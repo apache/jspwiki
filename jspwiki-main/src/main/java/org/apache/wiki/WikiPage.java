@@ -18,9 +18,11 @@
  */
 package org.apache.wiki;
 
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclImpl;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.WikiPageProvider;
 
 import java.util.Date;
@@ -29,8 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *  Simple wrapper class for the Wiki page attributes.  The Wiki page
- *  content is moved around in Strings, though.
+ *  Simple wrapper class for the Wiki page attributes.  The Wiki page content is moved around in Strings, though.
  */
 
 // FIXME: We need to rethink how metadata is being used - probably the 
@@ -40,7 +41,7 @@ import java.util.Map;
 public class WikiPage implements Cloneable, Comparable< WikiPage > {
 
     private       String     m_name;
-    private       WikiEngine m_engine;
+    private       Engine     m_engine;
     private       String     m_wiki;
     private Date             m_lastModified;
     private long             m_fileSize = -1;
@@ -76,8 +77,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @param engine The WikiEngine that owns this page.
      *  @param name   The name of the page.
      */
-    public WikiPage( WikiEngine engine, String name )
-    {
+    public WikiPage( final Engine engine, final String name ) {
         m_engine = engine;
         m_name = name;
         m_wiki = engine.getApplicationName();
@@ -103,9 +103,10 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @param key The key using which the attribute is fetched
      *  @return The attribute.  If the attribute has not been set, returns null.
      */
-    public < T > T getAttribute( String key )
+    @SuppressWarnings( "unchecked" )
+    public < T > T getAttribute( final String key )
     {
-        return (T)m_attributes.get( key );
+        return ( T )m_attributes.get( key );
     }
 
     /**
@@ -115,7 +116,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @param key The key for the attribute used to fetch the attribute later on.
      *  @param attribute The attribute value
      */
-    public void setAttribute( String key, Object attribute )
+    public void setAttribute( final String key, final Object attribute )
     {
         m_attributes.put( key, attribute );
     }
@@ -139,9 +140,10 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @return If the attribute existed, returns the object.
      *  @since 2.1.111
      */
-    public Object removeAttribute( String key )
+    @SuppressWarnings( "unchecked" )
+    public < T > T removeAttribute( final String key )
     {
-        return m_attributes.remove( key );
+        return ( T )m_attributes.remove( key );
     }
 
     /**
@@ -160,7 +162,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @param date The date
      */
-    public void setLastModified( Date date )
+    public void setLastModified( final Date date )
     {
         m_lastModified = date;
     }
@@ -171,7 +173,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @param version The version number
      */
-    public void setVersion( int version )
+    public void setVersion( final int version )
     {
         m_version = version;
     }
@@ -203,18 +205,16 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @param size The size of the page.
      *  @since 2.1.109
      */
-    public void setSize( long size )
+    public void setSize( final long size )
     {
         m_fileSize = size;
     }
 
     /**
-     *  Returns the Acl for this page.  May return <code>null</code>, 
-     *  in case there is no Acl defined, or it has not
-     *  yet been set by {@link #setAcl(Acl)}.
+     *  Returns the Acl for this page.  May return <code>null</code>, in case there is no Acl defined, or it has not yet been set by
+     *  {@link #setAcl(Acl)}.
      *  
-     *  @return The access control list.  May return null, if there is 
-     *          no acl.
+     *  @return The access control list.  May return null, if there is no acl.
      */
     public Acl getAcl()
     {
@@ -222,14 +222,13 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
     }
 
     /**
-     * Sets the Acl for this page. Note that method does <em>not</em>
-     * persist the Acl itself to back-end storage or in page markup;
-     * it merely sets the internal field that stores the Acl. To
-     * persist the Acl, callers should invoke 
+     * Sets the Acl for this page. Note that method does <em>not</em> persist the Acl itself to back-end storage or in page markup;
+     * it merely sets the internal field that stores the Acl. To persist the Acl, callers should invoke
      * {@link org.apache.wiki.auth.acl.AclManager#setPermissions(WikiPage, Acl)}.
+     *
      * @param acl The Acl to set
      */
-    public void setAcl( Acl acl )
+    public void setAcl( final Acl acl )
     {
         m_accessList = acl;
     }
@@ -239,7 +238,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @param author The author name.
      */
-    public void setAuthor( String author )
+    public void setAuthor( final String author )
     {
         m_author = author;
     }
@@ -267,8 +266,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
     /**
      *  This method will remove all metadata from the page.
      */
-    public void invalidateMetadata()
-    {        
+    public void invalidateMetadata() {
         m_hasMetadata = false;
         setAcl( null );
         m_attributes.clear();
@@ -277,9 +275,8 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
     private boolean m_hasMetadata = false;
 
     /**
-     *  Returns <code>true</code> if the page has valid metadata; that is, it has been parsed.
-     *  Note that this method is a kludge to support our pre-3.0 metadata system, and as such
-     *  will go away with the new API.
+     *  Returns <code>true</code> if the page has valid metadata; that is, it has been parsed. Note that this method is a kludge to
+     *  support our pre-3.0 metadata system, and as such will go away with the new API.
      *  
      *  @return true, if the page has metadata.
      */
@@ -301,22 +298,21 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @return A debug string.
      */
+    @Override
     public String toString()
     {
-        return "WikiPage ["+m_wiki+":"+m_name+",ver="+m_version+",mod="+m_lastModified+"]";
+        return "WikiPage [" + m_wiki + ":" + m_name + ",ver=" + m_version + ",mod=" + m_lastModified + "]";
     }
 
     /**
-     *  Creates a deep clone of a WikiPage.  Strings are not cloned, since
-     *  they're immutable.  Attributes are not cloned, only the internal
-     *  HashMap (so if you modify the contents of a value of an attribute,
-     *  these will reflect back to everyone).
+     *  Creates a deep clone of a WikiPage.  Strings are not cloned, since they're immutable.  Attributes are not cloned, only the internal
+     *  HashMap (so if you modify the contents of a value of an attribute, these will reflect back to everyone).
      *  
      *  @return A deep clone of the WikiPage
      */
-    public Object clone()
-    {
-        WikiPage p = new WikiPage( m_engine, m_name );
+    @Override
+    public Object clone() {
+        final WikiPage p = new WikiPage( m_engine, m_name );
        
         p.m_wiki         = m_wiki;
             
@@ -326,20 +322,14 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
 
         p.m_fileSize     = m_fileSize;
 
-        for( Map.Entry<String,Object> entry : m_attributes.entrySet() )
-        {
-            p.m_attributes.put( entry.getKey(), 
-                                entry.getValue() );
+        for( final Map.Entry< String, Object > entry : m_attributes.entrySet() ) {
+            p.m_attributes.put( entry.getKey(), entry.getValue() );
         }
 
-        if( m_accessList != null )
-        {
+        if( m_accessList != null ) {
             p.m_accessList = new AclImpl();
-            
-            for( Enumeration< AclEntry > entries = m_accessList.entries(); entries.hasMoreElements(); )
-            {
-                AclEntry e = entries.nextElement();
-            
+            for( final Enumeration< AclEntry > entries = m_accessList.entries(); entries.hasMoreElements(); ) {
+                final AclEntry e = entries.nextElement();
                 p.m_accessList.addEntry( e );
             }
         }
@@ -353,12 +343,13 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @param page The page to compare against
      *  @return -1, 0 or 1
      */
-    public int compareTo( WikiPage page ) {
+    @Override
+    public int compareTo( final WikiPage page ) {
         if( this == page ) {
             return 0; // the same object
         }
 
-        int res = m_engine.getPageManager().getPageSorter().compare( this.getName(), page.getName() );
+        int res = m_engine.getManager( PageManager.class ).getPageSorter().compare( this.getName(), page.getName() );
         if( res == 0 ) {
             res = this.getVersion() - page.getVersion();
         }
@@ -394,8 +385,10 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public int hashCode()
     {
         return m_name.hashCode() * m_version;
     }
+
 }
