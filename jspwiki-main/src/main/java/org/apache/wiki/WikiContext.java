@@ -19,11 +19,14 @@
 package org.apache.wiki;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.user.UserDatabase;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.ui.GroupCommand;
@@ -56,13 +59,12 @@ import java.util.PropertyPermission;
 public class WikiContext implements Cloneable, Command {
 
     private    Command m_command;
-
     private    WikiPage   m_page;
     private    WikiPage   m_realPage;
-    private    WikiEngine m_engine;
+    private    Engine     m_engine;
     private    String     m_template = "default";
 
-    private    HashMap<String,Object> m_variableMap = new HashMap<>();
+    private HashMap< String, Object > m_variableMap = new HashMap<>();
 
     /** Stores the HttpServletRequest.  May be null, if the request did not come from a servlet. */
     protected HttpServletRequest m_request;
@@ -167,30 +169,30 @@ public class WikiContext implements Cloneable, Command {
     private static final Permission DUMMY_PERMISSION = new PropertyPermission( "os.name", "read" );
 
     /**
-     *  Create a new WikiContext for the given WikiPage. Delegates to {@link #WikiContext(WikiEngine, HttpServletRequest, WikiPage)}.
+     *  Create a new WikiContext for the given WikiPage. Delegates to {@link #WikiContext(Engine, HttpServletRequest, WikiPage)}.
      *
-     *  @param engine The WikiEngine that is handling the request.
+     *  @param engine The Engine that is handling the request.
      *  @param page The WikiPage. If you want to create a WikiContext for an older version of a page, you must use this constructor.
      */
-    public WikiContext( final WikiEngine engine, final WikiPage page )
+    public WikiContext( final Engine engine, final WikiPage page )
     {
         this( engine, null, findCommand( engine, null, page ) );
     }
 
     /**
      * <p>
-     * Creates a new WikiContext for the given WikiEngine, Command and HttpServletRequest.
+     * Creates a new WikiContext for the given Engine, Command and HttpServletRequest.
      * </p>
      * <p>
      * This constructor will also look up the HttpSession associated with the request, and determine if a WikiSession object is present.
      * If not, a new one is created.
      * </p>
-     * @param engine The WikiEngine that is handling the request
+     * @param engine The Engine that is handling the request
      * @param request The HttpServletRequest that should be associated with this context. This parameter may be <code>null</code>.
      * @param command the command
      * @throws IllegalArgumentException if <code>engine</code> or <code>command</code> are <code>null</code>
      */
-    public WikiContext( final WikiEngine engine, final HttpServletRequest request, final Command command ) throws IllegalArgumentException {
+    public WikiContext( final Engine engine, final HttpServletRequest request, final Command command ) throws IllegalArgumentException {
         if ( engine == null || command == null ) {
             throw new IllegalArgumentException( "Parameter engine and command must not be null." );
         }
@@ -207,7 +209,7 @@ public class WikiContext implements Cloneable, Command {
 
         // If page not supplied, default to front page to avoid NPEs
         if( m_page == null ) {
-            m_page = m_engine.getPageManager().getPage( m_engine.getFrontPage() );
+            m_page = m_engine.getManager( PageManager.class ).getPage( m_engine.getFrontPage() );
 
             // Front page does not exist?
             if( m_page == null ) {
@@ -234,22 +236,22 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     * Creates a new WikiContext for the given WikiEngine, WikiPage and HttpServletRequest. This method simply looks up the appropriate
-     * Command using {@link #findCommand(WikiEngine, HttpServletRequest, WikiPage)} and delegates to
-     * {@link #WikiContext(WikiEngine, HttpServletRequest, Command)}.
+     * Creates a new WikiContext for the given Engine, WikiPage and HttpServletRequest. This method simply looks up the appropriate
+     * Command using {@link #findCommand(Engine, HttpServletRequest, WikiPage)} and delegates to
+     * {@link #WikiContext(Engine, HttpServletRequest, Command)}.
      *
-     * @param engine The WikiEngine that is handling the request
+     * @param engine The Engine that is handling the request
      * @param request The HttpServletRequest that should be associated with this context. This parameter may be <code>null</code>.
      * @param page The WikiPage. If you want to create a WikiContext for an older version of a page, you must supply this parameter
      */
-    public WikiContext( final WikiEngine engine, final HttpServletRequest request, final WikiPage page ) {
+    public WikiContext( final Engine engine, final HttpServletRequest request, final WikiPage page ) {
         this( engine, request, findCommand( engine, request, page ) );
     }
 
     /**
      *  Creates a new WikiContext from a supplied HTTP request, using a default wiki context.
      *
-     *  @param engine The WikiEngine that is handling the request
+     *  @param engine The Engine that is handling the request
      *  @param request the HTTP request
      *  @param requestContext the default context to use
      *  @return a new WikiContext object.
@@ -258,10 +260,10 @@ public class WikiContext implements Cloneable, Command {
      *  @see org.apache.wiki.ui.Command
      *  @since 2.1.15.
      */
-    public WikiContext( final WikiEngine engine, final HttpServletRequest request, final String requestContext ) {
-        this( engine, request, engine.getCommandResolver().findCommand( request, requestContext ) );
+    public WikiContext( final Engine engine, final HttpServletRequest request, final String requestContext ) {
+        this( engine, request, engine.getManager( CommandResolver.class ).findCommand( request, requestContext ) );
         if( !engine.isConfigured() ) {
-            throw new InternalWikiException( "WikiEngine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason." );
+            throw new InternalWikiException( "Engine has not been properly started.  It is likely that the configuration is faulty.  Please check all logs for the possible reason." );
         }
     }
 
@@ -333,7 +335,7 @@ public class WikiContext implements Cloneable, Command {
      */
     public String getRedirectURL() {
         final String pagename = m_page.getName();
-        String redirURL = m_engine.getCommandResolver().getSpecialPageReference( pagename );
+        String redirURL = m_engine.getManager( CommandResolver.class ).getSpecialPageReference( pagename );
         if( redirURL == null ) {
             final String alias = m_page.getAttribute( WikiPage.ALIAS );
             if( alias != null ) {
@@ -349,9 +351,9 @@ public class WikiContext implements Cloneable, Command {
     /**
      *  Returns the handling engine.
      *
-     *  @return The wikiengine owning this context.
+     *  @return The engine owning this context.
      */
-    public WikiEngine getEngine()
+    public Engine getEngine()
     {
         return m_engine;
     }
@@ -650,7 +652,7 @@ public class WikiContext implements Cloneable, Command {
 
     /**
      *  Returns the WikiSession associated with the context. This method is guaranteed to always return a valid WikiSession.
-     *  If this context was constructed without an associated HttpServletRequest, it will return {@link WikiSession#guestSession(WikiEngine)}.
+     *  If this context was constructed without an associated HttpServletRequest, it will return {@link WikiSession#guestSession(Engine)}.
      *
      *  @return The WikiSession associate with this context.
      */
@@ -687,7 +689,7 @@ public class WikiContext implements Cloneable, Command {
         if ( WikiCommand.INSTALL.equals( m_command ) ) {
             // See if admin users exists
             try {
-                final UserManager userMgr = m_engine.getUserManager();
+                final UserManager userMgr = m_engine.getManager( UserManager.class );
                 final UserDatabase userDb = userMgr.getUserDatabase();
                 userDb.findByLoginName( Installer.ADMIN_ID );
             } catch ( final NoSuchPrincipalException e ) {
@@ -728,7 +730,7 @@ public class WikiContext implements Cloneable, Command {
      *  @return true, if the user has all permissions.
      */
     public boolean hasAdminPermissions() {
-        return m_engine.getAuthorizationManager().checkPermission( getWikiSession(), new AllPermission( m_engine.getApplicationName() ) );
+        return m_engine.getManager( AuthorizationManager.class ).checkPermission( getWikiSession(), new AllPermission( m_engine.getApplicationName() ) );
     }
 
     /**
@@ -741,7 +743,7 @@ public class WikiContext implements Cloneable, Command {
         //  Figure out which template we should be using for this page.
         String template = null;
         if ( request != null ) {
-            String skin = request.getParameter( "skin" );
+            final String skin = request.getParameter( "skin" );
             if( skin != null )
             {
                 template = skin.replaceAll("\\p{Punct}", "");
@@ -753,7 +755,7 @@ public class WikiContext implements Cloneable, Command {
         if( template == null ) {
             final WikiPage page = getPage();
             if ( page != null ) {
-                template = page.getAttribute( WikiEngine.PROP_TEMPLATEDIR );
+                template = page.getAttribute( Engine.PROP_TEMPLATEDIR );
             }
 
         }
@@ -776,9 +778,9 @@ public class WikiContext implements Cloneable, Command {
      * @param page the wiki page
      * @return the correct command
      */
-    protected static Command findCommand( final WikiEngine engine, final HttpServletRequest request, final WikiPage page ) {
+    protected static Command findCommand( final Engine engine, final HttpServletRequest request, final WikiPage page ) {
         final String defaultContext = PageCommand.VIEW.getRequestContext();
-        Command command = engine.getCommandResolver().findCommand( request, defaultContext );
+        Command command = engine.getManager( CommandResolver.class ).findCommand( request, defaultContext );
         if ( command instanceof PageCommand && page != null ) {
             command = command.targetedCommand( page );
         }
@@ -796,7 +798,7 @@ public class WikiContext implements Cloneable, Command {
         if ( requestContext == null ) {
             m_command = PageCommand.NONE;
         } else {
-            final CommandResolver resolver = m_engine.getCommandResolver();
+            final CommandResolver resolver = m_engine.getManager( CommandResolver.class );
             m_command = resolver.findCommand( m_request, requestContext );
         }
 

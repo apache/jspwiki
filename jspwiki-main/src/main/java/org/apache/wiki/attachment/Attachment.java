@@ -18,8 +18,9 @@
  */
 package org.apache.wiki.attachment;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+
 
 /**
  *  Describes an attachment.  Attachments are actually derivatives of a WikiPage, since they do actually have a WikiName as well.
@@ -34,11 +35,11 @@ public class Attachment extends WikiPage {
      *  Creates a new attachment.  The final name of the attachment will be 
      *  a synthesis of the parent page name and the file name.
      *  
-     *  @param engine     The WikiEngine which is hosting this attachment.
+     *  @param engine     The Engine which is hosting this attachment.
      *  @param parentPage The page which will contain this attachment.
      *  @param fileName   The file name for the attachment.
      */
-    public Attachment( final WikiEngine engine, final String parentPage, final String fileName ) {
+    public Attachment( final Engine engine, final String parentPage, final String fileName ) {
         super( engine, parentPage + "/" + fileName );
 
         m_parentName = parentPage;
@@ -50,7 +51,7 @@ public class Attachment extends WikiPage {
      *  
      *  @return A debugging string
      */
-    public String toString() {
+    @Override public String toString() {
         return "Attachment [" + getName() + ";mod=" + getLastModified() + "]";
     }
 

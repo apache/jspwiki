@@ -20,6 +20,7 @@ package org.apache.wiki;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -108,8 +109,8 @@ public final class WikiSession implements WikiEventListener {
 
     private final Map<String,Set<String>> m_messages  = new HashMap<>();
 
-    /** The WikiEngine that created this session. */
-    private WikiEngine          m_engine              = null;
+    /** The Engine that created this session. */
+    private Engine              m_engine              = null;
 
     private String              m_status              = ANONYMOUS;
 
@@ -362,7 +363,7 @@ public final class WikiSession implements WikiEventListener {
      * @param engine the wiki engine
      * @param request the users's HTTP request
      */
-    public static void removeWikiSession( final WikiEngine engine, final HttpServletRequest request ) {
+    public static void removeWikiSession( final Engine engine, final HttpServletRequest request ) {
         if ( engine == null || request == null ) {
             throw new IllegalArgumentException( "Request or engine cannot be null." );
         }
@@ -536,7 +537,7 @@ public final class WikiSession implements WikiEventListener {
         m_subject.getPrincipals().removeAll( m_subject.getPrincipals(GroupPrincipal.class) );
 
         // Get the GroupManager and test for each Group
-        final GroupManager manager = m_engine.getGroupManager();
+        final GroupManager manager = m_engine.getManager( GroupManager.class );
         for( final Principal group : manager.getRoles() ) {
             if ( manager.isUserInRole( this, group ) ) {
                 m_subject.getPrincipals().add( group );
@@ -559,7 +560,7 @@ public final class WikiSession implements WikiEventListener {
         }
 
         // Look up the user and go get the new Principals
-        final UserDatabase database = m_engine.getUserManager().getUserDatabase();
+        final UserDatabase database = m_engine.getManager( UserManager.class ).getUserDatabase();
         if( database == null ) {
             throw new IllegalStateException( "User database cannot be null." );
         }
@@ -603,7 +604,7 @@ public final class WikiSession implements WikiEventListener {
      * <p>Static factory method that returns the WikiSession object associated with the current HTTP request. This method looks up
      * the associated HttpSession in an internal WeakHashMap and attempts to retrieve the WikiSession. If not found, one is created.
      * This method is guaranteed to always return a WikiSession, although the authentication status is unpredictable until the user
-     * attempts to log in. If the servlet request parameter is <code>null</code>, a synthetic {@link #guestSession(WikiEngine)} is
+     * attempts to log in. If the servlet request parameter is <code>null</code>, a synthetic {@link #guestSession(Engine)} is
      * returned.</p>
      * <p>When a session is created, this method attaches a WikiEventListener to the GroupManager so that changes to groups are detected
      * automatically.</p>
@@ -612,7 +613,7 @@ public final class WikiSession implements WikiEventListener {
      * @param request the servlet request object
      * @return the existing (or newly created) wiki session
      */
-    public static WikiSession getWikiSession( final WikiEngine engine, final HttpServletRequest request ) {
+    public static WikiSession getWikiSession( final Engine engine, final HttpServletRequest request ) {
         if ( request == null ) {
             if ( log.isDebugEnabled() ) {
                 log.debug( "Looking up WikiSession for NULL HttpRequest: returning guestSession()" );
@@ -639,15 +640,15 @@ public final class WikiSession implements WikiEventListener {
      * @param engine the wiki engine
      * @return the guest wiki session
      */
-    public static WikiSession guestSession( final WikiEngine engine ) {
+    public static WikiSession guestSession( final Engine engine ) {
         final WikiSession session = new WikiSession();
         session.m_engine = engine;
         session.invalidate();
 
         // Add the session as listener for GroupManager, AuthManager, UserManager events
-        final GroupManager groupMgr = engine.getGroupManager();
-        final AuthenticationManager authMgr = engine.getAuthenticationManager();
-        final UserManager userMgr = engine.getUserManager();
+        final GroupManager groupMgr = engine.getManager( GroupManager.class );
+        final AuthenticationManager authMgr = engine.getManager( AuthenticationManager.class );
+        final UserManager userMgr = engine.getManager( UserManager.class );
         groupMgr.addWikiEventListener( session );
         authMgr.addWikiEventListener( session );
         userMgr.addWikiEventListener( session );
@@ -659,11 +660,11 @@ public final class WikiSession implements WikiEventListener {
      *  Returns a static guest session, which is available for this thread only.  This guest session is used internally whenever
      *  there is no HttpServletRequest involved, but the request is done e.g. when embedding JSPWiki code.
      *
-     *  @param engine WikiEngine for this session
+     *  @param engine Engine for this session
      *  @return A static WikiSession which is shared by all in this same Thread.
      */
     // FIXME: Should really use WeakReferences to clean away unused sessions.
-    private static WikiSession staticGuestSession( final WikiEngine engine ) {
+    private static WikiSession staticGuestSession( final Engine engine ) {
         WikiSession session = c_guestSession.get();
         if( session == null ) {
             session = guestSession( engine );
@@ -680,7 +681,7 @@ public final class WikiSession implements WikiEventListener {
      * @param engine the wiki session
      * @return the number of sessions
      */
-    public static int sessions( final WikiEngine engine ) {
+    public static int sessions( final Engine engine ) {
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.sessions();
     }
@@ -693,7 +694,7 @@ public final class WikiSession implements WikiEventListener {
      * @param engine the wiki engine
      * @return an array of Principal objects, sorted by name
      */
-    public static Principal[] userPrincipals( final WikiEngine engine ) {
+    public static Principal[] userPrincipals( final Engine engine ) {
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.userPrincipals();
     }
