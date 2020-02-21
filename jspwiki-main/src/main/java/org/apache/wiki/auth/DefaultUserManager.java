@@ -32,7 +32,7 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
-import org.apache.wiki.auth.user.AbstractUserDatabase;
+import org.apache.wiki.auth.user.DummyUserDatabase;
 import org.apache.wiki.auth.user.DuplicateUserException;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
@@ -400,115 +400,6 @@ public class DefaultUserManager implements UserManager {
     @Override
     public Principal[] listWikiNames() throws WikiSecurityException {
         return getUserDatabase().getWikiNames();
-    }
-
-    /**
-     * This is a database that gets used if nothing else is available. It does nothing of note - it just mostly throws
-     * NoSuchPrincipalExceptions if someone tries to log in.
-     */
-    public static class DummyUserDatabase extends AbstractUserDatabase {
-
-        /**
-         * No-op.
-         * @param loginName the login name to delete
-         */
-        @Override
-        public void deleteByLoginName( final String loginName ) {
-            // No operation
-        }
-
-        /**
-         * No-op; always throws <code>NoSuchPrincipalException</code>.
-         * @param index the name to search for
-         * @return the user profile
-         * @throws NoSuchPrincipalException always...
-         */
-        @Override
-        public UserProfile findByEmail(final String index) throws NoSuchPrincipalException {
-            throw new NoSuchPrincipalException("No user profiles available");
-        }
-
-        /**
-         * No-op; always throws <code>NoSuchPrincipalException</code>.
-         * @param index the name to search for
-         * @return the user profile
-         * @throws NoSuchPrincipalException always...
-         */
-        @Override
-        public UserProfile findByFullName(final String index) throws NoSuchPrincipalException {
-            throw new NoSuchPrincipalException("No user profiles available");
-        }
-
-        /**
-         * No-op; always throws <code>NoSuchPrincipalException</code>.
-         * @param index the name to search for
-         * @return the user profile
-         * @throws NoSuchPrincipalException always...
-         */
-        @Override
-        public UserProfile findByLoginName(final String index) throws NoSuchPrincipalException {
-            throw new NoSuchPrincipalException("No user profiles available");
-        }
-
-        /**
-         * No-op; always throws <code>NoSuchPrincipalException</code>.
-         * @param uid the unique identifier to search for
-         * @return the user profile
-         * @throws NoSuchPrincipalException always...
-         */
-        @Override
-        public UserProfile findByUid( final String uid ) throws NoSuchPrincipalException {
-            throw new NoSuchPrincipalException("No user profiles available");
-        }
-        /**
-         * No-op; always throws <code>NoSuchPrincipalException</code>.
-         * @param index the name to search for
-         * @return the user profile
-         * @throws NoSuchPrincipalException always...
-         */
-        @Override
-        public UserProfile findByWikiName(final String index) throws NoSuchPrincipalException {
-            throw new NoSuchPrincipalException("No user profiles available");
-        }
-
-        /**
-         * No-op.
-         * @return a zero-length array
-         */
-        @Override
-        public Principal[] getWikiNames() {
-            return new Principal[0];
-        }
-
-        /**
-         * No-op.
-         *
-         * @param engine the wiki engine
-         * @param props the properties used to initialize the wiki engine
-         */
-        @Override
-        public void initialize( final Engine engine, final Properties props ) {
-        }
-
-        /**
-         * No-op; always throws <code>NoSuchPrincipalException</code>.
-         * @param loginName the login name
-         * @param newName the proposed new login name
-         * @throws NoSuchPrincipalException always...
-         */
-        @Override
-        public void rename( final String loginName, final String newName ) throws NoSuchPrincipalException {
-            throw new NoSuchPrincipalException("No user profiles available");
-        }
-
-        /**
-         * No-op.
-         * @param profile the user profile
-         */
-        @Override
-        public void save( final UserProfile profile ) {
-        }
-
     }
 
     // events processing .......................................................
