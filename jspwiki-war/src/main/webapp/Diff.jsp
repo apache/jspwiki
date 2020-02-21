@@ -41,7 +41,7 @@
     }
     String pagereq = wikiContext.getName();
 
-    WatchDog w = wiki.getCurrentWatchDog();
+    WatchDog w = WatchDog.getCurrentWatchDog( wiki );
     try
     {
     w.enterState("Generating INFO response",60);

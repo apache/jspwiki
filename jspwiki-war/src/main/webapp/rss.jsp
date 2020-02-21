@@ -67,7 +67,7 @@
         return;
     }
 
-    WatchDog w = wiki.getCurrentWatchDog();
+    WatchDog w = WatchDog.getCurrentWatchDog( wiki );
     w.enterState("Generating RSS",60);
     
     // Set the mode and type for the feed
