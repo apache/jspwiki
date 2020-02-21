@@ -170,25 +170,9 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         throw new WikiSecurityException( "Authorizer did not initialize properly. Check the logs." );
     }
 
-    /**
-     * <p>Determines if the Subject associated with a supplied WikiSession contains a desired user Principal or built-in Role principal,
-     * OR is a member a Group or external Role. The rules are as follows:</p>
-     * <ol>
-     * <li>First, if desired Principal is a Role or GroupPrincipal, delegate to {@link #isUserInRole(WikiSession, Principal)} and
-     * return the result.</li>
-     * <li>Otherwise, we're looking for a user Principal, so iterate through the Principal set and see if any share the same name as the
-     * one we are looking for.</li>
-     * </ol>
-     * <p><em>Note: if the Principal parameter is a user principal, the session must be authenticated in order for the user to "possess it".
-     * Anonymous or asserted sessions will never posseess a named user principal.</em></p>
-     *
-     * @param session the current wiki session, which must be non-null. If null, the result of this method always returns <code>false</code>
-     * @param principal the Principal (role, group, or user principal) to look for, which must be non-null. If null, the result of this
-     *                  method always returns <code>false</code>
-     * @return <code>true</code> if the Subject supplied with the WikiContext posesses the Role, GroupPrincipal or desired
-     *         user Principal, <code>false</code> otherwise
-     */
-    protected boolean hasRoleOrPrincipal( final WikiSession session, final Principal principal ) {
+    /** {@inheritDoc} */
+    @Override
+    public boolean hasRoleOrPrincipal( final WikiSession session, final Principal principal ) {
         // If either parameter is null, always deny
         if( session == null || principal == null ) {
             return false;
@@ -308,15 +292,9 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         throw new NoRequiredPropertyException( "Unable to find a " + PROP_AUTHORIZER + " entry in the properties.", PROP_AUTHORIZER );
     }
 
-    /**
-     * Checks to see if the local security policy allows a particular static Permission.
-     * Do not use this method for normal permission checks; use {@link #checkPermission(WikiSession, Permission)} instead.
-     *
-     * @param principals the Principals to check
-     * @param permission the Permission
-     * @return the result
-     */
-    protected boolean allowedByLocalPolicy( final Principal[] principals, final Permission permission ) {
+    /** {@inheritDoc} */
+    @Override
+    public boolean allowedByLocalPolicy( final Principal[] principals, final Permission permission ) {
         for ( final Principal principal : principals ) {
             // Get ProtectionDomain for this Principal from cache, or create new one
             ProtectionDomain pd = m_cachedPds.get( principal );
@@ -335,20 +313,9 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         return false;
     }
 
-    /**
-     * Determines whether a Subject possesses a given "static" Permission as defined in the security policy file. This method uses standard
-     * Java 2 security calls to do its work. Note that the current access control context's <code>codeBase</code> is effectively <em>this
-     * class</em>, not that of the caller. Therefore, this method will work best when what matters in the policy is <em>who</em> makes the
-     * permission check, not what the caller's code source is. Internally, this method works by executing <code>Subject.doAsPrivileged</code>
-     * with a privileged action that simply calls {@link AccessController#checkPermission(Permission)}.
-     *
-     * @see AccessController#checkPermission(Permission) . A caught exception (or lack thereof) determines whether the
-     *       privilege is absent (or present).
-     * @param session the WikiSession whose permission status is being queried
-     * @param permission the Permission the Subject must possess
-     * @return <code>true</code> if the Subject possesses the permission, <code>false</code> otherwise
-     */
-    protected boolean checkStaticPermission( final WikiSession session, final Permission permission ) {
+    /** {@inheritDoc} */
+    @Override
+    public boolean checkStaticPermission( final WikiSession session, final Permission permission ) {
         return ( Boolean )WikiSession.doPrivileged( session, ( PrivilegedAction< Boolean > )() -> {
             try {
                 // Check the JVM-wide security policy first

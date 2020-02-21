@@ -29,6 +29,7 @@ import org.apache.wiki.event.WikiSecurityEvent;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.AccessController;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Properties;
@@ -145,6 +146,26 @@ public interface AuthorizationManager {
     Authorizer getAuthorizer() throws WikiSecurityException;
 
     /**
+     * <p>Determines if the Subject associated with a supplied WikiSession contains a desired user Principal or built-in Role principal,
+     * OR is a member a Group or external Role. The rules are as follows:</p>
+     * <ol>
+     * <li>First, if desired Principal is a Role or GroupPrincipal, delegate to {@link #isUserInRole(WikiSession, Principal)} and
+     * return the result.</li>
+     * <li>Otherwise, we're looking for a user Principal, so iterate through the Principal set and see if any share the same name as the
+     * one we are looking for.</li>
+     * </ol>
+     * <p><em>Note: if the Principal parameter is a user principal, the session must be authenticated in order for the user to "possess it".
+     * Anonymous or asserted sessions will never posseess a named user principal.</em></p>
+     *
+     * @param session the current wiki session, which must be non-null. If null, the result of this method always returns <code>false</code>
+     * @param principal the Principal (role, group, or user principal) to look for, which must be non-null. If null, the result of this
+     *                  method always returns <code>false</code>
+     * @return <code>true</code> if the Subject supplied with the WikiContext posesses the Role, GroupPrincipal or desired
+     *         user Principal, <code>false</code> otherwise
+     */
+    boolean hasRoleOrPrincipal( WikiSession session, Principal principal );
+
+    /**
      * Checks whether the current user has access to the wiki context, by obtaining the required Permission ({@link WikiContext#requiredPermission()})
      * and delegating the access check to {@link #checkPermission(WikiSession, Permission)}. If the user is allowed, this method returns
      * <code>true</code>; <code>false</code> otherwise. If access is allowed, the wiki context will be added to the request as an attribute
@@ -185,6 +206,31 @@ public interface AuthorizationManager {
      * @throws WikiException if the AuthorizationManager cannot be initialized
      */
     void initialize( final Engine engine, final Properties properties ) throws WikiException;
+
+    /**
+     * Checks to see if the local security policy allows a particular static Permission.
+     * Do not use this method for normal permission checks; use {@link #checkPermission(WikiSession, Permission)} instead.
+     *
+     * @param principals the Principals to check
+     * @param permission the Permission
+     * @return the result
+     */
+    boolean allowedByLocalPolicy( Principal[] principals, Permission permission );
+
+    /**
+     * Determines whether a Subject possesses a given "static" Permission as defined in the security policy file. This method uses standard
+     * Java 2 security calls to do its work. Note that the current access control context's <code>codeBase</code> is effectively <em>this
+     * class</em>, not that of the caller. Therefore, this method will work best when what matters in the policy is <em>who</em> makes the
+     * permission check, not what the caller's code source is. Internally, this method works by executing <code>Subject.doAsPrivileged</code>
+     * with a privileged action that simply calls {@link AccessController#checkPermission(Permission)}.
+     *
+     * @see AccessController#checkPermission(Permission) . A caught exception (or lack thereof) determines whether the
+     *       privilege is absent (or present).
+     * @param session the WikiSession whose permission status is being queried
+     * @param permission the Permission the Subject must possess
+     * @return <code>true</code> if the Subject possesses the permission, <code>false</code> otherwise
+     */
+    boolean checkStaticPermission( WikiSession session, Permission permission );
 
     /**
      * <p>Given a supplied string representing a Principal's name from an Acl, this method resolves the correct type of Principal (role,
