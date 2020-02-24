@@ -32,6 +32,7 @@ import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.TextUtil;
 
@@ -163,7 +164,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *  Does a full reference update.  Does not sync; assumes that you do it afterwards.
      */
     private void updatePageReferences( final WikiPage page ) throws ProviderException {
-        final String content = m_engine.getPageManager().getPageText( page.getName(), WikiPageProvider.LATEST_VERSION );
+        final String content = m_engine.getManager( PageManager.class ).getPageText( page.getName(), WikiPageProvider.LATEST_VERSION );
         final Collection< String > links = scanWikiLinks( page, content );
         final TreeSet< String > res = new TreeSet<>( links );
         final List< Attachment > attachments = m_engine.getAttachmentManager().listAttachments( page );
@@ -181,7 +182,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *  @since 2.2
      *  @throws ProviderException If reading of pages fails.
      */
-    public void initialize( final Collection< WikiPage > pages ) throws ProviderException {
+    @Override public void initialize( final Collection< WikiPage > pages ) throws ProviderException {
         log.debug( "Initializing new ReferenceManager with " + pages.size() + " initial pages." );
         final StopWatch sw = new StopWatch();
         sw.start();
@@ -205,7 +206,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
             for( final WikiPage page : pages ) {
                 if( !( page instanceof Attachment ) ) {
                     // Refresh with the latest copy
-                    final WikiPage wp = m_engine.getPageManager().getPage( page.getName() );
+                    final WikiPage wp = m_engine.getManager( PageManager.class ).getPage( page.getName() );
 
                     if( wp.getLastModified() == null ) {
                         log.fatal( "Provider returns null lastModified.  Please submit a bug report." );
@@ -234,7 +235,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
         sw.stop();
         log.info( "Cross reference scan done in "+sw );
 
-        WikiEventManager.getInstance().addWikiEventListener( m_engine.getPageManager(), this );
+        WikiEventManager.getInstance().addWikiEventListener( m_engine.getManager( PageManager.class ), this );
     }
 
     /**
@@ -426,7 +427,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *  @param pagedata The page contents
      *  @return a Collection of Strings
      */
-    public Collection< String > scanWikiLinks( final WikiPage page, final String pagedata ) {
+    @Override public Collection< String > scanWikiLinks( final WikiPage page, final String pagedata ) {
         final LinkCollector localCollector = new LinkCollector();
         m_engine.getRenderingManager().textToHTML( new WikiContext( m_engine, page ),
                                                    pagedata,
@@ -448,7 +449,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *
      *  @param page Name of the page to remove from the maps.
      */
-    public synchronized void pageRemoved( final WikiPage page ) {
+    @Override public synchronized void pageRemoved( final WikiPage page ) {
         pageRemoved( page.getName() );
     }
 
@@ -467,7 +468,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
 
                 // We won't put it back again if it becomes empty and does not exist.  It will be added
                 // later on anyway, if it becomes referenced again.
-                if( !( refBy.isEmpty() && !m_engine.getPageManager().wikiPageExists( referredPageName ) ) ) {
+                if( !( refBy.isEmpty() && !m_engine.getManager( PageManager.class ).wikiPageExists( referredPageName ) ) ) {
                     m_referredBy.put( referredPageName, refBy );
                 }
             }
@@ -499,8 +500,8 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *
      *  @param page wiki page for which references should be updated
      */
-    public void updateReferences( final WikiPage page ) {
-        final String pageData = m_engine.getPageManager().getPureText( page.getName(), WikiProvider.LATEST_VERSION );
+    @Override public void updateReferences( final WikiPage page ) {
+        final String pageData = m_engine.getManager( PageManager.class ).getPureText( page.getName(), WikiProvider.LATEST_VERSION );
         updateReferences( page.getName(), scanWikiLinks( page, pageData ) );
     }
 
@@ -514,7 +515,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *  @param page Name of the page to update.
      *  @param references A Collection of Strings, each one pointing to a page this page references.
      */
-    public synchronized void updateReferences( final String page, final Collection< String > references ) {
+    @Override public synchronized void updateReferences( final String page, final Collection< String > references ) {
         internalUpdateReferences( page, references );
         serializeToDisk();
     }
@@ -603,7 +604,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
 
             // If the page is referred to by no one AND it doesn't even exist, we might just as well forget about this
             // entry. It will be added again elsewhere if new references appear.
-            if( ( oldRefBy == null || oldRefBy.isEmpty() ) && !m_engine.getPageManager().wikiPageExists( referredPage ) ) {
+            if( ( oldRefBy == null || oldRefBy.isEmpty() ) && !m_engine.getManager( PageManager.class ).wikiPageExists( referredPage ) ) {
                 m_referredBy.remove( referredPage );
             }
         }
@@ -673,7 +674,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *
      * @param pagename  Name of the page to clear references for.
      */
-    public synchronized void clearPageEntries( String pagename ) {
+    @Override public synchronized void clearPageEntries( String pagename ) {
         pagename = getFinalPageName( pagename );
 
         //  Remove this item from the referredBy list of any page which this item refers to.
@@ -696,7 +697,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *
      *  @return The Collection of Strings
      */
-    public synchronized Collection< String > findUnreferenced() {
+    @Override public synchronized Collection< String > findUnreferenced() {
         final ArrayList< String > unref = new ArrayList<>();
         for( final String key : m_referredBy.keySet() ) {
             final Set< ? > refs = getReferenceList( m_referredBy, key );
@@ -718,7 +719,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *
      * @return A Collection of Strings
      */
-    public synchronized Collection< String > findUncreated() {
+    @Override public synchronized Collection< String > findUncreated() {
         final TreeSet< String > uncreated = new TreeSet<>();
 
         // Go through m_refersTo values and check that m_refersTo has the corresponding keys.
@@ -727,7 +728,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
         for( final Collection<String> refs : allReferences ) {
             if( refs != null ) {
                 for( final String aReference : refs ) {
-                    if( !m_engine.getPageManager().wikiPageExists( aReference ) ) {
+                    if( !m_engine.getManager( PageManager.class ).wikiPageExists( aReference ) ) {
                         uncreated.add( aReference );
                     }
                 }
@@ -776,7 +777,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      * @param pagename The page to find referrers for.
      * @return A Set of Strings.  May return null, if the page does not exist, or if it has no references.
      */
-    public synchronized Set< String > findReferrers( final String pagename ) {
+    @Override public synchronized Set< String > findReferrers( final String pagename ) {
         final Set< String > refs = getReferenceList( m_referredBy, pagename );
         if( refs == null || refs.isEmpty() ) {
             return null;
@@ -798,7 +799,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *         not exist or has not been indexed yet.
      * @since 2.2.33
      */
-    public Set< String > findReferredBy( final String pageName ) {
+    @Override public Set< String > findReferredBy( final String pageName ) {
         return m_unmutableReferredBy.get( getFinalPageName(pageName) );
     }
 
@@ -816,7 +817,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *         does not exist or has not been indexed yet.
      * @since 2.2.33
      */
-    public Collection< String > findRefersTo( final String pageName ) {
+    @Override public Collection< String > findRefersTo( final String pageName ) {
         return m_unmutableRefersTo.get( getFinalPageName( pageName ) );
     }
 
@@ -859,7 +860,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *  @return A Set of all defined page names that ReferenceManager knows about.
      *  @since 2.3.24
      */
-    public Set< String > findCreated() {
+    @Override public Set< String > findCreated() {
         return new HashSet<>( m_refersTo.keySet() );
     }
 

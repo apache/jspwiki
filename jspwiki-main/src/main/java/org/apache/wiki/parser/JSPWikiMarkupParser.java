@@ -34,12 +34,17 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
+import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.XmlUtil;
+import org.apache.wiki.variables.VariableManager;
 import org.jdom2.Attribute;
 import org.jdom2.Content;
 import org.jdom2.Element;
@@ -165,7 +170,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @param context The WikiContext which controls the parsing
      *  @param in Where the data is read from.
      */
-    public JSPWikiMarkupParser( WikiContext context, Reader in )
+    public JSPWikiMarkupParser( final WikiContext context, final Reader in )
     {
         super( context, in );
         initialize();
@@ -207,7 +212,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         m_allowHTML          = m_context.getBooleanWikiProperty( PROP_ALLOWHTML, m_allowHTML );
         m_useRelNofollow     = m_context.getBooleanWikiProperty( PROP_USERELNOFOLLOW, m_useRelNofollow );
 
-        if( m_engine.getUserManager().getUserDatabase() == null || m_engine.getAuthorizationManager() == null ) {
+        if( m_engine.getManager( UserManager.class ).getUserDatabase() == null || m_engine.getManager( AuthorizationManager.class ) == null ) {
             disableAccessRules();
         }
 
@@ -238,13 +243,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *
      * @param param A Heading object.
      */
-    protected void callHeadingListenerChain( Heading param )
+    protected void callHeadingListenerChain( final Heading param )
     {
-        List< HeadingListener > list = m_headingListenerChain;
+        final List< HeadingListener > list = m_headingListenerChain;
 
-        for( Iterator< HeadingListener > i = list.iterator(); i.hasNext(); )
+        for( final Iterator< HeadingListener > i = list.iterator(); i.hasNext(); )
         {
-            HeadingListener h = i.next();
+            final HeadingListener h = i.next();
 
             h.headingAdded( m_context, param );
         }
@@ -261,18 +266,18 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @return An A element.
      *  @since 2.4.78
      */
-    protected Element createAnchor(int type, String link, String text, String section)
+    protected Element createAnchor( final int type, final String link, String text, String section)
     {
         text = escapeHTMLEntities( text );
         section = escapeHTMLEntities( section );
-        Element el = new Element("a");
+        final Element el = new Element("a");
         el.setAttribute("class",CLASS_TYPES[type]);
         el.setAttribute("href",link+section);
         el.addContent(text);
         return el;
     }
 
-    private Element makeLink( int type, String link, String text, String section, Iterator< Attribute > attributes )
+    private Element makeLink( int type, final String link, String text, String section, final Iterator< Attribute > attributes )
     {
         Element el = null;
 
@@ -289,7 +294,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         {
             type = EMPTY;
         }
-        ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
+        final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
 
         switch(type)
         {
@@ -344,7 +349,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 break;
 
             case IMAGEWIKILINK:
-                String pagelink = m_context.getURL(WikiContext.VIEW,text);
+                final String pagelink = m_context.getURL(WikiContext.VIEW,text);
                 el = new Element("img").setAttribute("class","inline");
                 el.setAttribute("src",link);
                 el.setAttribute("alt",text);
@@ -361,18 +366,18 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 break;
 
             case ATTACHMENT:
-                String attlink = m_context.getURL( WikiContext.ATTACH,
+                final String attlink = m_context.getURL( WikiContext.ATTACH,
                                                    link );
 
-                String infolink = m_context.getURL( WikiContext.INFO,
+                final String infolink = m_context.getURL( WikiContext.INFO,
                                                     link );
 
-                String imglink = m_context.getURL( WikiContext.NONE,
+                final String imglink = m_context.getURL( WikiContext.NONE,
                                                    "images/attachment_small.png" );
 
                 el = createAnchor( ATTACHMENT, attlink, text, "" );
 
-                if(  m_engine.getAttachmentManager().forceDownload( attlink ) )
+                if(  m_engine.getManager( AttachmentManager.class ).forceDownload( attlink ) )
                 {
                     el.setAttribute("download", "");
                 }
@@ -403,7 +408,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         {
             while( attributes.hasNext() )
             {
-                Attribute attr = attributes.next();
+                final Attribute attr = attributes.next();
                 if( attr != null )
                 {
                     el.setAttribute(attr);
@@ -428,7 +433,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         "hr", "noscript", "ol", "p", "pre", "table", "ul"
     };
 
-    private static boolean isBlockLevel( String name )
+    private static boolean isBlockLevel( final String name )
     {
         return Arrays.binarySearch( BLOCK_ELEMENTS, name ) >= 0;
     }
@@ -444,7 +449,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private String peekAheadLine()
         throws IOException
     {
-        String s = readUntilEOL().toString();
+        final String s = readUntilEOL().toString();
 
         if( s.length() > PUSHBACK_BUFFER_SIZE )
         {
@@ -457,7 +462,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             {
                 pushBack( s );
             }
-            catch( IOException e )
+            catch( final IOException e )
             {
                 log.warn("Pushback failed: the line is probably too long.  Attempting to recover.");
             }
@@ -467,7 +472,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     private int flushPlainText()
     {
-        int numChars = m_plainTextBuf.length();
+        final int numChars = m_plainTextBuf.length();
 
         if( numChars > 0 )
         {
@@ -503,15 +508,15 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                     while( m_camelCaseMatcher.contains( buf, m_camelCasePattern ) )
                     {
-                        MatchResult result = m_camelCaseMatcher.getMatch();
+                        final MatchResult result = m_camelCaseMatcher.getMatch();
 
-                        String firstPart = buf.substring(0,result.beginOffset(0));
+                        final String firstPart = buf.substring(0,result.beginOffset(0));
                         String prefix = result.group(1);
 
                         if( prefix == null ) prefix = "";
 
-                        String camelCase = result.group(2);
-                        String protocol  = result.group(3);
+                        final String camelCase = result.group(2);
+                        final String protocol  = result.group(3);
                         String uri       = protocol+result.group(4);
                         buf              = buf.substring(result.endOffset(0));
 
@@ -547,7 +552,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                         //
                         if( protocol != null )
                         {
-                            char c = uri.charAt(uri.length()-1);
+                            final char c = uri.charAt(uri.length()-1);
                             if( c == '.' || c == ',' )
                             {
                                 uri = uri.substring(0,uri.length()-1);
@@ -578,7 +583,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     m_currentElement.addContent( buf );
                 }
             }
-            catch( IllegalDataException e )
+            catch( final IllegalDataException e )
             {
                 //
                 // Sometimes it's possible that illegal XML chars is added to the data.
@@ -598,13 +603,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @param buf
      *  @return An escaped string.
      */
-    private String escapeHTMLEntities(String buf)
+    private String escapeHTMLEntities( final String buf)
     {
-        StringBuilder tmpBuf = new StringBuilder( buf.length() + 20 );
+        final StringBuilder tmpBuf = new StringBuilder( buf.length() + 20 );
 
         for( int i = 0; i < buf.length(); i++ )
         {
-            char ch = buf.charAt(i);
+            final char ch = buf.charAt(i);
 
             if( ch == '<' )
             {
@@ -626,13 +631,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //
 
                 boolean isEntity = false;
-                StringBuilder entityBuf = new StringBuilder();
+                final StringBuilder entityBuf = new StringBuilder();
 
                 if( i < buf.length() -1 )
                 {
                     for( int j = i; j < buf.length(); j++ )
                     {
-                        char ch2 = buf.charAt(j);
+                        final char ch2 = buf.charAt(j);
 
                         if( Character.isLetterOrDigit( ch2 ) || (ch2 == '#' && j == i+1) || ch2 == ';' || ch2 == '&' )
                         {
@@ -671,7 +676,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return tmpBuf.toString();
     }
 
-    private Element pushElement( Element e )
+    private Element pushElement( final Element e )
     {
         flushPlainText();
         m_currentElement.addContent( e );
@@ -680,7 +685,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return e;
     }
 
-    private Element addElement( Content e )
+    private Element addElement( final Content e )
     {
         if( e != null )
         {
@@ -705,9 +710,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @param s
      *  @return The new current element, or null, if there was no such element in the entire stack.
      */
-    private Element popElement( String s )
+    private Element popElement( final String s )
     {
-        int flushedBytes = flushPlainText();
+        final int flushedBytes = flushPlainText();
 
         Element currEl = m_currentElement;
 
@@ -744,10 +749,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  ending characters, or stream end.  The ending character will be left
      *  in the stream.
      */
-    private String readUntil( String endChars )
+    private String readUntil( final String endChars )
         throws IOException
     {
-        StringBuilder sb = new StringBuilder( 80 );
+        final StringBuilder sb = new StringBuilder( 80 );
         int ch = nextToken();
 
         while( ch != -1 )
@@ -779,10 +784,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  Reads the stream while the characters that have been specified are
      *  in the stream, returning then the result as a String.
      */
-    private String readWhile( String endChars )
+    private String readWhile( final String endChars )
         throws IOException
     {
-        StringBuilder sb = new StringBuilder( 80 );
+        final StringBuilder sb = new StringBuilder( 80 );
         int ch = nextToken();
 
         while( ch != -1 )
@@ -897,9 +902,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  a proper HTML link for it.  The local link mutator
      *  chain is also called.
      */
-    private Element makeCamelCaseLink( String wikiname )
+    private Element makeCamelCaseLink( final String wikiname )
     {
-        String matchedLink = m_linkParsingOperations.linkIfExists( wikiname );
+        final String matchedLink = m_linkParsingOperations.linkIfExists( wikiname );
 
         callMutatorChain( m_localLinkMutatorChain, wikiname );
 
@@ -955,7 +960,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      */
     private Element makeDirectURILink( String url )
     {
-        Element result;
+        final Element result;
         String last = null;
 
         if( url.endsWith(",") || url.endsWith(".") )
@@ -999,9 +1004,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
      */
 
     // FIXME: isExternalLink() is called twice.
-    private Element handleImageLink( String reallink, String link, boolean hasLinkText )
+    private Element handleImageLink( final String reallink, final String link, final boolean hasLinkText )
     {
-        String possiblePage = MarkupParser.cleanLink( link );
+        final String possiblePage = MarkupParser.cleanLink( link );
 
         if( m_linkParsingOperations.isExternalLink( link ) && hasLinkText )
         {
@@ -1044,7 +1049,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
 
         try {
-            final Acl acl = m_engine.getAclManager().parseAcl( page, ruleLine );
+            final Acl acl = m_engine.getManager( AclManager.class ).parseAcl( page, ruleLine );
             page.setAcl( acl );
 
             if( log.isDebugEnabled() ) {
@@ -1080,7 +1085,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             // log.debug("SET name='"+name+"', value='"+val+"'.");
 
             if( name.length() > 0 && val.length() > 0 ) {
-                val = m_engine.getVariableManager().expandVariables( m_context, val );
+                val = m_engine.getManager( VariableManager.class ).expandVariables( m_context, val );
                 m_context.getPage().setAttribute( name, val );
             }
         } catch( final Exception e ) {
@@ -1104,19 +1109,15 @@ public class JSPWikiMarkupParser extends MarkupParser {
     /**
      *  Gobbles up all hyperlinks that are encased in square brackets.
      */
-    private Element handleHyperlinks( String linktext, int pos )
-    {
-        ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
+    private Element handleHyperlinks( String linktext, final int pos ) {
+        final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
+        final StringBuilder sb = new StringBuilder(linktext.length()+80);
 
-        StringBuilder sb = new StringBuilder(linktext.length()+80);
-
-        if( m_linkParsingOperations.isAccessRule( linktext ) )
-        {
+        if( m_linkParsingOperations.isAccessRule( linktext ) ) {
             return handleAccessRule( linktext );
         }
 
-        if( m_linkParsingOperations.isMetadata( linktext ) )
-        {
+        if( m_linkParsingOperations.isMetadata( linktext ) ) {
             return handleMetadata( linktext );
         }
 
@@ -1124,7 +1125,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         {
             try
             {
-                PluginContent pluginContent = PluginContent.parsePluginLine( m_context, linktext, pos );
+                final PluginContent pluginContent = PluginContent.parsePluginLine( m_context, linktext, pos );
                 //
                 //  This might sometimes fail, especially if there is something which looks
                 //  like a plugin invocation but is really not.
@@ -1136,13 +1137,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     pluginContent.executeParse( m_context );
                 }
             }
-            catch( PluginException e )
+            catch( final PluginException e )
             {
                 log.info( m_context.getRealPage().getWiki() + " : " + m_context.getRealPage().getName() + " - Failed to insert plugin: " + e.getMessage() );
                 //log.info( "Root cause:",e.getRootThrowable() );
                 if( !m_wysiwygEditorMode )
                 {
-                    ResourceBundle rbPlugin = Preferences.getBundle( m_context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+                    final ResourceBundle rbPlugin = Preferences.getBundle( m_context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
                     return addElement( makeError( MessageFormat.format( rbPlugin.getString( "plugin.error.insertionfailed" ),
                     		                                            m_context.getRealPage().getWiki(),
                     		                                            m_context.getRealPage().getName(),
@@ -1155,7 +1156,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         try
         {
-            LinkParser.Link link = m_linkParser.parse(linktext);
+            final LinkParser.Link link = m_linkParser.parse(linktext);
             linktext       = link.getText();
             String linkref = link.getReference();
 
@@ -1168,7 +1169,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             //
             if( m_linkParsingOperations.isVariableLink( linktext ) )
             {
-                Content el = new VariableContent(linktext);
+                final Content el = new VariableContent(linktext);
 
                 addElement( el );
             }
@@ -1201,8 +1202,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //        is using, so you'll have to write the entire name as it appears
                 //        in the URL.  Bugger.
 
-                String extWiki  = link.getExternalWiki();
-                String wikiPage = link.getExternalWikiPage();
+                final String extWiki  = link.getExternalWiki();
+                final String wikiPage = link.getExternalWikiPage();
 
                 if( m_wysiwygEditorMode )
                 {
@@ -1233,7 +1234,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     }
                     else
                     {
-                        Object[] args = { escapeHTMLEntities(extWiki) };
+                        final Object[] args = { escapeHTMLEntities(extWiki) };
 
                         addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.nointerwikiref" ), args ) ) );
                     }
@@ -1256,7 +1257,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //
                 //  Internal wiki link, but is it an attachment link?
                 //
-                String attachment = m_engine.getAttachmentManager().getAttachmentInfoName( m_context, linkref );
+                String attachment = m_engine.getManager( AttachmentManager.class ).getAttachmentInfoName( m_context, linkref );
                 if( attachment != null )
                 {
                     callMutatorChain( m_attachmentLinkMutatorChain, attachment );
@@ -1275,14 +1276,14 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 {
                     // It's an internal Wiki link, but to a named section
 
-                    String namedSection = linkref.substring( hashMark+1 );
+                    final String namedSection = linkref.substring( hashMark+1 );
                     linkref = linkref.substring( 0, hashMark );
 
                     linkref = MarkupParser.cleanLink( linkref );
 
                     callMutatorChain( m_localLinkMutatorChain, linkref );
 
-                    String matchedLink = m_linkParsingOperations.linkIfExists( linkref );
+                    final String matchedLink = m_linkParsingOperations.linkIfExists( linkref );
                     if( matchedLink != null ) {
                         String sectref = "section-"+m_engine.encodeName(matchedLink+"-"+wikifyLink(namedSection));
                         sectref = sectref.replace('%', '_');
@@ -1298,7 +1299,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                     callMutatorChain( m_localLinkMutatorChain, linkref );
 
-                    String matchedLink = m_linkParsingOperations.linkIfExists( linkref );
+                    final String matchedLink = m_linkParsingOperations.linkIfExists( linkref );
                     if( matchedLink != null ) {
                         makeLink( READ, matchedLink, linktext, null, link.getAttributes() );
                     } else {
@@ -1307,10 +1308,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 }
             }
         }
-        catch( ParseException e )
+        catch( final ParseException e )
         {
             log.info("Parser failure: ",e);
-            Object[] args = { e.getMessage() };
+            final Object[] args = { e.getMessage() };
             addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.parserfailure" ), args ) ) );
         }
 
@@ -1323,7 +1324,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *
      *  @since 2.1.77
      */
-    private void pushBack( String s )
+    private void pushBack( final String s )
         throws IOException
     {
         for( int i = s.length()-1; i >= 0; i-- )
@@ -1335,11 +1336,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private Element handleBackslash()
         throws IOException
     {
-        int ch = nextToken();
+        final int ch = nextToken();
 
         if( ch == '\\' )
         {
-            int ch2 = nextToken();
+            final int ch2 = nextToken();
 
             if( ch2 == '\\' )
             {
@@ -1361,7 +1362,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private Element handleUnderscore()
         throws IOException
     {
-        int ch = nextToken();
+        final int ch = nextToken();
         Element el = null;
 
         if( ch == '_' )
@@ -1391,7 +1392,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private Element handleApostrophe()
         throws IOException
     {
-        int ch = nextToken();
+        final int ch = nextToken();
         Element el = null;
 
         if( ch == '\'' )
@@ -1414,14 +1415,14 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return el;
     }
 
-    private Element handleOpenbrace( boolean isBlock )
+    private Element handleOpenbrace( final boolean isBlock )
         throws IOException
     {
-        int ch = nextToken();
+        final int ch = nextToken();
 
         if( ch == '{' )
         {
-            int ch2 = nextToken();
+            final int ch2 = nextToken();
 
             if( ch2 == '{' )
             {
@@ -1454,11 +1455,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private Element handleClosebrace()
         throws IOException
     {
-        int ch2 = nextToken();
+        final int ch2 = nextToken();
 
         if( ch2 == '}' )
         {
-            int ch3 = nextToken();
+            final int ch3 = nextToken();
 
             if( ch3 == '}' )
             {
@@ -1502,11 +1503,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         if( ch == '-' )
         {
-            int ch2 = nextToken();
+            final int ch2 = nextToken();
 
             if( ch2 == '-' )
             {
-                int ch3 = nextToken();
+                final int ch3 = nextToken();
 
                 if( ch3 == '-' )
                 {
@@ -1539,31 +1540,31 @@ public class JSPWikiMarkupParser extends MarkupParser {
     {
         Element el = null;
 
-        int ch  = nextToken();
+        final int ch  = nextToken();
 
-        Heading hd = new Heading();
+        final Heading hd = new Heading();
 
         if( ch == '!' )
         {
-            int ch2 = nextToken();
+            final int ch2 = nextToken();
 
             if( ch2 == '!' )
             {
-                String title = peekAheadLine();
+                final String title = peekAheadLine();
 
                 el = makeHeading( Heading.HEADING_LARGE, title, hd);
             }
             else
             {
                 pushBack( ch2 );
-                String title = peekAheadLine();
+                final String title = peekAheadLine();
                 el = makeHeading( Heading.HEADING_MEDIUM, title, hd );
             }
         }
         else
         {
             pushBack( ch );
-            String title = peekAheadLine();
+            final String title = peekAheadLine();
             el = makeHeading( Heading.HEADING_SMALL, title, hd );
         }
 
@@ -1584,7 +1585,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         throws IOException
     {
         int ch;
-        StringBuilder buf = new StringBuilder( 256 );
+        final StringBuilder buf = new StringBuilder( 256 );
 
         while( true )
         {
@@ -1634,7 +1635,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         m_isbold   = false;
     }
 
-    private static String getListType( char c )
+    private static String getListType( final char c )
     {
         if( c == '*' )
         {
@@ -1660,7 +1661,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
          String strBullets = readWhile( "*#" );
          // String strBulletsRaw = strBullets;      // to know what was original before phpwiki style substitution
-         int numBullets = strBullets.length();
+         final int numBullets = strBullets.length();
 
          // override the beginning portion of bullet pattern to be like the previous
          // to simulate PHPWiki style lists
@@ -1733,7 +1734,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
              //  The pattern has changed, unwind and restart
              //
              int  numEqualBullets;
-             int  numCheckBullets;
+             final int  numCheckBullets;
 
              // find out how much is the same
              numEqualBullets = 0;
@@ -1817,8 +1818,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private Element handleOpenbracket()
         throws IOException
     {
-        StringBuilder sb = new StringBuilder(40);
-        int pos = getPosition();
+        final StringBuilder sb = new StringBuilder(40);
+        final int pos = getPosition();
         int ch = nextToken();
         boolean isPlugin = false;
 
@@ -1860,7 +1861,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         while( ch != -1 )
         {
-            int ch2 = nextToken(); pushBack(ch2);
+            final int ch2 = nextToken(); pushBack(ch2);
 
             if( isPlugin )
             {
@@ -1911,10 +1912,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
     /**
      *  Reads the stream until the current brace is closed or stream end.
      */
-    private String readBraceContent( char opening, char closing )
+    private String readBraceContent( final char opening, final char closing )
         throws IOException
     {
-        StringBuilder sb = new StringBuilder(40);
+        final StringBuilder sb = new StringBuilder(40);
         int braceLevel = 1;
         int ch;
         while(( ch = nextToken() ) != -1 )
@@ -1947,7 +1948,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      * @return An Element containing the div or span, depending on the situation.
      * @throws IOException
      */
-    private Element handleDiv( boolean newLine )
+    private Element handleDiv( final boolean newLine )
         throws IOException
     {
         int ch = nextToken();
@@ -2010,7 +2011,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                 try
                 {
-                    Boolean isSpan = m_styleStack.pop();
+                    final Boolean isSpan = m_styleStack.pop();
 
                     if( isSpan == null )
                     {
@@ -2025,7 +2026,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                         el = popElement( "div" );
                     }
                 }
-                catch( EmptyStackException e )
+                catch( final EmptyStackException e )
                 {
                     log.debug("Page '"+m_context.getName()+"' closes a %%-block that has not been opened.");
                     return m_currentElement;
@@ -2044,24 +2045,24 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 if( style != null && style.indexOf("javascript:") != -1 )
                 {
                     log.debug("Attempt to output javascript within CSS:"+style);
-                    ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
+                    final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
                     return addElement( makeError( rb.getString( "markupparser.error.javascriptattempt" ) ) );
                 }
             }
-            catch( NumberFormatException e )
+            catch( final NumberFormatException e )
             {
                 //
                 //  If there are unknown entities, we don't want the parser to stop.
                 //
-                ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
-                String msg = MessageFormat.format( rb.getString( "markupparser.error.parserfailure"), e.getMessage() );
+                final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
+                final String msg = MessageFormat.format( rb.getString( "markupparser.error.parserfailure"), e.getMessage() );
                 return addElement( makeError( msg ) );
             }
 
             //
             //  Decide if we should open a div or a span?
             //
-            String eol = peekAheadLine();
+            final String eol = peekAheadLine();
 
             if( eol.trim().length() > 0 )
             {
@@ -2090,10 +2091,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return el;
     }
 
-    private Element handleSlash( boolean newLine )
+    private Element handleSlash( final boolean newLine )
         throws IOException
     {
-        int ch = nextToken();
+        final int ch = nextToken();
 
         pushBack(ch);
         if( ch == '%' && !m_styleStack.isEmpty() )
@@ -2104,7 +2105,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return null;
     }
 
-    private Element handleBar( boolean newLine )
+    private Element handleBar( final boolean newLine )
         throws IOException
     {
         Element el = null;
@@ -2130,7 +2131,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             }
 
             m_rowNum++;
-            Element tr = ( m_rowNum % 2 != 0 )
+            final Element tr = ( m_rowNum % 2 != 0 )
                        ? new Element("tr").setAttribute("class", "odd")
                        : new Element("tr");
             el = pushElement( tr );
@@ -2140,7 +2141,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         //  Check out which table cell element to start;
         //  a header element (th) or a regular element (td).
         //
-        int ch = nextToken();
+        final int ch = nextToken();
 
         if( ch == '|' )
         {
@@ -2173,7 +2174,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private Element handleTilde()
         throws IOException
     {
-        int ch = nextToken();
+        final int ch = nextToken();
 
         if( ch == ' ' )
         {
@@ -2204,7 +2205,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return null;
     }
 
-    private void fillBuffer( Element startElement )
+    private void fillBuffer( final Element startElement )
         throws IOException
     {
         m_currentElement = startElement;
@@ -2215,7 +2216,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         while(!quitReading)
         {
-            int ch = nextToken();
+            final int ch = nextToken();
 
             if( ch == -1 ) break;
 
@@ -2299,7 +2300,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             {
                 skip = parseToken( ch );
             }
-            catch( IllegalDataException e )
+            catch( final IllegalDataException e )
             {
                 log.info("Page "+m_context.getPage().getName()+" contains data which cannot be added to DOM tree: "+e.getMessage());
 
@@ -2337,13 +2338,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
         popElement("domroot");
     }
 
-    private String cleanupSuspectData( String s )
+    private String cleanupSuspectData( final String s )
     {
-        StringBuilder sb = new StringBuilder( s.length() );
+        final StringBuilder sb = new StringBuilder( s.length() );
 
         for( int i = 0; i < s.length(); i++ )
         {
-            char c = s.charAt(i);
+            final char c = s.charAt(i);
 
             if( Verifier.isXMLCharacter( c ) ) sb.append( c );
             else sb.append( "0x"+Integer.toString(c,16).toUpperCase() );
@@ -2375,7 +2376,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      * @return {@link #ELEMENT}, {@link #CHARACTER} or {@link #IGNORE}.
      * @throws IOException If parsing fails.
      */
-    protected int parseToken( int ch )
+    protected int parseToken( final int ch )
         throws IOException
     {
         Element el = null;
@@ -2415,7 +2416,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //  Figure out which elements cannot be enclosed inside
                 //  a <p></p> pair according to XHTML rules.
                 //
-                String nextLine = peekAheadLine();
+                final String nextLine = peekAheadLine();
                 if( nextLine.length() == 0 ||
                     (nextLine.length() > 0 &&
                      !nextLine.startsWith("{{{") &&
@@ -2564,10 +2565,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
     public WikiDocument parse()
         throws IOException
     {
-        WikiDocument d = new WikiDocument( m_context.getPage() );
+        final WikiDocument d = new WikiDocument( m_context.getPage() );
         d.setContext( m_context );
 
-        Element rootElement = new Element("domroot");
+        final Element rootElement = new Element("domroot");
 
         d.setRootElement( rootElement );
 
@@ -2583,25 +2584,25 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *
      *  @param rootElement
      */
-    private void paragraphify(Element rootElement)
+    private void paragraphify( final Element rootElement)
     {
         //
         //  Add the paragraph tag to the first paragraph
         //
-        List< Content > kids = rootElement.getContent();
+        final List< Content > kids = rootElement.getContent();
 
         if( rootElement.getChild("p") != null )
         {
-            ArrayList<Content> ls = new ArrayList<>();
+            final ArrayList<Content> ls = new ArrayList<>();
             int idxOfFirstContent = 0;
             int count = 0;
 
-            for( Iterator< Content > i = kids.iterator(); i.hasNext(); count++ )
+            for( final Iterator< Content > i = kids.iterator(); i.hasNext(); count++ )
             {
-                Content c = i.next();
+                final Content c = i.next();
                 if( c instanceof Element )
                 {
-                    String name = ( ( Element )c ).getName();
+                    final String name = ( ( Element )c ).getName();
                     if( isBlockLevel( name ) ) break;
                 }
 
@@ -2618,11 +2619,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
             //
             if( ls.size() > 0 )
             {
-                Element newel = new Element("p");
+                final Element newel = new Element("p");
 
-                for( Iterator< Content > i = ls.iterator(); i.hasNext(); )
+                for( final Iterator< Content > i = ls.iterator(); i.hasNext(); )
                 {
-                    Content c = i.next();
+                    final Content c = i.next();
 
                     c.detach();
                     newel.addContent(c);

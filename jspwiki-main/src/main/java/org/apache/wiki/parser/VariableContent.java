@@ -21,6 +21,7 @@ package org.apache.wiki.parser;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
+import org.apache.wiki.variables.VariableManager;
 import org.jdom2.Text;
 
 /**
@@ -52,7 +53,7 @@ public class VariableContent extends Text {
      *   
      *   @return The rendered value of the variable.
      */
-    public String getValue() {
+    @Override public String getValue() {
         String result;
         final WikiDocument root = (WikiDocument) getDocument();
 
@@ -71,7 +72,7 @@ public class VariableContent extends Text {
             result = "[" + m_varName + "]";
         } else {
             try {
-                result = context.getEngine().getVariableManager().parseAndGetValue( context, m_varName );
+                result = context.getEngine().getManager( VariableManager.class ).parseAndGetValue( context, m_varName );
             } catch( final NoSuchVariableException e ) {
                 result = MarkupParser.makeError( "No such variable: " + e.getMessage() ).getText(); 
             }
@@ -84,7 +85,7 @@ public class VariableContent extends Text {
      *  Returns exactly getValue().
      *  @return Whatever getValue() returns.
      */
-    public String getText() {
+    @Override public String getText() {
         return getValue();
     }
 
@@ -92,7 +93,7 @@ public class VariableContent extends Text {
      *  Returns a debug-suitable string.
      *  @return Debug string
      */
-    public String toString() {
+    @Override public String toString() {
         return "VariableElement[\"" + m_varName + "\"]";
     }
 

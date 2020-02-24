@@ -23,6 +23,7 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.render.RenderingManager;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -152,9 +153,9 @@ public class LinkParsingOperations {
      *  determine whether it should be treated as an inline image or not.
      */
     public boolean isImageLink( String link ) {
-        if( wikiContext.getEngine().getRenderingManager().getParser( wikiContext, link ).isImageInlining() ) {
+        if( wikiContext.getEngine().getManager( RenderingManager.class ).getParser( wikiContext, link ).isImageInlining() ) {
             link = link.toLowerCase();
-            final List< Pattern > inlineImagePatterns = wikiContext.getEngine().getRenderingManager()
+            final List< Pattern > inlineImagePatterns = wikiContext.getEngine().getManager( RenderingManager.class )
             	                                                   .getParser( wikiContext, link ).getInlineImagePatterns();
 
             for( final Pattern p : inlineImagePatterns ) {

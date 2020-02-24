@@ -25,7 +25,7 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.util.TextUtil;
 import org.jdom2.Element;
 
@@ -50,7 +50,7 @@ public abstract class MarkupParser {
     protected PushbackReader m_in;
     private int m_pos = -1; // current position in reader stream
 
-    protected WikiEngine m_engine;
+    protected Engine m_engine;
     protected WikiContext m_context;
 
     /** Optionally stores internal wikilinks */

@@ -272,7 +272,7 @@ public class DefaultRenderingManager implements RenderingManager {
      */
     @Override
     public String getHTML( final WikiContext context, final WikiPage page ) {
-        final String pagedata = m_engine.getPageManager().getPureText( page.getName(), page.getVersion() );
+        final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page.getName(), page.getVersion() );
         return textToHTML( context, pagedata );
     }
 
@@ -284,8 +284,8 @@ public class DefaultRenderingManager implements RenderingManager {
      *  @param version Version number to fetch
      *  @return HTML-rendered page text.
      */
-    public String getHTML( final String pagename, final int version ) {
-        final WikiPage page = m_engine.getPageManager().getPage( pagename, version );
+    @Override public String getHTML( final String pagename, final int version ) {
+        final WikiPage page = m_engine.getManager( PageManager.class ).getPage( pagename, version );
         final WikiContext context = new WikiContext( m_engine, page );
         context.setRequestContext( WikiContext.NONE );
         return getHTML( context, page );

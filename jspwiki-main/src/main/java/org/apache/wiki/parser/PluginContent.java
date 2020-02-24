@@ -24,13 +24,14 @@ import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.PluginElement;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
+import org.apache.wiki.api.plugin.PluginElement;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.variables.VariableManager;
 import org.jdom2.Text;
 
 import java.io.IOException;
@@ -154,16 +155,16 @@ public class PluginContent extends Text implements PluginElement {
                     return BLANK;
                 }
 
-                final WikiEngine engine = context.getEngine();
+                final Engine engine = context.getEngine();
                 final Map< String, String > parsedParams = new HashMap<>();
 
                 //  Parse any variable instances from the string
                 for( final Map.Entry< String, String > e : m_params.entrySet() ) {
                     String val = e.getValue();
-                    val = engine.getVariableManager().expandVariables( context, val );
+                    val = engine.getManager( VariableManager.class).expandVariables( context, val );
                     parsedParams.put( e.getKey(), val );
                 }
-                final PluginManager pm = engine.getPluginManager();
+                final PluginManager pm = engine.getManager( PluginManager.class );
                 result = pm.execute( context, m_pluginName, parsedParams );
             }
         } catch( final Exception e ) {
@@ -185,7 +186,7 @@ public class PluginContent extends Text implements PluginElement {
     /**{@inheritDoc}*/
     @Override
     public void executeParse( final WikiContext context ) throws PluginException {
-        final PluginManager pm = context.getEngine().getPluginManager();
+        final PluginManager pm = context.getEngine().getManager( PluginManager.class );
         if( pm.pluginsEnabled() ) {
             final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
             final Map< String, String > params = getParameters();
@@ -214,7 +215,7 @@ public class PluginContent extends Text implements PluginElement {
         final PatternMatcher matcher = new Perl5Matcher();
 
         try {
-            final PluginManager pm = context.getEngine().getPluginManager();
+            final PluginManager pm = context.getEngine().getManager( PluginManager.class );
             if( matcher.contains( commandline, pm.getPluginPattern() ) ) {
                 final MatchResult res = matcher.getMatch();
                 final String plugin = res.group( 2 );
