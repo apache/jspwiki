@@ -17,6 +17,23 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-02-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-09_
+
+* [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120):
+    * Use `Engine` inside `WikiContext`, `WikiSession`, `WikiPage`, `Attachment` and `SessionMonitor`.
+        * e.g. `WikiContext#getEngine()` now returns an `Engine` instead of a `WikiEngine`. To retrieve a manager 
+        from it just use `Engine#getManager( DesiredManager.class )`. See implementations on `getXXXManager()`  
+        methods on `WikiEngine` for details. 
+    * `WikiProvider#initialize(..)` receives an `Engine` instead of a `WikiEngine`.
+    * `Engine` gains an `adapt( Class< E > cls )`, to facilitate downcasting to `Engine` implementation classes.
+    * Removed `Engine#getCurrentWatchDog()`, as it was a pass-through and introduced a package cycle; use instead 
+    `WatchDog#getCurrentWathDog( Engine )`. 
+    `o.a.wiki` and `o.a.w.event`. To obtain the `WikiEngine` reference from the event just use `getSrc()`
+    * Rename + extract interfaces from `AttachmentManager`, `AuthenticationManager`, `AuthorizationManager`, 
+    `GroupManager` and `UserManager`.
+
 **2020-02-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-08_
@@ -648,7 +665,7 @@ and also scans `.md` and `.xml` files.
     * to compare WikiPages use `wikiPage.compareTo( anotherWikiPage );`
     * `sortPages` methods are also gone, as an alternative you can use something along these lines (see
     `AttachmentManager#listAttachments` for another example):
-    `Collections.< WikiPage >sort( pages, Comparator.comparing( WikiPage::getName, m_engine.getPageManager().getPageSorter() ) );`
+    `Collections.< WikiPage >sort( pages, Comparator.comparing( WikiPage::getName, m_engine.getManager( PageManager.class ).getPageSorter() ) );`
     * as a side effect of this change, `AbstractReferalPlugin#filter[AndSort]Collection` methods operate with
     `Collection< String >` instead of with plain `Collection` (except for `RecentChangesPlugin`, plugins
     inheriting this method were already doing it), custom plugins inheriting this method will have to use
