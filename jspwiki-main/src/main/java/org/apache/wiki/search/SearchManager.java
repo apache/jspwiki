@@ -36,6 +36,7 @@ import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.modules.InternalModule;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.ClassUtil;
 
@@ -80,7 +81,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      */
     public SearchManager( final WikiEngine engine, final Properties properties ) throws FilterException {
         initialize( engine, properties );
-        WikiEventManager.getInstance().addWikiEventListener( m_engine.getPageManager(), this );
+        WikiEventManager.getInstance().addWikiEventListener( m_engine.getManager( PageManager.class ), this );
 
         //TODO: Replace with custom annotations. See JSPWIKI-566
         WikiAjaxDispatcherServlet.registerServlet( JSON_SEARCH, new JSONSearch() );
@@ -311,7 +312,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
     @Override
     public void postSave( final WikiContext wikiContext, final String content ) {
         //  Makes sure that we're indexing the latest version of this page.
-        final WikiPage p = m_engine.getPageManager().getPage( wikiContext.getPage().getName() );
+        final WikiPage p = m_engine.getManager( PageManager.class ).getPage( wikiContext.getPage().getName() );
         reindexPage( p );
     }
 
@@ -335,7 +336,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
         if( event instanceof WikiPageEvent && event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST ) {
             final String pageName = ( ( WikiPageEvent ) event ).getPageName();
 
-            final WikiPage p = m_engine.getPageManager().getPage( pageName );
+            final WikiPage p = m_engine.getManager( PageManager.class ).getPage( pageName );
             if( p != null ) {
                 pageRemoved( p );
             }

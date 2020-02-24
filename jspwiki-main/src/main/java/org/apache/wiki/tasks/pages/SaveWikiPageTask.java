@@ -19,9 +19,12 @@
 package org.apache.wiki.tasks.pages;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.tasks.TasksManager;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
@@ -51,16 +54,16 @@ public class SaveWikiPageTask extends Task {
         final WikiContext context = ( WikiContext ) getWorkflow().getAttribute( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT );
         final String proposedText = (String) getWorkflow().getAttribute( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT );
 
-        final WikiEngine engine = context.getEngine();
+        final Engine engine = context.getEngine();
         final WikiPage page = context.getPage();
 
         // Let the rest of the engine handle actual saving.
-        engine.getPageManager().putPageText( page, proposedText );
+        engine.getManager( PageManager.class ).putPageText( page, proposedText );
 
         // Refresh the context for post save filtering.
-        engine.getPageManager().getPage( page.getName() );
-        engine.getRenderingManager().textToHTML( context, proposedText );
-        engine.getFilterManager().doPostSaveFiltering( context, proposedText );
+        engine.getManager( PageManager.class ).getPage( page.getName() );
+        engine.getManager( RenderingManager.class ).textToHTML( context, proposedText );
+        engine.getManager( FilterManager.class ).doPostSaveFiltering( context, proposedText );
 
         return Outcome.STEP_COMPLETE;
     }

@@ -18,17 +18,18 @@
  */
 package org.apache.wiki.tasks.pages;
 
-import java.security.Principal;
-
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.tasks.TasksManager;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
 import org.apache.wiki.workflow.Workflow;
 import org.apache.wiki.workflow.WorkflowManager;
+
+import java.security.Principal;
 
 
 /**
@@ -60,24 +61,22 @@ public class PreSaveWikiPageTask extends Task {
     @Override
     public Outcome execute() throws WikiException {
         // Retrieve attributes
-        WikiEngine engine = m_context.getEngine();
-        Workflow workflow = getWorkflow();
+        final Engine engine = m_context.getEngine();
+        final Workflow workflow = getWorkflow();
 
         // Get the wiki page
-        WikiPage page = m_context.getPage();
+        final WikiPage page = m_context.getPage();
 
-        // Figure out who the author was. Prefer the author set programmatically; otherwise 
-        // get from the current logged in user
-        if (page.getAuthor() == null) {
-            Principal wup = m_context.getCurrentUser();
-
-            if (wup != null) {
-                page.setAuthor(wup.getName());
+        // Figure out who the author was. Prefer the author set programmatically; otherwise get from the current logged in user
+        if( page.getAuthor() == null ) {
+            final Principal wup = m_context.getCurrentUser();
+            if( wup != null ) {
+                page.setAuthor( wup.getName() );
             }
         }
 
         // Run the pre-save filters. If any exceptions, add error to list, abort, and redirect
-        String saveText = engine.getFilterManager().doPreSaveFiltering(m_context, m_proposedText);
+        final String saveText = engine.getManager( FilterManager.class ).doPreSaveFiltering(m_context, m_proposedText);
 
         // Stash the wiki context, old and new text as workflow attributes
         workflow.setAttribute( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT, m_context );
