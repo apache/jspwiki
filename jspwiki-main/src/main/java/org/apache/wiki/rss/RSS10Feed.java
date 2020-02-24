@@ -19,8 +19,8 @@
 package org.apache.wiki.rss;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -46,16 +46,16 @@ public class RSS10Feed extends Feed {
      *
      * @param context The WikiContext.
      */
-    public RSS10Feed( WikiContext context ) {
+    public RSS10Feed( final WikiContext context ) {
         super( context );
     }
 
     private Element getRDFItems() {
-        Element items = new Element( "items", NS_XMNLS );
-        Element rdfseq = new Element( "Seq", NS_RDF );
+        final Element items = new Element( "items", NS_XMNLS );
+        final Element rdfseq = new Element( "Seq", NS_RDF );
 
-        for( Entry e : m_entries ) {
-            String url = e.getURL();
+        for( final Entry e : m_entries ) {
+            final String url = e.getURL();
             rdfseq.addContent( new Element( "li", NS_RDF ).setAttribute( "resource", url, NS_RDF ) );
         }
         items.addContent( rdfseq );
@@ -63,24 +63,24 @@ public class RSS10Feed extends Feed {
         return items;
     }
 
-    private void addItemList( Element root ) {
-        SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        WikiEngine engine = m_wikiContext.getEngine();
+    private void addItemList( final Element root ) {
+        final SimpleDateFormat iso8601fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        final Engine engine = m_wikiContext.getEngine();
 
-        for( Entry entry : m_entries ) {
-            String url = entry.getURL();
+        for( final Entry entry : m_entries ) {
+            final String url = entry.getURL();
 
-            Element item = new Element( "item", NS_XMNLS );
+            final Element item = new Element( "item", NS_XMNLS );
             item.setAttribute( "about", url, NS_RDF );
             item.addContent( new Element( "title", NS_XMNLS ).addContent( entry.getTitle() ) );
             item.addContent( new Element( "link", NS_XMNLS ).addContent( url ) );
 
-            Element content = new Element( "description", NS_XMNLS );
+            final Element content = new Element( "description", NS_XMNLS );
             // TODO: Add a size limiter here
             content.addContent( entry.getContent() );
             item.addContent( content );
 
-            WikiPage p = entry.getPage();
+            final WikiPage p = entry.getPage();
             if( p.getVersion() != -1 ) {
                 item.addContent( new Element( "version", NS_WIKI ).addContent( Integer.toString( p.getVersion() ) ) );
             }
@@ -92,7 +92,7 @@ public class RSS10Feed extends Feed {
 
             //
             //  Modification date.
-            Calendar cal = Calendar.getInstance();
+            final Calendar cal = Calendar.getInstance();
             cal.setTime(p.getLastModified());
             cal.add( Calendar.MILLISECOND,
                     - ( cal.get( Calendar.ZONE_OFFSET ) +
@@ -108,7 +108,7 @@ public class RSS10Feed extends Feed {
                 author = "unknown";
             }
 
-            Element contributor = new Element( "creator", NS_DC );
+            final Element contributor = new Element( "creator", NS_DC );
             item.addContent( contributor );
 
             /*
@@ -136,7 +136,7 @@ public class RSS10Feed extends Feed {
     }
 
     private Element getChannelElement() {
-        Element channel = new Element( "channel", NS_XMNLS );
+        final Element channel = new Element( "channel", NS_XMNLS );
         channel.setAttribute( "about", m_feedURL, NS_RDF )
                .addContent( new Element( "link", NS_XMNLS ).addContent( m_feedURL ) );
 
@@ -161,7 +161,7 @@ public class RSS10Feed extends Feed {
      */
     @Override
     public String getString() {
-        Element root = new Element( "RDF", NS_RDF );
+        final Element root = new Element( "RDF", NS_RDF );
         root.addContent( getChannelElement() );
         root.addNamespaceDeclaration( NS_XMNLS );
         root.addNamespaceDeclaration( NS_RDF );

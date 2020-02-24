@@ -20,8 +20,9 @@ package org.apache.wiki.rss;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
+import org.apache.wiki.variables.VariableManager;
 
 import javax.servlet.ServletContext;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ import java.util.List;
  * Represents an abstract feed.
  */
 public abstract class Feed {
-    protected List<Entry> m_entries = new ArrayList<Entry>();
+    protected List<Entry> m_entries = new ArrayList<>();
 
     protected String m_feedURL;
     protected String m_channelTitle;
@@ -53,14 +54,14 @@ public abstract class Feed {
      * @param context the wiki context
      * @return the site name
      */
-    public static String getSiteName(WikiContext context) {
-        WikiEngine engine = context.getEngine();
+    public static String getSiteName( final WikiContext context ) {
+        final Engine engine = context.getEngine();
 
         String blogname = null;
 
         try {
-            blogname = engine.getVariableManager().getValue(context, VAR_BLOGNAME);
-        } catch (NoSuchVariableException e) {
+            blogname = engine.getManager( VariableManager.class ).getValue(context, VAR_BLOGNAME);
+        } catch( final NoSuchVariableException e ) {
         }
 
         if (blogname == null) {
@@ -75,7 +76,7 @@ public abstract class Feed {
      *
      * @param context The WikiContext.
      */
-    public Feed(WikiContext context) {
+    public Feed( final WikiContext context) {
         m_wikiContext = context;
     }
 
@@ -91,7 +92,7 @@ public abstract class Feed {
      *
      * @param mode As defined in RSSGenerator.
      */
-    public void setMode(String mode) {
+    public void setMode( final String mode) {
         m_mode = mode;
     }
 
@@ -100,7 +101,7 @@ public abstract class Feed {
      *
      * @param e The Entry to add.
      */
-    public void addEntry(Entry e) {
+    public void addEntry( final Entry e) {
         m_entries.add(e);
     }
 
@@ -121,7 +122,7 @@ public abstract class Feed {
     /**
      * @param description The m_channelDescription to set.
      */
-    public void setChannelDescription(String description) {
+    public void setChannelDescription( final String description) {
         m_channelDescription = description;
     }
 
@@ -135,7 +136,7 @@ public abstract class Feed {
     /**
      * @param language The m_channelLanguage to set.
      */
-    public void setChannelLanguage(String language) {
+    public void setChannelLanguage( final String language) {
         m_channelLanguage = language;
     }
 
@@ -149,7 +150,7 @@ public abstract class Feed {
     /**
      * @param title The m_channelTitle to set.
      */
-    public void setChannelTitle(String title) {
+    public void setChannelTitle( final String title) {
         m_channelTitle = title;
     }
 
@@ -163,7 +164,7 @@ public abstract class Feed {
     /**
      * @param feedurl The m_feedURL to set.
      */
-    public void setFeedURL(String feedurl) {
+    public void setFeedURL( final String feedurl) {
         m_feedURL = feedurl;
     }
 
@@ -174,7 +175,7 @@ public abstract class Feed {
      * @param name The filename
      * @return Something sane for a MIME type.
      */
-    protected String getMimeType(ServletContext c, String name) {
+    protected String getMimeType( final ServletContext c, final String name) {
         String type = c.getMimeType(name);
 
         if (type == null) {
@@ -190,7 +191,7 @@ public abstract class Feed {
      * @param s The String to format. Null is safe.
      * @return A formatted string.
      */
-    public static String format( String s ) {
+    public static String format( final String s ) {
         return StringEscapeUtils.escapeXml11( s );
     }
 }

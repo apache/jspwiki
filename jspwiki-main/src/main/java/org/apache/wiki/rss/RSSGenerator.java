@@ -26,6 +26,8 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.diff.DifferenceManager;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.util.TextUtil;
 
@@ -180,7 +182,7 @@ public class RSSGenerator {
         final String author = getAuthor( page );
         final WikiContext ctx = new WikiContext( m_engine, page );
         if( page.getVersion() > 1 ) {
-            final String diff = m_engine.getDifferenceManager().getDiff( ctx,
+            final String diff = m_engine.getManager( DifferenceManager.class ).getDiff( ctx,
                                                                 page.getVersion() - 1, // FIXME: Will fail when non-contiguous versions
                                                                          page.getVersion() );
 
@@ -311,7 +313,7 @@ public class RSSGenerator {
         feed.setChannelLanguage( m_channelLanguage );
         feed.setChannelDescription( m_channelDescription );
 
-        final Set< WikiPage > changed = m_engine.getPageManager().getRecentChanges();
+        final Set< WikiPage > changed = m_engine.getManager( PageManager.class ).getRecentChanges();
 
         final WikiSession session = WikiSession.guestSession( m_engine );
         int items = 0;
@@ -449,7 +451,7 @@ public class RSSGenerator {
             e.setURL( url );
 
             //  Title
-            String pageText = m_engine.getPageManager().getPureText( page.getName(), WikiProvider.LATEST_VERSION );
+            String pageText = m_engine.getManager( PageManager.class ).getPureText( page.getName(), WikiProvider.LATEST_VERSION );
 
             String title = "";
             final int firstLine = pageText.indexOf('\n');

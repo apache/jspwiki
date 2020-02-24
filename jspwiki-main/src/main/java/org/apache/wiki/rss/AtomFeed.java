@@ -21,10 +21,11 @@ package org.apache.wiki.rss;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.output.Format;
@@ -76,7 +77,7 @@ public class AtomFeed extends Feed {
 
     private Collection<Element> getItems() {
         final ArrayList< Element > list = new ArrayList<>();
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
         ServletContext servletContext = null;
         if( m_wikiContext.getHttpRequest() != null ) {
             servletContext = m_wikiContext.getHttpRequest().getSession().getServletContext();
@@ -97,9 +98,9 @@ public class AtomFeed extends Feed {
             entryEl.addContent( getElement( "content" ).setAttribute( "type", "html" ).setText( e.getContent() ) );
 
             //  Check for enclosures
-            if( engine.getAttachmentManager().hasAttachments( p ) && servletContext != null ) {
+            if( engine.getManager( AttachmentManager.class ).hasAttachments( p ) && servletContext != null ) {
                 try {
-                    final List< Attachment > c = engine.getAttachmentManager().listAttachments( p );
+                    final List< Attachment > c = engine.getManager( AttachmentManager.class ).listAttachments( p );
                     for( final Attachment att : c ) {
                         final Element attEl = getElement( "link" );
                         attEl.setAttribute( "rel", "enclosure" );
@@ -126,7 +127,7 @@ public class AtomFeed extends Feed {
     @Override
     public String getString() {
         final Element root = getElement("feed");
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
 
         Date lastModified = new Date(0L);
 
