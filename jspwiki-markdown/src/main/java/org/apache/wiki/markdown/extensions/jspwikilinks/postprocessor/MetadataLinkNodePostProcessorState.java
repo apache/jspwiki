@@ -25,6 +25,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.variables.VariableManager;
 
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
@@ -71,7 +72,7 @@ public class MetadataLinkNodePostProcessorState implements NodePostProcessorStat
             LOG.debug( "page=" + wikiContext.getRealPage().getName() + " SET name='" + name + "', value='" + val + "'" );
 
             if( name.length() > 0 && val.length() > 0 ) {
-                val = wikiContext.getEngine().getVariableManager().expandVariables( wikiContext, val );
+                val = wikiContext.getEngine().getManager( VariableManager.class ).expandVariables( wikiContext, val );
                 wikiContext.getPage().setAttribute( name, val );
                 link.unlink();
                 state.nodeRemoved( link );

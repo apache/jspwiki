@@ -23,6 +23,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
@@ -49,7 +50,7 @@ public class LocalLinkNodePostProcessorState implements NodePostProcessorState< 
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
         final int hashMark = link.getUrl().toString().indexOf( '#' );
-        final String attachment = wikiContext.getEngine().getAttachmentManager().getAttachmentInfoName( wikiContext, link.getUrl().toString() );
+        final String attachment = wikiContext.getEngine().getManager( AttachmentManager.class ).getAttachmentInfoName( wikiContext, link.getUrl().toString() );
         if( attachment != null  ) {
             if( !linkOperations.isImageLink( link.getUrl().toString() ) ) {
                 final String attlink = wikiContext.getURL( WikiContext.ATTACH, link.getUrl().toString() );

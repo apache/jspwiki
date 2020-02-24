@@ -26,6 +26,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
+import org.apache.wiki.variables.VariableManager;
 
 
 /**
@@ -52,7 +53,7 @@ public class VariableLinkNodePostProcessorState implements NodePostProcessorStat
         final String variable = NodePostProcessorStateCommonOperations.inlineLinkTextOnWysiwyg( state, link, m_wysiwygEditorMode );
         if( !m_wysiwygEditorMode ) {
             try {
-                final String parsedVariable = wikiContext.getEngine().getVariableManager().parseAndGetValue( wikiContext, variable );
+                final String parsedVariable = wikiContext.getEngine().getManager( VariableManager.class ).parseAndGetValue( wikiContext, variable );
                 final HtmlInline content = new HtmlInline( CharSubSequence.of( StringEscapeUtils.escapeXml11( parsedVariable ) ) );
                 NodePostProcessorStateCommonOperations.addContent( state, link, content );
             } catch( final NoSuchVariableException e ) {

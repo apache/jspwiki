@@ -25,7 +25,9 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.Acl;
+import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
+import org.apache.wiki.render.RenderingManager;
 
 
 /**
@@ -51,7 +53,7 @@ public class AccessRuleLinkNodePostProcessorState implements NodePostProcessorSt
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
         String ruleLine = NodePostProcessorStateCommonOperations.inlineLinkTextOnWysiwyg( state, link, m_wysiwygEditorMode );
-        if( wikiContext.getEngine().getRenderingManager().getParser( wikiContext, link.getUrl().toString() ).isParseAccessRules() ) {
+        if( wikiContext.getEngine().getManager( RenderingManager.class ).getParser( wikiContext, link.getUrl().toString() ).isParseAccessRules() ) {
             final WikiPage page = wikiContext.getRealPage();
             if( ruleLine.startsWith( "{" ) ) {
                 ruleLine = ruleLine.substring( 1 );
@@ -62,7 +64,7 @@ public class AccessRuleLinkNodePostProcessorState implements NodePostProcessorSt
             LOG.debug( "page=" + page.getName() + ", ACL = " + ruleLine );
 
             try {
-                final Acl acl = wikiContext.getEngine().getAclManager().parseAcl( page, ruleLine );
+                final Acl acl = wikiContext.getEngine().getManager( AclManager.class ).parseAcl( page, ruleLine );
                 page.setAcl( acl );
                 link.unlink();
                 state.nodeRemoved( link );

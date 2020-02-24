@@ -25,6 +25,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.markdown.MarkdownParser;
 import org.apache.wiki.render.markdown.MarkdownRenderer;
 import org.junit.jupiter.api.AfterEach;
@@ -105,14 +106,14 @@ public class MarkdownRendererTest {
         Assertions.assertEquals( "<p> This should be visible if the ACL allows you to see it</p>\n", translate( src ) );
         // in any case, we also check that the created wikipage has the ACL added
         Assertions.assertEquals( "  user = PerryMason: ((\"org.apache.wiki.auth.permissions.PagePermission\",\"JSPWiki:testpage\",\"view\"))\n",
-        		                 testEngine.getPageManager().getPage( PAGE_NAME ).getAcl().toString() );
+        		                 testEngine.getManager( PageManager.class ).getPage( PAGE_NAME ).getAcl().toString() );
     }
 
     @Test
     public void testMarkupExtensionMetadata() throws Exception {
         final String src = "[{SET Perry='Mason'}]() Some text after setting metadata";
         Assertions.assertEquals( "<p> Some text after setting metadata</p>\n", translate( src ) );
-        Assertions.assertEquals( "Mason", testEngine.getPageManager().getPage( PAGE_NAME ).getAttribute( "Perry" ) );
+        Assertions.assertEquals( "Mason", testEngine.getManager( PageManager.class ).getPage( PAGE_NAME ).getAttribute( "Perry" ) );
     }
 
     @Test

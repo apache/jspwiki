@@ -19,13 +19,13 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.Attributes;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
-
-import com.vladsch.flexmark.util.html.Attributes;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**
@@ -51,7 +51,7 @@ public class LocalLinkAttributeProviderState implements NodeAttributeProviderSta
     @Override
     public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
         final int hashMark = link.getUrl().toString().indexOf( '#' );
-        final String attachment = wikiContext.getEngine().getAttachmentManager().getAttachmentInfoName( wikiContext, link.getWikiLink() );
+        final String attachment = wikiContext.getEngine().getManager( AttachmentManager.class ).getAttachmentInfoName( wikiContext, link.getWikiLink() );
         if( attachment != null ) {
             if( !linkOperations.isImageLink( link.getUrl().toString() ) ) {
                 attributes.replaceValue( "class", MarkupParser.CLASS_ATTACHMENT );
