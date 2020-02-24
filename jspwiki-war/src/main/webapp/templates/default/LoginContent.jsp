@@ -29,15 +29,12 @@
 <fmt:setBundle basename="templates.default"/>
 <%
     WikiContext ctx = WikiContext.findContext( pageContext );
-    AuthenticationManager mgr = ctx.getEngine().getAuthenticationManager();
+    AuthenticationManager mgr = ctx.getEngine().getManager( AuthenticationManager.class );
     String loginURL = "";
 
-    if( mgr.isContainerAuthenticated() )
-    {
+    if( mgr.isContainerAuthenticated() ) {
         loginURL = "j_security_check";
-    }
-    else
-    {
+    } else {
         String redir = (String)ctx.getVariable("redirect");
         if( redir == null ) redir = ctx.getEngine().getFrontPage();
         loginURL = ctx.getURL( WikiContext.LOGIN, redir );

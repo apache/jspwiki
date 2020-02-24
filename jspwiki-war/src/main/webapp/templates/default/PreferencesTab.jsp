@@ -18,29 +18,28 @@
 --%>
 
 <%@ page errorPage="/Error.jsp" %>
-<%@ page import="java.util.*" %>
-<%@ page import="java.lang.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="java.io.*" %>
+<%@ page import="java.util.*" %>
 <%@ page import="java.util.jar.*" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.preferences.*" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext( pageContext );
-  TemplateManager t = c.getEngine().getTemplateManager();
+  TemplateManager t = c.getEngine().getManager( TemplateManager.class );
 %>
 <c:set var="skins"       value="<%= t.listSkins(pageContext, c.getTemplate() ) %>" />
 <c:set var="languages"   value="<%= t.listLanguages(pageContext) %>" />
 <c:set var="timezones"   value="<%= t.listTimeZones(pageContext) %>" />
 <c:set var="timeformats" value="<%= t.listTimeFormats(pageContext) %>" />
-<c:set var="editors"     value="<%= c.getEngine().getEditorManager().getEditorList() %>" />
+<c:set var="editors"     value="<%= c.getEngine().getManager( EditorManager.class ).getEditorList() %>" />
 <c:set var="redirect"><wiki:Variable var='redirect' default='<%=c.getEngine().getFrontPage() %>' /></c:set>
 
 <form action="<wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab' value='prefs'/></wiki:Link>"

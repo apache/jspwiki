@@ -32,7 +32,7 @@
   int MAXATTACHNAMELENGTH = 30;
   WikiContext c = WikiContext.findContext(pageContext);
 %>
-<c:set var="progressId" value="<%= c.getEngine().getProgressManager().getNewProgressIdentifier() %>" />
+<c:set var="progressId" value="<%= c.getEngine().getManager( ProgressManager.class ).getNewProgressIdentifier() %>" />
 <div class="page-content">
 <wiki:Permission permission="upload">
 

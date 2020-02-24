@@ -18,6 +18,7 @@
 --%>
 
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -34,14 +35,13 @@
 </c:when>
 <c:otherwise>
 
-<%-- If the page is an older version, then offer a note and a possibility
-     to restore this version as the latest one. --%>
+<%-- If the page is an older version, then offer a note and a possibility to restore this version as the latest one. --%>
 <wiki:CheckVersion mode="notlatest">
   <%
     WikiContext c = WikiContext.findContext( pageContext );
   %>
   <c:set var="thisVersion" value="<%= c.getPage().getVersion() %>" />
-  <c:set var="latestVersion" value="<%= c.getEngine().getPageManager().getPage( c.getPage().getName(), WikiProvider.LATEST_VERSION ).getVersion() %>" />
+  <c:set var="latestVersion" value="<%= c.getEngine().getManager( PageManager.class ).getPage( c.getPage().getName(), WikiProvider.LATEST_VERSION ).getVersion() %>" />
 
   <form action="<wiki:Link format='url' jsp='Wiki.jsp'/>"
         method="get"  accept-charset='UTF-8'>

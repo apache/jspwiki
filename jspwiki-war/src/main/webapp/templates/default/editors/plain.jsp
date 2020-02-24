@@ -19,10 +19,12 @@
 
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
-<%@ page import="org.apache.wiki.tags.*" %>
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
+<%@ page import="org.apache.wiki.tags.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -36,7 +38,7 @@
 --%>
 <%
    WikiContext context = WikiContext.findContext( pageContext );
-   WikiEngine engine = context.getEngine();
+   Engine engine = context.getEngine();
 
    String usertext = EditorManager.getEditedText( pageContext );
 %>
@@ -48,17 +50,17 @@
   String clone = request.getParameter( "clone" );
   if( clone != null )
   {
-    WikiPage p = engine.getPageManager().getPage( clone );
+    WikiPage p = engine.getManager( PageManager.class ).getPage( clone );
     if( p != null )
     {
-        AuthorizationManager mgr = engine.getAuthorizationManager();
+        AuthorizationManager mgr = engine.getManager( AuthorizationManager.class );
         PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
 
         try
         {
           if( mgr.checkPermission( context.getWikiSession(), pp ) )
           {
-            usertext = engine.getPageManager().getPureText( p );
+            usertext = engine.getManager( PageManager.class ).getPureText( p );
           }
         }
         catch( Exception e ) {  /*log.error( "Accessing clone page "+clone, e );*/ }
@@ -69,7 +71,7 @@
 <%
   if( usertext == null )
   {
-    usertext = engine.getPageManager().getPureText( context.getPage() );
+    usertext = engine.getManager( PageManager.class ).getPureText( context.getPage() );
   }
 %>
 </wiki:CheckRequestContext>
@@ -226,7 +228,7 @@
       </ul>
     </div>
 
-    <c:set var="editors" value="<%= context.getEngine().getEditorManager().getEditorList() %>" />
+    <c:set var="editors" value="<%= context.getEngine().getManager( EditorManager.class ).getEditorList() %>" />
     <c:if test='${fn:length(editors) > 1}'>
     <div class="btn-group config">
       <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>

@@ -17,26 +17,27 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="java.util.StringTokenizer" %>
-
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
+
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
   WikiContext c = WikiContext.findContext( pageContext );
 
-  String text = c.getEngine().getPageManager().getText( c.getPage() );
+  String text = c.getEngine().getManager( PageManager.class ).getText( c.getPage() );
   StringTokenizer tokens = new StringTokenizer( text );
   //avg reading speeds: https://iovs.arvojournals.org/article.aspx?articleid=2166061
 
 %>
-<c:set var="attachments" value="<%= c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size() %>" />
+<c:set var="attachments" value="<%= c.getEngine().getManager( AttachmentManager.class ).listAttachments( c.getPage() ).size() %>" />
 
 <c:set var="wordCount" value="<%= tokens.countTokens() %>" />
 <c:set var="readingTime" value="${wordCount / 228}" />

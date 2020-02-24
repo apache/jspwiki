@@ -25,6 +25,7 @@
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.auth.PrincipalComparator" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
+<%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
 <%@ page import="org.apache.wiki.auth.permissions.GroupPermission" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
@@ -43,8 +44,8 @@
   //String name = request.getParameter( "group" );
   //Group group = (Group)pageContext.getAttribute( "Group",PageContext.REQUEST_SCOPE );
 
-  AuthorizationManager authMgr = c.getEngine().getAuthorizationManager();
-  GroupManager groupMgr = c.getEngine().getGroupManager();
+  AuthorizationManager authMgr = c.getEngine().getManager( AuthorizationManager.class );
+  GroupManager groupMgr = c.getEngine().getManager( GroupManager.class );
 
   Principal[] groups = groupMgr.getRoles();
   Arrays.sort( groups, new PrincipalComparator() );
