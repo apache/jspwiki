@@ -66,7 +66,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
     /**
      *  Creates a new AttachmentManager.  Note that creation will never fail, but it's quite likely that attachments do not function.
      *  <p><b>DO NOT CREATE</b> an AttachmentManager on your own, unless you really know what you're doing. Just use
-     *  WikiEngine.getAttachmentManager() if you're making a module for JSPWiki.
+     *  Wikiengine.getManager( AttachmentManager.class ) if you're making a module for JSPWiki.
      *
      *  @param engine The wikiengine that owns this attachment manager.
      *  @param props A list of properties from which the AttachmentManager will seek its configuration. Typically this is the "jspwiki.properties".

@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
 
@@ -85,7 +86,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
      * @param secondWikiText the new text
      * @return XHTML, or empty string, if no difference detected.
      */
-    public String makeDiff( final WikiContext context, final String firstWikiText, final String secondWikiText ) {
+    @Override public String makeDiff( final WikiContext context, final String firstWikiText, final String secondWikiText ) {
         String diff;
         try {
             diff = m_provider.makeDiffHtml( context, firstWikiText, secondWikiText );
@@ -111,10 +112,10 @@ public class DefaultDifferenceManager implements DifferenceManager {
      *
      *  @return A HTML-ized difference between two pages.  If there is no difference, returns an empty string.
      */
-    public String getDiff( final WikiContext context, final int version1, final int version2 ) {
+    @Override public String getDiff( final WikiContext context, final int version1, final int version2 ) {
         final String page = context.getPage().getName();
-        String page1 = context.getEngine().getPageManager().getPureText( page, version1 );
-        final String page2 = context.getEngine().getPageManager().getPureText( page, version2 );
+        String page1 = context.getEngine().getManager( PageManager.class ).getPureText( page, version1 );
+        final String page2 = context.getEngine().getManager( PageManager.class ).getPureText( page, version2 );
 
         // Kludge to make diffs for new pages to work this way.
         if( version1 == WikiPageProvider.LATEST_VERSION ) {

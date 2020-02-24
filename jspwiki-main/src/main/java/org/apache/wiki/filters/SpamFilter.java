@@ -33,11 +33,14 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.RedirectException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.HttpUtil;
@@ -194,11 +197,11 @@ public class SpamFilter extends BasicPageFilter {
     private static  Logger  log = Logger.getLogger( SpamFilter.class );
 
 
-    private Vector<Host>    m_temporaryBanList = new Vector<Host>();
+    private Vector<Host>    m_temporaryBanList = new Vector<>();
 
     private int             m_banTime = 60; // minutes
 
-    private Vector<Host>    m_lastModifications = new Vector<Host>();
+    private Vector<Host>    m_lastModifications = new Vector<>();
 
     /**
      *  How many times a single IP address can change a page per minute?
@@ -247,7 +250,7 @@ public class SpamFilter extends BasicPageFilter {
      *  {@inheritDoc}
      */
     @Override
-    public void initialize( WikiEngine engine, Properties properties ) {
+    public void initialize( final WikiEngine engine, final Properties properties ) {
         m_forbiddenWordsPage = properties.getProperty( PROP_WORDLIST, m_forbiddenWordsPage );
         m_forbiddenIPsPage = properties.getProperty( PROP_IPLIST, m_forbiddenIPsPage);
         m_pageNameMaxLength = properties.getProperty( PROP_MAX_PAGENAME_LENGTH, m_pageNameMaxLength);
@@ -272,7 +275,7 @@ public class SpamFilter extends BasicPageFilter {
 
         try {
             m_urlPattern = m_compiler.compile( URL_REGEXP );
-        } catch( MalformedPatternException e ) {
+        } catch( final MalformedPatternException e ) {
             log.fatal( "Internal error: Someone put in a faulty pattern.", e );
             throw new InternalWikiException( "Faulty pattern." , e);
         }
@@ -295,15 +298,15 @@ public class SpamFilter extends BasicPageFilter {
     private static final int ACCEPT = 1;
     private static final int NOTE   = 2;
 
-    private static String log( WikiContext ctx, int type, String source, String message ) {
+    private static String log( final WikiContext ctx, final int type, final String source, String message ) {
         message = TextUtil.replaceString( message, "\r\n", "\\r\\n" );
         message = TextUtil.replaceString( message, "\"", "\\\"" );
 
-        String uid = getUniqueID();
+        final String uid = getUniqueID();
 
-        String page   = ctx.getPage().getName();
+        final String page   = ctx.getPage().getName();
         String reason = "UNKNOWN";
-        String addr   = ctx.getHttpRequest() != null ? HttpUtil.getRemoteAddress( ctx.getHttpRequest() ) : "-";
+        final String addr   = ctx.getHttpRequest() != null ? HttpUtil.getRemoteAddress( ctx.getHttpRequest() ) : "-";
 
         switch( type ) {
             case REJECT:
@@ -324,10 +327,10 @@ public class SpamFilter extends BasicPageFilter {
     }
 
     /** {@inheritDoc} */
-    public String preSave( WikiContext context, String content ) throws RedirectException {
+    @Override public String preSave( final WikiContext context, final String content ) throws RedirectException {
         cleanBanList();
         refreshBlacklists( context );
-        Change change = getChange( context, content );
+        final Change change = getChange( context, content );
 
         if( !ignoreThisUser( context ) ) {
             checkBanList( context, change );
@@ -338,7 +341,7 @@ public class SpamFilter extends BasicPageFilter {
         }
 
         if( !m_stopAtFirstMatch ) {
-            Integer score = ( Integer )context.getVariable( ATTR_SPAMFILTER_SCORE );
+            final Integer score = ( Integer )context.getVariable( ATTR_SPAMFILTER_SCORE );
 
             if( score != null && score.intValue() >= m_scoreLimit ) {
                 throw new RedirectException( "Herb says you got too many points", getRedirectPage( context ) );
@@ -349,16 +352,16 @@ public class SpamFilter extends BasicPageFilter {
         return content;
     }
 
-    private void checkPageName(WikiContext context, String content, Change change) throws RedirectException {
-        WikiPage page = context.getPage();
-        String pageName = page.getName();
-        int maxlength = Integer.valueOf(m_pageNameMaxLength);
+    private void checkPageName( final WikiContext context, final String content, final Change change) throws RedirectException {
+        final WikiPage page = context.getPage();
+        final String pageName = page.getName();
+        final int maxlength = Integer.valueOf(m_pageNameMaxLength);
         if ( pageName.length() > maxlength) {
             //
             //  Spam filter has a match.
             //
 
-            String uid = log( context, REJECT, REASON_PAGENAME_TOO_LONG + "(" + m_pageNameMaxLength + ")" , pageName);
+            final String uid = log( context, REJECT, REASON_PAGENAME_TOO_LONG + "(" + m_pageNameMaxLength + ")" , pageName);
 
             log.info("SPAM:PageNameTooLong (" + uid + "). The length of the page name is too large (" + pageName.length() + " , limit is " + m_pageNameMaxLength + ")");
             checkStrategy( context, REASON_PAGENAME_TOO_LONG, "Herb says '" + pageName + "' is a bad pageName and I trust Herb! (Incident code " + uid + ")" );
@@ -366,7 +369,7 @@ public class SpamFilter extends BasicPageFilter {
         }
     }
 
-    private void checkStrategy( WikiContext context, String error, String message ) throws RedirectException {
+    private void checkStrategy( final WikiContext context, final String error, final String message ) throws RedirectException {
         if( m_stopAtFirstMatch ) {
             throw new RedirectException( message, getRedirectPage( context ) );
         }
@@ -389,18 +392,18 @@ public class SpamFilter extends BasicPageFilter {
      * @param list
      * @return A Collection of the Patterns that were found from the lists.
      */
-    private Collection< Pattern > parseWordList( WikiPage source, String list ) {
-        ArrayList< Pattern > compiledpatterns = new ArrayList< Pattern >();
+    private Collection< Pattern > parseWordList( final WikiPage source, final String list ) {
+        final ArrayList< Pattern > compiledpatterns = new ArrayList<>();
 
         if( list != null ) {
-            StringTokenizer tok = new StringTokenizer( list, " \t\n" );
+            final StringTokenizer tok = new StringTokenizer( list, " \t\n" );
 
             while( tok.hasMoreTokens() ) {
-                String pattern = tok.nextToken();
+                final String pattern = tok.nextToken();
 
                 try {
                     compiledpatterns.add( m_compiler.compile( pattern ) );
-                } catch( MalformedPatternException e ) {
+                } catch( final MalformedPatternException e ) {
                     log.debug( "Malformed spam filter pattern " + pattern );
                     source.setAttribute("error", "Malformed spam filter pattern " + pattern);
                 }
@@ -416,12 +419,12 @@ public class SpamFilter extends BasicPageFilter {
      *  @param list
      *  @return The parsed blacklist patterns.
      */
-    private Collection< Pattern > parseBlacklist( String list ) {
-        ArrayList< Pattern > compiledpatterns = new ArrayList< Pattern >();
+    private Collection< Pattern > parseBlacklist( final String list ) {
+        final ArrayList< Pattern > compiledpatterns = new ArrayList<>();
 
         if( list != null ) {
             try {
-                BufferedReader in = new BufferedReader( new StringReader(list) );
+                final BufferedReader in = new BufferedReader( new StringReader(list) );
                 String line;
                 while( (line = in.readLine() ) != null ) {
                     line = line.trim();
@@ -434,11 +437,11 @@ public class SpamFilter extends BasicPageFilter {
 
                     try {
                         compiledpatterns.add( m_compiler.compile( line ) );
-                    } catch( MalformedPatternException e ) {
+                    } catch( final MalformedPatternException e ) {
                         log.debug( "Malformed spam filter pattern " + line );
                     }
                 }
-            } catch( IOException e ) {
+            } catch( final IOException e ) {
                 log.info( "Could not read patterns; returning what I got" , e );
             }
         }
@@ -454,21 +457,21 @@ public class SpamFilter extends BasicPageFilter {
      *  @param content
      *  @throws RedirectException
      */
-    private synchronized void checkSinglePageChange( WikiContext context, String content, Change change ) 
+    private synchronized void checkSinglePageChange( final WikiContext context, final String content, final Change change )
     		throws RedirectException {
-        HttpServletRequest req = context.getHttpRequest();
+        final HttpServletRequest req = context.getHttpRequest();
 
         if( req != null ) {
-            String addr = HttpUtil.getRemoteAddress( req );
+            final String addr = HttpUtil.getRemoteAddress( req );
             int hostCounter = 0;
             int changeCounter = 0;
 
             log.debug( "Change is " + change.m_change );
 
-            long time = System.currentTimeMillis() - 60*1000L; // 1 minute
+            final long time = System.currentTimeMillis() - 60*1000L; // 1 minute
 
-            for( Iterator< Host > i = m_lastModifications.iterator(); i.hasNext(); ) {
-                Host host = i.next();
+            for( final Iterator< Host > i = m_lastModifications.iterator(); i.hasNext(); ) {
+                final Host host = i.next();
 
                 //
                 //  Check if this item is invalid
@@ -500,19 +503,19 @@ public class SpamFilter extends BasicPageFilter {
             //  Now, let's check against the limits.
             //
             if( hostCounter >= m_limitSinglePageChanges ) {
-                Host host = new Host( addr, null );
+                final Host host = new Host( addr, null );
                 m_temporaryBanList.add( host );
 
-                String uid = log( context, REJECT, REASON_TOO_MANY_MODIFICATIONS, change.m_change );
+                final String uid = log( context, REJECT, REASON_TOO_MANY_MODIFICATIONS, change.m_change );
                 log.info( "SPAM:TooManyModifications (" + uid + "). Added host " + addr + " to temporary ban list for doing too many modifications/minute" );
                 checkStrategy( context, REASON_TOO_MANY_MODIFICATIONS, "Herb says you look like a spammer, and I trust Herb! (Incident code " + uid + ")" );
             }
 
             if( changeCounter >= m_limitSimilarChanges ) {
-                Host host = new Host( addr, null );
+                final Host host = new Host( addr, null );
                 m_temporaryBanList.add( host );
 
-                String uid = log( context, REJECT, REASON_SIMILAR_MODIFICATIONS, change.m_change );
+                final String uid = log( context, REJECT, REASON_SIMILAR_MODIFICATIONS, change.m_change );
                 log.info( "SPAM:SimilarModifications (" + uid + "). Added host " + addr + " to temporary ban list for doing too many similar modifications" );
                 checkStrategy( context, REASON_SIMILAR_MODIFICATIONS, "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")");
             }
@@ -523,16 +526,16 @@ public class SpamFilter extends BasicPageFilter {
             String tstChange  = change.toString();
             int    urlCounter = 0;
             while( m_matcher.contains( tstChange,m_urlPattern ) ) {
-                MatchResult m = m_matcher.getMatch();
+                final MatchResult m = m_matcher.getMatch();
                 tstChange = tstChange.substring( m.endOffset(0) );
                 urlCounter++;
             }
 
             if( urlCounter > m_maxUrls ) {
-                Host host = new Host( addr, null );
+                final Host host = new Host( addr, null );
                 m_temporaryBanList.add( host );
 
-                String uid = log( context, REJECT, REASON_TOO_MANY_URLS, change.toString() );
+                final String uid = log( context, REJECT, REASON_TOO_MANY_URLS, change.toString() );
                 log.info( "SPAM:TooManyUrls (" + uid + "). Added host " + addr + " to temporary ban list for adding too many URLs" );
                 checkStrategy( context, REASON_TOO_MANY_URLS, "Herb says you look like a spammer, and I trust Herb! (Incident code " + uid + ")" );
             }
@@ -565,7 +568,7 @@ public class SpamFilter extends BasicPageFilter {
      * @param change
      * @throws RedirectException
      */
-    private void checkAkismet( WikiContext context, Change change ) throws RedirectException {
+    private void checkAkismet( final WikiContext context, final Change change ) throws RedirectException {
         if( m_akismetAPIKey != null ) {
             if( m_akismet == null ) {
                 log.info( "Initializing Akismet spam protection." );
@@ -578,7 +581,7 @@ public class SpamFilter extends BasicPageFilter {
                 }
             }
 
-            HttpServletRequest req = context.getHttpRequest();
+            final HttpServletRequest req = context.getHttpRequest();
 
             //
             //  Akismet will mark all empty statements as spam, so we'll just
@@ -591,19 +594,19 @@ public class SpamFilter extends BasicPageFilter {
             if( req != null && m_akismet != null ) {
                 log.debug( "Calling Akismet to check for spam..." );
 
-                StopWatch sw = new StopWatch();
+                final StopWatch sw = new StopWatch();
                 sw.start();
 
-                String ipAddress     = HttpUtil.getRemoteAddress( req );
-                String userAgent     = req.getHeader( "User-Agent" );
-                String referrer      = req.getHeader( "Referer");
-                String permalink     = context.getViewURL( context.getPage().getName() );
-                String commentType   = context.getRequestContext().equals( WikiContext.COMMENT ) ? "comment" : "edit";
-                String commentAuthor = context.getCurrentUser().getName();
-                String commentAuthorEmail = null;
-                String commentAuthorURL   = null;
+                final String ipAddress     = HttpUtil.getRemoteAddress( req );
+                final String userAgent     = req.getHeader( "User-Agent" );
+                final String referrer      = req.getHeader( "Referer");
+                final String permalink     = context.getViewURL( context.getPage().getName() );
+                final String commentType   = context.getRequestContext().equals( WikiContext.COMMENT ) ? "comment" : "edit";
+                final String commentAuthor = context.getCurrentUser().getName();
+                final String commentAuthorEmail = null;
+                final String commentAuthorURL   = null;
 
-                boolean isSpam = m_akismet.commentCheck( ipAddress,
+                final boolean isSpam = m_akismet.commentCheck( ipAddress,
                                                          userAgent,
                                                          referrer,
                                                          permalink,
@@ -621,7 +624,7 @@ public class SpamFilter extends BasicPageFilter {
                     // Host host = new Host( ipAddress, null );
                     // m_temporaryBanList.add( host );
 
-                    String uid = log( context, REJECT, REASON_AKISMET, change.toString() );
+                    final String uid = log( context, REJECT, REASON_AKISMET, change.toString() );
                     log.info( "SPAM:Akismet (" + uid + "). Akismet thinks this change is spam; added host to temporary ban list." );
                     checkStrategy( context, REASON_AKISMET, "Akismet tells Herb you're a spammer, Herb trusts Akismet, and I trust Herb! (Incident code " + uid + ")" );
                 }
@@ -645,13 +648,13 @@ public class SpamFilter extends BasicPageFilter {
      * @param change
      * @throws RedirectException
      */
-    private void checkBotTrap( WikiContext context, Change change ) throws RedirectException {
-        HttpServletRequest request = context.getHttpRequest();
+    private void checkBotTrap( final WikiContext context, final Change change ) throws RedirectException {
+        final HttpServletRequest request = context.getHttpRequest();
 
         if( request != null ) {
-            String unspam = request.getParameter( getBotFieldName() );
+            final String unspam = request.getParameter( getBotFieldName() );
             if( unspam != null && unspam.length() > 0 ) {
-                String uid = log( context, REJECT, REASON_BOT_TRAP, change.toString() );
+                final String uid = log( context, REJECT, REASON_BOT_TRAP, change.toString() );
 
                 log.info( "SPAM:BotTrap (" + uid + ").  Wildly behaving bot detected." );
                 checkStrategy( context, REASON_BOT_TRAP, "Spamming attempt detected. (Incident code " + uid + ")" );
@@ -659,14 +662,14 @@ public class SpamFilter extends BasicPageFilter {
         }
     }
 
-    private void checkUTF8( WikiContext context, Change change ) throws RedirectException {
-        HttpServletRequest request = context.getHttpRequest();
+    private void checkUTF8( final WikiContext context, final Change change ) throws RedirectException {
+        final HttpServletRequest request = context.getHttpRequest();
 
         if( request != null ) {
-            String utf8field = request.getParameter( "encodingcheck" );
+            final String utf8field = request.getParameter( "encodingcheck" );
 
             if( utf8field != null && !utf8field.equals( "\u3041" ) ) {
-                String uid = log( context, REJECT, REASON_UTF8_TRAP, change.toString() );
+                final String uid = log( context, REJECT, REASON_UTF8_TRAP, change.toString() );
 
                 log.info( "SPAM:UTF8Trap (" + uid + ").  Wildly posting dumb bot detected." );
                 checkStrategy( context, REASON_UTF8_TRAP, "Spamming attempt detected. (Incident code " + uid + ")" );
@@ -676,10 +679,10 @@ public class SpamFilter extends BasicPageFilter {
 
     /** Goes through the ban list and cleans away any host which has expired from it. */
     private synchronized void cleanBanList() {
-        long now = System.currentTimeMillis();
+        final long now = System.currentTimeMillis();
 
-        for( Iterator< Host > i = m_temporaryBanList.iterator(); i.hasNext(); ) {
-            Host host = i.next();
+        for( final Iterator< Host > i = m_temporaryBanList.iterator(); i.hasNext(); ) {
+            final Host host = i.next();
 
             if( host.getReleaseTime() < now ) {
                 log.debug( "Removed host " + host.getAddress() + " from temporary ban list (expired)" );
@@ -694,16 +697,16 @@ public class SpamFilter extends BasicPageFilter {
      *  @param context
      *  @throws RedirectException
      */
-    private void checkBanList( WikiContext context, Change change ) throws RedirectException {
-        HttpServletRequest req = context.getHttpRequest();
+    private void checkBanList( final WikiContext context, final Change change ) throws RedirectException {
+        final HttpServletRequest req = context.getHttpRequest();
 
         if( req != null ) {
-            String remote = HttpUtil.getRemoteAddress(req);
-            long now = System.currentTimeMillis();
+            final String remote = HttpUtil.getRemoteAddress(req);
+            final long now = System.currentTimeMillis();
 
-            for( Host host : m_temporaryBanList ) {
+            for( final Host host : m_temporaryBanList ) {
                 if( host.getAddress().equals( remote ) ) {
-                    long timeleft = ( host.getReleaseTime() - now ) / 1000L;
+                    final long timeleft = ( host.getReleaseTime() - now ) / 1000L;
 
                     log( context, REJECT, REASON_IP_BANNED_TEMPORARILY, change.m_change );
                     checkStrategy( context, REASON_IP_BANNED_TEMPORARILY,
@@ -726,21 +729,21 @@ public class SpamFilter extends BasicPageFilter {
             //
             //  Rebuild, if the spam words page, the attachment or the IP ban page has changed since.
             //
-            final WikiPage sourceSpam = context.getEngine().getPageManager().getPage( m_forbiddenWordsPage );
+            final WikiPage sourceSpam = context.getEngine().getManager( PageManager.class ).getPage( m_forbiddenWordsPage );
             if( sourceSpam != null ) {
                 if( m_spamPatterns == null || m_spamPatterns.isEmpty() || sourceSpam.getLastModified().after( m_lastRebuild ) ) {
                     rebuild = true;
                 }
             }
 
-            final Attachment att = context.getEngine().getAttachmentManager().getAttachmentInfo( context, m_blacklist );
+            final Attachment att = context.getEngine().getManager( AttachmentManager.class ).getAttachmentInfo( context, m_blacklist );
             if( att != null ) {
                 if( m_spamPatterns == null || m_spamPatterns.isEmpty() || att.getLastModified().after( m_lastRebuild ) ) {
                     rebuild = true;
                 }
             }
 
-            final WikiPage sourceIPs = context.getEngine().getPageManager().getPage( m_forbiddenIPsPage );
+            final WikiPage sourceIPs = context.getEngine().getManager( PageManager.class ).getPage( m_forbiddenIPsPage );
             if( sourceIPs != null ) {
                 if( m_IPPatterns == null || m_IPPatterns.isEmpty() || sourceIPs.getLastModified().after( m_lastRebuild ) ) {
                     rebuild = true;
@@ -761,7 +764,7 @@ public class SpamFilter extends BasicPageFilter {
                 log.info( "IP filter reloaded - recognizing " + m_IPPatterns.size() + " patterns from page " + m_forbiddenIPsPage );
 
                 if( att != null ) {
-                    final InputStream in = context.getEngine().getAttachmentManager().getAttachmentStream(att);
+                    final InputStream in = context.getEngine().getManager( AttachmentManager.class ).getAttachmentStream(att);
                     final StringWriter out = new StringWriter();
                     FileUtil.copyContents( new InputStreamReader( in, StandardCharsets.UTF_8 ), out );
                     final Collection< Pattern > blackList = parseBlacklist( out.toString() );
@@ -784,7 +787,7 @@ public class SpamFilter extends BasicPageFilter {
      *  @param change
      *  @throws RedirectException
      */
-    private void checkPatternList( WikiContext context, String content, Change change ) throws RedirectException {
+    private void checkPatternList( final WikiContext context, final String content, final Change change ) throws RedirectException {
         //
         //  If we have no spam patterns defined, or we're trying to save
         //  the page containing the patterns, just return.
@@ -798,14 +801,14 @@ public class SpamFilter extends BasicPageFilter {
             ch += HttpUtil.getRemoteAddress( context.getHttpRequest() );
         }
 
-        for( Pattern p : m_spamPatterns ) {
+        for( final Pattern p : m_spamPatterns ) {
             // log.debug("Attempting to match page contents with "+p.getPattern());
 
             if( m_matcher.contains( ch, p ) ) {
                 //
                 //  Spam filter has a match.
                 //
-                String uid = log( context, REJECT, REASON_REGEXP + "(" + p.getPattern() + ")", ch );
+                final String uid = log( context, REJECT, REASON_REGEXP + "(" + p.getPattern() + ")", ch );
 
                 log.info( "SPAM:Regexp (" + uid + "). Content matches the spam filter '" + p.getPattern() + "'" );
                 checkStrategy( context, REASON_REGEXP, "Herb says '" + p.getPattern() + "' is a bad spam word and I trust Herb! (Incident code " + uid + ")" );
@@ -820,7 +823,7 @@ public class SpamFilter extends BasicPageFilter {
      *  @param context
      *  @throws RedirectException
      */
-    private void checkIPList( WikiContext context ) throws RedirectException {
+    private void checkIPList( final WikiContext context ) throws RedirectException {
         //
         //  If we have no IP patterns defined, or we're trying to save
         //  the page containing the IP patterns, just return.
@@ -829,17 +832,17 @@ public class SpamFilter extends BasicPageFilter {
             return;
         }
 
-        String remoteIP = HttpUtil.getRemoteAddress( context.getHttpRequest() );
+        final String remoteIP = HttpUtil.getRemoteAddress( context.getHttpRequest() );
         log.info("Attempting to match remoteIP " + remoteIP + " against " + m_IPPatterns.size() + " patterns");
 
-        for( Pattern p : m_IPPatterns ) {
+        for( final Pattern p : m_IPPatterns ) {
              log.debug("Attempting to match remoteIP with " + p.getPattern());
 
             if( m_matcher.contains( remoteIP, p ) ) {
 
                 //  IP filter has a match.
                 //
-                String uid = log( context, REJECT, REASON_IP_BANNED_PERMANENTLY + "(" + p.getPattern() + ")", remoteIP );
+                final String uid = log( context, REJECT, REASON_IP_BANNED_PERMANENTLY + "(" + p.getPattern() + ")", remoteIP );
 
                 log.info( "SPAM:IPBanList (" + uid + "). remoteIP matches the IP filter '" + p.getPattern() + "'" );
                 checkStrategy( context, REASON_IP_BANNED_PERMANENTLY, "Herb says '" + p.getPattern() + "' is a banned IP and I trust Herb! (Incident code " + uid + ")" );
@@ -847,8 +850,8 @@ public class SpamFilter extends BasicPageFilter {
         }
     }
 
-    private void checkPatternList( WikiContext context, String content, String change ) throws RedirectException {
-        Change c = new Change();
+    private void checkPatternList( final WikiContext context, final String content, final String change ) throws RedirectException {
+        final Change c = new Change();
         c.m_change = change;
         checkPatternList( context, content, c );
     }
@@ -863,13 +866,13 @@ public class SpamFilter extends BasicPageFilter {
     private static Change getChange( final WikiContext context, final String newText ) {
         final WikiPage page = context.getPage();
         final StringBuffer change = new StringBuffer();
-        final WikiEngine engine = context.getEngine();
+        final Engine engine = context.getEngine();
         // Get current page version
 
         final Change ch = new Change();
         
         try {
-            final String oldText = engine.getPageManager().getPureText( page.getName(), WikiProvider.LATEST_VERSION );
+            final String oldText = engine.getManager( PageManager.class ).getPureText( page.getName(), WikiProvider.LATEST_VERSION );
             final String[] first  = Diff.stringToArray( oldText );
             final String[] second = Diff.stringToArray( newText );
             final Revision rev = Diff.diff( first, second, new MyersDiff() );
@@ -924,7 +927,7 @@ public class SpamFilter extends BasicPageFilter {
      * @param context
      * @return True, if this users should be ignored.
      */
-    private boolean ignoreThisUser( WikiContext context ) {
+    private boolean ignoreThisUser( final WikiContext context ) {
         if( context.hasAdminPermissions() ) {
             return true;
         }
@@ -946,11 +949,11 @@ public class SpamFilter extends BasicPageFilter {
      *  @return A random string
      */
     private static String getUniqueID() {
-        StringBuilder sb = new StringBuilder();
-        Random rand = new Random();
+        final StringBuilder sb = new StringBuilder();
+        final Random rand = new Random();
 
         for( int i = 0; i < 6; i++ ) {
-            char x = ( char )( 'A' + rand.nextInt( 26 ) );
+            final char x = ( char )( 'A' + rand.nextInt( 26 ) );
             sb.append( x );
         }
 
@@ -963,7 +966,7 @@ public class SpamFilter extends BasicPageFilter {
      *  @param ctx WikiContext
      *  @return An URL to redirect to
      */
-    private String getRedirectPage( WikiContext ctx ) {
+    private String getRedirectPage( final WikiContext ctx ) {
         if( m_useCaptcha ) {
             return ctx.getURL( WikiContext.NONE, "Captcha.jsp", "page="+ctx.getEngine().encodeName( ctx.getPage().getName() ) );
         }
@@ -979,12 +982,12 @@ public class SpamFilter extends BasicPageFilter {
      *  @return False, if this userprofile is suspect and should not be allowed to be added.
      *  @since 2.6.1
      */
-    public boolean isValidUserProfile( WikiContext context, UserProfile profile ) {
+    public boolean isValidUserProfile( final WikiContext context, final UserProfile profile ) {
         try {
             checkPatternList( context, profile.getEmail(), profile.getEmail() );
             checkPatternList( context, profile.getFullname(), profile.getFullname() );
             checkPatternList( context, profile.getLoginName(), profile.getLoginName() );
-        } catch( RedirectException e ) {
+        } catch( final RedirectException e ) {
             log.info("Detected attempt to create a spammer user account (see above for rejection reason)");
             return false;
         }
@@ -1001,13 +1004,13 @@ public class SpamFilter extends BasicPageFilter {
      *  @since 2.6
      *  @return A hash value for this page and session
      */
-    public static final String getSpamHash( WikiPage page, HttpServletRequest request ) {
+    public static final String getSpamHash( final WikiPage page, final HttpServletRequest request ) {
         long lastModified = 0;
 
         if( page.getLastModified() != null ) {
             lastModified = page.getLastModified().getTime();
         }
-        long remote = HttpUtil.getRemoteAddress( request ).hashCode();
+        final long remote = HttpUtil.getRemoteAddress( request ).hashCode();
 
         return Long.toString( lastModified ^ remote );
     }
@@ -1020,7 +1023,7 @@ public class SpamFilter extends BasicPageFilter {
      *  @return The name to be used in the hash field
      *  @since  2.6
      */
-    public static final String getHashFieldName( HttpServletRequest request ) {
+    public static final String getHashFieldName( final HttpServletRequest request ) {
         String hash = null;
 
         if( request.getSession() != null ) {
@@ -1055,15 +1058,15 @@ public class SpamFilter extends BasicPageFilter {
      *  @throws IOException If redirection fails
      *  @since 2.6
      */
-    public static final boolean checkHash( WikiContext context, PageContext pageContext ) throws IOException {
-        String hashName = getHashFieldName( (HttpServletRequest)pageContext.getRequest() );
+    public static final boolean checkHash( final WikiContext context, final PageContext pageContext ) throws IOException {
+        final String hashName = getHashFieldName( (HttpServletRequest)pageContext.getRequest() );
 
         if( pageContext.getRequest().getParameter(hashName) == null ) {
             if( pageContext.getAttribute( hashName ) == null ) {
-                Change change = getChange( context, EditorManager.getEditedText( pageContext ) );
+                final Change change = getChange( context, EditorManager.getEditedText( pageContext ) );
                 log( context, REJECT, "MissingHash", change.m_change );
 
-                String redirect = context.getURL( WikiContext.VIEW,"SessionExpired" );
+                final String redirect = context.getURL( WikiContext.VIEW,"SessionExpired" );
                 ( ( HttpServletResponse )pageContext.getResponse() ).sendRedirect( redirect );
                 return false;
             }
@@ -1081,7 +1084,7 @@ public class SpamFilter extends BasicPageFilter {
      */
     public static final String insertInputFields( final PageContext pageContext ) {
         final WikiContext ctx = WikiContext.findContext( pageContext );
-        final WikiEngine engine = ctx.getEngine();
+        final Engine engine = ctx.getEngine();
         final StringBuilder sb = new StringBuilder();
         if( engine.getContentEncoding().equals( StandardCharsets.UTF_8 ) ) {
             sb.append( "<input name='encodingcheck' type='hidden' value='\u3041' />\n" );
@@ -1118,7 +1121,7 @@ public class SpamFilter extends BasicPageFilter {
             return m_change;
         }
 
-        public Host( String ipaddress, Change change ) {
+        public Host( final String ipaddress, final Change change ) {
             m_address = ipaddress;
             m_change  = change;
             m_releaseTime = System.currentTimeMillis() + m_banTime * 60 * 1000L;
@@ -1132,18 +1135,18 @@ public class SpamFilter extends BasicPageFilter {
         public int    m_adds;
         public int    m_removals;
         
-        public String toString() {
+        @Override public String toString() {
             return m_change;
         }
         
-        public boolean equals( Object o ) {
+        @Override public boolean equals( final Object o ) {
             if( o instanceof Change ) {
                 return m_change.equals( ( ( Change )o ).m_change );
             }
             return false;
         }
         
-        public int hashCode() {
+        @Override public int hashCode() {
             return m_change.hashCode() + 17;
         }
         

@@ -21,15 +21,19 @@ package org.apache.wiki.content;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageRenameEvent;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.references.ReferenceManager;
+import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.util.TextUtil;
 
 import java.util.Collection;
@@ -62,7 +66,7 @@ public class DefaultPageRenamer implements PageRenamer {
      *  @return The final new name (in case it had to be modified)
      *  @throws WikiException If the page cannot be renamed.
      */
-    public String renamePage( final WikiContext context, final String renameFrom, final String renameTo, final boolean changeReferrers ) throws WikiException {
+    @Override public String renamePage( final WikiContext context, final String renameFrom, final String renameTo, final boolean changeReferrers ) throws WikiException {
         //  Sanity checks first
         if( renameFrom == null || renameFrom.length() == 0 ) {
             throw new WikiException( "From name may not be null or empty" );
@@ -78,12 +82,12 @@ public class DefaultPageRenamer implements PageRenamer {
         }
         
         //  Preconditions: "from" page must exist, and "to" page must not yet exist.
-        final WikiEngine engine = context.getEngine();
-        final WikiPage fromPage = engine.getPageManager().getPage( renameFrom );
+        final Engine engine = context.getEngine();
+        final WikiPage fromPage = engine.getManager( PageManager.class ).getPage( renameFrom );
         if( fromPage == null ) {
             throw new WikiException("No such page "+renameFrom);
         }
-        WikiPage toPage = engine.getPageManager().getPage( renameToClean );
+        WikiPage toPage = engine.getManager( PageManager.class ).getPage( renameToClean );
         if( toPage != null ) {
             throw new WikiException( "Page already exists " + renameToClean );
         }
@@ -92,29 +96,29 @@ public class DefaultPageRenamer implements PageRenamer {
 
         //  Do the actual rename by changing from the frompage to the topage, including all of the attachments
         //  Remove references to attachments under old name
-        final List< Attachment > attachmentsOldName = engine.getAttachmentManager().listAttachments( fromPage );
+        final List< Attachment > attachmentsOldName = engine.getManager( AttachmentManager.class ).listAttachments( fromPage );
         for( final Attachment att: attachmentsOldName ) {
-            final WikiPage fromAttPage = engine.getPageManager().getPage( att.getName() );
-            engine.getReferenceManager().pageRemoved( fromAttPage );
+            final WikiPage fromAttPage = engine.getManager( PageManager.class ).getPage( att.getName() );
+            engine.getManager( ReferenceManager.class ).pageRemoved( fromAttPage );
         }
 
-        engine.getPageManager().getProvider().movePage( renameFrom, renameToClean );
-        if( engine.getAttachmentManager().attachmentsEnabled() ) {
-            engine.getAttachmentManager().getCurrentProvider().moveAttachmentsForPage( renameFrom, renameToClean );
+        engine.getManager( PageManager.class ).getProvider().movePage( renameFrom, renameToClean );
+        if( engine.getManager( AttachmentManager.class ).attachmentsEnabled() ) {
+            engine.getManager( AttachmentManager.class ).getCurrentProvider().moveAttachmentsForPage( renameFrom, renameToClean );
         }
         
         //  Add a comment to the page notifying what changed.  This adds a new revision to the repo with no actual change.
-        toPage = engine.getPageManager().getPage( renameToClean );
+        toPage = engine.getManager( PageManager.class ).getPage( renameToClean );
         if( toPage == null ) {
             throw new InternalWikiException( "Rename seems to have failed for some strange reason - please check logs!" );
         }
         toPage.setAttribute( WikiPage.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
         toPage.setAuthor( context.getCurrentUser().getName() );
-        engine.getPageManager().putPageText( toPage, engine.getPageManager().getPureText( toPage ) );
+        engine.getManager( PageManager.class ).putPageText( toPage, engine.getManager( PageManager.class ).getPureText( toPage ) );
 
         //  Update the references
-        engine.getReferenceManager().pageRemoved( fromPage );
-        engine.getReferenceManager().updateReferences( toPage );
+        engine.getManager( ReferenceManager.class ).pageRemoved( fromPage );
+        engine.getManager( ReferenceManager.class ).updateReferences( toPage );
 
         //  Update referrers
         if( changeReferrers ) {
@@ -122,14 +126,14 @@ public class DefaultPageRenamer implements PageRenamer {
         }
 
         //  re-index the page including its attachments
-        engine.getSearchManager().reindexPage( toPage );
+        engine.getManager( SearchManager.class ).reindexPage( toPage );
         
-        final Collection< Attachment > attachmentsNewName = engine.getAttachmentManager().listAttachments( toPage );
+        final Collection< Attachment > attachmentsNewName = engine.getManager( AttachmentManager.class ).listAttachments( toPage );
         for( final Attachment att:attachmentsNewName ) {
-            final WikiPage toAttPage = engine.getPageManager().getPage( att.getName() );
+            final WikiPage toAttPage = engine.getManager( PageManager.class ).getPage( att.getName() );
             // add reference to attachment under new page name
-            engine.getReferenceManager().updateReferences( toAttPage );
-            engine.getSearchManager().reindexPage( att );
+            engine.getManager( ReferenceManager.class ).updateReferences( toAttPage );
+            engine.getManager( SearchManager.class ).reindexPage( att );
         }
 
         firePageRenameEvent( renameFrom, renameToClean );
@@ -145,7 +149,7 @@ public class DefaultPageRenamer implements PageRenamer {
      * @param oldName the former page name
      * @param newName the new page name
      */
-    public void firePageRenameEvent( final String oldName, final String newName ) {
+    @Override public void firePageRenameEvent( final String oldName, final String newName ) {
         if( WikiEventManager.isListening(this) ) {
             WikiEventManager.fireEvent(this, new WikiPageRenameEvent(this, oldName, newName ) );
         }
@@ -164,16 +168,16 @@ public class DefaultPageRenamer implements PageRenamer {
             return;
         }
 
-        final WikiEngine engine = context.getEngine();
+        final Engine engine = context.getEngine();
         for( String pageName : referrers ) {
             //  In case the page was just changed from under us, let's do this small kludge.
             if( pageName.equals( fromPage.getName() ) ) {
                 pageName = toPage.getName();
             }
             
-            final WikiPage p = engine.getPageManager().getPage( pageName );
+            final WikiPage p = engine.getManager( PageManager.class ).getPage( pageName );
 
-            final String sourceText = engine.getPageManager().getPureText( p );
+            final String sourceText = engine.getManager( PageManager.class ).getPureText( p );
             String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );
 
             m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), JSPWikiMarkupParser.PROP_CAMELCASELINKS, m_camelCase );
@@ -186,8 +190,8 @@ public class DefaultPageRenamer implements PageRenamer {
                 p.setAuthor( context.getCurrentUser().getName() );
          
                 try {
-                    engine.getPageManager().putPageText( p, newText );
-                    engine.getReferenceManager().updateReferences( p );
+                    engine.getManager( PageManager.class ).putPageText( p, newText );
+                    engine.getManager( ReferenceManager.class ).updateReferences( p );
                 } catch( final ProviderException e ) {
                     //  We fail with an error, but we will try to continue to rename other referrers as well.
                     log.error("Unable to perform rename.",e);
@@ -196,17 +200,17 @@ public class DefaultPageRenamer implements PageRenamer {
         }
     }
 
-    private Set<String> getReferencesToChange( final WikiPage fromPage, final WikiEngine engine ) {
+    private Set<String> getReferencesToChange( final WikiPage fromPage, final Engine engine ) {
         final Set< String > referrers = new TreeSet<>();
-        final Collection< String > r = engine.getReferenceManager().findReferrers( fromPage.getName() );
+        final Collection< String > r = engine.getManager( ReferenceManager.class ).findReferrers( fromPage.getName() );
         if( r != null ) {
             referrers.addAll( r );
         }
         
         try {
-            final List< Attachment > attachments = engine.getAttachmentManager().listAttachments( fromPage );
+            final List< Attachment > attachments = engine.getManager( AttachmentManager.class ).listAttachments( fromPage );
             for( final Attachment att : attachments  ) {
-                final Collection< String > c = engine.getReferenceManager().findReferrers( att.getName() );
+                final Collection< String > c = engine.getManager( ReferenceManager.class ).findReferrers( att.getName() );
                 if( c != null ) {
                     referrers.addAll( c );
                 }

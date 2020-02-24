@@ -35,6 +35,7 @@ import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
@@ -43,6 +44,7 @@ import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.Decision;
@@ -184,7 +186,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
             //  Empty the references and yay, it shall be recalculated
             final WikiPage p = m_provider.getPageInfo( pageName, version );
 
-            m_engine.getReferenceManager().updateReferences( p );
+            m_engine.getManager( ReferenceManager.class ).updateReferences( p );
             m_engine.getSearchManager().reindexPage( p );
             text = m_provider.getPageText( pageName, version );
         }
@@ -196,7 +198,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getPureText(String, int)
      */
-    public String getPureText( final String page, final int version ) {
+    @Override public String getPureText( final String page, final int version ) {
         String result = null;
         try {
             result = getPageText( page, version );
@@ -214,12 +216,12 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getText(String, int)
      */
-    public String getText( final String page, final int version ) {
+    @Override public String getText( final String page, final int version ) {
         final String result = getPureText( page, version );
         return TextUtil.replaceEntities( result );
     }
 
-    public void saveText( final WikiContext context, final String text ) throws WikiException {
+    @Override public void saveText( final WikiContext context, final String text ) throws WikiException {
         // Check if page data actually changed; bail if not
         final WikiPage page = context.getPage();
         final String oldText = getPureText( page );
@@ -243,7 +245,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         final Principal submitter = context.getCurrentUser();
         final Step prepTask = m_engine.getTasksManager().buildPreSaveWikiPageTask( context, proposedText );
         final Step completionTask = m_engine.getTasksManager().buildSaveWikiPageTask();
-        final String diffText = m_engine.getDifferenceManager().makeDiff( context, oldText, proposedText );
+        final String diffText = m_engine.getManager( DifferenceManager.class ).makeDiff( context, oldText, proposedText );
         final boolean isAuthenticated = context.getWikiSession().isAuthenticated();
         final Fact[] facts = new Fact[ 5 ];
         facts[ 0 ] = new Fact( WorkflowManager.WF_WP_SAVE_FACT_PAGE_NAME, page.getName() );
@@ -363,7 +365,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getPage(java.lang.String)
      */
-    public WikiPage getPage( final String pagereq ) {
+    @Override public WikiPage getPage( final String pagereq ) {
         return getPage( pagereq, WikiProvider.LATEST_VERSION );
     }
 
@@ -371,7 +373,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getPage(java.lang.String, int)
      */
-    public WikiPage getPage( final String pagereq, final int version ) {
+    @Override public WikiPage getPage( final String pagereq, final int version ) {
         try {
             WikiPage p = getPageInfo( pagereq, version );
             if( p == null ) {
@@ -404,9 +406,9 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
             LOG.info("Repository has been modified externally while fetching info for " + pageName);
             page = m_provider.getPageInfo(pageName, version);
             if (page != null) {
-                m_engine.getReferenceManager().updateReferences(page);
+                m_engine.getManager( ReferenceManager.class ).updateReferences(page);
             } else {
-                m_engine.getReferenceManager().pageRemoved(new WikiPage(m_engine, pageName));
+                m_engine.getManager( ReferenceManager.class ).pageRemoved(new WikiPage(m_engine, pageName));
             }
         }
 
@@ -440,7 +442,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getCurrentProvider()
      */
-    public String getCurrentProvider() {
+    @Override public String getCurrentProvider() {
         return getProvider().getClass().getName();
     }
 
@@ -519,7 +521,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#wikiPageExists(java.lang.String)
      */
-    public boolean wikiPageExists( final String page ) {
+    @Override public boolean wikiPageExists( final String page ) {
         if( m_engine.getCommandResolver().getSpecialPageReference( page ) != null ) {
             return true;
         }
@@ -542,7 +544,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#wikiPageExists(java.lang.String, int)
      */
-    public boolean wikiPageExists( final String page, final int version ) throws ProviderException {
+    @Override public boolean wikiPageExists( final String page, final int version ) throws ProviderException {
         if( m_engine.getCommandResolver().getSpecialPageReference( page ) != null ) {
             return true;
         }
@@ -583,13 +585,13 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#deletePage(java.lang.String)
      */
-    public void deletePage( final String pageName ) throws ProviderException {
+    @Override public void deletePage( final String pageName ) throws ProviderException {
         final WikiPage p = getPage( pageName );
         if( p != null ) {
             if( p instanceof Attachment ) {
                 m_engine.getAttachmentManager().deleteAttachment( ( Attachment )p );
             } else {
-                final Collection< String > refTo = m_engine.getReferenceManager().findRefersTo( pageName );
+                final Collection< String > refTo = m_engine.getManager( ReferenceManager.class ).findRefersTo( pageName );
                 // May return null, if the page does not exist or has not been indexed yet.
 
                 if( m_engine.getAttachmentManager().hasAttachments( p ) ) {

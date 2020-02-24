@@ -21,6 +21,7 @@ package org.apache.wiki.filters;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.xmlrpc.AsyncCallback;
 import org.apache.xmlrpc.XmlRpcClient;
@@ -52,16 +53,16 @@ public class PingWeblogsComFilter extends BasicPageFilter {
     /**
      *  {@inheritDoc}
      */
-    public void initialize( final WikiEngine engine, final Properties props ) {
+    @Override public void initialize( final WikiEngine engine, final Properties props ) {
         m_pingURL = props.getProperty( PROP_PINGURL, "http://rpc.weblogs.com/RPC2" );
     }
 
     /**
      *  {@inheritDoc}
      */
-    public void postSave( final WikiContext context, final String pagecontent ) {
+    @Override public void postSave( final WikiContext context, final String pagecontent ) {
         String blogName = context.getPage().getName();
-        final WikiEngine engine   = context.getEngine();
+        final Engine engine   = context.getEngine();
 
         final int blogentryTxt = blogName.indexOf("_blogentry_");
         if( blogentryTxt == -1 ) {
@@ -86,11 +87,11 @@ public class PingWeblogsComFilter extends BasicPageFilter {
 
             xmlrpc.executeAsync("weblogUpdates.ping", params, 
                                 new AsyncCallback() {
-                                    public void handleError( final Exception ex, final URL url, final String method ) {
+                                    @Override public void handleError( final Exception ex, final URL url, final String method ) {
                                         log.error( "Unable to execute weblogs.com ping to URL: " + url.toString(), ex );
                                     }
 
-                                    public void handleResult( final Object result, final URL url, final String method ) {
+                                    @Override public void handleResult( final Object result, final URL url, final String method ) {
                                         @SuppressWarnings("unchecked")
                                         final Hashtable< String, Object > res = (Hashtable < String, Object > ) result;
 
