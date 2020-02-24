@@ -18,14 +18,14 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.JspException;
-
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.variables.VariableManager;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
 
 /**
  *  Returns the value of an Wiki variable.
@@ -43,16 +43,14 @@ import org.apache.wiki.util.TextUtil;
  *
  *  @since 2.0
  */
-public class VariableTag
-    extends WikiTagBase
-{
+public class VariableTag extends WikiTagBase {
+
     private static final long serialVersionUID = 0L;
 
     private String m_var      = null;
     private String m_default  = null;
 
-    public void initTag()
-    {
+    @Override public void initTag() {
         super.initTag();
         m_var = m_default = null;
     }
@@ -62,49 +60,40 @@ public class VariableTag
         return m_var;
     }
 
-    public void setVar( String arg )
+    public void setVar( final String arg )
     {
         m_var = arg;
     }
 
-    public void setDefault( String arg )
+    public void setDefault( final String arg )
     {
         m_default = arg;
     }
 
-    public final int doWikiStartTag()
-        throws JspException,
-               IOException
-    {
-        WikiEngine engine   = m_wikiContext.getEngine();
-        JspWriter out = pageContext.getOut();
+    @Override
+    public final int doWikiStartTag() throws JspException, IOException {
+        final Engine engine = m_wikiContext.getEngine();
+        final JspWriter out = pageContext.getOut();
         String msg = null;
         String value = null;
 
-        try
-        {
-            value = engine.getVariableManager().getValue( m_wikiContext,
-                                                          getVar() );
-        }
-        catch( NoSuchVariableException e )
-        {
-            msg = "No such variable: "+e.getMessage();
-        }
-        catch( IllegalArgumentException e )
-        {
-            msg = "Incorrect variable name: "+e.getMessage();
+        try {
+            value = engine.getManager( VariableManager.class ).getValue( m_wikiContext, getVar() );
+        } catch( final NoSuchVariableException e ) {
+            msg = "No such variable: " + e.getMessage();
+        } catch( final IllegalArgumentException e ) {
+            msg = "Incorrect variable name: " + e.getMessage();
         }
 
-        if( value == null )
-        {
+        if( value == null ) {
             value = m_default;
         }
 
-        if( value == null )
-        {
+        if( value == null ) {
             value = msg;
         }
         out.write( TextUtil.replaceEntities(value) );
         return SKIP_BODY;
     }
+
 }

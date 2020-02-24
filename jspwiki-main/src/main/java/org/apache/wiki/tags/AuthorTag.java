@@ -18,9 +18,10 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.preferences.Preferences;
@@ -49,16 +50,16 @@ public class AuthorTag extends WikiTagBase {
      */
     @Override
     public final int doWikiStartTag() throws IOException {
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
         final WikiPage   page   = m_wikiContext.getPage();
         String author = page.getAuthor();
 
         if( author != null && author.length() > 0 ) {
             author = TextUtil.replaceEntities(author);
 
-            if( engine.getPageManager().wikiPageExists(author) && !( "plain".equalsIgnoreCase( m_format ) ) ) {
+            if( engine.getManager( PageManager.class ).wikiPageExists(author) && !( "plain".equalsIgnoreCase( m_format ) ) ) {
                 // FIXME: It's very boring to have to do this.  Slow, too.
-                final RenderingManager mgr = engine.getRenderingManager();
+                final RenderingManager mgr = engine.getManager( RenderingManager.class );
                 final MarkupParser p = mgr.getParser( m_wikiContext, "["+author+"|"+author+"]" );
                 final WikiDocument d = p.parse();
                 author = mgr.getHTML( m_wikiContext, d );

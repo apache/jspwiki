@@ -18,14 +18,14 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspException;
-import javax.servlet.ServletException;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.ServletException;
+import javax.servlet.jsp.JspException;
+import java.io.IOException;
 
 /**
  *  Includes an another JSP page, making sure that we actually pass
@@ -41,13 +41,12 @@ public class IncludeTag extends WikiTagBase {
     
     protected String m_page;
 
-    public void initTag()
-    {
+    @Override public void initTag() {
         super.initTag();
         m_page = null;
     }
 
-    public void setPage( String page )
+    public void setPage( final String page )
     {
         m_page = page;
     }
@@ -57,7 +56,7 @@ public class IncludeTag extends WikiTagBase {
         return m_page;
     }
 
-    public final int doWikiStartTag()
+    @Override public final int doWikiStartTag()
         throws IOException,
                ProviderException
     {
@@ -66,37 +65,26 @@ public class IncludeTag extends WikiTagBase {
         return SKIP_BODY;
     }
 
-    public final int doEndTag()
-        throws JspException
-    {
-        try
-        {
-            String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
-                                                                                  m_wikiContext.getTemplate(),
-                                                                                  m_page );
-            
-            if( page == null )
-            {
-                pageContext.getOut().println("No template file called '"+TextUtil.replaceEntities(m_page)+"'");
-            }
-            else
-            {
+    @Override public final int doEndTag() throws JspException {
+        try {
+            final String page = m_wikiContext.getEngine().getManager( TemplateManager.class ).findJSP( pageContext,
+                                                                                                 m_wikiContext.getTemplate(),
+                                                                                                 m_page );
+
+            if( page == null ) {
+                pageContext.getOut().println( "No template file called '" + TextUtil.replaceEntities( m_page ) + "'" );
+            } else {
                 pageContext.include( page );
             }
-        }
-        catch( ServletException e )
-        {
-            log.warn( "Including failed, got a servlet exception from sub-page. "+
-                      "Rethrowing the exception to the JSP engine.", e );
+        } catch( final ServletException e ) {
+            log.warn( "Including failed, got a servlet exception from sub-page. Rethrowing the exception to the JSP engine.", e );
             throw new JspException( e.getMessage() );
-        }
-        catch( IOException e )
-        {
-            log.warn( "I/O exception - probably the connection was broken. "+
-                      "Rethrowing the exception to the JSP engine.", e );
+        } catch( final IOException e ) {
+            log.warn( "I/O exception - probably the connection was broken. Rethrowing the exception to the JSP engine.", e );
             throw new JspException( e.getMessage() );
         }
 
         return EVAL_PAGE;
     }
+
 }

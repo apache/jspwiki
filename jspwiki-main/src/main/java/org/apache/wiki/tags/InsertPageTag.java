@@ -19,9 +19,11 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
@@ -58,7 +60,7 @@ public class InsertPageTag extends WikiTagBase {
     protected String m_pageName = null;
     private   int    m_mode = HTML;
 
-    public void initTag() {
+    @Override public void initTag() {
         super.initTag();
         m_pageName = null;
         m_mode = HTML;
@@ -82,8 +84,8 @@ public class InsertPageTag extends WikiTagBase {
         }
     }
 
-    public final int doWikiStartTag() throws IOException, ProviderException {
-        final WikiEngine engine = m_wikiContext.getEngine();
+    @Override public final int doWikiStartTag() throws IOException, ProviderException {
+        final Engine engine = m_wikiContext.getEngine();
         final WikiPage insertedPage;
 
         //
@@ -94,9 +96,9 @@ public class InsertPageTag extends WikiTagBase {
 
         if( m_pageName == null ) {
             insertedPage = m_wikiContext.getPage();
-            if( !engine.getPageManager().wikiPageExists(insertedPage) ) return SKIP_BODY;
+            if( !engine.getManager( PageManager.class ).wikiPageExists(insertedPage) ) return SKIP_BODY;
         } else {
-            insertedPage = engine.getPageManager().getPage( m_pageName );
+            insertedPage = engine.getManager( PageManager.class ).getPage( m_pageName );
         }
 
         if( insertedPage != null ) {
@@ -109,8 +111,8 @@ public class InsertPageTag extends WikiTagBase {
             final WikiPage oldPage = m_wikiContext.setRealPage( insertedPage );
             
             switch( m_mode ) {
-              case HTML: out.print( engine.getRenderingManager().getHTML( m_wikiContext, insertedPage ) ); break;
-              case PLAIN: out.print( engine.getPageManager().getText( insertedPage ) ); break;
+              case HTML: out.print( engine.getManager( RenderingManager.class ).getHTML( m_wikiContext, insertedPage ) ); break;
+              case PLAIN: out.print( engine.getManager( PageManager.class ).getText( insertedPage ) ); break;
             }
             
             m_wikiContext.setRealPage( oldPage );

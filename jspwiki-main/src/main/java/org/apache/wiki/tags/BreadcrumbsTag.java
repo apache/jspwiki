@@ -20,6 +20,7 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpSession;
@@ -80,7 +81,7 @@ public class BreadcrumbsTag extends WikiTagBase
      *
      *  @param maxpages The amount.
      */
-    public void setMaxpages(int maxpages)
+    public void setMaxpages( final int maxpages)
     {
         m_maxQueueSize = maxpages + 1;
     }
@@ -100,7 +101,7 @@ public class BreadcrumbsTag extends WikiTagBase
      *
      *  @param separator A string which separates the page names.
      */
-    public void setSeparator(String separator)
+    public void setSeparator( final String separator)
     {
         m_separator = TextUtil.replaceEntities( separator );
     }
@@ -109,47 +110,34 @@ public class BreadcrumbsTag extends WikiTagBase
      *  {@inheritDoc}
      */
     @Override
-    public int doWikiStartTag() throws IOException
-    {
-        HttpSession session = pageContext.getSession();
-        FixedQueue  trail = (FixedQueue) session.getAttribute(BREADCRUMBTRAIL_KEY);
+    public int doWikiStartTag() throws IOException {
+        final HttpSession session = pageContext.getSession();
+        FixedQueue trail = (FixedQueue) session.getAttribute(BREADCRUMBTRAIL_KEY);
+        final String page = m_wikiContext.getPage().getName();
 
-        String page = m_wikiContext.getPage().getName();
-
-        if( trail == null )
-        {
+        if( trail == null ) {
             trail = new FixedQueue(m_maxQueueSize);
         } else {
             //  check if page still exists (could be deleted/renamed by another user)
             for (int i = 0;i<trail.size();i++) {
-                if (!m_wikiContext.getEngine().getPageManager().wikiPageExists(trail.get(i))) {
+                if( !m_wikiContext.getEngine().getManager( PageManager.class ).wikiPageExists( trail.get( i ) ) ) {
                     trail.remove(i);
                 }
             }
         }
 
-        if (m_wikiContext.getRequestContext().equals(WikiContext.VIEW))
-        {
-            if (m_wikiContext.getEngine().getPageManager().wikiPageExists(page))
-            {
-                if (trail.isEmpty())
-                {
-                    trail.pushItem(page);
-                }
-                else
-                {
-                    //
+        if( m_wikiContext.getRequestContext().equals( WikiContext.VIEW ) ) {
+            if( m_wikiContext.getEngine().getManager( PageManager.class ).wikiPageExists( page ) ) {
+                if( trail.isEmpty() ) {
+                    trail.pushItem( page );
+                } else {
                     // Don't add the page to the queue if the page was just refreshed
-                    //
-                    if (!trail.getLast().equals(page))
-                    {
-                        trail.pushItem(page);
+                    if( !trail.getLast().equals( page ) ) {
+                        trail.pushItem( page );
                     }
                 }
-            }
-            else
-            {
-                log.debug("didn't add page because it doesn't exist: " + page);
+            } else {
+                log.debug( "didn't add page because it doesn't exist: " + page );
             }
         }
 
@@ -162,22 +150,21 @@ public class BreadcrumbsTag extends WikiTagBase
         // FIXME: this code would be much simpler if we could just output the [pagename] and then use the
         // wiki engine to output the appropriate wikilink
 
-        JspWriter out     = pageContext.getOut();
-        int queueSize     = trail.size();
-        String linkclass  = "wikipage";
+        final JspWriter out     = pageContext.getOut();
+        final int queueSize     = trail.size();
+        final String linkclass  = "wikipage";
         String curPage    = null;
 
-        for( int i = 0; i < queueSize - 1; i++ )
-        {
+        for( int i = 0; i < queueSize - 1; i++ ) {
             curPage = trail.get(i);
 
             //FIXME: I can't figure out how to detect the appropriate jsp page to put here, so I hard coded Wiki.jsp
             //This breaks when you view an attachment metadata page
-            out.print("<a class=\"" + linkclass + "\" href=\"" + m_wikiContext.getViewURL(curPage)+ "\">"
-                        + TextUtil.replaceEntities( curPage ) + "</a>");
+            out.print( "<a class=\"" + linkclass + "\" href=\"" + m_wikiContext.getViewURL(curPage) + "\">" +
+                       TextUtil.replaceEntities( curPage ) +
+                       "</a>" );
 
-            if( i < queueSize - 2 )
-            {
+            if( i < queueSize - 2 ) {
                 out.print(m_separator);
             }
         }
@@ -188,23 +175,17 @@ public class BreadcrumbsTag extends WikiTagBase
     /**
      * Extends the LinkedList class to provide a fixed-size queue implementation
      */
-    public static class FixedQueue
-        extends LinkedList<String>
-        implements Serializable
-    {
+    public static class FixedQueue extends LinkedList< String > implements Serializable {
         private int m_size;
         private static final long serialVersionUID = 0L;
 
-        FixedQueue(int size)
-        {
+        FixedQueue( final int size ) {
             m_size = size;
         }
 
-        String pushItem(String o)
-        {
-            add(o);
-            if( size() > m_size )
-            {
+        String pushItem( final String o ) {
+            add( o );
+            if( size() > m_size ) {
                 return removeFirst();
             }
 
@@ -212,17 +193,13 @@ public class BreadcrumbsTag extends WikiTagBase
         }
 
         /**
-         * @param pageName
-         *            the page to be deleted from the breadcrumb
+         * @param pageName the page to be deleted from the breadcrumb
          */
-        public void removeItem(String pageName)
-        {
-            for (int i = 0; i < size(); i++)
-            {
-                String page = get(i);
-                if (page != null && page.equals(pageName))
-                {
-                    remove(page);
+        public void removeItem( final String pageName ) {
+            for( int i = 0; i < size(); i++ ) {
+                final String page = get( i );
+                if( page != null && page.equals( pageName ) ) {
+                    remove( page );
                 }
             }
         }

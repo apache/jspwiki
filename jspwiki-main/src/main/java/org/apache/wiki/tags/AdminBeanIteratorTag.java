@@ -18,13 +18,12 @@
  */
 package org.apache.wiki.tags;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.ui.admin.AdminBean;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  *  Provides an iterator for all AdminBeans of a given type.
@@ -41,11 +40,11 @@ public class AdminBeanIteratorTag extends IteratorTag {
      *  
      *  @param type Type to set
      */
-    public void setType( String type ) {
+    public void setType( final String type ) {
     	if (m_wikiContext == null) {
     		m_wikiContext = WikiContext.findContext(pageContext);
     	}
-        m_type = m_wikiContext.getEngine().getAdminBeanManager().getTypeFromString( type );
+        m_type = m_wikiContext.getEngine().getManager( AdminBeanManager.class ).getTypeFromString( type );
     }
 
     /**
@@ -53,11 +52,10 @@ public class AdminBeanIteratorTag extends IteratorTag {
      */
     @Override
     public void resetIterator() {
-        AdminBeanManager mgr = m_wikiContext.getEngine().getAdminBeanManager();
-        Collection< AdminBean > beans = mgr.getAllBeans();
-        ArrayList< AdminBean > typedBeans = new ArrayList< AdminBean >();
-        for( Iterator< AdminBean > i = beans.iterator(); i.hasNext(); ) {
-            AdminBean ab = i.next();
+        final AdminBeanManager mgr = m_wikiContext.getEngine().getManager( AdminBeanManager.class );
+        final Collection< AdminBean > beans = mgr.getAllBeans();
+        final ArrayList< AdminBean > typedBeans = new ArrayList<>();
+        for( final AdminBean ab : beans ) {
             if( ab.getType() == m_type ) {
                 typedBeans.add( ab );
             }

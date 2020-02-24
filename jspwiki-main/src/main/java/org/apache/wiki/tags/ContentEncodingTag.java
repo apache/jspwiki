@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 
 import java.io.IOException;
 
@@ -34,9 +34,10 @@ public class ContentEncodingTag extends WikiTagBase {
     /**
      *  {@inheritDoc}
      */
-    public final int doWikiStartTag() throws IOException {
-        final WikiEngine engine = m_wikiContext.getEngine();
+    @Override public final int doWikiStartTag() throws IOException {
+        final Engine engine = m_wikiContext.getEngine();
         pageContext.getOut().print( engine.getContentEncoding() );
         return SKIP_BODY;
     }
+
 }

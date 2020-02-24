@@ -18,17 +18,9 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.UserManager;
@@ -38,6 +30,13 @@ import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 /**
  * <p>
@@ -72,8 +71,8 @@ import org.apache.wiki.util.TextUtil;
  * negative condition (for example, <code>!exists</code>).</p>
  * @since 2.3
  */
-public class UserProfileTag extends WikiTagBase
-{
+public class UserProfileTag extends WikiTagBase {
+
     private static final long serialVersionUID = 3258410625431582003L;
 
     public  static final String BLANK = "(not set)";
@@ -112,99 +111,70 @@ public class UserProfileTag extends WikiTagBase
 
     private String             m_prop;
 
-    public void initTag()
-    {
+    @Override
+    public void initTag() {
         super.initTag();
         m_prop = null;
     }
 
-    public final int doWikiStartTag() throws IOException, WikiSecurityException
-    {
-        UserManager manager = m_wikiContext.getEngine().getUserManager();
-        UserProfile profile = manager.getUserProfile( m_wikiContext.getWikiSession() );
+    @Override
+    public final int doWikiStartTag() throws IOException, WikiSecurityException {
+        final UserManager manager = m_wikiContext.getEngine().getManager( UserManager.class );
+        final UserProfile profile = manager.getUserProfile( m_wikiContext.getWikiSession() );
         String result = null;
 
-        if ( EXISTS.equals( m_prop ) || NOT_NEW.equals( m_prop ) )
-        {
+        if( EXISTS.equals( m_prop ) || NOT_NEW.equals( m_prop ) ) {
             return profile.isNew() ? SKIP_BODY : EVAL_BODY_INCLUDE;
-        }
-        else if ( NEW.equals( m_prop ) || NOT_EXISTS.equals( m_prop ) )
-        {
+        } else if( NEW.equals( m_prop ) || NOT_EXISTS.equals( m_prop ) ) {
             return profile.isNew() ? EVAL_BODY_INCLUDE : SKIP_BODY;
-        }
-
-        else if ( CREATED.equals( m_prop ) && profile.getCreated() != null )
-        {
+        } else if( CREATED.equals( m_prop ) && profile.getCreated() != null ) {
             result = profile.getCreated().toString();
-        }
-        else if ( EMAIL.equals( m_prop ) )
-        {
+        } else if( EMAIL.equals( m_prop ) ) {
             result = profile.getEmail();
-        }
-        else if ( FULLNAME.equals( m_prop ) )
-        {
+        } else if( FULLNAME.equals( m_prop ) ) {
             result = profile.getFullname();
-        }
-        else if ( GROUPS.equals( m_prop ) )
-        {
+        } else if( GROUPS.equals( m_prop ) ) {
             result = printGroups( m_wikiContext );
-        }
-        else if ( LOGINNAME.equals( m_prop ) )
-        {
+        } else if( LOGINNAME.equals( m_prop ) ) {
             result = profile.getLoginName();
-        }
-        else if ( MODIFIED.equals( m_prop ) && profile.getLastModified() != null )
-        {
+        } else if( MODIFIED.equals( m_prop ) && profile.getLastModified() != null ) {
             result = profile.getLastModified().toString();
-        }
-        else if ( ROLES.equals( m_prop ) )
-        {
+        } else if( ROLES.equals( m_prop ) ) {
             result = printRoles( m_wikiContext );
-        }
-        else if ( WIKINAME.equals( m_prop ) )
-        {
+        } else if( WIKINAME.equals( m_prop ) ) {
             result = profile.getWikiName();
 
-            if( result == null )
-            {
+            if( result == null ) {
                 //
                 //  Default back to the declared user name
                 //
-                WikiEngine engine = this.m_wikiContext.getEngine();
-                WikiSession wikiSession = WikiSession.getWikiSession( engine, (HttpServletRequest)pageContext.getRequest() );
-                Principal user = wikiSession.getUserPrincipal();
+                final Engine engine = this.m_wikiContext.getEngine();
+                final WikiSession wikiSession = WikiSession.getWikiSession( engine, ( HttpServletRequest )pageContext.getRequest() );
+                final Principal user = wikiSession.getUserPrincipal();
 
-                if( user != null )
-                {
+                if( user != null ) {
                     result = user.getName();
                 }
             }
-        }
-        else if ( CHANGE_PASSWORD.equals( m_prop ) || CHANGE_LOGIN_NAME.equals( m_prop ) )
-        {
-            AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
-            if ( !authMgr.isContainerAuthenticated() )
-            {
+        } else if( CHANGE_PASSWORD.equals( m_prop ) || CHANGE_LOGIN_NAME.equals( m_prop ) ) {
+            final AuthenticationManager authMgr = m_wikiContext.getEngine().getManager( AuthenticationManager.class );
+            if( !authMgr.isContainerAuthenticated() ) {
                 return EVAL_BODY_INCLUDE;
             }
-        }
-        else if ( NOT_CHANGE_PASSWORD.equals( m_prop ) || NOT_CHANGE_LOGIN_NAME.equals( m_prop ) )
-        {
-            AuthenticationManager authMgr = m_wikiContext.getEngine().getAuthenticationManager();
-            if ( authMgr.isContainerAuthenticated() )
-            {
+        } else if( NOT_CHANGE_PASSWORD.equals( m_prop ) || NOT_CHANGE_LOGIN_NAME.equals( m_prop ) ) {
+            final AuthenticationManager authMgr = m_wikiContext.getEngine().getManager( AuthenticationManager.class );
+            if( authMgr.isContainerAuthenticated() ) {
                 return EVAL_BODY_INCLUDE;
             }
         }
 
-        if ( result != null )
-        {
-            pageContext.getOut().print( TextUtil.replaceEntities(result) );
+        if( result != null ) {
+            pageContext.getOut().print( TextUtil.replaceEntities( result ) );
         }
         return SKIP_BODY;
     }
 
-    public void setProperty( String property )
+    public void setProperty( final String property )
     {
         m_prop = property.toLowerCase().trim();
     }
@@ -216,34 +186,28 @@ public class UserProfileTag extends WikiTagBase
      * and extracting those that are of type Group.
      * @return the list of groups, sorted by name
      */
-    public static String printGroups( WikiContext context )
-    {
-        Principal[] roles = context.getWikiSession().getRoles();
-        List<String> tempRoles = new ArrayList<String>();
-        ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
-        
-        for ( Principal role : roles )
-        {
-            if( role instanceof GroupPrincipal )
-            {
+    public static String printGroups( final WikiContext context ) {
+        final Principal[] roles = context.getWikiSession().getRoles();
+        final List< String > tempRoles = new ArrayList<>();
+        final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
+
+        for( final Principal role : roles ) {
+            if( role instanceof GroupPrincipal ) {
                 tempRoles.add( role.getName() );
             }
         }
-        if ( tempRoles.size() == 0 )
-        {
-            return rb.getString("userprofile.nogroups");
+        if( tempRoles.size() == 0 ) {
+            return rb.getString( "userprofile.nogroups" );
         }
 
-        StringBuilder sb = new StringBuilder();
-        for ( int i = 0; i < tempRoles.size(); i++ )
-        {
-            String name = tempRoles.get( i );
+        final StringBuilder sb = new StringBuilder();
+        for( int i = 0; i < tempRoles.size(); i++ ) {
+            final String name = tempRoles.get( i );
 
             sb.append( name );
-            if ( i < ( tempRoles.size() - 1 ) )
-            {
-                sb.append(',');
-                sb.append(' ');
+            if( i < ( tempRoles.size() - 1 ) ) {
+                sb.append( ',' );
+                sb.append( ' ' );
             }
 
         }
@@ -257,37 +221,32 @@ public class UserProfileTag extends WikiTagBase
      * and extracting those that are of type Role.
      * @return the list of roles, sorted by name
      */
-    public static String printRoles( WikiContext context )
-    {
-        Principal[] roles = context.getWikiSession().getRoles();
-        List<String> tempRoles = new ArrayList<String>();
-        ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
-        
-        for ( Principal role : roles )
-        {
-            if ( role instanceof Role )
-            {
+    public static String printRoles( final WikiContext context ) {
+        final Principal[] roles = context.getWikiSession().getRoles();
+        final List< String > tempRoles = new ArrayList<>();
+        final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
+
+        for( final Principal role : roles ) {
+            if( role instanceof Role ) {
                 tempRoles.add( role.getName() );
             }
         }
-        if ( tempRoles.size() == 0 )
-        {
+        if( tempRoles.size() == 0 ) {
             return rb.getString( "userprofile.noroles" );
         }
 
-        StringBuilder sb = new StringBuilder();
-        for ( int i = 0; i < tempRoles.size(); i++ )
-        {
-            String name = tempRoles.get( i );
+        final StringBuilder sb = new StringBuilder();
+        for( int i = 0; i < tempRoles.size(); i++ ) {
+            final String name = tempRoles.get( i );
 
             sb.append( name );
-            if ( i < ( tempRoles.size() - 1 ) )
-            {
-                sb.append(',');
-                sb.append(' ');
+            if( i < ( tempRoles.size() - 1 ) ) {
+                sb.append( ',' );
+                sb.append( ' ' );
             }
 
         }
         return sb.toString();
     }
+
 }

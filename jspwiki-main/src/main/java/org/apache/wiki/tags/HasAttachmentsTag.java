@@ -19,10 +19,11 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.pages.PageManager;
 
 
 /**
@@ -35,13 +36,14 @@ public class HasAttachmentsTag extends WikiTagBase {
     private static final long serialVersionUID = 0L;
     private static final Logger log = Logger.getLogger( HasAttachmentsTag.class );
     
+    @Override
     public final int doWikiStartTag() {
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
         final WikiPage page = m_wikiContext.getPage();
-        final AttachmentManager mgr = engine.getAttachmentManager();
+        final AttachmentManager mgr = engine.getManager( AttachmentManager.class );
 
         try {
-            if( page != null && engine.getPageManager().wikiPageExists(page) && mgr.attachmentsEnabled() ) {
+            if( page != null && engine.getManager( PageManager.class ).wikiPageExists(page) && mgr.attachmentsEnabled() ) {
                 if( mgr.hasAttachments(page) ) {
                     return EVAL_BODY_INCLUDE;
                 }

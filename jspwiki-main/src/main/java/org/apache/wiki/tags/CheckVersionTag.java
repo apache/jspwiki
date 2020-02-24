@@ -19,8 +19,10 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.pages.PageManager;
+
 
 /**
  *  Does a version check on the page.  Mode is as follows:
@@ -75,13 +77,13 @@ public class CheckVersionTag extends WikiTagBase {
      */
     @Override
     public final int doWikiStartTag() {
-        final WikiEngine engine = m_wikiContext.getEngine();
-        final WikiPage   page   = m_wikiContext.getPage();
+        final Engine engine = m_wikiContext.getEngine();
+        final WikiPage page   = m_wikiContext.getPage();
 
-        if( page != null && engine.getPageManager().wikiPageExists(page.getName()) ) {
+        if( page != null && engine.getManager( PageManager.class ).wikiPageExists(page.getName()) ) {
             final int version = page.getVersion();
             final boolean include;
-            final WikiPage latest = engine.getPageManager().getPage( page.getName() );
+            final WikiPage latest = engine.getManager( PageManager.class ).getPage( page.getName() );
 
             switch( m_mode ) {
                 case LATEST    : include = (version < 0) || (latest.getVersion() == version); break;

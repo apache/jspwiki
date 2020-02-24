@@ -18,15 +18,14 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
 
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 
 /**
  *  Checks whether the page is locked for editing.  If the mode matches,
@@ -40,13 +39,11 @@ import javax.servlet.http.HttpSession;
  *  
  *  @since 2.0
  */
-public class CheckLockTag
-    extends WikiTagBase
-{
+public class CheckLockTag extends WikiTagBase {
+
     private static final long serialVersionUID = 1L;
     
-    private static enum LockState
-    {
+    private enum LockState {
         LOCKED, NOTLOCKED, OWNED
     }
 
@@ -56,8 +53,7 @@ public class CheckLockTag
      *  {@inheritDoc}
      */
     @Override
-    public void initTag()
-    {
+    public void initTag() {
         super.initTag();
         m_mode = LockState.NOTLOCKED;
     }
@@ -67,18 +63,12 @@ public class CheckLockTag
      *  
      *  @param arg A String for the mode.
      */
-    public void setMode( String arg )
-    {
-        if( "locked".equals(arg) )
-        {
+    public void setMode( final String arg ) {
+        if( "locked".equals( arg ) ) {
             m_mode = LockState.LOCKED;
-        }
-        else if("owned".equals(arg) )
-        {
+        } else if( "owned".equals( arg ) ) {
             m_mode = LockState.OWNED;
-        }
-        else
-        {
+        } else {
             m_mode = LockState.NOTLOCKED;
         }
     }
@@ -87,31 +77,21 @@ public class CheckLockTag
      *  {@inheritDoc}
      */
     @Override
-    public final int doWikiStartTag()
-        throws IOException,
-               ProviderException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        WikiPage   page   = m_wikiContext.getPage();
+    public final int doWikiStartTag() throws IOException, ProviderException {
+        final Engine engine = m_wikiContext.getEngine();
+        final WikiPage page = m_wikiContext.getPage();
 
-        if( page != null )
-        {
-            PageManager mgr = engine.getPageManager();
+        if( page != null ) {
+            final PageManager mgr = engine.getManager( PageManager.class );
+            final PageLock lock = mgr.getCurrentLock( page );
+            final HttpSession session = pageContext.getSession();
+            final PageLock userLock = ( PageLock )session.getAttribute( "lock-" + page.getName() );
+            if( ( lock != null && m_mode == LockState.LOCKED && lock != userLock ) ||
+                ( lock != null && m_mode == LockState.OWNED && lock == userLock )  ||
+                ( lock == null && m_mode == LockState.NOTLOCKED ) ) {
 
-            PageLock lock = mgr.getCurrentLock( page );
-
-            HttpSession session = pageContext.getSession();
-
-            PageLock userLock = (PageLock) session.getAttribute("lock-"+page.getName());
-
-            if( (lock != null && m_mode == LockState.LOCKED && lock != userLock ) ||
-                (lock != null && m_mode == LockState.OWNED && lock == userLock ) ||
-                (lock == null && m_mode == LockState.NOTLOCKED) )
-            {
-                String tid = getId();
-
-                if( tid != null && lock != null )
-                {
+                final String tid = getId();
+                if( tid != null && lock != null ) {
                     pageContext.setAttribute( tid, lock );
                 }
 

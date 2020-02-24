@@ -18,16 +18,15 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import java.util.Map;
+import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.engine.PluginManager;
+import org.apache.wiki.api.exceptions.PluginException;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.engine.PluginManager;
-import org.apache.wiki.api.exceptions.PluginException;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  *  Inserts any Wiki plugin.  The body of the tag becomes then
@@ -67,7 +66,7 @@ public class PluginTag
      *  
      *  @param p Name of the plugin.
      */
-    public void setPlugin( String p )
+    public void setPlugin( final String p )
     {
         m_plugin = p;
     }
@@ -77,7 +76,7 @@ public class PluginTag
      *  
      *  @param a Arguments string.
      */
-    public void setArgs( String a )
+    public void setArgs( final String a )
     {
         m_args = a;
     }
@@ -92,22 +91,20 @@ public class PluginTag
         return EVAL_BODY_BUFFERED;
     }
 
-    private String executePlugin( String plugin, String args, String body )
-        throws PluginException, IOException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        PluginManager pm  = engine.getPluginManager();
+    private String executePlugin( final String plugin, final String args, final String body ) throws PluginException, IOException {
+        final Engine engine = m_wikiContext.getEngine();
+        final PluginManager pm  = engine.getManager( PluginManager.class );
 
         m_evaluated = true;
 
-        Map<String, String> argmap = pm.parseArgs( args );
+        final Map<String, String> argmap = pm.parseArgs( args );
         
         if( body != null ) 
         {
             argmap.put( "_body", body );
         }
 
-        String result = pm.execute( m_wikiContext, plugin, argmap );
+        final String result = pm.execute( m_wikiContext, plugin, argmap );
 
         return result;        
     }
@@ -125,7 +122,7 @@ public class PluginTag
             {
                 pageContext.getOut().write( executePlugin( m_plugin, m_args, null ) );
             }
-            catch( Exception e )
+            catch( final Exception e )
             {
                 log.error( "Failed to insert plugin", e );
                 throw new JspException( "Tag failed, check logs: "+e.getMessage() );
@@ -143,11 +140,11 @@ public class PluginTag
     {
         try
         {
-            BodyContent bc = getBodyContent();
+            final BodyContent bc = getBodyContent();
             
             getPreviousOut().write( executePlugin( m_plugin, m_args, (bc != null) ? bc.getString() : null) );
         }
-        catch( Exception e )
+        catch( final Exception e )
         {
             log.error( "Failed to insert plugin", e );
             throw new JspException( "Tag failed, check logs: "+e.getMessage() );

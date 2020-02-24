@@ -18,9 +18,10 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.render.RenderingManager;
 
 import java.io.IOException;
 
@@ -38,12 +39,12 @@ public class ParentPageNameTag extends WikiTagBase {
      */
     @Override
     public final int doWikiStartTag() throws IOException {
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
         final WikiPage page = m_wikiContext.getPage();
 
         if( page != null ) {
             if( page instanceof Attachment ) {
-                pageContext.getOut().print( engine.getRenderingManager().beautifyTitle( ((Attachment)page).getParentName()) );
+                pageContext.getOut().print( engine.getManager( RenderingManager.class ).beautifyTitle( ((Attachment)page).getParentName()) );
             } else {
                 String name = page.getName();
                 final int entrystart = name.indexOf("_blogentry_");
@@ -56,7 +57,7 @@ public class ParentPageNameTag extends WikiTagBase {
                     name = name.substring( 0, commentstart );
                 }
 
-                pageContext.getOut().print( engine.getRenderingManager().beautifyTitle(name) );
+                pageContext.getOut().print( engine.getManager( RenderingManager.class ).beautifyTitle(name) );
             }
         }
 

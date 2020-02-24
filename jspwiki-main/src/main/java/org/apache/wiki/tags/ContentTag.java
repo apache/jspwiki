@@ -18,16 +18,16 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspException;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.ui.TemplateManager;
+
+import javax.servlet.ServletException;
+import javax.servlet.jsp.JspException;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -41,14 +41,14 @@ public class ContentTag extends WikiTagBase {
     private static final long serialVersionUID = 0L;
     private static final Logger log = Logger.getLogger( ContentTag.class );
     
-    private Map<String, String> m_mappings = new HashMap<String, String>();
+    private Map<String, String> m_mappings = new HashMap<>();
 
     /**
      *  Set the template for the VIEW context.
      *  
      *  @param s The template name.
      */
-    public void setView( String s )
+    public void setView( final String s )
     {
         m_mappings.put( WikiContext.VIEW, s );
     }
@@ -58,7 +58,7 @@ public class ContentTag extends WikiTagBase {
      *  
      *  @param s The template name.
      */
-    public void setDiff( String s )
+    public void setDiff( final String s )
     {
         m_mappings.put( WikiContext.DIFF, s );
     }
@@ -68,7 +68,7 @@ public class ContentTag extends WikiTagBase {
      *  
      *  @param s The template name.
      */
-    public void setInfo( String s )
+    public void setInfo( final String s )
     {
         m_mappings.put( WikiContext.INFO, s );
     }
@@ -78,7 +78,7 @@ public class ContentTag extends WikiTagBase {
      *  
      *  @param s The template name.
      */
-    public void setPreview( String s )
+    public void setPreview( final String s )
     {
         m_mappings.put( WikiContext.PREVIEW, s );
     }
@@ -88,7 +88,7 @@ public class ContentTag extends WikiTagBase {
      *  
      *  @param s The template name.
      */
-    public void setConflict( String s )
+    public void setConflict( final String s )
     {
         m_mappings.put( WikiContext.CONFLICT, s );
     }
@@ -98,7 +98,7 @@ public class ContentTag extends WikiTagBase {
      *  
      *  @param s The template name.
      */
-    public void setFind( String s )
+    public void setFind( final String s )
     {
         m_mappings.put( WikiContext.FIND, s );
     }
@@ -108,7 +108,7 @@ public class ContentTag extends WikiTagBase {
      *  
      *  @param s The template name.
      */
-    public void setPrefs( String s )
+    public void setPrefs( final String s )
     {
         m_mappings.put( WikiContext.PREFS, s );
     }
@@ -118,7 +118,7 @@ public class ContentTag extends WikiTagBase {
      *  
      *  @param s The template name.
      */
-    public void setError( String s )
+    public void setError( final String s )
     {
         m_mappings.put( WikiContext.ERROR, s );
     }
@@ -128,7 +128,7 @@ public class ContentTag extends WikiTagBase {
      *  
      *  @param s The template name.
      */
-    public void setEdit( String s )
+    public void setEdit( final String s )
     {
         m_mappings.put( WikiContext.EDIT, s );
     }
@@ -138,7 +138,7 @@ public class ContentTag extends WikiTagBase {
      *  
      *  @param s The template name.
      */
-    public void setComment( String s )
+    public void setComment( final String s )
     {
         m_mappings.put( WikiContext.COMMENT, s );
     }
@@ -146,7 +146,7 @@ public class ContentTag extends WikiTagBase {
     /**
      *  {@inheritDoc}
      */
-    public final int doWikiStartTag()
+    @Override public final int doWikiStartTag()
         throws IOException,
                ProviderException
     {
@@ -156,39 +156,37 @@ public class ContentTag extends WikiTagBase {
     /**
      *  {@inheritDoc}
      */
-    public final int doEndTag()
+    @Override public final int doEndTag()
         throws JspException
     {
         try
         {
             // Check the overridden templates first
-            String requestContext = m_wikiContext.getRequestContext();
+            final String requestContext = m_wikiContext.getRequestContext();
             String contentTemplate = m_mappings.get( requestContext );
 
             // If not found, use the defaults
-            if ( contentTemplate == null )
-            {
+            if( contentTemplate == null ) {
                 contentTemplate = m_wikiContext.getContentTemplate();
             }
-            
+
             // If still no, something fishy is going on
-            if( contentTemplate == null )
-            {
-                throw new JspException("This template uses <wiki:Content/> in an unsupported context: " + requestContext );
+            if( contentTemplate == null ) {
+                throw new JspException( "This template uses <wiki:Content/> in an unsupported context: " + requestContext );
             }
 
-            String page = m_wikiContext.getEngine().getTemplateManager().findJSP( pageContext,
-                                                                                  m_wikiContext.getTemplate(),
-                                                                                  contentTemplate );
+            final String page = m_wikiContext.getEngine().getManager( TemplateManager.class ).findJSP( pageContext,
+                                                                                                 m_wikiContext.getTemplate(),
+                                                                                                 contentTemplate );
             pageContext.include( page );
         }
-        catch( ServletException e )
+        catch( final ServletException e )
         {
             log.warn( "Including failed, got a servlet exception from sub-page. "+
                       "Rethrowing the exception to the JSP engine.", e );
             throw new JspException( e.getMessage() );
         }
-        catch( IOException e )
+        catch( final IOException e )
         {
             log.warn( "I/O exception - probably the connection was broken. "+
                       "Rethrowing the exception to the JSP engine.", e );

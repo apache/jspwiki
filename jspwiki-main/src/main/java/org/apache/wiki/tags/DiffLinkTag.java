@@ -19,9 +19,10 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.pages.PageManager;
 
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
@@ -53,7 +54,7 @@ public class DiffLinkTag extends WikiLinkTag {
     private String m_version    = VER_LATEST;
     private String m_newVersion = VER_LATEST;
 
-    public void initTag()
+    @Override public void initTag()
     {
         super.initTag();
         m_version = m_newVersion = VER_LATEST;
@@ -79,8 +80,8 @@ public class DiffLinkTag extends WikiLinkTag {
         m_newVersion = arg;
     }
 
-    public final int doWikiStartTag() throws IOException {
-        final WikiEngine engine = m_wikiContext.getEngine();
+    @Override public final int doWikiStartTag() throws IOException {
+        final Engine engine = m_wikiContext.getEngine();
         String pageName = m_pageName;
 
         if( m_pageName == null ) {
@@ -97,12 +98,12 @@ public class DiffLinkTag extends WikiLinkTag {
         int r2;
 
         //  In case the page does not exist, we fail silently.
-        if( !engine.getPageManager().wikiPageExists( pageName ) ) {
+        if( !engine.getManager( PageManager.class ).wikiPageExists( pageName ) ) {
             return SKIP_BODY;
         }
 
         if( VER_LATEST.equals(getVersion()) ) {
-            final WikiPage latest = engine.getPageManager().getPage( pageName, WikiProvider.LATEST_VERSION );
+            final WikiPage latest = engine.getManager( PageManager.class ).getPage( pageName, WikiProvider.LATEST_VERSION );
             if( latest == null ) {
                 // This may occur if matchEnglishPlurals is on, and we access the wrong page name
                 return SKIP_BODY;
@@ -118,7 +119,7 @@ public class DiffLinkTag extends WikiLinkTag {
         }
 
         if( VER_LATEST.equals( getNewVersion() ) ) {
-            final WikiPage latest = engine.getPageManager().getPage( pageName, WikiProvider.LATEST_VERSION );
+            final WikiPage latest = engine.getManager( PageManager.class ).getPage( pageName, WikiProvider.LATEST_VERSION );
             r2 = latest.getVersion();
         } else if( VER_PREVIOUS.equals( getNewVersion() ) ) {
             r2 = m_wikiContext.getPage().getVersion() - 1;

@@ -20,6 +20,7 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.render.RenderingManager;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
@@ -38,7 +39,7 @@ public class TranslateTag
     
     private static final Logger log = Logger.getLogger( TranslateTag.class );
 
-    public final int doAfterBody() throws JspException {
+    @Override public final int doAfterBody() throws JspException {
         try {
             WikiContext context = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
 
@@ -52,7 +53,7 @@ public class TranslateTag
 
             if( wikiText != null ) {
                 wikiText = wikiText.trim();
-                final String result = context.getEngine().getRenderingManager().textToHTML( context, wikiText );
+                final String result = context.getEngine().getManager( RenderingManager.class ).textToHTML( context, wikiText );
                 getPreviousOut().write( result );
             }
         } catch( final Exception e ) {

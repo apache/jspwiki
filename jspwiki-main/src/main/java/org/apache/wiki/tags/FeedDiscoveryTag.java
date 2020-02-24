@@ -19,8 +19,8 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.rss.Feed;
 import org.apache.wiki.util.TextUtil;
@@ -36,9 +36,9 @@ public class FeedDiscoveryTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
     
-    public final int doWikiStartTag() throws IOException {
-        final WikiEngine engine = m_wikiContext.getEngine();
-        final WikiPage   page   = m_wikiContext.getPage();
+    @Override public final int doWikiStartTag() throws IOException {
+        final Engine engine = m_wikiContext.getEngine();
+        final WikiPage page = m_wikiContext.getPage();
 
         final String encodedName = engine.encodeName( page.getName() );
         final String rssURL      = engine.getGlobalRSSURL();

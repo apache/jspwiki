@@ -112,7 +112,7 @@ public class UserCheckTag extends WikiTagBase {
     public final int doWikiStartTag() {
         final WikiSession session = m_wikiContext.getWikiSession();
         final String status = session.getStatus();
-        final AuthenticationManager mgr = m_wikiContext.getEngine().getAuthenticationManager();
+        final AuthenticationManager mgr = m_wikiContext.getEngine().getManager( AuthenticationManager.class );
         final boolean containerAuth = mgr.isContainerAuthenticated();
         final boolean cookieAssertions = mgr.allowsCookieAssertions();
 

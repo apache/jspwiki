@@ -20,7 +20,9 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.diff.DifferenceManager;
+import org.apache.wiki.pages.PageManager;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -51,7 +53,7 @@ public class InsertDiffTag extends WikiTagBase {
     protected String m_pageName;
 
     /** {@inheritDoc} */
-    public void initTag() {
+    @Override public void initTag() {
         super.initTag();
         m_pageName = null;
     }
@@ -75,15 +77,15 @@ public class InsertDiffTag extends WikiTagBase {
     }
 
     /** {@inheritDoc} */
-    public final int doWikiStartTag() throws IOException {
-        final WikiEngine engine = m_wikiContext.getEngine();
+    @Override public final int doWikiStartTag() throws IOException {
+        final Engine engine = m_wikiContext.getEngine();
         final WikiContext ctx;
         
         if( m_pageName == null ) {
             ctx = m_wikiContext;
         } else {
             ctx = ( WikiContext )m_wikiContext.clone();
-            ctx.setPage( engine.getPageManager().getPage(m_pageName) );
+            ctx.setPage( engine.getManager( PageManager.class ).getPage(m_pageName) );
         }
 
         final Integer vernew = ( Integer )pageContext.getAttribute( ATTR_NEWVERSION, PageContext.REQUEST_SCOPE );
@@ -93,7 +95,7 @@ public class InsertDiffTag extends WikiTagBase {
 
         if( ctx.getPage() != null ) {
             final JspWriter out = pageContext.getOut();
-            final String diff = engine.getDifferenceManager().getDiff( ctx, vernew.intValue(), verold.intValue() );
+            final String diff = engine.getManager( DifferenceManager.class ).getDiff( ctx, vernew.intValue(), verold.intValue() );
 
             if( diff.length() == 0 ) {
                 return EVAL_BODY_INCLUDE;

@@ -18,9 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.ui.Editor;
 import org.apache.wiki.ui.EditorManager;
 
@@ -36,20 +35,20 @@ import java.util.Collection;
 public class EditorIteratorTag extends IteratorTag  {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = Logger.getLogger( EditorIteratorTag.class );
 
-    public final int doStartTag() {
+    @Override public final int doStartTag() {
         m_wikiContext = WikiContext.findContext(pageContext);
-        final WikiEngine engine = m_wikiContext.getEngine();
-        final EditorManager mgr = engine.getEditorManager();
+        final Engine engine = m_wikiContext.getEngine();
+        final EditorManager mgr = engine.getManager( EditorManager.class );
         final String[] editorList = mgr.getEditorList();
         final Collection< Editor > editors = new ArrayList<>();
 
-        for ( int i = 0; i < editorList.length; i++ ) {
-            editors.add( new Editor( m_wikiContext, editorList[ i ] ) );
+        for( final String editor : editorList ) {
+            editors.add( new Editor( m_wikiContext, editor ) );
         }
         setList( editors );
 
         return super.doStartTag();
     }
+
 }

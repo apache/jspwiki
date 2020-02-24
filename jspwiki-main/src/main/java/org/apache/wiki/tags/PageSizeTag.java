@@ -19,9 +19,10 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.pages.PageManager;
 
 import java.io.IOException;
 
@@ -35,16 +36,17 @@ public class PageSizeTag extends WikiTagBase {
     private static final long serialVersionUID = 0L;
     private static final Logger log = Logger.getLogger( PageSizeTag.class );
     
+    @Override
     public final int doWikiStartTag() throws IOException {
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
         final WikiPage page = m_wikiContext.getPage();
 
         try {
             if( page != null ) {
                 long size = page.getSize();
 
-                if( size == -1 && engine.getPageManager().wikiPageExists( page ) ) { // should never happen with attachments
-                    size = engine.getPageManager().getPureText( page.getName(), page.getVersion() ).length();
+                if( size == -1 && engine.getManager( PageManager.class ).wikiPageExists( page ) ) { // should never happen with attachments
+                    size = engine.getManager( PageManager.class ).getPureText( page.getName(), page.getVersion() ).length();
                     page.setSize( size );
                 }
 

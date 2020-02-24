@@ -20,9 +20,10 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.pages.PageManager;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -48,12 +49,12 @@ public class HistoryIteratorTag extends IteratorTag  {
     @Override
     public final int doStartTag() {
         m_wikiContext = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
         final WikiPage page = m_wikiContext.getPage();
 
         try {
-            if( page != null && engine.getPageManager().wikiPageExists( page ) ) {
-                final List< WikiPage > versions = engine.getPageManager().getVersionHistory( page.getName() );
+            if( page != null && engine.getManager( PageManager.class ).wikiPageExists( page ) ) {
+                final List< WikiPage > versions = engine.getManager( PageManager.class ).getVersionHistory( page.getName() );
 
                 if( versions == null ) {
                     // There is no history

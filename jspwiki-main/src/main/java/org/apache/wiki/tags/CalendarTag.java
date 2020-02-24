@@ -20,8 +20,9 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -138,13 +139,13 @@ public class CalendarTag extends WikiTagBase {
      *  Returns a link to the given day.
      */
     private String getDayLink( final Calendar day ) {
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
         final String result;
 
         if( m_pageFormat != null ) {
             final String pagename = m_pageFormat.format( day.getTime() );
             
-            if( engine.getPageManager().wikiPageExists( pagename ) ) {
+            if( engine.getManager( PageManager.class ).wikiPageExists( pagename ) ) {
                 if( m_urlFormat != null ) {
                     final String url = m_urlFormat.format( day.getTime() );
                     result = "<td class=\"link\"><a href=\""+url+"\">"+day.get( Calendar.DATE )+"</a></td>";
@@ -240,7 +241,7 @@ public class CalendarTag extends WikiTagBase {
      */
     @Override
     public final int doWikiStartTag() throws IOException {
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
         final JspWriter out = pageContext.getOut();
         final Calendar cal = Calendar.getInstance();
         final Calendar prevCal = Calendar.getInstance();

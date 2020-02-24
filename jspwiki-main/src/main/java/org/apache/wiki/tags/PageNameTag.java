@@ -18,9 +18,10 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.IOException;
@@ -34,15 +35,16 @@ public class PageNameTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
 
+    @Override
     public final int doWikiStartTag() throws IOException {
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
         final WikiPage page = m_wikiContext.getPage();
 
         if( page != null ) {
             if( page instanceof Attachment ) {
                 pageContext.getOut().print( TextUtil.replaceEntities( ((Attachment)page).getFileName() ) );
             } else {
-                pageContext.getOut().print( engine.getRenderingManager().beautifyTitle( m_wikiContext.getName() ) );
+                pageContext.getOut().print( engine.getManager( RenderingManager.class ).beautifyTitle( m_wikiContext.getName() ) );
             }
         }
 

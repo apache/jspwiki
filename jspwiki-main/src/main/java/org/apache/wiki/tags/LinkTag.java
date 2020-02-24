@@ -20,11 +20,13 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.TextUtil;
@@ -67,7 +69,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
 
     private BodyContent m_bodyContent;
 
-    public void initTag() {
+    @Override public void initTag() {
         super.initTag();
         m_version = m_cssClass = m_style = m_title = m_target = m_compareToVersion = m_rel = m_jsp = m_ref = m_accesskey = m_templatefile = null;
         m_context = WikiContext.VIEW;
@@ -147,7 +149,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     /**
      * Support for ParamTag supplied parameters in body.
      */
-    public void setContainedParameter( final String name, final String value ) {
+    @Override public void setContainedParameter( final String name, final String value ) {
         if( name != null ) {
             if( m_containedParams == null ) {
                 m_containedParams = new HashMap<>();
@@ -165,7 +167,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
      */
     private String figureOutURL() throws ProviderException {
         String url = null;
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
 
         if( m_pageName == null ) {
             final WikiPage page = m_wikiContext.getPage();
@@ -206,7 +208,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                 //
                 //  Internal wiki link, but is it an attachment link?
                 //
-                final WikiPage p = engine.getPageManager().getPage( m_pageName );
+                final WikiPage p = engine.getManager( PageManager.class ).getPage( m_pageName );
 
                 if( p instanceof Attachment ) {
                     url = m_wikiContext.getURL( WikiContext.ATTACH, m_pageName );
@@ -233,7 +235,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                 }
             }
         } else if( m_pageName != null && m_pageName.length() > 0 ) {
-            final WikiPage p = engine.getPageManager().getPage( m_pageName );
+            final WikiPage p = engine.getManager( PageManager.class ).getPage( m_pageName );
 
             String parms = (m_version != null) ? "version="+getVersion() : null;
 
@@ -286,14 +288,14 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     }
 
     private String makeBasicURL( final String context, final String page, String parms ) {
-        final WikiEngine engine = m_wikiContext.getEngine();
+        final Engine engine = m_wikiContext.getEngine();
 
         if( context.equals( WikiContext.DIFF ) ) {
             int r1;
             int r2;
 
             if( DiffLinkTag.VER_LATEST.equals( getVersion() ) ) {
-                final WikiPage latest = engine.getPageManager().getPage( page, WikiProvider.LATEST_VERSION );
+                final WikiPage latest = engine.getManager( PageManager.class ).getPage( page, WikiProvider.LATEST_VERSION );
 
                 r1 = latest.getVersion();
             } else if( DiffLinkTag.VER_PREVIOUS.equals(getVersion()) ) {
@@ -306,7 +308,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
             }
 
             if( DiffLinkTag.VER_LATEST.equals(m_compareToVersion) ) {
-                final WikiPage latest = engine.getPageManager().getPage( page, WikiProvider.LATEST_VERSION );
+                final WikiPage latest = engine.getManager( PageManager.class ).getPage( page, WikiProvider.LATEST_VERSION );
 
                 r2 = latest.getVersion();
             } else if( DiffLinkTag.VER_PREVIOUS.equals(m_compareToVersion) ) {
@@ -324,13 +326,13 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         return engine.getURL( m_context, m_pageName, parms );
     }
 
-    public int doWikiStartTag() throws Exception {
+    @Override public int doWikiStartTag() throws Exception {
         return EVAL_BODY_BUFFERED;
     }
 
-    public int doEndTag() {
+    @Override public int doEndTag() {
         try {
-            final WikiEngine engine = m_wikiContext.getEngine();
+            final Engine engine = m_wikiContext.getEngine();
             final JspWriter out = pageContext.getOut();
             final String url = figureOutURL();
 
@@ -344,8 +346,8 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
             sb.append( (m_accesskey != null) ? "accesskey=\""+m_accesskey+"\" " : "" );
             sb.append( (m_tabindex != null) ? "tabindex=\""+m_tabindex+"\" " : "" );
 
-            if( engine.getPageManager().getPage( m_pageName ) instanceof Attachment ) {
-                sb.append( engine.getAttachmentManager().forceDownload( m_pageName ) ? "download " : "" );
+            if( engine.getManager( PageManager.class ).getPage( m_pageName ) instanceof Attachment ) {
+                sb.append( engine.getManager( AttachmentManager.class ).forceDownload( m_pageName ) ? "download " : "" );
             }
 
             switch( m_format ) {
@@ -374,12 +376,12 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         return EVAL_PAGE;
     }
 
-    public void setBodyContent( final BodyContent bc )
+    @Override public void setBodyContent( final BodyContent bc )
     {
         m_bodyContent = bc;
     }
 
-    public void doInitBody() {
+    @Override public void doInitBody() {
     }
 
 }

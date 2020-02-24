@@ -18,13 +18,14 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspWriter;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
+
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
+
 
 /**
  *  Writes a link to a Wiki page.  Body of the link becomes the actual text.
@@ -50,7 +51,7 @@ public class LinkToTag
     public String m_title = "";
     public String m_accesskey = "";
 
-    public void initTag()
+    @Override public void initTag()
     {
         super.initTag();
         m_version = null;
@@ -61,23 +62,23 @@ public class LinkToTag
         return m_version;
     }
 
-    public void setVersion( String arg )
+    public void setVersion( final String arg )
     {
         m_version = arg;
     }
 
-    public void setTitle( String title )
+    public void setTitle( final String title )
     {
         m_title = title;
     }
 
-    public void setAccesskey( String access )
+    public void setAccesskey( final String access )
     {
         m_accesskey = access;
     }
 
 
-    public int doWikiStartTag()
+    @Override public int doWikiStartTag()
         throws IOException
     {
         String     pageName = m_pageName;
@@ -85,7 +86,7 @@ public class LinkToTag
 
         if( m_pageName == null )
         {
-            WikiPage p = m_wikiContext.getPage();
+            final WikiPage p = m_wikiContext.getPage();
 
             if( p != null )
             {
@@ -99,9 +100,9 @@ public class LinkToTag
             }
         }
 
-        JspWriter out = pageContext.getOut();
-        String url;
-        String linkclass;
+        final JspWriter out = pageContext.getOut();
+        final String url;
+        final String linkclass;
         String forceDownload = "";
 
         if( isattachment )
@@ -110,7 +111,7 @@ public class LinkToTag
                                        (getVersion() != null) ? "version="+getVersion() : null );
             linkclass = "attachment";
 
-            if( m_wikiContext.getEngine().getAttachmentManager().forceDownload( pageName ) )
+            if( m_wikiContext.getEngine().getManager( AttachmentManager.class ).forceDownload( pageName ) )
             {
                 forceDownload = "download ";
             }
@@ -118,7 +119,7 @@ public class LinkToTag
         }
         else
         {
-        	StringBuilder params = new StringBuilder();
+        	final StringBuilder params = new StringBuilder();
             if( getVersion() != null ) params.append( "version="+getVersion() );
             if( getTemplate() != null ) params.append( (params.length()>0?"&amp;":"") + "skin="+getTemplate() );
 

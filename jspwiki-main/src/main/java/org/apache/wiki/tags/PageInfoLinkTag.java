@@ -19,8 +19,9 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.pages.PageManager;
 
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
@@ -54,8 +55,8 @@ public class PageInfoLinkTag extends WikiLinkTag {
         m_accesskey = access;
     }
     
-    public final int doWikiStartTag() throws IOException {
-        final WikiEngine engine = m_wikiContext.getEngine();
+    @Override public final int doWikiStartTag() throws IOException {
+        final Engine engine = m_wikiContext.getEngine();
         String     pageName = m_pageName;
 
         if( m_pageName == null ) {
@@ -67,7 +68,7 @@ public class PageInfoLinkTag extends WikiLinkTag {
             }
         }
 
-        if( engine.getPageManager().wikiPageExists(pageName) ) {
+        if( engine.getManager( PageManager.class ).wikiPageExists(pageName) ) {
             final JspWriter out = pageContext.getOut();
             final String url = m_wikiContext.getURL( WikiContext.INFO, pageName );
 

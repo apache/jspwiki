@@ -19,8 +19,9 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.pages.PageManager;
 
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
@@ -40,100 +41,82 @@ import java.io.IOException;
  *
  *  @since 2.0
  */
-public class EditLinkTag
-    extends WikiLinkTag
-{
+public class EditLinkTag extends WikiLinkTag {
+
     private static final long serialVersionUID = 0L;
     
     public String m_version = null;
     public String m_title = "";
     public String m_accesskey = "";
     
-    public void initTag()
-    {
+    @Override
+    public void initTag() {
         super.initTag();
         m_version = null;
     }
 
-    public void setVersion( String vers )
+    public void setVersion( final String vers )
     {
         m_version = vers;
     }
     
-    public void setTitle( String title )
+    public void setTitle( final String title )
     {
         m_title = title;
     }
 
-    public void setAccesskey( String access )
+    public void setAccesskey( final String access )
     {
         m_accesskey = access;
     }
 
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiEngine engine   = m_wikiContext.getEngine();
-        WikiPage   page     = null;
-        String     versionString = "";
-        String     pageName = null;
+    @Override
+    public final int doWikiStartTag() throws IOException {
+        final Engine engine   = m_wikiContext.getEngine();
+        WikiPage page = null;
+        String versionString = "";
+        final String pageName;
         
-        //
         //  Determine the page and the link.
-        //
-        if( m_pageName == null )
-        {
+        if( m_pageName == null ) {
             page = m_wikiContext.getPage();
-            if( page == null )
-            {
+            if( page == null ) {
                 // You can't call this on the page itself anyways.
                 return SKIP_BODY;
             }
 
             pageName = page.getName();
-        }
-        else
-        {
+        } else {
             pageName = m_pageName;
         }
 
         //
         //  Determine the latest version, if the version attribute is "this".
         //
-        if( m_version != null )
-        {
-            if( "this".equalsIgnoreCase(m_version) )
-            {
-                if( page == null )
-                {
+        if( m_version != null ) {
+            if( "this".equalsIgnoreCase( m_version ) ) {
+                if( page == null ) {
                     // No page, so go fetch according to page name.
-                    page = engine.getPageManager().getPage( m_pageName );
+                    page = engine.getManager( PageManager.class ).getPage( m_pageName );
                 }
-                
-                if( page != null )
-                {
-                    versionString = "version="+page.getVersion();
+
+                if( page != null ) {
+                    versionString = "version=" + page.getVersion();
                 }
-            }
-            else
-            {
-                versionString = "version="+m_version;
+            } else {
+                versionString = "version=" + m_version;
             }
         }
 
         //
-        //  Finally, print out the correct link, according to what
-        //  user commanded.
+        //  Finally, print out the correct link, according to what user commanded.
         //
-        JspWriter out = pageContext.getOut();
-
-        switch( m_format )
-        {
+        final JspWriter out = pageContext.getOut();
+        switch( m_format ) {
           case ANCHOR:
             out.print("<a href=\""+m_wikiContext.getURL(WikiContext.EDIT,pageName, versionString)
                      +"\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\">");
             break;
-
           case URL:
             out.print( m_wikiContext.getURL(WikiContext.EDIT,pageName,versionString) );
             break;
@@ -141,4 +124,5 @@ public class EditLinkTag
 
         return EVAL_BODY_INCLUDE;
     }
+
 }

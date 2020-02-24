@@ -18,17 +18,16 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
-
-import javax.servlet.jsp.JspWriter;
-
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.rss.RSSGenerator;
+
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 /**
  *  Writes an image link to a JSPWiki RSS file.  If RSS generation has
@@ -62,12 +61,12 @@ public class RSSImageLinkTag
      *
      *  @param title A string for the title.
      */
-    public void setTitle( String title )
+    public void setTitle( final String title )
     {
         m_title = title;
     }
 
-    public void setMode( String mode )
+    public void setMode( final String mode )
     {
         m_mode = mode;
     }
@@ -87,31 +86,21 @@ public class RSSImageLinkTag
      *  {@inheritDoc}
      */
     @Override
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiEngine engine = m_wikiContext.getEngine();
-        JspWriter out = pageContext.getOut();
-        ResourceBundle rb = Preferences.getBundle( m_wikiContext, InternationalizationManager.CORE_BUNDLE );
-
-        if( engine.getRSSGenerator() != null && engine.getRSSGenerator().isEnabled() )
-        {
-            if( RSSGenerator.MODE_FULL.equals(m_mode) )
-            {
-                String rssURL = engine.getGlobalRSSURL();
-
-                if( rssURL != null )
-                {
+    public final int doWikiStartTag() throws IOException {
+        final Engine engine = m_wikiContext.getEngine();
+        final JspWriter out = pageContext.getOut();
+        final ResourceBundle rb = Preferences.getBundle( m_wikiContext, InternationalizationManager.CORE_BUNDLE );
+        if( engine.getManager( RSSGenerator.class ) != null && engine.getManager( RSSGenerator.class ).isEnabled() ) {
+            if( RSSGenerator.MODE_FULL.equals(m_mode) ) {
+                final String rssURL = engine.getGlobalRSSURL();
+                if( rssURL != null ) {
                     out.print("<a class=\"feed\" href=\""+rssURL);
                     out.print( " title='"+rb.getString( "rss.title.full" )+"'>" );
                     out.print( "&nbsp;</a> ");
                 }
-            }
-            else
-            {
-                String page = m_pageName != null ? m_pageName : m_wikiContext.getPage().getName();
-
-                String params = "page="+page+"&mode="+m_mode;
+            } else {
+                final String page = m_pageName != null ? m_pageName : m_wikiContext.getPage().getName();
+                final String params = "page="+page+"&mode="+m_mode;
                 out.print( "<a href='"+m_wikiContext.getURL( WikiContext.NONE, "rss.jsp", params ));
                 out.print( "' class='feed'" );
                 out.print( " title='"+MessageFormat.format( rb.getString( "rss.title" ), page )+"'>" );
@@ -121,4 +110,5 @@ public class RSSImageLinkTag
 
         return SKIP_BODY;
     }
+
 }
