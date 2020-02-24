@@ -23,6 +23,7 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.junit.jupiter.api.AfterEach;
@@ -36,7 +37,7 @@ public class RenderingManagerTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        m_engine.getPageManager().deletePage( "TestPage" );
+        m_engine.getManager( PageManager.class ).deletePage( "TestPage" );
         CacheManager.getInstance().removeAllCaches();
     }
 
@@ -106,23 +107,23 @@ public class RenderingManagerTest {
     {
         m_engine.saveText( "TestPage", TEST_TEXT );
 
-        StopWatch sw = new StopWatch();
+        final StopWatch sw = new StopWatch();
 
         // System.out.println("DOM cache speed test:");
         sw.start();
 
         for( int i = 0; i < 300; i++ )
         {
-            WikiPage page = m_engine.getPageManager().getPage( "TestPage" );
-            String pagedata = m_engine.getPageManager().getPureText( page );
+            final WikiPage page = m_engine.getManager( PageManager.class ).getPage( "TestPage" );
+            final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page );
 
-            WikiContext context = new WikiContext( m_engine, page );
+            final WikiContext context = new WikiContext( m_engine, page );
 
-            MarkupParser p = m_manager.getParser( context, pagedata );
+            final MarkupParser p = m_manager.getParser( context, pagedata );
 
-            WikiDocument d = p.parse();
+            final WikiDocument d = p.parse();
 
-            String html = m_manager.getHTML( context, d );
+            final String html = m_manager.getHTML( context, d );
             Assertions.assertNotNull( "noncached got null response",html);
         }
 
@@ -135,8 +136,8 @@ public class RenderingManagerTest {
         sw.start();
 
         for( int i = 0; i < 300; i++ ) {
-            final WikiPage page = m_engine.getPageManager().getPage( "TestPage" );
-            final String pagedata = m_engine.getPageManager().getPureText( page );
+            final WikiPage page = m_engine.getManager( PageManager.class ).getPage( "TestPage" );
+            final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page );
             final WikiContext context = new WikiContext( m_engine, page );
             final String html = m_manager.getHTML( context, pagedata );
 

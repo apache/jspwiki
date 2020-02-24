@@ -17,6 +17,7 @@
     under the License.
  */
 package org.apache.wiki.auth;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
@@ -34,6 +35,7 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,11 +62,12 @@ public class AuthorizationManagerTest
     {
         private final String m_name;
 
-        public TestPrincipal( String name )
+        public TestPrincipal( final String name )
         {
             m_name = name;
         }
 
+        @Override
         public String getName()
         {
             return m_name;
@@ -74,7 +77,7 @@ public class AuthorizationManagerTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
 
         // Make sure we are using the default security policy file jspwiki.policy
         props.put( AuthorizationManager.POLICY, AuthorizationManager.DEFAULT_POLICY );
@@ -97,8 +100,8 @@ public class AuthorizationManagerTest
     {
         // Save a page without an ACL
         m_engine.saveText( "TestDefaultPage", "Foo" );
-        Permission view = PermissionFactory.getPagePermission( "*:TestDefaultPage", "view" );
-        Permission edit = PermissionFactory.getPagePermission( "*:TestDefaultPage", "edit" );
+        final Permission view = PermissionFactory.getPagePermission( "*:TestDefaultPage", "view" );
+        final Permission edit = PermissionFactory.getPagePermission( "*:TestDefaultPage", "edit" );
         WikiSession session;
 
         // Alice is asserted
@@ -114,9 +117,9 @@ public class AuthorizationManagerTest
         // Delete the test page
         try
         {
-            m_engine.getPageManager().deletePage( "TestDefaultPage" );
+            m_engine.getManager( PageManager.class ).deletePage( "TestDefaultPage" );
         }
-        catch( ProviderException e )
+        catch( final ProviderException e )
         {
             Assertions.fail( e.getMessage() );
         }
@@ -173,19 +176,19 @@ public class AuthorizationManagerTest
     public void testAssertedSession() throws Exception
     {
         // Create Alice and her roles
-        Principal alice = new WikiPrincipal( Users.ALICE );
-        Role it = new Role( "IT" );
-        Role engineering = new Role( "Engineering" );
-        Role finance = new Role( "Finance" );
-        Principal admin = new GroupPrincipal( "Admin" );
-        WikiSession session = WikiSessionTest.assertedSession(
+        final Principal alice = new WikiPrincipal( Users.ALICE );
+        final Role it = new Role( "IT" );
+        final Role engineering = new Role( "Engineering" );
+        final Role finance = new Role( "Finance" );
+        final Principal admin = new GroupPrincipal( "Admin" );
+        final WikiSession session = WikiSessionTest.assertedSession(
                 m_engine,
                 Users.ALICE,
                 new Principal[] { it, engineering, admin } );
 
         // Create two groups: Alice should be part of group Bar, but not Foo
-        Group fooGroup = m_groupMgr.parseGroup( "Foo", "", true );
-        Group barGroup = m_groupMgr.parseGroup( "Bar", "", true );
+        final Group fooGroup = m_groupMgr.parseGroup( "Foo", "", true );
+        final Group barGroup = m_groupMgr.parseGroup( "Bar", "", true );
         barGroup.add( alice );
         m_groupMgr.setGroup( m_session, fooGroup );
         m_groupMgr.setGroup( m_session, barGroup );
@@ -221,19 +224,19 @@ public class AuthorizationManagerTest
     public void testAuthenticatedSession() throws Exception
     {
         // Create Alice and her roles
-        Principal alice = new WikiPrincipal( Users.ALICE );
-        Role it = new Role( "IT" );
-        Role engineering = new Role( "Engineering" );
-        Role finance = new Role( "Finance" );
-        Principal admin = new GroupPrincipal( "Admin" );
-        WikiSession session = WikiSessionTest.containerAuthenticatedSession(
+        final Principal alice = new WikiPrincipal( Users.ALICE );
+        final Role it = new Role( "IT" );
+        final Role engineering = new Role( "Engineering" );
+        final Role finance = new Role( "Finance" );
+        final Principal admin = new GroupPrincipal( "Admin" );
+        final WikiSession session = WikiSessionTest.containerAuthenticatedSession(
                 m_engine,
                 Users.ALICE,
                 new Principal[] { it, engineering, admin } );
 
         // Create two groups: Alice should be part of group Bar, but not Foo
-        Group fooGroup = m_groupMgr.parseGroup( "Foo", "", true );
-        Group barGroup = m_groupMgr.parseGroup( "Bar", "", true );
+        final Group fooGroup = m_groupMgr.parseGroup( "Foo", "", true );
+        final Group barGroup = m_groupMgr.parseGroup( "Bar", "", true );
         barGroup.add( alice );
         m_groupMgr.setGroup( m_session, fooGroup );
         m_groupMgr.setGroup( m_session, barGroup );
@@ -269,17 +272,17 @@ public class AuthorizationManagerTest
     public void testInheritedPermissions() throws Exception
     {
         // Create test page & attachment
-        String src = "[{ALLOW edit Alice}] ";
+        final String src = "[{ALLOW edit Alice}] ";
         m_engine.saveText( "Test", src );
 
-        File f = m_engine.makeAttachmentFile();
-        Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
+        final File f = m_engine.makeAttachmentFile();
+        final Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, f );
 
-        Attachment p = (Attachment) m_engine.getPageManager().getPage( "Test/test1.txt" );
-        Permission view = PermissionFactory.getPagePermission( p, "view" );
-        Permission edit = PermissionFactory.getPagePermission( p, "edit" );
+        final Attachment p = (Attachment) m_engine.getManager( PageManager.class ).getPage( "Test/test1.txt" );
+        final Permission view = PermissionFactory.getPagePermission( p, "view" );
+        final Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
         // Create authenticated session with user 'Alice', who can read & edit (in ACL)
         WikiSession session;
@@ -294,24 +297,24 @@ public class AuthorizationManagerTest
 
         // Delete test page & attachment
         m_engine.getAttachmentManager().deleteAttachment( att );
-        m_engine.getPageManager().deletePage( "Test" );
+        m_engine.getManager( PageManager.class ).deletePage( "Test" );
     }
 
     @Test
     public void testInheritedAclPermissions() throws Exception
     {
         // Create test page & attachment
-        String src = "[{ALLOW view Alice}] ";
+        final String src = "[{ALLOW view Alice}] ";
         m_engine.saveText( "Test", src );
 
-        File f = m_engine.makeAttachmentFile();
-        Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
+        final File f = m_engine.makeAttachmentFile();
+        final Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, f );
 
-        Attachment p = (Attachment) m_engine.getPageManager().getPage( "Test/test1.txt" );
-        Permission view = PermissionFactory.getPagePermission( p, "view" );
-        Permission edit = PermissionFactory.getPagePermission( p, "edit" );
+        final Attachment p = (Attachment) m_engine.getManager( PageManager.class ).getPage( "Test/test1.txt" );
+        final Permission view = PermissionFactory.getPagePermission( p, "view" );
+        final Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
         // Create session with user 'Alice', who can read (in ACL)
         WikiSession session;
@@ -326,25 +329,25 @@ public class AuthorizationManagerTest
 
         // Delete test page & attachment
         m_engine.getAttachmentManager().deleteAttachment( att );
-        m_engine.getPageManager().deletePage( "Test" );
+        m_engine.getManager( PageManager.class ).deletePage( "Test" );
     }
 
     @Test
     public void testHasRoleOrPrincipal() throws Exception
     {
         // Create new user Alice and 2 sample roles
-        Principal alice = new WikiPrincipal( Users.ALICE );
-        Role it = new Role( "IT" );
-        Role finance = new Role( "Finance" );
+        final Principal alice = new WikiPrincipal( Users.ALICE );
+        final Role it = new Role( "IT" );
+        final Role finance = new Role( "Finance" );
 
         // Create Group1 with Alice in it, Group2 without
         WikiSession session = WikiSessionTest.adminSession( m_engine );
-        Group g1 = m_groupMgr.parseGroup( "Group1", "Alice", true );
+        final Group g1 = m_groupMgr.parseGroup( "Group1", "Alice", true );
         m_groupMgr.setGroup( session, g1 );
-        Principal group1 = g1.getPrincipal();
-        Group g2 = m_groupMgr.parseGroup( "Group2", "Bob", true );
+        final Principal group1 = g1.getPrincipal();
+        final Group g2 = m_groupMgr.parseGroup( "Group2", "Bob", true );
         m_groupMgr.setGroup( session, g2 );
-        Principal group2 = g2.getPrincipal();
+        final Principal group2 = g2.getPrincipal();
 
         // Create anonymous session; not in ANY custom roles or groups
         session = WikiSessionTest.anonymousSession( m_engine );
@@ -390,18 +393,18 @@ public class AuthorizationManagerTest
     public void testIsUserInRole() throws Exception
     {
         // Create new user Alice and 2 sample roles
-        Principal alice = new WikiPrincipal( Users.ALICE );
-        Role it = new Role( "IT" );
-        Role finance = new Role( "Finance" );
+        final Principal alice = new WikiPrincipal( Users.ALICE );
+        final Role it = new Role( "IT" );
+        final Role finance = new Role( "Finance" );
 
         // Create Group1 with Alice in it, Group2 without
         WikiSession session = WikiSessionTest.adminSession( m_engine );
-        Group g1 = m_groupMgr.parseGroup( "Group1", "Alice", true );
+        final Group g1 = m_groupMgr.parseGroup( "Group1", "Alice", true );
         m_groupMgr.setGroup( session, g1 );
-        Principal group1 = g1.getPrincipal();
-        Group g2 = m_groupMgr.parseGroup( "Group2", "Bob", true );
+        final Principal group1 = g1.getPrincipal();
+        final Group g2 = m_groupMgr.parseGroup( "Group2", "Bob", true );
         m_groupMgr.setGroup( session, g2 );
-        Principal group2 = g2.getPrincipal();
+        final Principal group2 = g2.getPrincipal();
 
         // Create anonymous session; not in ANY custom roles or groups
         session = WikiSessionTest.anonymousSession( m_engine );
@@ -447,12 +450,12 @@ public class AuthorizationManagerTest
     public void testPrincipalAcl() throws Exception
     {
         // Create test page & attachment
-        String src = "[{ALLOW edit Alice}] ";
+        final String src = "[{ALLOW edit Alice}] ";
         m_engine.saveText( "Test", src );
 
-        WikiPage p = m_engine.getPageManager().getPage( "Test" );
-        Permission view = PermissionFactory.getPagePermission( p, "view" );
-        Permission edit = PermissionFactory.getPagePermission( p, "edit" );
+        final WikiPage p = m_engine.getManager( PageManager.class ).getPage( "Test" );
+        final Permission view = PermissionFactory.getPagePermission( p, "view" );
+        final Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
         // Create session with authenticated user 'Alice', who can read & edit (in ACL)
         WikiSession session;
@@ -468,9 +471,9 @@ public class AuthorizationManagerTest
         // Cleanup
         try
         {
-            m_engine.getPageManager().deletePage( "Test" );
+            m_engine.getManager( PageManager.class ).deletePage( "Test" );
         }
-        catch( ProviderException e )
+        catch( final ProviderException e )
         {
             Assertions.fail( "Could not delete page" );
         }
@@ -500,7 +503,7 @@ public class AuthorizationManagerTest
     @Test
     public void testResolveGroups() throws WikiException
     {
-        Group group1 = m_groupMgr.parseGroup( "SampleGroup", "", true );
+        final Group group1 = m_groupMgr.parseGroup( "SampleGroup", "", true );
         m_groupMgr.setGroup( m_session, group1 );
 
         Assertions.assertEquals( group1.getPrincipal(), m_auth.resolvePrincipal( "SampleGroup" ) );
@@ -509,10 +512,10 @@ public class AuthorizationManagerTest
         // We shouldn't be able to spoof a built-in role
         try
         {
-            Group group2 = m_groupMgr.parseGroup( "Authenticated", "", true );
+            final Group group2 = m_groupMgr.parseGroup( "Authenticated", "", true );
             Assertions.assertNotSame( group2.getPrincipal(), m_auth.resolvePrincipal( "Authenticated" ) );
         }
-        catch ( WikiSecurityException e )
+        catch ( final WikiSecurityException e )
         {
             Assertions.assertTrue ( true, "Authenticated not allowed as group name." );
         }
@@ -523,7 +526,7 @@ public class AuthorizationManagerTest
     public void testResolveUsers() throws WikiException
     {
         // We should be able to resolve a user by login, user, or wiki name
-        UserProfile profile = m_engine.getUserManager().getUserDatabase().newProfile();
+        final UserProfile profile = m_engine.getUserManager().getUserDatabase().newProfile();
         profile.setEmail( "authmanagertest@tester.net" );
         profile.setFullname( "AuthorizationManagerTest User" );
         profile.setLoginName( "authmanagertest" );
@@ -531,7 +534,7 @@ public class AuthorizationManagerTest
         {
             m_engine.getUserManager().getUserDatabase().save( profile );
         }
-        catch( WikiSecurityException e )
+        catch( final WikiSecurityException e )
         {
             Assertions.fail( "Failed save: " + e.getLocalizedMessage() );
         }
@@ -542,14 +545,14 @@ public class AuthorizationManagerTest
         {
             m_engine.getUserManager().getUserDatabase().deleteByLoginName( "authmanagertest" );
         }
-        catch( WikiSecurityException e )
+        catch( final WikiSecurityException e )
         {
             Assertions.fail( "Failed delete: " + e.getLocalizedMessage() );
         }
 
 
         // A wiki group should resolve to itself
-        Group group1 = m_groupMgr.parseGroup( "SampleGroup", "", true );
+        final Group group1 = m_groupMgr.parseGroup( "SampleGroup", "", true );
         m_groupMgr.setGroup( m_session, group1 );
         Assertions.assertEquals( group1.getPrincipal(), m_auth.resolvePrincipal( "SampleGroup" ) );
         m_groupMgr.removeGroup( "SampleGroup" );
@@ -561,7 +564,7 @@ public class AuthorizationManagerTest
         Assertions.assertNotSame( new WikiPrincipal( "Authenticated" ), m_auth.resolvePrincipal( "Authenticated" ) );
 
         // An unknown user should resolve to a generic UnresolvedPrincipal
-        Principal principal = new UnresolvedPrincipal( "Bart Simpson" );
+        final Principal principal = new UnresolvedPrincipal( "Bart Simpson" );
         Assertions.assertEquals( principal, m_auth.resolvePrincipal( "Bart Simpson" ) );
     }
 
@@ -569,12 +572,12 @@ public class AuthorizationManagerTest
     public void testRoleAcl() throws Exception
     {
         // Create test page & attachment
-        String src = "[{ALLOW edit Authenticated}] ";
+        final String src = "[{ALLOW edit Authenticated}] ";
         m_engine.saveText( "Test", src );
 
-        WikiPage p = m_engine.getPageManager().getPage( "Test" );
-        Permission view = PermissionFactory.getPagePermission( p, "view" );
-        Permission edit = PermissionFactory.getPagePermission( p, "edit" );
+        final WikiPage p = m_engine.getManager( PageManager.class ).getPage( "Test" );
+        final Permission view = PermissionFactory.getPagePermission( p, "view" );
+        final Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
         // Create session with authenticated user 'Alice', who can read & edit
         WikiSession session;
@@ -590,9 +593,9 @@ public class AuthorizationManagerTest
         // Cleanup
         try
         {
-            m_engine.getPageManager().deletePage( "Test" );
+            m_engine.getManager( PageManager.class ).deletePage( "Test" );
         }
-        catch( ProviderException e )
+        catch( final ProviderException e )
         {
             Assertions.fail( e.getMessage() );
         }
@@ -662,8 +665,8 @@ public class AuthorizationManagerTest
     {
         m_engine.saveText( "TestDefaultPage", "Foo [{ALLOW view FooBar}]" );
 
-        Principal admin = new GroupPrincipal( "Admin" );
-        WikiSession session = WikiSessionTest.containerAuthenticatedSession(
+        final Principal admin = new GroupPrincipal( "Admin" );
+        final WikiSession session = WikiSessionTest.containerAuthenticatedSession(
                 m_engine,
                 Users.ALICE,
                 new Principal[] { admin } );
@@ -677,7 +680,7 @@ public class AuthorizationManagerTest
     {
         m_engine.saveText( "TestDefaultPage", "Foo [{ALLOW view FooBar}]" );
 
-        WikiSession session = WikiSessionTest.adminSession(m_engine);
+        final WikiSession session = WikiSessionTest.adminSession(m_engine);
 
         Assertions.assertTrue( m_auth.checkPermission( session, new AllPermission( m_engine.getApplicationName() ) ), "Alice has AllPermission" );
         Assertions.assertTrue( m_auth.checkPermission( session, new PagePermission("TestDefaultPage","view") ),"Alice cannot read" );
@@ -686,7 +689,7 @@ public class AuthorizationManagerTest
     @Test
     public void testUserPolicy() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
 
         // Make sure we are using the default security policy file jspwiki.policy
         props.put( AuthorizationManager.POLICY, "jspwiki-testUserPolicy.policy" );

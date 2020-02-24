@@ -24,6 +24,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +47,7 @@ public class DefaultPluginManagerTest {
 
     @AfterEach
     public void tearDown() throws ProviderException {
-        engine.getPageManager().deletePage("Testpage");
+        engine.getManager( PageManager.class ).deletePage("Testpage");
     }
 
     @Test
@@ -146,7 +147,7 @@ public class DefaultPluginManagerTest {
 
     @Test
     public void testParserPlugin() throws Exception {
-        engine.getPageManager().saveText(context, "[{SamplePlugin render=true}]");
+        engine.getManager( PageManager.class ).saveText(context, "[{SamplePlugin render=true}]");
         engine.getRenderingManager().getHTML( "Testpage" );
         Assertions.assertTrue( SamplePlugin.c_rendered );
     }

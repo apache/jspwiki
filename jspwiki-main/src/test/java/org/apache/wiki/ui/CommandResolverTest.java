@@ -28,6 +28,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.GroupPrincipal;
+import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,8 +53,8 @@ public class CommandResolverTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        m_engine.getPageManager().deletePage( "SinglePage" );
-        m_engine.getPageManager().deletePage( "PluralPage" );
+        m_engine.getManager( PageManager.class ).deletePage( "SinglePage" );
+        m_engine.getManager( PageManager.class ).deletePage( "PluralPage" );
     }
 
     @Test
@@ -124,7 +125,7 @@ public class CommandResolverTest {
 
     @Test
     public void testFindWikiActionWithParams() {
-        final WikiPage page = m_engine.getPageManager().getPage( "SinglePage" );
+        final WikiPage page = m_engine.getManager( PageManager.class ).getPage( "SinglePage" );
 
         // Passing an EDIT request with page param yields a wrapped action
         MockHttpServletRequest request = m_engine.newHttpRequest( "/Edit.jsp?page=SinglePage" );

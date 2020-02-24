@@ -19,6 +19,7 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,53 +52,53 @@ public class InsertPageTest
     @Test
     public void testRecursive() throws Exception
     {
-        String src = "[{InsertPage page='ThisPage'}] [{ALLOW view Anonymous}]";
+        final String src = "[{InsertPage page='ThisPage'}] [{ALLOW view Anonymous}]";
 
         testEngine.saveText("ThisPage",src);
 
         // Just check that it contains a proper error message; don't bother do HTML
         // checking.
-        String res = testEngine.getRenderingManager().getHTML("ThisPage");
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML("ThisPage");
         Assertions.assertTrue( res.indexOf("Circular reference") != -1 );
     }
 
     @Test
     public void testRecursive2() throws Exception
     {
-        String src  = "[{InsertPage page='ThisPage2'}]";
-        String src2 = "[{InsertPage page='ThisPage'}]";
+        final String src  = "[{InsertPage page='ThisPage2'}]";
+        final String src2 = "[{InsertPage page='ThisPage'}]";
 
         testEngine.saveText("ThisPage",src);
         testEngine.saveText("ThisPage2",src2);
 
         // Just check that it contains a proper error message; don't bother do HTML
         // checking.
-        Assertions.assertTrue( testEngine.getRenderingManager().getHTML("ThisPage").indexOf("Circular reference") != -1 );
+        Assertions.assertTrue( testEngine.getManager( RenderingManager.class ).getHTML("ThisPage").indexOf("Circular reference") != -1 );
     }
 
     @Test
     public void testMultiInvocation() throws Exception {
-        String src  = "[{InsertPage page='ThisPage2'}] [{InsertPage page='ThisPage2'}]";
-        String src2 = "foo[{ALLOW view Anonymous}]";
+        final String src  = "[{InsertPage page='ThisPage2'}] [{InsertPage page='ThisPage2'}]";
+        final String src2 = "foo[{ALLOW view Anonymous}]";
 
         testEngine.saveText("ThisPage",src);
         testEngine.saveText("ThisPage2",src2);
 
-        Assertions.assertTrue( testEngine.getRenderingManager().getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
+        Assertions.assertTrue( testEngine.getManager( RenderingManager.class ).getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
         Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div> <div class=\"inserted-page \" >foo\n</div>\n",
-                                 testEngine.getRenderingManager().getHTML("ThisPage"), "found != 2" );
+                testEngine.getManager( RenderingManager.class ).getHTML("ThisPage"), "found != 2" );
     }
 
     @Test
     public void testUnderscore() throws Exception {
-        String src  = "[{InsertPage page='Test_Page'}]";
-        String src2 = "foo[{ALLOW view Anonymous}]";
+        final String src  = "[{InsertPage page='Test_Page'}]";
+        final String src2 = "foo[{ALLOW view Anonymous}]";
 
         testEngine.saveText("ThisPage",src);
         testEngine.saveText("Test_Page",src2);
 
-        Assertions.assertTrue( testEngine.getRenderingManager().getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
-        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getRenderingManager().getHTML("ThisPage"), "found != 1" );
+        Assertions.assertTrue( testEngine.getManager( RenderingManager.class ).getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
+        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getManager( RenderingManager.class ).getHTML("ThisPage"), "found != 1" );
     }
 
     /**
@@ -109,7 +110,7 @@ public class InsertPageTest
         testEngine.saveText( "ThisPage", "[{InsertPage page='Test Page'}]" );
         testEngine.saveText( "Test Page", "foo[{ALLOW view Anonymous}]" );
 
-        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getRenderingManager().getHTML( "ThisPage" ), "found != 1" );
+        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getManager( RenderingManager.class ).getHTML( "ThisPage" ), "found != 1" );
     }
 
     /**
@@ -121,7 +122,7 @@ public class InsertPageTest
         testEngine.saveText( "ThisPage", "[{InsertPage page='Test Page'}]" );
         testEngine.saveText( "TestPage", "foo[{ALLOW view Anonymous}]" );
 
-        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getRenderingManager().getHTML( "ThisPage" ), "found != 1" );
+        Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getManager( RenderingManager.class ).getHTML( "ThisPage" ), "found != 1" );
     }
 
 }

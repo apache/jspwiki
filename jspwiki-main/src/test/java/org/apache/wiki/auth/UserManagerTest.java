@@ -61,7 +61,7 @@ public class UserManagerTest {
      */
     @BeforeEach
     public void setUp() throws Exception {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
 
         // Make sure user profile save workflow is OFF
         props.remove( "jspwiki.approver" + WorkflowManager.WF_UP_CREATE_SAVE_APPROVER );
@@ -76,7 +76,7 @@ public class UserManagerTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        GroupManager groupManager = m_engine.getGroupManager();
+        final GroupManager groupManager = m_engine.getGroupManager();
         if( groupManager.findRole( m_groupName ) != null ) {
             groupManager.removeGroup( m_groupName );
         }
@@ -84,7 +84,7 @@ public class UserManagerTest {
 
     /** Call this setup program to use the save-profile workflow. */
     protected void setUpWithWorkflow() throws Exception {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
 
         // Turn on user profile saves by the Admin group
         props.put( "jspwiki.approver." + WorkflowManager.WF_UP_CREATE_SAVE_APPROVER, "Admin" );
@@ -99,20 +99,20 @@ public class UserManagerTest {
     @Test
     public void testSetRenamedUserProfile() throws Exception {
         // First, count the number of users, groups, and pages
-        int oldUserCount = m_db.getWikiNames().length;
-        GroupManager groupManager = m_engine.getGroupManager();
-        PageManager pageManager = m_engine.getPageManager();
-        AuthorizationManager authManager = m_engine.getAuthorizationManager();
-        int oldGroupCount = groupManager.getRoles().length;
-        int oldPageCount = pageManager.getTotalPageCount();
+        final int oldUserCount = m_db.getWikiNames().length;
+        final GroupManager groupManager = m_engine.getGroupManager();
+        final PageManager pageManager = m_engine.getManager( PageManager.class );
+        final AuthorizationManager authManager = m_engine.getAuthorizationManager();
+        final int oldGroupCount = groupManager.getRoles().length;
+        final int oldPageCount = pageManager.getTotalPageCount();
 
         // Setup Step 1: create a new user with random name
-        WikiSession session = m_engine.guestSession();
-        long now = System.currentTimeMillis();
-        String oldLogin = "TestLogin" + now;
-        String oldName = "Test User " + now;
-        String newLogin = "RenamedLogin" + now;
-        String newName = "Renamed User " + now;
+        final WikiSession session = m_engine.guestSession();
+        final long now = System.currentTimeMillis();
+        final String oldLogin = "TestLogin" + now;
+        final String oldName = "Test User " + now;
+        final String newLogin = "RenamedLogin" + now;
+        final String newName = "Renamed User " + now;
         UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( oldLogin );
@@ -144,14 +144,14 @@ public class UserManagerTest {
         m_engine.saveText( pageName, "Test text. [{ALLOW view " + oldName + ", " + oldLogin + ", Alice}] More text." );
 
         // 3a. Make sure the page got saved, and that ONLY our test user has permission to read it.
-        WikiPage p = m_engine.getPageManager().getPage( pageName );
+        WikiPage p = m_engine.getManager( PageManager.class ).getPage( pageName );
         Assertions.assertEquals( oldPageCount + 1, pageManager.getTotalPageCount() );
         Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
         Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newName ) ) );
         Assertions.assertTrue( authManager.checkPermission( session, PermissionFactory.getPagePermission( p, "view" ) ), "Test User view page" );
-        WikiSession bobSession = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+        final WikiSession bobSession = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
         Assertions.assertFalse( authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ), "Bob !view page" );
 
         // Setup Step 4: change the user name in the profile and see what happens
@@ -179,7 +179,7 @@ public class UserManagerTest {
 
         // Test 3: our page should not contain the old wiki name OR login name
         // in the ACL any more (the full name is always used)
-        p = m_engine.getPageManager().getPage( pageName );
+        p = m_engine.getManager( PageManager.class ).getPage( pageName );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
@@ -190,11 +190,11 @@ public class UserManagerTest {
         // Test 4: our page text should have been re-written
         // (The new full name should be in the ACL, but the login name should have been removed)
         String expectedText = "[{ALLOW view Alice," + newName + "}]\nTest text.  More text.\r\n";
-        String actualText = m_engine.getPageManager().getText( pageName );
+        String actualText = m_engine.getManager( PageManager.class ).getText( pageName );
         Assertions.assertEquals( expectedText, actualText );
 
         // Remove our test page
-        m_engine.getPageManager().deletePage( pageName );
+        m_engine.getManager( PageManager.class ).deletePage( pageName );
 
         // Setup Step 6: re-create the group with our old test user names in it
         group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
@@ -204,7 +204,7 @@ public class UserManagerTest {
         // The test user should still be able to see the page (because the login name matches...)
         pageName = "TestPage2" + now;
         m_engine.saveText( pageName, "More test text. [{ALLOW view " + oldName + ", " + oldLogin + ", Alice}] More text." );
-        p = m_engine.getPageManager().getPage( pageName );
+        p = m_engine.getManager( PageManager.class ).getPage( pageName );
         Assertions.assertEquals( oldPageCount + 1, pageManager.getTotalPageCount() );
         Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
         Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
@@ -238,7 +238,7 @@ public class UserManagerTest {
 
         // Test 7: our page should not contain the old wiki name OR login name
         // in the ACL any more (the full name is always used)
-        p = m_engine.getPageManager().getPage( pageName );
+        p = m_engine.getManager( PageManager.class ).getPage( pageName );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
         Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
@@ -249,7 +249,7 @@ public class UserManagerTest {
         // Test 8: our page text should have been re-written
         // (The new full name should be in the ACL, but the login name should have been removed)
         expectedText = "[{ALLOW view Alice," + oldName + "}]\nMore test text.  More text.\r\n";
-        actualText = m_engine.getPageManager().getText( pageName );
+        actualText = m_engine.getManager( PageManager.class ).getText( pageName );
         Assertions.assertEquals( expectedText, actualText );
 
         // CLEANUP: delete the profile; user and page; should be back to old counts
@@ -259,18 +259,18 @@ public class UserManagerTest {
         groupManager.removeGroup( group.getName() );
         Assertions.assertEquals( oldGroupCount, groupManager.getRoles().length );
 
-        m_engine.getPageManager().deletePage( pageName );
+        m_engine.getManager( PageManager.class ).deletePage( pageName );
         Assertions.assertEquals( oldPageCount, pageManager.getTotalPageCount() );
     }
 
     @Test
     public void testSetUserProfile() throws Exception {
         // First, count the number of users in the db now.
-        int oldUserCount = m_db.getWikiNames().length;
+        final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        WikiSession session = m_engine.guestSession();
-        String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        final WikiSession session = m_engine.guestSession();
+        final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
@@ -293,12 +293,12 @@ public class UserManagerTest {
         setUpWithWorkflow();
 
         // First, count the number of users in the db now.
-        int oldUserCount = m_db.getWikiNames().length;
+        final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        WikiSession session = m_engine.guestSession();
-        String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
-        UserProfile profile = m_db.newProfile();
+        final WikiSession session = m_engine.guestSession();
+        final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
         profile.setFullname( "FullName" + loginName );
@@ -308,20 +308,20 @@ public class UserManagerTest {
         try {
             m_mgr.setUserProfile( session, profile );
             Assertions.fail( "We should have caught a DecisionRequiredException caused by approval!" );
-        } catch( DecisionRequiredException e ) {
+        } catch( final DecisionRequiredException e ) {
         }
 
         // The user should NOT be saved yet
         Assertions.assertEquals( oldUserCount, m_db.getWikiNames().length );
 
         // Now, look in Admin's queue, and verify there's a pending Decision there
-        DecisionQueue dq = m_engine.getWorkflowManager().getDecisionQueue();
-        Collection< Decision > decisions = dq.getActorDecisions( m_engine.adminSession() );
+        final DecisionQueue dq = m_engine.getWorkflowManager().getDecisionQueue();
+        final Collection< Decision > decisions = dq.getActorDecisions( m_engine.adminSession() );
         Assertions.assertEquals( 1, decisions.size() );
 
         // Verify that the Decision has all the facts and attributes we need
-        Decision d = decisions.iterator().next();
-        List< Fact > facts = d.getFacts();
+        final Decision d = decisions.iterator().next();
+        final List< Fact > facts = d.getFacts();
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_FULL_NAME, profile.getFullname() ), facts.get( 0 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );
@@ -344,12 +344,12 @@ public class UserManagerTest {
         setUpWithWorkflow();
 
         // First, count the number of users in the db now.
-        int oldUserCount = m_db.getWikiNames().length;
+        final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        WikiSession session = m_engine.guestSession();
-        String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
-        UserProfile profile = m_db.newProfile();
+        final WikiSession session = m_engine.guestSession();
+        final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
         profile.setFullname( "FullName" + loginName );
@@ -359,20 +359,20 @@ public class UserManagerTest {
         try {
             m_mgr.setUserProfile( session, profile );
             Assertions.fail( "We should have caught a DecisionRequiredException caused by approval!" );
-        } catch( DecisionRequiredException e ) {
+        } catch( final DecisionRequiredException e ) {
         }
 
         // The user should NOT be saved yet
         Assertions.assertEquals( oldUserCount, m_db.getWikiNames().length );
 
         // Now, look in Admin's queue, and verify there's a pending Decision there
-        DecisionQueue dq = m_engine.getWorkflowManager().getDecisionQueue();
-        Collection< Decision > decisions = dq.getActorDecisions( m_engine.adminSession() );
+        final DecisionQueue dq = m_engine.getWorkflowManager().getDecisionQueue();
+        final Collection< Decision > decisions = dq.getActorDecisions( m_engine.adminSession() );
         Assertions.assertEquals( 1, decisions.size() );
 
         // Verify that the Decision has all the facts and attributes we need
-        Decision d = decisions.iterator().next();
-        List< Fact > facts = d.getFacts();
+        final Decision d = decisions.iterator().next();
+        final List< Fact > facts = d.getFacts();
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_FULL_NAME, profile.getFullname() ), facts.get( 0 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );
@@ -389,12 +389,12 @@ public class UserManagerTest {
     @Test
     public void testSetCollidingUserProfile() throws Exception {
         // First, count the number of users in the db now.
-        int oldUserCount = m_db.getWikiNames().length;
+        final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        WikiSession session = m_engine.guestSession();
-        String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
-        UserProfile profile = m_db.newProfile();
+        final WikiSession session = m_engine.guestSession();
+        final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
         profile.setFullname( "FullName" + loginName );
@@ -405,7 +405,7 @@ public class UserManagerTest {
         try {
             m_mgr.setUserProfile( session, profile );
             Assertions.fail( "UserManager allowed saving of user with login name 'janne', but it shouldn't have." );
-        } catch( DuplicateUserException e ) {
+        } catch( final DuplicateUserException e ) {
             // Good! That's what we expected; reset for next test
             profile.setLoginName( loginName );
         }
@@ -415,7 +415,7 @@ public class UserManagerTest {
         try {
             m_mgr.setUserProfile( session, profile );
             Assertions.fail( "UserManager allowed saving of user with login name 'janne', but it shouldn't have." );
-        } catch( DuplicateUserException e ) {
+        } catch( final DuplicateUserException e ) {
             // Good! That's what we expected
         }
 

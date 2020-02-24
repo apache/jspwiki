@@ -20,27 +20,28 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
 public class GroupsTest {
+
     TestEngine testEngine = TestEngine.build();
 
     @AfterEach
     public void tearDown() throws Exception {
-        testEngine.getPageManager().deletePage( "Test" );
+        testEngine.getManager( PageManager.class ).deletePage( "Test" );
     }
 
     @Test
-    public void testTag() throws Exception
-    {
-        String src="[{Groups}]";
+    public void testTag() throws Exception {
+        final String src="[{Groups}]";
 
         testEngine.saveText( "Test", src );
 
-        String res = testEngine.getRenderingManager().getHTML( "Test" );
+        final String res = testEngine.getRenderingManager().getHTML( "Test" );
 
         Assertions.assertEquals( "<a href=\"/test/Group.jsp?group=Admin\">Admin</a>, "
                 + "<a href=\"/test/Group.jsp?group=Art\">Art</a>, "

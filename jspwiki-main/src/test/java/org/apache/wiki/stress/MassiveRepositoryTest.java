@@ -17,10 +17,12 @@
     under the License.  
  */
 package org.apache.wiki.stress;
+
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -42,10 +44,10 @@ public class MassiveRepositoryTest {
     public void setUp() throws Exception {
 
 
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        final String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
         // Remove file
-        File f = new File( files );
+        final File f = new File( files );
 
         TestEngine.deleteAll(f);
 
@@ -58,44 +60,44 @@ public class MassiveRepositoryTest {
     public void tearDown() throws Exception {
 
         
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        final String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
         // Remove file
-        File f = new File( files );
+        final File f = new File( files );
 
         TestEngine.deleteAll(f);
     }
 
-    private String getName( int i ) {
-        String baseName = "Page";
+    private String getName( final int i ) {
+        final String baseName = "Page";
         return baseName + i;
     }
     
     @Test
     public void testMassiveRepositoryGettingAllPagesFromCache() throws Exception {
-        int    numPages = 900;
-        int    numRevisions = 900;
-        int    numRenders = 9000;
-        int    tickmarks  = 90;
+        final int    numPages = 900;
+        final int    numRevisions = 900;
+        final int    numRenders = 9000;
+        final int    tickmarks  = 90;
         
         stressTest( numPages, numRevisions, numRenders, tickmarks );
     }
     
     @Test
     public void testMassiveRepositoryBypassingCacheByHavingTooMuchPages() throws Exception {
-    	int    numPages = 1001;
-        int    numRevisions = 1001;
-        int    numRenders = 10001;
-        int    tickmarks  = 100;
+    	final int    numPages = 1001;
+        final int    numRevisions = 1001;
+        final int    numRenders = 10001;
+        final int    tickmarks  = 100;
         
         stressTest( numPages, numRevisions, numRenders, tickmarks );
     }
 
-	void stressTest( int numPages, int numRevisions, int numRenders, int tickmarks ) throws WikiException {
-		String baseText = "!This is a page %d\r\n\r\nX\r\n\r\nLinks to [%1], [%2], [%3], [%4], [%5], [%6], [%7], [%8], [%9], [%0]";
+	void stressTest( final int numPages, final int numRevisions, final int numRenders, final int tickmarks ) throws WikiException {
+		final String baseText = "!This is a page %d\r\n\r\nX\r\n\r\nLinks to [%1], [%2], [%3], [%4], [%5], [%6], [%7], [%8], [%9], [%0]";
         
-        Random random = new Random();
-        Benchmark sw = new Benchmark();
+        final Random random = new Random();
+        final Benchmark sw = new Benchmark();
         sw.start();
         
         System.out.println("Creating "+numPages+" pages");
@@ -107,7 +109,7 @@ public class MassiveRepositoryTest {
         
         for( int i = 0; i < numPages; i++ )
         {
-            String name = getName(i);
+            final String name = getName(i);
             String text = TextUtil.replaceString( baseText, "%d", name );
             
             for( int r = 0; r < 10; r++ )
@@ -132,9 +134,9 @@ public class MassiveRepositoryTest {
         
         for( int i = 0; i < numRevisions; i++ )
         {
-            String page = getName( random.nextInt( numPages ) );
+            final String page = getName( random.nextInt( numPages ) );
             
-            String content = engine.getPageManager().getPureText( page, WikiProvider.LATEST_VERSION );
+            String content = engine.getManager( PageManager.class ).getPureText( page, WikiProvider.LATEST_VERSION );
             
             content = TextUtil.replaceString( content, "X", "XX" );
             
@@ -145,7 +147,7 @@ public class MassiveRepositoryTest {
         
         System.out.println("\nTook "+sw.toString()+", which is "+sw.toString(numRevisions)+" adds/second");
         
-        Assertions.assertEquals( numPages, engine.getPageManager().getTotalPageCount(), "Right number of pages" );
+        Assertions.assertEquals( numPages, engine.getManager( PageManager.class ).getTotalPageCount(), "Right number of pages" );
         
         //
         //  Rendering random pages
@@ -159,9 +161,9 @@ public class MassiveRepositoryTest {
         
         for( int i = 0; i < numRenders; i++ )
         {
-            String page = getName( random.nextInt( numPages ) );
+            final String page = getName( random.nextInt( numPages ) );
             
-            String content = engine.getRenderingManager().getHTML( page, WikiProvider.LATEST_VERSION );
+            final String content = engine.getRenderingManager().getHTML( page, WikiProvider.LATEST_VERSION );
               
             Assertions.assertNotNull(content);
             

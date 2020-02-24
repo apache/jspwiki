@@ -26,6 +26,7 @@ import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.providers.FileSystemProvider;
@@ -65,7 +66,7 @@ public class RSSGeneratorTest {
     public void testBlogRSS()
         throws Exception
     {
-        WeblogEntryPlugin plugin = new WeblogEntryPlugin();
+        final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
         m_testEngine.saveText( "TestBlog", "Foo1" );
 
         String newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
@@ -74,19 +75,19 @@ public class RSSGeneratorTest {
         newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
         m_testEngine.saveText( newPage, "!Title2\r\n__Bar__" );
 
-        RSSGenerator gen = m_testEngine.getRSSGenerator();
+        final RSSGenerator gen = m_testEngine.getRSSGenerator();
 
-        WikiContext context = new WikiContext( m_testEngine, m_testEngine.getPageManager().getPage("TestBlog") );
+        final WikiContext context = new WikiContext( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage("TestBlog") );
 
-        WeblogPlugin blogplugin = new WeblogPlugin();
+        final WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List< WikiPage > entries = blogplugin.findBlogEntries( m_testEngine,
+        final List< WikiPage > entries = blogplugin.findBlogEntries( m_testEngine,
                                                                "TestBlog",
                                                                new Date(0),
                                                                new Date(Long.MAX_VALUE) );
 
-        Feed feed = new RSS10Feed( context );
-        String blog = gen.generateBlogRSS( context, entries, feed );
+        final Feed feed = new RSS10Feed( context );
+        final String blog = gen.generateBlogRSS( context, entries, feed );
 
         Assertions.assertTrue( blog.indexOf("<description>Foo</description>") != -1, "has Foo" );
         Assertions.assertTrue( blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1, "has proper Bar" );
@@ -96,7 +97,7 @@ public class RSSGeneratorTest {
     public void testBlogRSS2()
         throws Exception
     {
-        WeblogEntryPlugin plugin = new WeblogEntryPlugin();
+        final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
         m_testEngine.saveText( "TestBlog", "Foo1" );
 
         String newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
@@ -105,19 +106,19 @@ public class RSSGeneratorTest {
         newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
         m_testEngine.saveText( newPage, "!Title2\r\n__Bar__" );
 
-        RSSGenerator gen = m_testEngine.getRSSGenerator();
+        final RSSGenerator gen = m_testEngine.getRSSGenerator();
 
-        WikiContext context = new WikiContext( m_testEngine, m_testEngine.getPageManager().getPage("TestBlog") );
+        final WikiContext context = new WikiContext( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage("TestBlog") );
 
-        WeblogPlugin blogplugin = new WeblogPlugin();
+        final WeblogPlugin blogplugin = new WeblogPlugin();
 
-        List< WikiPage > entries = blogplugin.findBlogEntries( m_testEngine,
+        final List< WikiPage > entries = blogplugin.findBlogEntries( m_testEngine,
                                                                "TestBlog",
                                                                new Date(0),
                                                                new Date(Long.MAX_VALUE) );
 
-        Feed feed = new RSS20Feed( context );
-        String blog = gen.generateBlogRSS( context, entries, feed );
+        final Feed feed = new RSS20Feed( context );
+        final String blog = gen.generateBlogRSS( context, entries, feed );
 
         Assertions.assertTrue( blog.indexOf("<description>Foo &amp;quot;blah&amp;quot;.</description>") != -1, "has Foo" );
         Assertions.assertTrue( blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1, "has proper Bar" );

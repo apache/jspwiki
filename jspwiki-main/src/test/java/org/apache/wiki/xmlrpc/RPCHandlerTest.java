@@ -24,6 +24,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.pages.PageManager;
 import org.apache.xmlrpc.XmlRpcException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -52,7 +53,7 @@ public class RPCHandlerTest
         m_engine = new TestEngine( m_props );
 
         m_handler = new RPCHandler();
-        WikiContext ctx = new WikiContext( m_engine, new WikiPage(m_engine, "Dummy") );
+        final WikiContext ctx = new WikiContext( m_engine, new WikiPage(m_engine, "Dummy") );
         m_handler.initialize( ctx );
     }
 
@@ -72,7 +73,7 @@ public class RPCHandlerTest
             m_handler.getPage( "NoSuchPage" );
             Assertions.fail("No exception for missing page.");
         }
-        catch( XmlRpcException e )
+        catch( final XmlRpcException e )
         {
             Assertions.assertEquals( RPCHandler.ERR_NOPAGE, e.code, "Wrong error code." );
         }
@@ -83,12 +84,12 @@ public class RPCHandlerTest
         throws Exception
     {
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
-        Vector previousChanges = m_handler.getRecentChanges( time );
+        final Vector previousChanges = m_handler.getRecentChanges( time );
 
         m_engine.saveText( NAME1, "Foo" );
-        WikiPage directInfo = m_engine.getPageManager().getPage( NAME1 );
+        final WikiPage directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
         time = getCalendarTime( directInfo.getLastModified() );
-        Vector recentChanges = m_handler.getRecentChanges( time );
+        final Vector recentChanges = m_handler.getRecentChanges( time );
 
         Assertions.assertEquals( 1, recentChanges.size() - previousChanges.size(), "wrong number of changes" );
     }
@@ -98,15 +99,15 @@ public class RPCHandlerTest
         throws Exception
     {
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
-        Vector previousChanges = m_handler.getRecentChanges( time );
+        final Vector previousChanges = m_handler.getRecentChanges( time );
 
         m_engine.saveText( NAME1, "Foo" );
-        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
-        WikiPage directInfo = m_engine.getPageManager().getPage( NAME1 );
+        final WikiPage directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
         time = getCalendarTime( directInfo.getLastModified() );
-        Vector recentChanges = m_handler.getRecentChanges( time );
+        final Vector recentChanges = m_handler.getRecentChanges( time );
 
         Assertions.assertEquals( 1, recentChanges.size() - previousChanges.size(), "wrong number of changes" );
     }
@@ -116,14 +117,14 @@ public class RPCHandlerTest
         throws Exception
     {
         m_engine.saveText( NAME1, "Foobar.[{ALLOW view Anonymous}]" );
-        WikiPage directInfo = m_engine.getPageManager().getPage( NAME1 );
+        final WikiPage directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
 
-        Hashtable ht = m_handler.getPageInfo( NAME1 );
+        final Hashtable ht = m_handler.getPageInfo( NAME1 );
         Assertions.assertEquals( (String)ht.get( "name" ), NAME1, "name" );
 
-        Date d = (Date) ht.get( "lastModified" );
+        final Date d = (Date) ht.get( "lastModified" );
 
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime( d );
 
         // System.out.println("Real: "+directInfo.getLastModified() );
@@ -146,16 +147,16 @@ public class RPCHandlerTest
     public void testListLinks()
         throws Exception
     {
-        String text = "[Foobar]";
-        String pageName = NAME1;
+        final String text = "[Foobar]";
+        final String pageName = NAME1;
 
         m_engine.saveText( pageName, text );
 
-        Vector links = m_handler.listLinks( pageName );
+        final Vector links = m_handler.listLinks( pageName );
 
         Assertions.assertEquals( 1, links.size(), "link count" );
 
-        Hashtable linkinfo = (Hashtable) links.elementAt(0);
+        final Hashtable linkinfo = (Hashtable) links.elementAt(0);
 
         Assertions.assertEquals( "Foobar", linkinfo.get("page"), "name" );
         Assertions.assertEquals( "local",  linkinfo.get("type"), "type" );
@@ -167,18 +168,18 @@ public class RPCHandlerTest
     public void testListLinksWithAttachments()
         throws Exception
     {
-        String text = "[Foobar] [Test/TestAtt.txt]";
-        String pageName = NAME1;
+        final String text = "[Foobar] [Test/TestAtt.txt]";
+        final String pageName = NAME1;
 
         m_engine.saveText( pageName, text );
 
-        Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
 
         // Test.
 
-        Vector links = m_handler.listLinks( pageName );
+        final Vector links = m_handler.listLinks( pageName );
 
         Assertions.assertEquals( 2, links.size(), "link count" );
 
@@ -195,9 +196,9 @@ public class RPCHandlerTest
         Assertions.assertEquals( "/test/attach/"+NAME1+"/TestAtt.txt", linkinfo.get("href"), "att href" );
     }
 
-    private Date getCalendarTime( Date modifiedDate )
+    private Date getCalendarTime( final Date modifiedDate )
     {
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         cal.setTime( modifiedDate );
         cal.add( Calendar.HOUR, -1 );
 

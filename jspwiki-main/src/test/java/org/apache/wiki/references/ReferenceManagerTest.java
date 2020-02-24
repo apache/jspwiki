@@ -12,11 +12,13 @@
  * limitations under the License.
  */
 package org.apache.wiki.references;
+
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.Util;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -82,7 +84,7 @@ public class ReferenceManagerTest  {
         Assertions.assertNotNull( c, "referrers expected" );
         Assertions.assertTrue( c.size() == 1 && c.contains("Foobar") );
 
-        engine.getPageManager().deletePage( "Foobar" );
+        engine.getManager( PageManager.class ).deletePage( "Foobar" );
         c = mgr.findReferrers("Foobar2");
         Assertions.assertNull( c );
 

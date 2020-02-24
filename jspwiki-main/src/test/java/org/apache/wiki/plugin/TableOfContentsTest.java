@@ -24,6 +24,7 @@ package org.apache.wiki.plugin;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -38,18 +39,18 @@ public class TableOfContentsTest
 
     @AfterEach
     public void tearDown() throws Exception {
-        testEngine.getPageManager().deletePage( "Test" );
+        testEngine.getManager( PageManager.class ).deletePage( "Test" );
     }
 
     @Test
     public void testHeadingVariables()
         throws Exception
     {
-        String src="[{SET foo=bar}]\n\n[{TableOfContents}]\n\n!!!Heading [{$foo}]";
+        final String src="[{SET foo=bar}]\n\n[{TableOfContents}]\n\n!!!Heading [{$foo}]";
 
         testEngine.saveText( "Test", src );
 
-        String res = testEngine.getI18nHTML( "Test" );
+        final String res = testEngine.getI18nHTML( "Test" );
 
         // FIXME: The <p> should not be here.
         Assertions.assertEquals( "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
@@ -65,14 +66,14 @@ public class TableOfContentsTest
     public void testNumberedItems()
     throws Exception
     {
-        String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading";
+        final String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading";
 
         testEngine.saveText( "Test", src );
 
-        String res = testEngine.getI18nHTML( "Test" );
+        final String res = testEngine.getI18nHTML( "Test" );
 
         // FIXME: The <p> should not be here.
-        String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
+        final String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
                 "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
                 "<ul>\n"+
                 "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-HeadingBar\">3 Heading bar</a></li>\n"+
@@ -90,14 +91,14 @@ public class TableOfContentsTest
     public void testNumberedItemsComplex()
     throws Exception
     {
-        String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading\n\n!Subsubheading2\n\n!!Subheading2\n\n!Subsubheading3\n\n!!!Heading\n\n!!Subheading3";
+        final String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading\n\n!Subsubheading2\n\n!!Subheading2\n\n!Subsubheading3\n\n!!!Heading\n\n!!Subheading3";
 
         testEngine.saveText( "Test", src );
 
-        String res = testEngine.getI18nHTML( "Test" );
+        final String res = testEngine.getI18nHTML( "Test" );
 
         // FIXME: The <p> should not be here.
-        String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
+        final String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
         "<ul>\n"+
         "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-HeadingBar\">3 Heading bar</a></li>\n"+
@@ -126,14 +127,14 @@ public class TableOfContentsTest
     public void testNumberedItemsComplex2()
     throws Exception
     {
-        String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!Subheading0\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading\n\n!Subsubheading2\n\n!!Subheading2\n\n!Subsubheading3\n\n!!!Heading\n\n!!Subheading3";
+        final String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3}]\n\n!!Subheading0\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading\n\n!Subsubheading2\n\n!!Subheading2\n\n!Subsubheading3\n\n!!!Heading\n\n!!Subheading3";
 
         testEngine.saveText( "Test", src );
 
-        String res = testEngine.getI18nHTML( "Test" );
+        final String res = testEngine.getI18nHTML( "Test" );
 
         // FIXME: The <p> should not be here.
-        String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
+        final String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
         "<ul>\n"+
         "<li class=\"toclevel-2\"><a class=\"wikipage\" href=\"#section-Test-Subheading0\">3.1 Subheading0</a></li>\n"+
@@ -164,14 +165,14 @@ public class TableOfContentsTest
     public void testNumberedItemsWithPrefix()
     throws Exception
     {
-        String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3,prefix=FooBar-}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading";
+        final String src="[{SET foo=bar}]\n\n[{INSERT TableOfContents WHERE numbered=true,start=3,prefix=FooBar-}]\n\n!!!Heading [{$foo}]\n\n!!Subheading\n\n!Subsubheading";
 
         testEngine.saveText( "Test", src );
 
-        String res = testEngine.getI18nHTML( "Test" );
+        final String res = testEngine.getI18nHTML( "Test" );
 
         // FIXME: The <p> should not be here.
-        String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
+        final String expecting = "<p><div class=\"toc\">\n<div class=\"collapsebox\">\n"+
         "<h4 id=\"section-TOC\">Table of Contents</h4>\n"+
         "<ul>\n"+
         "<li class=\"toclevel-1\"><a class=\"wikipage\" href=\"#section-Test-HeadingBar\">FooBar-3 Heading bar</a></li>\n"+
@@ -194,11 +195,11 @@ public class TableOfContentsTest
     public void testSelfReference()
         throws Exception
     {
-        String src = "!!![{TableOfContents}]";
+        final String src = "!!![{TableOfContents}]";
 
         testEngine.saveText( "Test", src );
 
-        String res = testEngine.getI18nHTML( "Test" );
+        final String res = testEngine.getI18nHTML( "Test" );
 
         Assertions.assertTrue( res.indexOf("Table of Contents") != -1 );
     }
@@ -207,11 +208,11 @@ public class TableOfContentsTest
     public void testHTML()
         throws Exception
     {
-        String src = "[{TableOfContents}]\n\n!<i>test</i>";
+        final String src = "[{TableOfContents}]\n\n!<i>test</i>";
 
         testEngine.saveText( "Test", src );
 
-        String res = testEngine.getI18nHTML( "Test" );
+        final String res = testEngine.getI18nHTML( "Test" );
 
         Assertions.assertTrue( res.indexOf("<i>") == -1, "<i>" ); // Check that there is no HTML left
         Assertions.assertTrue( res.indexOf("</i>") == -1, "</i>" ); // Check that there is no HTML left
@@ -220,11 +221,11 @@ public class TableOfContentsTest
     @Test
     public void testSimilarNames() throws WikiException
     {
-        String src = "[{TableOfContents}]\n\n!Test\n\n!Test\n\n";
+        final String src = "[{TableOfContents}]\n\n!Test\n\n!Test\n\n";
 
         testEngine.saveText( "Test", src );
 
-        String res = testEngine.getI18nHTML( "Test" );
+        final String res = testEngine.getI18nHTML( "Test" );
 
         Assertions.assertTrue( res.indexOf(  "id=\"section-Test-Test\"" ) != -1, "Final HTML 1" );
         Assertions.assertTrue( res.indexOf(  "id=\"section-Test-Test-2\"" ) != -1, "Final HTML 2" );

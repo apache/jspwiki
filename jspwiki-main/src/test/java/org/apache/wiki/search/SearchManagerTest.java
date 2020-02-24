@@ -22,6 +22,7 @@ import net.sf.ehcache.CacheManager;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.pages.PageManager;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -122,8 +123,8 @@ public class SearchManagerTest {
         final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
         final WikiContext ctx = new WikiContext( m_engine, request, WikiContext.EDIT );
-        m_engine.getPageManager().saveText( ctx, txt );
-        m_engine.getPageManager().saveText( ctx, "The Babylon Project was a dream given form. Its goal: to prevent another war by creating a place where humans and aliens could work out their differences peacefully." );
+        m_engine.getManager( PageManager.class ).saveText( ctx, txt );
+        m_engine.getManager( PageManager.class ).saveText( ctx, "The Babylon Project was a dream given form. Its goal: to prevent another war by creating a place where humans and aliens could work out their differences peacefully." );
 
         Collection< SearchResult > res = new ArrayList<>();
         Awaitility.await( "testSimpleSearch3" ).until( findsResultsFor( res, "Babylon" ) );
@@ -144,14 +145,14 @@ public class SearchManagerTest {
         final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
         final WikiContext ctx = new WikiContext( m_engine, request, WikiContext.EDIT );
-        m_engine.getPageManager().saveText( ctx, txt );
+        m_engine.getManager( PageManager.class ).saveText( ctx, txt );
 
         Collection< SearchResult > res = new ArrayList<>();
         Awaitility.await( "testSimpleSearch4" ).until( findsResultsFor( res, "mankind" ) );
 
         Assertions.assertEquals( 1, res.size(), "result not found" );
 
-        m_engine.getPageManager().saveText( ctx, "[{ALLOW view Authenticated}] It was the dawn of the third age of mankind... page is blocked" );
+        m_engine.getManager( PageManager.class ).saveText( ctx, "[{ALLOW view Authenticated}] It was the dawn of the third age of mankind... page is blocked" );
 
         res = m_mgr.findPages( "mankind" , ctx );
         Assertions.assertNotNull( res, "null result" );

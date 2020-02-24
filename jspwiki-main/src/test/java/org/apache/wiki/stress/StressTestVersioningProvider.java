@@ -20,6 +20,7 @@ package org.apache.wiki.stress;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -38,7 +39,7 @@ public class StressTestVersioningProvider {
     @AfterEach
     public void tearDown()
     {
-        String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        final String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
         // Remove file
         File f = new File( files, NAME1+FileSystemProvider.FILE_EXT );
@@ -53,9 +54,9 @@ public class StressTestVersioningProvider {
         throws Exception
     {
         String text = "";
-        String name = NAME1;
-        int    maxver = 2000; // Save 2000 versions.
-        Benchmark mark = new Benchmark();
+        final String name = NAME1;
+        final int    maxver = 2000; // Save 2000 versions.
+        final Benchmark mark = new Benchmark();
 
         mark.start();
         for( int i = 0; i < maxver; i++ )
@@ -67,20 +68,20 @@ public class StressTestVersioningProvider {
         mark.stop();
 
         System.out.println("Benchmark: "+mark.toString(2000)+" pages/second");
-        WikiPage pageinfo = engine.getPageManager().getPage( NAME1 );
+        final WikiPage pageinfo = engine.getManager( PageManager.class ).getPage( NAME1 );
 
         Assertions.assertEquals( maxver, pageinfo.getVersion(), "wrong version" );
 
         // +2 comes from \r\n.
-        Assertions.assertEquals( maxver+2, engine.getPageManager().getText(NAME1).length(), "wrong text" );
+        Assertions.assertEquals( maxver+2, engine.getManager( PageManager.class ).getText(NAME1).length(), "wrong text" );
     }
 
-    private void runMassiveFileTest(int maxpages)
+    private void runMassiveFileTest( final int maxpages)
         throws Exception
     {
-        String text = "Testing, 1, 2, 3: ";
-        String name = NAME1;
-        Benchmark mark = new Benchmark();
+        final String text = "Testing, 1, 2, 3: ";
+        final String name = NAME1;
+        final Benchmark mark = new Benchmark();
 
         System.out.println("Building a massive repository of "+maxpages+" pages...");
 
@@ -97,7 +98,7 @@ public class StressTestVersioningProvider {
         mark.reset();
 
         mark.start();
-        Collection< WikiPage > pages = engine.getPageManager().getAllPages();
+        final Collection< WikiPage > pages = engine.getManager( PageManager.class ).getAllPages();
         mark.stop();
 
         System.out.println("Got a list of all pages in "+mark);
@@ -105,8 +106,8 @@ public class StressTestVersioningProvider {
         mark.reset();
         mark.start();
 
-        for( WikiPage page : pages ) {
-            String foo = engine.getPageManager().getPureText( page );
+        for( final WikiPage page : pages ) {
+            final String foo = engine.getManager( PageManager.class ).getPureText( page );
             Assertions.assertNotNull( foo );
         }
         mark.stop();

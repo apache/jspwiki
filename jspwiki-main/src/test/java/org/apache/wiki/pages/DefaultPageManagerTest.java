@@ -62,7 +62,7 @@ public class DefaultPageManagerTest {
      */
     @Test
     public void testNonExistentPage() {
-        Assertions.assertFalse( engine.getPageManager().wikiPageExists( NAME1 ), "Page already exists" );
+        Assertions.assertFalse( engine.getManager( PageManager.class ).wikiPageExists( NAME1 ), "Page already exists" );
     }
 
     /**
@@ -71,7 +71,7 @@ public class DefaultPageManagerTest {
     @Test
     public void testNonExistentPage2() throws Exception {
         final WikiPage page = new WikiPage( engine, NAME1 );
-        Assertions.assertFalse( engine.getPageManager().wikiPageExists( page ), "Page already exists" );
+        Assertions.assertFalse( engine.getManager( PageManager.class ).wikiPageExists( page ), "Page already exists" );
     }
 
     @Test
@@ -97,8 +97,8 @@ public class DefaultPageManagerTest {
         final File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
         Assertions.assertTrue( saved.exists(), "Didn't create it!" );
 
-        final WikiPage page = engine.getPageManager().getPage( NAME1, WikiProvider.LATEST_VERSION );
-        engine.getPageManager().deletePage( page.getName() );
+        final WikiPage page = engine.getManager( PageManager.class ).getPage( NAME1, WikiProvider.LATEST_VERSION );
+        engine.getManager( PageManager.class ).deletePage( page.getName() );
         Assertions.assertFalse( saved.exists(), "Page has not been removed!" );
     }
 
@@ -118,9 +118,9 @@ public class DefaultPageManagerTest {
         Assertions.assertTrue( saved.exists(), "Didn't create it!" );
         Assertions.assertTrue( attfile.exists(), "Attachment dir does not exist" );
 
-        final WikiPage page = engine.getPageManager().getPage( NAME1, WikiProvider.LATEST_VERSION );
+        final WikiPage page = engine.getManager( PageManager.class ).getPage( NAME1, WikiProvider.LATEST_VERSION );
 
-        engine.getPageManager().deletePage( page.getName() );
+        engine.getManager( PageManager.class ).deletePage( page.getName() );
 
         Assertions.assertFalse( saved.exists(), "Page has not been removed!" );
         Assertions.assertFalse( attfile.exists(), "Attachment has not been removed" );
@@ -142,14 +142,14 @@ public class DefaultPageManagerTest {
         Assertions.assertTrue( saved.exists(), "Didn't create it!" );
         Assertions.assertTrue( attfile.exists(), "Attachment dir does not exist" );
 
-        final WikiPage page = engine.getPageManager().getPage( NAME1, WikiProvider.LATEST_VERSION );
+        final WikiPage page = engine.getManager( PageManager.class ).getPage( NAME1, WikiProvider.LATEST_VERSION );
         Assertions.assertNotNull( page, "page" );
 
         att = engine.getAttachmentManager().getAttachmentInfo(NAME1+"/TestAtt.txt");
-        engine.getPageManager().deletePage(att.getName());
-        engine.getPageManager().deletePage( NAME1 );
-        Assertions.assertNull( engine.getPageManager().getPage(NAME1), "Page not removed" );
-        Assertions.assertNull( engine.getPageManager().getPage(NAME1+"/TestAtt.txt"), "Att not removed" );
+        engine.getManager( PageManager.class ).deletePage(att.getName());
+        engine.getManager( PageManager.class ).deletePage( NAME1 );
+        Assertions.assertNull( engine.getManager( PageManager.class ).getPage(NAME1), "Page not removed" );
+        Assertions.assertNull( engine.getManager( PageManager.class ).getPage(NAME1+"/TestAtt.txt"), "Att not removed" );
 
         final Collection< String > refs = engine.getReferenceManager().findReferrers(NAME1);
         Assertions.assertNull( refs, "referrers" );
@@ -164,11 +164,11 @@ public class DefaultPageManagerTest {
         engine.saveText( NAME1, "Test2" );
         engine.saveText( NAME1, "Test3" );
 
-        final WikiPage page = engine.getPageManager().getPage( NAME1, 3 );
-        engine.getPageManager().deleteVersion( page );
-        Assertions.assertNull( engine.getPageManager().getPage( NAME1, 3 ), "got page" );
+        final WikiPage page = engine.getManager( PageManager.class ).getPage( NAME1, 3 );
+        engine.getManager( PageManager.class ).deleteVersion( page );
+        Assertions.assertNull( engine.getManager( PageManager.class ).getPage( NAME1, 3 ), "got page" );
 
-        final String content = engine.getPageManager().getText( NAME1, WikiProvider.LATEST_VERSION );
+        final String content = engine.getManager( PageManager.class ).getText( NAME1, WikiProvider.LATEST_VERSION );
         Assertions.assertEquals( "Test2", content.trim(), "content" );
     }
 
@@ -181,13 +181,13 @@ public class DefaultPageManagerTest {
         engine.saveText( NAME1, "Test2" );
         engine.saveText( NAME1, "Test3" );
 
-        final WikiPage page = engine.getPageManager().getPage( NAME1, 1 );
-        engine.getPageManager().deleteVersion( page );
-        Assertions.assertNull( engine.getPageManager().getPage( NAME1, 1 ), "got page" );
+        final WikiPage page = engine.getManager( PageManager.class ).getPage( NAME1, 1 );
+        engine.getManager( PageManager.class ).deleteVersion( page );
+        Assertions.assertNull( engine.getManager( PageManager.class ).getPage( NAME1, 1 ), "got page" );
 
-        final String content = engine.getPageManager().getText( NAME1, WikiProvider.LATEST_VERSION );
+        final String content = engine.getManager( PageManager.class ).getText( NAME1, WikiProvider.LATEST_VERSION );
         Assertions.assertEquals( "Test3", content.trim(), "content" );
-        Assertions.assertEquals( "", engine.getPageManager().getText(NAME1, 1).trim(), "content1" );
+        Assertions.assertEquals( "", engine.getManager( PageManager.class ).getText(NAME1, 1).trim(), "content1" );
     }
 
     @Test
@@ -196,8 +196,8 @@ public class DefaultPageManagerTest {
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
         props.setProperty( "jspwiki.usePageCache", "false" );
         final WikiEngine engine = new TestEngine( props );
-        final WikiPage p = engine.getPageManager().getPage( "test", -1 );
-        final VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
+        final WikiPage p = engine.getManager( PageManager.class ).getPage( "test", -1 );
+        final VerySimpleProvider vsp = (VerySimpleProvider) engine.getManager( PageManager.class ).getProvider();
 
         Assertions.assertEquals( "test", vsp.m_latestReq, "wrong page" );
         Assertions.assertEquals( -1, vsp.m_latestVers, "wrong version" );
@@ -210,8 +210,8 @@ public class DefaultPageManagerTest {
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
         props.setProperty( "jspwiki.usePageCache", "false" );
         final WikiEngine engine = new TestEngine( props );
-        final String p = engine.getPageManager().getText( "test", -1 );
-        final VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
+        final String p = engine.getManager( PageManager.class ).getText( "test", -1 );
+        final VerySimpleProvider vsp = (VerySimpleProvider) engine.getManager( PageManager.class ).getProvider();
 
         Assertions.assertEquals( "test", vsp.m_latestReq, "wrong page" );
         Assertions.assertEquals( -1, vsp.m_latestVers, "wrong version" );
@@ -225,7 +225,7 @@ public class DefaultPageManagerTest {
         props.setProperty( "jspwiki.usePageCache", "false" );
         final WikiEngine engine = new TestEngine( props );
         final String p = engine.getRenderingManager().getHTML( "test", -1 );
-        final VerySimpleProvider vsp = (VerySimpleProvider) engine.getPageManager().getProvider();
+        final VerySimpleProvider vsp = (VerySimpleProvider) engine.getManager( PageManager.class ).getProvider();
 
         Assertions.assertEquals( "test", vsp.m_latestReq, "wrong page" );
         Assertions.assertEquals( 5, vsp.m_latestVers, "wrong version" );
@@ -239,7 +239,7 @@ public class DefaultPageManagerTest {
         props.setProperty( "jspwiki.usePageCache", "true" );
         final WikiEngine engine = new TestEngine( props );
         final String p = engine.getRenderingManager().getHTML( VerySimpleProvider.PAGENAME, -1 );
-        final CachingProvider cp = (CachingProvider)engine.getPageManager().getProvider();
+        final CachingProvider cp = (CachingProvider)engine.getManager( PageManager.class ).getProvider();
         final VerySimpleProvider vsp = (VerySimpleProvider) cp.getRealProvider();
 
         Assertions.assertEquals( VerySimpleProvider.PAGENAME, vsp.m_latestReq, "wrong page" );
@@ -251,20 +251,20 @@ public class DefaultPageManagerTest {
     public void testCreatePage() throws Exception {
         final String text = "Foobar.\r\n";
         final String name = "mrmyxpltz";
-        Assertions.assertFalse( engine.getPageManager().wikiPageExists( name ), "page should not exist right now" );
+        Assertions.assertFalse( engine.getManager( PageManager.class ).wikiPageExists( name ), "page should not exist right now" );
 
         engine.saveText( name, text );
-        Assertions.assertTrue( engine.getPageManager().wikiPageExists( name ), "page does not exist" );
+        Assertions.assertTrue( engine.getManager( PageManager.class ).wikiPageExists( name ), "page does not exist" );
     }
 
     @Test
     public void testCreateEmptyPage() throws Exception {
         final String text = "";
         final String name = "mrmxyzptlk";
-        Assertions.assertFalse( engine.getPageManager().wikiPageExists( name ), "page should not exist right now" );
+        Assertions.assertFalse( engine.getManager( PageManager.class ).wikiPageExists( name ), "page should not exist right now" );
 
         engine.saveText( name, text );
-        Assertions.assertFalse( engine.getPageManager().wikiPageExists( name ), "page should not exist right now neither" );
+        Assertions.assertFalse( engine.getManager( PageManager.class ).wikiPageExists( name ), "page should not exist right now neither" );
     }
 
     @Test
@@ -273,8 +273,8 @@ public class DefaultPageManagerTest {
         final String name = NAME1;
         engine.saveText( name, text );
 
-        Assertions.assertTrue( engine.getPageManager().wikiPageExists( name ), "page does not exist" );
-        Assertions.assertEquals( text, engine.getPageManager().getText( name ), "wrong content" );
+        Assertions.assertTrue( engine.getManager( PageManager.class ).wikiPageExists( name ), "page does not exist" );
+        Assertions.assertEquals( text, engine.getManager( PageManager.class ).getText( name ), "wrong content" );
     }
 
     @Test
@@ -283,8 +283,8 @@ public class DefaultPageManagerTest {
         final String name = NAME1;
         engine.saveText( name, text );
 
-        Assertions.assertTrue( engine.getPageManager().wikiPageExists( name ), "page does not exist" );
-        Assertions.assertEquals( "Foobar. &amp;quot;\r\n", engine.getPageManager().getText( name ), "wrong content" );
+        Assertions.assertTrue( engine.getManager( PageManager.class ).wikiPageExists( name ), "page does not exist" );
+        Assertions.assertEquals( "Foobar. &amp;quot;\r\n", engine.getManager( PageManager.class ).getText( name ), "wrong content" );
     }
 
     /**
@@ -296,8 +296,8 @@ public class DefaultPageManagerTest {
         final String name = NAME1;
         engine.saveText( name, text );
 
-        Assertions.assertTrue( engine.getPageManager().wikiPageExists( name ), "page does not exist" );
-        Assertions.assertEquals( "Foobar. &quot;\r\n", engine.getPageManager().getText( name ), "wrong content" );
+        Assertions.assertTrue( engine.getManager( PageManager.class ).wikiPageExists( name ), "page does not exist" );
+        Assertions.assertEquals( "Foobar. &quot;\r\n", engine.getManager( PageManager.class ).getText( name ), "wrong content" );
     }
 
     @Test
@@ -306,12 +306,12 @@ public class DefaultPageManagerTest {
         final String name = NAME1;
         engine.saveText( name, text );
 
-        Assertions.assertTrue( engine.getPageManager().wikiPageExists( name ), "page does not exist" );
+        Assertions.assertTrue( engine.getManager( PageManager.class ).wikiPageExists( name ), "page does not exist" );
         // saveText uses normalizePostData to assure it conforms to certain rules
-        Assertions.assertEquals( TextUtil.normalizePostData( text ), engine.getPageManager().getText( name ), "wrong content" );
+        Assertions.assertEquals( TextUtil.normalizePostData( text ), engine.getManager( PageManager.class ).getText( name ), "wrong content" );
 
         engine.saveText( name, "" );
-        Assertions.assertEquals( TextUtil.normalizePostData( "" ), engine.getPageManager().getText( name ), "wrong content" );
+        Assertions.assertEquals( TextUtil.normalizePostData( "" ), engine.getManager( PageManager.class ).getText( name ), "wrong content" );
     }
 
 }

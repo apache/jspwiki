@@ -25,6 +25,7 @@ package org.apache.wiki.ui;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -64,7 +65,7 @@ public class PageCommandTest {
     public void testTargetedCommand() throws Exception {
         final TestEngine testEngine = TestEngine.build();
         testEngine.saveText( "TestPage", "This is a test." );
-        final WikiPage testPage = testEngine.getPageManager().getPage( "TestPage" );
+        final WikiPage testPage = testEngine.getManager( PageManager.class ).getPage( "TestPage" );
 
         // Get view command
         Command a = PageCommand.VIEW;

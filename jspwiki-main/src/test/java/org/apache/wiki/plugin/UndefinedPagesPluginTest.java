@@ -25,6 +25,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +61,7 @@ public class UndefinedPagesPluginTest {
     }
 
     private String wikitize( final String s ) {
-        return testEngine.getRenderingManager().textToHTML( context, s );
+        return testEngine.getManager( RenderingManager.class ).textToHTML( context, s );
     }
 
     /**

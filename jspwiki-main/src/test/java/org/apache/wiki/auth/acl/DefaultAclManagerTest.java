@@ -17,12 +17,14 @@
     under the License.
  */
 package org.apache.wiki.auth.acl;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,8 +46,8 @@ public class DefaultAclManagerTest
     @AfterEach
     public void tearDown() {
         try {
-            m_engine.getPageManager().deletePage( "TestDefaultPage" );
-            m_engine.getPageManager().deletePage( "TestAclPage" );
+            m_engine.getManager( PageManager.class ).deletePage( "TestDefaultPage" );
+            m_engine.getManager( PageManager.class ).deletePage( "TestAclPage" );
         } catch ( final ProviderException e ) {
         }
     }
@@ -53,12 +55,12 @@ public class DefaultAclManagerTest
     @Test
     public void testGetPermissions()
     {
-        WikiPage page = m_engine.getPageManager().getPage( "TestDefaultPage" );
+        WikiPage page = m_engine.getManager( PageManager.class ).getPage( "TestDefaultPage" );
         Acl acl = m_engine.getAclManager().getPermissions( page );
         Assertions.assertNotNull( page.getAcl() );
         Assertions.assertTrue(page.getAcl().isEmpty());
 
-        page = m_engine.getPageManager().getPage( "TestAclPage" );
+        page = m_engine.getManager( PageManager.class ).getPage( "TestAclPage" );
         acl = m_engine.getAclManager().getPermissions( page );
         Assertions.assertNotNull( page.getAcl() );
         Assertions.assertFalse(page.getAcl().isEmpty());
@@ -159,9 +161,9 @@ public class DefaultAclManagerTest
     public void testPrintAcl()
     {
         // Verify that the printed Acl for the test page is OK
-        WikiPage page = m_engine.getPageManager().getPage( "TestAclPage" );
+        final WikiPage page = m_engine.getManager( PageManager.class ).getPage( "TestAclPage" );
         Acl acl = m_engine.getAclManager().getPermissions( page );
-        String aclString = DefaultAclManager.printAcl( acl );
+        final String aclString = DefaultAclManager.printAcl( acl );
         Assertions.assertEquals( "[{ALLOW edit Charlie,Herman}]\n", aclString );
 
         // Create an ACL from scratch
@@ -178,7 +180,7 @@ public class DefaultAclManagerTest
         acl.addEntry( entry );
 
         // Verify that the printed ACL is OK
-        String expectedValue = "[{ALLOW delete Devin}]\n[{ALLOW edit Charlie,Devin}]\n[{ALLOW view Charlie}]\n";
+        final String expectedValue = "[{ALLOW delete Devin}]\n[{ALLOW edit Charlie,Devin}]\n[{ALLOW view Charlie}]\n";
         Assertions.assertEquals( expectedValue, DefaultAclManager.printAcl( acl ) );
     }
 

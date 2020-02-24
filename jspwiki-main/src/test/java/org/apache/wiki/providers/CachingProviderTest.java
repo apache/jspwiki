@@ -22,6 +22,7 @@ package org.apache.wiki.providers;
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.FileUtil;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -52,22 +53,22 @@ public class CachingProviderTest
     public void testInitialization()
         throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
 
         props.setProperty( "jspwiki.usePageCache", "true" );
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.CounterProvider" );
         props.setProperty( "jspwiki.cachingProvider.capacity", "100" );
 
-        TestEngine engine = new TestEngine( props );
+        final TestEngine engine = new TestEngine( props );
 
-        CounterProvider p = (CounterProvider)((CachingProvider)engine.getPageManager().getProvider()).getRealProvider();
+        final CounterProvider p = (CounterProvider)((CachingProvider)engine.getManager( PageManager.class ).getProvider()).getRealProvider();
 
         Assertions.assertEquals( 1, p.m_initCalls, "init" );
         Assertions.assertEquals( 1, p.m_getAllPagesCalls, "getAllPages" );
         Assertions.assertEquals( 0, p.m_pageExistsCalls, "pageExists" );
         Assertions.assertEquals( 4, p.m_getPageTextCalls, "getPageText" );
 
-        engine.getPageManager().getPage( "Foo" );
+        engine.getManager( PageManager.class ).getPage( "Foo" );
 
         Assertions.assertEquals( 0, p.m_pageExistsCalls, "pageExists2" );
     }
@@ -76,26 +77,26 @@ public class CachingProviderTest
     public void testSneakyAdd()
         throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
 
         props.setProperty( "jspwiki.cachingProvider.cacheCheckInterval", "2" );
 
-        TestEngine engine = new TestEngine( props );
+        final TestEngine engine = new TestEngine( props );
 
-        String dir = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
+        final String dir = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
 
-        File f = new File( dir, "Testi.txt" );
-        String content = "[fuufaa]";
+        final File f = new File( dir, "Testi.txt" );
+        final String content = "[fuufaa]";
 
-        PrintWriter out = new PrintWriter( new FileWriter(f) );
+        final PrintWriter out = new PrintWriter( new FileWriter(f) );
         FileUtil.copyContents( new StringReader(content), out );
         out.close();
 
-        Awaitility.await( "testSneakyAdd" ).until( () -> engine.getPageManager().getPage( "Testi" ) != null );
-        WikiPage p = engine.getPageManager().getPage( "Testi" );
+        Awaitility.await( "testSneakyAdd" ).until( () -> engine.getManager( PageManager.class ).getPage( "Testi" ) != null );
+        final WikiPage p = engine.getManager( PageManager.class ).getPage( "Testi" );
         Assertions.assertNotNull( p, "page did not exist?" );
 
-        String text = engine.getPageManager().getText( "Testi");
+        final String text = engine.getManager( PageManager.class ).getText( "Testi");
         Assertions.assertEquals( "[fuufaa]", text, "text" );
 
         // TODO: ReferenceManager check as well

@@ -259,19 +259,19 @@ public class WikiEngineTest {
         engine.saveText( NAME1, "[{SET foo=bar}]" );
         engine.saveText( NAME1, "[{SET foo=notbar}]");
 
-        final WikiPage v1 = engine.getPageManager().getPage( NAME1, 1 );
-        final WikiPage v2 = engine.getPageManager().getPage( NAME1, 2 );
+        final WikiPage v1 = engine.getManager( PageManager.class ).getPage( NAME1, 1 );
+        final WikiPage v2 = engine.getManager( PageManager.class ).getPage( NAME1, 2 );
 
         Assertions.assertEquals( "bar", v1.getAttribute("foo"), "V1" );
         Assertions.assertEquals( "notbar", v2.getAttribute("foo"), "V2" );
 
-        engine.getPageManager().deletePage( NAME1 );
+        engine.getManager( PageManager.class ).deletePage( NAME1 );
     }
 
     @Test
     public void testSpacedNames1() throws Exception {
         m_engine.saveText("This is a test", "puppaa");
-        Assertions.assertEquals( "puppaa", m_engine.getPageManager().getText("This is a test").trim(), "normal" );
+        Assertions.assertEquals( "puppaa", m_engine.getManager( PageManager.class ).getText("This is a test").trim(), "normal" );
     }
 
     @Test
@@ -293,11 +293,11 @@ public class WikiEngineTest {
         Collection< String > pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
         Assertions.assertEquals( "OldNameTestPage", pages.iterator().next(), "has one" );
 
-        final WikiContext ctx = new WikiContext( m_engine, m_engine.getPageManager().getPage("OldNameTestPage") );
+        final WikiContext ctx = new WikiContext( m_engine, m_engine.getManager( PageManager.class ).getPage("OldNameTestPage") );
         m_engine.getPageRenamer().renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
 
-        Assertions.assertFalse( m_engine.getPageManager().wikiPageExists( "OldNameTestPage"), "did not vanish" );
-        Assertions.assertTrue( m_engine.getPageManager().wikiPageExists( "NewNameTestPage"), "did not appear" );
+        Assertions.assertFalse( m_engine.getManager( PageManager.class ).wikiPageExists( "OldNameTestPage"), "did not vanish" );
+        Assertions.assertTrue( m_engine.getManager( PageManager.class ).wikiPageExists( "NewNameTestPage"), "did not appear" );
 
         pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
         Assertions.assertEquals( 1, pages.size(),  "wrong # of referrers" );
@@ -309,16 +309,16 @@ public class WikiEngineTest {
         final WikiPage p = new WikiPage( m_engine, NAME1 );
         final WikiContext context = new WikiContext(m_engine,p);
         context.getPage().setAttribute( WikiPage.CHANGENOTE, "Test change" );
-        m_engine.getPageManager().saveText( context, "test" );
+        m_engine.getManager( PageManager.class ).saveText( context, "test" );
 
         for( int i = 0; i < 5; i++ ) {
-            final WikiPage p2 = ( WikiPage )m_engine.getPageManager().getPage( NAME1 ).clone();
+            final WikiPage p2 = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( NAME1 ).clone();
             p2.removeAttribute( WikiPage.CHANGENOTE );
             context.setPage( p2 );
-            m_engine.getPageManager().saveText( context, "test" + i );
+            m_engine.getManager( PageManager.class ).saveText( context, "test" + i );
         }
 
-        final WikiPage p3 = m_engine.getPageManager().getPage( NAME1, -1 );
+        final WikiPage p3 = m_engine.getManager( PageManager.class ).getPage( NAME1, -1 );
         Assertions.assertNull( p3.getAttribute( WikiPage.CHANGENOTE ) );
     }
 
