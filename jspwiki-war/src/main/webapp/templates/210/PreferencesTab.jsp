@@ -37,7 +37,7 @@
 <%
   //FIXME: this should better move to UserPreferences.jsp but that doesn't seem to work. Ugh ?
   WikiContext c = WikiContext.findContext( pageContext );
-  TemplateManager t = c.getEngine().getTemplateManager();
+  TemplateManager t = c.getEngine().getManager( TemplateManager.class );
   pageContext.setAttribute( "skins", t.listSkins(pageContext, c.getTemplate() ) );
   pageContext.setAttribute( "languages", t.listLanguages(pageContext) );
   pageContext.setAttribute( "timeformats", t.listTimeFormats(pageContext) );

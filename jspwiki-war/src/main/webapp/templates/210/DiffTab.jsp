@@ -17,21 +17,23 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.wiki.tags.InsertDiffTag" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="java.util.*" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
+<%@ page import="org.apache.wiki.tags.InsertDiffTag" %>
+<%@ page import="org.apache.wiki.variables.VariableManager" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 
 <%
   WikiContext c = WikiContext.findContext( pageContext );
-  List history = c.getEngine().getPageManager().getVersionHistory(c.getPage().getName());
+  List history = c.getEngine().getManager( PageManager.class ).getVersionHistory(c.getPage().getName());
   pageContext.setAttribute( "history", history );
-  pageContext.setAttribute( "diffprovider", c.getEngine().getVariableManager().getVariable(c,"jspwiki.diffProvider"));
+  pageContext.setAttribute( "diffprovider", c.getEngine().getManager( VariableManager.class ).getVariable(c,"jspwiki.diffProvider"));
  %>
 
 <wiki:PageExists>

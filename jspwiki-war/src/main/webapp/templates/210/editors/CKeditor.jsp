@@ -21,11 +21,13 @@
 <%@ page import="java.util.Properties"%>
 <%@ page import="org.apache.commons.text.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.filters.*" %>
-<%@ page import="org.apache.wiki.render.*" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.parser.JSPWikiMarkupParser" %>
+<%@ page import="org.apache.wiki.render.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.variables.VariableManager" %>
@@ -39,7 +41,7 @@
 --%>
 <%
     WikiContext context = WikiContext.findContext( pageContext );
-    WikiEngine engine = context.getEngine();
+    Engine engine = context.getEngine();
 
     /* local download of CKeditor */
     TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
@@ -66,17 +68,17 @@
   String clone = request.getParameter( "clone" );
   if( clone != null )
   {
-    WikiPage p = engine.getPageManager().getPage( clone );
+    WikiPage p = engine.getManager( PageManager.class ).getPage( clone );
     if( p != null )
     {
-        AuthorizationManager mgr = engine.getAuthorizationManager();
+        AuthorizationManager mgr = engine.getManager( AuthorizationManager.class );
         PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
 
         try
         {
           if( mgr.checkPermission( context.getWikiSession(), pp ) )
           {
-            usertext = engine.getPageManager().getPureText( p );
+            usertext = engine.getManager( PageManager.class ).getPureText( p );
           }
         }
         catch( Exception e ) {  /*log.error( "Accessing clone page "+clone, e );*/ }
@@ -87,7 +89,7 @@
 <%
   if( usertext == null )
   {
-    usertext = engine.getPageManager().getPureText( context.getPage() );
+    usertext = engine.getManager( PageManager.class ).getPureText( context.getPage() );
   }
 %>
 </wiki:CheckRequestContext>
@@ -98,7 +100,7 @@
    try
    {
        //pageAsHtml = StringEscapeUtils.escapeEcmaScript( renderingManager.getHTML( context, usertext ) );
-       pageAsHtml = engine.getRenderingManager().getHTML( context, usertext );
+       pageAsHtml = engine.getManager( RenderingManager.class ).getHTML( context, usertext );
    }
        catch( Exception e )
    {
@@ -114,7 +116,7 @@
    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 
    /*not used
-   String templateDir = (String)copyOfWikiProperties.get( WikiEngine.PROP_TEMPLATEDIR );
+   String templateDir = (String)copyOfWikiProperties.get( Engine.PROP_TEMPLATEDIR );
 
    String protocol = "http://";
    if( request.isSecure() )

@@ -30,7 +30,7 @@
 <%
     String postURL = "";
     WikiContext ctx = WikiContext.findContext( pageContext );
-    AuthenticationManager mgr = ctx.getEngine().getAuthenticationManager();
+    AuthenticationManager mgr = ctx.getEngine().getManager( AuthenticationManager.class );
 
     if( mgr.isContainerAuthenticated() )
     {

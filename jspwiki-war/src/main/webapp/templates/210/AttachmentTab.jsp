@@ -29,7 +29,7 @@
 <%
   int MAXATTACHNAMELENGTH = 30;
   WikiContext c = WikiContext.findContext(pageContext);
-  String progressId = c.getEngine().getProgressManager().getNewProgressIdentifier();
+  String progressId = c.getEngine().getManager( ProgressManager.class ).getNewProgressIdentifier();
 %>
 
 <div id="addattachment">

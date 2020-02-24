@@ -18,15 +18,17 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<%@ page import="java.security.Permission" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.ui.progress.ProgressManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
-<%@ page import="java.security.Permission" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <fmt:setLocale value="${prefs.Language}" />
@@ -34,7 +36,7 @@
 <%
   WikiContext c = WikiContext.findContext(pageContext);
   WikiPage wikiPage = c.getPage();
-  int attCount = c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size();
+  int attCount = c.getEngine().getManager( AttachmentManager.class ).listAttachments( c.getPage() ).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
 
@@ -44,7 +46,7 @@
   String creationAuthor ="";
 
   //FIXME -- seems not to work correctly for attachments !!
-  WikiPage firstPage = c.getEngine().getPageManager().getPage( wikiPage.getName(), 1 );
+  WikiPage firstPage = c.getEngine().getManager( PageManager.class ).getPage( wikiPage.getName(), 1 );
   if( firstPage != null )
   {
     creationAuthor = firstPage.getAuthor();
@@ -265,7 +267,7 @@
 <wiki:PageType type="attachment">
 <%
   int MAXATTACHNAMELENGTH = 30;
-  String progressId = c.getEngine().getProgressManager().getNewProgressIdentifier();
+  String progressId = c.getEngine().getManager( ProgressManager.class ).getNewProgressIdentifier();
 %>
 
   <wiki:TabbedSection defaultTab="<%=tabParam%>">
