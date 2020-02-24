@@ -85,7 +85,7 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.auth.authorize.GroupManager</requestedClass>
-    <mappedClass>org.apache.wiki.auth.authorize.GroupManager</mappedClass>
+    <mappedClass>org.apache.wiki.auth.authorize.DefaultGroupManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.content.PageRenamer</requestedClass>
