@@ -18,34 +18,34 @@
 */
 package org.apache.wiki.ui.admin.beans;
 
-import java.util.Collection;
-
-import javax.management.NotCompliantMBeanException;
-
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
 
+import javax.management.NotCompliantMBeanException;
+import java.util.Collection;
+
 
 public class FilterBean extends ModuleBean {
 
-    public FilterBean( WikiEngine engine ) throws NotCompliantMBeanException {
+    public FilterBean( final Engine engine ) throws NotCompliantMBeanException {
         super( engine );
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getTitle() {
+    @Override public String getTitle() {
         return "Filters";
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getType() {
+    @Override public int getType() {
         return CORE;
     }
 
@@ -54,7 +54,7 @@ public class FilterBean extends ModuleBean {
      */
     @Override
     protected Collection< WikiModuleInfo > modules() {
-        return m_engine.getFilterManager().modules();
+        return m_engine.getManager( FilterManager.class ).modules();
     }
 
     /**
@@ -62,7 +62,7 @@ public class FilterBean extends ModuleBean {
      */
     @Override
     protected Element heading() {
-        Element trHead = XhtmlUtil.element( XHTML.tr );
+        final Element trHead = XhtmlUtil.element( XHTML.tr );
         trHead.addContent( XhtmlUtil.element( XHTML.th ).addContent( "Name" ) )
               .addContent( XhtmlUtil.element( XHTML.th ).addContent( "Author" ) )
               .addContent( XhtmlUtil.element( XHTML.th ).addContent( "Notes" ) );
@@ -73,8 +73,8 @@ public class FilterBean extends ModuleBean {
      * {@inheritDoc}
      */
     @Override
-    protected Element rowBody( WikiModuleInfo info ) {
-        Element tr = XhtmlUtil.element( XHTML.tr );
+    protected Element rowBody( final WikiModuleInfo info ) {
+        final Element tr = XhtmlUtil.element( XHTML.tr );
         tr.addContent( XhtmlUtil.element( XHTML.td ).addContent( info.getName() ) )
           .addContent( XhtmlUtil.element( XHTML.td ).addContent( info.getAuthor() ) )
           .addContent( XhtmlUtil.element( XHTML.td ).addContent( validModuleVersion( info ) ) );

@@ -18,44 +18,39 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.management.SimpleMBean;
+import org.apache.wiki.ui.admin.AdminBean;
+import org.apache.wiki.util.TextUtil;
+
 import javax.management.NotCompliantMBeanException;
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.ui.admin.AdminBean;
-import org.apache.wiki.management.SimpleMBean;
-import org.apache.wiki.util.TextUtil;
 
 /**
  *  This class is still experimental.
  *  
  *
  */
-public class PlainEditorAdminBean
-    extends SimpleMBean
-    implements AdminBean
-{
-    private static final String TEMPLATE = 
-        "<div>"+
-        "<input type='checkbox' id='ajax' %checked/>Use AJAX?<br />"+
-        "<input type='submit' value='Submit'/>"+
-        "%messages"+
-        "</div>"
-        ;
+public class PlainEditorAdminBean extends SimpleMBean implements AdminBean {
+
+    private static final String TEMPLATE = "<div>"+
+                                           "<input type='checkbox' id='ajax' %checked/>Use AJAX?<br />" +
+                                           "<input type='submit' value='Submit'/>" +
+                                           "%messages" +
+                                           "</div>";
     
     private boolean m_checked;
     
     private static final String[] ATTRIBUTES = {"title","checked"};
     private static final String[] METHODS    = {};
     
-    public PlainEditorAdminBean() throws NotCompliantMBeanException
-    {
+    public PlainEditorAdminBean() throws NotCompliantMBeanException {
     }
     
-    public String doGet(WikiContext context)
+    @Override public String doGet( final WikiContext context)
     {
-        HttpServletRequest req = context.getHttpRequest();
+        final HttpServletRequest req = context.getHttpRequest();
         
         if( req != null && req.getMethod().equals("POST") && getTitle().equals( req.getParameter("form") ) )
         {
@@ -69,11 +64,11 @@ public class PlainEditorAdminBean
         return base;
     }
 
-    public String doPost( WikiContext context )
+    @Override public String doPost( final WikiContext context )
     {
-        HttpServletRequest req = context.getHttpRequest();
+        final HttpServletRequest req = context.getHttpRequest();
         
-        boolean checked = "checked".equals( req.getParameter( "id" ) );
+        final boolean checked = "checked".equals( req.getParameter( "id" ) );
         
         // Make changes
         
@@ -85,12 +80,12 @@ public class PlainEditorAdminBean
         return base;
     }
     
-    public String getTitle()
+    @Override public String getTitle()
     {
         return "Plain editor";
     }
 
-    public int getType()
+    @Override public int getType()
     {
         return EDITOR;
     }
@@ -100,7 +95,7 @@ public class PlainEditorAdminBean
         return true;
     }
 
-    public String getId()
+    @Override public String getId()
     {
         return "editor.plain";
     }
@@ -110,19 +105,17 @@ public class PlainEditorAdminBean
         return m_checked;
     }
     
-    public String[] getAttributeNames()
+    @Override public String[] getAttributeNames()
     {
         return ATTRIBUTES;
     }
 
-    public String[] getMethodNames()
+    @Override public String[] getMethodNames()
     {
         return METHODS;
     }
 
-    public void initialize(WikiEngine engine)
-    {
-        // TODO Auto-generated method stub
-        
+    @Override public void initialize( final Engine engine ) {
     }
+
 }

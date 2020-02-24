@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.ui.admin;
 
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.ui.GenericHTTPHandler;
 
 
@@ -33,7 +33,7 @@ public interface AdminBean extends GenericHTTPHandler {
     int CORE    = 1;
     int EDITOR  = 2;
     
-    void initialize( WikiEngine engine );
+    void initialize( Engine engine );
     
     /**
      *  Return a human-readable title for this AdminBean.

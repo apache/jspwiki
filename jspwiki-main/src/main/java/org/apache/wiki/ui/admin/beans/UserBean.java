@@ -18,14 +18,9 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
-import java.util.Date;
-
-import javax.management.NotCompliantMBeanException;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -33,39 +28,43 @@ import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.ui.admin.AdminBean;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 
+import javax.management.NotCompliantMBeanException;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+
 
 public class UserBean extends SimpleAdminBean
 {
-    public UserBean( WikiEngine engine ) throws NotCompliantMBeanException
+    public UserBean( final Engine engine ) throws NotCompliantMBeanException
     {
         super();
     }
 
-    public String[] getAttributeNames()
+    @Override public String[] getAttributeNames()
     {
         return new String[0];
     }
 
     // FIXME: We don't yet support MBean for this kind of stuff.
-    public String[] getMethodNames()
+    @Override public String[] getMethodNames()
     {
         return new String[0];
     }
 
 
 
-    public String doPost(WikiContext context)
+    @Override public String doPost( final WikiContext context)
     {
-        HttpServletRequest request = context.getHttpRequest();
-        WikiSession session = context.getWikiSession();
-        UserManager mgr = context.getEngine().getUserManager();
+        final HttpServletRequest request = context.getHttpRequest();
+        final WikiSession session = context.getWikiSession();
+        final UserManager mgr = context.getEngine().getManager( UserManager.class );
 
-        String loginid   = request.getParameter("loginid");
-        String loginname = request.getParameter("loginname");
-        String fullname  = request.getParameter("fullname");
-        String password  = request.getParameter("password");
-        String password2 = request.getParameter("password2");
-        String email     = request.getParameter("email");
+        final String loginid   = request.getParameter("loginid");
+        final String loginname = request.getParameter("loginname");
+        final String fullname  = request.getParameter("fullname");
+        final String password  = request.getParameter("password");
+        final String password2 = request.getParameter("password2");
+        final String email     = request.getParameter("email");
 
 
         if( request.getParameter("action").equalsIgnoreCase("remove") )
@@ -75,11 +74,11 @@ public class UserBean extends SimpleAdminBean
                 mgr.getUserDatabase().deleteByLoginName(loginid);
                 session.addMessage("User profile "+loginid+" ("+fullname+") has been deleted");
             }
-            catch (NoSuchPrincipalException e)
+            catch ( final NoSuchPrincipalException e)
             {
                 session.addMessage("User profile has already been removed");
             }
-            catch (WikiSecurityException e)
+            catch ( final WikiSecurityException e)
             {
                 session.addMessage("Security problem: "+e);
             }
@@ -93,7 +92,7 @@ public class UserBean extends SimpleAdminBean
             return "";
         }
 
-        UserProfile p;
+        final UserProfile p;
 
         if( loginid.equals("--New--") )
         {
@@ -108,7 +107,7 @@ public class UserBean extends SimpleAdminBean
             {
                 p = mgr.getUserDatabase().findByLoginName( loginid );
             }
-            catch (NoSuchPrincipalException e)
+            catch ( final NoSuchPrincipalException e)
             {
                 session.addMessage("I could not find user profile "+loginid);
                 return "";
@@ -124,7 +123,7 @@ public class UserBean extends SimpleAdminBean
         {
             mgr.getUserDatabase().save( p );
         }
-        catch( WikiSecurityException e )
+        catch( final WikiSecurityException e )
         {
             session.addMessage("Unable to save "+e.getMessage());
         }
@@ -134,12 +133,12 @@ public class UserBean extends SimpleAdminBean
         return "";
     }
 
-    public String getTitle()
+    @Override public String getTitle()
     {
         return "User administration";
     }
 
-    public int getType()
+    @Override public int getType()
     {
         return AdminBean.UNKNOWN;
     }

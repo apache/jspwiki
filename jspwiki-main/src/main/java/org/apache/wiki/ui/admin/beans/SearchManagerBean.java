@@ -18,17 +18,19 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
-import java.util.Collection;
-
-import javax.management.NotCompliantMBeanException;
-
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 import org.apache.wiki.ui.progress.ProgressItem;
+import org.apache.wiki.ui.progress.ProgressManager;
+
+import javax.management.NotCompliantMBeanException;
+import java.util.Collection;
+
 
 /**
  *  The SearchManagerBean is a simple AdminBean interface
@@ -47,23 +49,23 @@ public class SearchManagerBean extends SimpleAdminBean
 
     private WikiBackgroundThread m_updater;
 
-    public SearchManagerBean(WikiEngine engine) throws NotCompliantMBeanException
+    public SearchManagerBean( final Engine engine) throws NotCompliantMBeanException
     {
         super();
         initialize(engine);
     }
 
-    public String[] getAttributeNames()
+    @Override public String[] getAttributeNames()
     {
         return new String[0];
     }
 
-    public String[] getMethodNames()
+    @Override public String[] getMethodNames()
     {
         return METHODS;
     }
 
-    public String getTitle()
+    @Override public String getTitle()
     {
         return "Search manager";
     }
@@ -74,44 +76,40 @@ public class SearchManagerBean extends SimpleAdminBean
      *  <p>
      *  This method prevents itself from being called twice.
      */
-    public synchronized void reload()
-    {
-        if( m_updater == null )
-        {
-            m_updater = new WikiBackgroundThread(m_engine, 0) {
+    public synchronized void reload() {
+        if( m_updater == null ) {
+            m_updater = new WikiBackgroundThread( m_engine, 0 ) {
+
                 int m_count;
                 int m_max;
 
-                public void startupTask() throws Exception
-                {
+                @Override public void startupTask() throws Exception {
                     super.startupTask();
 
-                    setName("Reindexer started");
+                    setName( "Reindexer started" );
                 }
 
-                public void backgroundTask() throws Exception
-                {
-                    Collection<WikiPage> allPages = m_engine.getPageManager().getAllPages();
+                @Override public void backgroundTask() throws Exception {
+                    final Collection< WikiPage > allPages = m_engine.getManager( PageManager.class ).getAllPages();
 
-                    SearchManager mgr = m_engine.getSearchManager();
+                    final SearchManager mgr = m_engine.getManager( SearchManager.class );
                     m_max = allPages.size();
 
-                    ProgressItem pi = new ProgressItem() {
-                        public int getProgress()
-                        {
+                    final ProgressItem pi = new ProgressItem() {
+
+                        @Override public int getProgress() {
                             return 100 * m_count / m_max;
                         }
                     };
 
-                    m_engine.getProgressManager().startProgress( pi, PROGRESS_ID );
+                    m_engine.getManager( ProgressManager.class ).startProgress( pi, PROGRESS_ID );
 
-                    for( WikiPage page : allPages )
-                    {
-                        mgr.reindexPage(page);
+                    for( final WikiPage page : allPages ) {
+                        mgr.reindexPage( page );
                         m_count++;
                     }
 
-                    m_engine.getProgressManager().stopProgress( PROGRESS_ID );
+                    m_engine.getManager( ProgressManager.class ).stopProgress( PROGRESS_ID );
                     shutdown();
                     m_updater = null;
                 }
@@ -122,38 +120,29 @@ public class SearchManagerBean extends SimpleAdminBean
         }
     }
 
-    public int getType()
+    @Override public int getType()
     {
         return CORE;
     }
 
-    public String doGet(WikiContext context)
-    {
-        if( m_updater != null )
-        {
-            return "Update already in progress ("+
-                   context.getEngine().getProgressManager().getProgress(PROGRESS_ID)+
-                   "%)";
+    @Override public String doGet( final WikiContext context ) {
+        if( m_updater != null ) {
+            return "Update already in progress ("+ context.getEngine().getManager( ProgressManager.class ).getProgress(PROGRESS_ID)+ "%)";
         }
 
         return "<input type='submit' id='searchmanagerbean-reload' name='searchmanagerbean-reload' value='Force index reload'/>"+
                "<div class='description'>Forces JSPWiki search engine to reindex all pages.  Use this if you think some pages are not being found even if they should.</div>";
     }
 
-    public String doPost(WikiContext context)
-    {
-        String val = context.getHttpParameter("searchmanagerbean-reload");
-
-        if( val != null )
-        {
+    @Override public String doPost( final WikiContext context ) {
+        final String val = context.getHttpParameter( "searchmanagerbean-reload" );
+        if( val != null ) {
             reload();
-
             context.getWikiSession().addMessage( "Started reload of all indexed pages..." );
-
             return "";
         }
 
-        return doGet(context);
+        return doGet( context );
     }
 
 }

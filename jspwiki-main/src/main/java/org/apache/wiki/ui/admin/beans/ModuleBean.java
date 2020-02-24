@@ -21,7 +21,7 @@ package org.apache.wiki.ui.admin.beans;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 import org.apache.wiki.util.XHTML;
@@ -37,37 +37,37 @@ public abstract class ModuleBean extends SimpleAdminBean {
 
     private static final String VER_WARNING = "<span class='warning'>This module is not compatible with this version of JSPWiki.</span>";
 
-    public ModuleBean( WikiEngine engine ) throws NotCompliantMBeanException {
+    public ModuleBean( final Engine engine ) throws NotCompliantMBeanException {
         m_engine = engine;
     }
 
     /**
      * {@inheritDoc}
      */
-    public String[] getAttributeNames() {
+    @Override public String[] getAttributeNames() {
         return new String[0];
     }
 
     /**
      * {@inheritDoc}
      */
-    public String[] getMethodNames() {
+    @Override public String[] getMethodNames() {
         return new String[0];
     }
 
     /**
      * {@inheritDoc}
      */
-    public String doGet( WikiContext context ) {
-        Collection< WikiModuleInfo > filters = modules();
-        Element root = title();
-        Element tb = containerForModuleDetail( root );
+    @Override public String doGet( final WikiContext context ) {
+        final Collection< WikiModuleInfo > filters = modules();
+        final Element root = title();
+        final Element tb = containerForModuleDetail( root );
 
-        Element trHead = heading();
+        final Element trHead = heading();
         tb.addContent( trHead );
 
-        for( WikiModuleInfo info : filters ) {
-            Element tr = rowBody( info );
+        for( final WikiModuleInfo info : filters ) {
+            final Element tr = rowBody( info );
             tb.addContent( tr );
         }
 
@@ -75,13 +75,13 @@ public abstract class ModuleBean extends SimpleAdminBean {
     }
 
     protected Element title() {
-        Element root = XhtmlUtil.element( XHTML.div );
+        final Element root = XhtmlUtil.element( XHTML.div );
         root.addContent( XhtmlUtil.element( XHTML.h4 ).addContent( getTitle() ) );
         return root;
     }
 
-    protected Element containerForModuleDetail( Element root ) {
-        Element tb = XhtmlUtil.element( XHTML.table ).setAttribute( "border", "1" );
+    protected Element containerForModuleDetail( final Element root ) {
+        final Element tb = XhtmlUtil.element( XHTML.table ).setAttribute( "border", "1" );
         root.addContent( tb );
         return tb;
     }
@@ -108,7 +108,7 @@ public abstract class ModuleBean extends SimpleAdminBean {
      */
     protected abstract Element rowBody( WikiModuleInfo module );
 
-    protected String validModuleVersion( WikiModuleInfo info ) {
+    protected String validModuleVersion( final WikiModuleInfo info ) {
         return Release.isNewerOrEqual( info.getMinVersion() ) && Release.isOlderOrEqual( info.getMaxVersion() )
                ? StringUtils.EMPTY
                : VER_WARNING;

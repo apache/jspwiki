@@ -20,7 +20,7 @@ package org.apache.wiki.ui.admin;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.management.SimpleMBean;
 
 import javax.management.MBeanAttributeInfo;
@@ -41,7 +41,7 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
      *  Provides access to a WikiEngine instance to which this AdminBean
      *  belongs to.
      */
-    protected WikiEngine m_engine;
+    protected Engine m_engine;
     
     /**
      *  Constructor reserved for subclasses only.
@@ -56,7 +56,7 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
     /**
      *  Initialize the AdminBean by setting up a WikiEngine instance internally.
      */
-    public void initialize( WikiEngine engine )
+    @Override public void initialize( final Engine engine )
     {
         m_engine = engine;
     }
@@ -67,11 +67,11 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
      *  attribute is read-only, a readonly input widget is created.
      *  The value is determined by the toString() method of the attribute.
      */
-    public String doGet(WikiContext context)
+    @Override public String doGet( final WikiContext context)
     {
-        MBeanInfo info = getMBeanInfo();
-        MBeanAttributeInfo[] attributes = info.getAttributes();
-        StringBuilder sb = new StringBuilder();
+        final MBeanInfo info = getMBeanInfo();
+        final MBeanAttributeInfo[] attributes = info.getAttributes();
+        final StringBuilder sb = new StringBuilder();
         
         for( int i = 0; i < attributes.length; i++ )
         {
@@ -81,7 +81,7 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
             
             try
             {
-                Object value = getAttribute( attributes[i].getName() );
+                final Object value = getAttribute( attributes[i].getName() );
                 if( attributes[i].isWritable() )
                 {
                     sb.append( "<input type='text' name='question' size='30' value='"+value+"' />\n" );
@@ -91,7 +91,7 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
                     sb.append( "<input type='text' class='readonly' readonly='true' size='30' value='"+value+"' />\n" );
                 }
             }
-            catch( Exception e )
+            catch( final Exception e )
             {
                 sb.append("Exception: "+e.getMessage());
             }
@@ -106,7 +106,7 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
     /**
      *  Not implemented yet.
      */
-    public String doPost(WikiContext context)
+    @Override public String doPost( final WikiContext context)
     {
         // TODO Auto-generated method stub
         return null;
@@ -116,7 +116,7 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
      *  By default, this method returns the class name of the bean.  This is
      *  suitable, if you have a singleton bean.
      */
-    public String getId()
+    @Override public String getId()
     {
         return getClass().getName();
     }

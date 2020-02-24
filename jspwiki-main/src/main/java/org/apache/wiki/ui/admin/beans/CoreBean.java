@@ -19,7 +19,8 @@
 package org.apache.wiki.ui.admin.beans;
 
 import org.apache.wiki.Release;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 
 import javax.management.NotCompliantMBeanException;
@@ -33,7 +34,7 @@ public class CoreBean extends SimpleAdminBean {
     private static final String[] ATTRIBUTES = { "pages", "version" };
     private static final String[] METHODS = { };
 
-    public CoreBean( final WikiEngine engine ) throws NotCompliantMBeanException {
+    public CoreBean( final Engine engine ) throws NotCompliantMBeanException {
         m_engine = engine;
     }
 
@@ -43,7 +44,7 @@ public class CoreBean extends SimpleAdminBean {
      *  @return the page content
      */
     public int getPages() {
-        return m_engine.getPageManager().getTotalPageCount();
+        return m_engine.getManager( PageManager.class ).getTotalPageCount();
     }
 
     public String getPagesDescription()
@@ -61,27 +62,27 @@ public class CoreBean extends SimpleAdminBean {
         return "The JSPWiki engine version";
     }
 
-    public String getTitle()
+    @Override public String getTitle()
     {
         return "Core bean";
     }
 
-    public int getType()
+    @Override public int getType()
     {
         return CORE;
     }
 
-    public String getId()
+    @Override public String getId()
     {
         return "corebean";
     }
 
-    public String[] getAttributeNames()
+    @Override public String[] getAttributeNames()
     {
         return ATTRIBUTES;
     }
 
-    public String[] getMethodNames()
+    @Override public String[] getMethodNames()
     {
         return METHODS;
     }

@@ -18,35 +18,35 @@
 */
 package org.apache.wiki.ui.admin.beans;
 
-import java.util.Collection;
-
-import javax.management.NotCompliantMBeanException;
-
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.plugin.DefaultPluginManager.WikiPluginInfo;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
 
+import javax.management.NotCompliantMBeanException;
+import java.util.Collection;
+
 
 public class PluginBean extends ModuleBean {
 
-    public PluginBean( WikiEngine engine ) throws NotCompliantMBeanException {
+    public PluginBean( final Engine engine ) throws NotCompliantMBeanException {
         super( engine );
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getTitle() {
+    @Override public String getTitle() {
         return "Plugins";
     }
 
     /**
      * {@inheritDoc}
      */
-    public int getType() {
+    @Override public int getType() {
         return CORE;
     }
 
@@ -55,7 +55,7 @@ public class PluginBean extends ModuleBean {
      */
     @Override
     protected Collection< WikiModuleInfo > modules() {
-        return m_engine.getPluginManager().modules();
+        return m_engine.getManager( PluginManager.class ).modules();
     }
 
     /**
@@ -63,7 +63,7 @@ public class PluginBean extends ModuleBean {
      */
     @Override
     protected Element heading() {
-        Element trHead = XhtmlUtil.element( XHTML.tr );
+        final Element trHead = XhtmlUtil.element( XHTML.tr );
         trHead.addContent( XhtmlUtil.element( XHTML.th ).addContent( "Name" ) )
               .addContent( XhtmlUtil.element( XHTML.th ).addContent( "Alias" ) )
               .addContent( XhtmlUtil.element( XHTML.th ).addContent( "Author" ) )
@@ -75,8 +75,8 @@ public class PluginBean extends ModuleBean {
      * {@inheritDoc}
      */
     @Override
-    protected Element rowBody( WikiModuleInfo plugin ) {
-        Element tr = XhtmlUtil.element( XHTML.tr );
+    protected Element rowBody( final WikiModuleInfo plugin ) {
+        final Element tr = XhtmlUtil.element( XHTML.tr );
         tr.addContent( XhtmlUtil.element( XHTML.td ).addContent( plugin.getName() ) )
           .addContent( XhtmlUtil.element( XHTML.td ).addContent( ( ( WikiPluginInfo )plugin).getAlias() ) )
           .addContent( XhtmlUtil.element( XHTML.td ).addContent( plugin.getAuthor() ) )

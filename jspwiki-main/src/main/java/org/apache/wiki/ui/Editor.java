@@ -34,7 +34,7 @@ public class Editor {
     public Editor( final WikiContext wikiContext, final String editorName ) {
         m_wikiContext = wikiContext;
         m_editorName = editorName;
-        m_editorManager = wikiContext.getEngine().getEditorManager();
+        m_editorManager = wikiContext.getEngine().getManager( EditorManager.class );
     }
 
     public String getName() {

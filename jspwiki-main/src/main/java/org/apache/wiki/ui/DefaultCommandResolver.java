@@ -25,6 +25,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.auth.GroupPrincipal;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.TextUtil;
 
@@ -304,7 +305,7 @@ public final class DefaultCommandResolver implements CommandResolver {
             }
         }
 
-        WikiPage wikipage = m_engine.getPageManager().getPage( page, version );
+        WikiPage wikipage = m_engine.getManager( PageManager.class ).getPage( page, version );
         if ( wikipage == null ) {
             page = MarkupParser.cleanLink( page );
             wikipage = new WikiPage( m_engine, page );
@@ -324,7 +325,7 @@ public final class DefaultCommandResolver implements CommandResolver {
         if ( m_specialPages.containsKey( page ) ) {
             return true;
         }
-        return m_engine.getPageManager().pageExists( page );
+        return m_engine.getManager( PageManager.class ).pageExists( page );
     }
 
 }

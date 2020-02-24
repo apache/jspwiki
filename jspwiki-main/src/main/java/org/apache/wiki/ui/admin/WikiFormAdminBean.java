@@ -18,15 +18,14 @@
  */
 package org.apache.wiki.ui.admin;
 
-import java.io.IOException;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.render.RenderingManager;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Map;
 
 /**
  *  This class is still experimental.
@@ -39,21 +38,21 @@ public abstract class WikiFormAdminBean
     
     public abstract void handleResponse( WikiContext context, Map< ?, ? > params );
 
-    public String doGet(WikiContext context)
+    @Override public String doGet( final WikiContext context)
     {
         String result = "";
         
-        String wikiMarkup = getForm(context);
+        final String wikiMarkup = getForm(context);
         
-        RenderingManager mgr = context.getEngine().getRenderingManager();
+        final RenderingManager mgr = context.getEngine().getManager( RenderingManager.class );
         
-        WikiDocument doc;
+        final WikiDocument doc;
         try
         {
             doc = mgr.getParser( context, wikiMarkup ).parse();
             result = mgr.getHTML(context, doc);
         }
-        catch (IOException e)
+        catch ( final IOException e)
         {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -62,7 +61,7 @@ public abstract class WikiFormAdminBean
         return result;
     }
 
-    public String handlePost(WikiContext context, HttpServletRequest req, HttpServletResponse resp)
+    public String handlePost( final WikiContext context, final HttpServletRequest req, final HttpServletResponse resp)
     {
         return null;
         // FIXME: Not yet implemented
