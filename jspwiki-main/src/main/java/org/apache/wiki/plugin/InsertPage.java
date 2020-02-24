@@ -19,14 +19,16 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -81,23 +83,21 @@ public class InsertPage
     /**
      *  {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
-    public String execute( WikiContext context, Map<String, String> params )
-        throws PluginException
-    {
-        WikiEngine engine = context.getEngine();
+    @Override @SuppressWarnings("unchecked")
+    public String execute( final WikiContext context, final Map<String, String> params ) throws PluginException {
+        final Engine engine = context.getEngine();
 
-        StringBuilder res = new StringBuilder();
+        final StringBuilder res = new StringBuilder();
 
-        String clazz        = params.get( PARAM_CLASS );
-        String includedPage = params.get( PARAM_PAGENAME );
+        final String clazz        = params.get( PARAM_CLASS );
+        final String includedPage = params.get( PARAM_PAGENAME );
         String style        = params.get( PARAM_STYLE );
-        Boolean showOnce    = "once".equals( params.get( PARAM_SHOW ) );
-        String defaultstr   = params.get( PARAM_DEFAULT );
-        int    section      = TextUtil.parseIntParameter(params.get( PARAM_SECTION ), -1 );
+        final Boolean showOnce    = "once".equals( params.get( PARAM_SHOW ) );
+        final String defaultstr   = params.get( PARAM_DEFAULT );
+        final int    section      = TextUtil.parseIntParameter(params.get( PARAM_SECTION ), -1 );
         int    maxlen       = TextUtil.parseIntParameter(params.get( PARAM_MAXLENGTH ), -1 );
 
-        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
 
         if( style == null ) style = DEFAULT_STYLE;
@@ -106,13 +106,13 @@ public class InsertPage
 
         if( includedPage != null )
         {
-            WikiPage page;
+            final WikiPage page;
             try {
                 final String pageName = engine.getFinalPageName( includedPage );
                 if( pageName != null ) {
-                    page = engine.getPageManager().getPage( pageName );
+                    page = engine.getManager( PageManager.class ).getPage( pageName );
                 } else {
-                    page = engine.getPageManager().getPage( includedPage );
+                    page = engine.getManager( PageManager.class ).getPage( includedPage );
                 }
             } catch( final ProviderException e ) {
                 res.append( "<span class=\"error\">Page could not be found by the page provider.</span>" );
@@ -136,17 +136,15 @@ public class InsertPage
                 }
                 else
                 {
-                    previousIncludes = new ArrayList<String>();
+                    previousIncludes = new ArrayList<>();
                 }
 
                 //
                 // Check for permissions
                 //
-                AuthorizationManager mgr = engine.getAuthorizationManager();
+                final AuthorizationManager mgr = engine.getManager( AuthorizationManager.class );
 
-                if( !mgr.checkPermission( context.getWikiSession(),
-                                          PermissionFactory.getPagePermission( page, "view") ) )
-                {
+                if( !mgr.checkPermission( context.getWikiSession(), PermissionFactory.getPagePermission( page, "view") ) ) {
                     res.append("<span class=\"error\">You do not have permission to view this included page.</span>");
                     return res.toString();
                 }
@@ -180,10 +178,10 @@ public class InsertPage
                  *  its own page, because we need the links to be correct.
                  */
 
-                WikiContext includedContext = (WikiContext) context.clone();
+                final WikiContext includedContext = (WikiContext) context.clone();
                 includedContext.setPage( page );
 
-                String pageData = engine.getPageManager().getPureText( page );
+                String pageData = engine.getManager( PageManager.class ).getPureText( page );
                 String moreLink = "";
 
                 if( section != -1 ) {
@@ -206,7 +204,7 @@ public class InsertPage
                 if( showOnce ) res.append("\" data-once=\""+cookieName );
                 res.append("\" >");
 
-                res.append( engine.getRenderingManager().textToHTML( includedContext, pageData ) );
+                res.append( engine.getManager( RenderingManager.class ).textToHTML( includedContext, pageData ) );
                 res.append( moreLink );
 
                 res.append("</div>");

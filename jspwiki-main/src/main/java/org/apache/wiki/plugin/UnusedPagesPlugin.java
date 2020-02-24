@@ -24,7 +24,6 @@ import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.TextUtil;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -36,58 +35,36 @@ import java.util.Map;
  *  <li><b>separator</b> - how to separate generated links; default is a wikitext line break,  producing a vertical list</li>
  * <li><b> maxwidth</b> - maximum width, in chars, of generated links.</li>
  * </ul>
- *
  */
-public class UnusedPagesPlugin
-    extends AbstractReferralPlugin
-{
-    /**
-     *  If set to "true", attachments are excluded from display.  Value is {@value}.
-     */
+public class UnusedPagesPlugin extends AbstractReferralPlugin {
+
+    /** If set to "true", attachments are excluded from display.  Value is {@value}. */
     public static final String PARAM_EXCLUDEATTS = "excludeattachments";
 
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
-        throws PluginException
-    {
-        ReferenceManager refmgr = context.getEngine().getReferenceManager();
-        Collection<String> links = refmgr.findUnreferenced();
-        //
+    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+        final ReferenceManager refmgr = context.getEngine().getManager( ReferenceManager.class );
+        Collection< String > links = refmgr.findUnreferenced();
+
         // filter out attachments if "excludeattachments" was requested:
-        //
-        String prop = params.get( PARAM_EXCLUDEATTS );
-        if( TextUtil.isPositive(prop) )
-        {
-            //  remove links to attachments (recognizable by a slash in it)
-            Iterator< String > iterator = links.iterator();
-            while( iterator.hasNext() )
-            {
-                String link = iterator.next();
-                if (link.indexOf("/")!=-1)
-                {
-                    iterator.remove();
-                }
-            }
+        final String prop = params.get( PARAM_EXCLUDEATTS );
+        if( TextUtil.isPositive( prop ) ) {
+            // remove links to attachments (recognizable by a slash in it)
+            links.removeIf( link -> link.contains( "/" ) );
         }
 
         super.initialize( context, params );
-
         links = filterAndSortCollection( links );
 
-        String wikitext = null;
-
-        if (m_show.equals(PARAM_SHOW_VALUE_COUNT))
-        {
+        String wikitext;
+        if( m_show.equals( PARAM_SHOW_VALUE_COUNT ) ) {
             wikitext = "" + links.size();
-            if (m_lastModified && links.size()!=0)
-            {
-                wikitext = links.size() + " (" + m_dateFormat.format(m_dateLastModified) + ")";
+            if( m_lastModified && links.size() != 0 ) {
+                wikitext = links.size() + " (" + m_dateFormat.format( m_dateLastModified ) + ")";
             }
-        }
-        else
-        {
+        } else {
             wikitext = wikitizeCollection( links, m_separator, ALL_ITEMS );
         }
         return makeHTML( context, wikitext );

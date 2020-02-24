@@ -45,31 +45,31 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
     /** Parameter name for setting the text to show when the maximum items is overruled. Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXTRAS = "extras";
 
-    public String execute(WikiContext context, Map<String, String> params) throws PluginException {
-        ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+    @Override public String execute( final WikiContext context, final Map<String, String> params) throws PluginException {
+        final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
-        ReferenceManager referenceManager = context.getEngine().getReferenceManager();
+        final ReferenceManager referenceManager = context.getEngine().getManager( ReferenceManager.class );
 
-        int items = TextUtil.parseIntParameter(params.get(PARAM_MAX), ALL_ITEMS);
+        final int items = TextUtil.parseIntParameter(params.get(PARAM_MAX), ALL_ITEMS);
         String extras = params.get(PARAM_EXTRAS);
         if (extras == null) {
             extras = rb.getString("referringundefinedpagesplugin.more");
         }
 
-        StringBuilder resultHTML = new StringBuilder();
+        final StringBuilder resultHTML = new StringBuilder();
 
-        Collection<String> uncreatedPages = referenceManager.findUncreated();
+        final Collection<String> uncreatedPages = referenceManager.findUncreated();
 
         super.initialize(context, params);
 
         Collection<String> result = null;
 
-        TreeMap< String, String > sortedMap = new TreeMap<>();
+        final TreeMap< String, String > sortedMap = new TreeMap<>();
         if (uncreatedPages != null) {
-            for (String uncreatedPageName : uncreatedPages) {
-                Collection<String> referrers = referenceManager.findReferrers(uncreatedPageName);
+            for ( final String uncreatedPageName : uncreatedPages) {
+                final Collection<String> referrers = referenceManager.findReferrers(uncreatedPageName);
                 if (referrers != null) {
-                    for (String referringPage : referrers) {
+                    for ( final String referringPage : referrers) {
                         sortedMap.put(referringPage, "");
                     }
                 }
@@ -79,13 +79,13 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
 
         result = super.filterAndSortCollection(result);
 
-        String wikitext = wikitizeCollection(result, m_separator, items);
+        final String wikitext = wikitizeCollection(result, m_separator, items);
 
         resultHTML.append(makeHTML(context, wikitext));
 
         // add the more.... text
         if (items < result.size() && items > 0) {
-            Object[] args = {"" + (result.size() - items)};
+            final Object[] args = {"" + (result.size() - items)};
             extras = MessageFormat.format(extras, args);
 
             resultHTML.append("<br/>" + extras + "<br/>");

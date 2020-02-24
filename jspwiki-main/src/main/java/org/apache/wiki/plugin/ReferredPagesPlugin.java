@@ -26,10 +26,11 @@ import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.TextUtil;
 
@@ -56,7 +57,7 @@ import java.util.Map;
 public class ReferredPagesPlugin implements WikiPlugin {
 
     private static final Logger log = Logger.getLogger( ReferredPagesPlugin.class );
-    private WikiEngine     m_engine;
+    private Engine         m_engine;
     private int            m_depth;
     private HashSet<String> m_exists  = new HashSet<>();
     private StringBuffer   m_result  = new StringBuffer(1024);
@@ -93,7 +94,7 @@ public class ReferredPagesPlugin implements WikiPlugin {
     /**
      *  {@inheritDoc}
      */
-    public String execute( final WikiContext context, final Map<String, String> params ) throws PluginException {
+    @Override public String execute( final WikiContext context, final Map<String, String> params ) throws PluginException {
         m_engine = context.getEngine();
         final WikiPage page = context.getPage();
         if( page == null ) {
@@ -185,11 +186,11 @@ public class ReferredPagesPlugin implements WikiPlugin {
         if( pagename == null ) {
             return;
         }
-        if( !m_engine.getPageManager().wikiPageExists(pagename) ) {
+        if( !m_engine.getManager( PageManager.class ).wikiPageExists(pagename) ) {
             return;
         }
 
-        final ReferenceManager mgr = m_engine.getReferenceManager();
+        final ReferenceManager mgr = m_engine.getManager( ReferenceManager.class );
         final Collection< String > allPages = mgr.findRefersTo( pagename );
         handleLinks( context, allPages, ++depth, pagename );
     }
@@ -205,7 +206,7 @@ public class ReferredPagesPlugin implements WikiPlugin {
         if( links != null )
             allLinks.addAll( links );
 
-        if( m_formatSort ) context.getEngine().getPageManager().getPageSorter().sort( allLinks );
+        if( m_formatSort ) context.getEngine().getManager( PageManager.class ).getPageSorter().sort( allLinks );
 
         for( final String link : allLinks ) {
             if( localLinkSet.contains( link ) ) {
@@ -213,7 +214,7 @@ public class ReferredPagesPlugin implements WikiPlugin {
             }
             localLinkSet.add( link );
 
-            if( !m_engine.getPageManager().wikiPageExists( link ) ) {
+            if( !m_engine.getManager( PageManager.class ).wikiPageExists( link ) ) {
                 continue; // hide links to non existing pages
             }
             if(  m_matcher.matches( link , m_excludePattern ) ) {

@@ -18,11 +18,6 @@
  */
 package org.apache.wiki.plugin;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
@@ -30,29 +25,27 @@ import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
 
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 /**
- *  This is a plugin for the administrator: It allows him to see in a single
- *  glance who is editing what.
+ *  This is a plugin for the administrator: It allows him to see in a single glance who is editing what.
  *
  *  <p>Parameters : </p>
  *   NONE
  *  @since 2.0.22.
  */
-public class ListLocksPlugin
-    implements WikiPlugin
-{
+public class ListLocksPlugin implements WikiPlugin {
+
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
-        throws PluginException
-    {
-    	StringBuilder result = new StringBuilder();
-
-        PageManager mgr = context.getEngine().getPageManager();
-        List<PageLock> locks = mgr.getActiveLocks();
-        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
-
+    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    	final StringBuilder result = new StringBuilder();
+        final PageManager mgr = context.getEngine().getManager( PageManager.class );
+        final List< PageLock > locks = mgr.getActiveLocks();
+        final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         result.append("<table class=\"wikitable\">\n");
         result.append("<tr>\n");
         result.append( "<th>" + rb.getString( "plugin.listlocks.page" ) + "</th><th>" + rb.getString( "plugin.listlocks.locked.by" )
@@ -60,18 +53,11 @@ public class ListLocksPlugin
                        + rb.getString( "plugin.listlocks.expires" ) + "</th>\n" );
         result.append("</tr>");
 
-        if( locks.size() == 0 )
-        {
-            result.append( "<tr><td colspan=\"4\" class=\"odd\">" + rb.getString( "plugin.listlocks.no.locks.exist" )
-                           + "</td></tr>\n" );
-        }
-        else
-        {
+        if( locks.size() == 0 ) {
+            result.append( "<tr><td colspan=\"4\" class=\"odd\">" + rb.getString( "plugin.listlocks.no.locks.exist" ) + "</td></tr>\n" );
+        } else {
             int rowNum = 1;
-            for( Iterator<PageLock> i = locks.iterator(); i.hasNext(); )
-            {
-                PageLock lock = i.next();
-
+            for( final PageLock lock : locks ) {
                 result.append( rowNum % 2 != 0 ? "<tr class=\"odd\">" : "<tr>" );
                 result.append( "<td>" + lock.getPage() + "</td>" );
                 result.append( "<td>" + lock.getLocker() + "</td>" );
@@ -81,9 +67,7 @@ public class ListLocksPlugin
                 rowNum++;
             }
         }
-
         result.append("</table>");
-
         return result.toString();
     }
 

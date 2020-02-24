@@ -40,8 +40,8 @@ public class UndefinedPagesPlugin extends AbstractReferralPlugin {
     /**
      *  {@inheritDoc}
      */
-    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
-        final ReferenceManager refmgr = context.getEngine().getReferenceManager();
+    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+        final ReferenceManager refmgr = context.getEngine().getManager( ReferenceManager.class );
         super.initialize( context, params );
 
         Collection< String > links = refmgr.findUncreated();

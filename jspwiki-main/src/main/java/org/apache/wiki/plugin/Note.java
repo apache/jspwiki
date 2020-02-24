@@ -20,13 +20,14 @@
  */
 package org.apache.wiki.plugin;
 
-import java.util.Map;
-
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.util.TextUtil;
+
+import java.util.Map;
 
 /**
  * Outputs an image with the supplied text as the <tt>title</tt> which is shown as a tooltip by
@@ -60,33 +61,31 @@ public class Note implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute(WikiContext context, Map<String, String> params) throws PluginException
+    @Override public String execute( final WikiContext context, final Map<String, String> params) throws PluginException
     {
-        String commandline = params.get(DefaultPluginManager.PARAM_CMDLINE);
+        final String commandline = params.get(DefaultPluginManager.PARAM_CMDLINE);
         if (commandline == null || commandline.length() == 0)
         {
             return "Unable to obtain plugin command line from parameter'" + DefaultPluginManager.PARAM_CMDLINE + "'"; // I18N
         }
 
-        String commentImage = imageUrl(context);
+        final String commentImage = imageUrl(context);
 
-        String commentText = clean(commandline);
+        final String commentText = clean(commandline);
 
         return "<img src='" + commentImage + "' alt=\"Comment: " + 
                commentText + "\" title=\"" + commentText + "\"/>";
     }
 
-    private String imageUrl( WikiContext ctx )
+    private String imageUrl( final WikiContext ctx )
     {
-        WikiEngine engine = ctx.getEngine();
+        final Engine engine = ctx.getEngine();
         String commentImage = engine.getWikiProperties().getProperty(PROP_NOTE_IMAGE,
                                                                      DEFAULT_NOTE_IMAGE);
 
         commentImage = "images/"+commentImage;
         
-        String resource = engine.getTemplateManager().findResource( ctx, 
-                                                                    engine.getTemplateDir(), 
-                                                                    commentImage );
+        String resource = engine.getManager( TemplateManager.class ).findResource( ctx, engine.getTemplateDir(), commentImage );
         
         // JSPWIKI-876 Fixed error with Note Plugin. Only one preceding "/" is needed.
         if (resource != null && resource.startsWith("/")) {
@@ -101,7 +100,7 @@ public class Note implements WikiPlugin
      * 
      * @param commandline
      */
-    private String clean(String commandline)
+    private String clean( final String commandline)
     {
         return TextUtil.replaceEntities( commandline );
     }

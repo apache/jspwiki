@@ -20,12 +20,13 @@ package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.RedirectException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
 
@@ -72,7 +73,7 @@ public class BugReportHandler implements WikiPlugin {
     /**
      *  {@inheritDoc}
      */
-    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
         final String title = params.get( PARAM_TITLE );
         String description = params.get( PARAM_DESCRIPTION );
         String version = params.get( PARAM_VERSION );
@@ -141,7 +142,7 @@ public class BugReportHandler implements WikiPlugin {
             final WikiPage newPage = new WikiPage( context.getEngine(), pageName );
             final WikiContext newContext = (WikiContext)context.clone();
             newContext.setPage( newPage );
-            context.getEngine().getPageManager().saveText( newContext, str.toString() );
+            context.getEngine().getManager( PageManager.class ).saveText( newContext, str.toString() );
 
             final MessageFormat formatter = new MessageFormat("");
             formatter.applyPattern( rb.getString("bugreporthandler.new") );
@@ -163,11 +164,11 @@ public class BugReportHandler implements WikiPlugin {
      */
     private synchronized String findNextPage( final WikiContext context, final String title, final String baseName ) {
         final String basicPageName = ( ( baseName != null ) ? baseName : "Bug" ) + MarkupParser.cleanLink( title );
-        final WikiEngine engine = context.getEngine();
+        final Engine engine = context.getEngine();
 
         String pageName = basicPageName;
         long   lastbug  = 2;
-        while( engine.getPageManager().wikiPageExists( pageName ) ) {
+        while( engine.getManager( PageManager.class ).wikiPageExists( pageName ) ) {
             pageName = basicPageName + lastbug++;
         }
 

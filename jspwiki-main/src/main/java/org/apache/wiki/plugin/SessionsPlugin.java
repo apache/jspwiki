@@ -18,17 +18,17 @@
  */
 package org.apache.wiki.plugin;
 
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.util.TextUtil;
+
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.util.TextUtil;
 
 /**
  *  <p>Displays information about active wiki sessions. The parameter
@@ -56,16 +56,16 @@ public class SessionsPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
+    @Override public String execute( final WikiContext context, final Map<String, String> params )
         throws PluginException
     {
-        WikiEngine engine = context.getEngine();
-        String prop = params.get( PARAM_PROP );
+        final Engine engine = context.getEngine();
+        final String prop = params.get( PARAM_PROP );
 
         if ( "users".equals( prop ) )
         {
-            Principal[] principals = WikiSession.userPrincipals( engine );
-            StringBuilder s = new StringBuilder();
+            final Principal[] principals = WikiSession.userPrincipals( engine );
+            final StringBuilder s = new StringBuilder();
             for ( int i = 0; i < principals.length; i++ )
             {
                 s.append(principals[i].getName() + ", ");
@@ -79,13 +79,13 @@ public class SessionsPlugin
         // number of sessions for each user)
         if ("distinctUsers".equals(prop))
         {
-            Principal[] principals = WikiSession.userPrincipals(engine);
+            final Principal[] principals = WikiSession.userPrincipals(engine);
             // we do not assume that the principals are sorted, so first count
             // them :
-            HashMap<String,Integer> distinctPrincipals = new HashMap<String,Integer>();
+            final HashMap<String,Integer> distinctPrincipals = new HashMap<>();
             for (int i = 0; i < principals.length; i++)
             {
-                String principalName = principals[i].getName();
+                final String principalName = principals[i].getName();
 
                 if (distinctPrincipals.containsKey(principalName))
                 {
@@ -102,11 +102,11 @@ public class SessionsPlugin
             }
             //
             //
-            StringBuilder s = new StringBuilder();
-            Iterator<Map.Entry<String, Integer>> entries = distinctPrincipals.entrySet().iterator();
+            final StringBuilder s = new StringBuilder();
+            final Iterator<Map.Entry<String, Integer>> entries = distinctPrincipals.entrySet().iterator();
             while (entries.hasNext())
             {
-                Map.Entry<String, Integer> entry = entries.next();
+                final Map.Entry<String, Integer> entry = entries.next();
                 s.append( entry.getKey() + "(" + entry.getValue().toString() + "), " );
             }
             // remove the last comma and blank :

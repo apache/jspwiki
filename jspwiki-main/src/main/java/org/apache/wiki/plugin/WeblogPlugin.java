@@ -20,9 +20,9 @@ package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
@@ -33,6 +33,8 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
+import org.apache.wiki.references.ReferenceManager;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
 import java.text.DateFormat;
@@ -83,7 +85,7 @@ import java.util.regex.Pattern;
 
 public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
 
-    private static final Logger     log = Logger.getLogger(WeblogPlugin.class);
+    private static final Logger log = Logger.getLogger(WeblogPlugin.class);
     private static final Pattern HEADINGPATTERN;
 
     /** How many days are considered by default.  Default value is {@value} */
@@ -155,12 +157,12 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
     /**
      *  {@inheritDoc}
      */
-    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
         final Calendar   startTime;
         final Calendar   stopTime;
         int        numDays = DEFAULT_DAYS;
-        final WikiEngine engine = context.getEngine();
-        final AuthorizationManager mgr = engine.getAuthorizationManager();
+        final Engine engine = context.getEngine();
+        final AuthorizationManager mgr = engine.getManager( AuthorizationManager.class );
 
         //
         //  Parse parameters.
@@ -268,7 +270,7 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
      */
     private void addEntryHTML( final WikiContext context, final DateFormat entryFormat, final boolean hasComments,
                                final StringBuilder buffer, final WikiPage entry, final Map< String, String > params) {
-        final WikiEngine engine = context.getEngine();
+        final Engine engine = context.getEngine();
         final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         buffer.append("<div class=\"weblogentry\">\n");
@@ -288,7 +290,7 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
         final WikiContext entryCtx = (WikiContext) context.clone();
         entryCtx.setPage( entry );
 
-        String html = engine.getRenderingManager().getHTML( entryCtx, engine.getPageManager().getPage( entry.getName() ) );
+        String html = engine.getManager( RenderingManager.class ).getHTML( entryCtx, engine.getManager( PageManager.class ).getPage( entry.getName() ) );
 
         // Extract the first h1/h2/h3 as title, and replace with null
         buffer.append("<div class=\"weblogentrytitle\">\n");
@@ -342,8 +344,8 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
         String author = entry.getAuthor();
 
         if( author != null ) {
-            if( engine.getPageManager().wikiPageExists(author) ) {
-                author = "<a href=\""+entryCtx.getURL( WikiContext.VIEW, author )+"\">"+engine.getRenderingManager().beautifyTitle(author)+"</a>";
+            if( engine.getManager( PageManager.class ).wikiPageExists(author) ) {
+                author = "<a href=\""+entryCtx.getURL( WikiContext.VIEW, author )+"\">"+engine.getManager( RenderingManager.class ).beautifyTitle(author)+"</a>";
             }
         } else {
             author = "AnonymousCoward";
@@ -354,7 +356,7 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
         final String commentPageName = TextUtil.replaceString( entry.getName(), "blogentry", "comments" );
 
         if( hasComments ) {
-            int numComments = guessNumberOfComments( engine, commentPageName );
+            final int numComments = guessNumberOfComments( engine, commentPageName );
 
             //
             //  We add the number of comments to the URL so that the user's browsers would realize that the page has changed.
@@ -371,14 +373,12 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
 
         buffer.append("</div>\n");
 
-        //
         //  Done, close
-        //
         buffer.append("</div>\n");
     }
 
-    private int guessNumberOfComments( final WikiEngine engine, final String commentpage ) {
-        final String pagedata = engine.getPageManager().getPureText( commentpage, WikiProvider.LATEST_VERSION );
+    private int guessNumberOfComments( final Engine engine, final String commentpage ) {
+        final String pagedata = engine.getManager( PageManager.class ).getPureText( commentpage, WikiProvider.LATEST_VERSION );
         if( pagedata == null || pagedata.trim().length() == 0 ) {
             return 0;
         }
@@ -396,9 +396,9 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
      *  @param end   The end date which is the last to be considered
      *  @return a list of pages with their FIRST revisions.
      */
-    public List< WikiPage > findBlogEntries( final WikiEngine engine, String baseName, final Date start, final Date end ) {
-        final PageManager mgr = engine.getPageManager();
-        final Set< String > allPages = engine.getReferenceManager().findCreated();
+    public List< WikiPage > findBlogEntries( final Engine engine, String baseName, final Date start, final Date end ) {
+        final PageManager mgr = engine.getManager( PageManager.class );
+        final Set< String > allPages = engine.getManager( ReferenceManager.class ).findCreated();
         final ArrayList<WikiPage> result = new ArrayList<>();
 
         baseName = makeEntryPage( baseName );
@@ -442,7 +442,7 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
      *
      *  {@inheritDoc}
      */
-    public void executeParser( final PluginElement element, final WikiContext context, final Map< String, String > params ) {
+    @Override public void executeParser( final PluginElement element, final WikiContext context, final Map< String, String > params ) {
         context.getPage().setAttribute( ATTR_ISWEBLOG, "true" );
     }
 

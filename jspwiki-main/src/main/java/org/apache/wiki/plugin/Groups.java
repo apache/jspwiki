@@ -19,11 +19,12 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.auth.PrincipalComparator;
 import org.apache.wiki.auth.authorize.GroupManager;
+import org.apache.wiki.url.URLConstructor;
 
 import java.security.Principal;
 import java.util.Arrays;
@@ -46,10 +47,10 @@ public class Groups implements WikiPlugin {
     /**
      *  {@inheritDoc}
      */
-    public String execute( final WikiContext context, final Map<String, String> params ) throws PluginException {
+    @Override public String execute( final WikiContext context, final Map<String, String> params ) throws PluginException {
         // Retrieve groups, and sort by name
-        final WikiEngine engine = context.getEngine();
-        final GroupManager groupMgr = engine.getGroupManager();
+        final Engine engine = context.getEngine();
+        final GroupManager groupMgr = engine.getManager( GroupManager.class );
         final Principal[] groups = groupMgr.getRoles();
         Arrays.sort( groups, COMPARATOR );
 
@@ -59,7 +60,7 @@ public class Groups implements WikiPlugin {
             final String name = groups[ i ].getName();
             
             // Make URL
-            final String url = engine.getURLConstructor().makeURL( WikiContext.VIEW_GROUP, name,  null );
+            final String url = engine.getManager( URLConstructor.class ).makeURL( WikiContext.VIEW_GROUP, name,  null );
             
             // Create hyperlink
             s.append( "<a href=\"" );
@@ -76,4 +77,5 @@ public class Groups implements WikiPlugin {
         }
         return s.toString();
     }
+
 }

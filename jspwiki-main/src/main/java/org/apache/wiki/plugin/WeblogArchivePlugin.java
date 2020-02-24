@@ -18,25 +18,22 @@
  */
 package org.apache.wiki.plugin;
 
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.util.TextUtil;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.util.TextUtil;
 
 /**
  *  Creates a list of all weblog entries on a monthly basis.
@@ -48,9 +45,7 @@ import org.apache.wiki.util.TextUtil;
  *
  *  @since 1.9.21
  */
-public class WeblogArchivePlugin implements WikiPlugin
-{
-    private static Logger     log = Logger.getLogger(WeblogArchivePlugin.class);
+public class WeblogArchivePlugin implements WikiPlugin {
 
     /** Parameter name for setting the page.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_PAGE = "page";
@@ -60,14 +55,10 @@ public class WeblogArchivePlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
-        throws PluginException
-    {
-        WikiEngine engine = context.getEngine();
+    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+        final Engine engine = context.getEngine();
 
-        //
         //  Parameters
-        //
         String weblogName = params.get( PARAM_PAGE );
 
         if( weblogName == null ) weblogName = context.getPage().getName();
@@ -77,82 +68,48 @@ public class WeblogArchivePlugin implements WikiPlugin
                                                 context.getURL( WikiContext.VIEW, weblogName,
                                                                 "weblog.startDate='ddMMyy'&amp;weblog.days=%d")+"'");
 
-        StringBuilder sb = new StringBuilder();
-
+        final StringBuilder sb = new StringBuilder();
         sb.append( "<div class=\"weblogarchive\">\n" );
 
-
-        //
         //  Collect months that have blog entries
-        //
+        final Collection< Calendar > months = collectMonths( engine, weblogName );
+        int year = 0;
 
-        try
-        {
-            Collection< Calendar > months = collectMonths( engine, weblogName );
-            int year = 0;
+        //  Output proper HTML.
+        sb.append( "<ul>\n" );
 
-            //
-            //  Output proper HTML.
-            //
-
-            sb.append( "<ul>\n" );
-
-            if( months.size() > 0 )
-            {
-                year = (months.iterator().next()).get( Calendar.YEAR );
-
-                sb.append( "<li class=\"archiveyear\">"+year+"</li>\n" );
-            }
-
-            for( Iterator< Calendar > i = months.iterator(); i.hasNext(); )
-            {
-                Calendar cal = i.next();
-
-                if( cal.get( Calendar.YEAR ) != year )
-                {
-                    year = cal.get( Calendar.YEAR );
-
-                    sb.append( "<li class=\"archiveyear\">"+year+"</li>\n" );
-                }
-
-                sb.append( "  <li>" );
-
-                sb.append( getMonthLink( cal ) );
-
-                sb.append( "</li>\n" );
-            }
-
-            sb.append( "</ul>\n" );
-        }
-        catch( ProviderException ex )
-        {
-            log.info( "Cannot get archive", ex );
-            sb.append("Cannot get archive: "+ex.getMessage());
+        if( months.size() > 0 ) {
+            year = ( months.iterator().next() ).get( Calendar.YEAR );
+            sb.append( "<li class=\"archiveyear\">" + year + "</li>\n" );
         }
 
+        for( final Calendar cal : months ) {
+            if( cal.get( Calendar.YEAR ) != year ) {
+                year = cal.get( Calendar.YEAR );
+                sb.append( "<li class=\"archiveyear\">" + year + "</li>\n" );
+            }
+            sb.append( "  <li>" );
+            sb.append( getMonthLink( cal ) );
+            sb.append( "</li>\n" );
+        }
+
+        sb.append( "</ul>\n" );
         sb.append( "</div>\n" );
-
         return sb.toString();
     }
 
-    private SortedSet< Calendar > collectMonths( WikiEngine engine, String page )
-        throws ProviderException
-    {
-        Comparator< Calendar > comp = new ArchiveComparator();
-        TreeSet<Calendar> res = new TreeSet<Calendar>( comp );
+    private SortedSet< Calendar > collectMonths( final Engine engine, final String page ) {
+        final Comparator< Calendar > comp = new ArchiveComparator();
+        final TreeSet<Calendar> res = new TreeSet<>( comp );
 
-        WeblogPlugin pl = new WeblogPlugin();
+        final WeblogPlugin pl = new WeblogPlugin();
 
-        List< WikiPage > blogEntries = pl.findBlogEntries( engine, page, new Date(0L), new Date() );
+        final List< WikiPage > blogEntries = pl.findBlogEntries( engine, page, new Date(0L), new Date() );
 
-        for( Iterator< WikiPage > i = blogEntries.iterator(); i.hasNext(); )
-        {
-            WikiPage p = i.next();
-
+        for( final WikiPage p : blogEntries ) {
             // FIXME: Not correct, should parse page creation time.
-
-            Date d = p.getLastModified();
-            Calendar cal = Calendar.getInstance();
+            final Date d = p.getLastModified();
+            final Calendar cal = Calendar.getInstance();
             cal.setTime( d );
             res.add( cal );
         }
@@ -160,10 +117,10 @@ public class WeblogArchivePlugin implements WikiPlugin
         return res;
     }
 
-    private String getMonthLink( Calendar day )
+    private String getMonthLink( final Calendar day )
     {
-        SimpleDateFormat monthfmt = new SimpleDateFormat( "MMMM" );
-        String result;
+        final SimpleDateFormat monthfmt = new SimpleDateFormat( "MMMM" );
+        final String result;
 
         if( m_monthUrlFormat == null )
         {
@@ -171,9 +128,9 @@ public class WeblogArchivePlugin implements WikiPlugin
         }
         else
         {
-            Calendar cal = (Calendar)day.clone();
-            int firstDay = cal.getActualMinimum( Calendar.DATE );
-            int lastDay  = cal.getActualMaximum( Calendar.DATE );
+            final Calendar cal = (Calendar)day.clone();
+            final int firstDay = cal.getActualMinimum( Calendar.DATE );
+            final int lastDay  = cal.getActualMaximum( Calendar.DATE );
 
             cal.set( Calendar.DATE, lastDay );
             String url = m_monthUrlFormat.format( cal.getTime() );
@@ -194,7 +151,7 @@ public class WeblogArchivePlugin implements WikiPlugin
      */
     private static class ArchiveComparator implements Comparator< Calendar > {
 
-        public int compare( Calendar a, Calendar b )
+        @Override public int compare( final Calendar a, final Calendar b )
         {
             if( a == null || b == null )
             {

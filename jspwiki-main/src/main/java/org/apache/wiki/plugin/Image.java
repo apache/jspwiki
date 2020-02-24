@@ -18,16 +18,16 @@
  */
 package org.apache.wiki.plugin;
 
-import java.util.Map;
-
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.util.TextUtil;
+
+import java.util.Map;
 
 /**
  *  Provides an image plugin for better control than is possible with a simple image inclusion.
@@ -87,7 +87,7 @@ public class Image
      *  This method is used to clean away things like quotation marks which
      *  a malicious user could use to stop processing and insert javascript.
      */
-    private static String getCleanParameter( Map<String, String> params, String paramId )
+    private static String getCleanParameter( final Map<String, String> params, final String paramId )
     {
         return TextUtil.replaceEntities( params.get( paramId ) );
     }
@@ -95,23 +95,23 @@ public class Image
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
+    @Override public String execute( final WikiContext context, final Map<String, String> params )
         throws PluginException
     {
-        WikiEngine engine = context.getEngine();
+        final Engine engine = context.getEngine();
         String src     = getCleanParameter( params, PARAM_SRC );
-        String align   = getCleanParameter( params, PARAM_ALIGN );
-        String ht      = getCleanParameter( params, PARAM_HEIGHT );
-        String wt      = getCleanParameter( params, PARAM_WIDTH );
-        String alt     = getCleanParameter( params, PARAM_ALT );
-        String caption = getCleanParameter( params, PARAM_CAPTION );
-        String link    = getCleanParameter( params, PARAM_LINK );
+        final String align   = getCleanParameter( params, PARAM_ALIGN );
+        final String ht      = getCleanParameter( params, PARAM_HEIGHT );
+        final String wt      = getCleanParameter( params, PARAM_WIDTH );
+        final String alt     = getCleanParameter( params, PARAM_ALT );
+        final String caption = getCleanParameter( params, PARAM_CAPTION );
+        final String link    = getCleanParameter( params, PARAM_LINK );
         String target  = getCleanParameter( params, PARAM_TARGET );
-        String style   = getCleanParameter( params, PARAM_STYLE );
-        String cssclass= getCleanParameter( params, PARAM_CLASS );
+        final String style   = getCleanParameter( params, PARAM_STYLE );
+        final String cssclass= getCleanParameter( params, PARAM_CLASS );
         // String map     = getCleanParameter( params, PARAM_MAP );
-        String border  = getCleanParameter( params, PARAM_BORDER );
-        String title   = getCleanParameter( params, PARAM_TITLE );
+        final String border  = getCleanParameter( params, PARAM_BORDER );
+        final String title   = getCleanParameter( params, PARAM_TITLE );
 
         if( src == null )
         {
@@ -127,20 +127,20 @@ public class Image
 
         try
         {
-            AttachmentManager mgr = engine.getAttachmentManager();
-            Attachment        att = mgr.getAttachmentInfo( context, src );
+            final AttachmentManager mgr = engine.getManager( AttachmentManager.class );
+            final Attachment        att = mgr.getAttachmentInfo( context, src );
 
             if( att != null )
             {
                 src = context.getURL( WikiContext.ATTACH, att.getName() );
             }
         }
-        catch( ProviderException e )
+        catch( final ProviderException e )
         {
             throw new PluginException( "Attachment info failed: "+e.getMessage() );
         }
 
-        StringBuilder result = new StringBuilder();
+        final StringBuilder result = new StringBuilder();
 
         result.append( "<table border=\"0\" class=\"imageplugin\"" );
 
@@ -216,7 +216,7 @@ public class Image
         return result.toString();
     }
 
-    private boolean validTargetValue( String s )
+    private boolean validTargetValue( final String s )
     {
         if( s.equals("_blank")
                 || s.equals("_self")
@@ -227,7 +227,7 @@ public class Image
         }
         else if( s.length() > 0 ) // check [a-zA-z]
         {
-            char c = s.charAt(0);
+            final char c = s.charAt(0);
             return Character.isLowerCase(c) || Character.isUpperCase(c);
         }
         return false;

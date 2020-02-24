@@ -21,14 +21,16 @@ package org.apache.wiki.plugin;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
@@ -74,14 +76,14 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     /**
      * {@inheritDoc}
      */
-    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
         final int since = TextUtil.parseIntParameter( params.get( "since" ), DEFAULT_DAYS );
         String spacing  = "4";
         boolean showAuthor = true;
         boolean showChangenote = true;
         String tablewidth = "4";
         
-        final WikiEngine engine = context.getEngine();
+        final Engine engine = context.getEngine();
 
         //
         //  Which format we want to see?
@@ -99,7 +101,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
         log.debug("Calculating recent changes from "+sincedate.getTime());
 
         // FIXME: Should really have a since date on the getRecentChanges method.
-        Collection< WikiPage > changes = engine.getPageManager().getRecentChanges();
+        Collection< WikiPage > changes = engine.getManager( PageManager.class ).getRecentChanges();
         super.initialize( context, params );
         changes = filterWikiPageCollection( changes );
         
@@ -133,7 +135,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                 }
 
                 final String href = context.getURL( pageref instanceof Attachment ? WikiContext.ATTACH : WikiContext.VIEW, pageref.getName() );
-                Element link = XhtmlUtil.link( href, engine.getRenderingManager().beautifyTitle( pageref.getName() ) );
+                Element link = XhtmlUtil.link( href, engine.getManager( RenderingManager.class ).beautifyTitle( pageref.getName() ) );
                 final Element row = XhtmlUtil.element( XHTML.tr );
                 final Element col = XhtmlUtil.element( XHTML.td );
                 col.setAttribute( XHTML.ATTR_width, "30%" );
@@ -177,7 +179,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
                     authorinfo.setAttribute( XHTML.ATTR_class, "author" );
 
                     if( author != null ) {
-                        if( engine.getPageManager().wikiPageExists( author ) ) {
+                        if( engine.getManager( PageManager.class ).wikiPageExists( author ) ) {
                             authorinfo.addContent( XhtmlUtil.link( context.getURL( WikiContext.VIEW, author ), author ) );
                         } else {
                             authorinfo.addContent( author );

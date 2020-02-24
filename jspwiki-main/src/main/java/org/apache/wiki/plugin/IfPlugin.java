@@ -30,8 +30,12 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.variables.VariableManager;
 
 import java.security.Principal;
 import java.util.Map;
@@ -139,9 +143,9 @@ public class IfPlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
         return ifInclude( context,params )
-                ? context.getEngine().getRenderingManager().textToHTML( context, params.get( DefaultPluginManager.PARAM_BODY ) )
+                ? context.getEngine().getManager( RenderingManager.class ).textToHTML( context, params.get( DefaultPluginManager.PARAM_BODY ) )
                 : "" ;
     }
 
@@ -172,14 +176,14 @@ public class IfPlugin implements WikiPlugin
         include |= checkIP(context, ip);
 
         if( page != null ) {
-            final String content = context.getEngine().getPageManager().getPureText(page, WikiProvider.LATEST_VERSION).trim();
+            final String content = context.getEngine().getManager( PageManager.class ).getPureText(page, WikiProvider.LATEST_VERSION).trim();
             include |= checkContains(content,contains);
             include |= checkIs(content,is);
             include |= checkExists(context,page,exists);
         }
 
         if( var != null ) {
-            final String content = context.getEngine().getVariableManager().getVariable(context, var);
+            final String content = context.getEngine().getManager( VariableManager.class ).getVariable(context, var);
             include |= checkContains(content,contains);
             include |= checkIs(content,is);
             include |= checkVarExists(content,exists);
@@ -192,7 +196,7 @@ public class IfPlugin implements WikiPlugin
         if( exists == null ) {
             return false;
         }
-        return !context.getEngine().getPageManager().wikiPageExists( page ) ^ TextUtil.isPositive(exists);
+        return !context.getEngine().getManager( PageManager.class ).wikiPageExists( page ) ^ TextUtil.isPositive(exists);
     }
 
     private static boolean checkVarExists( final String varContent, final String exists ) {
@@ -219,9 +223,9 @@ public class IfPlugin implements WikiPlugin
                 invert = true;
             }
 
-            final Principal g = context.getEngine().getAuthorizationManager().resolvePrincipal( gname );
+            final Principal g = context.getEngine().getManager( AuthorizationManager.class ).resolvePrincipal( gname );
 
-            include |= context.getEngine().getAuthorizationManager().isUserInRole( context.getWikiSession(), g ) ^ invert;
+            include |= context.getEngine().getManager( AuthorizationManager.class ).isUserInRole( context.getWikiSession(), g ) ^ invert;
         }
         return include;
     }

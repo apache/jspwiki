@@ -20,12 +20,13 @@ package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.pages.PageLock;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
 
@@ -49,17 +50,19 @@ import java.util.ResourceBundle;
 public class WeblogEntryPlugin implements WikiPlugin {
 
     private static final Logger log = Logger.getLogger(WeblogEntryPlugin.class);
-    private static final int MAX_BLOG_ENTRIES = 10000; // Just a precaution.
+    private static final int MAX_BLOG_ENTRIES = 10_000; // Just a precaution.
 
     /**
      * Parameter name for setting the entrytext  Value is <tt>{@value}</tt>.
      */
     public static final String PARAM_ENTRYTEXT = "entrytext";
-    /**
+
+    /*
      * Optional parameter: page that actually contains the blog. This lets us provide a "new entry" link for a blog page
      * somewhere else than on the page itself.
      */
     // "page" for uniform naming with WeblogPlugin...
+    
     /**
      * Parameter name for setting the page Value is <tt>{@value}</tt>.
      */
@@ -73,7 +76,7 @@ public class WeblogEntryPlugin implements WikiPlugin {
      * @return A new name.
      * @throws ProviderException If something goes wrong.
      */
-    public String getNewEntryPage( final WikiEngine engine, final String blogName ) throws ProviderException {
+    public String getNewEntryPage( final Engine engine, final String blogName ) throws ProviderException {
         final SimpleDateFormat fmt = new SimpleDateFormat(WeblogPlugin.DEFAULT_DATEFORMAT);
         final String today = fmt.format(new Date());
         final int entryNum = findFreeEntry( engine, blogName, today );
@@ -84,9 +87,10 @@ public class WeblogEntryPlugin implements WikiPlugin {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
         final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
-        final WikiEngine engine = context.getEngine();
+        final Engine engine = context.getEngine();
 
         String weblogName = params.get(PARAM_BLOGNAME);
         if (weblogName == null) {
@@ -102,8 +106,8 @@ public class WeblogEntryPlugin implements WikiPlugin {
         return "<a href=\"" + url + "\">" + entryText + "</a>";
     }
 
-    private int findFreeEntry( final WikiEngine engine, final String baseName, final String date ) throws ProviderException {
-        final Collection< WikiPage > everyone = engine.getPageManager().getAllPages();
+    private int findFreeEntry( final Engine engine, final String baseName, final String date ) throws ProviderException {
+        final Collection< WikiPage > everyone = engine.getManager( PageManager.class ).getAllPages();
         final String startString = WeblogPlugin.makeEntryPage(baseName, date, "");
         int max = 0;
 
@@ -125,7 +129,7 @@ public class WeblogEntryPlugin implements WikiPlugin {
         int idx = max + 1;
         while( idx < MAX_BLOG_ENTRIES ) {
             final WikiPage page = new WikiPage( engine, WeblogPlugin.makeEntryPage( baseName, date, Integer.toString( idx ) ) );
-            final PageLock lock = engine.getPageManager().getCurrentLock(page);
+            final PageLock lock = engine.getManager( PageManager.class ).getCurrentLock(page);
             if (lock == null) {
                 break;
             }

@@ -19,22 +19,24 @@
 
 package org.apache.wiki.plugin;
 
+import org.apache.log4j.Logger;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.references.ReferenceManager;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.api.plugin.WikiPlugin;
-import org.jdom2.Element;
-import org.jdom2.Namespace;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
 
 /**
  *  A WikiPlugin that creates an index of pages according to a certain pattern.
@@ -62,20 +64,20 @@ public class IndexPlugin extends AbstractReferralPlugin implements WikiPlugin
     /**
      * {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String,String> params ) throws PluginException
+    @Override public String execute( final WikiContext context, final Map<String,String> params ) throws PluginException
     {
-        String include = params.get(PARAM_INCLUDE);
-        String exclude = params.get(PARAM_EXCLUDE);
+        final String include = params.get(PARAM_INCLUDE);
+        final String exclude = params.get(PARAM_EXCLUDE);
         
-        Element masterDiv = getElement("div","index");     
-        Element indexDiv = getElement("div","header");
+        final Element masterDiv = getElement("div","index");
+        final Element indexDiv = getElement("div","header");
         masterDiv.addContent(indexDiv);
         try {
-            List<String> pages = listPages(context,include,exclude);
-            context.getEngine().getPageManager().getPageSorter().sort(pages);
+            final List<String> pages = listPages(context,include,exclude);
+            context.getEngine().getManager( PageManager.class ).getPageSorter().sort(pages);
             char initialChar = ' ';
             Element currentDiv = new Element("div",xmlns_XHTML);            
-            for ( String name : pages ) {
+            for ( final String name : pages ) {
                 if ( name.charAt(0) != initialChar ) {
                     if ( initialChar != ' ' ) {
                         indexDiv.addContent(" - ");
@@ -91,29 +93,29 @@ public class IndexPlugin extends AbstractReferralPlugin implements WikiPlugin
                 currentDiv.addContent(getLink(context.getURL(WikiContext.VIEW,name),name));
             }
             
-        } catch( ProviderException e ) {
+        } catch( final ProviderException e ) {
             log.warn("could not load page index",e);
             throw new PluginException( e.getMessage() );
         }
         // serialize to raw format string (no changes to whitespace)
-        XMLOutputter out = new XMLOutputter(Format.getRawFormat()); 
+        final XMLOutputter out = new XMLOutputter(Format.getRawFormat());
         return out.outputString(masterDiv);
     }
 
 
-    private Element getLink( String href, String content )
+    private Element getLink( final String href, final String content )
     {
-        Element a = new Element("a",xmlns_XHTML);
+        final Element a = new Element("a",xmlns_XHTML);
         a.setAttribute("href",href);
         a.addContent(content);
         return a;
     }
 
     
-    private Element makeHeader( String initialChar )
+    private Element makeHeader( final String initialChar )
     {
-        Element span = getElement("span","section");
-        Element a = new Element("a",xmlns_XHTML);
+        final Element span = getElement("span","section");
+        final Element a = new Element("a",xmlns_XHTML);
         a.setAttribute("id",initialChar);
         a.addContent(initialChar);
         span.addContent(a);
@@ -121,9 +123,9 @@ public class IndexPlugin extends AbstractReferralPlugin implements WikiPlugin
     }
 
     
-    private Element getElement( String gi, String classValue )
+    private Element getElement( final String gi, final String classValue )
     {
-        Element elt = new Element(gi,xmlns_XHTML);
+        final Element elt = new Element(gi,xmlns_XHTML);
         elt.setAttribute("class",classValue);
         return elt;
     }
@@ -138,13 +140,13 @@ public class IndexPlugin extends AbstractReferralPlugin implements WikiPlugin
      * @return A list containing page names which matched the filters.
      * @throws ProviderException
      */
-    private List<String> listPages( WikiContext context, String include, String exclude ) throws ProviderException {
-        Pattern includePtrn = include != null ? Pattern.compile( include ) : Pattern.compile(".*");
-        Pattern excludePtrn = exclude != null ? Pattern.compile( exclude ) : Pattern.compile("\\p{Cntrl}"); // there are no control characters in page names
-        List< String > result = new ArrayList<>();
-        Set< String > pages = context.getEngine().getReferenceManager().findCreated();
-        for ( Iterator<String> i = pages.iterator(); i.hasNext(); ) {
-            String pageName = i.next();
+    private List<String> listPages( final WikiContext context, final String include, final String exclude ) throws ProviderException {
+        final Pattern includePtrn = include != null ? Pattern.compile( include ) : Pattern.compile(".*");
+        final Pattern excludePtrn = exclude != null ? Pattern.compile( exclude ) : Pattern.compile("\\p{Cntrl}"); // there are no control characters in page names
+        final List< String > result = new ArrayList<>();
+        final Set< String > pages = context.getEngine().getManager( ReferenceManager.class ).findCreated();
+        for ( final Iterator<String> i = pages.iterator(); i.hasNext(); ) {
+            final String pageName = i.next();
             if ( excludePtrn.matcher( pageName ).matches() ) continue;
             if ( includePtrn.matcher( pageName ).matches() ) {
                 result.add( pageName );

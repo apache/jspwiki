@@ -23,6 +23,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.TextUtil;
@@ -69,12 +70,12 @@ public class ReferringPagesPlugin
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
+    @Override public String execute( final WikiContext context, final Map<String, String> params )
         throws PluginException
     {
-        ReferenceManager refmgr = context.getEngine().getReferenceManager();
+        final ReferenceManager refmgr = context.getEngine().getManager( ReferenceManager.class );
         String pageName = params.get( PARAM_PAGE );
-        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
         StringBuilder result = new StringBuilder( 256 );
 
@@ -83,7 +84,7 @@ public class ReferringPagesPlugin
             pageName = context.getPage().getName();
         }
 
-        WikiPage page = context.getEngine().getPageManager().getPage( pageName );
+        final WikiPage page = context.getEngine().getManager( PageManager.class ).getPage( pageName );
 
         if( page != null )
         {
@@ -92,7 +93,7 @@ public class ReferringPagesPlugin
 
             super.initialize( context, params );
 
-            int items = TextUtil.parseIntParameter( params.get( PARAM_MAX ), ALL_ITEMS );
+            final int items = TextUtil.parseIntParameter( params.get( PARAM_MAX ), ALL_ITEMS );
 
             String extras = TextUtil.replaceEntities( params.get( PARAM_EXTRAS ) );
             if( extras == null )
@@ -113,7 +114,7 @@ public class ReferringPagesPlugin
 
                 if( items < links.size() && items > 0 )
                 {
-                    Object[] args = { "" + ( links.size() - items) };
+                    final Object[] args = { "" + ( links.size() - items) };
                     extras = MessageFormat.format(extras, args);
 
                     result.append( "<br />" );

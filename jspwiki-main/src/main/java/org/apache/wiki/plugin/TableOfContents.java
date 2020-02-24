@@ -21,15 +21,17 @@ package org.apache.wiki.plugin;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.Heading;
 import org.apache.wiki.parser.HeadingListener;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
 
@@ -80,7 +82,7 @@ public class TableOfContents
     /**
      *  {@inheritDoc}
      */
-    public void headingAdded( WikiContext context, Heading hd )
+    @Override public void headingAdded( final WikiContext context, final Heading hd )
     {
         log.debug("HD: "+hd.m_level+", "+hd.m_titleText+", "+hd.m_titleAnchor);
 
@@ -118,10 +120,10 @@ public class TableOfContents
             m_level2Index = 0;
         }
 
-        String titleSection = hd.m_titleSection.replace( '%', '_' );
-        String pageName = context.getEngine().encodeName(context.getPage().getName()).replace( '%', '_' );
+        final String titleSection = hd.m_titleSection.replace( '%', '_' );
+        final String pageName = context.getEngine().encodeName(context.getPage().getName()).replace( '%', '_' );
 
-        String sectref = "#section-"+pageName+"-"+titleSection;
+        final String sectref = "#section-"+pageName+"-"+titleSection;
 
         m_buf.append( "<a class=\"wikipage\" href=\"" + sectref + "\">" );
         if (m_usingNumberedList)
@@ -149,12 +151,12 @@ public class TableOfContents
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
+    @Override public String execute( final WikiContext context, final Map<String, String> params )
         throws PluginException
     {
-        WikiEngine engine = context.getEngine();
-        WikiPage   page   = context.getPage();
-        ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final Engine engine = context.getEngine();
+        final WikiPage page = context.getPage();
+        final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
         if( context.getVariable( VAR_ALREADY_PROCESSING ) != null )
         {
@@ -162,12 +164,12 @@ public class TableOfContents
             return "<a href=\"#section-TOC\" class=\"toc\">"+rb.getString("tableofcontents.title")+"</a>";
         }
 
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         sb.append("<div class=\"toc\">\n");
         sb.append("<div class=\"collapsebox\">\n");
 
-        String title = params.get(PARAM_TITLE);
+        final String title = params.get(PARAM_TITLE);
         sb.append("<h4 id=\"section-TOC\">");
         if( title != null )
         {
@@ -183,7 +185,7 @@ public class TableOfContents
         m_usingNumberedList = false;
         if (params.containsKey(PARAM_NUMBERED))
         {
-            String numbered = params.get(PARAM_NUMBERED);
+            final String numbered = params.get(PARAM_NUMBERED);
             if (numbered.equalsIgnoreCase("true"))
             {
                 m_usingNumberedList = true;
@@ -198,7 +200,7 @@ public class TableOfContents
         if (m_usingNumberedList)
         {
             int start = 0;
-            String startStr = params.get(PARAM_START);
+            final String startStr = params.get(PARAM_START);
             if ((startStr != null) && (startStr.matches("^\\d+$")))
             {
                 start = Integer.parseInt(startStr);
@@ -216,12 +218,12 @@ public class TableOfContents
         }
 
         try {
-            String wikiText = engine.getPageManager().getPureText( page );
-            final boolean runFilters = "true".equals( engine.getVariableManager().getValue( context, VariableManager.VAR_RUNFILTERS, "true" ) );
+            String wikiText = engine.getManager( PageManager.class ).getPureText( page );
+            final boolean runFilters = "true".equals( engine.getManager( VariableManager.class ).getValue( context, VariableManager.VAR_RUNFILTERS, "true" ) );
 
             if( runFilters ) {
 				try {
-					final FilterManager fm = engine.getFilterManager();
+					final FilterManager fm = engine.getManager( FilterManager.class );
 					wikiText = fm.doPreTranslateFiltering(context, wikiText);
 
 				} catch( final Exception e ) {
@@ -232,7 +234,7 @@ public class TableOfContents
 
             context.setVariable( VAR_ALREADY_PROCESSING, "x" );
 
-            final MarkupParser parser = engine.getRenderingManager().getParser( context, wikiText );
+            final MarkupParser parser = engine.getManager( RenderingManager.class ).getParser( context, wikiText );
             parser.addHeadingListener( this );
             parser.parse();
 
