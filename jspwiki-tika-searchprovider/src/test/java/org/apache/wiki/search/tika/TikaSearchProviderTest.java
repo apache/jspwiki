@@ -19,6 +19,7 @@ package org.apache.wiki.search.tika;
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,20 +48,20 @@ public class TikaSearchProviderTest {
     @Test
     void testGetAttachmentContent() throws Exception {
         engine.saveText( "Test-tika", "blablablabla" );
-        byte[] filePdf = Files.readAllBytes( Paths.get( TikaSearchProviderTest.class.getClassLoader().getResource( "aaa-diagram.pdf" ).toURI() ) );
-        byte[] filePng = Files.readAllBytes( Paths.get( TikaSearchProviderTest.class.getClassLoader().getResource( "favicon.png" ).toURI() ) );
+        final byte[] filePdf = Files.readAllBytes( Paths.get( TikaSearchProviderTest.class.getClassLoader().getResource( "aaa-diagram.pdf" ).toURI() ) );
+        final byte[] filePng = Files.readAllBytes( Paths.get( TikaSearchProviderTest.class.getClassLoader().getResource( "favicon.png" ).toURI() ) );
         engine.addAttachment( "Test-tika", "aaa-diagram.pdf", filePdf );
         engine.addAttachment( "Test-tika", "favicon.png", filePng );
 
-        TikaSearchProvider tsp = ( TikaSearchProvider )engine.getSearchManager().getSearchEngine();
+        final TikaSearchProvider tsp = ( TikaSearchProvider )engine.getSearchManager().getSearchEngine();
 
-        Attachment attPdf = engine.getAttachmentManager().getAttachmentInfo( "Test-tika/aaa-diagram.pdf" );
-        String pdfIndexed = tsp.getAttachmentContent( attPdf );
+        final Attachment attPdf = engine.getManager( AttachmentManager.class ).getAttachmentInfo( "Test-tika/aaa-diagram.pdf" );
+        final String pdfIndexed = tsp.getAttachmentContent( attPdf );
         Assertions.assertTrue( pdfIndexed.contains( "aaa-diagram.pdf" ) );
         Assertions.assertTrue( pdfIndexed.contains( "WebContainerAuthorizer" ) );
 
-        Attachment attPng = engine.getAttachmentManager().getAttachmentInfo( "Test-tika/favicon.png" );
-        String pngIndexed = tsp.getAttachmentContent( attPng );
+        final Attachment attPng = engine.getManager( AttachmentManager.class ).getAttachmentInfo( "Test-tika/favicon.png" );
+        final String pngIndexed = tsp.getAttachmentContent( attPng );
         Assertions.assertTrue( pngIndexed.contains( "favicon.png" ) );
     }
 
