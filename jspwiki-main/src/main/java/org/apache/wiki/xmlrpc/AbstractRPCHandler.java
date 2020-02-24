@@ -19,11 +19,12 @@
 package org.apache.wiki.xmlrpc;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
+import org.apache.wiki.pages.PageManager;
 import org.apache.xmlrpc.AuthenticationFailed;
 
 import java.security.Permission;
@@ -54,13 +55,13 @@ public abstract class AbstractRPCHandler implements WikiRPCHandler {
     /** This is an inlined image. */
     public static final String LINK_INLINE   = "inline";
 
-    protected WikiEngine m_engine;
+    protected Engine m_engine;
     protected WikiContext m_context;
 
     /** This is the currently implemented JSPWiki XML-RPC code revision. */
     public static final int RPC_VERSION = 1;
 
-    public void initialize( final WikiContext context ) {
+    @Override public void initialize( final WikiContext context ) {
         m_context = context;
         m_engine  = context.getEngine();
     }
@@ -69,7 +70,7 @@ public abstract class AbstractRPCHandler implements WikiRPCHandler {
 
     public Vector getRecentChanges( final Date since ) {
         checkPermission( PagePermission.VIEW );
-        final Set< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
+        final Set< WikiPage > pages = m_engine.getManager( PageManager.class ).getRecentChanges();
         final Vector< Hashtable< ?, ? > > result = new Vector<>();
 
         // Transform UTC into local time.
@@ -78,7 +79,7 @@ public abstract class AbstractRPCHandler implements WikiRPCHandler {
         cal.add( Calendar.MILLISECOND, cal.get( Calendar.ZONE_OFFSET ) +
                   (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) );
 
-        for( WikiPage page : pages ) {
+        for( final WikiPage page : pages ) {
             if( page.getLastModified().after( cal.getTime() ) ) {
                 result.add( encodeWikiPage( page ) );
             }
@@ -94,7 +95,7 @@ public abstract class AbstractRPCHandler implements WikiRPCHandler {
      *  @param perm the Permission to check
      */
     protected void checkPermission( final Permission perm ) {
-        final AuthorizationManager mgr = m_engine.getAuthorizationManager();
+        final AuthorizationManager mgr = m_engine.getManager( AuthorizationManager.class );
 
         if( mgr.checkPermission( m_context.getWikiSession(), perm ) ) {
             return;

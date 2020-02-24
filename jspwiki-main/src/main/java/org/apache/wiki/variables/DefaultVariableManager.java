@@ -25,10 +25,13 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.engine.FilterManager;
+import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.filters.PageFilter;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
 
 import javax.servlet.http.HttpServletRequest;
@@ -298,24 +301,24 @@ public class DefaultVariableManager implements VariableManager {
         }
 
         public String getTotalpages() {
-            return Integer.toString( m_context.getEngine().getPageManager().getTotalPageCount() );
+            return Integer.toString( m_context.getEngine().getManager( PageManager.class ).getTotalPageCount() );
         }
 
         public String getPageprovider() {
-            return m_context.getEngine().getPageManager().getCurrentProvider();
+            return m_context.getEngine().getManager( PageManager.class ).getCurrentProvider();
         }
 
         public String getPageproviderdescription() {
-            return m_context.getEngine().getPageManager().getProviderDescription();
+            return m_context.getEngine().getManager( PageManager.class ).getProviderDescription();
         }
 
         public String getAttachmentprovider() {
-            final WikiProvider p = m_context.getEngine().getAttachmentManager().getCurrentProvider();
+            final WikiProvider p = m_context.getEngine().getManager( AttachmentManager.class ).getCurrentProvider();
             return (p != null) ? p.getClass().getName() : "-";
         }
 
         public String getAttachmentproviderdescription() {
-            final WikiProvider p = m_context.getEngine().getAttachmentManager().getCurrentProvider();
+            final WikiProvider p = m_context.getEngine().getManager( AttachmentManager.class ).getCurrentProvider();
             return (p != null) ? p.getProviderInfo() : "-";
         }
 
@@ -347,7 +350,7 @@ public class DefaultVariableManager implements VariableManager {
         }
 
         public String getPluginpath() {
-            final String s = m_context.getEngine().getPluginManager().getPluginSearchPath();
+            final String s = m_context.getEngine().getManager( PluginManager.class ).getPluginSearchPath();
 
             return ( s == null ) ? "-" : s;
         }
@@ -386,7 +389,7 @@ public class DefaultVariableManager implements VariableManager {
         }
 
         public String getPagefilters() {
-            final FilterManager fm = m_context.getEngine().getFilterManager();
+            final FilterManager fm = m_context.getEngine().getManager( FilterManager.class );
             final List< PageFilter > filters = fm.getFilterList();
             final StringBuilder sb = new StringBuilder();
             for( final PageFilter pf : filters ) {

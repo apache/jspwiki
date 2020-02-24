@@ -24,6 +24,8 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.xmlrpc.XmlRpcException;
 
 import java.util.Calendar;
@@ -49,7 +51,7 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
     public Vector< String > getAllPages() {
         checkPermission( PagePermission.VIEW );
 
-        final Set< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
+        final Set< WikiPage > pages = m_engine.getManager( PageManager.class ).getRecentChanges();
         final Vector< String > result = new Vector<>();
 
         for( final WikiPage p : pages ) {
@@ -64,7 +66,7 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
     /**
      *  Encodes a single wiki page info into a Hashtable.
      */
-    protected Hashtable<String, Object> encodeWikiPage( final WikiPage page ) {
+    @Override protected Hashtable<String, Object> encodeWikiPage( final WikiPage page ) {
         final Hashtable<String, Object> ht = new Hashtable<>();
         ht.put( "name", page.getName() );
 
@@ -90,10 +92,10 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
         return ht;
     }
 
-    public Vector< Hashtable< String, Object > > getRecentChanges( Date since ) {
+    @Override public Vector< Hashtable< String, Object > > getRecentChanges( Date since ) {
         checkPermission( PagePermission.VIEW );
 
-        final Set< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
+        final Set< WikiPage > pages = m_engine.getManager( PageManager.class ).getRecentChanges();
         final Vector< Hashtable< String, Object > > result = new Vector<>();
 
         final Calendar cal = Calendar.getInstance();
@@ -125,54 +127,54 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
      *  @throws XmlRpcException, if there is something wrong with the page.
      */
     private String parsePageCheckCondition( final String pagename ) throws XmlRpcException {
-        if( !m_engine.getPageManager().wikiPageExists(pagename) ) {
+        if( !m_engine.getManager( PageManager.class ).wikiPageExists(pagename) ) {
             throw new XmlRpcException( ERR_NOPAGE, "No such page '"+pagename+"' found, o master." );
         }
 
-        final WikiPage p = m_engine.getPageManager().getPage( pagename );
+        final WikiPage p = m_engine.getManager( PageManager.class ).getPage( pagename );
 
         checkPermission( PermissionFactory.getPagePermission( p, PagePermission.VIEW_ACTION ) );
         return pagename;
     }
 
     public Hashtable<String, Object> getPageInfo( final String pagename ) throws XmlRpcException {
-        return encodeWikiPage( m_engine.getPageManager().getPage( parsePageCheckCondition( pagename ) ) );
+        return encodeWikiPage( m_engine.getManager( PageManager.class ).getPage( parsePageCheckCondition( pagename ) ) );
     }
 
     public Hashtable<String, Object> getPageInfoVersion( String pagename, final int version ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
-        return encodeWikiPage( m_engine.getPageManager().getPage( pagename, version ) );
+        return encodeWikiPage( m_engine.getManager( PageManager.class ).getPage( pagename, version ) );
     }
 
     public String getPage( final String pagename ) throws XmlRpcException {
-        return m_engine.getPageManager().getPureText( parsePageCheckCondition( pagename ), -1 );
+        return m_engine.getManager( PageManager.class ).getPureText( parsePageCheckCondition( pagename ), -1 );
     }
 
     public String getPageVersion( final String pagename, final int version ) throws XmlRpcException {
-        return m_engine.getPageManager().getPureText( parsePageCheckCondition( pagename ), version );
+        return m_engine.getManager( PageManager.class ).getPureText( parsePageCheckCondition( pagename ), version );
     }
 
     public String getPageHTML( final String pagename ) throws XmlRpcException  {
-        return m_engine.getRenderingManager().getHTML( parsePageCheckCondition( pagename ) );
+        return m_engine.getManager( RenderingManager.class ).getHTML( parsePageCheckCondition( pagename ) );
     }
 
     public String getPageHTMLVersion( final String pagename, final int version ) throws XmlRpcException {
-        return m_engine.getRenderingManager().getHTML( parsePageCheckCondition( pagename ), version );
+        return m_engine.getManager( RenderingManager.class ).getHTML( parsePageCheckCondition( pagename ), version );
     }
 
     public Vector< Hashtable< String, String > > listLinks( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
-        final WikiPage page = m_engine.getPageManager().getPage( pagename );
-        final String pagedata = m_engine.getPageManager().getPureText( page );
+        final WikiPage page = m_engine.getManager( PageManager.class ).getPage( pagename );
+        final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page );
 
         final LinkCollector localCollector = new LinkCollector();
         final LinkCollector extCollector   = new LinkCollector();
         final LinkCollector attCollector   = new LinkCollector();
 
         final WikiContext context = new WikiContext( m_engine, page );
-        m_engine.getRenderingManager().textToHTML( context, pagedata, localCollector, extCollector, attCollector );
+        m_engine.getManager( RenderingManager.class ).textToHTML( context, pagedata, localCollector, extCollector, attCollector );
 
         final Vector< Hashtable< String, String > > result = new Vector<>();
 
@@ -186,7 +188,7 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
 
-            if( m_engine.getPageManager().wikiPageExists( link ) ) {
+            if( m_engine.getManager( PageManager.class ).wikiPageExists( link ) ) {
                 ht.put( "href", context.getViewURL( link ) );
             } else {
                 ht.put( "href", context.getURL( WikiContext.EDIT, link ) );

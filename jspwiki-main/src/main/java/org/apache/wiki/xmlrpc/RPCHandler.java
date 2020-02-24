@@ -25,6 +25,8 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 import org.apache.xmlrpc.XmlRpcException;
 
@@ -77,7 +79,7 @@ public class RPCHandler extends AbstractRPCHandler {
 
     public Vector< String > getAllPages() {
         checkPermission( PagePermission.VIEW );
-        final Collection< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
+        final Collection< WikiPage > pages = m_engine.getManager( PageManager.class ).getRecentChanges();
         final Vector< String > result = new Vector<>();
 
         for( final WikiPage p : pages ) {
@@ -128,7 +130,7 @@ public class RPCHandler extends AbstractRPCHandler {
     @Override
     public Vector< Hashtable< String, Object > > getRecentChanges( Date since ) {
         checkPermission( PagePermission.VIEW );
-        final Set< WikiPage > pages = m_engine.getPageManager().getRecentChanges();
+        final Set< WikiPage > pages = m_engine.getManager( PageManager.class ).getRecentChanges();
         final Vector< Hashtable< String, Object > > result = new Vector<>();
 
         final Calendar cal = Calendar.getInstance();
@@ -162,11 +164,11 @@ public class RPCHandler extends AbstractRPCHandler {
     private String parsePageCheckCondition( String pagename ) throws XmlRpcException {
         pagename = fromRPCString( pagename );
 
-        if( !m_engine.getPageManager().wikiPageExists(pagename) ) {
+        if( !m_engine.getManager( PageManager.class ).wikiPageExists(pagename) ) {
             throw new XmlRpcException( ERR_NOPAGE, "No such page '"+pagename+"' found, o master." );
         }
 
-        final WikiPage p = m_engine.getPageManager().getPage( pagename );
+        final WikiPage p = m_engine.getManager( PageManager.class ).getPage( pagename );
 
         checkPermission( PermissionFactory.getPagePermission( p, PagePermission.VIEW_ACTION ) );
 
@@ -175,50 +177,50 @@ public class RPCHandler extends AbstractRPCHandler {
 
     public Hashtable getPageInfo( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
-        return encodeWikiPage( m_engine.getPageManager().getPage(pagename) );
+        return encodeWikiPage( m_engine.getManager( PageManager.class ).getPage(pagename) );
     }
 
-    public Hashtable getPageInfoVersion( String pagename, int version ) throws XmlRpcException {
+    public Hashtable getPageInfoVersion( String pagename, final int version ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
-        return encodeWikiPage( m_engine.getPageManager().getPage( pagename, version ) );
+        return encodeWikiPage( m_engine.getManager( PageManager.class ).getPage( pagename, version ) );
     }
 
     public byte[] getPage( final String pagename ) throws XmlRpcException {
-        final String text = m_engine.getPageManager().getPureText( parsePageCheckCondition( pagename ), -1 );
+        final String text = m_engine.getManager( PageManager.class ).getPureText( parsePageCheckCondition( pagename ), -1 );
         return toRPCBase64( text );
     }
 
     public byte[] getPageVersion( String pagename, final int version ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
-        return toRPCBase64( m_engine.getPageManager().getPureText( pagename, version ) );
+        return toRPCBase64( m_engine.getManager( PageManager.class ).getPureText( pagename, version ) );
     }
 
     public byte[] getPageHTML( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
-        return toRPCBase64( m_engine.getRenderingManager().getHTML( pagename ) );
+        return toRPCBase64( m_engine.getManager( RenderingManager.class ).getHTML( pagename ) );
     }
 
-    public byte[] getPageHTMLVersion( String pagename, int version ) throws XmlRpcException {
+    public byte[] getPageHTMLVersion( String pagename, final int version ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
-        return toRPCBase64( m_engine.getRenderingManager().getHTML( pagename, version ) );
+        return toRPCBase64( m_engine.getManager( RenderingManager.class ).getHTML( pagename, version ) );
     }
 
     public Vector< Hashtable< String, String > > listLinks( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
-        final WikiPage page = m_engine.getPageManager().getPage( pagename );
-        final String pagedata = m_engine.getPageManager().getPureText( page );
+        final WikiPage page = m_engine.getManager( PageManager.class ).getPage( pagename );
+        final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page );
 
         final LinkCollector localCollector = new LinkCollector();
         final LinkCollector extCollector   = new LinkCollector();
         final LinkCollector attCollector   = new LinkCollector();
 
         final WikiContext context = new WikiContext( m_engine, page );
-        m_engine.getRenderingManager().textToHTML( context, pagedata, localCollector, extCollector, attCollector );
+        m_engine.getManager( RenderingManager.class ).textToHTML( context, pagedata, localCollector, extCollector, attCollector );
 
         final Vector< Hashtable< String, String > > result = new Vector<>();
 
@@ -240,7 +242,7 @@ public class RPCHandler extends AbstractRPCHandler {
             //  FIXME: The current link collector interface is not very good, since it causes this.
             //
 
-            if( m_engine.getPageManager().wikiPageExists( link ) ) {
+            if( m_engine.getManager( PageManager.class ).wikiPageExists( link ) ) {
                 ht.put( "href", context.getURL( WikiContext.VIEW, link ) );
             } else {
                 ht.put( "href", context.getURL( WikiContext.EDIT, link ) );

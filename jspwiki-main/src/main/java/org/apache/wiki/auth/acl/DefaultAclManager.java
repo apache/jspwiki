@@ -80,7 +80,7 @@ public class DefaultAclManager implements AclManager {
      * @param props  the initialization properties
      * @see org.apache.wiki.auth.acl.AclManager#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
      */
-    public void initialize( final WikiEngine engine, final Properties props ) {
+    @Override public void initialize( final WikiEngine engine, final Properties props ) {
         m_auth = engine.getAuthorizationManager();
         m_engine = engine;
     }
@@ -96,7 +96,7 @@ public class DefaultAclManager implements AclManager {
      * @throws WikiSecurityException if the ruleLine was faulty somehow.
      * @since 2.1.121
      */
-    public Acl parseAcl( final WikiPage page, final String ruleLine ) throws WikiSecurityException {
+    @Override public Acl parseAcl( final WikiPage page, final String ruleLine ) throws WikiSecurityException {
         Acl acl = page.getAcl();
         if (acl == null) {
             acl = new AclImpl();
@@ -150,7 +150,7 @@ public class DefaultAclManager implements AclManager {
      * @return the Acl representing permissions for the page
      * @since 2.2.121
      */
-    public Acl getPermissions( final WikiPage page ) {
+    @Override public Acl getPermissions( final WikiPage page ) {
         //  Does the page already have cached ACLs?
         Acl acl = page.getAcl();
         log.debug( "page=" + page.getName() + "\n" + acl );
@@ -158,7 +158,7 @@ public class DefaultAclManager implements AclManager {
         if( acl == null ) {
             //  If null, try the parent.
             if( page instanceof Attachment ) {
-                final WikiPage parent = m_engine.getPageManager().getPage( ( ( Attachment ) page ).getParentName() );
+                final WikiPage parent = m_engine.getManager( PageManager.class ).getPage( ( ( Attachment ) page ).getParentName() );
                 acl = getPermissions(parent);
             } else {
                 //  Or, try parsing the page
@@ -188,8 +188,8 @@ public class DefaultAclManager implements AclManager {
      * @throws WikiSecurityException of the Acl cannot be set
      * @since 2.5
      */
-    public void setPermissions( final WikiPage page, final Acl acl ) throws WikiSecurityException {
-        final PageManager pageManager = m_engine.getPageManager();
+    @Override public void setPermissions( final WikiPage page, final Acl acl ) throws WikiSecurityException {
+        final PageManager pageManager = m_engine.getManager( PageManager.class );
 
         // Forcibly expire any page locks
         final PageLock lock = pageManager.getCurrentLock( page );
@@ -198,7 +198,7 @@ public class DefaultAclManager implements AclManager {
         }
 
         // Remove all of the existing ACLs.
-        final String pageText = m_engine.getPageManager().getPureText( page );
+        final String pageText = m_engine.getManager( PageManager.class ).getPureText( page );
         final Matcher matcher = DefaultAclManager.ACL_PATTERN.matcher( pageText );
         final String cleansedText = matcher.replaceAll("" );
         final String newText = DefaultAclManager.printAcl( page.getAcl() ) + cleansedText;
