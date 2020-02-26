@@ -18,28 +18,24 @@
  */
 package org.apache.wiki.api.plugin;
 
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 
 /**
- *  If a plugin defines this interface, it is called exactly once
- *  prior to the actual execute() routine.  If the plugin has its
- *  own declaration in jspwiki_modules.xml, then it is called during
- *  startup - otherwise it is called the first time the plugin is
+ *  If a plugin defines this interface, it is called exactly once prior to the actual execute() routine.  If the plugin has its
+ *  own declaration in jspwiki_modules.xml, then it is called during startup - otherwise it is called the first time the plugin is
  *  encountered.
  *  <p>
- *  This method did not actually work until 2.5.30.  The method signature
- *  has been changed in 2.6 to reflect the new operation.
+ *  This method did not actually work until 2.5.30.  The method signature has been changed in 2.6 to reflect the new operation.
  */
-public interface InitializablePlugin
-{
+public interface InitializablePlugin {
+
     /**
-     *  Called whenever the plugin is being instantiated for
-     *  the first time.
+     *  Called whenever the plugin is being instantiated for the first time.
      *  
      *  @param engine The WikiEngine.
      *  @throws PluginException If something goes wrong.
      */
+    void initialize( Engine engine ) throws PluginException;
 
-    void initialize( WikiEngine engine ) throws PluginException;
 }
