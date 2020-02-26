@@ -58,11 +58,11 @@ import java.util.PropertyPermission;
  */
 public class WikiContext implements Cloneable, Command {
 
-    private    Command m_command;
-    private    WikiPage   m_page;
-    private    WikiPage   m_realPage;
-    private    Engine     m_engine;
-    private    String     m_template = "default";
+    private Command  m_command;
+    private WikiPage m_page;
+    private WikiPage m_realPage;
+    private Engine   m_engine;
+    private String   m_template = "default";
 
     private HashMap< String, Object > m_variableMap = new HashMap<>();
 

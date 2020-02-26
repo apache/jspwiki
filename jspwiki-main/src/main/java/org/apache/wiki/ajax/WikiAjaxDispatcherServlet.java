@@ -43,8 +43,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * This provides a simple ajax servlet for handling /ajax/<ClassName> requests.
- * HttpServlet classes need to be registered using {@link WikiAjaxDispatcherServlet#registerServlet(WikiAjaxServlet)}
+ * This provides a simple ajax servlet for handling /ajax/<ClassName> requests. HttpServlet classes need to be registered using
+ * {@link WikiAjaxDispatcherServlet#registerServlet(WikiAjaxServlet)}
  *
  * @since 2.10.2-svn12
  */
@@ -66,7 +66,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
     public void init( final ServletConfig config ) throws ServletException {
         super.init( config );
         m_engine = WikiEngine.getInstance( config );
-        PATH_AJAX = "/"+TextUtil.getStringProperty( m_engine.getWikiProperties(), "jspwiki.ajax.url.prefix", "ajax" ) + "/";
+        PATH_AJAX = "/" + TextUtil.getStringProperty( m_engine.getWikiProperties(), "jspwiki.ajax.url.prefix", "ajax" ) + "/";
         log.info( "WikiAjaxDispatcherServlet initialized." );
     }
 
