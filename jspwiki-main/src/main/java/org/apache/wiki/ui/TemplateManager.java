@@ -18,40 +18,25 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.preferences.Preferences.TimeFormat;
 import org.apache.wiki.util.ClassUtil;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.fmt.LocaleSupport;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.TreeSet;
 import java.util.Vector;
 
 
@@ -60,132 +45,62 @@ import java.util.Vector;
  *
  *  @since 2.1.62
  */
-public class TemplateManager extends ModuleManager {
+public interface TemplateManager {
 
-    private static final String SKIN_DIRECTORY = "skins";
+    String SKIN_DIRECTORY = "skins";
 
     /** Requests a JavaScript function to be called during window.onload. Value is {@value}. */
-    public static final String RESOURCE_JSFUNCTION = "jsfunction";
+    String RESOURCE_JSFUNCTION = "jsfunction";
 
     /** Requests a JavaScript associative array with all localized strings. */
-    public static final String RESOURCE_JSLOCALIZEDSTRINGS = "jslocalizedstrings";
+    String RESOURCE_JSLOCALIZEDSTRINGS = "jslocalizedstrings";
 
     /** Requests a stylesheet to be inserted. Value is {@value}. */
-    public static final String RESOURCE_STYLESHEET = "stylesheet";
+    String RESOURCE_STYLESHEET = "stylesheet";
 
     /** Requests a script to be loaded. Value is {@value}. */
-    public static final String RESOURCE_SCRIPT = "script";
+    String RESOURCE_SCRIPT = "script";
 
     /** Requests inlined CSS. Value is {@value}. */
-    public static final String RESOURCE_INLINECSS = "inlinecss";
+    String RESOURCE_INLINECSS = "inlinecss";
 
     /** The default directory for the properties. Value is {@value}. */
-    public static final String DIRECTORY = "templates";
+    String DIRECTORY = "templates";
 
     /** The name of the default template. Value is {@value}. */
-    public static final String DEFAULT_TEMPLATE = "default";
+    String DEFAULT_TEMPLATE = "default";
 
     /** Name of the file that contains the properties. */
-    public static final String PROPERTYFILE = "template.properties";
+    String PROPERTYFILE = "template.properties";
 
     /** Location of I18N Resource bundles, and path prefix and suffixes */
-    public static final String I18NRESOURCE_PREFIX = "templates/default_";
+    String I18NRESOURCE_PREFIX = "templates/default_";
 
-    public static final String I18NRESOURCE_SUFFIX = ".properties";
+    String I18NRESOURCE_SUFFIX = ".properties";
 
     /** The default (en) RESOURCE name and id. */
-    public static final String I18NRESOURCE_EN = "templates/default.properties";
-    public static final String I18NRESOURCE_EN_ID = "en";
+    String I18NRESOURCE_EN = "templates/default.properties";
+    String I18NRESOURCE_EN_ID = "en";
 
     /** I18N string to mark the default locale */
-    public static final String I18NDEFAULT_LOCALE = "prefs.user.language.default";
+    String I18NDEFAULT_LOCALE = "prefs.user.language.default";
 
     /** I18N string to mark the server timezone */
-    public static final String I18NSERVER_TIMEZONE = "prefs.user.timezone.server";
+    String I18NSERVER_TIMEZONE = "prefs.user.timezone.server";
 
     /** Prefix of the default timeformat properties. */
-    public static final String TIMEFORMATPROPERTIES = "jspwiki.defaultprefs.timeformat.";
+    String TIMEFORMATPROPERTIES = "jspwiki.defaultprefs.timeformat.";
 
     /** The name under which the resource includes map is stored in the  WikiContext. */
-    public static final String RESOURCE_INCLUDES = "jspwiki.resourceincludes";
-
-    // private Cache m_propertyCache;
-
-    private static final Logger log = Logger.getLogger( TemplateManager.class );
+    String RESOURCE_INCLUDES = "jspwiki.resourceincludes";
 
     /** Requests a HTTP header. Value is {@value}. */
-    public static final String RESOURCE_HTTPHEADER = "httpheader";
-
-    /**
-     *  Creates a new TemplateManager.  There is typically one manager per engine.
-     *
-     *  @param engine The owning engine.
-     *  @param properties The property list used to initialize this.
-     */
-    public TemplateManager( final Engine engine, final Properties properties ) {
-        super( engine );
-
-        //
-        //  Uses the unlimited cache.
-        //
-        // m_propertyCache = new Cache( true, false );
-    }
+    String RESOURCE_HTTPHEADER = "httpheader";
 
     /**
      *  Check the existence of a template.
      */
-    // FIXME: Does not work yet
-    public boolean templateExists( final String templateName ) {
-        final ServletContext context = m_engine.getServletContext();
-        try( final InputStream in = context.getResourceAsStream( getPath( templateName ) + "ViewTemplate.jsp" ) ) {
-            if( in != null ) {
-                return true;
-            }
-        } catch( final IOException e ) {
-            log.error( e.getMessage(), e );
-        }
-        return false;
-    }
-
-    /**
-     *  Tries to locate a given resource from the template directory. If the given resource is not found under the current name, returns the
-     *  path to the corresponding one in the default template.
-     *
-     *  @param sContext The servlet context
-     *  @param name The name of the resource
-     *  @return The name of the resource which was found.
-     */
-    private static String findResource( final ServletContext sContext, final String name ) {
-        String resourceName = name;
-        try( final InputStream is = sContext.getResourceAsStream( resourceName ) ) {
-            if( is == null ) {
-                final String defname = makeFullJSPName( DEFAULT_TEMPLATE, removeTemplatePart( resourceName ) );
-                try( final InputStream iis = sContext.getResourceAsStream( defname ) ) {
-                    resourceName = iis != null ? defname : null;
-                }
-            }
-        } catch( final IOException e ) {
-            log.error( "unable to open " + name + " as resource stream", e );
-        }
-        return resourceName;
-    }
-
-    /**
-     *  Attempts to find a resource from the given template, and if it's not found
-     *  attempts to locate it from the default template.
-     * @param sContext
-     * @param template
-     * @param name
-     * @return the Resource for the given template and name.
-     */
-    private static String findResource( final ServletContext sContext, final String template, final String name ) {
-        if( name.charAt(0) == '/' ) {
-            // This is already a full path
-            return findResource( sContext, name );
-        }
-        final String fullname = makeFullJSPName( template, name );
-        return findResource( sContext, fullname );
-    }
+    boolean templateExists( String templateName );
 
     /**
      *  An utility method for finding a JSP page.  It searches only under either current context or by the absolute name.
@@ -194,44 +109,7 @@ public class TemplateManager extends ModuleManager {
      *  @param name The name of the JSP page to look for (e.g "Wiki.jsp")
      *  @return The context path to the resource
      */
-    public String findJSP( final PageContext pageContext, final String name ) {
-        final ServletContext sContext = pageContext.getServletContext();
-        return findResource( sContext, name );
-    }
-
-    /**
-     *  Removes the template part of a name.
-     */
-    private static String removeTemplatePart( String name ) {
-        int idx = 0;
-        if( name.startsWith( "/" ) ) {
-            idx = 1;
-        }
-
-        idx = name.indexOf('/', idx);
-        if( idx != -1 ) {
-            idx = name.indexOf('/', idx+1); // Find second "/"
-            if( idx != -1 ) {
-                name = name.substring( idx+1 );
-            }
-        }
-
-        if( log.isDebugEnabled() ) {
-            log.debug( "Final name = "+name );
-        }
-        return name;
-    }
-
-    /**
-     *  Returns the full name (/templates/foo/bar) for name=bar, template=foo.
-     *
-     * @param template The name of the template.
-     * @param name The name of the resource.
-     * @return The full name for a template.
-     */
-    private static String makeFullJSPName( final String template, final String name ) {
-        return "/" + DIRECTORY + "/" + template + "/" + name;
-    }
+    String findJSP( PageContext pageContext, String name );
 
     /**
      *  Attempts to locate a resource under the given template.  If that template does not exist, or the page does not exist under that
@@ -244,15 +122,7 @@ public class TemplateManager extends ModuleManager {
      *  @param name Which resource are we looking for (e.g. "ViewTemplate.jsp")
      *  @return path to the JSP page; null, if it was not found.
      */
-    public String findJSP( final PageContext pageContext, final String template, final String name ) {
-        if( name == null || template == null ) {
-            log.fatal("findJSP() was asked to find a null template or name (" + template + "," + name + ")." + " JSP page '" +
-                      ( ( HttpServletRequest )pageContext.getRequest() ).getRequestURI() + "'" );
-            throw new InternalWikiException( "Illegal arguments to findJSP(); please check logs." );
-        }
-
-        return findResource( pageContext.getServletContext(), template, name );
-    }
+    String findJSP( PageContext pageContext, String template, String name );
 
     /**
      *  Attempts to locate a resource under the given template.  This matches the functionality findJSP(), but uses the WikiContext as
@@ -266,58 +136,7 @@ public class TemplateManager extends ModuleManager {
      *  @param name the name of the resource to fine
      *  @return the path to the resource
      */
-    public String findResource( final WikiContext ctx, final String template, final String name ) {
-        if( m_engine.getServletContext() != null ) {
-            return findResource( m_engine.getServletContext(), template, name );
-        }
-
-        return getPath(template)+"/"+name;
-    }
-
-    /**
-     *  Returns a property, as defined in the template.  The evaluation is lazy, i.e. the properties are not loaded until the template is
-     *  actually used for the first time.
-     */
-    /*
-    public String getTemplateProperty( WikiContext context, String key )
-    {
-        String template = context.getTemplate();
-
-        try
-        {
-            Properties props = (Properties)m_propertyCache.getFromCache( template, -1 );
-
-            if( props == null )
-            {
-                try
-                {
-                    props = getTemplateProperties( template );
-
-                    m_propertyCache.putInCache( template, props );
-                }
-                catch( IOException e )
-                {
-                    log.warn("IO Exception while reading template properties",e);
-
-                    return null;
-                }
-            }
-
-            return props.getProperty( key );
-        }
-        catch( NeedsRefreshException ex )
-        {
-            // FIXME
-            return null;
-        }
-    }
-*/
-    /**
-     *  Returns an absolute path to a given template.
-     */
-    private static String getPath( final String template ) {
-        return "/" + DIRECTORY + "/" + template + "/";
-    }
+    String findResource( WikiContext ctx, String template, String name );
 
     /**
      *   Lists the skins available under this template.  Returns an empty Set, if there are no extra skins available.  Note that
@@ -329,43 +148,18 @@ public class TemplateManager extends ModuleManager {
      *   @return Set of Strings with the skin names.
      *   @since 2.3.26
      */
-    public Set< String > listSkins( final PageContext pageContext, final String template ) {
-        final String place = makeFullJSPName( template, SKIN_DIRECTORY );
-        final ServletContext sContext = pageContext.getServletContext();
-        final Set< String > skinSet = sContext.getResourcePaths( place );
-        final Set< String > resultSet = new TreeSet<>();
-
-        if( log.isDebugEnabled() ) {
-            log.debug( "Listings skins from " + place );
-        }
-
-        if( skinSet != null ) {
-            final String[] skins = skinSet.toArray( new String[]{} );
-            for( final String skin : skins ) {
-                final String[] s = StringUtils.split( skin, "/" );
-                if( s.length > 2 && skin.endsWith( "/" ) ) {
-                    final String skinName = s[ s.length - 1 ];
-                    resultSet.add( skinName );
-                    if( log.isDebugEnabled() ) {
-                        log.debug( "...adding skin '" + skinName + "'" );
-                    }
-                }
-            }
-        }
-
-        return resultSet;
-    }
+    Set< String > listSkins( PageContext pageContext, String template );
 
     /**
      * List all installed i18n language properties by classpath searching for files like :
      *    templates/default_*.properties
      *    templates/default.properties
      *
-     * @param pageContext
+     * @param pageContext page context
      * @return map of installed Languages
      * @since 2.7.x
      */
-    public Map< String, String > listLanguages( final PageContext pageContext ) {
+    default Map< String, String > listLanguages( final PageContext pageContext ) {
         final Map< String, String > resultMap = new LinkedHashMap<>();
         final String clientLanguage = pageContext.getRequest().getLocale().toString();
         final List< String > entries = ClassUtil.classpathEntriesUnder( DIRECTORY );
@@ -376,7 +170,7 @@ public class TemplateManager extends ModuleManager {
                 } else {
                     name = name.substring( I18NRESOURCE_PREFIX.length(), name.lastIndexOf( I18NRESOURCE_SUFFIX ) );
                 }
-                final Locale locale = new Locale( name.substring( 0, 2 ), ( ( name.indexOf( "_" ) == -1 ) ? "" : name.substring( 3, 5 ) ) );
+                final Locale locale = new Locale( name.substring( 0, 2 ), !name.contains( "_" ) ? "" : name.substring( 3, 5 ) );
                 String defaultLanguage = "";
                 if( clientLanguage.startsWith( name ) ) {
                     defaultLanguage = LocaleSupport.getLocalizedMessage( pageContext, I18NDEFAULT_LOCALE );
@@ -392,76 +186,30 @@ public class TemplateManager extends ModuleManager {
     /**
      * List all available timeformats, read from the jspwiki.properties
      *
-     * @param pageContext
+     * @param pageContext page context
      * @return map of TimeFormats
      * @since 2.7.x
      */
-    public Map< String, String > listTimeFormats( final PageContext pageContext ) {
-        final WikiContext context = WikiContext.findContext( pageContext );
-        final Properties props = m_engine.getWikiProperties();
-        final ArrayList< String > tfArr = new ArrayList<>(40);
-        final LinkedHashMap< String, String > resultMap = new LinkedHashMap<>();
+    Map< String, String > listTimeFormats( final PageContext pageContext );
 
-        /* filter timeformat properties */
-        for( final Enumeration< ? > e = props.propertyNames(); e.hasMoreElements(); ) {
-            final String name = ( String )e.nextElement();
-            if( name.startsWith( TIMEFORMATPROPERTIES ) ) {
-                tfArr.add( name );
-            }
-        }
-
-        /* fetch actual formats */
-        if( tfArr.size() == 0 )  {/* no props found - make sure some default formats are avail */
-            tfArr.add( "dd-MMM-yy" );
-            tfArr.add( "d-MMM-yyyy" );
-            tfArr.add( "EEE, dd-MMM-yyyy, zzzz" );
-        } else {
-            Collections.sort( tfArr );
-
-            for (int i = 0; i < tfArr.size(); i++) {
-                tfArr.set(i, props.getProperty(tfArr.get(i)));
-            }
-        }
-
-        final String prefTimeZone = Preferences.getPreference( context, "TimeZone" );
-        //TimeZone tz = TimeZone.getDefault();
-        final TimeZone tz = TimeZone.getTimeZone(prefTimeZone);
-        /*try
-        {
-            tz.setRawOffset(Integer.parseInt(prefTimeZone));
-        }
-        catch (Exception e)
-        {
-        }*/
-
-        final Date d = new Date(); // current date
-        try {
-            // dummy format pattern
-            final SimpleDateFormat fmt = Preferences.getDateFormat( context, TimeFormat.DATETIME );
-            fmt.setTimeZone( tz );
-
-            for( int i = 0; i < tfArr.size(); i++ ) {
-                try {
-                    final String f = tfArr.get( i );
-                    fmt.applyPattern( f );
-                    resultMap.put( f, fmt.format( d ) );
-                } catch( final IllegalArgumentException e ) {} // skip parameter
-            }
-        }
-        catch( final IllegalArgumentException e ) {} // skip parameter
-
-        return resultMap;
-    }
+    /**
+     * Returns a collection of modules currently managed by this ModuleManager.  Each
+     * entry is an instance of the WikiModuleInfo class.  This method should return something
+     * which is safe to iterate over, even if the underlying collection changes.
+     *
+     * @return A Collection of WikiModuleInfo instances.
+     */
+    Collection< WikiModuleInfo > modules();
 
     /**
      * List all timezones, with special marker for server timezone
      *
-     * @param pageContext
+     * @param pageContext page context
      * @return map of TimeZones
      * @since 2.7.x
      */
-    public Map< String, String > listTimeZones( final PageContext pageContext ) {
-        final Map<String,String> resultMap = new LinkedHashMap<>();
+    default Map< String, String > listTimeZones( final PageContext pageContext ) {
+        final Map< String, String > resultMap = new LinkedHashMap<>();
         final String[][] tzs = {
                           { "GMT-12", "Enitwetok, Kwajalien" },
                           { "GMT-11", "Nome, Midway Island, Samoa" },
@@ -511,33 +259,6 @@ public class TemplateManager extends ModuleManager {
     }
 
     /**
-     *  Always returns a valid property map.
-     */
-    /*
-    private Properties getTemplateProperties( String templateName )
-        throws IOException
-    {
-        Properties p = new Properties();
-
-        ServletContext context = m_engine.getServletContext();
-
-        InputStream propertyStream = context.getResourceAsStream(getPath(templateName)+PROPERTYFILE);
-
-        if( propertyStream != null )
-        {
-            p.load( propertyStream );
-
-            propertyStream.close();
-        }
-        else
-        {
-            log.debug("Template '"+templateName+"' does not have a propertyfile '"+PROPERTYFILE+"'.");
-        }
-
-        return p;
-    }
-*/
-    /**
      *  Returns the include resources marker for a given type.  This is in a
      *  HTML or Javascript comment format.
      *
@@ -545,7 +266,7 @@ public class TemplateManager extends ModuleManager {
      *  @param type the marker
      *  @return the generated marker comment
      */
-    public static String getMarker( final WikiContext context, final String type ) {
+    static String getMarker( final WikiContext context, final String type ) {
         if( type.equals( RESOURCE_JSLOCALIZEDSTRINGS ) ) {
             return getJSLocalizedStrings( context );
         } else if( type.equals( RESOURCE_JSFUNCTION ) ) {
@@ -561,7 +282,7 @@ public class TemplateManager extends ModuleManager {
      *  @return Javascript snippet which defines the LocalizedStrings array
      *  @since 2.5.108
      */
-    private static String getJSLocalizedStrings( final WikiContext context ) {
+    static String getJSLocalizedStrings( final WikiContext context ) {
         final StringBuilder sb = new StringBuilder();
         sb.append( "var LocalizedStrings = {\n");
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.DEF_TEMPLATE );
@@ -575,7 +296,7 @@ public class TemplateManager extends ModuleManager {
                 } else {
                     sb.append( ",\n" );
                 }
-                sb.append( "\""+key+"\":\""+rb.getString(key)+"\"" );
+                sb.append( "\"" ).append( key ).append( "\":\"" ).append( rb.getString( key ) ).append( "\"" );
             }
         }
         sb.append("\n};\n");
@@ -604,7 +325,7 @@ public class TemplateManager extends ModuleManager {
      *  @param resource The resource to add.
      */
     @SuppressWarnings("unchecked")
-    public static void addResourceRequest( final WikiContext ctx, final String type, final String resource ) {
+    static void addResourceRequest( final WikiContext ctx, final String type, final String resource ) {
         HashMap< String, Vector< String > > resourcemap = ( HashMap< String, Vector< String > > ) ctx.getVariable( RESOURCE_INCLUDES );
         if( resourcemap == null ) {
             resourcemap = new HashMap<>();
@@ -636,7 +357,7 @@ public class TemplateManager extends ModuleManager {
             resources.add( resourceString );
         }
 
-        log.debug( "Request to add a resource: " + resourceString );
+        Logger.getLogger( TemplateManager.class ).debug( "Request to add a resource: " + resourceString );
 
         resourcemap.put( type, resources );
         ctx.setVariable( RESOURCE_INCLUDES, resourcemap );
@@ -650,7 +371,7 @@ public class TemplateManager extends ModuleManager {
      *  @return a String array for the resource requests
      */
     @SuppressWarnings("unchecked")
-    public static String[] getResourceRequests( final WikiContext ctx, final String type ) {
+    static String[] getResourceRequests( final WikiContext ctx, final String type ) {
         final HashMap< String, Vector< String > > hm = ( HashMap< String, Vector< String > > ) ctx.getVariable( RESOURCE_INCLUDES );
         if( hm == null ) {
             return new String[0];
@@ -672,7 +393,7 @@ public class TemplateManager extends ModuleManager {
      * @return the array of types requested
      */
     @SuppressWarnings("unchecked")
-    public static String[] getResourceTypes( final WikiContext ctx ) {
+    static String[] getResourceTypes( final WikiContext ctx ) {
         String[] res = new String[0];
         if( ctx != null ) {
             final HashMap< String, String > hm = ( HashMap< String, String > ) ctx.getVariable( RESOURCE_INCLUDES );
@@ -683,25 +404,6 @@ public class TemplateManager extends ModuleManager {
         }
 
         return res;
-    }
-
-    /**
-     *  Returns an empty collection, since at the moment the TemplateManager does not manage any modules.
-     *
-     *  @return {@inheritDoc}
-     */
-    @Override
-    public Collection< WikiModuleInfo > modules() {
-        return new ArrayList<>();
-    }
-
-    /**
-     *  Returns null!
-     *  {@inheritDoc}
-     */
-    @Override
-    public WikiModuleInfo getModuleInfo( final String moduleName ) {
-    	return null;
     }
 
 }

@@ -17,17 +17,15 @@
     under the License.    
  */
 package org.apache.wiki.i18n;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
 
-import org.junit.jupiter.api.Assertions;
-
 public class InternationalizationManagerTest
 {
-    InternationalizationManager i18n = new InternationalizationManager( null );
+    InternationalizationManager i18n = new DefaultInternationalizationManager( null );
     
     @BeforeEach
     public void setUp() throws Exception
@@ -41,7 +39,7 @@ public class InternationalizationManagerTest
     @Test
     public void testGetFromCoreWithArgs() 
     {
-        String str = i18n.get( InternationalizationManager.CORE_BUNDLE, 
+        final String str = i18n.get( InternationalizationManager.CORE_BUNDLE,
                                Locale.ENGLISH, 
                                "security.error.cannot.rename", 
                                "Test User" );
@@ -51,7 +49,7 @@ public class InternationalizationManagerTest
     @Test
     public void testGetFromDefTemplateWithArgs() 
     {
-        String str = i18n.get( InternationalizationManager.DEF_TEMPLATE, 
+        final String str = i18n.get( InternationalizationManager.DEF_TEMPLATE,
                                Locale.ENGLISH, 
                                "notification.createUserProfile.accept.content", 
                                "JSPWiki", "testUser", "Test User", "test@user.com", "www.foo.com" );

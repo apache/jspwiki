@@ -97,7 +97,7 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.i18n.InternationalizationManager</requestedClass>
-    <mappedClass>org.apache.wiki.i18n.InternationalizationManager</mappedClass>
+    <mappedClass>org.apache.wiki.i18n.DefaultInternationalizationManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.references.ReferenceManager</requestedClass>
@@ -109,7 +109,7 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.search.SearchManager</requestedClass>
-    <mappedClass>org.apache.wiki.search.SearchManager</mappedClass>
+    <mappedClass>org.apache.wiki.search.DefaultSearchManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.tasks.TasksManager</requestedClass>
@@ -121,11 +121,11 @@
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.ui.EditorManager</requestedClass>
-    <mappedClass>org.apache.wiki.ui.EditorManager</mappedClass>
+    <mappedClass>org.apache.wiki.ui.DefaultEditorManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.ui.TemplateManager</requestedClass>
-    <mappedClass>org.apache.wiki.ui.TemplateManager</mappedClass>
+    <mappedClass>org.apache.wiki.ui.DefaultTemplateManager</mappedClass>
   </mapping>
   <mapping>
     <requestedClass>org.apache.wiki.ui.progress.ProgressManager</requestedClass>
