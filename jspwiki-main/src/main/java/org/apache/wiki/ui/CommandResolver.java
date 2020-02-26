@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 
 /**
- * <p>Resolves special pages, JSPs and Commands on behalf of a WikiEngine. CommandResolver will automatically resolve page names
+ * <p>Resolves special pages, JSPs and Commands on behalf of a Engine. CommandResolver will automatically resolve page names
  * with singular/plural variants. It can also detect the correct Command based on parameters supplied in an HTTP request, or due to the
  * JSP being accessed.</p>
  * <p>
@@ -36,7 +36,7 @@ import java.util.Arrays;
  * <p>For more complex lookups in which the caller supplies an HTTP request, {@link #findCommand(HttpServletRequest, String)} will
  * look up and return the correct Command. The String parameter <code>defaultContext</code> supplies the request context to use
  * if it cannot be detected. However, note that the default wiki context may be overridden if the request was for a "special page."</p>
- * <p>For example, suppose the WikiEngine's properties specify a special page called <code>UserPrefs</code> that redirects to
+ * <p>For example, suppose the Engine's properties specify a special page called <code>UserPrefs</code> that redirects to
  * <code>UserPreferences.jsp</code>. The ordinary lookup method {@linkplain #findCommand(String)} using a supplied context <code>view</code>
  * would return {@link PageCommand#VIEW}. But the {@linkplain #findCommand(HttpServletRequest, String)} method, when passed the same context
  * (<code>view</code>) and an HTTP request containing the page parameter value <code>UserPrefs</code>, will instead return

@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.authorize.Role;
 
@@ -43,7 +43,7 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper {
      * @param engine the wiki engine
      * @param request the request to wrap
      */
-    public WikiRequestWrapper( final WikiEngine engine, final HttpServletRequest request ) {
+    public WikiRequestWrapper( final Engine engine, final HttpServletRequest request ) {
         super( request );
 
         // Get and stash a reference to the current WikiSession
@@ -56,7 +56,7 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper {
      * WikiSession is an authenticated session (that is, {@link WikiSession#isAuthenticated()} returns <code>true</code>,
      * this method returns the name of the principal returned by {@link WikiSession#getLoginPrincipal()}.
      */
-    public String getRemoteUser() {
+    @Override public String getRemoteUser() {
         if( super.getRemoteUser() != null ) {
             return super.getRemoteUser();
         }
@@ -73,7 +73,7 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper {
      * WikiSession is an authenticated session (that is, {@link WikiSession#isAuthenticated()} returns
      * <code>true</code>, this method returns the value of {@link WikiSession#getLoginPrincipal()}.
      */
-    public Principal getUserPrincipal() {
+    @Override public Principal getUserPrincipal() {
         if( super.getUserPrincipal() != null ) {
             return super.getUserPrincipal();
         }
@@ -90,7 +90,7 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper {
      * this method iterates through the built-in Role objects (<em>e.g.</em>, ANONYMOUS, ASSERTED, AUTHENTICATED) returned by
      * {@link WikiSession#getRoles()} and checks to see if any of these principals' names match the supplied role.
      */
-    public boolean isUserInRole( final String role ) {
+    @Override public boolean isUserInRole( final String role ) {
         final boolean hasContainerRole = super.isUserInRole(role);
         if( hasContainerRole ) {
             return true;

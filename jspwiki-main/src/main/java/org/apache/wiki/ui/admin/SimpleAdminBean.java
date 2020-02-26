@@ -35,12 +35,9 @@ import javax.management.NotCompliantMBeanException;
  *  
  *  @since 2.5.52
  */
-public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
-{
-    /**
-     *  Provides access to a WikiEngine instance to which this AdminBean
-     *  belongs to.
-     */
+public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean {
+
+    /** Provides access to a Engine instance to which this AdminBean belongs to. */
     protected Engine m_engine;
     
     /**
@@ -48,15 +45,15 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
      *  
      *  @throws NotCompliantMBeanException
      */
-    protected SimpleAdminBean() throws NotCompliantMBeanException
-    {
+    protected SimpleAdminBean() throws NotCompliantMBeanException {
         super();
     }
     
     /**
-     *  Initialize the AdminBean by setting up a WikiEngine instance internally.
+     *  Initialize the AdminBean by setting up a Engine instance internally.
      */
-    @Override public void initialize( final Engine engine )
+    @Override
+    public void initialize( final Engine engine )
     {
         m_engine = engine;
     }
@@ -67,38 +64,31 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
      *  attribute is read-only, a readonly input widget is created.
      *  The value is determined by the toString() method of the attribute.
      */
-    @Override public String doGet( final WikiContext context)
-    {
+    @Override
+    public String doGet( final WikiContext context ) {
         final MBeanInfo info = getMBeanInfo();
         final MBeanAttributeInfo[] attributes = info.getAttributes();
         final StringBuilder sb = new StringBuilder();
-        
-        for( int i = 0; i < attributes.length; i++ )
-        {
-            sb.append("<div class='block'>\n");
-            
-            sb.append( "<label>"+StringUtils.capitalize( attributes[i].getName() )+"</label>\n");
-            
-            try
-            {
-                final Object value = getAttribute( attributes[i].getName() );
-                if( attributes[i].isWritable() )
-                {
-                    sb.append( "<input type='text' name='question' size='30' value='"+value+"' />\n" );
+
+        for( int i = 0; i < attributes.length; i++ ) {
+            sb.append( "<div class='block'>\n" );
+
+            sb.append( "<label>" + StringUtils.capitalize( attributes[ i ].getName() ) + "</label>\n" );
+
+            try {
+                final Object value = getAttribute( attributes[ i ].getName() );
+                if( attributes[ i ].isWritable() ) {
+                    sb.append( "<input type='text' name='question' size='30' value='" + value + "' />\n" );
+                } else {
+                    sb.append( "<input type='text' class='readonly' readonly='true' size='30' value='" + value + "' />\n" );
                 }
-                else
-                {
-                    sb.append( "<input type='text' class='readonly' readonly='true' size='30' value='"+value+"' />\n" );
-                }
-            }
-            catch( final Exception e )
-            {
-                sb.append("Exception: "+e.getMessage());
+            } catch( final Exception e ) {
+                sb.append( "Exception: " + e.getMessage() );
             }
 
-            sb.append( "<div class='description'>"+attributes[i].getDescription()+"</div>\n");
-            
-            sb.append("</div>\n");
+            sb.append( "<div class='description'>" + attributes[ i ].getDescription() + "</div>\n" );
+
+            sb.append( "</div>\n" );
         }
         return sb.toString();
     }
@@ -106,18 +96,18 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean
     /**
      *  Not implemented yet.
      */
-    @Override public String doPost( final WikiContext context)
-    {
-        // TODO Auto-generated method stub
+    @Override
+    public String doPost( final WikiContext context) {
         return null;
     }
 
     /**
-     *  By default, this method returns the class name of the bean.  This is
-     *  suitable, if you have a singleton bean.
+     *  By default, this method returns the class name of the bean.  This is suitable, if you have a singleton bean.
      */
-    @Override public String getId()
+    @Override
+    public String getId()
     {
         return getClass().getName();
     }
+
 }

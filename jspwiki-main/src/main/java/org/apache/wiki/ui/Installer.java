@@ -20,6 +20,7 @@ package org.apache.wiki.ui;
 
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -58,17 +59,17 @@ public class Installer {
     public static final String INSTALL_INFO = "Installer.Info";
     public static final String INSTALL_ERROR = "Installer.Error";
     public static final String INSTALL_WARNING = "Installer.Warning";
-    public static final String APP_NAME = WikiEngine.PROP_APPNAME;
+    public static final String APP_NAME = Engine.PROP_APPNAME;
     public static final String STORAGE_DIR = BasicAttachmentProvider.PROP_STORAGEDIR;
     public static final String PAGE_DIR = FileSystemProvider.PROP_PAGEDIR;
-    public static final String WORK_DIR = WikiEngine.PROP_WORKDIR;
+    public static final String WORK_DIR = Engine.PROP_WORKDIR;
     public static final String ADMIN_GROUP = "Admin";
     public static final String PROPFILENAME = "jspwiki-custom.properties" ;
     public static final String TMP_DIR = System.getProperty("java.io.tmpdir");
     private final WikiSession m_session;
     private final File m_propertyFile;
     private final Properties m_props;
-    private final WikiEngine m_engine;
+    private final Engine m_engine;
     private HttpServletRequest m_request;
     private boolean m_validated;
     
@@ -93,7 +94,7 @@ public class Installer {
      */
     public boolean adminExists() {
         // See if the admin user exists already
-        final UserManager userMgr = m_engine.getUserManager();
+        final UserManager userMgr = m_engine.getManager( UserManager.class );
         final UserDatabase userDb = userMgr.getUserDatabase();
         try {
             userDb.findByLoginName( ADMIN_ID );
@@ -118,7 +119,7 @@ public class Installer {
         }
         
         // See if the admin user exists already
-        final UserManager userMgr = m_engine.getUserManager();
+        final UserManager userMgr = m_engine.getManager( UserManager.class );
         final UserDatabase userDb = userMgr.getUserDatabase();
         String password = null;
         
@@ -135,7 +136,7 @@ public class Installer {
         }
         
         // Create a new admin group
-        final GroupManager groupMgr = m_engine.getGroupManager();
+        final GroupManager groupMgr = m_engine.getManager( GroupManager.class );
         Group group;
         try {
             group = groupMgr.getGroup( ADMIN_GROUP );
@@ -166,7 +167,7 @@ public class Installer {
     }
 
     /**
-     * Returns a property from the WikiEngine's properties.
+     * Returns a property from the Engine's properties.
      * @param key the property key
      * @return the property value
      */

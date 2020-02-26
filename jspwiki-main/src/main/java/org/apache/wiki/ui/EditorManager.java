@@ -20,7 +20,7 @@ package org.apache.wiki.ui;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
@@ -39,21 +39,19 @@ import java.util.Set;
 
 
 /**
- *  Defines an editor manager.  An editor can be added by adding a
- *  suitable JSP file under templates/default/editors
- *  If you want your editor to include any scripts or something, you
- *  can simply request it by adding the following in your
- *  ini/jspwiki_module.xml:
+ *  Defines an editor manager.  An editor can be added by adding a suitable JSP file under templates/default/editors
+ *  If you want your editor to include any scripts or something, you can simply request it by adding the following in your
+ *  {@code ini/jspwiki_module.xml}:
  *
  *  <pre>
- *  <modules>
- *   <editor name="myeditor">
- *       <author>Janne Jalkanen</author>
- *       <script>foo.js</script>
- *       <stylesheet>foo.css</stylesheet>
- *       <path>editors/myeditor.jsp</path>
- *   </editor>
- *  </modules>
+ *  &lt;modules>
+ *   &lt;editor name="myeditor">
+ *       &lt;author>Janne Jalkanen&lt;/author>
+ *       &lt;script>foo.js&lt;/script>
+ *       &lt;stylesheet>foo.css&lt;/stylesheet>
+ *       &lt;path>editors/myeditor.jsp&lt;/path>
+ *   &lt;/editor>
+ *  &lt;/modules>
  *  </pre>
  *
  *  @since 2.4
@@ -82,7 +80,7 @@ public class EditorManager extends ModuleManager {
 
     private static final Logger log = Logger.getLogger( EditorManager.class );
 
-    public EditorManager( final WikiEngine engine ) {
+    public EditorManager( final Engine engine ) {
         super( engine );
     }
 
@@ -96,9 +94,7 @@ public class EditorManager extends ModuleManager {
     }
 
     /**
-     *  This method goes through the jspwiki_module.xml files and hunts for editors.
-     *  Any editors found are put in the registry.
-     *
+     *  This method goes through the jspwiki_module.xml files and hunts for editors. Any editors found are put in the registry.
      */
     private void registerEditors() {
         log.info( "Registering editor modules" );
@@ -225,7 +221,8 @@ public class EditorManager extends ModuleManager {
             return info;
         }
 
-        @Override protected void initializeFromXML( final Element el ) {
+        @Override
+        protected void initializeFromXML( final Element el ) {
             super.initializeFromXML( el );
             m_path = el.getChildText("path");
         }

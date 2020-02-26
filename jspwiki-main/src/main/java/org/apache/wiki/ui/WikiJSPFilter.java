@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.url.DefaultURLConstructor;
@@ -77,14 +77,16 @@ public class WikiJSPFilter extends WikiServletFilter {
     private boolean useEncoding;
 
     /** {@inheritDoc} */
-    @Override public void init( final FilterConfig config ) throws ServletException {
+    @Override
+    public void init( final FilterConfig config ) throws ServletException {
         super.init( config );
-        m_wiki_encoding = m_engine.getWikiProperties().getProperty(WikiEngine.PROP_ENCODING);
+        m_wiki_encoding = m_engine.getWikiProperties().getProperty( Engine.PROP_ENCODING );
 
-        useEncoding = !( Boolean.valueOf( m_engine.getWikiProperties().getProperty( WikiEngine.PROP_NO_FILTER_ENCODING, "false" ).trim() ).booleanValue() );
+        useEncoding = !Boolean.parseBoolean( m_engine.getWikiProperties().getProperty( Engine.PROP_NO_FILTER_ENCODING, "false" ).trim() );
     }
 
-    @Override public void doFilter( final ServletRequest  request, final ServletResponse response, final FilterChain chain ) throws ServletException, IOException {
+    @Override
+    public void doFilter( final ServletRequest  request, final ServletResponse response, final FilterChain chain ) throws ServletException, IOException {
         final WatchDog w = WatchDog.getCurrentWatchDog( m_engine );
         try {
             NDC.push( m_engine.getApplicationName()+":"+((HttpServletRequest)request).getRequestURI() );
@@ -226,18 +228,19 @@ public class WikiJSPFilter extends WikiServletFilter {
             m_response = r;
         }
 
-        /**
-         *  Returns a writer for output; this wraps the internal buffer into a PrintWriter.
-         */
-        @Override public PrintWriter getWriter() {
+        /** Returns a writer for output; this wraps the internal buffer into a PrintWriter. */
+        @Override
+        public PrintWriter getWriter() {
             return m_writer;
         }
 
-        @Override public ServletOutputStream getOutputStream() {
+        @Override
+        public ServletOutputStream getOutputStream() {
             return m_servletOut;
         }
 
-        @Override public void flushBuffer() throws IOException {
+        @Override
+        public void flushBuffer() throws IOException {
             m_writer.flush();
             super.flushBuffer();
         }
@@ -272,7 +275,8 @@ public class WikiJSPFilter extends WikiServletFilter {
         }
 
         /** Returns whatever was written so far into the Writer. */
-        @Override public String toString() {
+        @Override
+        public String toString() {
             try {
 				flushBuffer();
 			} catch( final IOException e ) {
@@ -298,7 +302,7 @@ public class WikiJSPFilter extends WikiServletFilter {
 
     /**
      *  Fires a WikiPageEvent of the provided type and page name
-     *  to all registered listeners of the current WikiEngine.
+     *  to all registered listeners of the current Engine.
      *
      * @see org.apache.wiki.event.WikiPageEvent
      * @param type       the event type to be fired

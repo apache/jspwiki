@@ -33,8 +33,6 @@ import java.util.Collection;
 
 public abstract class ModuleBean extends SimpleAdminBean {
 
-    //protected WikiEngine m_engine; //inherited protected field from SimpleAdminBean
-
     private static final String VER_WARNING = "<span class='warning'>This module is not compatible with this version of JSPWiki.</span>";
 
     public ModuleBean( final Engine engine ) throws NotCompliantMBeanException {
@@ -44,21 +42,24 @@ public abstract class ModuleBean extends SimpleAdminBean {
     /**
      * {@inheritDoc}
      */
-    @Override public String[] getAttributeNames() {
+    @Override
+    public String[] getAttributeNames() {
         return new String[0];
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override public String[] getMethodNames() {
+    @Override
+    public String[] getMethodNames() {
         return new String[0];
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override public String doGet( final WikiContext context ) {
+    @Override
+    public String doGet( final WikiContext context ) {
         final Collection< WikiModuleInfo > filters = modules();
         final Element root = title();
         final Element tb = containerForModuleDetail( root );

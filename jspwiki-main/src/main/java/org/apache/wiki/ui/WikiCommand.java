@@ -27,7 +27,7 @@ import java.security.Permission;
  * <p>Defines Commands for wiki-wide operations such as creating groups, editing preferences and profiles, and logging in/out.
  * WikiCommands can be combined with Strings (representing the name of a wiki instance) to produce targeted Commands.</p>
  *
- * @see org.apache.wiki.WikiEngine#getApplicationName()
+ * @see org.apache.wiki.api.core.Engine#getApplicationName()
  * @since 2.4.22
  */
 public final class WikiCommand extends AbstractCommand {
@@ -91,11 +91,13 @@ public final class WikiCommand extends AbstractCommand {
     }
 
     /**
-     *  Constructs an admin command.
+     * Constructs an admin command.
      *  
-     *  @param requestContext
-     *  @param urlPattern
-     *  @param contentTemplate
+     * @param requestContext the request context
+     * @param urlPattern the URL pattern
+     * @param contentTemplate the content template; may be <code>null</code>
+     * @param target the target of the command, such as a WikiPage; may be <code>null</code>
+     * @throws IllegalArgumentException if the request content or URL pattern is <code>null</code>
      */
     private WikiCommand( final String requestContext, final String urlPattern, final String contentTemplate, final String target ) {
         super( requestContext, urlPattern, contentTemplate, target );
@@ -111,7 +113,7 @@ public final class WikiCommand extends AbstractCommand {
      * @return the new targeted command
      * @throws IllegalArgumentException if the target is not of the correct type
      */
-    public Command targetedCommand( final Object target ) {
+    @Override public Command targetedCommand( final Object target ) {
         if ( !( target instanceof String ) ) {
             throw new IllegalArgumentException( "Target must non-null and of type String." );
         }
@@ -123,14 +125,14 @@ public final class WikiCommand extends AbstractCommand {
      *
      * @see org.apache.wiki.ui.Command#getName()
      */
-    public String getName() {
+    @Override public String getName() {
         return getJSPFriendlyName();
     }
 
     /**
      * @see org.apache.wiki.ui.Command#requiredPermission()
      */
-    public Permission requiredPermission() {
+    @Override public Permission requiredPermission() {
         return m_permission;
     }
 

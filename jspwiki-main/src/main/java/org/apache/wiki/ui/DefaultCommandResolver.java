@@ -20,13 +20,14 @@ package org.apache.wiki.ui;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,7 +63,7 @@ public final class DefaultCommandResolver implements CommandResolver {
 
     private static final Logger LOG = Logger.getLogger( DefaultCommandResolver.class );
 
-    private final WikiEngine m_engine;
+    private final Engine m_engine;
 
     /** If true, we'll also consider english plurals (+s) a match. */
     private final boolean m_matchEnglishPlurals;
@@ -71,13 +72,13 @@ public final class DefaultCommandResolver implements CommandResolver {
     private final Map<String, Command> m_specialPages;
 
     /**
-     * Constructs a CommandResolver for a given WikiEngine. This constructor will extract the special page references for this wiki and
+     * Constructs a CommandResolver for a given Engine. This constructor will extract the special page references for this wiki and
      * store them in a cache used for resolution.
      *
      * @param engine the wiki engine
      * @param properties the properties used to initialize the wiki
      */
-    public DefaultCommandResolver( final WikiEngine engine, final Properties properties ) {
+    public DefaultCommandResolver( final Engine engine, final Properties properties ) {
         m_engine = engine;
         m_specialPages = new HashMap<>();
 
@@ -101,7 +102,7 @@ public final class DefaultCommandResolver implements CommandResolver {
         }
 
         // Do we match plurals?
-        m_matchEnglishPlurals = TextUtil.getBooleanProperty( properties, WikiEngine.PROP_MATCHPLURALS, true );
+        m_matchEnglishPlurals = TextUtil.getBooleanProperty( properties, Engine.PROP_MATCHPLURALS, true );
     }
 
     /**
@@ -214,7 +215,7 @@ public final class DefaultCommandResolver implements CommandResolver {
     public String getSpecialPageReference( final String page ) {
         final Command command = m_specialPages.get( page );
         if ( command != null ) {
-            return m_engine.getURLConstructor().makeURL( command.getRequestContext(), command.getURLPattern(), null );
+            return m_engine.getManager( URLConstructor.class ).makeURL( command.getRequestContext(), command.getURLPattern(), null );
         }
 
         return null;
@@ -266,7 +267,7 @@ public final class DefaultCommandResolver implements CommandResolver {
     public String extractPageFromParameter( final String requestContext, final HttpServletRequest request ) {
         // Extract the page name from the URL directly
         try {
-            String page = m_engine.getURLConstructor().parsePage( requestContext, request, m_engine.getContentEncoding() );
+            String page = m_engine.getManager( URLConstructor.class ).parsePage( requestContext, request, m_engine.getContentEncoding() );
             if ( page != null ) {
                 try {
                     // Look for singular/plural variants; if one not found, take the one the user supplied

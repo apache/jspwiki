@@ -23,6 +23,8 @@ import org.apache.log4j.NDC;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiSecurityException;
 
@@ -39,7 +41,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
- * Filter that verifies that the {@link org.apache.wiki.WikiEngine} is running, and sets the authentication status for the user's
+ * Filter that verifies that the {@link org.apache.wiki.api.core.Engine} is running, and sets the authentication status for the user's
  * WikiSession. Each HTTP request processed by this filter is wrapped by a {@link WikiRequestWrapper}. The wrapper's primary responsibility
  * is to return the correct <code>userPrincipal</code> and <code>remoteUser</code> for authenticated JSPWiki users (whether authenticated
  * by container or by JSPWiki's custom system). The wrapper's other responsibility is to incorporate JSPWiki built-in roles
@@ -50,7 +52,7 @@ import java.io.PrintWriter;
 public class WikiServletFilter implements Filter {
 
     private static final Logger log = Logger.getLogger( WikiServletFilter.class );
-    protected WikiEngine m_engine = null;
+    protected Engine m_engine = null;
 
     /**
      *  Creates a Wiki Servlet Filter.
@@ -64,14 +66,14 @@ public class WikiServletFilter implements Filter {
      * Initializes the WikiServletFilter.
      * 
      * @param config The FilterConfig.
-     * @throws ServletException If a WikiEngine cannot be started.
+     * @throws ServletException If a Engine cannot be started.
      */
-    public void init( final FilterConfig config ) throws ServletException {
+    @Override public void init( final FilterConfig config ) throws ServletException {
         final ServletContext context = config.getServletContext();
 
         // TODO REMOVEME when resolving JSPWIKI-129
         if( System.getSecurityManager() != null ) {
-            context.log( "== JSPWIKI WARNING ==   : This container is running with a security manager. JSPWiki does not yet really support that right now. See issue JSPWIKI-129 for details and information on how to proceed." );
+            context.log( "== JSPWIKI WARNING ==  : This container is running with a security manager. JSPWiki does not yet really support that right now. See issue JSPWIKI-129 for details and information on how to proceed." );
         }
 
         m_engine = WikiEngine.getInstance( context, null );
@@ -80,11 +82,11 @@ public class WikiServletFilter implements Filter {
     /**
      * Destroys the WikiServletFilter.
      */
-    public void destroy() {
+    @Override public void destroy() {
     }
 
     /**
-    * Checks that the WikiEngine is running ok, wraps the current HTTP request, and sets the correct authentication state for the users's
+    * Checks that the Engine is running ok, wraps the current HTTP request, and sets the correct authentication state for the users's
     * WikiSession. First, the method {@link org.apache.wiki.auth.AuthenticationManager#login(HttpServletRequest)}
     * executes, which sets the authentication state. Then, the request is wrapped with a
     * {@link WikiRequestWrapper}.
@@ -94,7 +96,7 @@ public class WikiServletFilter implements Filter {
     * @throws ServletException if {@link org.apache.wiki.auth.AuthenticationManager#login(HttpServletRequest)} fails for any reason
     * @throws IOException If writing to the servlet response fails. 
     */
-    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
+    @Override public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
         //  Sanity check; it might be true in some conditions, but we need to know where.
         if( chain == null ) {
             throw new ServletException("FilterChain is null, even if it should not be.  Please report this to the jspwiki development team.");
@@ -125,7 +127,7 @@ public class WikiServletFilter implements Filter {
         if ( !isWrapped( request ) ) {
             // Prepare the WikiSession
             try {
-                m_engine.getAuthenticationManager().login( httpRequest );
+                m_engine.getManager( AuthenticationManager.class ).login( httpRequest );
                 final WikiSession wikiSession = SessionMonitor.getInstance( m_engine ).find( httpRequest.getSession() );
                 httpRequest = new WikiRequestWrapper( m_engine, httpRequest );
                 if ( log.isDebugEnabled() ) {
@@ -137,7 +139,7 @@ public class WikiServletFilter implements Filter {
         }
 
         try {
-            NDC.push( m_engine.getApplicationName()+":"+httpRequest.getRequestURL() );
+            NDC.push( m_engine.getApplicationName() + ":" + httpRequest.getRequestURL() );
             chain.doFilter( httpRequest, response );
         } finally {
             NDC.pop();
