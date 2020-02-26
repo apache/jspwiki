@@ -29,6 +29,7 @@ import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.ui.EditorManager;
+import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.ui.admin.beans.CoreBean;
 import org.apache.wiki.ui.admin.beans.FilterBean;
 import org.apache.wiki.ui.admin.beans.PluginBean;
@@ -58,10 +59,10 @@ import java.util.List;
 public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanManager {
 
     private Engine m_engine;
-    private ArrayList< AdminBean >  m_allBeans;
+    private ArrayList< AdminBean > m_allBeans;
     private MBeanServer m_mbeanServer;
 
-    private static final Logger log = Logger.getLogger(DefaultAdminBeanManager.class);
+    private static final Logger log = Logger.getLogger( DefaultAdminBeanManager.class );
 
     public DefaultAdminBeanManager( final Engine engine ) {
         log.info("Using JDK 1.5 Platform MBeanServer");
@@ -78,9 +79,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
         initialize();
     }
 
-    /* (non-Javadoc)
-	 * @see org.apache.wiki.ui.admin.AdminBeanManager#initialize()
-	 */
+    /** {@inheritDoc} */
     @Override
 	public void initialize() {
         reload();
@@ -110,7 +109,6 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
         try {
             if( ab instanceof DynamicMBean && m_mbeanServer != null ) {
                 final ObjectName name = getObjectName( ab );
-
                 if( !m_mbeanServer.isRegistered( name ) ) {
                     m_mbeanServer.registerMBean( ab, name );
                 }
@@ -118,29 +116,29 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
 
             m_allBeans.add( ab );
 
-            log.info("Registered new admin bean "+ab.getTitle());
+            log.info( "Registered new admin bean " + ab.getTitle() );
         } catch( final InstanceAlreadyExistsException e ) {
-            log.error("Admin bean already registered to JMX",e);
+            log.error( "Admin bean already registered to JMX", e );
         } catch( final MBeanRegistrationException e ) {
-            log.error("Admin bean cannot be registered to JMX",e);
+            log.error( "Admin bean cannot be registered to JMX", e );
         } catch( final NotCompliantMBeanException e ) {
-            log.error("Your admin bean is not very good",e);
+            log.error( "Your admin bean is not very good", e );
         } catch( final MalformedObjectNameException e ) {
-            log.error("Your admin bean name is not very good",e);
+            log.error( "Your admin bean name is not very good", e );
         } catch( final NullPointerException e ) {
-            log.error("Evil NPE occurred",e);
+            log.error( "Evil NPE occurred", e );
         }
     }
 
     private ObjectName getObjectName( final AdminBean ab ) throws MalformedObjectNameException {
         final String component = getJMXTitleString( ab.getType() );
         final String title     = ab.getTitle();
-        return new ObjectName( Release.APPNAME + ":component="+component+",name="+title );
+        return new ObjectName( Release.APPNAME + ":component=" + component + ",name=" + title );
     }
 
     /**
-     *  Registers all the beans from a collection of WikiModuleInfos.  If some of the beans
-     *  fail, logs the message and keeps going to the next bean.
+     *  Registers all the beans from a collection of WikiModuleInfos.  If some of the beans fail, logs the message and keeps going to the
+     *  next bean.
      *
      *  @param c Collection of WikiModuleInfo instances
      */
@@ -176,6 +174,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
         registerBeans( m_engine.getManager( EditorManager.class ).modules() );
         registerBeans( m_engine.getManager( PluginManager.class ).modules() );
         registerBeans( m_engine.getManager( FilterManager.class ).modules() );
+        registerBeans( m_engine.getManager( TemplateManager.class ).modules() );
     }
 
     /* (non-Javadoc)
