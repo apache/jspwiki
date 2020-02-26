@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.pages.PageManager;
@@ -35,6 +36,7 @@ import org.intabulas.sandler.elements.Entry;
 import org.intabulas.sandler.elements.Feed;
 import org.intabulas.sandler.elements.Link;
 import org.intabulas.sandler.elements.Person;
+import org.intabulas.sandler.elements.impl.LinkImpl;
 import org.intabulas.sandler.exceptions.FeedMarshallException;
 
 import javax.servlet.ServletConfig;
@@ -45,30 +47,27 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 
 
 /**
- *  Handles incoming requests for the Atom API.  This class uses the
- *  "sandler" Atom API implementation.
+ *  Handles incoming requests for the Atom API.  This class uses the "sandler" Atom API implementation.
  *
  *  @since 2.1.97
  */
 // FIXME: Rewrite using some other library
-public class AtomAPIServlet extends HttpServlet
-{
-    static final Logger log = Logger.getLogger( AtomAPIServlet.class );
+public class AtomAPIServlet extends HttpServlet {
+
+    private static final Logger log = Logger.getLogger( AtomAPIServlet.class );
 
     private static final long serialVersionUID = 0L;
 
-    private WikiEngine       m_engine;
+    private Engine m_engine;
 
     /**
      *  {@inheritDoc}
      */
-    @Override public void init( final ServletConfig config )
-        throws ServletException
-    {
+    @Override
+    public void init( final ServletConfig config ) throws ServletException {
         m_engine = WikiEngine.getInstance( config );
     }
 
@@ -77,22 +76,15 @@ public class AtomAPIServlet extends HttpServlet
      *  The initial slash is also removed.  If there is no page,
      *  returns null.
      */
-    private String getPageName( final HttpServletRequest request )
-    {
+    private String getPageName( final HttpServletRequest request ) {
         String name = request.getPathInfo();
-
-        if( name == null || name.length() <= 1 )
-        {
+        if( name == null || name.length() <= 1 ) {
             return null;
-        }
-        else if( name.charAt(0) == '/' )
-        {
-            name = name.substring(1);
+        } else if( name.charAt( 0 ) == '/' ) {
+            name = name.substring( 1 );
         }
 
-        name = TextUtil.urlDecodeUTF8( name );
-
-        return name;
+        return TextUtil.urlDecodeUTF8( name );
     }
 
     /**
@@ -104,61 +96,43 @@ public class AtomAPIServlet extends HttpServlet
      *   <li>Assumes that incoming code is plain text or WikiMarkup, not html.
      *  </ul>
      *  
-     *  @param request {@inheritDoc}
-     *  @param response {@inheritDoc}
-     *  @throws ServletException {@inheritDoc}
+     *  {@inheritDoc}
      */
-    @Override public void doPost( final HttpServletRequest request, final HttpServletResponse response )
-        throws ServletException
-    {
-        log.debug("Received POST to AtomAPIServlet");
+    @Override
+    public void doPost( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
+        log.debug( "Received POST to AtomAPIServlet" );
 
-        try
-        {
+        try {
             final String blogid = getPageName( request );
-
-            final WikiPage page    = m_engine.getManager( PageManager.class ).getPage( blogid );
-
-            if( page == null )
-            {
-                throw new ServletException("Page "+blogid+" does not exist, cannot add blog post.");
+            final WikiPage page = m_engine.getManager( PageManager.class ).getPage( blogid );
+            if( page == null ) {
+                throw new ServletException( "Page " + blogid + " does not exist, cannot add blog post." );
             }
 
-            //FIXME: Do authentication here
+            // FIXME: Do authentication here
             final Entry entry = Sandler.unmarshallEntry( request.getInputStream() );
 
-            //
             //  Fetch the obligatory parts of the content.
-            //
-            final Content title   = entry.getTitle();
-            final Content content = entry.getContent(0);
+            final Content title = entry.getTitle();
+            final Content content = entry.getContent( 0 );
+            final Person author = entry.getAuthor();
 
-            final Person  author  = entry.getAuthor();
-
-            //FIXME: Sandler 0.5 does not support generator
-
-            //
-            //  Generate new blog entry.
-            //
+            // FIXME: Sandler 0.5 does not support generator
+            // Generate new blog entry.
             final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
-
             final String pageName = plugin.getNewEntryPage( m_engine, blogid );
             final String username = author.getName();
-
             final WikiPage entryPage = new WikiPage( m_engine, pageName );
             entryPage.setAuthor( username );
 
             final WikiContext context = new WikiContext( m_engine, request, entryPage );
-
             final StringBuilder text = new StringBuilder();
-            text.append( "!" + title.getBody() );
-            text.append( "\n\n" );
-            text.append( content.getBody() );
-
-            log.debug("Writing entry: "+text);
-
+            text.append( "!" )
+                .append( title.getBody() )
+                .append( "\n\n" )
+                .append( content.getBody() );
+            log.debug( "Writing entry: " + text );
             m_engine.getManager( PageManager.class ).saveText( context, text.toString() );
-
         } catch( final FeedMarshallException e ) {
             log.error("Received faulty Atom entry",e);
             throw new ServletException("Faulty Atom entry",e);
@@ -177,71 +151,53 @@ public class AtomAPIServlet extends HttpServlet
      *  
      *  {@inheritDoc}
      */
-    @Override public void doGet( final HttpServletRequest request, final HttpServletResponse response )
-        throws ServletException
-    {
-        log.debug("Received HTTP GET to AtomAPIServlet");
-
+    @Override
+    public void doGet( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
+        log.debug( "Received HTTP GET to AtomAPIServlet" );
         final String blogid = getPageName( request );
-
-        log.debug("Requested page "+blogid);
-
-        try
-        {
-            if( blogid == null )
-            {
+        log.debug( "Requested page " + blogid );
+        try {
+            if( blogid == null ) {
                 final Feed feed = listBlogs();
-
-                response.setContentType("application/x.atom+xml; charset=UTF-8");
-                response.getWriter().println( Sandler.marshallFeed(feed) );
-
-                response.getWriter().flush();
-            }
-            else
-            {
+                response.setContentType( "application/x.atom+xml; charset=UTF-8" );
+                response.getWriter().println( Sandler.marshallFeed( feed ) );
+            } else {
                 final Entry entry = getBlogEntry( blogid );
-
-                response.setContentType("application/x.atom+xml; charset=UTF-8");
-                response.getWriter().println( Sandler.marshallEntry(entry) );
-
-                response.getWriter().flush();
+                response.setContentType( "application/x.atom+xml; charset=UTF-8" );
+                response.getWriter().println( Sandler.marshallEntry( entry ) );
             }
+            response.getWriter().flush();
+        } catch( final Exception e ) {
+            log.error( "Unable to generate response", e );
+            throw new ServletException( "Internal problem - whack Janne on the head to get a better error report", e );
         }
-        catch( final Exception e )
-        {
-            log.error("Unable to generate response",e);
-            throw new ServletException("Internal problem - whack Janne on the head to get a better error report",e);
-        }
-
     }
 
     private Entry getBlogEntry( final String entryid ) {
         final WikiPage page = m_engine.getManager( PageManager.class ).getPage( entryid );
         final WikiPage firstVersion = m_engine.getManager( PageManager.class ).getPage( entryid, 1 );
-
         final Entry entry = SyndicationFactory.newSyndicationEntry();
-
         final String pageText = m_engine.getManager( PageManager.class ).getText(page.getName());
-        String title = "";
         final int firstLine = pageText.indexOf('\n');
 
-        if( firstLine > 0 )
-        {
+        String title = "";
+        if( firstLine > 0 ) {
             title = pageText.substring( 0, firstLine );
         }
 
-        if( title.trim().length() == 0 ) title = page.getName();
+        if( title.trim().length() == 0 ) {
+            title = page.getName();
+        }
 
         // Remove wiki formatting
-        while( title.startsWith("!") ) title = title.substring(1);
+        while( title.startsWith("!") ) {
+            title = title.substring(1);
+        }
 
         entry.setTitle( title );
         entry.setCreated( firstVersion.getLastModified() );
         entry.setModified( page.getLastModified() );
-        entry.setAuthor( SyndicationFactory.createPerson( page.getAuthor(),
-                                                          null,
-                                                          null ) );
-
+        entry.setAuthor( SyndicationFactory.createPerson( page.getAuthor(), null, null ) );
         entry.addContent( SyndicationFactory.createEscapedContent(pageText) );
 
         return entry;
@@ -252,46 +208,25 @@ public class AtomAPIServlet extends HttpServlet
      */
     private Feed listBlogs() throws ProviderException {
         final Collection< WikiPage > pages = m_engine.getManager( PageManager.class ).getAllPages();
-
         final Feed feed = SyndicationFactory.newSyndicationFeed();
         feed.setTitle("List of blogs at this site");
         feed.setModified( new Date() );
 
-        for( final Iterator< WikiPage > i = pages.iterator(); i.hasNext(); )
-        {
-            final WikiPage p = i.next();
-
-            //
+        for( final WikiPage p : pages ) {
             //  List only weblogs
-            //  FIXME: Unfortunately, a weblog is not known until it has
-            //         been executed once, because plugins are off during
-            //         the initial startup phase.
-            //
+            //  FIXME: Unfortunately, a weblog is not known until it has een executed once, because plugins are off during the initial startup phase.
+            log.debug( p.getName() + " = " + p.getAttribute( WeblogPlugin.ATTR_ISWEBLOG ) );
 
-            log.debug( p.getName()+" = "+p.getAttribute(WeblogPlugin.ATTR_ISWEBLOG)) ;
-
-            if( !("true".equals(p.getAttribute(WeblogPlugin.ATTR_ISWEBLOG)) ) ) {
+            if( !( "true".equals( p.getAttribute( WeblogPlugin.ATTR_ISWEBLOG ) ) ) ) {
                 continue;
             }
 
             final String encodedName = TextUtil.urlEncodeUTF8( p.getName() );
-
             final WikiContext context = new WikiContext( m_engine, p );
-
-            final String title = TextUtil.replaceEntities(org.apache.wiki.rss.Feed.getSiteName(context));
-
-            final Link postlink = createLink( "service.post",
-                                        m_engine.getBaseURL()+"atom/"+encodedName,
-                                        title );
-
-            final Link editlink = createLink( "service.edit",
-                                        m_engine.getBaseURL()+"atom/"+encodedName,
-                                        title );
-
-            final Link feedlink = createLink( "service.feed",
-                                        m_engine.getBaseURL()+"atom.jsp?page="+encodedName,
-                                        title );
-
+            final String title = TextUtil.replaceEntities( org.apache.wiki.rss.Feed.getSiteName( context ) );
+            final Link postlink = createLink( "service.post", m_engine.getBaseURL() + "atom/" + encodedName, title );
+            final Link editlink = createLink( "service.edit", m_engine.getBaseURL() + "atom/" + encodedName, title );
+            final Link feedlink = createLink( "service.feed", m_engine.getBaseURL() + "atom.jsp?page=" + encodedName, title );
 
             feed.addLink( postlink );
             feed.addLink( feedlink );
@@ -301,12 +236,8 @@ public class AtomAPIServlet extends HttpServlet
         return feed;
     }
 
-    private Link createLink( final String rel,
-                             final String href,
-                             final String title )
-    {
-        final org.intabulas.sandler.elements.impl.LinkImpl link = new org.intabulas.sandler.elements.impl.LinkImpl();
-
+    private Link createLink( final String rel, final String href, final String title ) {
+        final LinkImpl link = new LinkImpl();
         link.setRelationship( rel );
         link.setTitle( title );
         link.setType( "application/x.atom+xml" );
@@ -318,14 +249,17 @@ public class AtomAPIServlet extends HttpServlet
     /**
      *  {@inheritDoc}
      */
-    @Override public void doDelete( final HttpServletRequest request, final HttpServletResponse response ) {
-        log.debug("Received HTTP DELETE");
+    @Override
+    public void doDelete( final HttpServletRequest request, final HttpServletResponse response ) {
+        log.debug( "Received HTTP DELETE" );
     }
 
     /**
      *  {@inheritDoc}
      */
-    @Override public void doPut( final HttpServletRequest request, final HttpServletResponse response ) {
-        log.debug("Received HTTP PUT");
+    @Override
+    public void doPut( final HttpServletRequest request, final HttpServletResponse response ) {
+        log.debug( "Received HTTP PUT" );
     }
+
 }

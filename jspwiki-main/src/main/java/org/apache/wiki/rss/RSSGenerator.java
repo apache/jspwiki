@@ -20,16 +20,19 @@ package org.apache.wiki.rss;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.pages.PageTimeComparator;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
+import org.apache.wiki.variables.VariableManager;
 
 import java.util.Iterator;
 import java.util.List;
@@ -55,7 +58,7 @@ import java.util.Set;
 public class RSSGenerator {
 
     private static final Logger log = Logger.getLogger( RSSGenerator.class );
-    private WikiEngine m_engine;
+    private Engine m_engine;
 
     private String m_channelDescription = "";
     private String m_channelLanguage = "en-us";
@@ -121,12 +124,12 @@ public class RSSGenerator {
     private static final int MAX_CHARACTERS = Integer.MAX_VALUE-1;
 
     /**
-     *  Initialize the RSS generator for a given WikiEngine.
+     *  Initialize the RSS generator for a given Engine.
      *
-     *  @param engine The WikiEngine.
+     *  @param engine The Engine.
      *  @param properties The properties.
      */
-    public RSSGenerator( final WikiEngine engine, final Properties properties ) {
+    public RSSGenerator( final Engine engine, final Properties properties ) {
         m_engine = engine;
         m_channelDescription = properties.getProperty( PROP_CHANNEL_DESCRIPTION, m_channelDescription );
         m_channelLanguage = properties.getProperty( PROP_CHANNEL_LANGUAGE, m_channelLanguage );
@@ -190,7 +193,7 @@ public class RSSGenerator {
             buf.append( diff );
         } else {
             buf.append( author ).append( " created this page on " ).append( page.getLastModified() ).append( ":<br /><hr /><br />" );
-            buf.append( m_engine.getRenderingManager().getHTML( page.getName() ) );
+            buf.append( m_engine.getManager( RenderingManager.class ).getHTML( page.getName() ) );
         }
 
         return buf.toString();
@@ -321,7 +324,7 @@ public class RSSGenerator {
             final WikiPage page = i.next();
 
             //  Check if the anonymous user has view access to this page.
-            if( !m_engine.getAuthorizationManager().checkPermission(session, new PagePermission(page,PagePermission.VIEW_ACTION) ) ) {
+            if( !m_engine.getManager( AuthorizationManager.class ).checkPermission(session, new PagePermission(page,PagePermission.VIEW_ACTION) ) ) {
                 // No permission, skip to the next one.
                 continue;
             }
@@ -357,14 +360,14 @@ public class RSSGenerator {
     protected String generateWikiPageRSS( final WikiContext wikiContext, final List< WikiPage > changed, final Feed feed ) {
         feed.setChannelTitle( m_engine.getApplicationName()+": "+wikiContext.getPage().getName() );
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
-        final String language = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
+        final String language = m_engine.getManager( VariableManager.class ).getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
 
         if( language != null ) {
             feed.setChannelLanguage( language );
         } else {
             feed.setChannelLanguage( m_channelLanguage );
         }
-        final String channelDescription = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
+        final String channelDescription = m_engine.getManager( VariableManager.class ).getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
 
         if( channelDescription != null ) {
             feed.setChannelDescription( channelDescription );
@@ -412,7 +415,7 @@ public class RSSGenerator {
             log.debug( "Generating RSS for blog, size=" + changed.size() );
         }
 
-        final String ctitle = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_TITLE );
+        final String ctitle = m_engine.getManager( VariableManager.class ).getVariable( wikiContext, PROP_CHANNEL_TITLE );
         if( ctitle != null ) {
             feed.setChannelTitle( ctitle );
         } else {
@@ -421,14 +424,14 @@ public class RSSGenerator {
 
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
 
-        final String language = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
+        final String language = m_engine.getManager( VariableManager.class ).getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
         if( language != null ) {
             feed.setChannelLanguage( language );
         } else {
             feed.setChannelLanguage( m_channelLanguage );
         }
 
-        final String channelDescription = m_engine.getVariableManager().getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
+        final String channelDescription = m_engine.getManager( VariableManager.class ).getVariable( wikiContext, PROP_CHANNEL_DESCRIPTION );
         if( channelDescription != null ) {
             feed.setChannelDescription( channelDescription );
         }
@@ -477,7 +480,7 @@ public class RSSGenerator {
                 if( maxlen > MAX_CHARACTERS ) {
                     maxlen = MAX_CHARACTERS;
                 }
-                pageText = m_engine.getRenderingManager().textToHTML( wikiContext, pageText.substring( firstLine + 1, maxlen ).trim() );
+                pageText = m_engine.getManager( RenderingManager.class ).textToHTML( wikiContext, pageText.substring( firstLine + 1, maxlen ).trim() );
                 if( maxlen == MAX_CHARACTERS ) {
                     pageText += "...";
                 }
