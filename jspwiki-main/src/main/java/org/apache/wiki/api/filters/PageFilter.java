@@ -43,7 +43,7 @@ public interface PageFilter {
     /**
      *  Is called whenever the a new PageFilter is instantiated and reset.
      *  
-     *  @param engine The WikiEngine whic owns this PageFilter
+     *  @param engine The Engine which owns this PageFilter
      *  @param properties The properties ripped from filters.xml.
      *  @throws FilterException If the filter could not be initialized. If this is thrown, the filter is not added to the internal queues.
      */

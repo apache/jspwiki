@@ -38,7 +38,7 @@ public interface WikiProvider {
     /**
      *  Initializes the page provider.
      *
-     *  @param engine WikiEngine to own this provider
+     *  @param engine Engine to own this provider
      *  @param properties A set of properties used to initialize this provider
      *  @throws NoRequiredPropertyException If the provider needs a property which is not found in the property set
      *  @throws IOException If there is an IO problem

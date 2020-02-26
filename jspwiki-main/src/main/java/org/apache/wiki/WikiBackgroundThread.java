@@ -28,8 +28,7 @@ import org.apache.wiki.event.WikiEventListener;
 /**
  * Abstract Thread subclass that operates in the background; when it detects the {@link WikiEngineEvent#SHUTDOWN} event,
  * it terminates itself. Subclasses of this method need only implement the method {@link #backgroundTask()}, instead of
- * the normal {@link Thread#run()}, and provide a constructor that passes the WikiEngine and sleep interval. This 
- * class is thread-safe.
+ * the normal {@link Thread#run()}, and provide a constructor that passes the Engine and sleep interval. This class is thread-safe.
  */
 public abstract class WikiBackgroundThread extends Thread implements WikiEventListener {
 	
@@ -78,7 +77,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
     public abstract void backgroundTask() throws Exception;
     
     /**
-     * Returns the WikiEngine that created this background thread.
+     * Returns the Engine that created this background thread.
      * 
      * @return the wiki engine
      */
@@ -104,7 +103,8 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
      * 
      * @see java.lang.Thread#run()
      */
-    @Override public final void run() {
+    @Override
+    public final void run() {
         try {
             // Perform the initial startup task
             final String name = getName();
@@ -154,9 +154,8 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
     }
     
     /**
-     * Executes a task just after the thread's {@link Thread#run()} method starts, but before the 
-     * {@link #backgroundTask()} task executes. By default, this method does nothing; override it to implement 
-     * custom functionality.
+     * Executes a task just after the thread's {@link Thread#run()} method starts, but before the {@link #backgroundTask()} task executes.
+     * By default, this method does nothing; override it to implement custom functionality.
      * 
      * @throws Exception Any exception can be thrown.
      */

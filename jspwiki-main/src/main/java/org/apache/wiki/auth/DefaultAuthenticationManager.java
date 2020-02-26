@@ -400,7 +400,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
      * firing appropriate authentication events.
      *
      * @param session the user's current WikiSession
-     * @param authorizer the WikiEngine's configured Authorizer
+     * @param authorizer the Engine's configured Authorizer
      * @param request the user's HTTP session, which may be <code>null</code>
      */
     private void injectAuthorizerRoles( final WikiSession session, final Authorizer authorizer, final HttpServletRequest request ) {

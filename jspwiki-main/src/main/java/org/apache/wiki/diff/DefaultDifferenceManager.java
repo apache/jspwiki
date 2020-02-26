@@ -44,7 +44,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
     /**
      * Creates a new DifferenceManager for the given engine.
      *
-     * @param engine The WikiEngine.
+     * @param engine The Engine.
      * @param props  A set of properties.
      */
     public DefaultDifferenceManager( final Engine engine, final Properties props ) {

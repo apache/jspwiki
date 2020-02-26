@@ -108,7 +108,7 @@ public class AttachmentServlet extends HttpServlet {
     //private final DateFormat rfcDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z");
 
     /**
-     *  Initializes the servlet from WikiEngine properties.
+     *  Initializes the servlet from Engine properties.
      */
     @Override
     public void init( final ServletConfig config ) throws ServletException {

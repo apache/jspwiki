@@ -96,7 +96,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
     /**
      *  Constructs a new FilterManager object.
      *
-     *  @param engine The WikiEngine which owns the FilterManager
+     *  @param engine The Engine which owns the FilterManager
      *  @param props Properties to initialize the FilterManager with
      *  @throws WikiException If something goes wrong.
      */
@@ -116,7 +116,8 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      *  @param priority The priority in which position to add it in.
      *  @throws IllegalArgumentException If the PageFilter is null or invalid.
      */
-    @Override public void addPageFilter( final PageFilter f, final int priority ) throws IllegalArgumentException {
+    @Override
+    public void addPageFilter( final PageFilter f, final int priority ) throws IllegalArgumentException {
         if( f == null ) {
             throw new IllegalArgumentException("Attempt to provide a null filter - this should never happen.  Please check your configuration (or if you're a developer, check your own code.)");
         }

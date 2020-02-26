@@ -103,7 +103,8 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
      * @see javax.security.auth.spi.LoginModule#login()
      * {@inheritDoc}
      */
-    @Override public boolean login() throws LoginException {
+    @Override
+    public boolean login() throws LoginException {
         // Otherwise, let's go and look for the cookie!
         final HttpRequestCallback hcb = new HttpRequestCallback();
         final WikiEngineCallback wcb = new WikiEngineCallback();

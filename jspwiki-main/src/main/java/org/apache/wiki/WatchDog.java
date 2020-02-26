@@ -60,7 +60,7 @@ public final class WatchDog {
      *  Returns the current watchdog for the current thread. This is the preferred method of getting you a Watchdog, since it
      *  keeps an internal list of Watchdogs for you so that there won't be more than one watchdog per thread.
      *
-     *  @param engine The WikiEngine to which the Watchdog should be bonded to.
+     *  @param engine The Engine to which the Watchdog should be bonded to.
      *  @return A usable WatchDog object.
      */
     public static WatchDog getCurrentWatchDog( final Engine engine ) {
@@ -102,7 +102,7 @@ public final class WatchDog {
     /**
      *  Creates a new WatchDog for a Thread.  The Thread is wrapped in a Watchable wrapper for this purpose.
      *
-     *  @param engine The WikiEngine
+     *  @param engine The Engine
      *  @param thread A Thread for watching.
      */
     public WatchDog( final Engine engine, final Thread thread ) {

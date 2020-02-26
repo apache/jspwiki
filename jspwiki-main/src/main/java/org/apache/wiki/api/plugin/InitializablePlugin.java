@@ -33,7 +33,7 @@ public interface InitializablePlugin {
     /**
      *  Called whenever the plugin is being instantiated for the first time.
      *  
-     *  @param engine The WikiEngine.
+     *  @param engine The Engine.
      *  @throws PluginException If something goes wrong.
      */
     void initialize( Engine engine ) throws PluginException;

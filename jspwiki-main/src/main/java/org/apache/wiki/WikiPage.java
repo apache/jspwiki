@@ -74,7 +74,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
     /**
      *  Create a new WikiPage using a given engine and name.
      *  
-     *  @param engine The WikiEngine that owns this page.
+     *  @param engine The Engine that owns this page.
      *  @param name   The name of the page.
      */
     public WikiPage( final Engine engine, final String name ) {

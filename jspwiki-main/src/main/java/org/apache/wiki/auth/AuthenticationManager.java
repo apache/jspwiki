@@ -37,7 +37,7 @@ import java.util.Set;
 
 
 /**
- * Manages authentication activities for a WikiEngine: user login, logout, and credential refreshes. This class uses JAAS to determine how
+ * Manages authentication activities for a Engine: user login, logout, and credential refreshes. This class uses JAAS to determine how
  * users log in.
  * <p>
  * The login procedure is protected in addition by a mechanism which prevents a hacker to try and force-guess passwords by slowing down
@@ -68,7 +68,7 @@ public interface AuthenticationManager {
     String PROP_LOGIN_MODULE = "jspwiki.loginModule.class";
 
     /**
-     * Creates an AuthenticationManager instance for the given WikiEngine and
+     * Creates an AuthenticationManager instance for the given Engine and
      * the specified set of properties. All initialization for the modules is
      * done here.
      * @param engine the wiki engine
@@ -78,7 +78,7 @@ public interface AuthenticationManager {
     void initialize( Engine engine, Properties props ) throws WikiException;
 
     /**
-     * Returns true if this WikiEngine uses container-managed authentication. This method is used primarily for cosmetic purposes in the
+     * Returns true if this Engine uses container-managed authentication. This method is used primarily for cosmetic purposes in the
      * JSP tier, and performs no meaningful security function per se. Delegates to
      * {@link org.apache.wiki.auth.authorize.WebContainerAuthorizer#isContainerAuthorized()},
      * if used as the external authorizer; otherwise, returns <code>false</code>.
@@ -117,7 +117,7 @@ public interface AuthenticationManager {
     
     /**
      * Attempts to perform a WikiSession login for the given username/password combination using JSPWiki's custom authentication mode. In
-     * order to log in, the JAAS LoginModule supplied by the WikiEngine property {@link #PROP_LOGIN_MODULE} will be instantiated, and its
+     * order to log in, the JAAS LoginModule supplied by the Engine property {@link #PROP_LOGIN_MODULE} will be instantiated, and its
      * {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)} method will be invoked. By default,
      * the {@link org.apache.wiki.auth.login.UserDatabaseLoginModule} class will be used. When the LoginModule's <code>initialize</code>
      * method is invoked, an options Map populated by properties keys prefixed by {@link #PREFIX_LOGIN_MODULE_OPTIONS} will be passed as a
@@ -143,16 +143,16 @@ public interface AuthenticationManager {
     void logout( HttpServletRequest request );
 
     /**
-     * Determines whether this WikiEngine allows users to assert identities using cookies instead of passwords. This is determined by inspecting
-     * the WikiEngine property {@link #PROP_ALLOW_COOKIE_ASSERTIONS}.
+     * Determines whether this Engine allows users to assert identities using cookies instead of passwords. This is determined by inspecting
+     * the Engine property {@link #PROP_ALLOW_COOKIE_ASSERTIONS}.
      *
      * @return <code>true</code> if cookies are allowed
      */
     boolean allowsCookieAssertions();
 
     /**
-     * Determines whether this WikiEngine allows users to authenticate using cookies instead of passwords. This is determined by inspecting
-     * the WikiEngine property {@link #PROP_ALLOW_COOKIE_AUTH}.
+     * Determines whether this Engine allows users to authenticate using cookies instead of passwords. This is determined by inspecting
+     * the Engine property {@link #PROP_ALLOW_COOKIE_AUTH}.
      *
      *  @return <code>true</code> if cookies are allowed for authentication
      *  @since 2.5.62
