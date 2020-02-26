@@ -20,7 +20,7 @@ package org.apache.wiki.url;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.util.TextUtil;
@@ -38,7 +38,7 @@ import java.util.Properties;
  */
 public class DefaultURLConstructor implements URLConstructor {
 
-    protected WikiEngine m_engine;
+    protected Engine m_engine;
 
     /**
      *  Contains the absolute path of the JSPWiki Web application without the actual servlet (which is the m_urlPrefix).
@@ -49,7 +49,7 @@ public class DefaultURLConstructor implements URLConstructor {
      *
      * {@inheritDoc}
      */
-    public void initialize( final WikiEngine engine, final Properties properties ) {
+    @Override public void initialize( final Engine engine, final Properties properties ) {
         m_engine = engine;
         m_pathPrefix = engine.getBaseURL() + "/";
     }
@@ -125,14 +125,14 @@ public class DefaultURLConstructor implements URLConstructor {
      *
      *  {@inheritDoc}
      */
-    public String makeURL( final String context, final String name, String parameters ) {
+    @Override public String makeURL( final String context, final String name, String parameters ) {
         if( parameters != null && parameters.length() > 0 ) {
-            if( context.equals(WikiContext.ATTACH) ) {
-                parameters = "?"+parameters;
-            } else if( context.equals(WikiContext.NONE) ) {
-                parameters = (name.indexOf('?') != -1 ) ? "&amp;" : "?" + parameters;
+            if( context.equals( WikiContext.ATTACH ) ) {
+                parameters = "?" + parameters;
+            } else if( context.equals( WikiContext.NONE ) ) {
+                parameters = name.indexOf( '?' ) != -1 ? "&amp;" : "?" + parameters;
             } else {
-                parameters = "&amp;"+parameters;
+                parameters = "&amp;" + parameters;
             }
         } else {
             parameters = "";
@@ -145,7 +145,7 @@ public class DefaultURLConstructor implements URLConstructor {
      *
      *  {@inheritDoc}
      */
-    public String parsePage( final String context, final HttpServletRequest request, final Charset encoding ) {
+    @Override public String parsePage( final String context, final HttpServletRequest request, final Charset encoding ) {
         String pagereq = request.getParameter( "page" );
         if( context.equals(WikiContext.ATTACH) ) {
             pagereq = parsePageFromURL( request, encoding );
@@ -185,7 +185,7 @@ public class DefaultURLConstructor implements URLConstructor {
      * @param request The HTTP Request that was used to end up in this page.
      * @return "Wiki.jsp", "PageInfo.jsp", etc.  Just return the name, JSPWiki will figure out the page.
      */
-    public String getForwardPage( final HttpServletRequest request ) {
+    @Override public String getForwardPage( final HttpServletRequest request ) {
         return "Wiki.jsp";
     }
 

@@ -19,7 +19,7 @@
 package org.apache.wiki.url;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Properties;
@@ -34,7 +34,7 @@ public class ShortViewURLConstructor extends ShortURLConstructor {
     /**
      *  {@inheritDoc}
      */
-    public void initialize( final WikiEngine engine, final Properties properties ) {
+    @Override public void initialize( final Engine engine, final Properties properties ) {
         super.initialize( engine, properties );
     }
     

@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.url;
 
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public interface URLConstructor {
      *  @param  engine The WikiEngine that this URLConstructor belongs to
      *  @param properties Properties used to initialize
      */
-    void initialize( WikiEngine engine, Properties properties );
+    void initialize( Engine engine, Properties properties );
 
     /**
      *  Constructs the URL with a bunch of parameters.

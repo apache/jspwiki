@@ -21,7 +21,7 @@ package org.apache.wiki.url;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,7 +50,7 @@ public class ShortURLConstructor extends DefaultURLConstructor {
     
     /** {@inheritDoc} */
     @Override
-    public void initialize( final WikiEngine engine, final Properties properties ) {
+    public void initialize( final Engine engine, final Properties properties ) {
         super.initialize( engine, properties );
         
         m_urlPrefix = TextUtil.getStringProperty( properties, PROP_PREFIX, null );
@@ -160,7 +160,7 @@ public class ShortURLConstructor extends DefaultURLConstructor {
             jspPage = "Wiki";
         }
     
-        return jspPage+".jsp";
+        return jspPage + ".jsp";
     }
 
 }
