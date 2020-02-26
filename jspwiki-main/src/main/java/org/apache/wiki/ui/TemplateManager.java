@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
@@ -122,7 +122,7 @@ public class TemplateManager extends ModuleManager {
      *  @param engine The owning engine.
      *  @param properties The property list used to initialize this.
      */
-    public TemplateManager( final WikiEngine engine, final Properties properties ) {
+    public TemplateManager( final Engine engine, final Properties properties ) {
         super( engine );
 
         //

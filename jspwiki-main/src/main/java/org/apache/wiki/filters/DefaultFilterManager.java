@@ -20,7 +20,7 @@ package org.apache.wiki.filters;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -100,7 +100,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      *  @param props Properties to initialize the FilterManager with
      *  @throws WikiException If something goes wrong.
      */
-    public DefaultFilterManager( final WikiEngine engine, final Properties props ) throws WikiException {
+    public DefaultFilterManager( final Engine engine, final Properties props ) throws WikiException {
         super( engine );
         initialize( props );
     }
@@ -116,7 +116,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      *  @param priority The priority in which position to add it in.
      *  @throws IllegalArgumentException If the PageFilter is null or invalid.
      */
-    public void addPageFilter( final PageFilter f, final int priority ) throws IllegalArgumentException {
+    @Override public void addPageFilter( final PageFilter f, final int priority ) throws IllegalArgumentException {
         if( f == null ) {
             throw new IllegalArgumentException("Attempt to provide a null filter - this should never happen.  Please check your configuration (or if you're a developer, check your own code.)");
         }
@@ -240,7 +240,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      *
      *  @see PageFilter#preTranslate(WikiContext, String)
      */
-    public String doPreTranslateFiltering( final WikiContext context, String pageData ) throws FilterException {
+    @Override public String doPreTranslateFiltering( final WikiContext context, String pageData ) throws FilterException {
         fireEvent( WikiPageEvent.PRE_TRANSLATE_BEGIN, context );
         for( final PageFilter f : m_pageFilters ) {
             pageData = f.preTranslate( context, pageData );
@@ -260,7 +260,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      *  @return The modified HTML
      *  @see PageFilter#postTranslate(WikiContext, String)
      */
-    public String doPostTranslateFiltering( final WikiContext context, String htmlData ) throws FilterException {
+    @Override public String doPostTranslateFiltering( final WikiContext context, String htmlData ) throws FilterException {
         fireEvent( WikiPageEvent.POST_TRANSLATE_BEGIN, context );
         for( final PageFilter f : m_pageFilters ) {
             htmlData = f.postTranslate( context, htmlData );
@@ -280,7 +280,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      *  @return The modified WikiMarkup
      *  @see PageFilter#preSave(WikiContext, String)
      */
-    public String doPreSaveFiltering( final WikiContext context, String pageData ) throws FilterException {
+    @Override public String doPreSaveFiltering( final WikiContext context, String pageData ) throws FilterException {
         fireEvent( WikiPageEvent.PRE_SAVE_BEGIN, context );
         for( final PageFilter f : m_pageFilters ) {
             pageData = f.preSave( context, pageData );
@@ -300,7 +300,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      *
      *  @see PageFilter#postSave(WikiContext, String)
      */
-    public void doPostSaveFiltering( final WikiContext context, final String pageData ) throws FilterException {
+    @Override public void doPostSaveFiltering( final WikiContext context, final String pageData ) throws FilterException {
         fireEvent( WikiPageEvent.POST_SAVE_BEGIN, context );
         for( final PageFilter f : m_pageFilters ) {
             // log.info("POSTSAVE: "+f.toString() );
@@ -316,7 +316,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      *
      *  @return A List of PageFilter objects
      */
-    public List< PageFilter > getFilterList()
+    @Override public List< PageFilter > getFilterList()
     {
         return m_pageFilters;
     }
@@ -326,7 +326,7 @@ public class DefaultFilterManager extends ModuleManager implements FilterManager
      * Notifies PageFilters to clean up their ressources.
      *
      */
-    public void destroy() {
+    @Override public void destroy() {
         for( final PageFilter f : m_pageFilters ) {
             f.destroy( m_engine );
         }

@@ -18,28 +18,24 @@
  */
 package org.apache.wiki.modules;
 
+import org.apache.wiki.Release;
+import org.apache.wiki.api.core.Engine;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.wiki.Release;
-import org.apache.wiki.WikiEngine;
-
 
 /**
  *  Superclass for all JSPWiki managers for modules (plugins, etc).
  */
-public abstract class ModuleManager
-{
+public abstract class ModuleManager {
 
-    /**
-     * Location of the property-files of plugins.
-     *  (Each plugin should include this property-file in its jar-file)
-     */
+    /** Location of the property-files of plugins. (Each plugin should include this property-file in its jar-file) */
     public static final String PLUGIN_RESOURCE_LOCATION = "ini/jspwiki_module.xml";
 
-    protected WikiEngine m_engine;
+    protected Engine m_engine;
 
     private boolean m_loadIncompatibleModules = false;
 
@@ -48,8 +44,7 @@ public abstract class ModuleManager
      *
      *  @param engine The WikiEngine which owns this manager.
      */
-    public ModuleManager( WikiEngine engine )
-    {
+    public ModuleManager( final Engine engine ) {
         m_engine = engine;
     }
 
@@ -59,12 +54,10 @@ public abstract class ModuleManager
      *  @param info The module to check
      *  @return True, if the module is compatible.
      */
-    public boolean checkCompatibility( WikiModuleInfo info )
-    {
-        if( !m_loadIncompatibleModules )
-        {
-            String minVersion = info.getMinVersion();
-            String maxVersion = info.getMaxVersion();
+    public boolean checkCompatibility( final WikiModuleInfo info ) {
+        if( !m_loadIncompatibleModules ) {
+            final String minVersion = info.getMinVersion();
+            final String maxVersion = info.getMaxVersion();
 
             return Release.isNewerOrEqual( minVersion ) && Release.isOlderOrEqual( maxVersion );
         }
@@ -81,12 +74,13 @@ public abstract class ModuleManager
      */
     public abstract Collection< WikiModuleInfo > modules();
 
-    protected < T extends WikiModuleInfo > Collection< WikiModuleInfo > modules( Iterator< T > iterator ) {
-        Set< WikiModuleInfo > ls = new TreeSet<>();
-
-        for( Iterator< T > i = iterator; i.hasNext(); ) {
-            WikiModuleInfo wmi = i.next();
-            if( !ls.contains( wmi ) ) ls.add( wmi );
+    protected < T extends WikiModuleInfo > Collection< WikiModuleInfo > modules( final Iterator< T > iterator ) {
+        final Set< WikiModuleInfo > ls = new TreeSet<>();
+        for( final Iterator< T > i = iterator; i.hasNext(); ) {
+            final WikiModuleInfo wmi = i.next();
+            if( !ls.contains( wmi ) ) {
+                ls.add( wmi );
+            }
         }
 
         return ls;
@@ -94,8 +88,9 @@ public abstract class ModuleManager
 
     /**
      * Returns the {@link WikiModuleInfo} information about the provided moduleName.
+     *
      * @param moduleName
      * @return The wikiModuleInfo
      */
-    public abstract WikiModuleInfo getModuleInfo(String moduleName);
+    public abstract WikiModuleInfo getModuleInfo( final String moduleName );
 }

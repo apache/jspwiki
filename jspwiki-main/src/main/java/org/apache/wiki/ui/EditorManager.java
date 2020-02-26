@@ -26,6 +26,7 @@ import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.XmlUtil;
+import org.apache.wiki.variables.VariableManager;
 import org.jdom2.Element;
 
 import javax.servlet.jsp.PageContext;
@@ -147,7 +148,7 @@ public class EditorManager extends ModuleManager {
         if( editor == null ) {
             // or use the default editor in jspwiki.properties
             try {
-                editor = m_engine.getVariableManager().getValue( context, PROP_EDITORTYPE );
+                editor = m_engine.getManager( VariableManager.class ).getValue( context, PROP_EDITORTYPE );
             } catch( final NoSuchVariableException e ) {} // This is fine
         }
 
@@ -224,7 +225,7 @@ public class EditorManager extends ModuleManager {
             return info;
         }
 
-        protected void initializeFromXML( final Element el ) {
+        @Override protected void initializeFromXML( final Element el ) {
             super.initializeFromXML( el );
             m_path = el.getChildText("path");
         }
