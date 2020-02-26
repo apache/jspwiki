@@ -21,7 +21,6 @@ package org.apache.wiki;
 import net.sf.ehcache.CacheManager;
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.url.DefaultURLConstructor;
 import org.apache.wiki.url.URLConstructor;
 
 import javax.servlet.RequestDispatcher;
@@ -83,7 +82,7 @@ public class WikiServlet extends HttpServlet {
      */
     @Override
     public void doGet( final HttpServletRequest req, final HttpServletResponse res ) throws IOException, ServletException {
-        String pageName = DefaultURLConstructor.parsePageFromURL( req, m_engine.getContentEncoding() );
+        String pageName = URLConstructor.parsePageFromURL( req, m_engine.getContentEncoding() );
 
         log.info( "Request for page: " + pageName );
         if( pageName == null ) {

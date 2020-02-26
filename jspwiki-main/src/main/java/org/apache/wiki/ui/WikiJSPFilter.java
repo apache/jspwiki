@@ -26,7 +26,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
-import org.apache.wiki.url.DefaultURLConstructor;
+import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.FilterChain;
@@ -94,15 +94,13 @@ public class WikiJSPFilter extends WikiServletFilter {
             final HttpServletResponseWrapper responseWrapper = new JSPWikiServletResponseWrapper( ( HttpServletResponse )response, m_wiki_encoding, useEncoding );
 
             // fire PAGE_REQUESTED event
-            final String pagename = DefaultURLConstructor.parsePageFromURL( ( HttpServletRequest )request,
-                                                                            Charset.forName( response.getCharacterEncoding() ) );
+            final String pagename = URLConstructor.parsePageFromURL( ( HttpServletRequest )request, Charset.forName( response.getCharacterEncoding() ) );
             fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename );
             super.doFilter( request, responseWrapper, chain );
 
             // The response is now complete. Lets replace the markers now.
 
-            // WikiContext is only available after doFilter! (That is after
-            //   interpreting the jsp)
+            // WikiContext is only available after doFilter! (That is after interpreting the jsp)
 
             try {
                 w.enterState( "Delivering response", 30 );

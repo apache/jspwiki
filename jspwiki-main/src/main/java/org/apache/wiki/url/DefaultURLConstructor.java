@@ -40,16 +40,15 @@ public class DefaultURLConstructor implements URLConstructor {
 
     protected Engine m_engine;
 
-    /**
-     *  Contains the absolute path of the JSPWiki Web application without the actual servlet (which is the m_urlPrefix).
-     */
+    /** Contains the absolute path of the JSPWiki Web application without the actual servlet (which is the m_urlPrefix). */
     protected String m_pathPrefix = "";
 
     /**
      *
      * {@inheritDoc}
      */
-    @Override public void initialize( final Engine engine, final Properties properties ) {
+    @Override
+    public void initialize( final Engine engine, final Properties properties ) {
         m_engine = engine;
         m_pathPrefix = engine.getBaseURL() + "/";
     }
@@ -125,7 +124,8 @@ public class DefaultURLConstructor implements URLConstructor {
      *
      *  {@inheritDoc}
      */
-    @Override public String makeURL( final String context, final String name, String parameters ) {
+    @Override
+    public String makeURL( final String context, final String name, String parameters ) {
         if( parameters != null && parameters.length() > 0 ) {
             if( context.equals( WikiContext.ATTACH ) ) {
                 parameters = "?" + parameters;
@@ -145,39 +145,15 @@ public class DefaultURLConstructor implements URLConstructor {
      *
      *  {@inheritDoc}
      */
-    @Override public String parsePage( final String context, final HttpServletRequest request, final Charset encoding ) {
+    @Override
+    public String parsePage( final String context, final HttpServletRequest request, final Charset encoding ) {
         String pagereq = request.getParameter( "page" );
         if( context.equals(WikiContext.ATTACH) ) {
-            pagereq = parsePageFromURL( request, encoding );
+            pagereq = URLConstructor.parsePageFromURL( request, encoding );
         }
 
         return pagereq;
     }
-
-    /**
-     *  Takes the name of the page from the request URI. The initial slash is also removed.  If there is no page, returns null.
-     *
-     *  @param request The request to parse
-     *  @param encoding The encoding to use
-     *
-     *  @return a parsed page name, or null, if it cannot be found
-     */
-    public static String parsePageFromURL( final HttpServletRequest request, final Charset encoding ) {
-        final String name = request.getPathInfo();
-        if( name == null || name.length() <= 1 ) {
-            return null;
-        } else if( name.charAt(0) == '/' ) {
-            return name.substring(1);
-        }
-
-        //
-        //  This is required, because by default all URLs are handled as Latin1, even if they are really UTF-8.
-        //
-        // name = TextUtil.urlDecode( name, encoding );
-
-        return name;
-    }
-
 
     /**
      *  This method is not needed for the DefaultURLConstructor.
@@ -185,7 +161,8 @@ public class DefaultURLConstructor implements URLConstructor {
      * @param request The HTTP Request that was used to end up in this page.
      * @return "Wiki.jsp", "PageInfo.jsp", etc.  Just return the name, JSPWiki will figure out the page.
      */
-    @Override public String getForwardPage( final HttpServletRequest request ) {
+    @Override
+    public String getForwardPage( final HttpServletRequest request ) {
         return "Wiki.jsp";
     }
 

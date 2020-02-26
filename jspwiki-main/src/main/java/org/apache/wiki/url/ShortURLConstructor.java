@@ -144,7 +144,7 @@ public class ShortURLConstructor extends DefaultURLConstructor {
     public String parsePage( final String context, final HttpServletRequest request, final Charset encoding ) {
         final String pagereq = request.getParameter( "page" );
         if( pagereq == null ) {
-            return parsePageFromURL( request, encoding );
+            return URLConstructor.parsePageFromURL( request, encoding );
         }
 
         return pagereq;

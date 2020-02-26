@@ -77,4 +77,26 @@ public interface URLConstructor {
      */
     String getForwardPage( HttpServletRequest request );
 
+    /**
+     *  Takes the name of the page from the request URI. The initial slash is also removed.  If there is no page, returns null.
+     *
+     *  @param request The request to parse
+     *  @param encoding The encoding to use
+     *
+     *  @return a parsed page name, or null, if it cannot be found
+     */
+    static String parsePageFromURL( final HttpServletRequest request, final Charset encoding ) {
+        final String name = request.getPathInfo();
+        if( name == null || name.length() <= 1 ) {
+            return null;
+        } else if( name.charAt(0) == '/' ) {
+            return name.substring(1);
+        }
+
+        //  This is required, because by default all URLs are handled as Latin1, even if they are really UTF-8.
+        // name = TextUtil.urlDecode( name, encoding );
+
+        return name;
+    }
+
 }
