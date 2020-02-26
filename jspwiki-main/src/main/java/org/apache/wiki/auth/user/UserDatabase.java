@@ -59,6 +59,7 @@ public interface UserDatabase {
      *
      * @param identifier the name of the user to retrieve; this corresponds to value returned by the user profile's {@link UserProfile#getLoginName()} method.
      * @return the array of Principals representing the user's identities
+     * @throws NoSuchPrincipalException If the user database does not contain user with the supplied identifier
      */
     Principal[] getPrincipals( String identifier ) throws NoSuchPrincipalException;
 

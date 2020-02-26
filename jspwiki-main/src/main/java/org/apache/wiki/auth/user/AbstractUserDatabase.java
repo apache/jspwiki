@@ -48,15 +48,15 @@ public abstract class AbstractUserDatabase implements UserDatabase {
     protected static final String SSHA_PREFIX = "{SSHA}";
 
     /**
-     * Looks up and returns the first {@link UserProfile}in the user database
-     * that whose login name, full name, or wiki name matches the supplied
-     * string. This method provides a "forgiving" search algorithm for resolving
-     * principal names when the exact profile attribute that supplied the name
-     * is unknown.
+     * Looks up and returns the first {@link UserProfile} in the user database that whose login name, full name, or wiki name matches the
+     * supplied string. This method provides a "forgiving" search algorithm for resolving principal names when the exact profile attribute
+     * that supplied the name is unknown.
+     *
      * @param index the login name, full name, or wiki name
      * @see org.apache.wiki.auth.user.UserDatabase#find(java.lang.String)
      */
-    @Override public UserProfile find( final String index ) throws NoSuchPrincipalException {
+    @Override
+    public UserProfile find( final String index ) throws NoSuchPrincipalException {
         UserProfile profile = null;
 
         // Try finding by full name
@@ -93,25 +93,29 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      * {@inheritDoc}
      * @see org.apache.wiki.auth.user.UserDatabase#findByEmail(java.lang.String)
      */
-    @Override public abstract UserProfile findByEmail( String index ) throws NoSuchPrincipalException;
+    @Override
+    public abstract UserProfile findByEmail( String index ) throws NoSuchPrincipalException;
 
     /**
      * {@inheritDoc}
      * @see org.apache.wiki.auth.user.UserDatabase#findByFullName(java.lang.String)
      */
-    @Override public abstract UserProfile findByFullName( String index ) throws NoSuchPrincipalException;
+    @Override
+    public abstract UserProfile findByFullName( String index ) throws NoSuchPrincipalException;
 
     /**
      * {@inheritDoc}
      * @see org.apache.wiki.auth.user.UserDatabase#findByLoginName(java.lang.String)
      */
-    @Override public abstract UserProfile findByLoginName( String index ) throws NoSuchPrincipalException;
+    @Override
+    public abstract UserProfile findByLoginName( String index ) throws NoSuchPrincipalException;
 
     /**
      * {@inheritDoc}
      * @see org.apache.wiki.auth.user.UserDatabase#findByWikiName(java.lang.String)
      */
-    @Override public abstract UserProfile findByWikiName( String index ) throws NoSuchPrincipalException;
+    @Override
+    public abstract UserProfile findByWikiName( String index ) throws NoSuchPrincipalException;
 
     /**
      * <p>Looks up the Principals representing a user from the user database. These
@@ -126,50 +130,50 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      *            {@link UserProfile#getLoginName()}method.
      * @return the array of Principals representing the user
      * @see org.apache.wiki.auth.user.UserDatabase#getPrincipals(java.lang.String)
-     * @throws NoSuchPrincipalException {@inheritDoc}
+     * @throws NoSuchPrincipalException If the user database does not contain user with the supplied identifier
      */
-    @Override public Principal[] getPrincipals( final String identifier ) throws NoSuchPrincipalException
-    {
-        try {
-            final UserProfile profile = findByLoginName( identifier );
-            final ArrayList< Principal > principals = new ArrayList<>();
-            if( profile.getLoginName() != null && profile.getLoginName().length() > 0 ) {
-                principals.add( new WikiPrincipal( profile.getLoginName(), WikiPrincipal.LOGIN_NAME ) );
-            }
-            if( profile.getFullname() != null && profile.getFullname().length() > 0 ) {
-                principals.add( new WikiPrincipal( profile.getFullname(), WikiPrincipal.FULL_NAME ) );
-            }
-            if( profile.getWikiName() != null && profile.getWikiName().length() > 0 ) {
-                principals.add( new WikiPrincipal( profile.getWikiName(), WikiPrincipal.WIKI_NAME ) );
-            }
-            return principals.toArray( new Principal[ principals.size() ] );
-        } catch( final NoSuchPrincipalException e ) {
-            throw e;
+    @Override
+    public Principal[] getPrincipals( final String identifier ) throws NoSuchPrincipalException {
+        final UserProfile profile = findByLoginName( identifier );
+        final ArrayList< Principal > principals = new ArrayList<>();
+        if( profile.getLoginName() != null && profile.getLoginName().length() > 0 ) {
+            principals.add( new WikiPrincipal( profile.getLoginName(), WikiPrincipal.LOGIN_NAME ) );
         }
+        if( profile.getFullname() != null && profile.getFullname().length() > 0 ) {
+            principals.add( new WikiPrincipal( profile.getFullname(), WikiPrincipal.FULL_NAME ) );
+        }
+        if( profile.getWikiName() != null && profile.getWikiName().length() > 0 ) {
+            principals.add( new WikiPrincipal( profile.getWikiName(), WikiPrincipal.WIKI_NAME ) );
+        }
+        return principals.toArray( new Principal[ principals.size() ] );
     }
 
     /**
      * {@inheritDoc}
+     *
      * @see org.apache.wiki.auth.user.UserDatabase#initialize(org.apache.wiki.api.core.Engine, java.util.Properties)
      */
-    @Override public abstract void initialize( Engine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
+    @Override
+    public abstract void initialize( Engine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
 
     /**
-     * Factory method that instantiates a new DefaultUserProfile with a new, distinct
-     * unique identifier.
+     * Factory method that instantiates a new DefaultUserProfile with a new, distinct unique identifier.
      * 
      * @return A new, empty profile.
      */
-    @Override public UserProfile newProfile()
-    {
-        return DefaultUserProfile.newProfile( this );
+    @Override
+    public UserProfile newProfile() {
+        final UserProfile profile = new DefaultUserProfile();
+        profile.setUid( AbstractUserDatabase.generateUid( this ) );
+        return profile;
     }
 
     /**
      * {@inheritDoc}
      * @see org.apache.wiki.auth.user.UserDatabase#save(org.apache.wiki.auth.user.UserProfile)
      */
-    @Override public abstract void save( UserProfile profile ) throws WikiSecurityException;
+    @Override
+    public abstract void save( UserProfile profile ) throws WikiSecurityException;
 
     /**
      * Validates the password for a given user. If the user does not exist in the user database, this method always returns
@@ -181,7 +185,8 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      * @return <code>true</code> if the supplied user password matches the stored password
      * @see org.apache.wiki.auth.user.UserDatabase#validatePassword(java.lang.String, java.lang.String)
      */
-    @Override public boolean validatePassword( final String loginName, final String password ) {
+    @Override
+    public boolean validatePassword( final String loginName, final String password ) {
         final String hashedPassword;
         try {
             final UserProfile profile = findByLoginName( loginName );
@@ -286,7 +291,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      */
     protected long parseLong( final String value ) {
         if( NumberUtils.isParsable( value ) ) {
-            return Long.valueOf( value );
+            return Long.parseLong( value );
         } else {
             return 0L;
         }

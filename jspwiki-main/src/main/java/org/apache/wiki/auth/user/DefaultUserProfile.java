@@ -27,88 +27,63 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+
 /**
- * Default implementation for representing wiki user information, such as the
- * login name, full name, wiki name, and e-mail address.
+ * Default implementation for representing wiki user information, such as the login name, full name, wiki name, and e-mail address.
+ *
  * @since 2.3
  */
+public final class DefaultUserProfile implements UserProfile {
 
-public final class DefaultUserProfile implements UserProfile
-{
     private static final long serialVersionUID = -5600466893735300647L;
-
     private static final String EMPTY_STRING = "";
-
     private static final String WHITESPACE = "\\s";
-    
-    private Map<String,Serializable> attributes = new HashMap<>();
 
-    private Date     created   = null;
-
-    private String   email     = null;
-
-    private String   fullname  = null;
-    
+    private Map< String, Serializable > attributes = new HashMap<>();
+    private Date created = null;
+    private String email = null;
+    private String fullname = null;
     private Date lockExpiry = null;
-
-    private String   loginName = null;
-
-    private Date     modified  = null;
-
-    private String   password  = null;
-    
+    private String loginName = null;
+    private Date modified = null;
+    private String password = null;
     private String uid = null;
-
-    private String   wikiname  = null;
-
-    /**
-     * Private constructor to prevent direct instantiation.
-     */
-    private DefaultUserProfile() {}
+    private String wikiname = null;
 
     /**
-     * Static factory method that creates a new DefaultUserProfile
-     * and sets a unique identifier (uid) for the supplied UserDatabase.
-     * @param db the UserDatabase for which the uid should be
-     * created
-     * @return the new profile
+     * Package constructor to allow direct instantiation only from package related classes (i.e., AbstractUserDatabase).
      */
-    protected static UserProfile newProfile( UserDatabase db )
-    {
-        UserProfile profile = new DefaultUserProfile();
-        profile.setUid( AbstractUserDatabase.generateUid( db ) );
-        return profile;
-    }
+    DefaultUserProfile() {}
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean equals( Object o )
-    {
-        if ( ( o != null ) && ( o instanceof UserProfile ) )
-        {
-            DefaultUserProfile u = (DefaultUserProfile) o;
-            return  same( fullname, u.fullname ) && same( password, u.password )
-                    && same( loginName, u.loginName ) && same(StringUtils.lowerCase( email ), StringUtils.lowerCase( u.email ) ) && same( wikiname,
-                    u.wikiname );
+    public boolean equals( final Object o ) {
+        if ( o instanceof UserProfile ) {
+            final DefaultUserProfile u = ( DefaultUserProfile )o;
+            return  same( fullname, u.fullname ) &&
+                    same( password, u.password ) &&
+                    same( loginName, u.loginName ) &&
+                    same( StringUtils.lowerCase( email ), StringUtils.lowerCase( u.email ) ) &&
+                    same( wikiname, u.wikiname );
         }
 
         return false;
     }
 
     @Override
-    public int hashCode()
-    {
-        return (fullname  != null ? fullname.hashCode()  : 0) ^
-               (password  != null ? password.hashCode()  : 0) ^
-               (loginName != null ? loginName.hashCode() : 0) ^
-               (wikiname  != null ? wikiname.hashCode()  : 0) ^
-               (email     != null ? StringUtils.lowerCase( email ).hashCode()     : 0);
+    public int hashCode() {
+        return ( fullname  != null ? fullname.hashCode()  : 0 ) ^
+               ( password  != null ? password.hashCode()  : 0 ) ^
+               ( loginName != null ? loginName.hashCode() : 0 ) ^
+               ( wikiname  != null ? wikiname.hashCode()  : 0 ) ^
+               ( email     != null ? StringUtils.lowerCase( email ).hashCode() : 0 );
     }
 
     /**
      * Returns the creation date
+     *
      * @return the creation date
      * @see org.apache.wiki.auth.user.UserProfile#getCreated()
      */
@@ -120,6 +95,7 @@ public final class DefaultUserProfile implements UserProfile
 
     /**
      * Returns the user's e-mail address.
+     *
      * @return the e-mail address
      */
     @Override
@@ -130,6 +106,7 @@ public final class DefaultUserProfile implements UserProfile
 
     /**
      * Returns the user's full name.
+     *
      * @return the full name
      */
     @Override
@@ -140,6 +117,7 @@ public final class DefaultUserProfile implements UserProfile
 
     /**
      * Returns the last-modified date.
+     *
      * @return the last-modified date
      * @see org.apache.wiki.auth.user.UserProfile#getLastModified()
      */
@@ -160,12 +138,10 @@ public final class DefaultUserProfile implements UserProfile
     }
 
     /**
-     * Returns the user password for use with custom authentication. Note that
-     * the password field is not meaningful for container authentication; the
-     * user's private credentials are generally stored elsewhere. While it
-     * depends on the {@link UserDatabase}implementation, in most cases the
-     * value returned by this method will be a password hash, not the password
-     * itself.
+     * Returns the user password for use with custom authentication. Note that the password field is not meaningful for container
+     * authentication; the user's private credentials are generally stored elsewhere. While it depends on the {@link UserDatabase}
+     * implementation, in most cases the value returned by this method will be a password hash, not the password itself.
+     *
      * @return the password
      */
     @Override
@@ -176,6 +152,7 @@ public final class DefaultUserProfile implements UserProfile
 
     /**
      * Returns the user's wiki name.
+     *
      * @return the wiki name.
      */
     @Override
@@ -185,10 +162,9 @@ public final class DefaultUserProfile implements UserProfile
     }
 
     /**
-     * Returns <code>true</code> if the user profile is
-     * new. This implementation checks whether
-     * {@link #getLastModified()} returns <code>null</code>
-     * to determine the status.
+     * Returns <code>true</code> if the user profile is new. This implementation checks whether {@link #getLastModified()} returns
+     * <code>null</code> to determine the status.
+     *
      * @see org.apache.wiki.auth.user.UserProfile#isNew()
      */
     @Override
@@ -202,80 +178,80 @@ public final class DefaultUserProfile implements UserProfile
      * @see org.apache.wiki.auth.user.UserProfile#setCreated(java.util.Date)
      */
     @Override
-    public void setCreated(Date date)
+    public void setCreated( final Date date )
     {
         created = date;
     }
 
     /**
      * Sets the user's e-mail address.
+     *
      * @param email the e-mail address
      */
     @Override
-    public void setEmail( String email )
+    public void setEmail( final String email )
     {
     	this.email = email;
     }
 
     /**
      * Sets the user's full name. For example, "Janne Jalkanen."
+     *
      * @param arg the full name
      */
     @Override
-    public void setFullname( String arg )
-    {
+    public void setFullname( final String arg ) {
         fullname = arg;
 
         // Compute wiki name
-        if ( fullname != null )
-        {
-            wikiname = fullname.replaceAll(WHITESPACE, EMPTY_STRING);
+        if ( fullname != null ) {
+            wikiname = fullname.replaceAll( WHITESPACE, EMPTY_STRING );
         }
     }
 
     /**
      * Sets the last-modified date.
+     *
      * @param date the last-modified date
      * @see org.apache.wiki.auth.user.UserProfile#setLastModified(java.util.Date)
      */
     @Override
-    public void setLastModified( Date date )
+    public void setLastModified( final Date date )
     {
         modified = date;
     }
 
     /**
-     * Sets the name by which the user logs in. The login name is used as the
-     * username for custom authentication (see
+     * Sets the name by which the user logs in. The login name is used as the username for custom authentication (see
      * {@link org.apache.wiki.auth.AuthenticationManager#login(WikiSession,HttpServletRequest, String, String)}).
-     * The login name is typically a short name ("jannej"). In contrast, the
-     * wiki name is typically of type FirstnameLastName ("JanneJalkanen").
+     * The login name is typically a short name ("jannej"). In contrast, the wiki name is typically of type
+     * FirstnameLastName ("JanneJalkanen").
+     *
      * @param name the login name
      */
     @Override
-    public void setLoginName( String name )
+    public void setLoginName( final String name )
     {
         loginName = name;
     }
 
     /**
-     * Sets the user's password for use with custom authentication. It is
-     * <em>not</em> the responsibility of implementing classes to hash the
-     * password; that responsibility is borne by the UserDatabase implementation
-     * during save operations (see {@link UserDatabase#save(UserProfile)}).
-     * Note that the password field is not meaningful for container
-     * authentication; the user's private credentials are generally stored
-     * elsewhere.
+     * Sets the user's password for use with custom authentication. It is <em>not</em> the responsibility of implementing classes to hash
+     * the password; that responsibility is borne by the UserDatabase implementation during save operations (see
+     * {@link UserDatabase#save(UserProfile)}). Note that the password field is not meaningful for container authentication; the user's
+     * private credentials are generally stored elsewhere.
+     *
      * @param arg the password
      */
     @Override
-    public void setPassword( String arg )
+    public void setPassword( final String arg )
     {
         password = arg;
     }
 
     /**
      * Returns a string representation of this user profile.
+     *
      * @return the string
      */
     @Override
@@ -285,20 +261,17 @@ public final class DefaultUserProfile implements UserProfile
     }
 
     /**
-     * Private method that compares two objects and determines whether they are
-     * equal. Two nulls are considered equal.
+     * Private method that compares two objects and determines whether they are equal. Two nulls are considered equal.
+     *
      * @param arg1 the first object
      * @param arg2 the second object
      * @return the result of the comparison
      */
-    private boolean same( Object arg1, Object arg2 )
-    {
-        if ( arg1 == null && arg2 == null )
-        {
+    private boolean same( final Object arg1, final Object arg2 ) {
+        if( arg1 == null && arg2 == null ) {
             return true;
         }
-        if ( arg1 == null || arg2 == null )
-        {
+        if( arg1 == null || arg2 == null ) {
             return false;
         }
         return arg1.equals( arg2 );
@@ -310,7 +283,7 @@ public final class DefaultUserProfile implements UserProfile
      * {@inheritDoc}
      */
     @Override
-    public Map<String,Serializable> getAttributes()
+    public Map< String, Serializable > getAttributes()
     {
         return attributes;
     }
@@ -337,23 +310,21 @@ public final class DefaultUserProfile implements UserProfile
      * {@inheritDoc}
      */
     @Override
-    public boolean isLocked()
-    {
-        boolean locked =  lockExpiry != null && System.currentTimeMillis() < lockExpiry.getTime();
-
+    public boolean isLocked() {
+        final boolean locked = lockExpiry != null && System.currentTimeMillis() < lockExpiry.getTime();
         // Clear the lock if it's expired already
-        if ( !locked && lockExpiry != null )
-        {
+        if( !locked && lockExpiry != null ) {
             lockExpiry = null;
         }
         return locked;
+
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setLockExpiry( Date expiry )
+    public void setLockExpiry( final Date expiry )
     {
     	this.lockExpiry = expiry;
     }
@@ -362,8 +333,9 @@ public final class DefaultUserProfile implements UserProfile
      * {@inheritDoc}
      */
     @Override
-    public void setUid( String uid )
+    public void setUid( final String uid )
     {
         this.uid = uid;
     }
+
 }
