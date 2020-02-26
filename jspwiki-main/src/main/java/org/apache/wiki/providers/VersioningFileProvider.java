@@ -726,11 +726,12 @@ public class VersioningFileProvider extends AbstractFileProvider {
         Properties m_props;
         long m_lastModified;
 
-        /*
+        /**
          * Because a Constructor is inherently synchronised, there is no need to synchronise the arguments.
          *
-         * @param engine WikiEngine instance
+         * @param pageName page name
          * @param props  Properties to use for initialization
+         * @param lastModified last modified date
          */
         public CachedProperties( final String pageName, final Properties props, final long lastModified ) {
             if ( pageName == null ) {

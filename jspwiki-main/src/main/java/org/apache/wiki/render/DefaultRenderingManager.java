@@ -25,12 +25,14 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
@@ -40,6 +42,7 @@ import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
@@ -53,7 +56,7 @@ import java.util.Properties;
 
 /**
  *  This class provides a facade towards the differing rendering routines.  You should use the routines in this manager
- *  instead of the ones in WikiEngine, if you don't want the different side effects to occur - such as WikiFilters.
+ *  instead of the ones in Engine, if you don't want the different side effects to occur - such as WikiFilters.
  *  <p>
  *  This class also manages a rendering cache, i.e. documents are stored between calls. You may control the cache by
  *  tweaking the ehcache.xml file.
@@ -76,7 +79,7 @@ public class DefaultRenderingManager implements RenderingManager {
     /** The name of the default WYSIWYG renderer. */
     private static final String DEFAULT_WYSIWYG_RENDERER = WysiwygEditingRenderer.class.getName();
 
-    private WikiEngine m_engine;
+    private Engine m_engine;
 
     private boolean m_useCache = true;
     private final CacheManager m_cacheManager = CacheManager.getInstance();
@@ -96,7 +99,7 @@ public class DefaultRenderingManager implements RenderingManager {
      *  {@inheritDoc}
      */
     @Override
-    public void initialize( final WikiEngine engine, final Properties properties ) throws WikiException {
+    public void initialize( final Engine engine, final Properties properties ) throws WikiException {
         m_engine = engine;
         m_markupParserClass = properties.getProperty( PROP_PARSER, DEFAULT_PARSER );
         if( !ClassUtil.assignable( m_markupParserClass, MarkupParser.class.getName() ) ) {
@@ -128,7 +131,7 @@ public class DefaultRenderingManager implements RenderingManager {
 
         log.info( "Rendering content with " + renderImplName + "." );
 
-        WikiEventManager.getInstance().addWikiEventListener( m_engine.getFilterManager(),this );
+        WikiEventManager.getInstance().addWikiEventListener( m_engine.getManager( FilterManager.class ),this );
     }
 
     private Constructor< ? > initRenderer( final String renderImplName, final Class< ? >[] rendererParams ) throws WikiException {
@@ -156,7 +159,7 @@ public class DefaultRenderingManager implements RenderingManager {
     public String beautifyTitle( final String title ) {
         if( m_beautifyTitle ) {
             try {
-                final Attachment att = m_engine.getAttachmentManager().getAttachmentInfo( title );
+                final Attachment att = m_engine.getManager( AttachmentManager.class ).getAttachmentInfo( title );
                 if( att == null ) {
                     return TextUtil.beautifyString( title );
                 }
@@ -298,19 +301,19 @@ public class DefaultRenderingManager implements RenderingManager {
     public String textToHTML( final WikiContext context, String pagedata ) {
         String result = "";
 
-        final boolean runFilters = "true".equals( m_engine.getVariableManager().getValue( context,VariableManager.VAR_RUNFILTERS,"true" ) );
+        final boolean runFilters = "true".equals( m_engine.getManager( VariableManager.class ).getValue( context,VariableManager.VAR_RUNFILTERS,"true" ) );
 
         final StopWatch sw = new StopWatch();
         sw.start();
         try {
             if( runFilters ) {
-                pagedata = m_engine.getFilterManager().doPreTranslateFiltering( context, pagedata );
+                pagedata = m_engine.getManager( FilterManager.class ).doPreTranslateFiltering( context, pagedata );
             }
 
             result = getHTML( context, pagedata );
 
             if( runFilters ) {
-                result = m_engine.getFilterManager().doPostTranslateFiltering( context, result );
+                result = m_engine.getManager( FilterManager.class ).doPostTranslateFiltering( context, result );
             }
         } catch( final FilterException e ) {
             log.error( "page filter threw exception: ", e );
@@ -342,14 +345,14 @@ public class DefaultRenderingManager implements RenderingManager {
             return null;
         }
 
-        final boolean runFilters = "true".equals( m_engine.getVariableManager().getValue( context, VariableManager.VAR_RUNFILTERS,"true" ) );
+        final boolean runFilters = "true".equals( m_engine.getManager( VariableManager.class ).getValue( context, VariableManager.VAR_RUNFILTERS,"true" ) );
 
         try {
             final StopWatch sw = new StopWatch();
             sw.start();
 
-            if( runFilters && m_engine.getFilterManager() != null ) {
-                pagedata = m_engine.getFilterManager().doPreTranslateFiltering( context, pagedata );
+            if( runFilters && m_engine.getManager( FilterManager.class ) != null ) {
+                pagedata = m_engine.getManager( FilterManager.class ).doPreTranslateFiltering( context, pagedata );
             }
 
             final MarkupParser mp = getParser( context, pagedata );
@@ -367,8 +370,8 @@ public class DefaultRenderingManager implements RenderingManager {
             if( !justParse ) {
                 result = getHTML( context, doc );
 
-                if( runFilters && m_engine.getFilterManager() != null ) {
-                    result = m_engine.getFilterManager().doPostTranslateFiltering( context, result );
+                if( runFilters && m_engine.getManager( FilterManager.class ) != null ) {
+                    result = m_engine.getManager( FilterManager.class ).doPostTranslateFiltering( context, result );
                 }
             }
 
@@ -430,7 +433,7 @@ public class DefaultRenderingManager implements RenderingManager {
                 if( m_documentCache != null ) {
                     final String pageName = ( ( WikiPageEvent ) event ).getPageName();
                     m_documentCache.remove( pageName );
-                    final Collection< String > referringPages = m_engine.getReferenceManager().findReferrers( pageName );
+                    final Collection< String > referringPages = m_engine.getManager( ReferenceManager.class ).findReferrers( pageName );
 
                     //
                     //  Flush also those pages that refer to this page (if an nonexistent page

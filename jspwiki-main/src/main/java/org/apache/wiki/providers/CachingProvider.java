@@ -71,7 +71,7 @@ public class CachingProvider implements WikiPageProvider {
     private CacheManager m_cacheManager = CacheManager.getInstance();
 
     private WikiPageProvider m_provider;
-    // FIXME: Find another way to the search engine to use instead of from WikiEngine?
+    // FIXME: Find another way to the search engine to use instead of from Engine?
     private Engine m_engine;
 
     private Cache m_cache;

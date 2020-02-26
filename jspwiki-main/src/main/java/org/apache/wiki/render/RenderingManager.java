@@ -21,8 +21,8 @@ package org.apache.wiki.render;
 import org.apache.log4j.Logger;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.modules.InternalModule;
@@ -70,7 +70,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @param properties A list of properties to get parameters from.
      *  @throws WikiException If the manager could not be initialized.
      */
-    void initialize( WikiEngine engine, Properties properties ) throws WikiException;
+    void initialize( Engine engine, Properties properties ) throws WikiException;
 
     /**
      *  Beautifies the title of the page by appending spaces in suitable places, if the user has so decreed in the properties when

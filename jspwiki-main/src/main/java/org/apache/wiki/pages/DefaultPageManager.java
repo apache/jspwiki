@@ -22,7 +22,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.core.Engine;
@@ -104,9 +103,9 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
     /**
      * Creates a new PageManager.
      *
-     * @param engine WikiEngine instance
+     * @param engine Engine instance
      * @param props  Properties to use for initialization
-     * @throws NoSuchElementException {@value #PROP_PAGEPROVIDER} property not found on WikiEngine properties
+     * @throws NoSuchElementException {@value #PROP_PAGEPROVIDER} property not found on Engine properties
      * @throws WikiException If anything goes wrong, you get this.
      */
     public DefaultPageManager(final Engine engine, final Properties props) throws NoSuchElementException, WikiException {
@@ -234,7 +233,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
 
         // Check if creation of empty pages is allowed; bail if not
         final boolean allowEmpty = TextUtil.getBooleanProperty( m_engine.getWikiProperties(),
-                                                                WikiEngine.PROP_ALLOW_CREATION_OF_EMPTY_PAGES,
+                                                                Engine.PROP_ALLOW_CREATION_OF_EMPTY_PAGES,
                                                          false );
         if ( !allowEmpty && !wikiPageExists( page ) && text.trim().equals( "" ) ) {
             return;
@@ -272,9 +271,9 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
     }
 
     /**
-     * Returns the WikiEngine to which this PageManager belongs to.
+     * Returns the Engine to which this PageManager belongs to.
      *
-     * @return The WikiEngine object.
+     * @return The Engine object.
      */
     protected Engine getEngine() {
         return m_engine;
@@ -637,7 +636,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         /**
          * Create a LockReaper for a given engine.
          *
-         * @param engine WikiEngine to own this thread.
+         * @param engine Engine to own this thread.
          */
         public LockReaper( final Engine engine) {
             super( engine, 60 );

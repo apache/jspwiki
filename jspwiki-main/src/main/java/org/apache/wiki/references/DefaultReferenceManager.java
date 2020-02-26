@@ -23,17 +23,19 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.WikiPageProvider;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.BufferedInputStream;
@@ -75,7 +77,7 @@ import java.util.TreeSet;
    A word about synchronizing:
 
    I expect this object to be accessed in three situations:
-   - when a WikiEngine is created and it scans its wikipages
+   - when a Engine is created and it scans its wikipages
    - when the WE saves a page
    - when a JSP page accesses one of the WE's ReferenceManagers to display a list of (un)referenced pages.
 
@@ -145,13 +147,13 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
     /**
      *  Builds a new ReferenceManager.
      *
-     *  @param engine The WikiEngine to which this is managing references to.
+     *  @param engine The Engine to which this is managing references to.
      */
-    public DefaultReferenceManager( final WikiEngine engine ) {
+    public DefaultReferenceManager( final Engine engine ) {
         m_refersTo = new HashMap<>();
         m_referredBy = new HashMap<>();
         m_engine = engine;
-        m_matchEnglishPlurals = TextUtil.getBooleanProperty( engine.getWikiProperties(), WikiEngine.PROP_MATCHPLURALS, false );
+        m_matchEnglishPlurals = TextUtil.getBooleanProperty( engine.getWikiProperties(), Engine.PROP_MATCHPLURALS, false );
 
         //
         //  Create two maps that contain unmutable versions of the two basic maps.
@@ -167,7 +169,7 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
         final String content = m_engine.getManager( PageManager.class ).getPageText( page.getName(), WikiPageProvider.LATEST_VERSION );
         final Collection< String > links = scanWikiLinks( page, content );
         final TreeSet< String > res = new TreeSet<>( links );
-        final List< Attachment > attachments = m_engine.getAttachmentManager().listAttachments( page );
+        final List< Attachment > attachments = m_engine.getManager( AttachmentManager.class ).listAttachments( page );
         for( final Attachment att : attachments ) {
             res.add( att.getName() );
         }
@@ -427,15 +429,16 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *  @param pagedata The page contents
      *  @return a Collection of Strings
      */
-    @Override public Collection< String > scanWikiLinks( final WikiPage page, final String pagedata ) {
+    @Override
+    public Collection< String > scanWikiLinks( final WikiPage page, final String pagedata ) {
         final LinkCollector localCollector = new LinkCollector();
-        m_engine.getRenderingManager().textToHTML( new WikiContext( m_engine, page ),
-                                                   pagedata,
-                                                   localCollector,
-                                                   null,
-                                                   localCollector,
-                                                   false,
-                                                   true );
+        m_engine.getManager( RenderingManager.class ).textToHTML( new WikiContext( m_engine, page ),
+                                                                  pagedata,
+                                                                  localCollector,
+                                                                  null,
+                                                                  localCollector,
+                                                                  false,
+                                                                  true );
 
         return localCollector.getLinks();
     }
@@ -449,7 +452,8 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *
      *  @param page Name of the page to remove from the maps.
      */
-    @Override public synchronized void pageRemoved( final WikiPage page ) {
+    @Override
+    public synchronized void pageRemoved( final WikiPage page ) {
         pageRemoved( page.getName() );
     }
 

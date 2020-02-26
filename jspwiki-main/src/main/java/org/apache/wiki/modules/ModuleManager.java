@@ -42,7 +42,7 @@ public abstract class ModuleManager {
     /**
      *  Constructs the ModuleManager.
      *
-     *  @param engine The WikiEngine which owns this manager.
+     *  @param engine The Engine which owns this manager.
      */
     public ModuleManager( final Engine engine ) {
         m_engine = engine;

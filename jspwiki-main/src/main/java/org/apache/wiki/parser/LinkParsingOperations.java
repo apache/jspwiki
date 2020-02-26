@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class LinkParsingOperations {
 
-    private static Logger log = Logger.getLogger( LinkParsingOperations.class );
+    private static final Logger log = Logger.getLogger( LinkParsingOperations.class );
     private final WikiContext wikiContext;
 
     /**

@@ -21,7 +21,6 @@ package org.apache.wiki.providers;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.core.Engine;
@@ -140,7 +139,7 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
         }
 
         m_engine = engine;
-        m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING, DEFAULT_ENCODING );
+        m_encoding = properties.getProperty( Engine.PROP_ENCODING, DEFAULT_ENCODING );
         final String os = System.getProperty( "os.name" ).toLowerCase();
         if( os.startsWith( "windows" ) || os.equals( "nt" ) ) {
             m_windowsHackNeeded = true;
@@ -182,8 +181,8 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
 
         if( m_windowsHackNeeded ) {
             final String pn = pagename.toLowerCase();
-            for( int i = 0; i < WINDOWS_DEVICE_NAMES.length; i++ ) {
-                if( WINDOWS_DEVICE_NAMES[i].equals(pn) ) {
+            for( final String windowsDeviceName : WINDOWS_DEVICE_NAMES ) {
+                if( windowsDeviceName.equals( pn ) ) {
                     pagename = "$$$" + pagename;
                 }
             }

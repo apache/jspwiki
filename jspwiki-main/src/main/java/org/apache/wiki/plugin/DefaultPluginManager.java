@@ -31,7 +31,6 @@ import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.core.Engine;
@@ -69,7 +68,7 @@ import java.util.StringTokenizer;
 
 /**
  *  Manages plugin classes.  There exists a single instance of PluginManager
- *  per each instance of WikiEngine, that is, each JSPWiki instance.
+ *  per each instance of Engine, that is, each JSPWiki instance.
  *  <P>
  *  A plugin is defined to have three parts:
  *  <OL>
@@ -146,7 +145,7 @@ import java.util.StringTokenizer;
  *      called once for this class
  *      before any actual execute() methods are called.  You should use the initialize() for e.g.
  *      precalculating things.  But notice that this method is really called only once during the
- *      entire WikiEngine lifetime.  The InitializablePlugin is available from 2.5.30 onwards.</li>
+ *      entire Engine lifetime.  The InitializablePlugin is available from 2.5.30 onwards.</li>
  *  <li>ParserStagePlugin: If you implement this interface, the executeParse() method is called
  *      when JSPWiki is forming the DOM tree.  You will receive an incomplete DOM tree, as well
  *      as the regular parameters.  However, since JSPWiki caches the DOM tree to speed up later
@@ -182,10 +181,10 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
     /**
      *  Create a new PluginManager.
      *
-     *  @param engine WikiEngine which owns this manager.
+     *  @param engine Engine which owns this manager.
      *  @param props Contents of a "jspwiki.properties" file.
      */
-    public DefaultPluginManager( final WikiEngine engine, final Properties props ) {
+    public DefaultPluginManager( final Engine engine, final Properties props ) {
         super( engine );
         final String packageNames = props.getProperty( PROP_SEARCHPATH );
 
@@ -612,7 +611,7 @@ public class DefaultPluginManager extends ModuleManager implements PluginManager
          *  If the plugin extends {@link HttpServlet} it will automatically
          *  register it as AJAX using {@link WikiAjaxDispatcherServlet#registerServlet(String, WikiAjaxServlet)}.
          *
-         *  @param engine The WikiEngine
+         *  @param engine The Engine
          *  @param searchPath A List of Strings, containing different package names.
          *  @param externalJars the list of external jars to search
          */
