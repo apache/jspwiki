@@ -18,7 +18,6 @@
 */
 package org.apache.wiki.markdown.renderer;
 
-import com.vladsch.flexmark.html.CustomNodeRenderer;
 import com.vladsch.flexmark.html.HtmlWriter;
 import com.vladsch.flexmark.html.renderer.LinkType;
 import com.vladsch.flexmark.html.renderer.NodeRenderer;
@@ -44,7 +43,7 @@ public class JSPWikiLinkRenderer implements NodeRenderer {
     @Override
     public Set< NodeRenderingHandler< ? > > getNodeRenderingHandlers() {
         final HashSet< NodeRenderingHandler< ? > > set = new HashSet<>();
-        set.add( new NodeRenderingHandler<>( JSPWikiLink.class, new CustomNodeRenderer< JSPWikiLink >() {
+        set.add( new NodeRenderingHandler<>( JSPWikiLink.class, new NodeRenderingHandler.CustomNodeRenderer< JSPWikiLink >() {
 
             /**
              * {@inheritDoc}

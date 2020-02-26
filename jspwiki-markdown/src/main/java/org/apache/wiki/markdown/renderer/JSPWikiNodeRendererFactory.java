@@ -50,7 +50,7 @@ public class JSPWikiNodeRendererFactory implements DelegatingNodeRendererFactory
      * {@inheritDoc}
      */
     @Override
-    public Set< Class< ? extends NodeRendererFactory > > getDelegates() {
+    public Set< Class< ? > > getDelegates() {
         // return null if renderer does not delegate or delegates only to core node renderer
         return null;
     }
