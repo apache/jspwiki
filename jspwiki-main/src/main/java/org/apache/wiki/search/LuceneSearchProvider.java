@@ -175,7 +175,7 @@ public class LuceneSearchProvider implements SearchProvider {
     /**
      *  Returns the handling engine.
      *
-     *  @return Current WikiEngine
+     *  @return Current Engine
      */
     protected Engine getEngine()
     {

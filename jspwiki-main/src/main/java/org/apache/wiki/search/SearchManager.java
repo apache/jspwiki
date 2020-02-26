@@ -22,11 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.ajax.AjaxUtil;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -38,6 +38,7 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.ClassUtil;
 
 import javax.servlet.ServletException;
@@ -75,11 +76,11 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
     /**
      *  Creates a new SearchManager.
      *
-     *  @param engine The WikiEngine that owns this SearchManager.
+     *  @param engine The Engine that owns this SearchManager.
      *  @param properties The list of Properties.
      *  @throws FilterException If it cannot be instantiated.
      */
-    public SearchManager( final WikiEngine engine, final Properties properties ) throws FilterException {
+    public SearchManager( final Engine engine, final Properties properties ) throws FilterException {
         initialize( engine, properties );
         WikiEventManager.getInstance().addWikiEventListener( m_engine.getManager( PageManager.class ), this );
 
@@ -163,7 +164,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
 
                 final String cleanWikiName = MarkupParser.cleanLink(wikiName).toLowerCase() + filename;
                 final String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
-                final Set< String > allPages = m_engine.getReferenceManager().findCreated();
+                final Set< String > allPages = m_engine.getManager( ReferenceManager.class ).findCreated();
 
                 int counter = 0;
                 for( final Iterator< String > i = allPages.iterator(); i.hasNext() && counter < maxLength; ) {
@@ -236,7 +237,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
      * @throws FilterException if the search provider failed to initialize
      */
     @Override
-    public void initialize( final WikiEngine engine, final Properties properties ) throws FilterException {
+    public void initialize( final Engine engine, final Properties properties ) throws FilterException {
         m_engine = engine;
         loadSearchProvider(properties);
 

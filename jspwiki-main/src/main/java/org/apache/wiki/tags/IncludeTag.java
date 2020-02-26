@@ -28,8 +28,7 @@ import javax.servlet.jsp.JspException;
 import java.io.IOException;
 
 /**
- *  Includes an another JSP page, making sure that we actually pass
- *  the WikiContext correctly.
+ *  Includes an another JSP page, making sure that we actually pass the WikiContext correctly.
  *
  *  @since 2.0
  */
@@ -41,7 +40,8 @@ public class IncludeTag extends WikiTagBase {
     
     protected String m_page;
 
-    @Override public void initTag() {
+    @Override
+    public void initTag() {
         super.initTag();
         m_page = null;
     }
@@ -56,16 +56,13 @@ public class IncludeTag extends WikiTagBase {
         return m_page;
     }
 
-    @Override public final int doWikiStartTag()
-        throws IOException,
-               ProviderException
-    {
-        // WikiEngine engine = m_wikiContext.getEngine();
-
+    @Override
+    public final int doWikiStartTag() throws IOException, ProviderException {
         return SKIP_BODY;
     }
 
-    @Override public final int doEndTag() throws JspException {
+    @Override
+    public final int doEndTag() throws JspException {
         try {
             final String page = m_wikiContext.getEngine().getManager( TemplateManager.class ).findJSP( pageContext,
                                                                                                  m_wikiContext.getTemplate(),

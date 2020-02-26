@@ -41,7 +41,7 @@ import java.util.Map;
 /**
  *  Provides a generic link tag for all kinds of linking purposes.
  *  <p>
- *  If parameter <i>jsp</i> is defined, constructs a URL pointing to the specified JSP page, under the baseURL known by the WikiEngine.
+ *  If parameter <i>jsp</i> is defined, constructs a URL pointing to the specified JSP page, under the baseURL known by the Engine.
  *  Any ParamTag name-value pairs contained in the body are added to this URL to provide support for arbitrary JSP calls.
  *  <p>
  *  @since 2.3.50
@@ -69,7 +69,8 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
 
     private BodyContent m_bodyContent;
 
-    @Override public void initTag() {
+    @Override
+    public void initTag() {
         super.initTag();
         m_version = m_cssClass = m_style = m_title = m_target = m_compareToVersion = m_rel = m_jsp = m_ref = m_accesskey = m_templatefile = null;
         m_context = WikiContext.VIEW;
@@ -149,7 +150,8 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     /**
      * Support for ParamTag supplied parameters in body.
      */
-    @Override public void setContainedParameter( final String name, final String value ) {
+    @Override
+    public void setContainedParameter( final String name, final String value ) {
         if( name != null ) {
             if( m_containedParams == null ) {
                 m_containedParams = new HashMap<>();
@@ -205,11 +207,8 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
 
                 final String parms = (m_version != null) ? "version="+getVersion() : null;
 
-                //
                 //  Internal wiki link, but is it an attachment link?
-                //
                 final WikiPage p = engine.getManager( PageManager.class ).getPage( m_pageName );
-
                 if( p instanceof Attachment ) {
                     url = m_wikiContext.getURL( WikiContext.ATTACH, m_pageName );
                 } else if( (hashMark = m_ref.indexOf('#')) != -1 ) {
@@ -326,11 +325,13 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         return engine.getURL( m_context, m_pageName, parms );
     }
 
-    @Override public int doWikiStartTag() throws Exception {
+    @Override
+    public int doWikiStartTag() throws Exception {
         return EVAL_BODY_BUFFERED;
     }
 
-    @Override public int doEndTag() {
+    @Override
+    public int doEndTag() {
         try {
             final Engine engine = m_wikiContext.getEngine();
             final JspWriter out = pageContext.getOut();
@@ -376,12 +377,14 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         return EVAL_PAGE;
     }
 
-    @Override public void setBodyContent( final BodyContent bc )
+    @Override
+    public void setBodyContent( final BodyContent bc )
     {
         m_bodyContent = bc;
     }
 
-    @Override public void doInitBody() {
+    @Override
+    public void doInitBody() {
     }
 
 }

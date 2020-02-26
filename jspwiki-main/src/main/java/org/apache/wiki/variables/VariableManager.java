@@ -79,7 +79,7 @@ public interface VariableManager {
      *  @param context WikiContext to look the variable in
      *  @param name Name of the variable to look for
      *  @return Variable value, or null, if there is no such variable.
-     *  @since 2.2 on WikiEngine, moved to VariableManager on 2.11.0
+     *  @since 2.2 on Engine, moved to VariableManager on 2.11.0
      */
     String getVariable( WikiContext context, String name );
 
