@@ -21,6 +21,7 @@ package org.apache.wiki.xmlrpc;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.xmlrpc.ContextXmlRpcHandler;
 import org.apache.xmlrpc.Invoker;
 import org.apache.xmlrpc.XmlRpcContext;
@@ -49,17 +50,15 @@ import java.util.Vector;
  *
  *  @since 1.6.6
  */
-public class RPCServlet extends HttpServlet
-{
+public class RPCServlet extends HttpServlet {
     private static final long serialVersionUID = 3976735878410416180L;
 
-    /** This is what is appended to each command, if the handler has
-        not been specified.  */
+    /** This is what is appended to each command, if the handler has not been specified. */
     // FIXME: Should this be $default?
     public static final String XMLRPC_PREFIX = "wiki";
 
-    private WikiEngine       m_engine;
-    private XmlRpcServer     m_xmlrpcServer = new XmlRpcServer();
+    private Engine m_engine;
+    private XmlRpcServer m_xmlrpcServer = new XmlRpcServer();
 
     private static final Logger log = Logger.getLogger( RPCServlet.class );
 
@@ -77,7 +76,7 @@ public class RPCServlet extends HttpServlet
     /**
      *  Initializes the servlet.
      */
-    public void init( final ServletConfig config ) throws ServletException {
+    @Override public void init( final ServletConfig config ) throws ServletException {
         m_engine = WikiEngine.getInstance( config );
 
         String handlerName = config.getInitParameter( "handler" );
@@ -93,9 +92,7 @@ public class RPCServlet extends HttpServlet
         try {
             initHandler( prefix, handlerName );
 
-            //
             // FIXME: The metaweblog API should be possible to turn off.
-            //
             initHandler( "metaWeblog", "org.apache.wiki.xmlrpc.MetaWeblogHandler" );
         } catch( final Exception e ) {
             log.fatal("Unable to start RPC interface: ", e);
@@ -106,7 +103,7 @@ public class RPCServlet extends HttpServlet
     /**
      *  Handle HTTP POST.  This is an XML-RPC call, and we'll just forward the query to an XmlRpcServer.
      */
-    public void doPost( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
+    @Override public void doPost( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
         log.debug("Received POST to RPCServlet");
 
         try {
@@ -135,7 +132,7 @@ public class RPCServlet extends HttpServlet
     /**
      *  Handles HTTP GET.  However, we do not respond to GET requests, other than to show an explanatory text.
      */
-    public void doGet( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
+    @Override public void doGet( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
         log.debug("Received HTTP GET to RPCServlet");
 
         try {
@@ -160,7 +157,7 @@ public class RPCServlet extends HttpServlet
             m_clazz = clazz;
         }
 
-        public Object execute( final String method, final Vector params, final XmlRpcContext context ) throws Exception {
+        @Override public Object execute( final String method, final Vector params, final XmlRpcContext context ) throws Exception {
             final WikiRPCHandler rpchandler = (WikiRPCHandler) m_clazz.newInstance();
             rpchandler.initialize( ((WikiXmlRpcContext)context).getWikiContext() );
 
@@ -179,18 +176,16 @@ public class RPCServlet extends HttpServlet
             m_context = ctx;
         }
 
-        public XmlRpcHandlerMapping getHandlerMapping()
+        @Override public XmlRpcHandlerMapping getHandlerMapping()
         {
             return m_mapping;
         }
 
-        public String getPassword() {
-            // TODO Auto-generated method stub
+        @Override public String getPassword() {
             return null;
         }
 
-        public String getUserName() {
-            // TODO Auto-generated method stub
+        @Override public String getUserName() {
             return null;
         }
 
@@ -199,4 +194,5 @@ public class RPCServlet extends HttpServlet
             return m_context;
         }
     }
+
 }

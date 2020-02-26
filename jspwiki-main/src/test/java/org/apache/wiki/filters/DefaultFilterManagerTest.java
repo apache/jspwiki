@@ -16,8 +16,8 @@
     specific language governing permissions and limitations
     under the License.
  */
-
 package org.apache.wiki.filters;
+
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.filters.PageFilter;
@@ -35,33 +35,33 @@ public class DefaultFilterManagerTest {
 
     @Test
     public void testInitFilters() throws Exception {
-        FilterManager m = new DefaultFilterManager( engine, props );
+        final FilterManager m = new DefaultFilterManager( engine, props );
 
-        List<PageFilter> l = m.getFilterList();
+        final List<PageFilter> l = m.getFilterList();
 
         Assertions.assertEquals( 2, l.size(), "Wrong number of filters" );
 
-        Iterator<PageFilter> i = l.iterator();
-        PageFilter f1 = i.next();
+        final Iterator<PageFilter> i = l.iterator();
+        final PageFilter f1 = i.next();
 
         Assertions.assertTrue( f1 instanceof ProfanityFilter, "Not a Profanityfilter" );
 
-        PageFilter f2 = i.next();
+        final PageFilter f2 = i.next();
 
         Assertions.assertTrue( f2 instanceof TestFilter, "Not a Testfilter" );
     }
 
     @Test
     public void testInitParams() throws Exception {
-        FilterManager m = new DefaultFilterManager( engine, props );
+        final FilterManager m = new DefaultFilterManager( engine, props );
 
-        List<PageFilter> l = m.getFilterList();
+        final List<PageFilter> l = m.getFilterList();
 
-        Iterator<PageFilter> i = l.iterator();
+        final Iterator<PageFilter> i = l.iterator();
         i.next();
-        TestFilter f2 = (TestFilter)i.next();
+        final TestFilter f2 = (TestFilter)i.next();
 
-        Properties p = f2.m_properties;
+        final Properties p = f2.m_properties;
 
         Assertions.assertEquals( "Zippadippadai", p.getProperty("foobar"), "no foobar" );
 

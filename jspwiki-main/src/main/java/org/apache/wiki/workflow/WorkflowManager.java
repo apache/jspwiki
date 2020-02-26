@@ -98,7 +98,7 @@ public interface WorkflowManager extends WikiEventListener {
     List< Workflow > getCompletedWorkflows();
 
     /**
-     * Initializes the WorkflowManager using a specfied WikiEngine and properties. Any properties that begin with
+     * Initializes the WorkflowManager using a specfied Engine and properties. Any properties that begin with
      * {@link #PROPERTY_APPROVER_PREFIX} will be assumed to be Decisions that require approval. For a given property key, everything
      * after the prefix denotes the Decision's message key. The property value indicates the Principal (Role, GroupPrincipal, WikiPrincipal)
      * that must approve the Decision. For example, if the property key/value pair is {@code jspwiki.approver.workflow.saveWikiPage=Admin},

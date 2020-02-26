@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.xmlrpc;
 
-import org.apache.log4j.Logger;
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
@@ -43,10 +42,8 @@ import java.util.Vector;
  *
  *  @since 1.6.6
  */
-// We could use WikiEngine directly, but because of introspection it would show just too many methods to be safe.
+// We could use Engine directly, but because of introspection it would show just too many methods to be safe.
 public class RPCHandler extends AbstractRPCHandler {
-
-    private static final Logger log = Logger.getLogger( RPCHandler.class );
 
     /**
      *  Converts Java string into RPC string.

@@ -148,13 +148,13 @@ public class DefaultWorkflowManager implements WorkflowManager {
     }
 
     /**
-     * Protected helper method that returns the associated WikiEngine
+     * Protected helper method that returns the associated Engine
      *
      * @return the wiki engine
      */
     protected Engine getEngine() {
         if ( m_engine == null ) {
-            throw new IllegalStateException( "WikiEngine cannot be null; please initialize WorkflowManager first." );
+            throw new IllegalStateException( "Engine cannot be null; please initialize WorkflowManager first." );
         }
         return m_engine;
     }

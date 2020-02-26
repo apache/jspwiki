@@ -34,7 +34,7 @@ public final class WorkflowBuilder {
     private final Engine m_engine;
 
     /**
-     * Private constructor that creates a new WorkflowBuilder for the supplied WikiEngine.
+     * Private constructor that creates a new WorkflowBuilder for the supplied Engine.
      * @param engine the wiki engine
      */
     private WorkflowBuilder( final Engine engine )
@@ -43,7 +43,7 @@ public final class WorkflowBuilder {
     }
 
     /**
-     * Returns the WorkflowBuilder instance for a WikiEngine. Only one WorkflowBuilder
+     * Returns the WorkflowBuilder instance for a Engine. Only one WorkflowBuilder
      * exists for a given engine.
      * @param engine the wiki engine
      * @return the workflow builder
