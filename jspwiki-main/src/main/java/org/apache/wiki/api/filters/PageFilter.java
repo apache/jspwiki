@@ -18,72 +18,62 @@
  */
 package org.apache.wiki.api.filters;
 
-import java.util.Properties;
-
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
 
+import java.util.Properties;
+
+
 /**
- *  Provides a definition for a page filter.  A page filter is a class
- *  that can be used to transform the WikiPage content being saved or
+ *  Provides a definition for a page filter.  A page filter is a class that can be used to transform the WikiPage content being saved or
  *  being loaded at any given time.
  *  <p>
- *  Note that the WikiContext.getPage() method always returns the context
- *  in which text is rendered, i.e. the original request.  Thus the content
- *  may actually be different content than what what the wikiContext.getPage()
- *  implies!  This happens often if you are for example including multiple
- *  pages on the same page.
+ *  Note that the WikiContext.getPage() method always returns the context in which text is rendered, i.e. the original request.  Thus the
+ *  content may actually be different content than what what the wikiContext.getPage() implies!  This happens often if you are for example
+ *  including multiple pages on the same page.
  *  <p>
- *  PageFilters must be thread-safe!  There is only one instance of each PageFilter 
- *  per each WikiEngine invocation.  If you need to store data persistently, use
- *  VariableManager, or WikiContext.
+ *  PageFilters must be thread-safe!  There is only one instance of each PageFilter per each Engine invocation.  If you need to store data
+ *  persistently, use VariableManager, or WikiContext.
  *  <p>
- *  As of 2.5.30, initialize() gains access to the WikiEngine.
- *
+ *  As of 2.5.30, initialize() gains access to the Engine.
  */
-public interface PageFilter
-{
+public interface PageFilter {
+
     /**
-     *  Is called whenever the a new PageFilter is instantiated and
-     *  reset.
+     *  Is called whenever the a new PageFilter is instantiated and reset.
      *  
      *  @param engine The WikiEngine whic owns this PageFilter
      *  @param properties The properties ripped from filters.xml.
-     *  @throws FilterException If the filter could not be initialized. If this is thrown,
-     *                          the filter is not added to the internal queues.
+     *  @throws FilterException If the filter could not be initialized. If this is thrown, the filter is not added to the internal queues.
      */
-    void initialize( WikiEngine engine, Properties properties )
-        throws FilterException;
+    void initialize( Engine engine, Properties properties ) throws FilterException;
 
     /**
-     *  This method is called whenever a page has been loaded from the provider,
-     *  but not yet been sent through the markup-translation process.  Note that you cannot
-     *  do HTML translation here, because it will be escaped.
+     *  This method is called whenever a page has been loaded from the provider, but not yet been sent through the markup-translation
+     *  process.  Note that you cannot do HTML translation here, because it will be escaped.
      *
      *  @param wikiContext The current wikicontext.
-     *  @param content     WikiMarkup.
+     *  @param content WikiMarkup.
      *  @return The modified wikimarkup content.
-     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
-     *                          processing to be abandoned.
+     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page processing to be abandoned.
      */
-    String preTranslate( WikiContext wikiContext, String content )
-        throws FilterException;
+    default String preTranslate( final WikiContext wikiContext, final String content ) throws FilterException {
+        return content;
+    }
 
     /**
-     *  This method is called after a page has been fed through the translation process,
-     *  so anything you are seeing here is translated content.  If you want to
-     *  do any of your own WikiMarkup2HTML translation, do it here.
+     *  This method is called after a page has been fed through the translation process, so anything you are seeing here is translated
+     *  content.  If you want to do any of your own WikiMarkup2HTML translation, do it here.
      *  
      *  @param wikiContext The WikiContext.
      *  @param htmlContent The translated HTML
      *  @return The modified HTML
-     *  
-     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
-     *                          processing to be abandoned.
+     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page processing to be abandoned.
      */
-    String postTranslate( WikiContext wikiContext, String htmlContent )
-        throws FilterException;
+    default String postTranslate( final WikiContext wikiContext, final String htmlContent ) throws FilterException {
+        return htmlContent;
+    }
 
     /**
      *  This method is called before the page has been saved to the PageProvider.
@@ -91,35 +81,31 @@ public interface PageFilter
      *  @param wikiContext The WikiContext
      *  @param content The wikimarkup that the user just wanted to save.
      *  @return The modified wikimarkup
-     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page
-     *                          processing to be abandoned.
+     *  @throws FilterException If something goes wrong.  Throwing this causes the entire page processing to be abandoned.
      */
-    String preSave( WikiContext wikiContext, String content )
-        throws FilterException;
+    default String preSave( final WikiContext wikiContext, final String content ) throws FilterException {
+        return content;
+    }
 
     /**
-     *  This method is called after the page has been successfully saved.
-     *  If the saving fails for any reason, then this method will not
+     *  This method is called after the page has been successfully saved. If the saving fails for any reason, then this method will not
      *  be called.
      *  <p>
-     *  Since the result is discarded from this method, this is only useful
-     *  for things like counters, etc.
+     *  Since the result is discarded from this method, this is only useful for things like counters, etc.
      *  
      *  @param wikiContext The WikiContext
      *  @param content The content which was just stored.
-     *  @throws FilterException If something goes wrong.  As the page is already saved,
-     *                          This is just logged.
+     *  @throws FilterException If something goes wrong.  As the page is already saved, This is just logged.
      */
-    void postSave( WikiContext wikiContext, String content )
-        throws FilterException;
+    default void postSave( final WikiContext wikiContext, final String content ) throws FilterException {}
 
     /**
      *  Called for every filter, e.g. on wiki engine shutdown. Use this if you have to 
      *  clean up or close global resources you allocated in the initialize() method.
      * 
-     *  @param engine The WikiEngine which owns this filter.
+     *  @param engine The Engine which owns this filter.
      *  @since 2.5.36
      */
-    void destroy( WikiEngine engine );
+    default void destroy( final Engine engine ) {}
 
 }

@@ -20,7 +20,7 @@ package org.apache.wiki.filters;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.parser.CreoleToJSPWikiTranslator;
@@ -28,26 +28,19 @@ import org.apache.wiki.parser.CreoleToJSPWikiTranslator;
 import java.util.Properties;
 
 /**
- * <p>Provides the Implementation for mixed mode creole: If you activate
- * this filter, it will translate all markup that was saved as creole
- * markup to JSPWiki markup. Therefore the files will be saved 
- * with mixed markup.
+ * <p>Provides the Implementation for mixed mode creole: If you activate this filter, it will translate all markup that was saved as creole
+ * markup to JSPWiki markup. Therefore the files will be saved with mixed markup.
  * <p>
- * <b>WARNING</b>: There's no turning back after installing this
- * filter. Since your wiki pages are saved in Creole markup you can
+ * <b>WARNING</b>: There's no turning back after installing this filter. Since your wiki pages are saved in Creole markup you can
  * not deactivate it afterwards.
  * <p>
- * <b>WARNING</b>: This feature is completely experimental, and is known to be
- * broken.  Use at your own risk.
+ * <b>WARNING</b>: This feature is completely experimental, and is known to be broken.  Use at your own risk.
  * <p>
- * <b>WARNING</b>: The CreoleFilter feature is deprecated.  JSPWiki is likely
- * to implement a non-mixed mode Creole at some point, since turning on
- * Creole will make new pages obsolete.
- * 
- * 
+ * <b>WARNING</b>: The CreoleFilter feature is deprecated.  JSPWiki is likely to implement a non-mixed mode Creole at some point, since
+ * turning on Creole will make new pages obsolete.
+ *
  * @see <a href="http://www.wikicreole.org/wiki/MixedMode">[[WikiCreole:MixedMode]]</a> 
  */
-
 public class CreoleFilter extends BasicPageFilter {
     
     private static final Logger log = Logger.getLogger(CreoleFilter.class);
@@ -55,18 +48,19 @@ public class CreoleFilter extends BasicPageFilter {
     /**
      *  {@inheritDoc}
      */
-    public void initialize(WikiEngine engine, Properties props) throws FilterException {
+    @Override public void initialize( final Engine engine, final Properties props ) throws FilterException {
     }
 
     /**
      *  {@inheritDoc}
      */
-    public String preSave( WikiContext wikiContext, String content ) {
+    @Override
+    public String preSave( final WikiContext wikiContext, final String content ) {
         try {
-            String username=wikiContext.getCurrentUser().getName();
-            Properties prop = wikiContext.getEngine().getWikiProperties();
+            final String username = wikiContext.getCurrentUser().getName();
+            final Properties prop = wikiContext.getEngine().getWikiProperties();
             return new CreoleToJSPWikiTranslator().translateSignature(prop, content,username);
-        } catch(Exception e ) {
+        } catch( final Exception e ) {
             log.error( e.getMessage(), e );
             return e.getMessage();
         }
@@ -75,11 +69,12 @@ public class CreoleFilter extends BasicPageFilter {
     /**
      *  {@inheritDoc}
      */
-    public String preTranslate(WikiContext wikiContext, String content) {
+    @Override
+    public String preTranslate( final WikiContext wikiContext, final String content ) {
         try {
-            Properties prop = wikiContext.getEngine().getWikiProperties();
+            final Properties prop = wikiContext.getEngine().getWikiProperties();
             return new CreoleToJSPWikiTranslator().translate(prop ,content);
-        } catch (Exception e) {
+        } catch( final Exception e ) {
             log.error( e.getMessage(), e );
             return content
                    + "\n \n %%error \n"
