@@ -71,7 +71,7 @@ public class WeblogEntryPlugin implements WikiPlugin {
     /**
      * Returns a new page name for entries.  It goes through the list of all blog pages, and finds out the next in line.
      *
-     * @param engine   A WikiEngine
+     * @param engine   A Engine
      * @param blogName The page (or blog) name.
      * @return A new name.
      * @throws ProviderException If something goes wrong.

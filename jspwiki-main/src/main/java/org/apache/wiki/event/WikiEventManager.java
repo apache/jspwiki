@@ -37,7 +37,7 @@ import java.util.Vector;
  *  A singleton class that manages the addition and removal of WikiEvent listeners to a event source, as well as the firing of events
  *  to those listeners. An "event source" is the object delegating its event handling to an inner delegating class supplied by this
  *  manager. The class being serviced is considered a "client" of the delegate. The WikiEventManager operates across any number of
- *  simultaneously-existing WikiEngines since it manages all delegation on a per-object basis. Anything that might fire a WikiEvent
+ *  simultaneously-existing Engines since it manages all delegation on a per-object basis. Anything that might fire a WikiEvent
  *  (or any of its subclasses) can be a client.
  *  </p>
  *
@@ -242,14 +242,12 @@ public final class WikiEventManager {
         final Map< Object, WikiEventDelegate > sources = mgr.getDelegates();
         synchronized( sources ) {
             // get an iterator over the Map.Enty objects in the map
-            final Iterator< Map.Entry< Object, WikiEventDelegate > > it = sources.entrySet().iterator();
-            while( it.hasNext() ) {
-                final Map.Entry< Object, WikiEventDelegate > entry = it.next();
+            for( final Map.Entry< Object, WikiEventDelegate > entry : sources.entrySet() ) {
                 // the entry value is the delegate
                 final WikiEventDelegate delegate = entry.getValue();
 
                 // now see if we can remove the listener from the delegate (delegate may be null because this is a weak reference)
-                if( delegate != null && delegate.removeWikiEventListener(listener) ) {
+                if( delegate != null && delegate.removeWikiEventListener( listener ) ) {
                     return true; // was removed
                 }
             }
@@ -375,8 +373,8 @@ public final class WikiEventManager {
         public Set< WikiEventListener > getWikiEventListeners() {
             synchronized( m_listenerList ) {
                 final TreeSet< WikiEventListener > set = new TreeSet<>( new WikiEventListenerComparator() );
-                for( final Iterator< WeakReference< WikiEventListener > >  i = m_listenerList.iterator(); i.hasNext(); ) {
-                    final WikiEventListener l = i.next().get();
+                for( final WeakReference< WikiEventListener > wikiEventListenerWeakReference : m_listenerList ) {
+                    final WikiEventListener l = wikiEventListenerWeakReference.get();
                     if( l != null ) {
                         set.add( l );
                     }
@@ -434,12 +432,12 @@ public final class WikiEventManager {
             boolean needsCleanup = false;
             try {
                 synchronized( m_listenerList ) {
-                    for( int i = 0; i < m_listenerList.size(); i++ ) {
-                        final WikiEventListener listener = m_listenerList.get( i ).get();
+                    for( final WeakReference< WikiEventListener > wikiEventListenerWeakReference : m_listenerList ) {
+                        final WikiEventListener listener = wikiEventListenerWeakReference.get();
                         if( listener != null ) {
                             listener.actionPerformed( event );
                         } else {
-                            needsCleanup  = true;
+                            needsCleanup = true;
                         }
                     }
 

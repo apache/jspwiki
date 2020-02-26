@@ -41,7 +41,7 @@ public final class WebContainerCallbackHandler implements CallbackHandler {
     /**
      * Create a new handler.
      *
-     * @param engine  The WikiEngine
+     * @param engine  The Engine
      * @param request The request to look into
      */
     public WebContainerCallbackHandler( final Engine engine, final HttpServletRequest request ) {

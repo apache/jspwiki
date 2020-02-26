@@ -20,8 +20,8 @@ package org.apache.wiki.auth.acl;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthorizationManager;
@@ -31,6 +31,7 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 
 import java.security.Permission;
 import java.security.Principal;
@@ -55,15 +56,16 @@ public class DefaultAclManager implements AclManager {
     private static final Logger log = Logger.getLogger(DefaultAclManager.class);
 
     private AuthorizationManager m_auth = null;
-    private WikiEngine m_engine = null;
-    private static final String PERM_REGEX = "(" +
-            PagePermission.COMMENT_ACTION + "|" +
-            PagePermission.DELETE_ACTION + "|" +
-            PagePermission.EDIT_ACTION + "|" +
-            PagePermission.MODIFY_ACTION + "|" +
-            PagePermission.RENAME_ACTION + "|" +
-            PagePermission.UPLOAD_ACTION + "|" +
-            PagePermission.VIEW_ACTION + ")";
+    private Engine m_engine = null;
+    private static final String PERM_REGEX = "("
+                                              + PagePermission.COMMENT_ACTION + "|"
+                                              + PagePermission.DELETE_ACTION  + "|"
+                                              + PagePermission.EDIT_ACTION    + "|"
+                                              + PagePermission.MODIFY_ACTION  + "|"
+                                              + PagePermission.RENAME_ACTION  + "|"
+                                              + PagePermission.UPLOAD_ACTION  + "|"
+                                              + PagePermission.VIEW_ACTION    +
+                                             ")";
     private static final String ACL_REGEX = "\\[\\{\\s*ALLOW\\s+" + PERM_REGEX + "\\s*(.*?)\\s*\\}\\]";
 
     /**
@@ -73,30 +75,16 @@ public class DefaultAclManager implements AclManager {
      */
     public static final Pattern ACL_PATTERN = Pattern.compile( ACL_REGEX );
 
-    /**
-     * Initializes the AclManager with a supplied wiki engine and properties.
-     *
-     * @param engine the wiki engine
-     * @param props  the initialization properties
-     * @see org.apache.wiki.auth.acl.AclManager#initialize(org.apache.wiki.WikiEngine, java.util.Properties)
-     */
-    @Override public void initialize( final WikiEngine engine, final Properties props ) {
-        m_auth = engine.getAuthorizationManager();
+    /** {@inheritDoc} */
+    @Override
+    public void initialize( final Engine engine, final Properties props ) {
+        m_auth = engine.getManager( AuthorizationManager.class );
         m_engine = engine;
     }
 
-    /**
-     * A helper method for parsing textual AccessControlLists. The line is in form
-     * {@code ALLOW <permission> <principal>, <principal>, <principal>}. This method was moved from Authorizer.
-     *
-     * @param page The current wiki page. If the page already has an ACL, it will be used as a basis for this ACL in order to avoid the
-     *             creation of a new one.
-     * @param ruleLine The rule line, as described above.
-     * @return A valid Access Control List. May be empty.
-     * @throws WikiSecurityException if the ruleLine was faulty somehow.
-     * @since 2.1.121
-     */
-    @Override public Acl parseAcl( final WikiPage page, final String ruleLine ) throws WikiSecurityException {
+    /** {@inheritDoc} */
+    @Override
+    public Acl parseAcl( final WikiPage page, final String ruleLine ) throws WikiSecurityException {
         Acl acl = page.getAcl();
         if (acl == null) {
             acl = new AclImpl();
@@ -138,19 +126,9 @@ public class DefaultAclManager implements AclManager {
     }
 
 
-    /**
-     * Returns the access control list for the page.
-     * If the ACL has not been parsed yet, it is done
-     * on-the-fly. If the page has a parent page, then that is tried also.
-     * This method was moved from Authorizer;
-     * it was consolidated with some code from AuthorizationManager.
-     * This method is guaranteed to return a non-<code>null</code> Acl.
-     *
-     * @param page the page
-     * @return the Acl representing permissions for the page
-     * @since 2.2.121
-     */
-    @Override public Acl getPermissions( final WikiPage page ) {
+    /** {@inheritDoc} */
+    @Override
+    public Acl getPermissions( final WikiPage page ) {
         //  Does the page already have cached ACLs?
         Acl acl = page.getAcl();
         log.debug( "page=" + page.getName() + "\n" + acl );
@@ -164,7 +142,7 @@ public class DefaultAclManager implements AclManager {
                 //  Or, try parsing the page
                 final WikiContext ctx = new WikiContext( m_engine, page );
                 ctx.setVariable( WikiContext.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
-                m_engine.getRenderingManager().getHTML(ctx, page);
+                m_engine.getManager( RenderingManager.class ).getHTML(ctx, page);
 
                 if (page.getAcl() == null) {
                     page.setAcl( new AclImpl() );
@@ -176,19 +154,9 @@ public class DefaultAclManager implements AclManager {
         return acl;
     }
 
-    /**
-     * Sets the access control list for the page and persists it by prepending
-     * it to the wiki page markup and saving the page. When this method is
-     * called, all other ACL markup in the page is removed. This method will forcibly
-     * expire locks on the wiki page if they exist. Any ProviderExceptions will be
-     * re-thrown as WikiSecurityExceptions.
-     *
-     * @param page the wiki page
-     * @param acl  the access control list
-     * @throws WikiSecurityException of the Acl cannot be set
-     * @since 2.5
-     */
-    @Override public void setPermissions( final WikiPage page, final Acl acl ) throws WikiSecurityException {
+    /** {@inheritDoc} */
+    @Override
+    public void setPermissions( final WikiPage page, final Acl acl ) throws WikiSecurityException {
         final PageManager pageManager = m_engine.getManager( PageManager.class );
 
         // Forcibly expire any page locks
@@ -210,9 +178,8 @@ public class DefaultAclManager implements AclManager {
     }
 
     /**
-     * Generates an ACL string for inclusion in a wiki page, based on a supplied Acl object.
-     * All of the permissions in this Acl are assumed to apply to the same page scope.
-     * The names of the pages are ignored; only the actions and principals matter.
+     * Generates an ACL string for inclusion in a wiki page, based on a supplied Acl object. All of the permissions in this Acl are
+     * assumed to apply to the same page scope. The names of the pages are ignored; only the actions and principals matter.
      *
      * @param acl the ACL
      * @return the ACL string

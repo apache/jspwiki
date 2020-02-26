@@ -39,7 +39,7 @@ import java.util.List;
  *  Provides facilities for handling attachments.  All attachment handling goes through this class.
  *  <p>
  *  The AttachmentManager provides a facade towards the current WikiAttachmentProvider that is in use.
- *  It is created by the WikiEngine as a singleton object, and can be requested through the WikiEngine.
+ *  It is created by the Engine as a singleton object, and can be requested through the Engine.
  *
  *  @since 1.9.28
  */

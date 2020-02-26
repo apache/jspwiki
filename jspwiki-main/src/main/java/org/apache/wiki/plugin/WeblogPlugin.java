@@ -390,7 +390,7 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
      *  Attempts to locate all pages that correspond to the
      *  blog entry pattern.  Will only consider the days on the dates; not the hours and minutes.
      *
-     *  @param engine WikiEngine which is used to get the pages
+     *  @param engine Engine which is used to get the pages
      *  @param baseName The basename (e.g. "Main" if you want "Main_blogentry_xxxx")
      *  @param start The date which is the first to be considered
      *  @param end   The end date which is the last to be considered

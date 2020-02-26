@@ -55,8 +55,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Helper class for verifying JSPWiki's security configuration. Invoked by
- * <code>admin/SecurityConfig.jsp</code>.
+ * Helper class for verifying JSPWiki's security configuration. Invoked by <code>admin/SecurityConfig.jsp</code>.
+ *
  * @since 2.4
  */
 public final class SecurityVerifier {
@@ -120,13 +120,23 @@ public final class SecurityVerifier {
     /** Message topic for JAAS information messages. */
     public static final String    INFO_JAAS                    = "Info.Jaas";
 
-    private static final String[] CONTAINER_ACTIONS            = new String[]
-                                                               { "View pages", "Comment on existing pages",
-            "Edit pages", "Upload attachments", "Create a new group", "Rename an existing page", "Delete pages" };
+    private static final String[] CONTAINER_ACTIONS            = new String[] { "View pages",
+                                                                                "Comment on existing pages",
+                                                                                "Edit pages",
+                                                                                "Upload attachments",
+                                                                                "Create a new group",
+                                                                                "Rename an existing page",
+                                                                                "Delete pages"
+                                                                              };
 
-    private static final String[] CONTAINER_JSPS               = new String[]
-                                                               { "/Wiki.jsp", "/Comment.jsp", "/Edit.jsp",
-            "/Upload.jsp", "/NewGroup.jsp", "/Rename.jsp", "/Delete.jsp" };
+    private static final String[] CONTAINER_JSPS               = new String[] { "/Wiki.jsp",
+                                                                                "/Comment.jsp",
+                                                                                "/Edit.jsp",
+                                                                                "/Upload.jsp",
+                                                                                "/NewGroup.jsp",
+                                                                                "/Rename.jsp",
+                                                                                "/Delete.jsp"
+                                                                              };
 
     private static final String   BG_GREEN                     = "bgcolor=\"#c0ffc0\"";
 
@@ -135,7 +145,8 @@ public final class SecurityVerifier {
     private static final Logger LOG                          = Logger.getLogger( SecurityVerifier.class.getName() );
 
     /**
-     * Constructs a new SecurityVerifier for a supplied WikiEngine and WikiSession.
+     * Constructs a new SecurityVerifier for a supplied Engine and WikiSession.
+     *
      * @param engine the wiki engine
      * @param session the wiki session (typically, that of an administrator)
      */

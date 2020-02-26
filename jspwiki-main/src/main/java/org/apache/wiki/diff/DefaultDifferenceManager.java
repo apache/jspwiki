@@ -21,7 +21,7 @@ package org.apache.wiki.diff;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.WikiPageProvider;
@@ -47,7 +47,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
      * @param engine The WikiEngine.
      * @param props  A set of properties.
      */
-    public DefaultDifferenceManager( final WikiEngine engine, final Properties props ) {
+    public DefaultDifferenceManager( final Engine engine, final Properties props ) {
         loadProvider( props );
         initializeProvider( engine, props );
 
@@ -69,11 +69,11 @@ public class DefaultDifferenceManager implements DifferenceManager {
     }
 
 
-    private void initializeProvider( final WikiEngine engine, final Properties props ) {
+    private void initializeProvider( final Engine engine, final Properties props ) {
         try {
-            m_provider.initialize(engine, props);
-        } catch( final NoRequiredPropertyException | IOException e1 ) {
-            log.warn("Failed initializing DiffProvider, will use NullDiffProvider.", e1);
+            m_provider.initialize( engine, props );
+        } catch( final NoRequiredPropertyException | IOException e ) {
+            log.warn( "Failed initializing DiffProvider, will use NullDiffProvider.", e );
             m_provider = new DiffProvider.NullDiffProvider(); //doesn't need init'd
         }
     }
@@ -86,7 +86,8 @@ public class DefaultDifferenceManager implements DifferenceManager {
      * @param secondWikiText the new text
      * @return XHTML, or empty string, if no difference detected.
      */
-    @Override public String makeDiff( final WikiContext context, final String firstWikiText, final String secondWikiText ) {
+    @Override
+    public String makeDiff( final WikiContext context, final String firstWikiText, final String secondWikiText ) {
         String diff;
         try {
             diff = m_provider.makeDiffHtml( context, firstWikiText, secondWikiText );
@@ -112,7 +113,8 @@ public class DefaultDifferenceManager implements DifferenceManager {
      *
      *  @return A HTML-ized difference between two pages.  If there is no difference, returns an empty string.
      */
-    @Override public String getDiff( final WikiContext context, final int version1, final int version2 ) {
+    @Override
+    public String getDiff( final WikiContext context, final int version1, final int version2 ) {
         final String page = context.getPage().getName();
         String page1 = context.getEngine().getManager( PageManager.class ).getPureText( page, version1 );
         final String page2 = context.getEngine().getManager( PageManager.class ).getPureText( page, version2 );

@@ -44,7 +44,7 @@ import java.util.Properties;
  *  This is the main interface through which everything should go.
  *
  *  <p>
- *  There's basically only a single Engine for each web application, and you should always get it using the {@code WikiEngine.getInstance(..)}
+ *  There's basically only a single Engine for each web application, and you should always get it using the {@code Engine.getInstance(..)}
  *  method.
  */
 public interface Engine {
@@ -121,14 +121,14 @@ public interface Engine {
     < T > T getManager( Class< T > manager );
 
     /**
-     * check if the WikiEngine has been configured.
+     * check if the Engine has been configured.
      *
      * @return {@code true} if it has, {@code false} otherwise.
      */
     boolean isConfigured();
 
     /**
-     *  Returns the set of properties that the WikiEngine was initialized with.  Note that this method returns a direct reference, so it's
+     *  Returns the set of properties that the Engine was initialized with.  Note that this method returns a direct reference, so it's
      *  possible to manipulate the properties.  However, this is not advised unless you really know what you're doing.
      *
      *  @return The wiki properties
@@ -201,7 +201,7 @@ public interface Engine {
     String getFrontPage();
 
     /**
-     *  Returns the ServletContext that this particular WikiEngine was initialized with. <strong>It may return {@code null}</strong>,
+     *  Returns the ServletContext that this particular Engine was initialized with. <strong>It may return {@code null}</strong>,
      *  if the Engine is not running inside a servlet container!
      *
      *  @since 1.7.10
@@ -305,7 +305,7 @@ public interface Engine {
     String getApplicationName();
 
     /**
-     *  Returns the root path.  The root path is where the WikiEngine is located in the file system.
+     *  Returns the root path.  The root path is where the Engine is located in the file system.
      *
      *  @since 2.2
      *  @return A path to where the Wiki is installed in the local filesystem.

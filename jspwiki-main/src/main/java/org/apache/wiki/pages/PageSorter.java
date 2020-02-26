@@ -82,12 +82,10 @@ public class PageSorter implements Comparator< String > {
     }
 
     /**
-     * Called by WikiEngine to initialise this instance. Tries to use class
-     * given by the PROP_PAGE_NAME_COMPARATOR property as the page name
-     * comparator. Uses a default comparator if this property is not set or
-     * there is any problem loading the specified class.
+     * Called by Engine to initialise this instance. Tries to use class given by the PROP_PAGE_NAME_COMPARATOR property as the page name
+     * comparator. Uses a default comparator if this property is not set or there is any problem loading the specified class.
      * 
-     * @param props this WikiEngine's properties.
+     * @param props this Engine's properties.
      */
     @SuppressWarnings( "unchecked" )
     public void initialize( final Properties props ) {
@@ -113,9 +111,7 @@ public class PageSorter implements Comparator< String > {
     }
 
     /**
-     * Sorts the specified array into ascending order based on the
-     * PageNameComparator. The actual sort is done using
-     * <code>Arrays.sort()</code>.
+     * Sorts the specified array into ascending order based on the PageNameComparator. The actual sort is done using {@code Arrays.sort()}.
      * 
      * @param nameArray the page names to be sorted
      */

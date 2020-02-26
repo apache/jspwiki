@@ -155,7 +155,7 @@ public interface PageManager extends WikiEventListener {
 
     /**
      * Puts the page text into the repository.  Note that this method does NOT update
-     * JSPWiki internal data structures, and therefore you should always use WikiEngine.saveText()
+     * JSPWiki internal data structures, and therefore you should always use saveText()
      *
      * @param page    Page to save
      * @param content Wikimarkup to save

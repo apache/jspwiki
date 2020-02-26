@@ -48,7 +48,7 @@ public class WikiCallbackHandler implements CallbackHandler {
     /**
      *  Create a new callback handler.
      *
-     * @param engine the WikiEngine
+     * @param engine the Engine
      * @param request the user's HTTP request. If passed as <code>null</code>, later requests for {@link HttpRequestCallback} will return an UnsupportedCallbackException
      * @param username the username
      * @param password the password

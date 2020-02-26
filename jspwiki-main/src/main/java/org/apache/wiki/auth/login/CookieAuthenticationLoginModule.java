@@ -19,7 +19,6 @@
 package org.apache.wiki.auth.login;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.util.FileUtil;
@@ -64,7 +63,7 @@ import java.util.UUID;
  *  <ol>
  *  <li>{@link HttpRequestCallback}- supplies the cookie, which should contain
  *      an unique id for fetching the UID.</li>
- *  <li>{@link WikiEngineCallback} - allows access to the WikiEngine itself.
+ *  <li>{@link WikiEngineCallback} - allows access to the Engine itself.
  *  </ol>
  * <p>
  * After authentication, a generic WikiPrincipal based on the username will be
@@ -159,7 +158,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
     /**
      * Attempts to locate the cookie file.
      *
-     * @param engine WikiEngine
+     * @param engine Engine
      * @param uid    An unique ID fetched from the user cookie
      * @return A File handle, or null, if there was a problem.
      */
@@ -210,11 +209,11 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
      * Sets a login cookie based on properties set by the user.  This method also
      * creates the cookie uid-username mapping in the work directory.
      *
-     * @param engine   The WikiEngine
+     * @param engine   The Engine
      * @param response The HttpServletResponse
      * @param username The username for whom to create the cookie.
      */
-    public static void setLoginCookie( final WikiEngine engine, final HttpServletResponse response, final String username ) {
+    public static void setLoginCookie( final Engine engine, final HttpServletResponse response, final String username ) {
         final UUID uid = UUID.randomUUID();
         final int days = TextUtil.getIntegerProperty( engine.getWikiProperties(), PROP_LOGIN_EXPIRY_DAYS, DEFAULT_EXPIRY_DAYS );
         final Cookie userId = getLoginCookie( uid.toString() );
@@ -240,11 +239,11 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
     /**
      * Clears away the login cookie, and removes the uid-username mapping file as well.
      *
-     * @param engine   WikiEngine
+     * @param engine   Engine
      * @param request  Servlet request
      * @param response Servlet response
      */
-    public static void clearLoginCookie( final WikiEngine engine, final HttpServletRequest request, final HttpServletResponse response ) {
+    public static void clearLoginCookie( final Engine engine, final HttpServletRequest request, final HttpServletResponse response ) {
         final Cookie userId = getLoginCookie( "" );
         userId.setMaxAge( 0 );
         response.addCookie( userId );

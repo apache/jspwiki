@@ -32,13 +32,12 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *  <p>Manages WikiSession's for different WikiEngine's.</p>
+ *  <p>Manages WikiSession's for different Engine's.</p>
  *  <p>The WikiSession's are stored both in the remote user HttpSession and in the SessionMonitor for the WikeEngine.
  *  This class must be configured as a session listener in the web.xml for the wiki web application.
  *  </p>
@@ -47,7 +46,7 @@ public class SessionMonitor implements HttpSessionListener {
 
     private static final Logger log = Logger.getLogger( SessionMonitor.class );
 
-    /** Map with WikiEngines as keys, and SessionMonitors as values. */
+    /** Map with Engines as keys, and SessionMonitors as values. */
     private static ConcurrentHashMap< Engine, SessionMonitor > c_monitors = new ConcurrentHashMap<>();
 
     /** Weak hashmap with HttpSessions as keys, and WikiSessions as values. */
@@ -58,12 +57,12 @@ public class SessionMonitor implements HttpSessionListener {
     private final PrincipalComparator m_comparator = new PrincipalComparator();
 
     /**
-     * Returns the instance of the SessionMonitor for this wiki.
-     * Only one SessionMonitor exists per WikiEngine.
+     * Returns the instance of the SessionMonitor for this wiki. Only one SessionMonitor exists per Engine.
+     *
      * @param engine the wiki engine
      * @return the session monitor
      */
-    public static final SessionMonitor getInstance( final Engine engine ) {
+    public static SessionMonitor getInstance( final Engine engine ) {
         if( engine == null )
         {
             throw new IllegalArgumentException( "Engine cannot be null." );
@@ -253,26 +252,16 @@ public class SessionMonitor implements HttpSessionListener {
      * @param se the HTTP session event
      */
     @Override
-    public void sessionDestroyed( final HttpSessionEvent se )
-    {
+    public void sessionDestroyed( final HttpSessionEvent se ) {
         final HttpSession session = se.getSession();
-        final Iterator<SessionMonitor> it = c_monitors.values().iterator();
-        while( it.hasNext() )
-        {
-            final SessionMonitor monitor = it.next();
-
-            final WikiSession storedSession = monitor.findSession(session);
-
-            monitor.remove(session);
-
+        for( final SessionMonitor monitor : c_monitors.values() ) {
+            final WikiSession storedSession = monitor.findSession( session );
+            monitor.remove( session );
             log.debug( "Removed session " + session.getId() + "." );
-
-            if( storedSession != null )
-            {
-                fireEvent( WikiSecurityEvent.SESSION_EXPIRED,
-                           storedSession.getLoginPrincipal(),
-                           storedSession );
+            if( storedSession != null ) {
+                fireEvent( WikiSecurityEvent.SESSION_EXPIRED, storedSession.getLoginPrincipal(), storedSession );
             }
         }
     }
+
 }

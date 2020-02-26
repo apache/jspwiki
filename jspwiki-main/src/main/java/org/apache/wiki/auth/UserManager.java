@@ -54,7 +54,7 @@ public interface UserManager {
     void initialize( final Engine engine, final Properties props );
 
     /**
-     * Returns the UserDatabase employed by this WikiEngine. The UserDatabase is lazily initialized by this method, if it does
+     * Returns the UserDatabase employed by this Engine. The UserDatabase is lazily initialized by this method, if it does
      * not exist yet. If the initialization fails, this method will use the inner class DummyUserDatabase as a default (which
      * is enough to get JSPWiki running).
      *

@@ -18,27 +18,25 @@
  */
 package org.apache.wiki.attachment;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.ProviderException;
 
+import java.io.IOException;
+import java.io.InputStream;
+
+
 /**
- *  Provides the data for an attachment.  Please note that there will
- *  be a strong reference retained for the provider for each Attachment
- *  it provides, so do try to keep the object light.  Also, reuse objects
- *  if possible.
+ *  Provides the data for an attachment.  Please note that there will be a strong reference retained for the provider for each Attachment
+ *  it provides, so do try to keep the object light.  Also, reuse objects if possible.
  *  <p>
  *  The Provider needs to be thread-safe.
  *
  *  @since  2.5.34
  */
-public interface DynamicAttachmentProvider
-{
+public interface DynamicAttachmentProvider {
+
     /**
-     *  Returns a stream of data for this attachment.  The stream will be
-     *  closed by AttachmentServlet.
+     *  Returns a stream of data for this attachment.  The stream will be closed by AttachmentServlet.
      *
      *  @param context A Wiki Context
      *  @param att The Attachment for which the data should be received.
@@ -46,6 +44,6 @@ public interface DynamicAttachmentProvider
      *  @throws ProviderException If something goes wrong internally
      *  @throws IOException If something goes wrong when reading the data
      */
-    InputStream getAttachmentData( WikiContext context, Attachment att )
-        throws ProviderException, IOException;
+    InputStream getAttachmentData( WikiContext context, Attachment att ) throws ProviderException, IOException;
+
 }

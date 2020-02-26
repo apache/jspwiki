@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.util.TextUtil;
@@ -53,7 +54,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
     private static final Map< String, AjaxServletContainer > ajaxServlets = new ConcurrentHashMap<>();
     private static final Logger log = Logger.getLogger( WikiAjaxDispatcherServlet.class.getName() );
     private String PATH_AJAX = "/ajax/";
-    private WikiEngine m_engine;
+    private Engine m_engine;
 
     /**
      * {@inheritDoc}
