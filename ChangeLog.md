@@ -19,6 +19,20 @@ under the License.
 
 **2020-02-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
+* _2.11.0-M7-git-10_
+
+* Finally, finished [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120):
+    * Use `Engine` instead of `WikiEngine` throughout the code as much as possible. 
+    * `URLConstructor#initialize(..)` receives an `Engine` instead of a `WikiEngine`.
+    * `InitializablePlugin` and implementing classes receive an `Engine` instead of a `WikiEngine`.
+    * `PageFilter`s receive an `Engine` instead of a `WikiEngine` on `initialize` method.
+    * Rename + extract interfaces from `EditorManager`, `InternationalizationManager`, `SearchManager`, 
+    and `TemplateManager`.
+
+* Updated Flexmark to 0.60.2
+
+**2020-02-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
 * _2.11.0-M7-git-09_
 
 * [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120):
