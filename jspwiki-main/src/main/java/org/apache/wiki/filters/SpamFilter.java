@@ -71,6 +71,7 @@ import java.util.Properties;
 import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 /**
@@ -122,20 +123,18 @@ public class SpamFilter extends BasicPageFilter {
     private static final String LISTVAR = "spamwords";
     private static final String LISTIPVAR = "ips";
 
-    /** The filter property name for specifying the page which contains the list of spamwords.
-     *  Value is <tt>{@value}</tt>. */
+    private static final Random RANDOM = ThreadLocalRandom.current();
+
+    /** The filter property name for specifying the page which contains the list of spamwords. Value is <tt>{@value}</tt>. */
     public static final String  PROP_WORDLIST              = "wordlist";
 
-    /** The filter property name for specifying the page which contains the list of IPs to ban.
-     *  Value is <tt>{@value}</tt>. */
+    /** The filter property name for specifying the page which contains the list of IPs to ban. Value is <tt>{@value}</tt>. */
     public static final String  PROP_IPLIST                = "IPlist";
 
-    /** The filter property name for specifying the maximum page name length.
-     *  Value is <tt>{@value}</tt>. */
+    /** The filter property name for specifying the maximum page name length.  Value is <tt>{@value}</tt>. */
     public static final String  PROP_MAX_PAGENAME_LENGTH   = "maxpagenamelength";
 
-    /** The filter property name for the page to which you are directed if Herb rejects your
-     *  edit.  Value is <tt>{@value}</tt>. */
+    /** The filter property name for the page to which you are directed if Herb rejects your edit.  Value is <tt>{@value}</tt>. */
     public static final String  PROP_ERRORPAGE             = "errorpage";
     
     /** The filter property name for specifying how many changes is any given IP address
@@ -143,9 +142,7 @@ public class SpamFilter extends BasicPageFilter {
      */
     public static final String  PROP_PAGECHANGES           = "pagechangesinminute";
     
-    /** The filter property name for specifying how many similar changes are allowed
-     *  before a host is banned.  Value is <tt>{@value}</tt>.
-     */
+    /** The filter property name for specifying how many similar changes are allowed before a host is banned.  Value is <tt>{@value}</tt>. */
     public static final String  PROP_SIMILARCHANGES        = "similarchanges";
     
     /** The filter property name for specifying how long a host is banned.  Value is <tt>{@value}</tt>.*/
@@ -154,8 +151,7 @@ public class SpamFilter extends BasicPageFilter {
     /** The filter property name for the attachment containing the blacklist.  Value is <tt>{@value}</tt>.*/
     public static final String  PROP_BLACKLIST             = "blacklist";
     
-    /** The filter property name for specifying how many URLs can any given edit contain.  
-     *  Value is <tt>{@value}</tt> */
+    /** The filter property name for specifying how many URLs can any given edit contain. Value is <tt>{@value}</tt> */
     public static final String  PROP_MAXURLS               = "maxurls";
     
     /** The filter property name for specifying the Akismet API-key.  Value is <tt>{@value}</tt>. */
@@ -195,26 +191,19 @@ public class SpamFilter extends BasicPageFilter {
     private static  Logger  c_spamlog = Logger.getLogger( "SpamLog" );
     private static  Logger  log = Logger.getLogger( SpamFilter.class );
 
-
     private Vector<Host>    m_temporaryBanList = new Vector<>();
 
     private int             m_banTime = 60; // minutes
 
     private Vector<Host>    m_lastModifications = new Vector<>();
 
-    /**
-     *  How many times a single IP address can change a page per minute?
-     */
+    /** How many times a single IP address can change a page per minute? */
     private int             m_limitSinglePageChanges = 5;
 
-    /**
-     *  How many times can you add the exact same string to a page?
-     */
+    /** How many times can you add the exact same string to a page? */
     private int             m_limitSimilarChanges = 2;
 
-    /**
-     *  How many URLs can be added at maximum.
-     */
+    /** How many URLs can be added at maximum. */
     private int             m_maxUrls = 10;
 
     private Pattern         m_urlPattern;
@@ -227,9 +216,7 @@ public class SpamFilter extends BasicPageFilter {
     /** The limit at which we consider something to be spam. */
     private int             m_scoreLimit = 1;
 
-    /**
-     * If set to true, will ignore anyone who is in Authenticated role.
-     */
+    /** If set to true, will ignore anyone who is in Authenticated role. */
     private boolean         m_ignoreAuthenticated = false;
 
     private boolean         m_stopAtFirstMatch = true;
@@ -892,9 +879,8 @@ public class SpamFilter extends BasicPageFilter {
      */
     private static String getUniqueID() {
         final StringBuilder sb = new StringBuilder();
-        final Random rand = new Random();
         for( int i = 0; i < 6; i++ ) {
-            final char x = ( char )( 'A' + rand.nextInt( 26 ) );
+            final char x = ( char )( 'A' + RANDOM.nextInt( 26 ) );
             sb.append( x );
         }
 
