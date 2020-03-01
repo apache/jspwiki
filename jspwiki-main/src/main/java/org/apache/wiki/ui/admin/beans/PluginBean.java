@@ -19,9 +19,9 @@
 package org.apache.wiki.ui.admin.beans;
 
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.plugin.DefaultPluginManager.WikiPluginInfo;
+import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
@@ -39,14 +39,16 @@ public class PluginBean extends ModuleBean {
     /**
      * {@inheritDoc}
      */
-    @Override public String getTitle() {
+    @Override
+    public String getTitle() {
         return "Plugins";
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override public int getType() {
+    @Override
+    public int getType() {
         return CORE;
     }
 

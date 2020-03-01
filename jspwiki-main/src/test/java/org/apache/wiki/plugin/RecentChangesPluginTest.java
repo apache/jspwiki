@@ -19,18 +19,16 @@ under the License.
 
 package org.apache.wiki.plugin;
 
-import java.util.Properties;
-
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.api.engine.PluginManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import java.util.Properties;
 
 public class RecentChangesPluginTest {
     Properties props = TestEngine.getTestProperties();
@@ -73,7 +71,7 @@ public class RecentChangesPluginTest {
     public void testSimple() throws Exception {
         context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage01"));
 
-        String res = manager.execute(context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin}");
+        final String res = manager.execute(context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin}");
 
         // we don't want to compare the complete html returned, but check if
         // certain Strings are present and other Strings are not present
@@ -92,7 +90,7 @@ public class RecentChangesPluginTest {
     public void testParmInClude() throws Exception {
         context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage02"));
 
-        String res = manager.execute( context,
+        final String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}" );
 
         Assertions.assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
@@ -110,7 +108,7 @@ public class RecentChangesPluginTest {
     public void testParmExClude() throws Exception {
         context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage03"));
 
-        String res = manager.execute( context,
+        final String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin exclude='TestPage03*'}" );
 
         Assertions.assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
@@ -128,7 +126,7 @@ public class RecentChangesPluginTest {
     public void testNoRecentChanges() throws Exception {
         context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage04"));
 
-        String res = manager.execute( context,
+        final String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin since='-1'}" );
 
         Assertions.assertTrue( "<table class=\"recentchanges\" cellpadding=\"4\"></table>".equals( res ) );

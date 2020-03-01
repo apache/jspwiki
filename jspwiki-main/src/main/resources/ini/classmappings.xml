@@ -56,7 +56,7 @@
     <mappedClass>org.apache.wiki.filters.DefaultFilterManager</mappedClass>
   </mapping>
   <mapping>
-    <requestedClass>org.apache.wiki.api.engine.PluginManager</requestedClass>
+    <requestedClass>org.apache.wiki.plugin.PluginManager</requestedClass>
     <mappedClass>org.apache.wiki.plugin.DefaultPluginManager</mappedClass>
   </mapping>
   <mapping>

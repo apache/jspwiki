@@ -23,7 +23,7 @@ import org.apache.wiki.WikiContext;
 import java.util.Map;
 
 /**
- *  Implements a Plugin interface for the parser stage.  Please see {@link org.apache.wiki.api.engine.PluginManager}
+ *  Implements a Plugin interface for the parser stage.  Please see {@link org.apache.wiki.plugin.PluginManager PluginManager}
  *  for further documentation.
  */
 public interface ParserStagePlugin {

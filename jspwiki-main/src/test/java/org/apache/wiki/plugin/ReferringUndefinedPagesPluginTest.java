@@ -19,18 +19,16 @@ under the License.
 
 package org.apache.wiki.plugin;
 
-import java.util.Properties;
-
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.api.engine.PluginManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.sf.ehcache.CacheManager;
+import java.util.Properties;
 
 public class ReferringUndefinedPagesPluginTest {
     Properties props = TestEngine.getTestProperties();
@@ -69,7 +67,7 @@ public class ReferringUndefinedPagesPluginTest {
 	 */
     @Test
 	public void testSimple() throws Exception {
-		String res = manager.execute(context, "{INSERT ReferringUndefinedPagesPlugin}");
+		final String res = manager.execute(context, "{INSERT ReferringUndefinedPagesPlugin}");
 		Assertions.assertTrue(res.contains("href=\"/test/Wiki.jsp?page=TestPage01\""));
 	}
 
@@ -80,7 +78,7 @@ public class ReferringUndefinedPagesPluginTest {
 	 */
     @Test
 	public void testParmInClude() throws Exception {
-		String res = manager.execute(context, "{INSERT ReferringUndefinedPagesPlugin} include='TestPage02*'}");
+		final String res = manager.execute(context, "{INSERT ReferringUndefinedPagesPlugin} include='TestPage02*'}");
 		Assertions.assertFalse(res.contains("href=\"/test/Wiki.jsp?page=TestPage01\""));
 		Assertions.assertTrue(res.contains("href=\"/test/Wiki.jsp?page=TestPage02\""));
         Assertions.assertFalse(res.contains("href=\"/test/Wiki.jsp?page=TestPage03\""));
@@ -93,7 +91,7 @@ public class ReferringUndefinedPagesPluginTest {
      */
     @Test
     public void testParmExClude() throws Exception {
-        String res = manager.execute(context,"{INSERT ReferringUndefinedPagesPlugin} exclude='TestPage02*'}");
+        final String res = manager.execute(context,"{INSERT ReferringUndefinedPagesPlugin} exclude='TestPage02*'}");
 
         Assertions.assertTrue(res.contains("href=\"/test/Wiki.jsp?page=TestPage01\""));
         Assertions.assertFalse(res.contains("href=\"/test/Wiki.jsp?page=TestPage02\""));
@@ -107,7 +105,7 @@ public class ReferringUndefinedPagesPluginTest {
      */
     @Test
     public void testParmMax() throws Exception {
-        String res = manager.execute(context,"{INSERT ReferringUndefinedPagesPlugin} max='2'}");
+        final String res = manager.execute(context,"{INSERT ReferringUndefinedPagesPlugin} max='2'}");
 
         Assertions.assertTrue(res.contains("href=\"/test/Wiki.jsp?page=TestPage01\""));
         Assertions.assertTrue(res.contains("href=\"/test/Wiki.jsp?page=TestPage02\""));

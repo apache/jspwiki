@@ -18,18 +18,18 @@
  */
 
 package org.apache.wiki.plugin;
-import java.text.SimpleDateFormat;
-import java.util.Properties;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.text.SimpleDateFormat;
+import java.util.Properties;
 
 public class ReferringPagesPluginTest
 {
@@ -71,12 +71,12 @@ public class ReferringPagesPluginTest
         engine.deleteTestPage( "Foobar7" );
     }
 
-    private String mkLink( String page )
+    private String mkLink( final String page )
     {
         return mkFullLink( page, page );
     }
 
-    private String mkFullLink( String page, String link )
+    private String mkFullLink( final String page, final String link )
     {
         return "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page="+link+"\">"+page+"</a>";
     }
@@ -85,9 +85,9 @@ public class ReferringPagesPluginTest
     public void testSingleReferral()
         throws Exception
     {
-        WikiContext context2 = new WikiContext( engine, new WikiPage(engine, "Foobar") );
+        final WikiContext context2 = new WikiContext( engine, new WikiPage(engine, "Foobar") );
 
-        String res = manager.execute( context2,
+        final String res = manager.execute( context2,
                                       "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
 
         Assertions.assertEquals( mkLink( "TestPage" )+"<br />",
@@ -98,7 +98,7 @@ public class ReferringPagesPluginTest
     public void testMaxReferences()
         throws Exception
     {
-        String res = manager.execute( context,
+        final String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
 
         int count = 0;
@@ -115,7 +115,7 @@ public class ReferringPagesPluginTest
         // there is one extra "<a" in the result
         Assertions.assertEquals( 5+1, count );
 
-        String expected = ">...and 2 more</a>";
+        final String expected = ">...and 2 more</a>";
         count =0;
         while( (index = res.indexOf(expected,index+1)) != -1 )
         {
@@ -128,9 +128,9 @@ public class ReferringPagesPluginTest
     public void testReferenceWidth()
         throws Exception
     {
-        WikiContext context2 = new WikiContext( engine, new WikiPage(engine, "Foobar") );
+        final WikiContext context2 = new WikiContext( engine, new WikiPage(engine, "Foobar") );
 
-        String res = manager.execute( context2,
+        final String res = manager.execute( context2,
                                       "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");
 
         Assertions.assertEquals( mkFullLink( "TestP...", "TestPage" )+"<br />",
@@ -141,7 +141,7 @@ public class ReferringPagesPluginTest
     public void testInclude()
         throws Exception
     {
-        String res = manager.execute( context,
+        final String res = manager.execute( context,
                                       "{ReferringPagesPlugin include='*7'}" );
 
         Assertions.assertTrue( res.indexOf("Foobar7") != -1, "7" );
@@ -156,7 +156,7 @@ public class ReferringPagesPluginTest
     public void testExclude()
         throws Exception
     {
-        String res = manager.execute( context, "{ReferringPagesPlugin exclude='*'}");
+        final String res = manager.execute( context, "{ReferringPagesPlugin exclude='*'}");
         Assertions.assertEquals( "...nobody", res );
     }
 
@@ -164,7 +164,7 @@ public class ReferringPagesPluginTest
     public void testExclude2()
         throws Exception
     {
-        String res = manager.execute( context,
+        final String res = manager.execute( context,
                                       "{ReferringPagesPlugin exclude='*7'}");
 
         Assertions.assertTrue( res.indexOf("Foobar7") == -1 );
@@ -174,7 +174,7 @@ public class ReferringPagesPluginTest
     public void testExclude3()
        throws Exception
     {
-        String res = manager.execute( context,
+        final String res = manager.execute( context,
                                       "{ReferringPagesPlugin exclude='*7,*5,*4'}");
 
         Assertions.assertTrue( res.indexOf("Foobar7") == -1, "7" );
@@ -196,22 +196,22 @@ public class ReferringPagesPluginTest
         Assertions.assertEquals("6",result);
 
         result = manager.execute(context, "{ReferringPagesPlugin,exclude='*7',show=count,showLastModified=true}");
-        String numberResult=result.substring(0,result.indexOf(" "));
+        final String numberResult=result.substring(0,result.indexOf(" "));
         Assertions.assertEquals("6",numberResult);
 
-        String dateString = result.substring(result.indexOf("(")+1,result.indexOf(")"));
+        final String dateString = result.substring(result.indexOf("(")+1,result.indexOf(")"));
         // the date should be parseable:
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss dd-MMM-yyyy zzz", engine.newHttpRequest().getLocale());
+        final SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss dd-MMM-yyyy zzz", engine.newHttpRequest().getLocale());
         df.parse(dateString);
 
         // test if the proper exception is thrown:
-        String expectedExceptionString = "showLastModified=true is only valid if show=count is also specified";
+        final String expectedExceptionString = "showLastModified=true is only valid if show=count is also specified";
         String exceptionString = null;
         try
         {
             result = manager.execute(context, "{ReferringPagesPlugin,showLastModified=true}");
         }
-        catch (PluginException pe)
+        catch ( final PluginException pe)
         {
             exceptionString = pe.getMessage();
         }
