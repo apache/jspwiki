@@ -19,7 +19,6 @@
 package org.apache.wiki.filters;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.filters.PageFilter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

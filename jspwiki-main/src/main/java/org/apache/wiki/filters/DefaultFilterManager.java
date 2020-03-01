@@ -21,7 +21,6 @@ package org.apache.wiki.filters;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.PageFilter;

@@ -16,15 +16,15 @@
     specific language governing permissions and limitations
     under the License.    
  */
-package org.apache.wiki.api.engine;
-
-import java.util.Collection;
-import java.util.List;
+package org.apache.wiki.filters;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.modules.WikiModuleInfo;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface FilterManager
 {
