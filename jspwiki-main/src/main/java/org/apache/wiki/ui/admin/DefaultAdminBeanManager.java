@@ -21,7 +21,6 @@ package org.apache.wiki.ui.admin;
 import org.apache.log4j.Logger;
 import org.apache.wiki.Release;
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.api.engine.FilterManager;
 import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.event.WikiEngineEvent;

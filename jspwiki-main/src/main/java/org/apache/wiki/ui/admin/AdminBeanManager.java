@@ -17,12 +17,11 @@
     under the License.  
  */
 
-package org.apache.wiki.api.engine;
-
-import java.util.List;
+package org.apache.wiki.ui.admin;
 
 import org.apache.wiki.event.WikiEvent;
-import org.apache.wiki.ui.admin.AdminBean;
+
+import java.util.List;
 
 public interface AdminBeanManager {
 

@@ -60,7 +60,7 @@
     <mappedClass>org.apache.wiki.plugin.DefaultPluginManager</mappedClass>
   </mapping>
   <mapping>
-    <requestedClass>org.apache.wiki.api.engine.AdminBeanManager</requestedClass>
+    <requestedClass>org.apache.wiki.ui.admin.AdminBeanManager</requestedClass>
     <mappedClass>org.apache.wiki.ui.admin.DefaultAdminBeanManager</mappedClass>
   </mapping>
   <mapping>
