@@ -22,6 +22,7 @@ package org.apache.wiki;
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.references.ReferenceManager;
@@ -320,6 +321,16 @@ public class WikiEngineTest {
 
         final WikiPage p3 = m_engine.getManager( PageManager.class ).getPage( NAME1, -1 );
         Assertions.assertNull( p3.getAttribute( WikiPage.CHANGENOTE ) );
+    }
+
+    @Test
+    public void testGetManagers() {
+        Assertions.assertNotNull( m_engine.getManager( PageManager.class ) );
+        Assertions.assertNull( m_engine.getManager( ModuleManager.class ) );
+
+        Assertions.assertEquals( 0, m_engine.getManagers( String.class ).size() );
+        Assertions.assertEquals( 1, m_engine.getManagers( PageManager.class ).size() );
+        Assertions.assertEquals( 4, m_engine.getManagers( ModuleManager.class ).size() );
     }
 
 }

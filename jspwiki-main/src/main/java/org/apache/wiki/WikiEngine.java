@@ -72,11 +72,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 /**
@@ -532,8 +534,19 @@ public class WikiEngine implements Engine {
 
     /** {@inheritDoc} */
     @Override
+    @SuppressWarnings( "unchecked" )
     public < T > T getManager( final Class< T > manager ) {
         return ( T )managers.get( manager );
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public < T > List< T > getManagers( final Class< T > manager ) {
+        return ( List< T > )managers.entrySet().stream()
+                                    .filter( e -> manager.isAssignableFrom( e.getKey() ) )
+                                    .map( e -> e.getValue() )
+                                    .collect( Collectors.toList() );
     }
 
     /** {@inheritDoc} */

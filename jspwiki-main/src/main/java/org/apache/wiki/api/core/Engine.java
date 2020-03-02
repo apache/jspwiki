@@ -34,6 +34,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 
@@ -112,13 +113,22 @@ public interface Engine {
     }
 
     /**
-     * Retrieves the requested object instantiated by the Engine.
+     * Retrieves the object instantiated by the Engine matching the requested type.
      *
      * @param manager requested object instantiated by the Engine.
      * @param <T> type of the requested object.
      * @return requested object instantiated by the Engine, {@code null} if not available.
      */
     < T > T getManager( Class< T > manager );
+
+    /**
+     * Retrieves the objects instantiated by the Engine that can be assigned to the requested type.
+     *
+     * @param manager requested objectx instantiated by the Engine.
+     * @param <T> type of the requested object.
+     * @return collection of requested objects instantiated by the Engine, {@code empty} list if none available.
+     */
+    < T > List< T > getManagers( Class< T > manager );
 
     /**
      * check if the Engine has been configured.

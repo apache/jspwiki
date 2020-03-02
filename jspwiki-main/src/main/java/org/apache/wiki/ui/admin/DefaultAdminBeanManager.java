@@ -24,11 +24,8 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.filters.FilterManager;
+import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
-import org.apache.wiki.plugin.PluginManager;
-import org.apache.wiki.ui.EditorManager;
-import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.ui.admin.beans.CoreBean;
 import org.apache.wiki.ui.admin.beans.FilterBean;
 import org.apache.wiki.ui.admin.beans.PluginBean;
@@ -170,10 +167,9 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
         } catch( final NotCompliantMBeanException e ) {
             log.error( e.getMessage(), e );
         }
-        registerBeans( m_engine.getManager( EditorManager.class ).modules() );
-        registerBeans( m_engine.getManager( PluginManager.class ).modules() );
-        registerBeans( m_engine.getManager( FilterManager.class ).modules() );
-        registerBeans( m_engine.getManager( TemplateManager.class ).modules() );
+        for( final ModuleManager moduleManager : m_engine.getManagers( ModuleManager.class ) ) {
+            registerBeans( moduleManager.modules() );
+        }
     }
 
     /* (non-Javadoc)
