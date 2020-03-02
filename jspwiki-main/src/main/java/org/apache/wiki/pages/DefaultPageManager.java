@@ -42,8 +42,6 @@ import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiSecurityEvent;
-import org.apache.wiki.modules.ModuleManager;
-import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.references.ReferenceManager;
@@ -78,19 +76,21 @@ import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
- * Manages the WikiPages.  This class functions as an unified interface towards the page providers.  It handles initialization
+ * Manages the WikiPages. This class functions as an unified interface towards the page providers. It handles initialization
  * and management of the providers, and provides utility methods for accessing the contents.
  * <p/>
- * Saving a page is a two-stage Task; first the pre-save operations and then the actual save.  See the descriptions of the tasks
+ * Saving a page is a two-stage Task; first the pre-save operations and then the actual save. See the descriptions of the tasks
  * for further information.
  *
  * @since 2.0
  */
-public class DefaultPageManager extends ModuleManager implements PageManager {
+public class DefaultPageManager implements PageManager {
 
     private static final Logger LOG = Logger.getLogger( DefaultPageManager.class );
 
     private WikiPageProvider m_provider;
+
+    private Engine m_engine;
 
     protected ConcurrentHashMap< String, PageLock > m_pageLocks = new ConcurrentHashMap<>();
 
@@ -109,7 +109,7 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * @throws WikiException If anything goes wrong, you get this.
      */
     public DefaultPageManager(final Engine engine, final Properties props) throws NoSuchElementException, WikiException {
-        super(engine);
+        m_engine = engine;
         final String classname;
         final boolean useCache = "true".equals( props.getProperty( PROP_USECACHE ) );
         m_expiryTime = TextUtil.parseIntParameter( props.getProperty( PROP_LOCKEXPIRY ), 60 );
@@ -199,7 +199,8 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getPureText(String, int)
      */
-    @Override public String getPureText( final String page, final int version ) {
+    @Override
+    public String getPureText( final String page, final int version ) {
         String result = null;
         try {
             result = getPageText( page, version );
@@ -217,12 +218,14 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getText(String, int)
      */
-    @Override public String getText( final String page, final int version ) {
+    @Override
+    public String getText( final String page, final int version ) {
         final String result = getPureText( page, version );
         return TextUtil.replaceEntities( result );
     }
 
-    @Override public void saveText( final WikiContext context, final String text ) throws WikiException {
+    @Override
+    public void saveText( final WikiContext context, final String text ) throws WikiException {
         // Check if page data actually changed; bail if not
         final WikiPage page = context.getPage();
         final String oldText = getPureText( page );
@@ -366,7 +369,8 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getPage(java.lang.String)
      */
-    @Override public WikiPage getPage( final String pagereq ) {
+    @Override
+    public WikiPage getPage( final String pagereq ) {
         return getPage( pagereq, WikiProvider.LATEST_VERSION );
     }
 
@@ -374,7 +378,8 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
      * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getPage(java.lang.String, int)
      */
-    @Override public WikiPage getPage( final String pagereq, final int version ) {
+    @Override
+    public WikiPage getPage( final String pagereq, final int version ) {
         try {
             WikiPage p = getPageInfo( pagereq, version );
             if( p == null ) {
@@ -675,23 +680,6 @@ public class DefaultPageManager extends ModuleManager implements PageManager {
         if( WikiEventManager.isListening( this ) ) {
             WikiEventManager.fireEvent( this, new WikiPageEvent( m_engine, type, pagename ) );
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Collection< WikiModuleInfo > modules() {
-        return new ArrayList<>();
-    }
-
-    /**
-     * Returns null!
-     *  {@inheritDoc}
-     */
-    @Override
-    public WikiModuleInfo getModuleInfo( final String moduleName ) {
-    	return null;
     }
 
     /**
