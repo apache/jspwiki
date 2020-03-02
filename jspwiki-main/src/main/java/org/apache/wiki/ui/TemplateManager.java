@@ -21,13 +21,12 @@ package org.apache.wiki.ui;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.modules.WikiModuleInfo;
+import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.ClassUtil;
 
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.fmt.LocaleSupport;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -45,7 +44,7 @@ import java.util.Vector;
  *
  *  @since 2.1.62
  */
-public interface TemplateManager {
+public interface TemplateManager extends ModuleManager {
 
     String SKIN_DIRECTORY = "skins";
 
@@ -191,15 +190,6 @@ public interface TemplateManager {
      * @since 2.7.x
      */
     Map< String, String > listTimeFormats( final PageContext pageContext );
-
-    /**
-     * Returns a collection of modules currently managed by this ModuleManager.  Each
-     * entry is an instance of the WikiModuleInfo class.  This method should return something
-     * which is safe to iterate over, even if the underlying collection changes.
-     *
-     * @return A Collection of WikiModuleInfo instances.
-     */
-    Collection< WikiModuleInfo > modules();
 
     /**
      * List all timezones, with special marker for server timezone

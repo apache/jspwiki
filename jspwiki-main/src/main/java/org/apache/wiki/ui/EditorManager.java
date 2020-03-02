@@ -19,10 +19,9 @@
 package org.apache.wiki.ui;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.modules.WikiModuleInfo;
+import org.apache.wiki.modules.ModuleManager;
 
 import javax.servlet.jsp.PageContext;
-import java.util.Collection;
 import java.util.Properties;
 
 
@@ -44,7 +43,7 @@ import java.util.Properties;
  *
  *  @since 2.4
  */
-public interface EditorManager {
+public interface EditorManager extends ModuleManager {
 
     /** The property name for setting the editor. Current value is "jspwiki.editor" - not used anymore: replaced by defaultpref.template.editor */
     String PROP_EDITORTYPE = "jspwiki.editor";
@@ -116,14 +115,5 @@ public interface EditorManager {
 
         return usertext;
     }
-
-    /**
-     * Returns a collection of modules currently managed by this ModuleManager.  Each
-     * entry is an instance of the WikiModuleInfo class.  This method should return something
-     * which is safe to iterate over, even if the underlying collection changes.
-     *
-     * @return A Collection of WikiModuleInfo instances.
-     */
-    Collection< WikiModuleInfo > modules();
 
 }

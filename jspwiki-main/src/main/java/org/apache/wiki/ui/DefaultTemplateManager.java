@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.modules.ModuleManager;
+import org.apache.wiki.modules.BaseModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
@@ -52,7 +52,7 @@ import java.util.TreeSet;
  *
  *  @since 2.1.62
  */
-public class DefaultTemplateManager extends ModuleManager implements TemplateManager {
+public class DefaultTemplateManager extends BaseModuleManager implements TemplateManager {
 
     private static final Logger log = Logger.getLogger( DefaultTemplateManager.class );
 

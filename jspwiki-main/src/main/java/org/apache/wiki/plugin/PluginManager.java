@@ -22,15 +22,14 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.modules.WikiModuleInfo;
+import org.apache.wiki.modules.ModuleManager;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 
-public interface PluginManager {
+public interface PluginManager extends ModuleManager {
 
     /** The property name defining which packages will be searched for plugin classes. */
     String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
@@ -130,22 +129,6 @@ public interface PluginManager {
      * @throws PluginException From the plugin itself, it propagates, waah!
      */
     String execute( WikiContext context, String commandline ) throws PluginException;
-
-    /**
-     * Returns a collection of modules currently managed by this ModuleManager. Each entry is an instance of the {@link WikiModuleInfo}
-     * class. This method should return something which is safe to iterate over, even if the underlying collection changes.
-     * 
-     * @return A Collection of {@link WikiModuleInfo} instances.
-     */
-    Collection< WikiModuleInfo > modules();
-
-    /**
-     * Returns the {@link WikiModuleInfo} information about the provided pluginName.
-     *
-     * @param pluginName
-     * @return The wikiPluginInfo
-     */
-    WikiModuleInfo getModuleInfo(String pluginName);
     
     /**
      * Creates a {@link WikiPlugin}.

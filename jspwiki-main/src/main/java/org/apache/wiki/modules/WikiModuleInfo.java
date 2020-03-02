@@ -86,17 +86,17 @@ public class WikiModuleInfo implements Comparable< WikiModuleInfo > {
      *  @param el The element to parse.
      */
     protected void initializeFromXML( final Element el ) {
-    	m_description        = el.getChildText("description");
-    	m_moduleUrl          = el.getChildText("url");
-    	m_moduleVersion      = el.getChildText("version");
-        m_htmlTemplate       = el.getChildText("template");
-        m_scriptLocation     = el.getChildText("script");
-        m_stylesheetLocation = el.getChildText("stylesheet");
-        m_author             = el.getChildText("author");
-        m_authorUrl          = el.getChildText("authorUrl");
-        m_minVersion         = el.getChildText("minVersion");
-        m_maxVersion         = el.getChildText("maxVersion");
-        m_adminBeanClass     = el.getChildText("adminBean");
+        m_adminBeanClass = el.getChildText( "adminBean" );
+        m_author = el.getChildText( "author" );
+        m_authorUrl = el.getChildText( "authorUrl" );
+        m_description = el.getChildText( "description" );
+        m_maxVersion = el.getChildText( "maxVersion" );
+        m_minVersion = el.getChildText( "minVersion" );
+        m_scriptLocation = el.getChildText( "script" );
+        m_stylesheetLocation = el.getChildText( "stylesheet" );
+        m_htmlTemplate = el.getChildText( "template" );
+        m_moduleUrl = el.getChildText( "url" );
+        m_moduleVersion = el.getChildText( "version" );
     }
 
     /**
@@ -229,7 +229,7 @@ public class WikiModuleInfo implements Comparable< WikiModuleInfo > {
         String spec = m_resource.toString();
     
         // Replace the 'PLUGIN_RESOURCE_LOCATION' with the requested resourceLocation.
-        final int length = ModuleManager.PLUGIN_RESOURCE_LOCATION.length();
+        final int length = BaseModuleManager.PLUGIN_RESOURCE_LOCATION.length();
         spec = spec.substring( 0, spec.length() - length ) + resourceLocation;
     
         final URL url = new URL( spec );
@@ -243,8 +243,8 @@ public class WikiModuleInfo implements Comparable< WikiModuleInfo > {
     /**
      *  {@inheritDoc}
      */
-    public int compareTo( final WikiModuleInfo mod )
-    {
+    @Override
+    public int compareTo( final WikiModuleInfo mod ) {
         return m_name.compareTo( mod.getName() );
     }
 

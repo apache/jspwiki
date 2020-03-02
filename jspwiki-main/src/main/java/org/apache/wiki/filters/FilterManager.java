@@ -21,13 +21,12 @@ package org.apache.wiki.filters;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.filters.PageFilter;
-import org.apache.wiki.modules.WikiModuleInfo;
+import org.apache.wiki.modules.ModuleManager;
 
-import java.util.Collection;
 import java.util.List;
 
-public interface FilterManager
-{
+public interface FilterManager extends ModuleManager {
+
     /** Property name for setting the filter XML property file.  Value is <tt>{@value}</tt>. */
     String PROP_FILTERXML = "jspwiki.filterConfig";
     
@@ -112,20 +111,5 @@ public interface FilterManager
      * Notifies PageFilters to clean up their ressources.
      */
     void destroy();
-    
-    /**
-     * Returns a collection of modules currently managed by this ModuleManager.  Each
-     * entry is an instance of the {@link WikiModuleInfo} class.  This method should return something
-     * which is safe to iterate over, even if the underlying collection changes.
-     * 
-     * @return A Collection of {@link WikiModuleInfo} instances.
-     */
-    Collection< WikiModuleInfo > modules();
-    
-    /**
-     * Returns the {@link WikiModuleInfo} information about the provided filterName.
-     * @param filterName
-     * @return The WikiModuleInfo
-     */
-    WikiModuleInfo getModuleInfo(String filterName);
+
 }

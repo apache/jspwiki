@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
-import org.apache.wiki.modules.ModuleManager;
+import org.apache.wiki.modules.BaseModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.XmlUtil;
@@ -55,7 +55,7 @@ import java.util.Set;
  *
  *  @since 2.4
  */
-public class DefaultEditorManager extends ModuleManager implements EditorManager {
+public class DefaultEditorManager extends BaseModuleManager implements EditorManager {
 
     private Map< String, WikiEditorInfo > m_editors;
 

@@ -37,7 +37,7 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.InitializablePlugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.modules.ModuleManager;
+import org.apache.wiki.modules.BaseModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.ClassUtil;
@@ -156,11 +156,11 @@ import java.util.StringTokenizer;
  *
  *  @since 1.6.1
  */
-public class DefaultPluginManager extends ModuleManager implements PluginManager {
+public class DefaultPluginManager extends BaseModuleManager implements PluginManager {
 
     private static final String PLUGIN_INSERT_PATTERN = "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?[ \\t]*";
 
-    private static Logger log = Logger.getLogger( DefaultPluginManager.class );
+    private static final Logger log = Logger.getLogger( DefaultPluginManager.class );
 
     private static final String DEFAULT_FORMS_PACKAGE = "org.apache.wiki.forms";
 
