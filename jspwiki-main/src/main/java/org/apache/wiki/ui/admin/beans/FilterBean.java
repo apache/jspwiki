@@ -19,7 +19,7 @@
 package org.apache.wiki.ui.admin.beans;
 
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.api.engine.FilterManager;
+import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
@@ -38,14 +38,16 @@ public class FilterBean extends ModuleBean {
     /**
      * {@inheritDoc}
      */
-    @Override public String getTitle() {
+    @Override
+    public String getTitle() {
         return "Filters";
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override public int getType() {
+    @Override
+    public int getType() {
         return CORE;
     }
 

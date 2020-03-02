@@ -20,8 +20,8 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.plugin.PluginManager;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
@@ -104,9 +104,7 @@ public class PluginTag
             argmap.put( "_body", body );
         }
 
-        final String result = pm.execute( m_wikiContext, plugin, argmap );
-
-        return result;        
+        return pm.execute( m_wikiContext, plugin, argmap );
     }
     
     /**

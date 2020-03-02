@@ -20,10 +20,10 @@
 package org.apache.wiki.forms;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.plugin.DefaultPluginManager;
+import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.FormUtil;
 

@@ -24,14 +24,14 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
-import org.apache.wiki.api.engine.FilterManager;
-import org.apache.wiki.api.engine.PluginManager;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.preferences.Preferences;
 
 import javax.servlet.http.HttpServletRequest;

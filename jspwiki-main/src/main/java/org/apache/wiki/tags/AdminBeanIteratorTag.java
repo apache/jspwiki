@@ -19,8 +19,8 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.engine.AdminBeanManager;
 import org.apache.wiki.ui.admin.AdminBean;
+import org.apache.wiki.ui.admin.AdminBeanManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
