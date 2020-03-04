@@ -31,6 +31,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.RedirectException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -351,7 +352,7 @@ public class AttachmentServlet extends HttpServlet {
             req.getSession().removeAttribute("msg");
             res.sendRedirect( nextPage );
         } catch( final RedirectException e ) {
-            final WikiSession session = WikiSession.getWikiSession( m_engine, req );
+            final Session session = WikiSession.getWikiSession( m_engine, req );
             session.addMessage( e.getMessage() );
 
             req.getSession().setAttribute("msg", e.getMessage());

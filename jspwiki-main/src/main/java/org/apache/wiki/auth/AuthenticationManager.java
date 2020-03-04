@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.auth;
 
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.event.WikiEventListener;
@@ -131,7 +131,7 @@ public interface AuthenticationManager {
      * @return true, if the username/password is valid
      * @throws org.apache.wiki.auth.WikiSecurityException if the Authorizer or UserManager cannot be obtained
      */
-    boolean login( WikiSession session, HttpServletRequest request, String username, String password ) throws WikiSecurityException;
+    boolean login( Session session, HttpServletRequest request, String username, String password ) throws WikiSecurityException;
 
     /**
      * Logs the user out by retrieving the WikiSession associated with the HttpServletRequest and unbinding all of the Subject's Principals,

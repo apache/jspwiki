@@ -22,6 +22,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -175,7 +176,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
     /** {@inheritDoc} */
     @Override
-    public boolean isUserInRole( final WikiSession session, final Principal role ) {
+    public boolean isUserInRole( final Session session, final Principal role ) {
         // Always return false if session/role is null, or if role isn't a GroupPrincipal
         if ( session == null || !( role instanceof GroupPrincipal ) || !session.isAuthenticated() ) {
             return false;
@@ -273,7 +274,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
     /** {@inheritDoc} */
     @Override
-    public void setGroup( final WikiSession session, final Group group ) throws WikiSecurityException {
+    public void setGroup( final Session session, final Group group ) throws WikiSecurityException {
         // TODO: check for appropriate permissions
 
         // If group already exists, delete it; fire GROUP_REMOVE event

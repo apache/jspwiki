@@ -26,6 +26,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.util.comparators.PrincipalComparator;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -38,10 +39,9 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- *  <p>Manages WikiSession's for different Engine's.</p>
- *  <p>The WikiSession's are stored both in the remote user HttpSession and in the SessionMonitor for the WikeEngine.
- *  This class must be configured as a session listener in the web.xml for the wiki web application.
- *  </p>
+ *  <p>Manages Sessions for different Engines.</p>
+ *  <p>The Sessions are stored both in the remote user HttpSession and in the SessionMonitor for the Engine.
+ *  This class must be configured as a session listener in the web.xml for the wiki web application.</p>
  */
 public class SessionMonitor implements HttpSessionListener {
 
@@ -64,29 +64,20 @@ public class SessionMonitor implements HttpSessionListener {
      * @return the session monitor
      */
     public static SessionMonitor getInstance( final Engine engine ) {
-        if( engine == null )
-        {
+        if( engine == null ) {
             throw new IllegalArgumentException( "Engine cannot be null." );
         }
-        SessionMonitor monitor;
-
-          monitor = c_monitors.get(engine);
-          if( monitor == null )
-          {
-              monitor = new SessionMonitor(engine);
-
-              c_monitors.put( engine, monitor );
-
-          }
+        SessionMonitor monitor = c_monitors.get( engine );
+        if( monitor == null ) {
+            monitor = new SessionMonitor( engine );
+            c_monitors.put( engine, monitor );
+        }
 
         return monitor;
     }
 
-    /**
-     * Construct the SessionListener
-     */
-    public SessionMonitor()
-    {
+    /** Construct the SessionListener */
+    public SessionMonitor() {
     }
 
     private SessionMonitor( final Engine engine ) {
@@ -139,7 +130,7 @@ public class SessionMonitor implements HttpSessionListener {
             if( log.isDebugEnabled() ) {
                 log.debug( "Looking up WikiSession for session ID=" + sid + "... not found. Creating guestSession()" );
             }
-            wikiSession = WikiSession.guestSession( m_engine );
+            wikiSession = (WikiSession)WikiSession.guestSession( m_engine );
             synchronized( m_sessions ) {
                 m_sessions.put( sid, wikiSession );
             }
@@ -149,18 +140,27 @@ public class SessionMonitor implements HttpSessionListener {
     }
 
     /**
-     * Removes the wiki session associated with the user's HttpSession
-     * from the session cache.
+     * Removes the wiki session associated with the user's HttpRequest from the session cache.
+     *
+     * @param request the user's HTTP request
+     */
+    public final void remove( final HttpServletRequest request ) {
+        if( request == null ) {
+            throw new IllegalArgumentException( "Request cannot be null." );
+        }
+        remove( request.getSession() );
+    }
+
+    /**
+     * Removes the wiki session associated with the user's HttpSession from the session cache.
+     *
      * @param session the user's HTTP session
      */
-    public final void remove( final HttpSession session )
-    {
-        if ( session == null )
-        {
+    public final void remove( final HttpSession session ) {
+        if( session == null ) {
             throw new IllegalArgumentException( "Session cannot be null." );
         }
-        synchronized ( m_sessions )
-        {
+        synchronized( m_sessions ) {
             m_sessions.remove( session.getId() );
         }
     }

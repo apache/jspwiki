@@ -20,8 +20,8 @@ package org.apache.wiki.auth.authorize;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -166,10 +166,10 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * @param role the role to check
      * @return <code>true</code> if the user is considered to be in the role,
      *         <code>false</code> otherwise
-     * @see org.apache.wiki.auth.Authorizer#isUserInRole(org.apache.wiki.WikiSession, java.security.Principal)
+     * @see org.apache.wiki.auth.Authorizer#isUserInRole(org.apache.wiki.api.core.Session, java.security.Principal)
      */
     @Override
-    public boolean isUserInRole( final WikiSession session, final Principal role ) {
+    public boolean isUserInRole( final Session session, final Principal role ) {
         if ( session == null || role == null ) {
             return false;
         }

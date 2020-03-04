@@ -20,8 +20,8 @@ package org.apache.wiki.auth;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupDatabase;
@@ -67,7 +67,7 @@ public final class SecurityVerifier {
 
     private Principal[]           m_policyPrincipals           = new Principal[0];
 
-    private WikiSession           m_session;
+    private Session               m_session;
 
     /** Message prefix for errors. */
     public static final String    ERROR                        = "Error.";
@@ -150,7 +150,7 @@ public final class SecurityVerifier {
      * @param engine the wiki engine
      * @param session the wiki session (typically, that of an administrator)
      */
-    public SecurityVerifier( final Engine engine, final WikiSession session ) {
+    public SecurityVerifier( final Engine engine, final Session session ) {
         m_engine = engine;
         m_session = session;
         m_session.clearMessages();

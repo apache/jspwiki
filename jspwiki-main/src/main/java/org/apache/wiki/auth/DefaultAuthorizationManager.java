@@ -23,6 +23,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.acl.Acl;
@@ -94,7 +95,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
 
     /** {@inheritDoc} */
     @Override
-    public boolean checkPermission( final WikiSession session, final Permission permission ) {
+    public boolean checkPermission( final Session session, final Permission permission ) {
         // A slight sanity check.
         if( session == null || permission == null ) {
             fireEvent( WikiSecurityEvent.ACCESS_DENIED, null, permission );
@@ -172,7 +173,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
 
     /** {@inheritDoc} */
     @Override
-    public boolean hasRoleOrPrincipal( final WikiSession session, final Principal principal ) {
+    public boolean hasRoleOrPrincipal( final Session session, final Principal principal ) {
         // If either parameter is null, always deny
         if( session == null || principal == null ) {
             return false;
@@ -315,8 +316,8 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
 
     /** {@inheritDoc} */
     @Override
-    public boolean checkStaticPermission( final WikiSession session, final Permission permission ) {
-        return ( Boolean )WikiSession.doPrivileged( session, ( PrivilegedAction< Boolean > )() -> {
+    public boolean checkStaticPermission( final Session session, final Permission permission ) {
+        return ( Boolean )Session.doPrivileged( session, ( PrivilegedAction< Boolean > )() -> {
             try {
                 // Check the JVM-wide security policy first
                 AccessController.checkPermission( permission );

@@ -21,6 +21,7 @@ package org.apache.wiki.auth;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.user.DuplicateUserException;
 import org.apache.wiki.auth.user.UserDatabase;
@@ -64,7 +65,7 @@ public interface UserManager {
     UserDatabase getUserDatabase();
 
     /**
-     * <p>Retrieves the {@link org.apache.wiki.auth.user.UserProfile} for the user in a wiki session. If the user is authenticated, the
+     * <p>Retrieves the {@link org.apache.wiki.auth.user.UserProfile} for the user in a session. If the user is authenticated, the
      * UserProfile returned will be the one stored in the user database; if one does not exist, a new one will be initialized and returned.
      * If the user is anonymous or asserted, the UserProfile will <i>always</i> be newly initialized to prevent spoofing of identities.
      * If a UserProfile needs to be initialized, its {@link org.apache.wiki.auth.user.UserProfile#isNew()} method will return
@@ -74,11 +75,11 @@ public interface UserManager {
      * <code>false</code>, this method throws an {@link IllegalStateException}. This is meant as a quality check for UserDatabase providers;
      * it should only be thrown if the implementation is faulty.</p>
      *
-     * @param session the wiki session, which may not be <code>null</code>
+     * @param session the session, which may not be <code>null</code>
      * @return the user's profile, which will be newly initialized if the user is anonymous or asserted, or if the user cannot be found in
      *         the user database
      */
-    UserProfile getUserProfile( WikiSession session );
+    UserProfile getUserProfile( Session session );
 
     /**
      * <p>
@@ -108,9 +109,9 @@ public interface UserManager {
      * {@link org.apache.wiki.workflow.DecisionRequiredException}. All other WikiException
      * indicate a condition that is not normal is probably due to mis-configuration
      */
-    void setUserProfile( WikiSession session, UserProfile profile ) throws DuplicateUserException, WikiException;
+    void setUserProfile( Session session, UserProfile profile ) throws DuplicateUserException, WikiException;
 
-    void startUserProfileCreationWorkflow( WikiSession session, UserProfile profile ) throws WikiException;
+    void startUserProfileCreationWorkflow( Session session, UserProfile profile ) throws WikiException;
 
     /**
      * <p> Extracts user profile parameters from the HTTP request and populates a UserProfile with them. The UserProfile will either be a
@@ -177,7 +178,7 @@ public interface UserManager {
      * @param session    the wiki session supporting the event
      * @param profile    the user profile (or array of user profiles), which may be <code>null</code>
      */
-    default void fireEvent( final int type, final WikiSession session, final Object profile ) {
+    default void fireEvent( final int type, final Session session, final Object profile ) {
         if( WikiEventManager.isListening( this ) ) {
             WikiEventManager.fireEvent( this, new WikiSecurityEvent( session, type, profile ) );
         }

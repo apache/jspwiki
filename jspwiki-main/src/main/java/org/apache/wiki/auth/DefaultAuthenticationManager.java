@@ -21,6 +21,7 @@ package org.apache.wiki.auth;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.authorize.WebAuthorizer;
 import org.apache.wiki.auth.authorize.WebContainerAuthorizer;
@@ -208,7 +209,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
      * {@inheritDoc}
      */
     @Override
-    public boolean login( final WikiSession session, final HttpServletRequest request, final String username, final String password ) throws WikiSecurityException {
+    public boolean login( final Session session, final HttpServletRequest request, final String username, final String password ) throws WikiSecurityException {
         if ( session == null ) {
             log.error( "No wiki session provided, cannot log in." );
             return false;
@@ -276,7 +277,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             log.debug( "Invalidating WikiSession for session ID=" + sid );
         }
         // Retrieve the associated WikiSession and clear the Principal set
-        final WikiSession wikiSession = WikiSession.getWikiSession( m_engine, request );
+        final Session wikiSession = WikiSession.getWikiSession( m_engine, request );
         final Principal originalPrincipal = wikiSession.getLoginPrincipal();
         wikiSession.invalidate();
 
@@ -284,7 +285,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         WikiSession.removeWikiSession( m_engine, request );
 
         // We need to flush the HTTP session too
-        if ( session != null ) {
+        if( session != null ) {
             session.invalidate();
         }
 
@@ -394,7 +395,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     /**
      * After successful login, this method is called to inject authorized role Principals into the WikiSession. To determine which roles
      * should be injected, the configured Authorizer is queried for the roles it knows about by calling  {@link Authorizer#getRoles()}.
-     * Then, each role returned by the authorizer is tested by calling {@link Authorizer#isUserInRole(WikiSession, Principal)}. If this
+     * Then, each role returned by the authorizer is tested by calling {@link Authorizer#isUserInRole(Session, Principal)}. If this
      * check fails, and the Authorizer is of type WebAuthorizer, the role is checked again by calling
      * {@link WebAuthorizer#isUserInRole(HttpServletRequest, Principal)}). Any roles that pass the test are injected into the Subject by
      * firing appropriate authentication events.
@@ -403,7 +404,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
      * @param authorizer the Engine's configured Authorizer
      * @param request the user's HTTP session, which may be <code>null</code>
      */
-    private void injectAuthorizerRoles( final WikiSession session, final Authorizer authorizer, final HttpServletRequest request ) {
+    private void injectAuthorizerRoles( final Session session, final Authorizer authorizer, final HttpServletRequest request ) {
         // Test each role the authorizer knows about
         for( final Principal role : authorizer.getRoles() ) {
             // Test the Authorizer

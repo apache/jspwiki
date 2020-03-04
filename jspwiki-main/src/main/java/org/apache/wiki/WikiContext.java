@@ -20,6 +20,7 @@ package org.apache.wiki;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
@@ -69,7 +70,7 @@ public class WikiContext implements Cloneable, Command {
     /** Stores the HttpServletRequest.  May be null, if the request did not come from a servlet. */
     protected HttpServletRequest m_request;
 
-    private WikiSession m_session;
+    private Session m_session;
 
     public static final String ATTR_CONTEXT = "jspwiki.context";
 
@@ -652,11 +653,12 @@ public class WikiContext implements Cloneable, Command {
 
     /**
      *  Returns the WikiSession associated with the context. This method is guaranteed to always return a valid WikiSession.
-     *  If this context was constructed without an associated HttpServletRequest, it will return {@link WikiSession#guestSession(Engine)}.
+     *  If this context was constructed without an associated HttpServletRequest, it will return
+     *  {@link org.apache.wiki.WikiSession#guestSession(Engine)}.
      *
      *  @return The WikiSession associate with this context.
      */
-    public WikiSession getWikiSession()
+    public Session getWikiSession()
     {
         return m_session;
     }

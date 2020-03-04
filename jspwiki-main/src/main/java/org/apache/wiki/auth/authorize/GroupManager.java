@@ -20,7 +20,7 @@ package org.apache.wiki.auth.authorize;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.Authorizer;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -82,7 +82,7 @@ public interface GroupManager extends Authorizer, WikiEventListener {
      * parameter contains the member list. If these differ from those in the existing group, the passed values override the old values.
      * </p>
      * <p>
-     * This method does not commit the new Group to the GroupManager cache. To do that, use {@link #setGroup(WikiSession, Group)}.
+     * This method does not commit the new Group to the GroupManager cache. To do that, use {@link #setGroup(Session, Group)}.
      * </p>
      * @param name the name of the group to construct
      * @param memberLine the line of text containing the group membership list
@@ -106,7 +106,7 @@ public interface GroupManager extends Authorizer, WikiEventListener {
      * parameter contains the member list. If these differ from those in the existing group, the passed values override the old values.
      * </p>
      * <p>
-     * This method does not commit the new Group to the GroupManager cache. To do that, use {@link #setGroup(WikiSession, Group)}.
+     * This method does not commit the new Group to the GroupManager cache. To do that, use {@link #setGroup(Session, Group)}.
      * </p>
      * @param context the current wiki context
      * @param create whether this method should create a new, empty Group if one with the requested name is not found. If <code>false</code>,
@@ -176,11 +176,11 @@ public interface GroupManager extends Authorizer, WikiEventListener {
      * @param group the Group, which may not be <code>null</code>
      * @throws WikiSecurityException if the Group cannot be saved by the back-end
      */
-    void setGroup( final WikiSession session, final Group group ) throws WikiSecurityException;
+    void setGroup( final Session session, final Group group ) throws WikiSecurityException;
 
     /**
      * Validates a Group, and appends any errors to the session errors list. Any validation errors are added to the wiki session's messages
-     * collection (see {@link WikiSession#getMessages()}.
+     * collection (see {@link Session#getMessages()}.
      *
      * @param context the current wiki context
      * @param group the supplied Group

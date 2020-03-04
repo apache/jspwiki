@@ -20,6 +20,7 @@ package org.apache.wiki.auth;
 
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 
 import java.security.Principal;
 import java.util.Properties;
@@ -74,6 +75,6 @@ public interface Authorizer {
      * @param role the role to check
      * @return <code>true</code> if the user is considered to be in the role, <code>false</code> otherwise
      */
-    boolean isUserInRole( WikiSession session, Principal role );
+    boolean isUserInRole( Session session, Principal role );
 
 }

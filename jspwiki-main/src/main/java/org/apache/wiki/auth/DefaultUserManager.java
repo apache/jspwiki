@@ -21,11 +21,11 @@ package org.apache.wiki.auth;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.ajax.AjaxUtil;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.PageFilter;
@@ -90,7 +90,7 @@ public class DefaultUserManager implements UserManager {
     private static final Logger log = Logger.getLogger( DefaultUserManager.class);
 
     /** Associates wiki sessions with profiles */
-    private final Map< WikiSession, UserProfile > m_profiles = new WeakHashMap<>();
+    private final Map< Session, UserProfile > m_profiles = new WeakHashMap<>();
 
     /** The user database loads, manages and persists user identities */
     private UserDatabase m_database;
@@ -147,7 +147,7 @@ public class DefaultUserManager implements UserManager {
 
     /** {@inheritDoc} */
     @Override
-    public UserProfile getUserProfile( final WikiSession session ) {
+    public UserProfile getUserProfile( final Session session ) {
         // Look up cached user profile
         UserProfile profile = m_profiles.get( session );
         boolean newProfile = profile == null;
@@ -179,7 +179,7 @@ public class DefaultUserManager implements UserManager {
 
     /** {@inheritDoc} */
     @Override
-    public void setUserProfile( final WikiSession session, final UserProfile profile ) throws DuplicateUserException, WikiException {
+    public void setUserProfile( final Session session, final UserProfile profile ) throws DuplicateUserException, WikiException {
         // Verify user is allowed to save profile!
         final Permission p = new WikiPermission( m_engine.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
         if ( !m_engine.getManager( AuthorizationManager.class ).checkPermission( session, p ) ) {
@@ -250,7 +250,7 @@ public class DefaultUserManager implements UserManager {
 
     /** {@inheritDoc} */
     @Override
-    public void startUserProfileCreationWorkflow( final WikiSession session, final UserProfile profile ) throws WikiException {
+    public void startUserProfileCreationWorkflow( final Session session, final UserProfile profile ) throws WikiException {
         final WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
         final Principal submitter = session.getUserPrincipal();
         final Step completionTask = m_engine.getManager( TasksManager.class ).buildSaveUserProfileTask( m_engine, session.getLocale() );
@@ -300,8 +300,7 @@ public class DefaultUserManager implements UserManager {
         fullname = InputValidator.isBlank( fullname ) ? null : fullname;
         email = InputValidator.isBlank( email ) ? null : email;
 
-        // A special case if we have container authentication
-        // If authenticated, login name is always taken from container
+        // A special case if we have container authentication: if authenticated, login name is always taken from container
         if ( m_engine.getManager( AuthenticationManager.class ).isContainerAuthenticated() && context.getWikiSession().isAuthenticated() ) {
             loginName = context.getWikiSession().getLoginPrincipal().getName();
         }
@@ -318,7 +317,7 @@ public class DefaultUserManager implements UserManager {
     @Override
     public void validateProfile( final WikiContext context, final UserProfile profile ) {
         final boolean isNew = profile.isNew();
-        final WikiSession session = context.getWikiSession();
+        final Session session = context.getWikiSession();
         final InputValidator validator = new InputValidator( SESSION_MESSAGES, context );
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
 
