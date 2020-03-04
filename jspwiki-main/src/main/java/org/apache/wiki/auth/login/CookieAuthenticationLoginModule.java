@@ -123,7 +123,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
 
                 if( cookieFile != null && cookieFile.exists() && cookieFile.canRead() ) {
 
-                    try( final Reader in = new BufferedReader( new InputStreamReader( new FileInputStream( cookieFile ), "UTF-8" ) ) ) {
+                    try( final Reader in = new BufferedReader( new InputStreamReader( new FileInputStream( cookieFile ), StandardCharsets.UTF_8 ) ) ) {
                         final String username = FileUtil.readContents( in );
 
                         if( log.isDebugEnabled() ) {
