@@ -21,6 +21,7 @@ package org.apache.wiki.ui;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -66,7 +67,7 @@ public class Installer {
     public static final String ADMIN_GROUP = "Admin";
     public static final String PROPFILENAME = "jspwiki-custom.properties" ;
     public static final String TMP_DIR = System.getProperty("java.io.tmpdir");
-    private final WikiSession m_session;
+    private final Session m_session;
     private final File m_propertyFile;
     private final Properties m_props;
     private final Engine m_engine;

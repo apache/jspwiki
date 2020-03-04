@@ -19,6 +19,7 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.AuthenticationManager;
 
 /**
@@ -110,7 +111,7 @@ public class UserCheckTag extends WikiTagBase {
      */
     @Override
     public final int doWikiStartTag() {
-        final WikiSession session = m_wikiContext.getWikiSession();
+        final Session session = m_wikiContext.getWikiSession();
         final String status = session.getStatus();
         final AuthenticationManager mgr = m_wikiContext.getEngine().getManager( AuthenticationManager.class );
         final boolean containerAuth = mgr.isContainerAuthenticated();

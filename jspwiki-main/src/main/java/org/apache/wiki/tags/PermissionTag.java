@@ -21,7 +21,7 @@ package org.apache.wiki.tags;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
-import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.permissions.AllPermission;
@@ -103,7 +103,7 @@ public class PermissionTag extends WikiTagBase {
      *  @return true if granted, false if not
      */
     private boolean checkPermission( final String permission ) {
-        final WikiSession session        = m_wikiContext.getWikiSession();
+        final Session session            = m_wikiContext.getWikiSession();
         final WikiPage    page           = m_wikiContext.getPage();
         final AuthorizationManager mgr   = m_wikiContext.getEngine().getManager( AuthorizationManager.class );
         boolean gotPermission      = false;

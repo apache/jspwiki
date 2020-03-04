@@ -19,8 +19,8 @@
 package org.apache.wiki.ui.admin.beans;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -33,30 +33,29 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 
-public class UserBean extends SimpleAdminBean
-{
-    public UserBean( final Engine engine ) throws NotCompliantMBeanException
-    {
+public class UserBean extends SimpleAdminBean {
+
+    public UserBean( final Engine engine ) throws NotCompliantMBeanException  {
         super();
     }
 
-    @Override public String[] getAttributeNames()
+    @Override
+    public String[] getAttributeNames()
     {
         return new String[0];
     }
 
     // FIXME: We don't yet support MBean for this kind of stuff.
-    @Override public String[] getMethodNames()
+    @Override
+    public String[] getMethodNames()
     {
         return new String[0];
     }
 
-
-
-    @Override public String doPost( final WikiContext context)
-    {
+    @Override
+    public String doPost( final WikiContext context ) {
         final HttpServletRequest request = context.getHttpRequest();
-        final WikiSession session = context.getWikiSession();
+        final Session session = context.getWikiSession();
         final UserManager mgr = context.getEngine().getManager( UserManager.class );
 
         final String loginid   = request.getParameter("loginid");
@@ -66,66 +65,49 @@ public class UserBean extends SimpleAdminBean
         final String password2 = request.getParameter("password2");
         final String email     = request.getParameter("email");
 
-
-        if( request.getParameter("action").equalsIgnoreCase("remove") )
-        {
-            try
-            {
-                mgr.getUserDatabase().deleteByLoginName(loginid);
-                session.addMessage("User profile "+loginid+" ("+fullname+") has been deleted");
-            }
-            catch ( final NoSuchPrincipalException e)
-            {
-                session.addMessage("User profile has already been removed");
-            }
-            catch ( final WikiSecurityException e)
-            {
-                session.addMessage("Security problem: "+e);
+        if( request.getParameter( "action" ).equalsIgnoreCase( "remove" ) ) {
+            try {
+                mgr.getUserDatabase().deleteByLoginName( loginid );
+                session.addMessage( "User profile " + loginid + " (" + fullname + ") has been deleted" );
+            } catch( final NoSuchPrincipalException e ) {
+                session.addMessage( "User profile has already been removed" );
+            } catch( final WikiSecurityException e ) {
+                session.addMessage( "Security problem: " + e );
             }
             return "";
         }
 
-
-        if( password != null && password.length() > 0 && !password.equals(password2) )
-        {
-            session.addMessage("Passwords do not match!");
+        if( password != null && password.length() > 0 && !password.equals( password2 ) ) {
+            session.addMessage( "Passwords do not match!" );
             return "";
         }
 
         final UserProfile p;
 
-        if( loginid.equals("--New--") )
-        {
+        if( loginid.equals( "--New--" ) ) {
             // Create new user
 
             p = mgr.getUserDatabase().newProfile();
             p.setCreated( new Date() );
-        }
-        else
-        {
-            try
-            {
+        } else {
+            try {
                 p = mgr.getUserDatabase().findByLoginName( loginid );
-            }
-            catch ( final NoSuchPrincipalException e)
-            {
-                session.addMessage("I could not find user profile "+loginid);
+            } catch( final NoSuchPrincipalException e ) {
+                session.addMessage( "I could not find user profile " + loginid );
                 return "";
             }
         }
 
-        p.setEmail(email);
-        p.setFullname(fullname);
-        if( password != null && password.length() > 0 ) p.setPassword(password);
-        p.setLoginName(loginname);
+        p.setEmail( email );
+        p.setFullname( fullname );
+        if( password != null && password.length() > 0 )
+            p.setPassword( password );
+        p.setLoginName( loginname );
 
-        try
-        {
+        try {
             mgr.getUserDatabase().save( p );
-        }
-        catch( final WikiSecurityException e )
-        {
-            session.addMessage("Unable to save "+e.getMessage());
+        } catch( final WikiSecurityException e ) {
+            session.addMessage( "Unable to save " + e.getMessage() );
         }
 
         session.addMessage("User profile has been updated");
@@ -133,13 +115,13 @@ public class UserBean extends SimpleAdminBean
         return "";
     }
 
-    @Override public String getTitle()
-    {
+    @Override
+    public String getTitle() {
         return "User administration";
     }
 
-    @Override public int getType()
-    {
+    @Override
+    public int getType() {
         return AdminBean.UNKNOWN;
     }
 

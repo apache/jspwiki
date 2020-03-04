@@ -18,54 +18,46 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.exceptions.WikiException;
+
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.WikiSession;
-
 /**
- * Keeps a queue of pending Decisions that need to be acted on by named
- * Principals.
+ * Keeps a queue of pending Decisions that need to be acted on by named Principals.
  *
  * @since 2.5
  */
-public class DecisionQueue implements Serializable
-{
+public class DecisionQueue implements Serializable {
+
     private static final long serialVersionUID = -7172912793410302533L;
 
-    private LinkedList<Decision> m_queue = new LinkedList<Decision>();
+    private LinkedList< Decision > m_queue = new LinkedList<>();
 
     private volatile int m_next;
 
-    /**
-     * Constructs a new DecisionQueue.
-     */
-    public DecisionQueue()
-    {
+    /** Constructs a new DecisionQueue. */
+    public DecisionQueue() {
         m_next = 1000;
     }
 
     /**
-     * Adds a Decision to the DecisionQueue; also sets the Decision's unique
-     * identifier.
+     * Adds a Decision to the DecisionQueue; also sets the Decision's unique identifier.
      *
-     * @param decision
-     *            the Decision to add
+     * @param decision the Decision to add
      */
-    protected synchronized void add( Decision decision )
-    {
+    protected synchronized void add( final Decision decision ) {
         m_queue.addLast( decision );
         decision.setId( nextId() );
     }
 
     /**
-     * Protected method that returns all pending Decisions in the queue, in
-     * order of submission. If no Decisions are pending, this method returns a
-     * zero-length array.
+     * Protected method that returns all pending Decisions in the queue, in  order of submission. If no Decisions are pending, this
+     * method returns a zero-length array.
      *
      * @return the pending decisions 
      */
@@ -76,46 +68,37 @@ public class DecisionQueue implements Serializable
 
     /**
      * Protected method that removes a Decision from the queue.
+     *
      * @param decision the decision to remove
      */
-    protected synchronized void remove(Decision decision)
+    protected synchronized void remove( final Decision decision )
     {
         m_queue.remove( decision );
     }
 
     /**
-     * Returns a Collection representing the current Decisions that pertain to a
-     * users's WikiSession. The Decisions are obtained by iterating through the
-     * WikiSession's Principals and selecting those Decisions whose
-     * {@link Decision#getActor()} value match. If the wiki session is not
-     * authenticated, this method returns an empty Collection.
+     * Returns a Collection representing the current Decisions that pertain to a users's Session. The Decisions are obtained by iterating
+     * through the Session's Principals and selecting those Decisions whose {@link Decision#getActor()} value match. If the session
+     * is not authenticated, this method returns an empty Collection.
      *
-     * @param session
-     *            the wiki session
+     * @param session the wiki session
      * @return the collection of Decisions, which may be empty
      */
-    public Collection<Decision> getActorDecisions(WikiSession session)
-    {
-        ArrayList<Decision> decisions = new ArrayList<>();
-        if ( session.isAuthenticated() )
-        {
-            Principal[] principals = session.getPrincipals();
-            Principal[] rolePrincipals = session.getRoles();
-            for ( Decision decision : m_queue )
-            {
+    public Collection<Decision> getActorDecisions( final Session session ) {
+        final ArrayList< Decision > decisions = new ArrayList<>();
+        if( session.isAuthenticated() ) {
+            final Principal[] principals = session.getPrincipals();
+            final Principal[] rolePrincipals = session.getRoles();
+            for( final Decision decision : m_queue ) {
                 // Iterate through the Principal set
-                for ( Principal principal : principals )
-                {
-                    if ( principal.equals( decision.getActor() ) )
-                    {
+                for( final Principal principal : principals ) {
+                    if( principal.equals( decision.getActor() ) ) {
                         decisions.add( decision );
                     }
                 }
                 // Iterate through the Role set
-                for ( Principal principal : rolePrincipals )
-                {
-                    if ( principal.equals( decision.getActor() ) )
-                    {
+                for( final Principal principal : rolePrincipals ) {
+                    if( principal.equals( decision.getActor() ) ) {
                         decisions.add( decision );
                     }
                 }
@@ -125,41 +108,32 @@ public class DecisionQueue implements Serializable
     }
 
     /**
-     * Attempts to complete a Decision by calling
-     * {@link Decision#decide(Outcome)}. This will cause the Step immediately
-     * following the Decision (if any) to start. If the decision completes
-     * successfully, this method also removes the completed decision from the
+     * Attempts to complete a Decision by calling {@link Decision#decide(Outcome)}. This will cause the Step immediately following the
+     * Decision (if any) to start. If the decision completes successfully, this method also removes the completed decision from the
      * queue.
      *
      * @param decision the Decision for which the Outcome will be supplied
      * @param outcome the Outcome of the Decision
-     * @throws WikiException if the succeeding Step cannot start
-     * for any reason
+     * @throws WikiException if the succeeding Step cannot start for any reason
      */
-    public void decide( Decision decision, Outcome outcome ) throws WikiException
-    {
+    public void decide( final Decision decision, final Outcome outcome ) throws WikiException {
         decision.decide( outcome );
-        if ( decision.isCompleted() )
-        {
+        if ( decision.isCompleted() ) {
             remove( decision );
         }
 
-        // TODO: We should fire an event indicating the Outcome, and whether the
-        // Decision completed successfully
+        // TODO: We should fire an event indicating the Outcome, and whether the Decision completed successfully
     }
 
     /**
-     * Reassigns the owner of the Decision to a new owner. Under the covers,
-     * this method calls {@link Decision#reassign(Principal)}.
+     * Reassigns the owner of the Decision to a new owner. Under the covers, this method calls {@link Decision#reassign(Principal)}.
      *
      * @param decision the Decision to reassign
      * @param owner the new owner
      * @throws WikiException never
      */
-    public synchronized void reassign(Decision decision, Principal owner) throws WikiException
-    {
-        if (decision.isReassignable())
-        {
+    public synchronized void reassign( final Decision decision, final Principal owner ) throws WikiException {
+        if( decision.isReassignable() ) {
             decision.reassign( owner );
 
             // TODO: We should fire an event indicating the reassignment
@@ -169,14 +143,12 @@ public class DecisionQueue implements Serializable
     }
 
     /**
-     * Returns the next available unique identifier, which is subsequently
-     * incremented.
+     * Returns the next available unique identifier, which is subsequently incremented.
      *
      * @return the id
      */
-    private synchronized int nextId()
-    {
-        int current = m_next;
+    private synchronized int nextId() {
+        final int current = m_next;
         m_next++;
         return current;
     }

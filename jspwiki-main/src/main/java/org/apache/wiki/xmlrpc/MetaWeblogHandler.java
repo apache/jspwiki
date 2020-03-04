@@ -61,7 +61,8 @@ public class MetaWeblogHandler implements WikiRPCHandler {
     /**
      *  {@inheritDoc}
      */
-    @Override public void initialize( final WikiContext context )
+    @Override
+    public void initialize( final WikiContext context )
     {
         m_context = context;
     }

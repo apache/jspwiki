@@ -24,6 +24,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -318,7 +319,7 @@ public class RSSGenerator {
 
         final Set< WikiPage > changed = m_engine.getManager( PageManager.class ).getRecentChanges();
 
-        final WikiSession session = WikiSession.guestSession( m_engine );
+        final Session session = WikiSession.guestSession( m_engine );
         int items = 0;
         for( final Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
             final WikiPage page = i.next();

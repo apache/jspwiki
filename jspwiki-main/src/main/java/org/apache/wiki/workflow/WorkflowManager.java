@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.workflow;
 
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
 
@@ -139,12 +139,12 @@ public interface WorkflowManager extends WikiEventListener {
 
     /**
      * Returns the current workflows a wiki session owns. These are workflows whose {@link Workflow#getOwner()} method returns a Principal
-     * also possessed by the wiki session (see {@link org.apache.wiki.WikiSession#getPrincipals()}). If the wiki session is not
+     * also possessed by the wiki session (see {@link org.apache.wiki.api.core.Session#getPrincipals()}). If the wiki session is not
      * authenticated, this method returns an empty Collection.
      *
      * @param session the wiki session
      * @return the collection workflows the wiki session owns, which may be empty
      */
-    List< Workflow > getOwnerWorkflows( WikiSession session );
+    List< Workflow > getOwnerWorkflows( Session session );
 
 }

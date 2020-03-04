@@ -23,7 +23,7 @@ import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
-import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.attachment.AttachmentManager;
@@ -373,7 +373,7 @@ public class DefaultVariableManager implements VariableManager {
         }
 
         public String getLoginstatus() {
-            final WikiSession session = m_context.getWikiSession();
+            final Session session = m_context.getWikiSession();
             return Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE ).getString( "varmgr." + session.getStatus() );
         }
 

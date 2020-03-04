@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.workflow;
 
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
@@ -187,7 +187,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
      * {@inheritDoc}
      */
     @Override
-    public List< Workflow > getOwnerWorkflows( final WikiSession session ) {
+    public List< Workflow > getOwnerWorkflows( final Session session ) {
         final List< Workflow > workflows = new ArrayList<>();
         if ( session.isAuthenticated() ) {
             final Principal[] sessionPrincipals = session.getPrincipals();

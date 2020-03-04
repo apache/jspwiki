@@ -20,6 +20,7 @@ package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
@@ -47,7 +48,7 @@ public class UserNameTag extends WikiTagBase {
 
     @Override public final int doWikiStartTag() throws IOException {
         final Engine engine = m_wikiContext.getEngine();
-        final WikiSession wikiSession = WikiSession.getWikiSession(engine, (HttpServletRequest) pageContext.getRequest());
+        final Session wikiSession = WikiSession.getWikiSession(engine, (HttpServletRequest) pageContext.getRequest());
         final Principal user = wikiSession.getUserPrincipal();
 
         if( user != null ) {
