@@ -17,10 +17,11 @@
     under the License.
  */
 package org.apache.wiki.auth.authorize;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -45,12 +46,12 @@ public class GroupManagerTest
 
     private SecurityEventTrap m_trap = new SecurityEventTrap();
 
-    private WikiSession       m_session;
+    private Session m_session;
 
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
 
         m_engine = new TestEngine( props );
         m_groupMgr = m_engine.getGroupManager();
@@ -63,7 +64,7 @@ public class GroupManagerTest
             m_groupMgr.removeGroup( "Test2" );
             m_groupMgr.removeGroup( "Test3" );
         }
-        catch ( NoSuchPrincipalException e )
+        catch ( final NoSuchPrincipalException e )
         {
             // It's not a problem if we can't find the principals...
         }
@@ -112,7 +113,7 @@ public class GroupManagerTest
     @Test
     public void testGetRoles()
     {
-        Principal[] roles = m_groupMgr.getRoles();
+        final Principal[] roles = m_groupMgr.getRoles();
         Assertions.assertTrue( ArrayUtils.contains( roles, new GroupPrincipal( "Test" ) ), "Found Test" );
         Assertions.assertTrue( ArrayUtils.contains( roles, new GroupPrincipal( "Test2" ) ), "Found Test2" );
         Assertions.assertTrue( ArrayUtils.contains( roles, new GroupPrincipal( "Test3" ) ), "Found Test3" );
@@ -121,10 +122,8 @@ public class GroupManagerTest
     @Test
     public void testGroupMembership() throws Exception
     {
-        WikiSession s;
-
         // Anonymous; should belong to NO groups
-        s = WikiSessionTest.anonymousSession( m_engine );
+        Session s = WikiSessionTest.anonymousSession( m_engine );
         Assertions.assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test" ) ) );
         Assertions.assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test2" ) ) );
         Assertions.assertFalse( m_groupMgr.isUserInRole( s, new GroupPrincipal( "Test3" ) ) );
@@ -181,7 +180,7 @@ public class GroupManagerTest
         {
             m_groupMgr.removeGroup( "Events" );
         }
-        catch ( NoSuchPrincipalException e )
+        catch ( final NoSuchPrincipalException e )
         {
             // It's not a problem if we get here...
         }
@@ -189,14 +188,14 @@ public class GroupManagerTest
 
         Group group = m_groupMgr.parseGroup( "Events", "", true );
         m_groupMgr.setGroup( m_session, group );
-        WikiSecurityEvent event;
+        final WikiSecurityEvent event;
         group = m_groupMgr.getGroup( "Events" );
         group.add( new WikiPrincipal( "Alice" ) );
         group.add( new WikiPrincipal( "Bob" ) );
         group.add( new WikiPrincipal( "Charlie" ) );
 
         // We should see a GROUP_ADD event
-        WikiSecurityEvent[] events = m_trap.events();
+        final WikiSecurityEvent[] events = m_trap.events();
         Assertions.assertEquals( 1, events.length );
         event = events[0];
         Assertions.assertEquals( m_groupMgr, event.getSrc() );

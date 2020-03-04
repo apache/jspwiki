@@ -18,21 +18,18 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.auth.GroupPrincipal;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-
 import org.junit.jupiter.api.Test;
 
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Properties;
-
-import org.junit.jupiter.api.Assertions;
-
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiSession;
-import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.auth.GroupPrincipal;
-import org.apache.wiki.auth.WikiPrincipal;
 
 public class DecisionQueueTest
 {
@@ -49,15 +46,15 @@ public class DecisionQueueTest
 
     Decision d3;
 
-    WikiSession janneSession;
+    Session janneSession;
 
-    WikiSession adminSession;
+    Session adminSession;
 
     @BeforeEach
     public void setUp() throws Exception
     {
 
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine(props);
         m_queue = m_engine.getWorkflowManager().getDecisionQueue();
         adminSession = m_engine.adminSession();
@@ -75,7 +72,7 @@ public class DecisionQueueTest
     @Test
     public void testAdd()
     {
-        Decision[] decisions = m_queue.decisions();
+        final Decision[] decisions = m_queue.decisions();
         Assertions.assertEquals(d1, decisions[0]);
         Assertions.assertEquals(d2, decisions[1]);
         Assertions.assertEquals(d3, decisions[2]);
@@ -142,7 +139,7 @@ public class DecisionQueueTest
     @Test
     public void testDecisions()
     {
-        Decision[] decisions = m_queue.decisions();
+        final Decision[] decisions = m_queue.decisions();
         Assertions.assertEquals(3, decisions.length);
         Assertions.assertEquals(d1, decisions[0]);
         Assertions.assertEquals(d2, decisions[1]);
@@ -162,7 +159,7 @@ public class DecisionQueueTest
     @Test
     public void testDecisionWorkflow() throws WikiException
     {
-        Principal janne = janneSession.getUserPrincipal();
+        final Principal janne = janneSession.getUserPrincipal();
 
         // Clean out the queue first
         m_queue.remove(d1);
@@ -172,9 +169,9 @@ public class DecisionQueueTest
         // Create a workflow with 3 steps, with a Decision for Janne in the middle
         w = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
         w.setWorkflowManager(m_engine.getWorkflowManager());
-        Step startTask = new TaskTest.NormalTask(w);
-        Step endTask = new TaskTest.NormalTask(w);
-        Decision decision = new SimpleDecision(w, "decision.Actor1Decision", janne);
+        final Step startTask = new TaskTest.NormalTask(w);
+        final Step endTask = new TaskTest.NormalTask(w);
+        final Decision decision = new SimpleDecision(w, "decision.Actor1Decision", janne);
         startTask.addSuccessor(Outcome.STEP_COMPLETE, decision);
         decision.addSuccessor(Outcome.DECISION_APPROVE, endTask);
         w.setFirstStep(startTask);
@@ -186,7 +183,7 @@ public class DecisionQueueTest
         // Verify that it's also in Janne's DecisionQueue
         Collection< Decision > decisions = m_queue.getActorDecisions(janneSession);
         Assertions.assertEquals(1, decisions.size());
-        Decision d = (Decision)decisions.iterator().next();
+        final Decision d = (Decision)decisions.iterator().next();
         Assertions.assertEquals(decision, d);
 
         // Make Decision, and verify that it's gone from the queue

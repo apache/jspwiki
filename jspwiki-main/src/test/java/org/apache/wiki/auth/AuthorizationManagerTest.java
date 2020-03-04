@@ -21,8 +21,8 @@ package org.apache.wiki.auth;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
@@ -56,7 +56,7 @@ public class AuthorizationManagerTest
 
     private GroupManager         m_groupMgr;
 
-    private WikiSession          m_session;
+    private Session m_session;
 
     private static class TestPrincipal implements Principal
     {
@@ -102,10 +102,8 @@ public class AuthorizationManagerTest
         m_engine.saveText( "TestDefaultPage", "Foo" );
         final Permission view = PermissionFactory.getPagePermission( "*:TestDefaultPage", "view" );
         final Permission edit = PermissionFactory.getPagePermission( "*:TestDefaultPage", "edit" );
-        WikiSession session;
-
         // Alice is asserted
-        session = WikiSessionTest.assertedSession( m_engine, Users.ALICE );
+        Session session = WikiSessionTest.assertedSession( m_engine, Users.ALICE );
         Assertions.assertTrue( m_auth.checkPermission( session, view ), "Alice view" );
         Assertions.assertTrue( m_auth.checkPermission( session, edit ), "Alice edit" );
 
@@ -115,24 +113,19 @@ public class AuthorizationManagerTest
         Assertions.assertTrue( m_auth.checkPermission( session, edit ), "Bob edit" );
 
         // Delete the test page
-        try
-        {
+        try {
             m_engine.getManager( PageManager.class ).deletePage( "TestDefaultPage" );
-        }
-        catch( final ProviderException e )
-        {
+        } catch( final ProviderException e ) {
             Assertions.fail( e.getMessage() );
         }
     }
 
     @Test
-    public void testGetRoles() throws Exception
-    {
-        WikiSession session;
+    public void testGetRoles() throws Exception {
         Principal[] principals;
 
         // Create a new "asserted" session for Bob
-        session = WikiSessionTest.assertedSession( m_engine, Users.BOB );
+        Session session = WikiSessionTest.assertedSession( m_engine, Users.BOB );
 
         // Set up a group without Bob in it
         Group test = m_groupMgr.parseGroup( "Test", "Alice \n Charlie", true );
@@ -181,10 +174,7 @@ public class AuthorizationManagerTest
         final Role engineering = new Role( "Engineering" );
         final Role finance = new Role( "Finance" );
         final Principal admin = new GroupPrincipal( "Admin" );
-        final WikiSession session = WikiSessionTest.assertedSession(
-                m_engine,
-                Users.ALICE,
-                new Principal[] { it, engineering, admin } );
+        final Session session = WikiSessionTest.assertedSession( m_engine, Users.ALICE, new Principal[] { it, engineering, admin } );
 
         // Create two groups: Alice should be part of group Bar, but not Foo
         final Group fooGroup = m_groupMgr.parseGroup( "Foo", "", true );
@@ -229,10 +219,7 @@ public class AuthorizationManagerTest
         final Role engineering = new Role( "Engineering" );
         final Role finance = new Role( "Finance" );
         final Principal admin = new GroupPrincipal( "Admin" );
-        final WikiSession session = WikiSessionTest.containerAuthenticatedSession(
-                m_engine,
-                Users.ALICE,
-                new Principal[] { it, engineering, admin } );
+        final Session session = WikiSessionTest.containerAuthenticatedSession( m_engine, Users.ALICE, new Principal[] { it, engineering, admin } );
 
         // Create two groups: Alice should be part of group Bar, but not Foo
         final Group fooGroup = m_groupMgr.parseGroup( "Foo", "", true );
@@ -285,8 +272,7 @@ public class AuthorizationManagerTest
         final Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
         // Create authenticated session with user 'Alice', who can read & edit (in ACL)
-        WikiSession session;
-        session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
+        Session session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
         Assertions.assertTrue( m_auth.checkPermission( session, view ), "Alice view Test/test1.txt" );
         Assertions.assertTrue( m_auth.checkPermission( session, edit ), "Alice view Test/test1.txt" );
 
@@ -317,8 +303,7 @@ public class AuthorizationManagerTest
         final Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
         // Create session with user 'Alice', who can read (in ACL)
-        WikiSession session;
-        session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
+        Session session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
         Assertions.assertTrue( m_auth.checkPermission( session, view ), "Foo view Test" );
         Assertions.assertFalse( m_auth.checkPermission( session, edit ),"Foo !edit Test" );
 
@@ -341,7 +326,7 @@ public class AuthorizationManagerTest
         final Role finance = new Role( "Finance" );
 
         // Create Group1 with Alice in it, Group2 without
-        WikiSession session = WikiSessionTest.adminSession( m_engine );
+        Session session = WikiSessionTest.adminSession( m_engine );
         final Group g1 = m_groupMgr.parseGroup( "Group1", "Alice", true );
         m_groupMgr.setGroup( session, g1 );
         final Principal group1 = g1.getPrincipal();
@@ -398,7 +383,7 @@ public class AuthorizationManagerTest
         final Role finance = new Role( "Finance" );
 
         // Create Group1 with Alice in it, Group2 without
-        WikiSession session = WikiSessionTest.adminSession( m_engine );
+        Session session = WikiSessionTest.adminSession( m_engine );
         final Group g1 = m_groupMgr.parseGroup( "Group1", "Alice", true );
         m_groupMgr.setGroup( session, g1 );
         final Principal group1 = g1.getPrincipal();
@@ -458,8 +443,7 @@ public class AuthorizationManagerTest
         final Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
         // Create session with authenticated user 'Alice', who can read & edit (in ACL)
-        WikiSession session;
-        session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
+        Session session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
         Assertions.assertTrue( m_auth.checkPermission( session, view ), "Alice view Test" );
         Assertions.assertTrue( m_auth.checkPermission( session, edit ), "Alice edit Test" );
 
@@ -580,8 +564,7 @@ public class AuthorizationManagerTest
         final Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
         // Create session with authenticated user 'Alice', who can read & edit
-        WikiSession session;
-        session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
+        Session session = WikiSessionTest.authenticatedSession( m_engine, Users.ALICE, Users.ALICE_PASS );
         Assertions.assertTrue( m_auth.checkPermission( session, view ), "Alice view Test" );
         Assertions.assertTrue( m_auth.checkPermission( session, edit ), "Alice edit Test" );
 
@@ -591,20 +574,16 @@ public class AuthorizationManagerTest
         Assertions.assertFalse( m_auth.checkPermission( session, edit ), "Bob !edit Test" );
 
         // Cleanup
-        try
-        {
+        try {
             m_engine.getManager( PageManager.class ).deletePage( "Test" );
-        }
-        catch( final ProviderException e )
-        {
+        } catch( final ProviderException e ) {
             Assertions.fail( e.getMessage() );
         }
     }
 
     @Test
-    public void testStaticPermission() throws Exception
-    {
-        WikiSession s = WikiSessionTest.anonymousSession( m_engine );
+    public void testStaticPermission() throws Exception {
+        Session s = WikiSessionTest.anonymousSession( m_engine );
         Assertions.assertTrue( m_auth.checkStaticPermission( s, PagePermission.VIEW ), "Anonymous view" );
         Assertions.assertTrue( m_auth.checkStaticPermission( s, PagePermission.EDIT ), "Anonymous edit" );
         Assertions.assertTrue( m_auth.checkStaticPermission( s, PagePermission.COMMENT ), "Anonymous comment" );
@@ -660,27 +639,20 @@ public class AuthorizationManagerTest
     }
 
     @Test
-    public void testAdminView()
-       throws Exception
-    {
+    public void testAdminView() throws Exception {
         m_engine.saveText( "TestDefaultPage", "Foo [{ALLOW view FooBar}]" );
 
         final Principal admin = new GroupPrincipal( "Admin" );
-        final WikiSession session = WikiSessionTest.containerAuthenticatedSession(
-                m_engine,
-                Users.ALICE,
-                new Principal[] { admin } );
+        final Session session = WikiSessionTest.containerAuthenticatedSession( m_engine, Users.ALICE, new Principal[] { admin } );
 
         Assertions.assertTrue( m_auth.checkPermission( session, new AllPermission( m_engine.getApplicationName() ) ), "Alice has AllPermission" );
         Assertions.assertTrue( m_auth.checkPermission( session, new PagePermission("TestDefaultPage","view") ), "Alice cannot read" );
     }
 
     @Test
-    public void testAdminView2() throws Exception
-    {
+    public void testAdminView2() throws Exception {
         m_engine.saveText( "TestDefaultPage", "Foo [{ALLOW view FooBar}]" );
-
-        final WikiSession session = WikiSessionTest.adminSession(m_engine);
+        final Session session = WikiSessionTest.adminSession(m_engine);
 
         Assertions.assertTrue( m_auth.checkPermission( session, new AllPermission( m_engine.getApplicationName() ) ), "Alice has AllPermission" );
         Assertions.assertTrue( m_auth.checkPermission( session, new PagePermission("TestDefaultPage","view") ),"Alice cannot read" );
@@ -700,7 +672,7 @@ public class AuthorizationManagerTest
         m_groupMgr = m_engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( m_engine );
 
-        WikiSession s = WikiSessionTest.anonymousSession( m_engine );
+        Session s = WikiSessionTest.anonymousSession( m_engine );
         Assertions.assertFalse( m_auth.checkStaticPermission( s, PagePermission.VIEW ), "Anonymous view" );
         Assertions.assertFalse( m_auth.checkStaticPermission( s, PagePermission.EDIT ), "Anonymous edit" );
         Assertions.assertFalse( m_auth.checkStaticPermission( s, PagePermission.COMMENT ), "Anonymous comment" );

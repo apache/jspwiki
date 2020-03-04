@@ -21,8 +21,8 @@ package org.apache.wiki.auth;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
@@ -107,7 +107,7 @@ public class UserManagerTest {
         final int oldPageCount = pageManager.getTotalPageCount();
 
         // Setup Step 1: create a new user with random name
-        final WikiSession session = m_engine.guestSession();
+        final Session session = m_engine.guestSession();
         final long now = System.currentTimeMillis();
         final String oldLogin = "TestLogin" + now;
         final String oldName = "Test User " + now;
@@ -151,7 +151,7 @@ public class UserManagerTest {
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
         Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newName ) ) );
         Assertions.assertTrue( authManager.checkPermission( session, PermissionFactory.getPagePermission( p, "view" ) ), "Test User view page" );
-        final WikiSession bobSession = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+        final Session bobSession = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
         Assertions.assertFalse( authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ), "Bob !view page" );
 
         // Setup Step 4: change the user name in the profile and see what happens
@@ -269,7 +269,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final WikiSession session = m_engine.guestSession();
+        final Session session = m_engine.guestSession();
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
@@ -296,7 +296,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final WikiSession session = m_engine.guestSession();
+        final Session session = m_engine.guestSession();
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
@@ -347,7 +347,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final WikiSession session = m_engine.guestSession();
+        final Session session = m_engine.guestSession();
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
@@ -392,7 +392,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final WikiSession session = m_engine.guestSession();
+        final Session session = m_engine.guestSession();
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );

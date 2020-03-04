@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.auth;
 
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.authorize.WebAuthorizer;
 
@@ -47,19 +47,22 @@ public class TestAuthorizer implements WebAuthorizer {
         super();
     }
 
-    @Override public Principal findRole( final String role )
+    @Override
+    public Principal findRole( final String role )
     {
         return null;
     }
 
-    @Override public void initialize( final Engine engine, final Properties props ) {
+    @Override
+    public void initialize( final Engine engine, final Properties props ) {
     }
 
     /**
      * Returns an array of Principal objects containing five elements: Role "Admin", Role.AUTHENTICATED, Role "IT", Role "Finance" and
      * Role "Engineering."
      */
-    @Override public Principal[] getRoles()
+    @Override
+    public Principal[] getRoles()
     {
         return m_roles;
     }
@@ -67,7 +70,8 @@ public class TestAuthorizer implements WebAuthorizer {
     /**
      * Returns <code>true</code> if the WikiSession's Subject contains a particular role principal.
      */
-    @Override public boolean isUserInRole( final WikiSession session, final Principal role ) {
+    @Override
+    public boolean isUserInRole( final Session session, final Principal role ) {
         if ( session == null || role == null ) {
             return false;
         }

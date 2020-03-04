@@ -23,6 +23,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.pages.PageManager;
@@ -47,15 +48,10 @@ public class IfPluginTest {
      * @return {@link WikiContext} associated to given {@link WikiPage}.
      * @throws WikiException problems while logging in.
      */
-    WikiContext getJanneBasedWikiContextFor( final WikiPage page ) throws WikiException
-    {
+    WikiContext getJanneBasedWikiContextFor( final WikiPage page ) throws WikiException {
         final MockHttpServletRequest request = testEngine.newHttpRequest();
-        final WikiSession session =  WikiSession.getWikiSession( testEngine, request );
-        testEngine.getAuthenticationManager().login( session,
-                                                     request,
-                                                     Users.JANNE,
-                                                     Users.JANNE_PASS );
-
+        final Session session =  WikiSession.getWikiSession( testEngine, request );
+        testEngine.getAuthenticationManager().login( session, request, Users.JANNE, Users.JANNE_PASS );
         return new WikiContext( testEngine, request, page );
     }
 
@@ -67,9 +63,7 @@ public class IfPluginTest {
     @Test
     public void testIfPluginUserAllowed() throws WikiException
     {
-        final String src = "[{IfPlugin user='Janne Jalkanen'\n" +
-        		     "\n" +
-        		     "Content visible for Janne Jalkanen}]";
+        final String src = "[{IfPlugin user='Janne Jalkanen'\n\nContent visible for Janne Jalkanen}]";
         final String expected = "<p>Content visible for Janne Jalkanen</p>\n";
 
         testEngine.saveText( "Test", src );
@@ -88,9 +82,7 @@ public class IfPluginTest {
     @Test
     public void testIfPluginUserNotAllowed() throws WikiException
     {
-        final String src = "[{IfPlugin user='!Janne Jalkanen'\n" +
-                     "\n" +
-                     "Content NOT visible for Janne Jalkanen}]";
+        final String src = "[{IfPlugin user='!Janne Jalkanen'\n\nContent NOT visible for Janne Jalkanen}]";
         final String expected = "\n";
 
         testEngine.saveText( "Test", src );
@@ -108,9 +100,7 @@ public class IfPluginTest {
      */
     @Test
     public void testIfPluginIPAllowed() throws WikiException {
-        final String src = "[{IfPlugin ip='127.0.0.1'\n" +
-                     "\n" +
-                     "Content visible for 127.0.0.1}]";
+        final String src = "[{IfPlugin ip='127.0.0.1'\n\nContent visible for 127.0.0.1}]";
         final String expected = "<p>Content visible for 127.0.0.1</p>\n";
 
         testEngine.saveText( "Test", src );
@@ -128,9 +118,7 @@ public class IfPluginTest {
      */
     @Test
     public void testIfPluginIPNotAllowed() throws WikiException {
-        final String src = "[{IfPlugin ip='!127.0.0.1'\n" +
-                     "\n" +
-                     "Content NOT visible for 127.0.0.1}]";
+        final String src = "[{IfPlugin ip='!127.0.0.1'\n\nContent NOT visible for 127.0.0.1}]";
         final String expected = "\n";
 
         testEngine.saveText( "Test", src );

@@ -24,6 +24,7 @@ import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockServletContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
@@ -57,9 +58,9 @@ public class TestEngine extends WikiEngine
 {
     static Logger log = Logger.getLogger( TestEngine.class );
 
-    private WikiSession m_adminWikiSession = null;
-    private WikiSession m_janneWikiSession = null;
-    private WikiSession m_guestWikiSession = null;
+    private Session m_adminWikiSession = null;
+    private Session m_janneWikiSession = null;
+    private Session m_guestWikiSession = null;
 
     // combined properties file (jspwiki.properties + custom override, if any)
     private static Properties combinedProperties = null;
@@ -70,12 +71,12 @@ public class TestEngine extends WikiEngine
      * @return the wiki session
      * @throws WikiSecurityException
      */
-    public WikiSession adminSession() throws WikiSecurityException
+    public Session adminSession() throws WikiSecurityException
     {
         if ( m_adminWikiSession == null )
         {
             // Set up long-running admin session
-            HttpServletRequest request = newHttpRequest();
+            final HttpServletRequest request = newHttpRequest();
             m_adminWikiSession = WikiSession.getWikiSession( this, request );
             this.getAuthenticationManager().login( m_adminWikiSession, request,
                                                    Users.ADMIN,
@@ -89,12 +90,12 @@ public class TestEngine extends WikiEngine
      * For testing purposes, obviously.
      * @return the wiki session
      */
-    public WikiSession guestSession()
+    public Session guestSession()
     {
         if ( m_guestWikiSession == null )
         {
             // Set up guest session
-            HttpServletRequest request = newHttpRequest();
+            final HttpServletRequest request = newHttpRequest();
             m_guestWikiSession = WikiSession.getWikiSession( this, request );
         }
         return m_guestWikiSession;
@@ -106,12 +107,12 @@ public class TestEngine extends WikiEngine
      * @return the wiki session
      * @throws WikiSecurityException
      */
-    public WikiSession janneSession() throws WikiSecurityException
+    public Session janneSession() throws WikiSecurityException
     {
         if ( m_janneWikiSession == null )
         {
             // Set up a test Janne session
-            HttpServletRequest request = newHttpRequest();
+            final HttpServletRequest request = newHttpRequest();
             m_janneWikiSession = WikiSession.getWikiSession( this, request );
             this.getAuthenticationManager().login( m_janneWikiSession, request, Users.JANNE, Users.JANNE_PASS );
         }
@@ -134,11 +135,11 @@ public class TestEngine extends WikiEngine
         this( getTestProperties() );
     }
 
-    public TestEngine( Properties props ) throws WikiException {
+    public TestEngine( final Properties props ) throws WikiException {
         super( createServletContext( "test" ), "test", cleanTestProps( props ) );
 
         // Stash the WikiEngine in the servlet context
-        ServletContext servletContext = this.getServletContext();
+        final ServletContext servletContext = this.getServletContext();
         servletContext.setAttribute("org.apache.wiki.WikiEngine", this);
     }
 
@@ -172,8 +173,8 @@ public class TestEngine extends WikiEngine
      * @param path the path relative to the wiki context, for example "/Wiki.jsp"
      * @return the new request
      */
-    public MockHttpServletRequest newHttpRequest( String path ) {
-        MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path ) {
+    public MockHttpServletRequest newHttpRequest( final String path ) {
+        final MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path ) {
             @Override
             public ServletContext getServletContext() { // stripes mock returns null
                 return new MockServletContext( "/JSPWiki" ) {
@@ -198,9 +199,9 @@ public class TestEngine extends WikiEngine
             properties = getTestProperties();
         }
 
-        String workdir = properties.getProperty( WikiEngine.PROP_WORKDIR );
+        final String workdir = properties.getProperty( WikiEngine.PROP_WORKDIR );
         if ( workdir != null ) {
-            File f = new File( workdir );
+            final File f = new File( workdir );
 
             if (f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists()) {
                 // System.out.println( "Deleting " + f.getAbsolutePath() );
@@ -218,9 +219,9 @@ public class TestEngine extends WikiEngine
             properties = getTestProperties();
         }
 
-        String wikidir = properties.getProperty( AbstractFileProvider.PROP_PAGEDIR );
+        final String wikidir = properties.getProperty( AbstractFileProvider.PROP_PAGEDIR );
         if ( wikidir != null ) {
-            File f = new File( wikidir );
+            final File f = new File( wikidir );
 
             if (f.exists() && f.isDirectory()) {
                 deleteAll( f );
@@ -234,12 +235,12 @@ public class TestEngine extends WikiEngine
         }
         // better to make a copy via putAll instead of Properties(properties)
         // constructor, see http://stackoverflow.com/a/2004900
-        Properties propCopy = new Properties();
+        final Properties propCopy = new Properties();
         propCopy.putAll(combinedProperties);
         return propCopy;
     }
 
-    public static final Properties getTestProperties(String customPropFile) {
+    public static final Properties getTestProperties( final String customPropFile) {
         return PropertyReader.getCombinedProperties(customPropFile);
     }
 /*
@@ -260,17 +261,17 @@ public class TestEngine extends WikiEngine
     /**
      *  Deletes all files under this directory, and does them recursively.
      */
-    public static void deleteAll( File file )
+    public static void deleteAll( final File file )
     {
         if( file != null )
         {
             if( file.isDirectory() )
             {
-                File[] files = file.listFiles();
+                final File[] files = file.listFiles();
 
                 if( files != null )
                 {
-                    for (File file2 : files) {
+                    for ( final File file2 : files) {
                         if( file2.isDirectory() )
                         {
                             deleteAll(file2);

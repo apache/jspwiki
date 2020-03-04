@@ -23,6 +23,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.WikiSessionTest;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.Role;
@@ -56,18 +57,22 @@ public class AuthenticationManagerTest {
             return null;
         }
 
-        @Override public Principal[] getRoles() {
+        @Override
+        public Principal[] getRoles() {
             return m_roles;
         }
 
-        @Override public void initialize( final Engine engine, final Properties props ) throws WikiSecurityException {
+        @Override
+        public void initialize( final Engine engine, final Properties props ) throws WikiSecurityException {
         }
 
-        @Override public boolean isUserInRole( final HttpServletRequest request, final Principal role ) {
+        @Override
+        public boolean isUserInRole( final HttpServletRequest request, final Principal role ) {
             return request != null && "ContainerRole".equals( role.getName() );
         }
 
-        @Override public boolean isUserInRole( final WikiSession session, final Principal role ) {
+        @Override
+        public boolean isUserInRole( final Session session, final Principal role ) {
             return session != null && "AuthorizerRole".equals( role.getName() );
         }
     }
@@ -78,7 +83,7 @@ public class AuthenticationManagerTest {
 
     private GroupManager m_groupMgr;
 
-    private WikiSession m_session;
+    private Session m_session;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -101,7 +106,7 @@ public class AuthenticationManagerTest {
         m_engine = new TestEngine( props );
 
         // Start a session without any container roles: DummyAuthorizer should ALWAYS allow AuthorizerRole
-        WikiSession session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
+        Session session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
         Assertions.assertTrue( session.hasPrincipal( Role.ALL ) );
         Assertions.assertTrue( session.hasPrincipal( Role.AUTHENTICATED ) );
         Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( Users.JANNE, WikiPrincipal.LOGIN_NAME ) ) );
@@ -170,7 +175,7 @@ public class AuthenticationManagerTest {
 
     @Test
     public void testLoginCustom() throws Exception {
-        final WikiSession session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
+        final Session session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
         Assertions.assertTrue( session.hasPrincipal( Role.ALL ) );
         Assertions.assertTrue( session.hasPrincipal( Role.AUTHENTICATED ) );
         Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( Users.JANNE, WikiPrincipal.LOGIN_NAME ) ) );
@@ -190,7 +195,7 @@ public class AuthenticationManagerTest {
 
         // Log in 'janne' and verify there are 5 principals in the subject
         // (ALL, AUTHENTICATED, login, fullname, wikiname Principals)
-        final WikiSession session = WikiSession.guestSession( m_engine );
+        final Session session = WikiSession.guestSession( m_engine );
         m_auth.login( session, null, Users.JANNE, Users.JANNE_PASS );
         Assertions.assertEquals( 3, session.getPrincipals().length );
         Assertions.assertEquals( 2, session.getRoles().length );
