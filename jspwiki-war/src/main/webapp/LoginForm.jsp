@@ -19,6 +19,8 @@
 
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%!
@@ -34,7 +36,7 @@
 
 %>
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     // Retrieve the Login page context, then go and find the login form
 
     WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
@@ -46,7 +48,7 @@
     }
     
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
                                                             
     log.debug("Login template content is: " + contentPage);
     

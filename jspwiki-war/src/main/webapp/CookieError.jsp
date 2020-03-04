@@ -18,14 +18,16 @@
 --%>
 
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ taglib prefix="wiki" uri="http://jspwiki.apache.org/tags" %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context; authorization check not needed
     WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.VIEW );
  
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "CookieErrorTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "CookieErrorTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />

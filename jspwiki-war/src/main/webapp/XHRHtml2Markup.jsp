@@ -20,6 +20,8 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -29,12 +31,12 @@
     wiki = WikiEngine.getInstance( getServletConfig() );
   }
   //Logger log = Logger.getLogger("XHRHtml2Markup");
-  WikiEngine wiki;
+  Engine wiki;
 %>
 <%
   WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.VIEW );
 
-  if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+  if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
 
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );
   //response.setHeader( "Cache-control", "max-age=0" );

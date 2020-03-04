@@ -20,13 +20,17 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.util.HttpUtil" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
+<%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
 <%@ page import="org.apache.wiki.pages.PageLock" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -47,10 +51,10 @@
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.EDIT );
-    if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) {
+    if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) {
         return;
     }
     if( wikiContext.getCommand().getTarget() == null ) {
@@ -59,7 +63,7 @@
     }
     String pagereq = wikiContext.getName();
 
-    WikiSession wikiSession = wikiContext.getWikiSession();
+    Session wikiSession = wikiContext.getWikiSession();
     String user = wikiSession.getUserPrincipal().getName();
     String action  = request.getParameter("action");
     String ok      = request.getParameter("ok");
@@ -87,7 +91,7 @@
     }
 
     WikiPage wikipage = wikiContext.getPage();
-    WikiPage latestversion = wiki.getPageManager().getPage( pagereq );
+    WikiPage latestversion = wiki.getManager( PageManager.class ).getPage( pagereq );
 
     if( latestversion == null ) {
         latestversion = wikiContext.getPage();
@@ -140,8 +144,8 @@
         //
         //  We expire ALL locks at this moment, simply because someone has already broken it.
         //
-        PageLock lock = wiki.getPageManager().getCurrentLock( wikipage );
-        wiki.getPageManager().unlockPage( lock );
+        PageLock lock = wiki.getManager( PageManager.class ).getCurrentLock( wikipage );
+        wiki.getManager( PageManager.class ).unlockPage( lock );
         session.removeAttribute( "lock-"+pagereq );
 
         //
@@ -181,11 +185,11 @@
             }
 
             if( append != null ) {
-                StringBuffer pageText = new StringBuffer(wiki.getPageManager().getText( pagereq ));
+                StringBuffer pageText = new StringBuffer(wiki.getManager( PageManager.class ).getText( pagereq ));
                 pageText.append( text );
-                wiki.getPageManager().saveText( wikiContext, pageText.toString() );
+                wiki.getManager( PageManager.class ).saveText( wikiContext, pageText.toString() );
             } else {
-                wiki.getPageManager().saveText( wikiContext, text );
+                wiki.getManager( PageManager.class ).saveText( wikiContext, text );
             }
         } catch( DecisionRequiredException ex ) {
         	String redirect = wikiContext.getURL(WikiContext.VIEW,"ApprovalRequiredForPageChanges");
@@ -225,7 +229,7 @@
         log.debug("Cancelled editing "+pagereq);
         PageLock lock = (PageLock) session.getAttribute( "lock-"+pagereq );
         if( lock != null ) {
-            wiki.getPageManager().unlockPage( lock );
+            wiki.getManager( PageManager.class ).unlockPage( lock );
             session.removeAttribute( "lock-"+pagereq );
         }
         response.sendRedirect( wikiContext.getViewURL(pagereq) );
@@ -249,11 +253,11 @@
     //
     //  Attempt to lock the page.
     //
-    PageLock lock = wiki.getPageManager().lockPage( wikipage, user );
+    PageLock lock = wiki.getManager( PageManager.class ).lockPage( wikipage, user );
     if( lock != null ) {
         session.setAttribute( "lock-"+pagereq, lock );
     }
 
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "EditTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "EditTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" />

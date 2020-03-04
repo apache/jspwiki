@@ -19,14 +19,17 @@
 
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.WikiContext" %>
-<%@ page import="org.apache.wiki.WikiSession" %>
 <%@ page import="org.apache.wiki.WikiEngine" %>
+<%@ page import="org.apache.wiki.api.core.Engine" %>
+<%@ page import="org.apache.wiki.api.core.Session" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.auth.UserManager" %>
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
 <%@ page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="org.apache.wiki.auth.user.DuplicateUserException" %>
 <%@ page import="org.apache.wiki.auth.user.UserProfile" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
@@ -40,14 +43,14 @@
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.PREFS );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     
     // Extract the user profile and action attributes
-    UserManager userMgr = wiki.getUserManager();
-    WikiSession wikiSession = wikiContext.getWikiSession();
+    UserManager userMgr = wiki.getManager( UserManager.class );
+    Session wikiSession = wikiContext.getWikiSession();
 
 /* FIXME: Obsolete
     if( request.getParameter(EditorManager.PARA_EDITOR) != null )
@@ -76,7 +79,7 @@
             catch( DuplicateUserException due )
             {
                 // User collision! (full name or wiki name already taken)
-                wikiSession.addMessage( "profile", wiki.getInternationalizationManager()
+                wikiSession.addMessage( "profile", wiki.getManager( InternationalizationManager.class )
                                                        .get( InternationalizationManager.CORE_BUNDLE,
                                                     		 Preferences.getLocale( wikiContext ), 
                                                              due.getMessage(), due.getArgs() ) );
@@ -97,7 +100,7 @@
         {
             String redirectPage = request.getParameter( "redirect" );
 
-            if( !wiki.getPageManager().wikiPageExists( redirectPage ) )
+            if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) )
             {
                redirectPage = wiki.getFrontPage();
             }
@@ -116,7 +119,7 @@
         CookieAssertionLoginModule.setUserCookie( response, assertedName );
 
         String redirectPage = request.getParameter( "redirect" );
-        if( !wiki.getPageManager().wikiPageExists( redirectPage ) )
+        if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) )
         {
           redirectPage = wiki.getFrontPage();
         }
@@ -133,6 +136,6 @@
         return;
     }
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 

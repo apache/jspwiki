@@ -19,6 +19,8 @@
 
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.auth.NoSuchPrincipalException" %>
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
@@ -31,13 +33,13 @@
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.DELETE_GROUP );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
 
-    WikiSession wikiSession = wikiContext.getWikiSession();
-    GroupManager groupMgr = wiki.getGroupManager();
+    Session wikiSession = wikiContext.getWikiSession();
+    GroupManager groupMgr = wiki.getManager( GroupManager.class );
     String name = request.getParameter( "group" );
 
     if ( name == null )

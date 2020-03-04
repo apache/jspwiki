@@ -21,6 +21,7 @@
 <%@ page import="java.security.Principal" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
@@ -31,14 +32,14 @@
     wiki = WikiEngine.getInstance( getServletConfig() );
   }
   Logger log = Logger.getLogger("JSPWiki");
-  WikiEngine wiki;
+  Engine wiki;
   SecurityVerifier verifier;
 %>
 <!doctype html>
 <html lang="en" name="top">
 <%
   WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.NONE );
-  if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+  if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );
   verifier = new SecurityVerifier( wiki, wikiContext.getWikiSession() );
 
@@ -118,17 +119,14 @@ and everyone in between. You have been warned.  You can turn it off by setting</
 -->
 <h3>Container-Managed Authentication</h3>
 <%
-  boolean isContainerAuth = wiki.getAuthenticationManager().isContainerAuthenticated();
-  AuthorizationManager authorizationManager = wiki.getAuthorizationManager();
-  if ( isContainerAuth )
-  {
+  boolean isContainerAuth = wiki.getManager( AuthenticationManager.class ).isContainerAuthenticated();
+  AuthorizationManager authorizationManager = wiki.getManager( AuthorizationManager.class );
+  if( isContainerAuth ) {
 %>
     <!-- We are using container auth -->
     <p>I see that you've configured container-managed authentication. Very nice.</p>
 <%
-  }
-  else
-  {
+  } else {
 %>
     <!-- We are not using container auth -->
     <p>Container-managed authentication appears to be disabled, according to your <code>WEB-INF/web.xml</code> file.</p>

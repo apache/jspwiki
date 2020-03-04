@@ -19,10 +19,13 @@
 
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%! 
@@ -30,14 +33,14 @@
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.EDIT_GROUP );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
     
     // Extract the current user, group name, members and action attributes
-    WikiSession wikiSession = wikiContext.getWikiSession();
-    GroupManager groupMgr = wiki.getGroupManager();
+    Session wikiSession = wikiContext.getWikiSession();
+    GroupManager groupMgr = wiki.getManager( GroupManager.class );
     Group group = null;
     try 
     {
@@ -78,9 +81,7 @@
         
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "EditTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "EditTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" />
 

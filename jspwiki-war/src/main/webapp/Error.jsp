@@ -20,13 +20,14 @@
 <%@ page isErrorPage="true" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.Engine" %>
 <%@ page import="org.apache.wiki.util.FileUtil" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.ERROR );
     String pagereq = wikiContext.getName();
 

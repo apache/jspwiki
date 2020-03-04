@@ -21,12 +21,14 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="org.apache.wiki.auth.login.CookieAuthenticationLoginModule" %>
 <%@ page import="org.apache.wiki.auth.user.DuplicateUserException" %>
 <%@ page import="org.apache.wiki.auth.user.UserProfile" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -35,11 +37,11 @@
     Logger log = Logger.getLogger("JSPWiki");
 %>
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    AuthenticationManager mgr = wiki.getAuthenticationManager();
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    AuthenticationManager mgr = wiki.getManager( AuthenticationManager.class );
     WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.LOGIN );
     pageContext.setAttribute( WikiContext.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
-    WikiSession wikiSession = wikiContext.getWikiSession();
+    Session wikiSession = wikiContext.getWikiSession();
     ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
 
     // Set the redirect-page variable if one was passed as a parameter
@@ -51,7 +53,7 @@
 
     // Are we saving the profile?
     if( "saveProfile".equals(request.getParameter("action")) ) {
-        UserManager userMgr = wiki.getUserManager();
+        UserManager userMgr = wiki.getManager( UserManager.class );
         UserProfile profile = userMgr.parseProfile( wikiContext );
          
         // Validate the profile
@@ -64,7 +66,7 @@
                 CookieAssertionLoginModule.setUserCookie( response, profile.getFullname() );
             } catch( DuplicateUserException due ) {
                 // User collision! (full name or wiki name already taken)
-                wikiSession.addMessage( "profile", wiki.getInternationalizationManager()
+                wikiSession.addMessage( "profile", wiki.getManager( InternationalizationManager.class )
                 		                               .get( InternationalizationManager.CORE_BUNDLE,
                 		                            		 Preferences.getLocale( wikiContext ), 
                 		                            		 due.getMessage(), due.getArgs() ) );
@@ -150,7 +152,7 @@
 
         // If wiki page was "Login", redirect to main, otherwise use the page supplied
         String redirectPage = request.getParameter( "redirect" );
-        if( !wiki.getPageManager().wikiPageExists( redirectPage ) ) {
+        if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) ) {
            redirectPage = wiki.getFrontPage();
         }
         String viewUrl = ( "Login".equals( redirectPage ) ) ? "Wiki.jsp" : wikiContext.getViewURL( redirectPage );

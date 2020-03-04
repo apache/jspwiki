@@ -23,10 +23,14 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*"%>
 <%@ page import="org.apache.log4j.*"%>
 <%@ page import="org.apache.wiki.*"%>
+<%@ page import="org.apache.wiki.api.core.Engine"%>
+<%@ page import="org.apache.wiki.api.core.Session"%>
 <%@ page import="org.apache.wiki.auth.*"%>
 <%@ page import="org.apache.wiki.auth.user.*"%>
 <%@ page import="org.apache.wiki.i18n.*"%>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
+<%@ page import="org.apache.wiki.url.URLConstructor"%>
 <%@ page import="org.apache.wiki.util.*"%>
 <%@ page errorPage="/Error.jsp"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -34,10 +38,10 @@
 
     String message = null;
 
-    public boolean resetPassword( WikiEngine wiki, HttpServletRequest request, ResourceBundle rb ) {
+    public boolean resetPassword( Engine wiki, HttpServletRequest request, ResourceBundle rb ) {
         // Reset pw for account name
         String name = request.getParameter( "name" );
-        UserDatabase userDatabase = wiki.getUserManager().getUserDatabase();
+        UserDatabase userDatabase = wiki.getManager( UserManager.class ).getUserDatabase();
         boolean success = false;
 
         try {
@@ -61,7 +65,7 @@
             // Try sending email first, as that is more likely to fail.
 
             Object[] args = { profile.getLoginName(), randomPassword, request.getScheme() + "://"+ request.getServerName() + ":" + request.getServerPort() +
-                             wiki.getURLConstructor().makeURL( WikiContext.NONE, "Login.jsp", "" ), wiki.getApplicationName() };
+                             wiki.getManager( URLConstructor.class ).makeURL( WikiContext.NONE, "Login.jsp", "" ), wiki.getApplicationName() };
 
             String mailMessage = MessageFormat.format( rb.getString( "lostpwd.newpassword.email" ), args );
 
@@ -96,7 +100,7 @@
     }
 %>
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
 
     //Create wiki context like in Login.jsp:
     //don't check for access permissions: if you have lost your password you cannot login!
@@ -110,7 +114,7 @@
 
     ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
 
-    WikiSession wikiSession = wikiContext.getWikiSession();
+    Session wikiSession = wikiContext.getWikiSession();
     String action = request.getParameter( "action" );
 
     boolean done = false;
@@ -131,6 +135,6 @@
     response.setDateHeader( "Expires", new Date().getTime() );
     response.setDateHeader( "Last-Modified", new Date().getTime() );
 
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 %>
 <wiki:Include page="<%=contentPage%>" />

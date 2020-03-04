@@ -17,12 +17,14 @@
     under the License.  
 --%>
 
-<%@page import="org.apache.wiki.auth.login.CookieAuthenticationLoginModule"%>
 <%@page import="org.apache.wiki.WikiEngine" %>
+<%@page import="org.apache.wiki.api.core.Engine" %>
+<%@page import="org.apache.wiki.auth.AuthenticationManager" %>
 <%@page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
+<%@page import="org.apache.wiki.auth.login.CookieAuthenticationLoginModule"%>
 <%
-  WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-  wiki.getAuthenticationManager().logout( request );
+  Engine wiki = WikiEngine.getInstance( getServletConfig() );
+  wiki.getManager( AuthenticationManager.class ).logout( request );
 
   // Clear the user cookie
   CookieAssertionLoginModule.clearUserCookie( response );

@@ -22,6 +22,7 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
@@ -68,7 +69,7 @@
     String pagereq = wikiContext.getName();
 
     ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
-    WikiSession wikiSession = wikiContext.getWikiSession();
+    Session wikiSession = wikiContext.getWikiSession();
     String storedUser = wikiSession.getUserPrincipal().getName();
 
     if( wikiSession.isAnonymous() ) {

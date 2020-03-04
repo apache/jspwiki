@@ -21,6 +21,8 @@
 <%@ page import="org.apache.commons.httpclient.*" %>
 <%@ page import="org.apache.commons.httpclient.methods.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.*" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
@@ -35,12 +37,11 @@
     Logger log = Logger.getLogger("JSPWiki");
 %>
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.VIEW );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
     String pagereq = wikiContext.getName();
-
     String reqPage = TextUtil.replaceEntities( request.getParameter( "page" ) );
     String content = TextUtil.replaceEntities( request.getParameter( "text" ) );
 

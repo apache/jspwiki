@@ -19,16 +19,20 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
 
-<%@ page import="java.util.*" %>
-<%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.text.*" %>
-<%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ page import="org.apache.wiki.rss.*" %>
-<%@ page import="org.apache.wiki.util.*" %>
+<%@ page import="java.util.*" %>
 <%@ page import="net.sf.ehcache.Cache" %>
 <%@ page import="net.sf.ehcache.Element" %>
 <%@ page import="net.sf.ehcache.CacheManager" %>
+<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
+<%@ page import="org.apache.wiki.plugin.WeblogPlugin" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
+<%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.rss.*" %>
+<%@ page import="org.apache.wiki.util.*" %>
 
 <%!
     private Logger log = Logger.getLogger("JSPWiki");
@@ -47,23 +51,20 @@
         m_rssCache = new Cache(cacheName, cacheCapacity, false, false, m_expiryPeriod, m_expiryPeriod);
         m_cacheManager.addCache(m_rssCache);
     }
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = new WikiContext( wiki, request, "rss" );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
-    WikiPage    wikipage    = wikiContext.getPage();
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
+    WikiPage wikipage = wikiContext.getPage();
 
     // Redirect if RSS generation not on
-
-    if( wiki.getRSSGenerator() == null )
-    {
+    if( wiki.getManager( RSSGenerator.class ) == null ) {
         response.sendError( 404, "RSS feeds are disabled at administrator request" );
         return;
     }
 
-    if( wikipage == null || !wiki.getPageManager().wikiPageExists(wikipage.getName()) )
-    {
-        response.sendError( 404, "No such page "+wikipage.getName() );
+    if( wikipage == null || !wiki.getManager( PageManager.class ).wikiPageExists( wikipage.getName() ) ) {
+        response.sendError( 404, "No such page " + wikipage.getName() );
         return;
     }
 
@@ -74,11 +75,12 @@
     String      mode        = request.getParameter("mode");
     String      type        = request.getParameter("type");
     
-    if( mode == null || !(mode.equals(RSSGenerator.MODE_BLOG) || mode.equals(RSSGenerator.MODE_WIKI)) ) 
+    if( mode == null || !(mode.equals(RSSGenerator.MODE_BLOG) || mode.equals(RSSGenerator.MODE_WIKI)) ) {
     	   mode = RSSGenerator.MODE_BLOG;
-    if( type == null || !(type.equals(RSSGenerator.RSS10) || type.equals(RSSGenerator.RSS20) || type.equals(RSSGenerator.ATOM)) ) 
+    }
+    if( type == null || !(type.equals(RSSGenerator.RSS10) || type.equals(RSSGenerator.RSS20) || type.equals(RSSGenerator.ATOM ) ) ) {
     	   type = RSSGenerator.RSS20;
-    
+    }
     // Set the content type and include the response content
     response.setContentType( RSSGenerator.getContentType(type)+"; charset=UTF-8");
 
@@ -95,10 +97,10 @@
     List< WikiPage > changed;
     
     if( "blog".equals( mode ) ) {
-        org.apache.wiki.plugin.WeblogPlugin plug = new org.apache.wiki.plugin.WeblogPlugin();
+        WeblogPlugin plug = new WeblogPlugin();
         changed = plug.findBlogEntries( wiki, wikipage.getName(), new Date(0L), new Date() );
     } else {
-        changed = wiki.getPageManager().getVersionHistory( wikipage.getName() );
+        changed = wiki.getManager( PageManager.class ).getVersionHistory( wikipage.getName() );
     }
     
     //
@@ -128,8 +130,7 @@
     //  based on the LastModified-date, so whenever it changes, so does
     //  the hashkey so we don't have to make any special modifications.
     //
-    //  TODO: Figure out if it would be a good idea to use a disk-based
-    //        cache here.
+    //  TODO: Figure out if it would be a good idea to use a disk-based cache here.
     //
     String hashKey = wikipage.getName()+";"+mode+";"+type+";"+latest.getTime();
     
@@ -139,11 +140,11 @@
     if (element != null) {
       rss = (String) element.getObjectValue();
     } else { 
-        rss = wiki.getRSSGenerator().generateFeed( wikiContext, changed, mode, type );
-        m_rssCache.put(new Element(hashKey,rss));
+        rss = wiki.getManager( RSSGenerator.class ).generateFeed( wikiContext, changed, mode, type );
+        m_rssCache.put( new Element( hashKey, rss ) );
     }
     
-    out.println(rss);
+    out.println( rss );
     
     w.exitState(); 
     %>

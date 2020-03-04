@@ -20,12 +20,14 @@
 <%@ page isErrorPage="true" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%! 
     Logger log = Logger.getLogger("JSPWiki"); 
 %>
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.MESSAGE );
 
     // Stash the wiki context and message text
@@ -34,6 +36,6 @@
 
     // Set the content type and include the response content
     response.setContentType( "text/html; charset=" + wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" />

@@ -17,10 +17,14 @@
     under the License.  
 --%>
 
-<%@ page import="java.util.*,org.apache.wiki.*" %>
-<%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.text.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.references.ReferenceManager" %>
 <%@ page import="org.apache.wiki.rss.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
 <%!
@@ -33,16 +37,15 @@
      *
      *  FIXME: Does not honor the ACL's on the pages.
      */
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = new WikiContext( wiki, request, "rss" );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
     
-    Set< String > allPages = wiki.getReferenceManager().findCreated();
+    Set< String > allPages = wiki.getManager( ReferenceManager.class ).findCreated();
     
     response.setContentType("text/plain; charset=UTF-8");
-    for( Iterator< String > i = allPages.iterator(); i.hasNext(); )
-    {
+    for( Iterator< String > i = allPages.iterator(); i.hasNext(); ) {
         String pageName = i.next();
         
         // Let's not add attachments.
