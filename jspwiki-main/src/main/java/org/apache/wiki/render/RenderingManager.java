@@ -36,7 +36,7 @@ import java.util.Properties;
 
 /**
  *  This class provides a facade towards the differing rendering routines.  You should use the routines in this manager
- *  instead of the ones in WikiEngine, if you don't want the different side effects to occur - such as WikiFilters.
+ *  instead of the ones in Engine, if you don't want the different side effects to occur - such as WikiFilters.
  *  <p>
  *  This class also manages a rendering cache, i.e. documents are stored between calls. You may control the cache by
  *  tweaking the ehcache.xml file.
@@ -66,7 +66,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  Looks for alternative WikiRenderers, initializes one, or the default
      *  XHTMLRenderer, for use.
      *
-     *  @param engine A WikiEngine instance.
+     *  @param engine A Engine instance.
      *  @param properties A list of properties to get parameters from.
      *  @throws WikiException If the manager could not be initialized.
      */
@@ -74,7 +74,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
 
     /**
      *  Beautifies the title of the page by appending spaces in suitable places, if the user has so decreed in the properties when
-     *  constructing this WikiEngine.  However, attachment names are only beautified by the name.
+     *  constructing this Engine.  However, attachment names are only beautified by the name.
      *
      *  @param title The title to beautify
      *  @return A beautified title (or, if beautification is off, returns the title without modification)

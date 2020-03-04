@@ -41,7 +41,7 @@ public class SearchMatcher {
     /**
      *  Creates a new SearchMatcher.
      *  
-     *  @param engine The WikiEngine
+     *  @param engine The Engine
      *  @param queries A list of queries
      */
     public SearchMatcher( final Engine engine, final QueryItem[] queries ) {

@@ -27,11 +27,9 @@ import java.util.Properties;
 
 
 /**
- *  Provides an interface through which JSPWiki constructs URLs.
- *  JSPWiki calls the methods of this interface whenever an URL
- *  that points to any JSPWiki internals is required.  For example,
- *  if you need to find an URL to the editor page for page "TextFormattingRules",
- *  you would call makeURL( WikiContext.EDIT, "TextFormattingRules", false, null );
+ *  Provides an interface through which JSPWiki constructs URLs. JSPWiki calls the methods of this interface whenever an URL
+ *  that points to any JSPWiki internals is required.  For example, if you need to find an URL to the editor page for page
+ *  "TextFormattingRules", you would call makeURL( WikiContext.EDIT, "TextFormattingRules", false, null );
  *
  *  @since 2.2
  */
@@ -40,7 +38,7 @@ public interface URLConstructor {
      *  Initializes.  Note that the engine is not fully initialized at this
      *  point, so don't do anything fancy here - use lazy init, if you have to.
      *
-     *  @param  engine The WikiEngine that this URLConstructor belongs to
+     *  @param  engine The Engine that this URLConstructor belongs to
      *  @param properties Properties used to initialize
      */
     void initialize( Engine engine, Properties properties );
