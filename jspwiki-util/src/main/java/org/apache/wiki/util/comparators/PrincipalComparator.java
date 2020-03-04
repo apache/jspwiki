@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -16,33 +16,34 @@
     specific language governing permissions and limitations
     under the License.  
  */
-package org.apache.wiki.auth;
+package org.apache.wiki.util.comparators;
 
 import java.io.Serializable;
 import java.security.Principal;
 import java.text.Collator;
 import java.util.Comparator;
 
+
 /**
- * Comparator class for sorting objects of type Principal.
- * Used for sorting arrays or collections of Principals.
+ * Comparator class for sorting objects of type Principal. Used for sorting arrays or collections of Principals.
+ *
  * @since 2.3
  */
-public class PrincipalComparator
-    implements Comparator<Principal>, Serializable
-{
+public class PrincipalComparator implements Comparator< Principal >, Serializable {
+
     private static final long serialVersionUID = 1L;
 
     /**
      * Compares two Principal objects.
+     *
      * @param o1 the first Principal
      * @param o2 the second Principal
      * @return the result of the comparison
      * @see java.util.Comparator#compare(Object, Object)
      */
-    public int compare( Principal o1, Principal o2 )
-    {
-        Collator collator = Collator.getInstance();
+    @Override
+    public int compare( final Principal o1, final Principal o2 ) {
+        final Collator collator = Collator.getInstance();
         return collator.compare( o1.getName(), o2.getName() );
     }
 

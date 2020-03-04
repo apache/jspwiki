@@ -24,6 +24,7 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.util.comparators.PrincipalComparator;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;

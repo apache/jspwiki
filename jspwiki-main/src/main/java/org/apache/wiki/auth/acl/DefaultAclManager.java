@@ -25,13 +25,13 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthorizationManager;
-import org.apache.wiki.auth.PrincipalComparator;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.util.comparators.PrincipalComparator;
 
 import java.security.Permission;
 import java.security.Principal;
