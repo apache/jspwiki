@@ -17,16 +17,25 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+
+**2002-03-04  Dirk Frederickx (brushed AT apache DOT org)**
+
+* _2.11.0-M7-git-11_
+
+* Links with target="_blank" can expose your site to performance and security issues.
+  Add rel="noreferrer" as protect against this issue.
+
+
 **2020-02-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-10_
 
 * Finally, finished [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120):
-    * Use `Engine` instead of `WikiEngine` throughout the code as much as possible. 
+    * Use `Engine` instead of `WikiEngine` throughout the code as much as possible.
     * `URLConstructor#initialize(..)` receives an `Engine` instead of a `WikiEngine`.
     * `InitializablePlugin` and implementing classes receive an `Engine` instead of a `WikiEngine`.
     * `PageFilter`s receive an `Engine` instead of a `WikiEngine` on `initialize` method.
-    * Rename + extract interfaces from `EditorManager`, `InternationalizationManager`, `SearchManager`, 
+    * Rename + extract interfaces from `EditorManager`, `InternationalizationManager`, `SearchManager`,
     and `TemplateManager`.
 
 * Updated Flexmark to 0.60.2
@@ -37,15 +46,15 @@ under the License.
 
 * [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120):
     * Use `Engine` inside `WikiContext`, `WikiSession`, `WikiPage`, `Attachment` and `SessionMonitor`.
-        * e.g. `WikiContext#getEngine()` now returns an `Engine` instead of a `WikiEngine`. To retrieve a manager 
-        from it just use `Engine#getManager( DesiredManager.class )`. See implementations on `getXXXManager()`  
-        methods on `WikiEngine` for details. 
+        * e.g. `WikiContext#getEngine()` now returns an `Engine` instead of a `WikiEngine`. To retrieve a manager
+        from it just use `Engine#getManager( DesiredManager.class )`. See implementations on `getXXXManager()`
+        methods on `WikiEngine` for details.
     * `WikiProvider#initialize(..)` receives an `Engine` instead of a `WikiEngine`.
     * `Engine` gains an `adapt( Class< E > cls )`, to facilitate downcasting to `Engine` implementation classes.
-    * Removed `Engine#getCurrentWatchDog()`, as it was a pass-through and introduced a package cycle; use instead 
-    `WatchDog#getCurrentWathDog( Engine )`. 
+    * Removed `Engine#getCurrentWatchDog()`, as it was a pass-through and introduced a package cycle; use instead
+    `WatchDog#getCurrentWathDog( Engine )`.
     `o.a.wiki` and `o.a.w.event`. To obtain the `WikiEngine` reference from the event just use `getSrc()`
-    * Rename + extract interfaces from `AttachmentManager`, `AuthenticationManager`, `AuthorizationManager`, 
+    * Rename + extract interfaces from `AttachmentManager`, `AuthenticationManager`, `AuthorizationManager`,
     `GroupManager` and `UserManager`.
 
 **2020-02-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
@@ -54,12 +63,12 @@ under the License.
 
 * [JSPWIKI-120](https://issues.apache.org/jira/browse/JSPWIKI-120): finally, extracted `Engine` interface from
 `WikiEngine`. It will be part of JSPWiki public API later on.
-    * removed direct reference to `WikiEngine` on `WikiEngineEvent`, in order to break package cycle between 
+    * removed direct reference to `WikiEngine` on `WikiEngineEvent`, in order to break package cycle between
     `o.a.wiki` and `o.a.w.event`. To obtain the `WikiEngine` reference from the event just use `getSrc()`
-    * extract new `PluginElement` interface from `PluginContent` in order to break a package/class cycle between 
+    * extract new `PluginElement` interface from `PluginContent` in order to break a package/class cycle between
     `PluginContent` and `ParserStagePlugin`
 
-* Merged [PR #13](https://github.com/apache/jspwiki/pull/13) from [Kideath](https://github.com/kideath) in order 
+* Merged [PR #13](https://github.com/apache/jspwiki/pull/13) from [Kideath](https://github.com/kideath) in order
 to fix russian translation. Thanks!
 
 * Dependency updates

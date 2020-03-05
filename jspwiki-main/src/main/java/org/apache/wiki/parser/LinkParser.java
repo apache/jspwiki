@@ -163,6 +163,12 @@ public class LinkParser
     private static final String[] PERMITTED_TARGET_VALUES = new String[] {
             "_blank", "_self", "_parent", "_top" };
 
+    /** Links with target="_blank" can expose your site to performance and security issues.
+        To fix, add rel="noopener" or rel="noreferrer" to these links.
+    */
+    private static final String REL = "rel";
+    private static final String NOREFERRER = "noreferrer";
+
     private static final String EQSQUO = "='";
     private static final String SQUO   = "'";
     private static final String EQ     = "=";
@@ -259,6 +265,13 @@ public class LinkParser
                                 {
                                     Attribute a = new Attribute(token,value);
                                     link.addAttribute(a);
+
+                                    if( token.equals(TARGET) )
+                                    {
+                                        Attribute rel = new Attribute(REL,NOREFERRER);
+                                        link.addAttribute(rel);
+                                   }
+
                                 }
                                 else
                                 {
