@@ -35,9 +35,10 @@ Okay, so you wanna Wiki?  You'll need the following things:
 
 REQUIRED:
 
-* A JSP engine that supports Servlet API 3.1.  We recommend Tomcat from
-  http://tomcat.apache.org/ for a really easy installation.
-  Tomcat 8.x or later is supported.
+* A JSP engine that supports Servlet API 3.1.  We recommend [Apache Tomcat](http://tomcat.apache.org/)
+  for a really easy installation. Tomcat 9.x or later is recommended, although Tomcat 8.x 
+  is supported too; see [additional configuration](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Getting%20Started#section-Getting+Started-Tomcat8.x) 
+  that must be set up in order to run JSPWiki on Tomcat 8.x.
 
 * Some previous administration experience...  If you've ever installed
   Apache or any other web server, you should be pretty well off.
