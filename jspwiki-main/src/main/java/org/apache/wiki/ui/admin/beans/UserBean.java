@@ -57,13 +57,12 @@ public class UserBean extends SimpleAdminBean {
         final HttpServletRequest request = context.getHttpRequest();
         final Session session = context.getWikiSession();
         final UserManager mgr = context.getEngine().getManager( UserManager.class );
-
-        final String loginid   = request.getParameter("loginid");
-        final String loginname = request.getParameter("loginname");
-        final String fullname  = request.getParameter("fullname");
-        final String password  = request.getParameter("password");
-        final String password2 = request.getParameter("password2");
-        final String email     = request.getParameter("email");
+        final String loginid = request.getParameter( "loginid" );
+        final String loginname = request.getParameter( "loginname" );
+        final String fullname = request.getParameter( "fullname" );
+        final String password = request.getParameter( "password" );
+        final String password2 = request.getParameter( "password2" );
+        final String email = request.getParameter( "email" );
 
         if( request.getParameter( "action" ).equalsIgnoreCase( "remove" ) ) {
             try {
@@ -100,8 +99,9 @@ public class UserBean extends SimpleAdminBean {
 
         p.setEmail( email );
         p.setFullname( fullname );
-        if( password != null && password.length() > 0 )
+        if( password != null && password.length() > 0 ) {
             p.setPassword( password );
+        }
         p.setLoginName( loginname );
 
         try {

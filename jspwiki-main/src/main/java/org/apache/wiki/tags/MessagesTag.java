@@ -86,12 +86,15 @@ public class MessagesTag extends WikiTagBase {
             if( messages.length > 0 ) {
                 final StringBuilder sb = new StringBuilder();
                 if( messages.length == 1 ) {
-                    sb.append( "<div class=\"" + m_div + "\">" + m_prefix + TextUtil.replaceEntities( messages[ 0 ] ) + "</div>" );
+                    sb.append( "<div class=\"" ).append( m_div ).append( "\">" )
+                      .append( m_prefix )
+                      .append( TextUtil.replaceEntities( messages[ 0 ] ) )
+                      .append( "</div>" );
                 } else {
-                    sb.append( "<div class=\"" + m_div + "\">" + m_prefix );
+                    sb.append( "<div class=\"" ).append( m_div ).append( "\">" ).append( m_prefix );
                     sb.append( "<ul>" );
-                    for( int i = 0; i < messages.length; i++ ) {
-                        sb.append( "<li>" + TextUtil.replaceEntities( messages[ i ] ) + "</li>" );
+                    for( final String message : messages ) {
+                        sb.append( "<li>" ).append( TextUtil.replaceEntities( message ) ).append( "</li>" );
                     }
                     sb.append( "</ul></div>" );
                 }

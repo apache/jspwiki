@@ -18,44 +18,30 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.AuthenticationManager;
 
 /**
- *  Includes the content if an user check validates.  This has
- *  been considerably enhanced for 2.2.  The possibilities for the "status"-argument are:
+ *  Includes the content if an user check validates.  This has been considerably enhanced for 2.2.  The possibilities for the
+ *  "status"-argument are:
  *
  * <ul>
- * <li>"anonymous"     - the body of the tag is included 
- *                       if the user is completely unknown (no cookie, no password)</li>
- * <li>"asserted"      - the body of the tag is included 
- *                       if the user has either been named by a cookie, but
- *                       not been authenticated.</li>
- * <li>"authenticated" - the body of the tag is included 
- *                       if the user is validated either through the container,
- *                       or by our own authentication.</li>
- * <li>"assertionsAllowed"
- *                     - the body of the tag is included 
- *                       if wiki allows identities to be asserted using cookies.</li>
- * <li>"assertionsNotAllowed"
- *                     - the body of the tag is included 
- *                       if wiki does <i>not</i> allow identities to 
- *                       be asserted using cookies.</li>
- * <li>"containerAuth" - the body of the tag is included 
- *                       if the user is validated through the container.</li>
- * <li>"customAuth"    - the body of the tag is included 
- *                       if the user is validated through our own authentication.</li>
- * <li>"known"         - if the user is not anonymous</li>                      
- * <li>"notAuthenticated"
- *                     - the body of the tag is included 
- *                       if the user is not yet authenticated.</li>
+ * <li>"anonymous"            - the body of the tag is included if the user is completely unknown (no cookie, no password)</li>
+ * <li>"asserted"             - the body of the tag is included if the user has either been named by a cookie, but not been authenticated.</li>
+ * <li>"authenticated"        - the body of the tag is included if the user is validated either through the container, or by our own authentication.</li>
+ * <li>"assertionsAllowed"    - the body of the tag is included if wiki allows identities to be asserted using cookies.</li>
+ * <li>"assertionsNotAllowed" - the body of the tag is included if wiki does <i>not</i> allow identities to be asserted using cookies.</li>
+ * <li>"containerAuth"        - the body of the tag is included if the user is validated through the container.</li>
+ * <li>"customAuth"           - the body of the tag is included if the user is validated through our own authentication.</li>
+ * <li>"known"                - if the user is not anonymous</li>
+ * <li>"notAuthenticated"     - the body of the tag is included if the user is not yet authenticated.</li>
  * </ul>
  *
  *  If the old "exists" -argument is used, it corresponds as follows:
  *  <p>
  *  <tt>exists="true" ==> status="known"<br>
  *  <tt>exists="false" ==> status="unknown"<br>
+ *  </p>
  *
  *  It is NOT a good idea to use BOTH of the arguments.
  *
@@ -120,17 +106,17 @@ public class UserCheckTag extends WikiTagBase {
         if( m_status != null ) {
             switch( m_status ) {
             case ANONYMOUS:
-                if( status.equals( WikiSession.ANONYMOUS ) ) {
+                if( status.equals( Session.ANONYMOUS ) ) {
                     return EVAL_BODY_INCLUDE;
                 }
                 break;
             case AUTHENTICATED:
-                if( status.equals( WikiSession.AUTHENTICATED ) ) {
+                if( status.equals( Session.AUTHENTICATED ) ) {
                     return EVAL_BODY_INCLUDE;
                 }
                 break;
             case ASSERTED:
-                if( status.equals( WikiSession.ASSERTED ) ) {
+                if( status.equals( Session.ASSERTED ) ) {
                     return EVAL_BODY_INCLUDE;
                 }
                 break;
@@ -160,7 +146,7 @@ public class UserCheckTag extends WikiTagBase {
                 }
                 return SKIP_BODY;
             case NOT_AUTHENTICATED:
-                if( !status.equals( WikiSession.AUTHENTICATED ) ) {
+                if( !status.equals( Session.AUTHENTICATED ) ) {
                     return EVAL_BODY_INCLUDE;
                 }
                 break;

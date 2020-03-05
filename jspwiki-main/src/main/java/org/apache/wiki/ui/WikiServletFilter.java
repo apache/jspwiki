@@ -22,8 +22,8 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -42,7 +42,7 @@ import java.io.PrintWriter;
 
 /**
  * Filter that verifies that the {@link org.apache.wiki.api.core.Engine} is running, and sets the authentication status for the user's
- * WikiSession. Each HTTP request processed by this filter is wrapped by a {@link WikiRequestWrapper}. The wrapper's primary responsibility
+ * Session. Each HTTP request processed by this filter is wrapped by a {@link WikiRequestWrapper}. The wrapper's primary responsibility
  * is to return the correct <code>userPrincipal</code> and <code>remoteUser</code> for authenticated JSPWiki users (whether authenticated
  * by container or by JSPWiki's custom system). The wrapper's other responsibility is to incorporate JSPWiki built-in roles
  * into the role-checking algorithm for {@link  HttpServletRequest#isUserInRole(String)}. Just before the request is wrapped, the method
@@ -68,7 +68,8 @@ public class WikiServletFilter implements Filter {
      * @param config The FilterConfig.
      * @throws ServletException If a Engine cannot be started.
      */
-    @Override public void init( final FilterConfig config ) throws ServletException {
+    @Override
+    public void init( final FilterConfig config ) throws ServletException {
         final ServletContext context = config.getServletContext();
 
         // TODO REMOVEME when resolving JSPWIKI-129
@@ -82,12 +83,13 @@ public class WikiServletFilter implements Filter {
     /**
      * Destroys the WikiServletFilter.
      */
-    @Override public void destroy() {
+    @Override
+    public void destroy() {
     }
 
     /**
     * Checks that the Engine is running ok, wraps the current HTTP request, and sets the correct authentication state for the users's
-    * WikiSession. First, the method {@link org.apache.wiki.auth.AuthenticationManager#login(HttpServletRequest)}
+    * Session. First, the method {@link org.apache.wiki.auth.AuthenticationManager#login(HttpServletRequest)}
     * executes, which sets the authentication state. Then, the request is wrapped with a
     * {@link WikiRequestWrapper}.
     * @param request the current HTTP request object
@@ -96,7 +98,8 @@ public class WikiServletFilter implements Filter {
     * @throws ServletException if {@link org.apache.wiki.auth.AuthenticationManager#login(HttpServletRequest)} fails for any reason
     * @throws IOException If writing to the servlet response fails. 
     */
-    @Override public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
+    @Override
+    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
         //  Sanity check; it might be true in some conditions, but we need to know where.
         if( chain == null ) {
             throw new ServletException("FilterChain is null, even if it should not be.  Please report this to the jspwiki development team.");
@@ -125,10 +128,10 @@ public class WikiServletFilter implements Filter {
         httpRequest.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
         
         if ( !isWrapped( request ) ) {
-            // Prepare the WikiSession
+            // Prepare the Session
             try {
                 m_engine.getManager( AuthenticationManager.class ).login( httpRequest );
-                final WikiSession wikiSession = SessionMonitor.getInstance( m_engine ).find( httpRequest.getSession() );
+                final Session wikiSession = SessionMonitor.getInstance( m_engine ).find( httpRequest.getSession() );
                 httpRequest = new WikiRequestWrapper( m_engine, httpRequest );
                 if ( log.isDebugEnabled() ) {
                     log.debug( "Executed security filters for user=" + wikiSession.getLoginPrincipal().getName() + ", path=" + httpRequest.getRequestURI() );

@@ -52,19 +52,22 @@ public class BasicSearchProvider implements SearchProvider {
     /**
      *  {@inheritDoc}
      */
-    @Override public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException, IOException {
+    @Override
+    public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException, IOException {
         m_engine = engine;
     }
 
     /**
      *  {@inheritDoc}
      */
-    @Override public void pageRemoved( final WikiPage page ) {}
+    @Override
+    public void pageRemoved( final WikiPage page ) {}
 
     /**
      *  {@inheritDoc}
      */
-    @Override public void reindexPage( final WikiPage page ) {}
+    @Override
+    public void reindexPage( final WikiPage page ) {}
 
     /**
      *  Parses a query into something that we can use.
@@ -175,14 +178,16 @@ public class BasicSearchProvider implements SearchProvider {
     /**
      *  {@inheritDoc}
      */
-    @Override public Collection< SearchResult > findPages( final String query, final WikiContext wikiContext ) {
+    @Override
+    public Collection< SearchResult > findPages( final String query, final WikiContext wikiContext ) {
         return findPages( parseQuery( query ), wikiContext );
     }
 
     /**
      *  {@inheritDoc}
      */
-    @Override public String getProviderInfo() {
+    @Override
+    public String getProviderInfo() {
         return "BasicSearchProvider";
     }
 

@@ -134,7 +134,8 @@ public class SearchMatcher {
          *  Returns Wikipage for this result.
          *  @return WikiPage
          */
-        @Override public WikiPage getPage() {
+        @Override
+        public WikiPage getPage() {
             return m_page;
         }
 
@@ -143,7 +144,8 @@ public class SearchMatcher {
          *  
          *  @return Score from 0+
          */
-        @Override public int getScore() {
+        @Override
+        public int getScore() {
             return m_score;
         }
 
@@ -152,7 +154,8 @@ public class SearchMatcher {
          *  
          *  @return an empty array
          */
-        @Override public String[] getContexts() {
+        @Override
+        public String[] getContexts() {
             // Unimplemented
             return new String[0];
         }

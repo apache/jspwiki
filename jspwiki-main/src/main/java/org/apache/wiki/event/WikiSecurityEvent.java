@@ -83,7 +83,7 @@ public final class WikiSecurityEvent extends WikiEvent {
     /** When a user logs out. */
     public static final int   LOGOUT                   = 44;
 
-    /** When a Principal should be added to the WikiSession */
+    /** When a Principal should be added to the Session */
     public static final int PRINCIPAL_ADD               = 35;
 
     /** When a session expires. */
@@ -187,6 +187,7 @@ public final class WikiSecurityEvent extends WikiEvent {
      *
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         final StringBuilder msg = new StringBuilder();
         msg.append( "WikiSecurityEvent." );
@@ -233,6 +234,7 @@ public final class WikiSecurityEvent extends WikiEvent {
      *
      * @return a String description of the type
      */
+    @Override
     public String getTypeDescription() {
         switch ( getType() ) {
             case LOGIN_AUTHENTICATED:       return "login authenticated";

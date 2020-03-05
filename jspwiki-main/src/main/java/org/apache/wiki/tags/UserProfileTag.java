@@ -163,8 +163,8 @@ public class UserProfileTag extends WikiTagBase {
 
     /**
      * Returns a sorted list of the {@link org.apache.wiki.auth.authorize.Group} objects a user possesses
-     * in his or her WikiSession. The result is computed by consulting
-     * {@link org.apache.wiki.WikiSession#getRoles()}
+     * in his or her Session. The result is computed by consulting
+     * {@link org.apache.wiki.api.core.Session#getRoles()}
      * and extracting those that are of type Group.
      * @return the list of groups, sorted by name
      */
@@ -198,8 +198,8 @@ public class UserProfileTag extends WikiTagBase {
 
     /**
      * Returns a sorted list of the {@link org.apache.wiki.auth.authorize.Role} objects a user possesses
-     * in his or her WikiSession. The result is computed by consulting
-     * {@link org.apache.wiki.WikiSession#getRoles()}
+     * in his or her Session. The result is computed by consulting
+     * {@link org.apache.wiki.api.core.Session#getRoles()}
      * and extracting those that are of type Role.
      * @return the list of roles, sorted by name
      */

@@ -443,7 +443,8 @@ public abstract class AbstractReferralPlugin implements WikiPlugin
             m_length = length;
         }
 
-        @Override public String mutate( final WikiContext context, final String text ) {
+        @Override
+        public String mutate( final WikiContext context, final String text ) {
             if( text.length() > m_length ) {
                 return text.substring( 0, m_length ) + "...";
             }

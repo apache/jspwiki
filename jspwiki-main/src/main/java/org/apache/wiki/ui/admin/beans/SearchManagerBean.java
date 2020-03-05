@@ -33,46 +33,44 @@ import java.util.Collection;
 
 
 /**
- *  The SearchManagerBean is a simple AdminBean interface
- *  to the SearchManager.  It currently can be used to force
- *  a reload of all of the pages.
+ * The SearchManagerBean is a simple AdminBean interface to the SearchManager.  It currently can be used to force a reload of all of the pages.
  *
  *  @since 2.6
  */
-public class SearchManagerBean extends SimpleAdminBean
-{
-    private static final String PROGRESS_ID = "searchmanagerbean.reindexer";
+public class SearchManagerBean extends SimpleAdminBean {
 
+    private static final String PROGRESS_ID = "searchmanagerbean.reindexer";
     private static final String[] METHODS = { "reload" };
 
     // private static Logger log = Logger.getLogger( SearchManagerBean.class );
 
     private WikiBackgroundThread m_updater;
 
-    public SearchManagerBean( final Engine engine) throws NotCompliantMBeanException
-    {
+    public SearchManagerBean( final Engine engine ) throws NotCompliantMBeanException {
         super();
-        initialize(engine);
+        initialize( engine );
     }
 
-    @Override public String[] getAttributeNames()
+    @Override
+    public String[] getAttributeNames()
     {
         return new String[0];
     }
 
-    @Override public String[] getMethodNames()
+    @Override
+    public String[] getMethodNames()
     {
         return METHODS;
     }
 
-    @Override public String getTitle()
+    @Override
+    public String getTitle()
     {
         return "Search manager";
     }
 
     /**
-     *  Starts a background thread which goes through all the pages and adds them
-     *  to the reindex queue.
+     *  Starts a background thread which goes through all the pages and adds them to the reindex queue.
      *  <p>
      *  This method prevents itself from being called twice.
      */
@@ -83,13 +81,15 @@ public class SearchManagerBean extends SimpleAdminBean
                 int m_count;
                 int m_max;
 
-                @Override public void startupTask() throws Exception {
+                @Override
+                public void startupTask() throws Exception {
                     super.startupTask();
 
                     setName( "Reindexer started" );
                 }
 
-                @Override public void backgroundTask() throws Exception {
+                @Override
+                public void backgroundTask() throws Exception {
                     final Collection< WikiPage > allPages = m_engine.getManager( PageManager.class ).getAllPages();
 
                     final SearchManager mgr = m_engine.getManager( SearchManager.class );
@@ -97,11 +97,11 @@ public class SearchManagerBean extends SimpleAdminBean
 
                     final ProgressItem pi = new ProgressItem() {
 
-                        @Override public int getProgress() {
+                        @Override
+                        public int getProgress() {
                             return 100 * m_count / m_max;
                         }
                     };
-
                     m_engine.getManager( ProgressManager.class ).startProgress( pi, PROGRESS_ID );
 
                     for( final WikiPage page : allPages ) {
@@ -120,12 +120,13 @@ public class SearchManagerBean extends SimpleAdminBean
         }
     }
 
-    @Override public int getType()
-    {
+    @Override
+    public int getType() {
         return CORE;
     }
 
-    @Override public String doGet( final WikiContext context ) {
+    @Override
+    public String doGet( final WikiContext context ) {
         if( m_updater != null ) {
             return "Update already in progress ("+ context.getEngine().getManager( ProgressManager.class ).getProgress(PROGRESS_ID)+ "%)";
         }
@@ -134,7 +135,8 @@ public class SearchManagerBean extends SimpleAdminBean
                "<div class='description'>Forces JSPWiki search engine to reindex all pages.  Use this if you think some pages are not being found even if they should.</div>";
     }
 
-    @Override public String doPost( final WikiContext context ) {
+    @Override
+    public String doPost( final WikiContext context ) {
         final String val = context.getHttpParameter( "searchmanagerbean-reload" );
         if( val != null ) {
             reload();

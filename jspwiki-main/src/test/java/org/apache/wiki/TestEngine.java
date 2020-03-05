@@ -378,7 +378,7 @@ public class TestEngine extends WikiEngine
     public void saveText( final String pageName, final String content ) throws WikiException {
         // Build new request and associate our admin session
         final MockHttpServletRequest request = newHttpRequest();
-        final WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
+        final Session wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
         this.getAuthenticationManager().login( wikiSession, request, Users.ADMIN, Users.ADMIN_PASS );
 
         // Create page and wiki context
@@ -390,7 +390,7 @@ public class TestEngine extends WikiEngine
     public void saveTextAsJanne( final String pageName, final String content ) throws WikiException {
         // Build new request and associate our Janne session
         final MockHttpServletRequest request = newHttpRequest();
-        final WikiSession wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
+        final Session wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
         this.getAuthenticationManager().login( wikiSession, request, Users.JANNE, Users.JANNE_PASS );
 
         // Create page and wiki context

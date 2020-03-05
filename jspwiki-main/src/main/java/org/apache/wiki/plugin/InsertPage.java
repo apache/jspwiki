@@ -155,15 +155,10 @@ public class InsertPage
                 //
                 String cookieName = "";
 
-                if( showOnce )
-                {
-                    cookieName = ONCE_COOKIE +
-                                 TextUtil.urlEncodeUTF8( page.getName() )
-                                         .replaceAll( "\\+", "%20" );
+                if( showOnce ) {
+                    cookieName = ONCE_COOKIE + TextUtil.urlEncodeUTF8( page.getName() ).replaceAll( "\\+", "%20" );
 
-                    if( HttpUtil.retrieveCookieValue( context.getHttpRequest(),
-                                                      cookieName ) != null )
-                    {
+                    if( HttpUtil.retrieveCookieValue( context.getHttpRequest(), cookieName ) != null ) {
                         return "";  //silent exit
                     }
 
