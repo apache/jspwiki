@@ -20,7 +20,6 @@ package org.apache.wiki.auth.authorize;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
@@ -365,7 +364,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
         final WikiSecurityEvent se = ( WikiSecurityEvent )event;
         if( se.getType() == WikiSecurityEvent.PROFILE_NAME_CHANGED ) {
-            final WikiSession session = se.getSrc();
+            final Session session = se.getSrc();
             final UserProfile[] profiles = ( UserProfile[] )se.getTarget();
             final Principal[] oldPrincipals = new Principal[] { new WikiPrincipal( profiles[ 0 ].getLoginName() ),
                     new WikiPrincipal( profiles[ 0 ].getFullname() ), new WikiPrincipal( profiles[ 0 ].getWikiName() ) };

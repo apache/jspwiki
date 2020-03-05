@@ -19,7 +19,6 @@
 package org.apache.wiki.auth.user;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wiki.WikiSession;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -223,7 +222,7 @@ public final class DefaultUserProfile implements UserProfile {
 
     /**
      * Sets the name by which the user logs in. The login name is used as the username for custom authentication (see
-     * {@link org.apache.wiki.auth.AuthenticationManager#login(WikiSession,HttpServletRequest, String, String)}).
+     * {@link org.apache.wiki.auth.AuthenticationManager#login(org.apache.wiki.api.core.Session,HttpServletRequest, String, String)}).
      * The login name is typically a short name ("jannej"). In contrast, the wiki name is typically of type
      * FirstnameLastName ("JanneJalkanen").
      *

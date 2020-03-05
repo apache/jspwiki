@@ -88,24 +88,24 @@ public interface AuthenticationManager {
     boolean isContainerAuthenticated();
 
     /**
-     * <p>Logs in the user by attempting to populate a WikiSession Subject from a web servlet request by examining the request
+     * <p>Logs in the user by attempting to populate a Session Subject from a web servlet request by examining the request
      *  for the presence of container credentials and user cookies. The processing logic is as follows:
      * </p>
      * <ul>
-     * <li>If the WikiSession had previously been unauthenticated, check to see if user has subsequently authenticated. To be considered
+     * <li>If the Session had previously been unauthenticated, check to see if user has subsequently authenticated. To be considered
      * "authenticated," the request must supply one of the following (in order of preference): the container <code>userPrincipal</code>,
      * container <code>remoteUser</code>, or authentication cookie. If the user is authenticated, this method fires event
      * {@link org.apache.wiki.event.WikiSecurityEvent#LOGIN_AUTHENTICATED} with two parameters: a Principal representing the login principal,
-     * and the current WikiSession. In addition, if the authorizer is of type WebContainerAuthorizer, this method iterates through the
+     * and the current Session. In addition, if the authorizer is of type WebContainerAuthorizer, this method iterates through the
      * container roles returned by {@link org.apache.wiki.auth.authorize.WebContainerAuthorizer#getRoles()}, tests for membership in each
      * one, and adds those that pass to the Subject's principal set.</li>
-     * <li>If, after checking for authentication, the WikiSession is still Anonymous, this method next checks to see if the user has
+     * <li>If, after checking for authentication, the Session is still Anonymous, this method next checks to see if the user has
      * "asserted" an identity by supplying an assertion cookie. If the user is found to be asserted, this method fires event
      * {@link org.apache.wiki.event.WikiSecurityEvent#LOGIN_ASSERTED} with two parameters: <code>WikiPrincipal(<em>cookievalue</em>)</code>,
-     * and the current WikiSession.</li>
-     * <li>If, after checking for authenticated and asserted status, the  WikiSession is <em>still</em> anonymous, this method fires event
+     * and the current Session.</li>
+     * <li>If, after checking for authenticated and asserted status, the  Session is <em>still</em> anonymous, this method fires event
      * {@link org.apache.wiki.event.WikiSecurityEvent#LOGIN_ANONYMOUS} with two parameters: <code>WikiPrincipal(<em>remoteAddress</em>)</code>,
-     * and the current WikiSession </li>
+     * and the current Session </li>
      * </ul>
      *
      * @param request servlet request for this user
@@ -116,7 +116,7 @@ public interface AuthenticationManager {
     boolean login( HttpServletRequest request ) throws WikiSecurityException;
     
     /**
-     * Attempts to perform a WikiSession login for the given username/password combination using JSPWiki's custom authentication mode. In
+     * Attempts to perform a Session login for the given username/password combination using JSPWiki's custom authentication mode. In
      * order to log in, the JAAS LoginModule supplied by the Engine property {@link #PROP_LOGIN_MODULE} will be instantiated, and its
      * {@link javax.security.auth.spi.LoginModule#initialize(Subject, CallbackHandler, Map, Map)} method will be invoked. By default,
      * the {@link org.apache.wiki.auth.login.UserDatabaseLoginModule} class will be used. When the LoginModule's <code>initialize</code>
@@ -134,7 +134,7 @@ public interface AuthenticationManager {
     boolean login( Session session, HttpServletRequest request, String username, String password ) throws WikiSecurityException;
 
     /**
-     * Logs the user out by retrieving the WikiSession associated with the HttpServletRequest and unbinding all of the Subject's Principals,
+     * Logs the user out by retrieving the Session associated with the HttpServletRequest and unbinding all of the Subject's Principals,
      * except for {@link Role#ALL}, {@link Role#ANONYMOUS}. is a cheap-and-cheerful way to do it without invoking JAAS LoginModules.
      * The logout operation will also flush the JSESSIONID cookie from the user's browser session, if it was set.
      *

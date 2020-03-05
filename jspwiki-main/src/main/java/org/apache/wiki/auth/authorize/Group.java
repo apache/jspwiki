@@ -18,11 +18,11 @@
  */
 package org.apache.wiki.auth.authorize;
 
+import org.apache.wiki.auth.GroupPrincipal;
+
 import java.security.Principal;
 import java.util.Date;
 import java.util.Vector;
-
-import org.apache.wiki.auth.GroupPrincipal;
 
 /**
  * <p>
@@ -48,7 +48,7 @@ import org.apache.wiki.auth.GroupPrincipal;
  * </p>
  * <p>
  * Groups are related to {@link GroupPrincipal}s. A GroupPrincipal, when
- * injected into the Principal set of a WikiSession's Subject, means that the
+ * injected into the Principal set of a Session's Subject, means that the
  * user is a member of a Group of the same name -- it is, in essence, an
  * "authorization token." GroupPrincipals, unlike Groups, are thread-safe,
  * lightweight and immutable. That's why we use them in Subjects rather than the
@@ -57,13 +57,11 @@ import org.apache.wiki.auth.GroupPrincipal;
  *
  * @since 2.3
  */
-public class Group
-{
+public class Group {
 
-    static final String[]  RESTRICTED_GROUPNAMES = new String[]
-                                                  { "Anonymous", "All", "Asserted", "Authenticated" };
+    static final String[]  RESTRICTED_GROUPNAMES = new String[] { "Anonymous", "All", "Asserted", "Authenticated" };
 
-    private final Vector<Principal>    m_members             = new Vector<Principal>();
+    private final Vector<Principal>    m_members = new Vector<>();
 
     private String          m_creator             = null;
 
@@ -88,8 +86,7 @@ public class Group
      * @param name the name of the group
      * @param wiki the wiki the group belongs to
      */
-    protected Group( String name, String wiki )
-    {
+    protected Group( final String name, final String wiki ) {
         m_name = name;
         m_wiki = wiki;
         m_principal = new GroupPrincipal( name );
@@ -101,10 +98,8 @@ public class Group
      * @param user the principal to add
      * @return <code>true</code> if the operation was successful
      */
-    public synchronized boolean add( Principal user )
-    {
-        if ( isMember( user ) )
-        {
+    public synchronized boolean add( final Principal user ) {
+        if( isMember( user ) ) {
             return false;
         }
 
@@ -115,8 +110,7 @@ public class Group
     /**
      * Clears all Principals from the group list. 
      */
-    public synchronized void clear()
-    {
+    public synchronized void clear() {
         m_members.clear();
     }
 
@@ -126,29 +120,26 @@ public class Group
      * @param o the object to compare
      * @return the comparison
      */
-    public boolean equals( Object o )
-    {
-        if ( o == null || !( o instanceof Group ) )
-            return false;
-
-        Group g = (Group) o; // Just a shortcut.
-
-        if ( g.m_members.size() != m_members.size() )
-            return false;
-
-        if ( getName() != null && !getName().equals( g.getName() ) )
-        {
-            return false;
-        }
-        else if ( getName() == null && g.getName() != null )
-        {
+    @Override
+    public boolean equals( final Object o ) {
+        if( !( o instanceof Group ) ) {
             return false;
         }
 
-        for( Principal principal : m_members )
-        {
-            if ( !g.isMember( principal ) )
-            {
+        final Group g = ( Group )o; // Just a shortcut.
+
+        if( g.m_members.size() != m_members.size() ) {
+            return false;
+        }
+
+        if( getName() != null && !getName().equals( g.getName() ) ) {
+            return false;
+        } else if( getName() == null && g.getName() != null ) {
+            return false;
+        }
+
+        for( final Principal principal : m_members ) {
+            if( !g.isMember( principal ) ) {
                 return false;
             }
         }
@@ -157,15 +148,14 @@ public class Group
     }
 
     /**
-     *  The hashcode is calculated as a XOR sum over all members of
-     *  the Group.
+     *  The hashcode is calculated as a XOR sum over all members of the Group.
+     *
      *  @return the hash code
      */
-    public int hashCode()
-    {
+    @Override
+    public int hashCode() {
         int hc = 0;
-        for( Principal member : m_members )
-        {
+        for( final Principal member : m_members ) {
             hc ^= member.hashCode();
         }
         return hc;
@@ -173,113 +163,109 @@ public class Group
     
     /**
      * Returns the creation date.
+     *
      * @return the creation date
      */
-    public synchronized Date getCreated()
-    {
+    public synchronized Date getCreated() {
         return m_created;
     }
 
     /**
      * Returns the creator of this Group.
+     *
      * @return the creator
      */
-    public final synchronized String getCreator()
-    {
+    public final synchronized String getCreator() {
         return m_creator;
     }
 
     /**
      * Returns the last-modified date.
+     *
      * @return the date and time of last modification
      */
-    public synchronized Date getLastModified()
-    {
+    public synchronized Date getLastModified() {
         return m_modified;
     }
 
     /**
      * Returns the name of the user who last modified this group.
+     *
      * @return the modifier
      */
-    public final synchronized String getModifier()
-    {
+    public final synchronized String getModifier() {
         return m_modifier;
     }
 
     /**
      * The name of the group. This is set in the class constructor.
+     *
      * @return the name of the Group
      */
-    public String getName()
-    {
+    public String getName() {
         return m_name;
     }
 
     /**
      * Returns the GroupPrincipal that represents this Group.
+     *
      * @return the group principal
      */
-    public Principal getPrincipal()
-    {
+    public Principal getPrincipal() {
         return m_principal;
     }
 
     /**
      * Returns the wiki name.
+     *
      * @return the wiki name
      */
-    public String getWiki()
-    {
+    public String getWiki() {
         return m_wiki;
     }
 
     /**
-     * Returns <code>true</code> if a Principal is a member of the group.
-     * Specifically, the Principal's <code>getName()</code> method must return
-     * the same value as one of the Principals in the group member list. The
-     * Principal's type does <em>not</em> need to match.
+     * Returns <code>true</code> if a Principal is a member of the group. Specifically, the Principal's <code>getName()</code> method must
+     * return the same value as one of the Principals in the group member list. The Principal's type does <em>not</em> need to match.
+     *
      * @param principal the principal about whom membeship status is sought
      * @return the result of the operation
      */
-    public boolean isMember( Principal principal )
-    {
+    public boolean isMember( final Principal principal ) {
         return findMember( principal.getName() ) != null;
     }
 
     /**
      * Returns the members of the group as an array of Principal objects.
+     *
      * @return the members
      */
-    public Principal[] members()
-    {
-        return m_members.toArray( new Principal[m_members.size()] );
+    public Principal[] members() {
+        return m_members.toArray( new Principal[ m_members.size() ] );
     }
 
     /**
-     * Removes a Principal from the group. 
-     * 
+     * Removes a Principal from the group.
+     *
      * @param user the principal to remove
      * @return <code>true</code> if the operation was successful
      */
-    public synchronized boolean remove( Principal user )
-    {
+    public synchronized boolean remove( Principal user ) {
         user = findMember( user.getName() );
-
-        if ( user == null )
+        if( user == null )
             return false;
 
         m_members.remove( user );
-        
+
         return true;
     }
 
     /**
      * Sets the created date.
+     *
      * @param date the creation date
      */
-    public synchronized void setCreated( Date date )
-    {
+    public synchronized void setCreated( final Date date ) {
         m_created = date;
     }
 
@@ -287,47 +273,42 @@ public class Group
      * Sets the creator of this Group.
      * @param creator the creator
      */
-    public final synchronized void setCreator( String creator )
-    {
+    public final synchronized void setCreator( final String creator ) {
         this.m_creator = creator;
     }
 
     /**
      * Sets the last-modified date
+     *
      * @param date the last-modified date
      */
-    public synchronized void setLastModified( Date date )
-    {
+    public synchronized void setLastModified( final Date date ) {
         m_modified = date;
     }
 
     /**
      * Sets the name of the user who last modified this group.
+     *
      * @param modifier the modifier
      */
-    public final synchronized void setModifier( String modifier )
-    {
+    public final synchronized void setModifier( final String modifier ) {
         this.m_modifier = modifier;
     }
 
     /**
      * Returns a string representation of the Group.
+     *
      * @return the string
      * @see java.lang.Object#toString()
      */
-    public String toString()
-    {
-    	StringBuilder sb = new StringBuilder();
-        sb.append( "(Group " + getName() + ")" );
-        return sb.toString();
+    @Override
+    public String toString() {
+        return "(Group " + getName() + ")";
     }
 
-    private Principal findMember( String name )
-    {
-        for( Principal member : m_members )
-        {
-            if ( member.getName().equals( name ) )
-            {
+    private Principal findMember( final String name ) {
+        for( final Principal member : m_members ) {
+            if( member.getName().equals( name ) ) {
                 return member;
             }
         }

@@ -54,7 +54,7 @@ import java.util.Locale;
  * re-authenticate.
  * </p>
  * <p>In addition to methods for examining individual <code>Session</code> objects, this class also contains a number of static
- * methods for managing WikiSessions for an entire wiki. These methods allow callers to find, query and remove WikiSession objects, and
+ * methods for managing Sessions for an entire wiki. These methods allow callers to find, query and remove Session objects, and
  * to obtain a list of the current wiki session users.</p>
  */
 public interface Session extends WikiEventListener {
@@ -126,7 +126,7 @@ public interface Session extends WikiEventListener {
     /**
      *  Returns a cached Locale object for this user.  It's better to use WikiContext's corresponding getBundle() method, since that
      *  will actually react if the user changes the locale in the middle, but if that's not available (or, for some reason, you need
-     *  the speed), this method can also be used.  The Locale expires when the WikiSession expires, and currently there is no way to
+     *  the speed), this method can also be used.  The Locale expires when the Session expires, and currently there is no way to
      *  reset the Locale.
      *
      *  @return A cached Locale object
@@ -190,7 +190,7 @@ public interface Session extends WikiEventListener {
     Principal[] getPrincipals();
 
     /**
-     * Returns an array of Principal objects that represents the groups and roles that the user associated with a WikiSession possesses.
+     * Returns an array of Principal objects that represents the groups and roles that the user associated with a Session possesses.
      * The array is built by iterating through the Subject's Principal set and extracting all Role and GroupPrincipal objects into a
      * list. The list is returned as an array sorted in the natural order implied by each Principal's <code>getName</code> method. Note
      * that this method does <em>not</em> consult the external Authorizer or GroupManager; it relies on the Principals that have been
@@ -201,7 +201,7 @@ public interface Session extends WikiEventListener {
     Principal[] getRoles();
 
     /**
-     * Returns <code>true</code> if the WikiSession's Subject possess a supplied Principal. This method eliminates the need to externally
+     * Returns <code>true</code> if the Session's Subject possess a supplied Principal. This method eliminates the need to externally
      * request and inspect the JAAS subject.
      *
      * @param principal the Principal to test
@@ -209,7 +209,7 @@ public interface Session extends WikiEventListener {
      */
     boolean hasPrincipal( Principal principal );
 
-    /** Invalidates the WikiSession and resets its Subject's Principals to the equivalent of a "guest session". */
+    /** Invalidates the Session and resets its Subject's Principals to the equivalent of a "guest session". */
     void invalidate();
 
     /**
@@ -233,7 +233,7 @@ public interface Session extends WikiEventListener {
 
     /**
      * Wrapper for {@link Subject#doAsPrivileged(Subject, PrivilegedAction, java.security.AccessControlContext)}
-     * that executes an action with the privileges posssessed by a WikiSession's Subject. The action executes with a <code>null</code>
+     * that executes an action with the privileges posssessed by a Session's Subject. The action executes with a <code>null</code>
      * AccessControlContext, which has the effect of running it "cleanly" without the AccessControlContexts of the caller.
      *
      * @param session the wiki session

@@ -19,7 +19,6 @@
 package org.apache.wiki.auth;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -89,15 +88,15 @@ public interface UserManager {
      * and the user's credential set is refreshed; if custom authentication is used, this means the user will be automatically be logged in.
      * </p>
      * <p>
-     * When the user's profile is saved successfully, this method fires a {@link WikiSecurityEvent#PROFILE_SAVE} event with the WikiSession
+     * When the user's profile is saved successfully, this method fires a {@link WikiSecurityEvent#PROFILE_SAVE} event with the Session
      * as the source and the UserProfile as target. For existing profiles, if the user's full name changes, this method also fires a
-     * "name changed" event ({@link WikiSecurityEvent#PROFILE_NAME_CHANGED}) with the WikiSession as the source and an array containing
+     * "name changed" event ({@link WikiSecurityEvent#PROFILE_NAME_CHANGED}) with the Session as the source and an array containing
      * the old and new UserProfiles, respectively. The <code>NAME_CHANGED</code> event allows the GroupManager and PageManager can change
      * group memberships and ACLs if needed.
      * </p>
      * <p>
-     * Note that WikiSessions normally attach event listeners to the UserManager, so changes to the profile will automatically cause the
-     * correct Principals to be reloaded into the current WikiSession's Subject.
+     * Note that Sessions normally attach event listeners to the UserManager, so changes to the profile will automatically cause the
+     * correct Principals to be reloaded into the current Session's Subject.
      * </p>
      *
      * @param session the wiki session, which may not be <code>null</code>
@@ -126,7 +125,7 @@ public interface UserManager {
      * <li>In all cases, the created/last modified timestamps of the user's existing or new profile always override whatever values the user
      * supplied.</li>
      * <li>If container authentication is used, the login name property of the profile is set to the name of
-     * {@link org.apache.wiki.WikiSession#getLoginPrincipal()}. Otherwise, the value of the <code>loginname</code> parameter is used.</li>
+     * {@link org.apache.wiki.api.core.Session#getLoginPrincipal()}. Otherwise, the value of the <code>loginname</code> parameter is used.</li>
      * </ul>
      *
      * @param context the current wiki context
@@ -139,7 +138,7 @@ public interface UserManager {
      * make sure it isn't null. Otherwise, the password is checked for length and that it matches the value of the 'password2' HTTP
      * parameter. Note that we have a special case when container-managed authentication is used and the user is not authenticated;
      * this will always cause validation to fail. Any validation errors are added to the wiki session's messages collection
-     * (see {@link WikiSession#getMessages()}.
+     * (see {@link org.apache.wiki.api.core.Session#getMessages()}.
      *
      * @param context the current wiki context
      * @param profile the supplied UserProfile

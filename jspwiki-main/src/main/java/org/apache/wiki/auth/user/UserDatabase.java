@@ -53,7 +53,7 @@ public interface UserDatabase {
      * Note that if an implememtation wishes to mark one of the returned Principals as representing the user's common name, it should
      * instantiate this Principal using {@link org.apache.wiki.auth.WikiPrincipal#WikiPrincipal(String, String)} with the <code>type</code>
      * parameter set to {@link org.apache.wiki.auth.WikiPrincipal#WIKI_NAME}. The method
-     * {@link org.apache.wiki.WikiSession#getUserPrincipal()} will return this principal as the "primary" principal. Note that this method
+     * {@link org.apache.wiki.api.core.Session#getUserPrincipal()} will return this principal as the "primary" principal. Note that this method
      * can also be used to mark a WikiPrincipal as a login name or a wiki name.
      * </p>
      *

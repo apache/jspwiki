@@ -45,7 +45,7 @@ import java.util.Properties;
  *   <em>e.g.,</em> reading, editing, renaming
  * </ul>
  * <p>Calling classes determine whether they are entitled to perform a particular action by constructing the appropriate permission first,
- * then passing it and the current {@link org.apache.wiki.WikiSession} to the {@link #checkPermission(Session, Permission)} method. If
+ * then passing it and the current {@link Session} to the {@link #checkPermission(Session, Permission)} method. If
  * the session's Subject possesses the permission, the action is allowed.</p>
  * <p>For WikiPermissions, the decision criteria is relatively simple: the caller either possesses the permission, as granted by the wiki
  * security policy -- or not.</p>
@@ -75,10 +75,10 @@ public interface AuthorizationManager {
 
     /**
      * Returns <code>true</code> or <code>false</code>, depending on whether a Permission is allowed for the Subject associated with
-     * a supplied WikiSession. The access control algorithm works this way:
+     * a supplied Session. The access control algorithm works this way:
      * <ol>
      * <li>The {@link org.apache.wiki.auth.acl.Acl} for the page is obtained</li>
-     * <li>The Subject associated with the current {@link org.apache.wiki.WikiSession} is obtained</li>
+     * <li>The Subject associated with the current {@link org.apache.wiki.api.core.Session} is obtained</li>
      * <li>If the Subject's Principal set includes the Role Principal that is the administrator group, always allow the Permission</li>
      * <li>For all permissions, check to see if the Permission is allowed according to the default security policy. If it isn't, deny
      * the permission and halt further processing.</li>
@@ -106,7 +106,7 @@ public interface AuthorizationManager {
     boolean checkPermission( Session session, Permission permission );
 
     /**
-     * <p>Determines if the Subject associated with a supplied WikiSession contains a desired Role or GroupPrincipal. The algorithm
+     * <p>Determines if the Subject associated with a supplied Session contains a desired Role or GroupPrincipal. The algorithm
      * simply checks to see if the Subject possesses the Role or GroupPrincipal it in its Principal set. Note that any user (anonymous,
      * asserted, authenticated) can possess a built-in role. But a user <em>must</em> be authenticated to possess a role other than one
      * of the built-in ones. We do this to prevent privilege escalation.</p>
@@ -146,7 +146,7 @@ public interface AuthorizationManager {
     Authorizer getAuthorizer() throws WikiSecurityException;
 
     /**
-     * <p>Determines if the Subject associated with a supplied WikiSession contains a desired user Principal or built-in Role principal,
+     * <p>Determines if the Subject associated with a supplied Session contains a desired user Principal or built-in Role principal,
      * OR is a member a Group or external Role. The rules are as follows:</p>
      * <ol>
      * <li>First, if desired Principal is a Role or GroupPrincipal, delegate to {@link #isUserInRole(Session, Principal)} and
@@ -226,7 +226,7 @@ public interface AuthorizationManager {
      *
      * @see AccessController#checkPermission(Permission) . A caught exception (or lack thereof) determines whether the
      *       privilege is absent (or present).
-     * @param session the WikiSession whose permission status is being queried
+     * @param session the Session whose permission status is being queried
      * @param permission the Permission the Subject must possess
      * @return <code>true</code> if the Subject possesses the permission, <code>false</code> otherwise
      */

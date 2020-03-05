@@ -46,7 +46,7 @@ import java.security.Principal;
  */
 public interface GroupManager extends Authorizer, WikiEventListener {
 
-    /** Key used for adding UI messages to a user's WikiSession. */
+    /** Key used for adding UI messages to a user's Session. */
     String MESSAGES_KEY = "group";
 
     String PROP_GROUPDATABASE = "jspwiki.groupdatabase";
@@ -168,8 +168,8 @@ public interface GroupManager extends Authorizer, WikiEventListener {
      * </p>
      * <p>
      * This method will register the new Group with the GroupManager. For example, {@link org.apache.wiki.auth.AuthenticationManager}
-     * attaches each WikiSession as a GroupManager listener. Thus, the act of registering a Group with <code>setGroup</code> means that
-     * all WikiSessions will automatically receive group add/change/delete events immediately.
+     * attaches each Session as a GroupManager listener. Thus, the act of registering a Group with <code>setGroup</code> means that
+     * all Sessions will automatically receive group add/change/delete events immediately.
      * </p>
      *
      * @param session the wiki session, which may not be <code>null</code>
@@ -203,7 +203,7 @@ public interface GroupManager extends Authorizer, WikiEventListener {
 
 
     /**
-     * Checks if a String is blank or a restricted Group name, and if it is, appends an error to the WikiSession's message list.
+     * Checks if a String is blank or a restricted Group name, and if it is, appends an error to the Session's message list.
      *
      * @param context the wiki context
      * @param name the Group name to test

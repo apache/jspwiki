@@ -154,7 +154,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     @Override
     public boolean login( final HttpServletRequest request ) throws WikiSecurityException {
         final HttpSession httpSession = request.getSession();
-        final WikiSession session = SessionMonitor.getInstance( m_engine ).find( httpSession );
+        final Session session = SessionMonitor.getInstance( m_engine ).find( httpSession );
         final AuthenticationManager authenticationMgr = m_engine.getManager( AuthenticationManager.class );
         final AuthorizationManager authorizationMgr = m_engine.getManager( AuthorizationManager.class );
         CallbackHandler handler = null;
@@ -171,7 +171,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 principals = authenticationMgr.doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
             }
 
-            // If the container logged the user in successfully, tell the WikiSession (and add all of the Principals)
+            // If the container logged the user in successfully, tell the Session (and add all of the Principals)
             if ( principals.size() > 0 ) {
                 fireEvent( WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );
                 for( final Principal principal : principals ) {
@@ -274,9 +274,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         final HttpSession session = request.getSession();
         final String sid = ( session == null ) ? "(null)" : session.getId();
         if( log.isDebugEnabled() ) {
-            log.debug( "Invalidating WikiSession for session ID=" + sid );
+            log.debug( "Invalidating Session for session ID=" + sid );
         }
-        // Retrieve the associated WikiSession and clear the Principal set
+        // Retrieve the associated Session and clear the Principal set
         final Session wikiSession = WikiSession.getWikiSession( m_engine, request );
         final Principal originalPrincipal = wikiSession.getLoginPrincipal();
         wikiSession.invalidate();
@@ -393,14 +393,14 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     }
 
     /**
-     * After successful login, this method is called to inject authorized role Principals into the WikiSession. To determine which roles
+     * After successful login, this method is called to inject authorized role Principals into the Session. To determine which roles
      * should be injected, the configured Authorizer is queried for the roles it knows about by calling  {@link Authorizer#getRoles()}.
      * Then, each role returned by the authorizer is tested by calling {@link Authorizer#isUserInRole(Session, Principal)}. If this
      * check fails, and the Authorizer is of type WebAuthorizer, the role is checked again by calling
      * {@link WebAuthorizer#isUserInRole(HttpServletRequest, Principal)}). Any roles that pass the test are injected into the Subject by
      * firing appropriate authentication events.
      *
-     * @param session the user's current WikiSession
+     * @param session the user's current Session
      * @param authorizer the Engine's configured Authorizer
      * @param request the user's HTTP session, which may be <code>null</code>
      */

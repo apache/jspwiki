@@ -185,7 +185,7 @@ public class WikiContext implements Cloneable, Command {
      * Creates a new WikiContext for the given Engine, Command and HttpServletRequest.
      * </p>
      * <p>
-     * This constructor will also look up the HttpSession associated with the request, and determine if a WikiSession object is present.
+     * This constructor will also look up the HttpSession associated with the request, and determine if a Session object is present.
      * If not, a new one is created.
      * </p>
      * @param engine The Engine that is handling the request
@@ -652,11 +652,11 @@ public class WikiContext implements Cloneable, Command {
     }
 
     /**
-     *  Returns the WikiSession associated with the context. This method is guaranteed to always return a valid WikiSession.
+     *  Returns the Session associated with the context. This method is guaranteed to always return a valid Session.
      *  If this context was constructed without an associated HttpServletRequest, it will return
      *  {@link org.apache.wiki.WikiSession#guestSession(Engine)}.
      *
-     *  @return The WikiSession associate with this context.
+     *  @return The Session associated with this context.
      */
     public Session getWikiSession()
     {
@@ -672,8 +672,8 @@ public class WikiContext implements Cloneable, Command {
      *  @return Current WikiContext, or null, of no context exists.
      */
     public static WikiContext findContext( final PageContext pageContext ) {
-        final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        return (WikiContext)request.getAttribute( ATTR_CONTEXT );
+        final HttpServletRequest request = ( HttpServletRequest )pageContext.getRequest();
+        return ( WikiContext )request.getAttribute( ATTR_CONTEXT );
     }
 
     /**

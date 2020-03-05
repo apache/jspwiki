@@ -29,7 +29,7 @@ import java.util.Comparator;
 /**
  *  A lightweight, immutable Principal class. WikiPrincipals can be created with and optional "type" to denote what type of user
  *  profile Principal it represents (FULL_NAME, WIKI_NAME, LOGIN_NAME). Types are used to determine suitable user and login Principals in
- *  classes like WikiSession. However, the type property of a WikiPrincipal does not affect a WikiPrincipal's logical equality
+ *  classes like Session. However, the type property of a WikiPrincipal does not affect a WikiPrincipal's logical equality
  *  or hash code; two WikiPrincipals with the same name but different types are still considered equal.
  *
  *  @since  2.2

@@ -382,7 +382,7 @@ public final class WikiSession implements Session {
     /**
      * Injects GroupPrincipal objects into the user's Principal set based on the groups the user belongs to. For Groups, the algorithm
      * first calls the {@link GroupManager#getRoles()} to obtain the array of GroupPrincipals the authorizer knows about. Then, the
-     * method {@link GroupManager#isUserInRole(WikiSession, Principal)} is called for each Principal. If the user is a member of the
+     * method {@link GroupManager#isUserInRole(Session, Principal)} is called for each Principal. If the user is a member of the
      * group, an equivalent GroupPrincipal is injected into the user's principal set. Existing GroupPrincipals are flushed and replaced.
      * This method should generally be called after a user's {@link org.apache.wiki.auth.user.UserProfile} is saved. If the wiki session
      * is null, or there is no matching user profile, the method returns silently.
@@ -493,7 +493,7 @@ public final class WikiSession implements Session {
         // Look for a WikiSession associated with the user's Http Session and create one if it isn't there yet.
         final HttpSession session = request.getSession();
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
-        final WikiSession wikiSession = monitor.find( session );
+        final WikiSession wikiSession = ( WikiSession )monitor.find( session );
 
         // Attach reference to wiki engine
         wikiSession.m_engine = engine;

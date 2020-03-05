@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.auth;
 
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 
@@ -29,9 +28,9 @@ import java.util.Properties;
 /**
  * Interface for service providers of authorization information. After a user successfully logs in, the
  * {@link org.apache.wiki.auth.AuthenticationManager} consults the configured Authorizer to determine which additional
- * {@link org.apache.wiki.auth.authorize.Role} principals should be added to the user's WikiSession. To determine which roles should be
+ * {@link org.apache.wiki.auth.authorize.Role} principals should be added to the user's Session. To determine which roles should be
  * injected, the Authorizer is queried for the roles it knows about by calling {@link org.apache.wiki.auth.Authorizer#getRoles()}. Then,
- * each role returned by the Authorizer is tested by calling {@link org.apache.wiki.auth.Authorizer#isUserInRole(WikiSession, Principal)}.
+ * each role returned by the Authorizer is tested by calling {@link org.apache.wiki.auth.Authorizer#isUserInRole(Session, Principal)}.
  * If this check fails, and the Authorizer is of type WebAuthorizer, AuthenticationManager checks the role again by calling
  * {@link org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, Principal)}).
  * Any roles that pass the test are injected into the Subject by firing appropriate authentication events.
