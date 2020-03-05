@@ -233,7 +233,7 @@
     <target name="woas:download-appbundler-for-mac" description="Download the Mac OS X appbundler library">
         <delete dir="${jspwiki.appbundler.install.dir}"/>
         <mkdir dir="${jspwiki.appbundler.install.dir}"/>
-        <get src="http://search.maven.org/remotecontent?filepath=com/panayotis/appbundler/1.1.0/appbundler-1.1.0.jar" dest="${jspwiki.appbundler.install.dir}/appbundler-1.1.0.jar"/>
+        <get src="https://repo1.maven.org/fromsearch?filepath=com/panayotis/appbundler/1.1.0/appbundler-1.1.0.jar" dest="${jspwiki.appbundler.install.dir}/appbundler-1.1.0.jar"/>
     </target>
 
 </project>
