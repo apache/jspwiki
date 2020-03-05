@@ -20,7 +20,6 @@ package org.apache.wiki.providers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.core.Engine;
@@ -292,7 +291,7 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
 
         if( wikipages == null ) {
             log.error("Wikipages directory '" + m_pageDirectory + "' does not exist! Please check " + PROP_PAGEDIR + " in jspwiki.properties.");
-            throw new InternalWikiException( "Page directory does not exist" );
+            throw new ProviderException( "Page directory does not exist" );
         }
 
         for( final File wikipage : wikipages ) {
