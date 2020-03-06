@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
-import org.apache.wiki.Release;
+import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
@@ -47,43 +47,40 @@ public class CoreBean extends SimpleAdminBean {
         return m_engine.getManager( PageManager.class ).getTotalPageCount();
     }
 
-    public String getPagesDescription()
-    {
+    public String getPagesDescription() {
         return "The total number of pages in this wiki";
     }
 
-    public String getVersion()
-    {
+    public String getVersion() {
         return Release.VERSTR;
     }
 
-    public String getVersionDescription()
-    {
+    public String getVersionDescription() {
         return "The JSPWiki engine version";
     }
 
-    @Override public String getTitle()
-    {
+    @Override
+    public String getTitle() {
         return "Core bean";
     }
 
-    @Override public int getType()
-    {
+    @Override
+    public int getType() {
         return CORE;
     }
 
-    @Override public String getId()
-    {
+    @Override
+    public String getId() {
         return "corebean";
     }
 
-    @Override public String[] getAttributeNames()
-    {
+    @Override
+    public String[] getAttributeNames() {
         return ATTRIBUTES;
     }
 
-    @Override public String[] getMethodNames()
-    {
+    @Override
+    public String[] getMethodNames() {
         return METHODS;
     }
 

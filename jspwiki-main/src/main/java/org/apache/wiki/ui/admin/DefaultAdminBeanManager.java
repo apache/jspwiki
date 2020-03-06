@@ -19,7 +19,7 @@
 package org.apache.wiki.ui.admin;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.Release;
+import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;

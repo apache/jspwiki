@@ -18,9 +18,9 @@
  */
 package org.apache.wiki.rss;
 
-import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;

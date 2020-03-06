@@ -19,9 +19,9 @@
 package org.apache.wiki.rss;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
@@ -132,20 +132,20 @@ public class AtomFeed extends Feed {
         Date lastModified = new Date(0L);
 
         for( final Entry e : m_entries ) {
-            if( e.getPage().getLastModified().after( lastModified ) )
+            if( e.getPage().getLastModified().after( lastModified ) ) {
                 lastModified = e.getPage().getLastModified();
+            }
         }
 
         //  Mandatory parts
-        root.addContent( getElement("title").setText( getChannelTitle() ) );
-        root.addContent( getElement("id").setText(getFeedID()) );
-        root.addContent( getElement("updated").setText(DateFormatUtils.formatUTC( lastModified,
-                                                                                  RFC3339FORMAT ) ));
+        root.addContent( getElement( "title" ).setText( getChannelTitle() ) );
+        root.addContent( getElement( "id" ).setText( getFeedID() ) );
+        root.addContent( getElement( "updated" ).setText( DateFormatUtils.formatUTC( lastModified, RFC3339FORMAT ) ) );
 
         //  Optional
         // root.addContent( getElement("author").addContent(getElement("name").setText(format())))
-        root.addContent( getElement("link").setAttribute("href",engine.getBaseURL()));
-        root.addContent( getElement("generator").setText("JSPWiki "+Release.VERSTR));
+        root.addContent( getElement( "link" ).setAttribute( "href", engine.getBaseURL() ) );
+        root.addContent( getElement( "generator" ).setText( "JSPWiki " + Release.VERSTR ) );
 
         final String rssFeedURL  = engine.getURL(WikiContext.NONE, "rss.jsp",
                                                  "page=" + engine.encodeName( m_wikiContext.getPage().getName() ) +

@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.modules;
 
-import org.apache.wiki.Release;
+import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Engine;
 
 import java.util.Collection;
@@ -67,9 +67,7 @@ public abstract class BaseModuleManager implements ModuleManager {
         final Set< WikiModuleInfo > ls = new TreeSet<>();
         for( final Iterator< T > i = iterator; i.hasNext(); ) {
             final WikiModuleInfo wmi = i.next();
-            if( !ls.contains( wmi ) ) {
-                ls.add( wmi );
-            }
+            ls.add( wmi );
         }
 
         return ls;

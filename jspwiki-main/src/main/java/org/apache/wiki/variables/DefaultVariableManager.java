@@ -19,10 +19,10 @@
 package org.apache.wiki.variables;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.Release;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.filters.PageFilter;

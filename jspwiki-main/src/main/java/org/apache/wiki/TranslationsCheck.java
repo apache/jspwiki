@@ -13,6 +13,8 @@
  */
 package org.apache.wiki;
 
+import org.apache.wiki.api.Release;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -40,14 +42,14 @@ import java.util.TreeSet;
  */
 public class TranslationsCheck
 {
-    private static final TreeSet<String> allProps = new TreeSet<String>();  // sorted, no duplicates
-    private static final TreeSet<String> duplProps = new TreeSet<String>();
+    private static final TreeSet<String> allProps = new TreeSet<>();  // sorted, no duplicates
+    private static final TreeSet<String> duplProps = new TreeSet<>();
 
     // Change these to your settings...
     static String base = ".";
     static String suffix = null;
 
-    public static void main(String[] args) throws IOException
+    public static void main( final String[] args) throws IOException
     {
         if( args.length == 0 )
         {
@@ -71,7 +73,7 @@ public class TranslationsCheck
             diff("/CoreResources.properties", "/CoreResources_" + suffix + ".properties");
             detectDuplicates("/CoreResources_" + suffix + ".properties");
         }
-        catch( FileNotFoundException e )
+        catch( final FileNotFoundException e )
         {
             System.err.println("Unable to locate "+"/CoreResources_" + suffix + ".properties");
         }
@@ -81,7 +83,7 @@ public class TranslationsCheck
             diff("/templates/default.properties", "/templates/default_" + suffix + ".properties");
             detectDuplicates("/templates/default_" + suffix + ".properties");
         }
-        catch( FileNotFoundException e )
+        catch( final FileNotFoundException e )
         {
             System.err.println("Unable to locate "+"/templates/default_" + suffix + ".properties");
         }
@@ -94,7 +96,7 @@ public class TranslationsCheck
 
             System.out.println("Duplicates overall (two or more occurences):");
             System.out.println("--------------------------------------------");
-            Iterator< String > iter = duplProps.iterator();
+            final Iterator< String > iter = duplProps.iterator();
             if (duplProps.size() == 0)
                 System.out.println("(none)");
             else
@@ -102,7 +104,7 @@ public class TranslationsCheck
                     System.out.println(iter.next());
             System.out.println();
         }
-        catch( FileNotFoundException e )
+        catch( final FileNotFoundException e )
         {
             System.err.println("Unable to locate "+"/plugin/PluginResources_" + suffix + ".properties");
         }
@@ -112,25 +114,25 @@ public class TranslationsCheck
                 "Moving them to a special section in the file may be the better solution.");
     }
 
-    public static Map< String, Integer > diff(String source1, String source2) throws FileNotFoundException, IOException
+    public static Map< String, Integer > diff( final String source1, final String source2) throws FileNotFoundException, IOException
     {
         int missing = 0, outdated = 0;
         // Standard Properties
-        Properties p1 = new Properties();
+        final Properties p1 = new Properties();
         
         p1.load( TranslationsCheck.class.getClassLoader().getResourceAsStream( base + source1 ) );
 
-        Properties p2 = new Properties();
+        final Properties p2 = new Properties();
         p2.load( TranslationsCheck.class.getClassLoader().getResourceAsStream( base + source2 ) );
 
-        String msg = "Checking " + source2 + "...";
+        final String msg = "Checking " + source2 + "...";
         System.out.println(msg);
 
         Iterator< String > iter = sortedNames(p1).iterator();
         while (iter.hasNext())
         {
-            String name = iter.next();
-            String value = p1.getProperty(name);
+            final String name = iter.next();
+            final String value = p1.getProperty(name);
 
             if (p2.get(name) == null)
             {
@@ -151,8 +153,8 @@ public class TranslationsCheck
         iter = sortedNames(p2).iterator();
         while (iter.hasNext())
         {
-            String name = iter.next();
-            String value = p2.getProperty(name);
+            final String name = iter.next();
+            final String value = p2.getProperty(name);
 
             if (p1.get(name) == null)
             {
@@ -170,16 +172,16 @@ public class TranslationsCheck
             System.out.println();
         }
 
-        Map< String, Integer > diff = new HashMap< String, Integer >( 2 );
+        final Map< String, Integer > diff = new HashMap<>( 2 );
         diff.put( "missing", missing );
         diff.put( "outdated", outdated );
         return diff;
     }
 
-    private static List<String> sortedNames(Properties p)
+    private static List<String> sortedNames( final Properties p)
     {
-        List<String> list = new ArrayList<String>();
-        Enumeration<?> iter = p.propertyNames();
+        final List<String> list = new ArrayList<>();
+        final Enumeration<?> iter = p.propertyNames();
         while (iter.hasMoreElements())
         {
             list.add( (String)iter.nextElement() );
@@ -189,12 +191,12 @@ public class TranslationsCheck
         return list;
     }
 
-    public static int detectDuplicates(String source) throws IOException
+    public static int detectDuplicates( final String source) throws IOException
     {
-        Properties p = new Properties();
+        final Properties p = new Properties();
         p.load( TranslationsCheck.class.getClassLoader().getResourceAsStream( base + source ) );
 
-        Enumeration<?> iter = p.propertyNames();
+        final Enumeration<?> iter = p.propertyNames();
         String currentStr;
         while (iter.hasMoreElements())
         {

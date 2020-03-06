@@ -17,7 +17,7 @@
     under the License.
  */
 
-package org.apache.wiki;
+package org.apache.wiki.api;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils;
  *  Contains release and version information.  You may also invoke this class directly, in which case it prints
  *  out the version string.  This is a handy way of checking which JSPWiki version you have - just type from a command line:
  *  <pre>
- *  % java -cp JSPWiki.jar org.apache.wiki.Release
+ *  % java -cp JSPWiki.jar org.apache.wiki.api.Release
  *  2.5.38
  *  </pre>
  *  <p>
@@ -160,7 +160,7 @@ public final class Release {
      *  things like different command line tools.
      *  <P>Example:
      *  <PRE>
-     *  % java org.apache.wiki.Release
+     *  % java org.apache.wiki.api.Release
      *  1.9.26-cvs
      *  </PRE>
      *
