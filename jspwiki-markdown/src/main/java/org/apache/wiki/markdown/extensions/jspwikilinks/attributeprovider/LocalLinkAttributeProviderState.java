@@ -21,11 +21,14 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.html.Attributes;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
+
+import java.util.List;
 
 
 /**
@@ -36,11 +39,18 @@ public class LocalLinkAttributeProviderState implements NodeAttributeProviderSta
     private final boolean hasRef;
     private final WikiContext wikiContext;
     private final LinkParsingOperations linkOperations;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public LocalLinkAttributeProviderState( final WikiContext wikiContext, final boolean hasRef ) {
+    public LocalLinkAttributeProviderState( final WikiContext wikiContext,
+                                            final boolean hasRef,
+                                            final boolean isImageInlining,
+                                            final List< Pattern > inlineImagePatterns ) {
         this.hasRef = hasRef;
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
     }
 
     /**
@@ -53,7 +63,7 @@ public class LocalLinkAttributeProviderState implements NodeAttributeProviderSta
         final int hashMark = link.getUrl().toString().indexOf( '#' );
         final String attachment = wikiContext.getEngine().getManager( AttachmentManager.class ).getAttachmentInfoName( wikiContext, link.getWikiLink() );
         if( attachment != null ) {
-            if( !linkOperations.isImageLink( link.getUrl().toString() ) ) {
+            if( !linkOperations.isImageLink( link.getUrl().toString(), isImageInlining, inlineImagePatterns ) ) {
                 attributes.replaceValue( "class", MarkupParser.CLASS_ATTACHMENT );
                 final String attlink = wikiContext.getURL( WikiContext.ATTACH, link.getWikiLink() );
                 attributes.replaceValue( "href", attlink );

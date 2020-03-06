@@ -22,11 +22,14 @@ import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
+
+import java.util.List;
 
 
 /**
@@ -36,10 +39,16 @@ public class LocalLinkNodePostProcessorState implements NodePostProcessorState< 
 
     private final WikiContext wikiContext;
     private final LinkParsingOperations linkOperations;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public LocalLinkNodePostProcessorState( final WikiContext wikiContext ) {
+    public LocalLinkNodePostProcessorState( final WikiContext wikiContext,
+                                            final boolean isImageInlining,
+                                            final List< Pattern > inlineImagePatterns ) {
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
     }
 
     /**
@@ -52,7 +61,7 @@ public class LocalLinkNodePostProcessorState implements NodePostProcessorState< 
         final int hashMark = link.getUrl().toString().indexOf( '#' );
         final String attachment = wikiContext.getEngine().getManager( AttachmentManager.class ).getAttachmentInfoName( wikiContext, link.getUrl().toString() );
         if( attachment != null  ) {
-            if( !linkOperations.isImageLink( link.getUrl().toString() ) ) {
+            if( !linkOperations.isImageLink( link.getUrl().toString(), isImageInlining, inlineImagePatterns ) ) {
                 final String attlink = wikiContext.getURL( WikiContext.ATTACH, link.getUrl().toString() );
                 link.setUrl( CharSubSequence.of( attlink ) );
                 link.removeChildren();

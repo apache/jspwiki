@@ -19,12 +19,14 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.Attributes;
+import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 
-import com.vladsch.flexmark.util.html.Attributes;
+import java.util.List;
 
 
 /**
@@ -36,11 +38,18 @@ public class ExternalLinkAttributeProviderState implements NodeAttributeProvider
     private final boolean m_useRelNofollow;
     private final WikiContext wikiContext;
     private final LinkParsingOperations linkOperations;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public ExternalLinkAttributeProviderState( final WikiContext wikiContext, final boolean hasRef ) {
+    public ExternalLinkAttributeProviderState( final WikiContext wikiContext,
+                                               final boolean hasRef,
+                                               final boolean isImageInlining,
+                                               final List< Pattern > inlineImagePatterns ) {
         this.hasRef = hasRef;
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
         this.m_useRelNofollow = wikiContext.getBooleanWikiProperty( MarkupParser.PROP_USERELNOFOLLOW, false );
     }
 
@@ -51,7 +60,7 @@ public class ExternalLinkAttributeProviderState implements NodeAttributeProvider
      */
     @Override
     public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
-        if( linkOperations.isImageLink( link.getUrl().toString() ) ) {
+        if( linkOperations.isImageLink( link.getUrl().toString(), isImageInlining, inlineImagePatterns ) ) {
             new ImageLinkAttributeProviderState( wikiContext, link.getText().toString(), hasRef ).setAttributes( attributes, link );
         } else {
             attributes.replaceValue( "class", MarkupParser.CLASS_EXTERNAL );

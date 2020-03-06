@@ -23,7 +23,6 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.render.RenderingManager;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -41,13 +40,11 @@ public class LinkParsingOperations {
     private final WikiContext wikiContext;
 
     /**
-     *  This list contains all IANA registered URI protocol
-     *  types as of September 2004 + a few well-known extra types.
+     *  This list contains all IANA registered URI protocol types as of September 2004 + a few well-known extra types.
      *
      *  JSPWiki recognises all of them as external links.
      *
-     *  This array is sorted during class load, so you can just dump
-     *  here whatever you want in whatever order you want.
+     *  This array is sorted during class load, so you can just dump here whatever you want in whatever order you want.
      */
     static final String[] EXTERNAL_LINKS = {
         "http:", "ftp:", "https:", "mailto:",
@@ -83,8 +80,7 @@ public class LinkParsingOperations {
     /**
      *  Returns true if the link is really command to insert a plugin.
      *  <P>
-     *  Currently we just check if the link starts with "{INSERT",
-     *  or just plain "{" but not "{$".
+     *  Currently we just check if the link starts with "{INSERT", or just plain "{" but not "{$".
      *
      *  @param link Link text, i.e. the contents of text between [].
      *  @return True, if this link seems to be a command to insert a plugin here.
@@ -135,8 +131,7 @@ public class LinkParsingOperations {
     }
 
     /**
-     * Figures out if a link is an off-site link.  This recognizes
-     * the most common protocols by checking how it starts.
+     * Figures out if a link is an off-site link.  This recognizes the most common protocols by checking how it starts.
      *
      * @param page The link to check.
      * @return true, if this is a link outside of this wiki.
@@ -149,15 +144,11 @@ public class LinkParsingOperations {
     }
 
     /**
-     *  Matches the given link to the list of image name patterns to
-     *  determine whether it should be treated as an inline image or not.
+     *  Matches the given link to the list of image name patterns to determine whether it should be treated as an inline image or not.
      */
-    public boolean isImageLink( String link ) {
-        if( wikiContext.getEngine().getManager( RenderingManager.class ).getParser( wikiContext, link ).isImageInlining() ) {
+    public boolean isImageLink( String link, final boolean isImageInlining, final List< Pattern > inlineImagePatterns ) {
+        if( isImageInlining ) {
             link = link.toLowerCase();
-            final List< Pattern > inlineImagePatterns = wikiContext.getEngine().getManager( RenderingManager.class )
-            	                                                   .getParser( wikiContext, link ).getInlineImagePatterns();
-
             for( final Pattern p : inlineImagePatterns ) {
                 if( new Perl5Matcher().matches( link, p ) ) {
                     return true;

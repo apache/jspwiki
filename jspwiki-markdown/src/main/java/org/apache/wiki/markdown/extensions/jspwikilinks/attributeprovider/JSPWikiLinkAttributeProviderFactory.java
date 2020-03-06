@@ -18,12 +18,14 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
-import org.apache.wiki.WikiContext;
-
 import com.vladsch.flexmark.html.AttributeProvider;
 import com.vladsch.flexmark.html.AttributeProviderFactory;
 import com.vladsch.flexmark.html.IndependentAttributeProviderFactory;
 import com.vladsch.flexmark.html.renderer.LinkResolverContext;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.wiki.WikiContext;
+
+import java.util.List;
 
 
 /**
@@ -32,9 +34,15 @@ import com.vladsch.flexmark.html.renderer.LinkResolverContext;
 public class JSPWikiLinkAttributeProviderFactory extends IndependentAttributeProviderFactory {
 
     final WikiContext wikiContext;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public JSPWikiLinkAttributeProviderFactory( final WikiContext wikiContext ) {
+    public JSPWikiLinkAttributeProviderFactory( final WikiContext wikiContext,
+                                                final boolean isImageInlining,
+                                                final List< Pattern > inlineImagePatterns ) {
         this.wikiContext = wikiContext;
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
     }
 
     /**
@@ -44,7 +52,7 @@ public class JSPWikiLinkAttributeProviderFactory extends IndependentAttributePro
      */
     @Override
     public AttributeProvider apply( final LinkResolverContext context ) {
-        return new JSPWikiLinkAttributeProvider( wikiContext );
+        return new JSPWikiLinkAttributeProvider( wikiContext, isImageInlining, inlineImagePatterns );
     }
 
 }

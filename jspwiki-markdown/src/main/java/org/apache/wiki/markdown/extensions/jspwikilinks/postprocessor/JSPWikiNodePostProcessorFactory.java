@@ -23,7 +23,10 @@ import com.vladsch.flexmark.parser.block.NodePostProcessor;
 import com.vladsch.flexmark.parser.block.NodePostProcessorFactory;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.data.DataHolder;
+import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
+
+import java.util.List;
 
 
 /**
@@ -32,11 +35,18 @@ import org.apache.wiki.WikiContext;
 public class JSPWikiNodePostProcessorFactory extends NodePostProcessorFactory {
 
     private final WikiContext m_context;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public JSPWikiNodePostProcessorFactory( final WikiContext m_context, final DataHolder options ) {
+    public JSPWikiNodePostProcessorFactory( final WikiContext m_context,
+                                            final DataHolder options,
+                                            final boolean isImageInlining,
+                                            final List< Pattern > inlineImagePatterns ) {
         super( true );
         addNodes( Link.class ); // needs to be called before create( Document )
         this.m_context = m_context;
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
     }
 
     /**
@@ -44,7 +54,7 @@ public class JSPWikiNodePostProcessorFactory extends NodePostProcessorFactory {
      */
     @Override
     public NodePostProcessor apply( final Document document ) {
-        return new JSPWikiLinkNodePostProcessor( m_context, document );
+        return new JSPWikiLinkNodePostProcessor( m_context, document, isImageInlining, inlineImagePatterns );
     }
 
 }

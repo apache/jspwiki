@@ -21,10 +21,13 @@ package org.apache.wiki.markdown;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
+import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider.JSPWikiLinkAttributeProviderFactory;
 import org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor.JSPWikiNodePostProcessorFactory;
 import org.apache.wiki.markdown.renderer.JSPWikiNodeRendererFactory;
+
+import java.util.List;
 
 
 /**
@@ -33,9 +36,15 @@ import org.apache.wiki.markdown.renderer.JSPWikiNodeRendererFactory;
 public class MarkdownForJSPWikiExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension {
 
 	private final WikiContext context;
+	private final boolean isImageInlining;
+	private final List< Pattern > inlineImagePatterns;
 
-	public MarkdownForJSPWikiExtension( final WikiContext context ) {
+	public MarkdownForJSPWikiExtension( final WikiContext context,
+										final boolean isImageInlining,
+										final List< Pattern > inlineImagePatterns ) {
 		this.context = context;
+		this.isImageInlining = isImageInlining;
+		this.inlineImagePatterns = inlineImagePatterns;
 	}
 
 	/**
@@ -58,7 +67,7 @@ public class MarkdownForJSPWikiExtension implements Parser.ParserExtension, Html
 	@Override
 	public void extend( final HtmlRenderer.Builder rendererBuilder, final String rendererType ) {
 	    rendererBuilder.nodeRendererFactory( new JSPWikiNodeRendererFactory( context ) );
-        rendererBuilder.attributeProviderFactory( new JSPWikiLinkAttributeProviderFactory( context ) );
+        rendererBuilder.attributeProviderFactory( new JSPWikiLinkAttributeProviderFactory( context, isImageInlining, inlineImagePatterns ) );
 	}
 
     /**
@@ -66,7 +75,7 @@ public class MarkdownForJSPWikiExtension implements Parser.ParserExtension, Html
 	 */
 	@Override
 	public void extend( final Parser.Builder parserBuilder ) {
-	    parserBuilder.postProcessorFactory( new JSPWikiNodePostProcessorFactory( context, parserBuilder ) );
+	    parserBuilder.postProcessorFactory( new JSPWikiNodePostProcessorFactory( context, parserBuilder, isImageInlining, inlineImagePatterns ) );
 	}
 
 }

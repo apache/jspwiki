@@ -23,6 +23,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.log4j.Logger;
+import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
@@ -32,6 +33,7 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
 
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -43,13 +45,20 @@ public class InterWikiLinkNodePostProcessorState implements NodePostProcessorSta
     private static final Logger LOG = Logger.getLogger( InterWikiLinkNodePostProcessorState.class );
     private final WikiContext wikiContext;
     private final LinkParsingOperations linkOperations;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
     private final Document document;
     private final boolean m_wysiwygEditorMode;
     private boolean m_useOutlinkImage = true;
 
-    public InterWikiLinkNodePostProcessorState( final WikiContext wikiContext, final Document document ) {
+    public InterWikiLinkNodePostProcessorState( final WikiContext wikiContext,
+                                                final Document document,
+                                                final boolean isImageInlining,
+                                                final List< Pattern > inlineImagePatterns ) {
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
         this.document = document;
         this.m_useOutlinkImage = wikiContext.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
         final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
@@ -68,7 +77,7 @@ public class InterWikiLinkNodePostProcessorState implements NodePostProcessorSta
             String urlReference = wikiContext.getEngine().getInterWikiURL( refAndPage[ 0 ] );
             if( urlReference != null ) {
                 urlReference = TextUtil.replaceString( urlReference, "%s", refAndPage[ 1 ] );
-                if( linkOperations.isImageLink( urlReference ) ) {
+                if( linkOperations.isImageLink( urlReference, isImageInlining, inlineImagePatterns ) ) {
                     new ImageLinkNodePostProcessorState( wikiContext, urlReference, link.hasRef() ).process( state, link );
                 } else {
                     link.setUrl( CharSubSequence.of( urlReference ) );

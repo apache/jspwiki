@@ -25,11 +25,14 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.TextUtil;
+
+import java.util.List;
 
 
 /**
@@ -41,13 +44,20 @@ public class JSPWikiLinkNodePostProcessor extends NodePostProcessor {
 
     protected final WikiContext m_context;
     protected final LinkParsingOperations linkOperations;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
     protected boolean m_useOutlinkImage = true;
     protected final Document document;
 
-    public JSPWikiLinkNodePostProcessor( final WikiContext m_context, final Document document ) {
+    public JSPWikiLinkNodePostProcessor( final WikiContext m_context,
+                                         final Document document,
+                                         final boolean isImageInlining,
+                                         final List< Pattern > inlineImagePatterns ) {
         this.m_context = m_context;
         this.document = document;
         linkOperations = new LinkParsingOperations( m_context );
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
         m_useOutlinkImage = m_context.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
     }
 
@@ -71,15 +81,15 @@ public class JSPWikiLinkNodePostProcessor extends NodePostProcessor {
             } else if( linkOperations.isVariableLink( link.getUrl().toString() ) ) {
                 linkPostProcessor = new VariableLinkNodePostProcessorState( m_context );
             } else if( linkOperations.isExternalLink( link.getUrl().toString() ) ) {
-                linkPostProcessor = new ExternalLinkNodePostProcessorState( m_context );
+                linkPostProcessor = new ExternalLinkNodePostProcessorState( m_context, isImageInlining, inlineImagePatterns );
             } else if( linkOperations.isInterWikiLink( link.getUrl().toString() ) ) {
-                linkPostProcessor = new InterWikiLinkNodePostProcessorState( m_context, document );
+                linkPostProcessor = new InterWikiLinkNodePostProcessorState( m_context, document, isImageInlining, inlineImagePatterns );
             } else if( StringUtils.startsWith( link.getUrl().toString(), "#" ) ) {
                 linkPostProcessor = new LocalFootnoteLinkNodePostProcessorState( m_context );
             } else if( TextUtil.isNumber( link.getUrl().toString() ) ) {
                 linkPostProcessor = new LocalFootnoteRefLinkNodePostProcessorState( m_context );
             } else {
-                linkPostProcessor = new LocalLinkNodePostProcessorState( m_context );
+                linkPostProcessor = new LocalLinkNodePostProcessorState( m_context, isImageInlining, inlineImagePatterns );
             }
             linkPostProcessor.process( state, link );
         }
@@ -95,7 +105,7 @@ public class JSPWikiLinkNodePostProcessor extends NodePostProcessor {
 
         if( previous != null ) {
             previous.insertAfter( link );
-        } else {
+        } else if( parent != null ) {
             parent.appendChild( link );
         }
 

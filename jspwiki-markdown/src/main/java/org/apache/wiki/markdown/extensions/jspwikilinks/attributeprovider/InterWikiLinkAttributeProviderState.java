@@ -21,11 +21,14 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.html.Attributes;
+import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.TextUtil;
+
+import java.util.List;
 
 
 /**
@@ -37,11 +40,18 @@ public class InterWikiLinkAttributeProviderState implements NodeAttributeProvide
     private final boolean m_wysiwygEditorMode;
     private final WikiContext wikiContext;
     private final LinkParsingOperations linkOperations;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public InterWikiLinkAttributeProviderState( final WikiContext wikiContext, final boolean hasRef ) {
+    public InterWikiLinkAttributeProviderState( final WikiContext wikiContext,
+                                                final boolean hasRef,
+                                                final boolean isImageInlining,
+                                                final List< Pattern > inlineImagePatterns ) {
         this.hasRef = hasRef;
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
         final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
@@ -58,7 +68,7 @@ public class InterWikiLinkAttributeProviderState implements NodeAttributeProvide
             String urlReference = wikiContext.getEngine().getInterWikiURL( refAndPage[ 0 ] );
             if( urlReference != null ) {
                 urlReference = TextUtil.replaceString( urlReference, "%s", refAndPage[ 1 ] );
-                if( linkOperations.isImageLink( urlReference ) ) {
+                if( linkOperations.isImageLink( urlReference, isImageInlining, inlineImagePatterns ) ) {
                     new ImageLinkAttributeProviderState( wikiContext, urlReference, hasRef ).setAttributes( attributes, link );
                 } else {
                     setInterWikiLinkAttrs( attributes, link, urlReference );

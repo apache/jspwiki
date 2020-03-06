@@ -18,16 +18,18 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
+import com.vladsch.flexmark.html.AttributeProvider;
+import com.vladsch.flexmark.html.renderer.AttributablePart;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.Attributes;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.util.TextUtil;
 
-import com.vladsch.flexmark.html.AttributeProvider;
-import com.vladsch.flexmark.html.renderer.AttributablePart;
-import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.html.Attributes;
+import java.util.List;
 
 
 /**
@@ -39,10 +41,16 @@ public class JSPWikiLinkAttributeProvider implements AttributeProvider {
 
     protected final WikiContext wikiContext;
     protected final LinkParsingOperations linkOperations;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public JSPWikiLinkAttributeProvider( final WikiContext wikiContext ) {
+    public JSPWikiLinkAttributeProvider( final WikiContext wikiContext,
+                                         final boolean isImageInlining,
+                                         final List< Pattern > inlineImagePatterns ) {
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
     }
 
     /**
@@ -56,15 +64,15 @@ public class JSPWikiLinkAttributeProvider implements AttributeProvider {
             final JSPWikiLink link = ( JSPWikiLink )node;
             final NodeAttributeProviderState< JSPWikiLink > linkState;
             if( linkOperations.isExternalLink( link.getWikiLink() ) ) {
-                linkState = new ExternalLinkAttributeProviderState( wikiContext, link.hasRef() );
+                linkState = new ExternalLinkAttributeProviderState( wikiContext, link.hasRef(), isImageInlining, inlineImagePatterns );
             } else if( linkOperations.isInterWikiLink( link.getWikiLink() ) ) {
-                linkState = new InterWikiLinkAttributeProviderState( wikiContext, link.hasRef() );
+                linkState = new InterWikiLinkAttributeProviderState( wikiContext, link.hasRef(), isImageInlining, inlineImagePatterns );
             } else if( StringUtils.startsWith( link.getWikiLink(), "#" ) ) {
                 linkState = new LocalFootnoteLinkAttributeProviderState( wikiContext );
             } else if( TextUtil.isNumber( link.getWikiLink() ) ) {
                 linkState = new LocalFootnoteRefLinkAttributeProviderState( wikiContext );
             } else {
-                linkState = new LocalLinkAttributeProviderState( wikiContext, link.hasRef() );
+                linkState = new LocalLinkAttributeProviderState( wikiContext, link.hasRef(), isImageInlining, inlineImagePatterns );
             }
             linkState.setAttributes( attributes, link );
         }
