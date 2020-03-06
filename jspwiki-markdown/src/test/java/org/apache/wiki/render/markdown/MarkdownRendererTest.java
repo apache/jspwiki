@@ -16,7 +16,7 @@
     specific language governing permissions and limitations
     under the License.
  */
-package org.apache.wiki.render;
+package org.apache.wiki.render.markdown;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
@@ -27,7 +27,6 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.markdown.MarkdownParser;
-import org.apache.wiki.render.markdown.MarkdownRenderer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -177,16 +176,16 @@ public class MarkdownRendererTest {
         	               "[^footnote]: footnote text\n" +
                            "with continuation";
         Assertions.assertEquals( "<p>text <sup id=\"fnref-1\"><a class=\"footnoteref\" href=\"#fn-1\">1</a></sup> embedded.</p>\n" +
-        		             "<div class=\"footnotes\">\n" +
-        		             "<hr />\n" +
-        		             "<ol>\n" +
-        		             "<li id=\"fn-1\">\n" +
-        		             "<p>footnote text\n" +
-        		             "with continuation</p>\n" +
-        		             "<a href=\"#fnref-1\" class=\"footnote-backref\">&#8617;</a>\n" +
-        		             "</li>\n" +
-        		             "</ol>\n" +
-        		             "</div>\n", translate( src ) );
+        		                 "<div class=\"footnotes\">\n" +
+        		                 "<hr />\n" +
+        		                 "<ol>\n" +
+        		                 "<li id=\"fn-1\">\n" +
+        		                 "<p>footnote text\n" +
+        		                 "with continuation</p>\n" +
+        		                 "<a href=\"#fnref-1\" class=\"footnote-backref\">&#8617;</a>\n" +
+        		                 "</li>\n" +
+        		                 "</ol>\n" +
+        		                 "</div>\n", translate( src ) );
     }
 
     @Test
@@ -265,8 +264,8 @@ public class MarkdownRendererTest {
                            "### Awesome H3";
 
         Assertions.assertEquals( "<h3 id=\"awesome-h3\">Awesome H3</h3>\n" +
-                             "<h3 id=\"awesome-h3-1\">Awesome H3</h3>\n",
-                             translate( src ) );
+                                 "<h3 id=\"awesome-h3-1\">Awesome H3</h3>\n",
+                                 translate( src ) );
     }
 
     @BeforeEach
@@ -281,8 +280,8 @@ public class MarkdownRendererTest {
     @AfterEach
     public void tearDown() {
         for( final String name : created ) {
-            testEngine.deleteTestPage(name);
-            TestEngine.deleteAttachments(name);
+            testEngine.deleteTestPage( name );
+            TestEngine.deleteAttachments( name );
         }
 
         created.clear();
@@ -293,7 +292,7 @@ public class MarkdownRendererTest {
         return translate( new WikiPage( testEngine, PAGE_NAME ), src );
     }
 
-    String translate( final WikiEngine e, final String src) throws Exception {
+    String translate( final WikiEngine e, final String src ) throws Exception {
         return translate( e, new WikiPage( testEngine, PAGE_NAME ), src );
     }
 
