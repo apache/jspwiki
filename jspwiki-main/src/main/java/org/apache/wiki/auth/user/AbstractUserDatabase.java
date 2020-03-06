@@ -266,7 +266,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
 
     /**
      * Private method that calculates the SHA-1 hash of a given <code>String</code>
-     *
+     * SHA-1 is not secure
      * @param text the text to hash
      * @return the result hash
      * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String)} instead
