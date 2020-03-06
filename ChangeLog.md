@@ -17,6 +17,19 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-03-06  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-12_
+
+* [JSPWIKI-303](https://issues.apache.org/jira/browse/JSPWIKI-303): JSPWiki-API library creation
+    * Extracted `o.a.w.api.core.Session` from `o.a.w.WikiSession`, and use it throughout the code
+    * Removed `o.a.w.api.engine` package, moving the interfaces there to their appropiate packages.
+    * Promote `o.a.w.Release` to the `o.a.w.api` package
+
+* Internal classes' refactors in order to break some class / packages cycles.
+
+* Updated Tomcat to 9.0.31 in order to get JDK 8 level to compile and run JSPs when using the Cargo 
+  plugin. Baseline is still servlet 3.1 (i.e.: Tomcat 8.x), though.
 
 **2002-03-04  Dirk Frederickx (brushed AT apache DOT org)**
 
