@@ -15,7 +15,6 @@ package org.apache.wiki.references;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.Util;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.pages.PageManager;
@@ -98,7 +97,7 @@ public class ReferenceManagerTest  {
     @Test
     public void testUnreferenced() {
         final Collection< String > c = mgr.findUnreferenced();
-        Assertions.assertTrue( Util.collectionContains( c, "TestPage" ), "Unreferenced page not found by ReferenceManager" );
+        Assertions.assertTrue( c.contains( "TestPage" ), "Unreferenced page not found by ReferenceManager" );
     }
 
 
