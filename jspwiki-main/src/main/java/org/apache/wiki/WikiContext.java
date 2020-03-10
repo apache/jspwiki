@@ -273,7 +273,7 @@ public class WikiContext implements Cloneable, Command {
      * @see org.apache.wiki.ui.Command#getContentTemplate()
      */
     @Override
-	public String getContentTemplate()
+    public String getContentTemplate()
     {
         return m_command.getContentTemplate();
     }
@@ -283,7 +283,7 @@ public class WikiContext implements Cloneable, Command {
      * @see org.apache.wiki.ui.Command#getJSP()
      */
     @Override
-	public String getJSP()
+    public String getJSP()
     {
         return m_command.getContentTemplate();
     }
@@ -354,9 +354,8 @@ public class WikiContext implements Cloneable, Command {
      *
      *  @return The engine owning this context.
      */
-    public Engine getEngine()
-    {
-        return m_engine;
+    public WikiEngine getEngine() {
+        return ( WikiEngine )m_engine;
     }
 
     /**
@@ -386,7 +385,7 @@ public class WikiContext implements Cloneable, Command {
      *  @return The name of the request context (e.g. VIEW).
      */
     @Override
-	public String getRequestContext()
+    public String getRequestContext()
     {
         return m_command.getRequestContext();
     }
@@ -406,7 +405,7 @@ public class WikiContext implements Cloneable, Command {
      * @see org.apache.wiki.ui.Command#getTarget()
      */
     @Override
-	public Object getTarget()
+    public Object getTarget()
     {
         return m_command.getTarget();
     }
@@ -416,7 +415,7 @@ public class WikiContext implements Cloneable, Command {
      * @see org.apache.wiki.ui.Command#getURLPattern()
      */
     @Override
-	public String getURLPattern()
+    public String getURLPattern()
     {
         return m_command.getURLPattern();
     }
@@ -514,7 +513,7 @@ public class WikiContext implements Cloneable, Command {
      * @see org.apache.wiki.ui.GroupCommand#getName()
      */
     @Override
-	public String getName() {
+    public String getName() {
         if ( m_command instanceof PageCommand ) {
             return m_page != null ? m_page.getName() : "<no page>";
         }
@@ -599,7 +598,7 @@ public class WikiContext implements Cloneable, Command {
      *  @return A shallow clone of the WikiContext
      */
     @Override
-	public Object clone() {
+    public WikiContext clone() {
         try {
             // super.clone() must always be called to make sure that inherited objects
             // get the right type
@@ -658,9 +657,8 @@ public class WikiContext implements Cloneable, Command {
      *
      *  @return The Session associated with this context.
      */
-    public Session getWikiSession()
-    {
-        return m_session;
+    public WikiSession getWikiSession() {
+        return ( WikiSession )m_session;
     }
 
     /**
@@ -686,7 +684,7 @@ public class WikiContext implements Cloneable, Command {
      * @since 2.4
      */
     @Override
-	public Permission requiredPermission() {
+    public Permission requiredPermission() {
         // This is a filthy rotten hack -- absolutely putrid
         if ( WikiCommand.INSTALL.equals( m_command ) ) {
             // See if admin users exists
@@ -718,7 +716,7 @@ public class WikiContext implements Cloneable, Command {
      * {@inheritDoc}
      */
     @Override
-	public Command targetedCommand( final Object target ) {
+    public Command targetedCommand( final Object target ) {
         if ( m_command.getTarget() == null ) {
             return m_command.targetedCommand( target );
         }
