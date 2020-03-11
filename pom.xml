@@ -121,9 +121,13 @@
   <modules>
     <module>jspwiki-wikipages</module>
     <module>jspwiki-util</module>
+    <module>jspwiki-event</module>
+    <module>jspwiki-api</module>
     <module>jspwiki-main</module>
     <module>jspwiki-markdown</module>
     <module>jspwiki-tika-searchprovider</module>
+    <module>jspwiki-210-test-adaptees</module>
+    <module>jspwiki-210-adapters</module>
     <module>jspwiki-war</module>
     <module>jspwiki-portable</module>
     <module>jspwiki-it-tests</module><!-- IT tests are launched only if -Pintegration-tests is given -->
