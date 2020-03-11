@@ -14,40 +14,26 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.    
  */
 package org.apache.wiki.api.exceptions;
 
 
+
 /**
- *  This exception may be thrown if a filter wants to reject something and redirect the user elsewhere.
- *
- *  @since 2.1.112
+ *  Marks that no such variable was located.
  */
-public class RedirectException extends FilterException {
+public class NoSuchVariableException extends WikiException {
 	
-    private static final long serialVersionUID = 6626993875873941172L;
-    
-    private final String m_where;
+    private static final long          serialVersionUID = 1L;
 
     /**
-     *  Constructs a new RedirectException.
-     *  
-     *  @param msg The message for the exception
-     *  @param redirect The redirect URI.
+     *  Constructs an exception.
+     *
+     *  @param msg Message to show
      */
-    public RedirectException( String msg, String redirect ) {
+    public NoSuchVariableException( final String msg ) {
         super( msg );
-        m_where = redirect;
     }
 
-    /**
-     *  Get the URI for redirection.
-     *  
-     *  @return The URI given in the constructor.
-     */
-    public String getRedirect() {
-        return m_where;
-    }
-    
 }

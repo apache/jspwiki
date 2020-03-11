@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,27 +14,27 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
-package org.apache.wiki.api.plugin;
+package org.apache.wiki.api.exceptions;
 
-import org.apache.wiki.WikiContext;
-
-import java.util.Map;
 
 /**
- *  Implements a Plugin interface for the parser stage.  Please see {@link org.apache.wiki.plugin.PluginManager PluginManager}
- *  for further documentation.
+ *  A generic PageFilter exception.
+ *
+ *  @since 2.1.112
  */
-public interface ParserStagePlugin {
-    
+public class FilterException extends WikiException {
+
+    private static final long serialVersionUID = -490652869936406653L;
+
     /**
-     *  Method which is executed during parsing.
-     *  
-     *  @param element The JDOM element which has already been connected to the Document.
-     *  @param context WikiContext, as usual.
-     *  @param params  Parsed parameters for the plugin.
+     *  Constructs an exception.
+     *
+     *  @param msg exception message.
      */
-    void executeParser( PluginElement element, WikiContext context, Map< String, String > params );
-    
+    public FilterException( final String msg ) {
+        super( msg );
+    }
+
 }

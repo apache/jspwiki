@@ -18,7 +18,7 @@
 */
 package org.apache.wiki.api.plugin;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 
 import java.util.Map;
@@ -73,7 +73,7 @@ public interface PluginElement {
      * @param context WikiContext in which the plugin is executed. Must NOT be null.
      * @return plugin contents.
      */
-    String invoke( WikiContext context );
+    String invoke( Context context );
 
     /**
      * Executes the executeParse() method.
@@ -81,6 +81,6 @@ public interface PluginElement {
      * @param context The WikiContext
      * @throws PluginException If something goes wrong.
      */
-    void executeParse( WikiContext context ) throws PluginException;
+    void executeParse( Context context ) throws PluginException;
 
 }

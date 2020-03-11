@@ -14,27 +14,30 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.
+    under the License.    
  */
 package org.apache.wiki.api.exceptions;
 
 
-/**
- *  A generic PageFilter exception.
- *
- *  @since 2.1.112
- */
-public class FilterException extends WikiException {
 
-    private static final long serialVersionUID = -490652869936406653L;
+/**
+ *  Marks an erroneus jspwiki.properties file.  Certain properties have been marked as "required", and if you 
+ *  do not provide a good value for a property, you'll see this exception.
+ *  <P>
+ *  Check <TT>jspwiki.properties</TT> for the required properties.
+ */
+public class NoRequiredPropertyException extends WikiException {
+	
+    private static final long          serialVersionUID = 1L;
 
     /**
      *  Constructs an exception.
      *
-     *  @param msg exception message.
+     *  @param msg Message to show
+     *  @param key The key of the property in question.
      */
-    public FilterException( String msg ) {
-        super( msg );
+    public NoRequiredPropertyException( final String msg, final String key ) {
+        super( msg + ": key=" + key );
     }
 
 }

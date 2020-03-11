@@ -38,7 +38,7 @@ public class WikiI18nException extends WikiException {
      *  @param key the key corresponding to the i18n message in the exception.
      *  @param args arguments needed to construct the i18n message associated with the exception.
      */
-    public WikiI18nException( String key, Object... args ) {
+    public WikiI18nException( final String key, final Object... args ) {
         super( key );
         this.args = args;
     }

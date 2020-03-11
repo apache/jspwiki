@@ -14,30 +14,37 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.    
+    under the License.     
  */
 package org.apache.wiki.api.exceptions;
 
 
-
 /**
- *  Marks an erroneus jspwiki.properties file.  Certain properties have been marked as "required", and if you 
- *  do not provide a good value for a property, you'll see this exception.
- *  <P>
- *  Check <TT>jspwiki.properties</TT> for the required properties.
+ *  A generic Wiki exception.
+ *
+ *  @since 2.0
  */
-public class NoRequiredPropertyException extends WikiException {
-	
-    private static final long          serialVersionUID = 1L;
+public class WikiException extends Exception {
+
+	private static final long serialVersionUID = 3257290231723210803L;
 
     /**
      *  Constructs an exception.
-     *
-     *  @param msg Message to show
-     *  @param key The key of the property in question.
+     *  
+     *  @param msg the message in the exception.
      */
-    public NoRequiredPropertyException( String msg, String key ) {
-        super( msg + ": key=" + key );
+    public WikiException( final String msg ) {
+        super( msg );
+    }
+    
+    /**
+     *  Constructs an exception with a supplied cause.
+     *  
+     *  @param msg the message in the exception.
+     *  @param cause the cause of the exception
+     */
+    public WikiException( final String msg, final Throwable cause ) {
+        super( msg, cause );
     }
 
 }

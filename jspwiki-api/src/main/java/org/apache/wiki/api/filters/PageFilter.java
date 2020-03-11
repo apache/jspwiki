@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.api.filters;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
 
@@ -53,12 +53,12 @@ public interface PageFilter {
      *  This method is called whenever a page has been loaded from the provider, but not yet been sent through the markup-translation
      *  process.  Note that you cannot do HTML translation here, because it will be escaped.
      *
-     *  @param wikiContext The current wikicontext.
+     *  @param context The current context.
      *  @param content WikiMarkup.
      *  @return The modified wikimarkup content.
      *  @throws FilterException If something goes wrong.  Throwing this causes the entire page processing to be abandoned.
      */
-    default String preTranslate( final WikiContext wikiContext, final String content ) throws FilterException {
+    default String preTranslate( final Context context, final String content ) throws FilterException {
         return content;
     }
 
@@ -71,7 +71,7 @@ public interface PageFilter {
      *  @return The modified HTML
      *  @throws FilterException If something goes wrong.  Throwing this causes the entire page processing to be abandoned.
      */
-    default String postTranslate( final WikiContext wikiContext, final String htmlContent ) throws FilterException {
+    default String postTranslate( final Context wikiContext, final String htmlContent ) throws FilterException {
         return htmlContent;
     }
 
@@ -83,7 +83,7 @@ public interface PageFilter {
      *  @return The modified wikimarkup
      *  @throws FilterException If something goes wrong.  Throwing this causes the entire page processing to be abandoned.
      */
-    default String preSave( final WikiContext wikiContext, final String content ) throws FilterException {
+    default String preSave( final Context wikiContext, final String content ) throws FilterException {
         return content;
     }
 
@@ -97,7 +97,7 @@ public interface PageFilter {
      *  @param content The content which was just stored.
      *  @throws FilterException If something goes wrong.  As the page is already saved, This is just logged.
      */
-    default void postSave( final WikiContext wikiContext, final String content ) throws FilterException {}
+    default void postSave( final Context wikiContext, final String content ) throws FilterException {}
 
     /**
      *  Called for every filter, e.g. on wiki engine shutdown. Use this if you have to 

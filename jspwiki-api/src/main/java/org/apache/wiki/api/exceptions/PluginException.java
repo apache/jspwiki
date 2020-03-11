@@ -33,7 +33,7 @@ public class PluginException  extends WikiException {
      *
      *  @param message exception message.
      */
-    public PluginException( String message ) {
+    public PluginException( final String message ) {
         super( message );
         m_throwable = null;
     }
@@ -44,7 +44,7 @@ public class PluginException  extends WikiException {
      *  @param message exception message.
      *  @param original The original exception.
      */
-    public PluginException( String message, Throwable original ) {
+    public PluginException( final String message, final Throwable original ) {
         super( message, original );
         m_throwable = original;
     }

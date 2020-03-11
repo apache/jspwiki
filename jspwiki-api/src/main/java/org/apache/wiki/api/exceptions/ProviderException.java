@@ -33,7 +33,7 @@ public class ProviderException extends WikiException {
      *
      *  @param msg exception message.
      */
-    public ProviderException( String msg ) {
+    public ProviderException( final String msg ) {
         super( msg );
     }
 
