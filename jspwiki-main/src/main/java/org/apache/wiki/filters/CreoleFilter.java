@@ -19,7 +19,7 @@
 package org.apache.wiki.filters;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.filters.BasicPageFilter;
@@ -48,14 +48,16 @@ public class CreoleFilter extends BasicPageFilter {
     /**
      *  {@inheritDoc}
      */
-    @Override public void initialize( final Engine engine, final Properties props ) throws FilterException {
+    @Override
+    public void initialize( final Engine engine, final Properties props ) throws FilterException {
+        super.initialize( engine, props );
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public String preSave( final WikiContext wikiContext, final String content ) {
+    public String preSave( final Context wikiContext, final String content ) {
         try {
             final String username = wikiContext.getCurrentUser().getName();
             final Properties prop = wikiContext.getEngine().getWikiProperties();
@@ -70,7 +72,7 @@ public class CreoleFilter extends BasicPageFilter {
      *  {@inheritDoc}
      */
     @Override
-    public String preTranslate( final WikiContext wikiContext, final String content ) {
+    public String preTranslate( final Context wikiContext, final String content ) {
         try {
             final Properties prop = wikiContext.getEngine().getWikiProperties();
             return new CreoleToJSPWikiTranslator().translate(prop ,content);

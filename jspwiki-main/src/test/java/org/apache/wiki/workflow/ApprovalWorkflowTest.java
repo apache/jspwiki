@@ -19,7 +19,7 @@
 package org.apache.wiki.workflow;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.BasicPageFilter;
@@ -44,8 +44,7 @@ public class ApprovalWorkflowTest {
     DecisionQueue m_dq;
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
 
         // Explicitly turn on Admin approvals for page saves and our sample approval workflow
@@ -53,7 +52,7 @@ public class ApprovalWorkflowTest {
         props.put( "jspwiki.approver.workflow.approvalWorkflow", Users.JANNE );
 
         // Start the wiki engine
-        m_engine = new TestEngine(props);
+        m_engine = new TestEngine( props );
         m_wm = m_engine.getWorkflowManager();
         m_dq = m_wm.getDecisionQueue();
         m_builder = WorkflowBuilder.getBuilder( m_engine );
@@ -61,15 +60,13 @@ public class ApprovalWorkflowTest {
 
 
     @Test
-    public void testBuildApprovalWorkflow() throws WikiException
-    {
-
+    public void testBuildApprovalWorkflow() throws WikiException {
         final Principal submitter = new WikiPrincipal( "Submitter" );
         final String workflowApproverKey = "workflow.approvalWorkflow";
         final Task prepTask = new TestPrepTask( "task.preSaveWikiPage" );
         final String decisionKey = "decision.saveWikiPage";
         final Fact[] facts = new Fact[3];
-        facts[0] = new Fact("fact1",Integer.valueOf( 1 ) );
+        facts[0] = new Fact("fact1", 1 );
         facts[1] = new Fact("fact2","A factual String");
         facts[2] = new Fact("fact3",Outcome.DECISION_ACKNOWLEDGE);
         final Task completionTask = new TestPrepTask( "task.saveWikiPage" );
@@ -113,11 +110,11 @@ public class ApprovalWorkflowTest {
 
         // Check that our predecessor/successor relationships are ok
         Assertions.assertEquals( decision, prepTask.getSuccessor( Outcome.STEP_COMPLETE ) );
-        Assertions.assertEquals( null, prepTask.getSuccessor( Outcome.STEP_ABORT ) );
-        Assertions.assertEquals( null, prepTask.getSuccessor( Outcome.STEP_CONTINUE ) );
-        Assertions.assertEquals( null, decision.getSuccessor( Outcome.DECISION_ACKNOWLEDGE ) );
-        Assertions.assertEquals( null, decision.getSuccessor( Outcome.DECISION_HOLD ) );
-        Assertions.assertEquals( null, decision.getSuccessor( Outcome.DECISION_REASSIGN ) );
+        Assertions.assertNull( prepTask.getSuccessor( Outcome.STEP_ABORT ) );
+        Assertions.assertNull( prepTask.getSuccessor( Outcome.STEP_CONTINUE ) );
+        Assertions.assertNull( decision.getSuccessor( Outcome.DECISION_ACKNOWLEDGE ) );
+        Assertions.assertNull( decision.getSuccessor( Outcome.DECISION_HOLD ) );
+        Assertions.assertNull( decision.getSuccessor( Outcome.DECISION_REASSIGN ) );
         Assertions.assertEquals( completionTask, decision.getSuccessor( Outcome.DECISION_APPROVE ) );
 
         // The "deny" notification should use the right key
@@ -137,14 +134,13 @@ public class ApprovalWorkflowTest {
     }
 
     @Test
-    public void testBuildApprovalWorkflowDeny() throws WikiException
-    {
+    public void testBuildApprovalWorkflowDeny() throws WikiException {
         final Principal submitter = new WikiPrincipal( "Submitter" );
         final String workflowApproverKey = "workflow.approvalWorkflow";
         final Task prepTask = new TestPrepTask( "task.preSaveWikiPage" );
         final String decisionKey = "decision.saveWikiPage";
         final Fact[] facts = new Fact[3];
-        facts[0] = new Fact("fact1",new Integer(1));
+        facts[0] = new Fact("fact1", 1 );
         facts[1] = new Fact("fact2","A factual String");
         facts[2] = new Fact("fact3",Outcome.DECISION_ACKNOWLEDGE);
         final Task completionTask = new TestPrepTask( "task.saveWikiPage" );
@@ -180,17 +176,13 @@ public class ApprovalWorkflowTest {
     }
 
     @Test
-    public void testSaveWikiPageWithApproval() throws WikiException
-    {
+    public void testSaveWikiPageWithApproval() throws WikiException {
         // Create a sample test page and try to save it
         final String pageName = "SaveWikiPageWorkflow-Test" + System.currentTimeMillis();
         final String text = "This is a test!";
-        try
-        {
-            m_engine.saveTextAsJanne(pageName, text);
-        }
-        catch ( final DecisionRequiredException e )
-        {
+        try {
+            m_engine.saveTextAsJanne( pageName, text );
+        } catch( final DecisionRequiredException e ) {
             // Swallow exception, because it is expected...
         }
 
@@ -202,7 +194,7 @@ public class ApprovalWorkflowTest {
         Assertions.assertEquals(1, decisions.size());
 
         // Now, approve the decision and it should go away, and page should appear.
-        final Decision decision = (Decision)decisions.iterator().next();
+        final Decision decision = decisions.iterator().next();
         decision.decide(Outcome.DECISION_APPROVE);
         Assertions.assertTrue( m_engine.getManager( PageManager.class ).wikiPageExists(pageName));
         decisions = m_dq.getActorDecisions( m_engine.adminSession() );
@@ -213,17 +205,13 @@ public class ApprovalWorkflowTest {
     }
 
     @Test
-    public void testSaveWikiPageWithRejection() throws WikiException
-    {
+    public void testSaveWikiPageWithRejection() throws WikiException {
         // Create a sample test page and try to save it
         final String pageName = "SaveWikiPageWorkflow-Test" + System.currentTimeMillis();
         final String text = "This is a test!";
-        try
-        {
-            m_engine.saveTextAsJanne(pageName, text);
-        }
-        catch ( final DecisionRequiredException e )
-        {
+        try {
+            m_engine.saveTextAsJanne( pageName, text );
+        } catch( final DecisionRequiredException e ) {
             // Swallow exception, because it is expected...
         }
 
@@ -235,14 +223,14 @@ public class ApprovalWorkflowTest {
         Assertions.assertEquals(1, decisions.size());
 
         // Now, DENY the decision and the page should still not exist...
-        Decision decision = (Decision)decisions.iterator().next();
+        Decision decision = decisions.iterator().next();
         decision.decide(Outcome.DECISION_DENY);
         Assertions.assertFalse( m_engine.getManager( PageManager.class ).wikiPageExists(pageName) );
 
         // ...but there should also be a notification decision in Janne's queue
         decisions = m_dq.getActorDecisions( m_engine.janneSession() );
         Assertions.assertEquals(1, decisions.size());
-        decision = (Decision)decisions.iterator().next();
+        decision = decisions.iterator().next();
         Assertions.assertEquals(WorkflowManager.WF_WP_SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey());
 
         // Once Janne disposes of the notification, his queue should be empty
@@ -252,8 +240,7 @@ public class ApprovalWorkflowTest {
     }
 
     @Test
-    public void testSaveWikiPageWithException() throws WikiException
-    {
+    public void testSaveWikiPageWithException() {
         // Add a PageFilter that rejects all save attempts
         final FilterManager fm = m_engine.getFilterManager();
         fm.addPageFilter( new AbortFilter(), 0 );
@@ -287,8 +274,8 @@ public class ApprovalWorkflowTest {
             super( messageKey );
         }
 
-        @Override public Outcome execute() throws WikiException
-        {
+        @Override
+        public Outcome execute() {
             getWorkflow().setAttribute( getMessageKey(), "Completed" );
             setOutcome( Outcome.STEP_COMPLETE );
             return Outcome.STEP_COMPLETE;
@@ -299,10 +286,9 @@ public class ApprovalWorkflowTest {
     /**
      * Dummy PageFilter that always throws a FilterException during preSave operations.
      */
-    public static class AbortFilter extends BasicPageFilter
-    {
-        @Override public String preSave( final WikiContext wikiContext, final String content) throws FilterException
-        {
+    public static class AbortFilter extends BasicPageFilter {
+        @Override
+        public String preSave( final Context wikiContext, final String content ) throws FilterException {
             throw new FilterException( "Page save aborted." );
         }
     }

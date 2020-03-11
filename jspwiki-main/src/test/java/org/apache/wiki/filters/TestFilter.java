@@ -28,7 +28,8 @@ public class TestFilter extends BasicPageFilter {
 	
     public Properties m_properties;
 
-    @Override public void initialize( final Engine engine, final Properties props ) {
+    @Override
+    public void initialize( final Engine engine, final Properties props ) {
         m_properties = props;
     }
 

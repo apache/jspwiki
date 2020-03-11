@@ -19,10 +19,10 @@
 
 package org.apache.wiki.filters;
 
-import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
-
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.filters.BasicPageFilter;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
@@ -53,8 +53,9 @@ public class PageEventFilter extends BasicPageFilter {
     /**
      * Called whenever a new PageFilter is instantiated and reset.
      */
-    public void initialize( final Properties properties ) throws FilterException {
-        //
+    @Override
+    public void initialize( final Engine engine, final Properties properties ) throws FilterException {
+        super.initialize( engine, properties );
     }
 
     /**
@@ -64,7 +65,8 @@ public class PageEventFilter extends BasicPageFilter {
      * @param wikiContext The current wikicontext.
      * @param content WikiMarkup.
      */
-    public String preTranslate( final WikiContext wikiContext, final String content ) {
+    @Override
+    public String preTranslate( final Context wikiContext, final String content ) {
         fireEvent( WikiPageEvent.PRE_TRANSLATE, wikiContext );
         return content;
     }
@@ -74,7 +76,8 @@ public class PageEventFilter extends BasicPageFilter {
      * This method is called after a page has been fed through the TranslatorReader, so anything you are seeing here is translated content.
      * If you want to do any of your own WikiMarkup2HTML translation, do it here.
      */
-    public String postTranslate( final WikiContext wikiContext, final String htmlContent ) {
+    @Override
+    public String postTranslate( final Context wikiContext, final String htmlContent ) {
         fireEvent( WikiPageEvent.POST_TRANSLATE, wikiContext );
         return htmlContent;
     }
@@ -83,7 +86,8 @@ public class PageEventFilter extends BasicPageFilter {
     /**
       * This method is called before the page has been saved to the PageProvider.
       */
-    public String preSave( final WikiContext wikiContext, final String content ) {
+    @Override
+    public String preSave( final Context wikiContext, final String content ) {
         fireEvent( WikiPageEvent.PRE_SAVE, wikiContext );
         return content;
     }
@@ -95,7 +99,8 @@ public class PageEventFilter extends BasicPageFilter {
       * <p>
       * Since the result is discarded from this method, this is only useful for things like counters, etc.
       */
-    public void postSave( final WikiContext wikiContext, final String content ) {
+    @Override
+    public void postSave( final Context wikiContext, final String content ) {
         fireEvent( WikiPageEvent.POST_SAVE, wikiContext );
     }
 
@@ -128,7 +133,7 @@ public class PageEventFilter extends BasicPageFilter {
      * @param type      the WikiPageEvent type to be fired.
      * @param context   the WikiContext of the event.
      */
-    protected final void fireEvent( final int type, final WikiContext context ) {
+    protected final void fireEvent( final int type, final Context context ) {
         if( WikiEventManager.isListening(this ) && WikiPageEvent.isValidType( type ) ) {
             final WikiPageEvent event = new WikiPageEvent( context.getEngine(), type, context.getPage().getName() );
             WikiEventManager.fireEvent(this, event );

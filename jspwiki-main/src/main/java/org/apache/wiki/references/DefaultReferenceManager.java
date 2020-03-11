@@ -25,6 +25,7 @@ import org.apache.wiki.LinkCollector;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.BasicPageFilter;
@@ -416,8 +417,8 @@ public class DefaultReferenceManager extends BasicPageFilter implements Referenc
      *  @param content {@inheritDoc}
      */
     @Override
-	public void postSave( final WikiContext context, final String content ) {
-        final WikiPage page = context.getPage();
+	public void postSave( final Context context, final String content ) {
+        final WikiPage page = ( WikiPage )context.getPage();
         updateReferences( page.getName(), scanWikiLinks( page, content ) );
         serializeAttrsToDisk( page );
     }
