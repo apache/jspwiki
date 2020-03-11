@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -157,7 +158,8 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
     /**
      *  {@inheritDoc}
      */
-    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    @Override
+    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
         final Calendar   startTime;
         final Calendar   stopTime;
         int        numDays = DEFAULT_DAYS;
@@ -442,7 +444,8 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
      *
      *  {@inheritDoc}
      */
-    @Override public void executeParser( final PluginElement element, final WikiContext context, final Map< String, String > params ) {
+    @Override
+    public void executeParser( final PluginElement element, final Context context, final Map< String, String > params ) {
         context.getPage().setAttribute( ATTR_ISWEBLOG, "true" );
     }
 

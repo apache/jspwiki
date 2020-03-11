@@ -24,6 +24,7 @@ import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
@@ -128,7 +129,7 @@ public class PluginContent extends Text implements PluginElement {
 
     /**{@inheritDoc}*/
     @Override
-    public String invoke( final WikiContext context ) {
+    public String invoke( final Context context ) {
 		String result;
 		final Boolean wysiwygVariable = ( Boolean )context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         boolean wysiwygEditorMode = false;
@@ -161,18 +162,18 @@ public class PluginContent extends Text implements PluginElement {
                 //  Parse any variable instances from the string
                 for( final Map.Entry< String, String > e : m_params.entrySet() ) {
                     String val = e.getValue();
-                    val = engine.getManager( VariableManager.class).expandVariables( context, val );
+                    val = engine.getManager( VariableManager.class).expandVariables( ( WikiContext )context, val );
                     parsedParams.put( e.getKey(), val );
                 }
                 final PluginManager pm = engine.getManager( PluginManager.class );
-                result = pm.execute( context, m_pluginName, parsedParams );
+                result = pm.execute( ( WikiContext )context, m_pluginName, parsedParams );
             }
         } catch( final Exception e ) {
             if( wysiwygEditorMode ) {
                 result = "";
             } else {
                 // log.info("Failed to execute plugin",e);
-                final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+                final ResourceBundle rb = Preferences.getBundle( ( WikiContext )context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
                 result = MarkupParser.makeError( MessageFormat.format( rb.getString( "plugin.error.insertionfailed" ), 
                 		                                               context.getRealPage().getWiki(), 
                 		                                               context.getRealPage().getName(), 
@@ -185,10 +186,10 @@ public class PluginContent extends Text implements PluginElement {
 
     /**{@inheritDoc}*/
     @Override
-    public void executeParse( final WikiContext context ) throws PluginException {
+    public void executeParse( final Context context ) throws PluginException {
         final PluginManager pm = context.getEngine().getManager( PluginManager.class );
         if( pm.pluginsEnabled() ) {
-            final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+            final ResourceBundle rb = Preferences.getBundle( ( WikiContext )context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
             final Map< String, String > params = getParameters();
             final WikiPlugin plugin = pm.newWikiPlugin( getPluginName(), rb );
             try {
@@ -211,7 +212,7 @@ public class PluginContent extends Text implements PluginElement {
      * @throws PluginException If plugin invocation is faulty
      * @since 2.10.0
      */
-    public static PluginContent parsePluginLine( final WikiContext context, final String commandline, final int pos ) throws PluginException {
+    public static PluginContent parsePluginLine( final Context context, final String commandline, final int pos ) throws PluginException {
         final PatternMatcher matcher = new Perl5Matcher();
 
         try {

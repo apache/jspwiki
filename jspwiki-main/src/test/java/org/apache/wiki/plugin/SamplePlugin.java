@@ -19,7 +19,7 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
 import org.apache.wiki.api.plugin.PluginElement;
 import org.apache.wiki.api.plugin.WikiPlugin;
@@ -31,31 +31,33 @@ import java.util.Map;
  *  <P>
  *  Parameters: text - text to return.
  *  Any _body content gets appended between brackets.
- *
  */
 public class SamplePlugin implements WikiPlugin, ParserStagePlugin {
 	
     protected static boolean c_rendered = false;
     
-    public String execute( WikiContext context, Map< String, String > params ) throws PluginException {
-    	StringBuilder sb = new StringBuilder();
-
-        String text = params.get("text");
+    @Override
+    public String execute( final WikiContext context, final Map< String, String > params ) {
+        final StringBuilder sb = new StringBuilder();
+        final String text = params.get("text");
 
         if( text != null ) {
             sb.append( text );
         }
 
-        String body = params.get("_body");
+        final String body = params.get("_body");
         if( body != null ) {
-            sb.append( " ("+body.replace('\n','+')+")" );
+            sb.append( " (" ).append( body.replace( '\n', '+' ) ).append( ")" );
         }
 
         return sb.toString();
     }
 
-    public void executeParser( PluginElement element, WikiContext context, Map< String, String > params) {
-        if( element.getParameter("render") != null ) c_rendered = true;
+    @Override
+    public void executeParser( final PluginElement element, final Context context, final Map< String, String > params) {
+        if( element.getParameter("render") != null ) {
+            c_rendered = true;
+        }
     }
 
 }
