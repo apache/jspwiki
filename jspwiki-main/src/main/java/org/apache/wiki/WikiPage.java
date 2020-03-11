@@ -19,6 +19,7 @@
 package org.apache.wiki;
 
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclImpl;
@@ -38,7 +39,7 @@ import java.util.Map;
 //        author, date, etc. should also be part of the metadata.  We also
 //        need to figure out the metadata lifecycle.
 
-public class WikiPage implements Cloneable, Comparable< WikiPage > {
+public class WikiPage implements Page, Comparable< WikiPage > {
 
     private       String     m_name;
     private       Engine     m_engine;
@@ -88,6 +89,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @return The page name.
      */
+    @Override
     public String getName()
     {
         return m_name;
@@ -103,6 +105,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @param key The key using which the attribute is fetched
      *  @return The attribute.  If the attribute has not been set, returns null.
      */
+    @Override
     @SuppressWarnings( "unchecked" )
     public < T > T getAttribute( final String key )
     {
@@ -116,6 +119,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @param key The key for the attribute used to fetch the attribute later on.
      *  @param attribute The attribute value
      */
+    @Override
     public void setAttribute( final String key, final Object attribute )
     {
         m_attributes.put( key, attribute );
@@ -128,7 +132,8 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      * @return The attribute Map.  Please note that this is a direct
      *         reference, not a copy.
      */
-    public Map< String, Object > getAttributes() 
+    @Override
+    public Map< String, Object > getAttributes()
     {
         return m_attributes;
     }
@@ -140,6 +145,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @return If the attribute existed, returns the object.
      *  @since 2.1.111
      */
+    @Override
     @SuppressWarnings( "unchecked" )
     public < T > T removeAttribute( final String key )
     {
@@ -151,6 +157,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @return The last modification date
      */
+    @Override
     public Date getLastModified()
     {
         return m_lastModified;
@@ -162,6 +169,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @param date The date
      */
+    @Override
     public void setLastModified( final Date date )
     {
         m_lastModified = date;
@@ -173,6 +181,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @param version The version number
      */
+    @Override
     public void setVersion( final int version )
     {
         m_version = version;
@@ -183,6 +192,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @return the version number of this page.
      */
+    @Override
     public int getVersion()
     {
         return m_version;
@@ -194,6 +204,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @return the size of the page. 
      *  @since 2.1.109
      */
+    @Override
     public long getSize()
     {
         return m_fileSize;
@@ -205,6 +216,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @param size The size of the page.
      *  @since 2.1.109
      */
+    @Override
     public void setSize( final long size )
     {
         m_fileSize = size;
@@ -238,6 +250,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @param author The author name.
      */
+    @Override
     public void setAuthor( final String author )
     {
         m_author = author;
@@ -248,6 +261,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @return Author name, or possibly null.
      */
+    @Override
     public String getAuthor()
     {
         return m_author;
@@ -258,6 +272,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @return The name of the wiki.
      */
+    @Override
     public String getWiki()
     {
         return m_wiki;
@@ -266,6 +281,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
     /**
      *  This method will remove all metadata from the page.
      */
+    @Override
     public void invalidateMetadata() {
         m_hasMetadata = false;
         setAcl( null );
@@ -280,6 +296,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  
      *  @return true, if the page has metadata.
      */
+    @Override
     public boolean hasMetadata()
     {
         return m_hasMetadata;
@@ -288,6 +305,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
     /**
      *  Sets the metadata flag to true.  Never call.
      */
+    @Override
     public void setHasMetadata()
     {
         m_hasMetadata = true;
@@ -311,7 +329,7 @@ public class WikiPage implements Cloneable, Comparable< WikiPage > {
      *  @return A deep clone of the WikiPage
      */
     @Override
-    public Object clone() {
+    public WikiPage clone() {
         final WikiPage p = new WikiPage( m_engine, m_name );
        
         p.m_wiki         = m_wiki;

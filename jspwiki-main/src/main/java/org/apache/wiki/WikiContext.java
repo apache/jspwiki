@@ -19,7 +19,9 @@
 package org.apache.wiki;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -57,7 +59,7 @@ import java.util.PropertyPermission;
  *
  *  @see org.apache.wiki.plugin.Counter
  */
-public class WikiContext implements Cloneable, Command {
+public class WikiContext implements Context, Command {
 
     private Command  m_command;
     private WikiPage m_page;
@@ -303,9 +305,10 @@ public class WikiContext implements Cloneable, Command {
      *  @since 2.3.14
      *  @see org.apache.wiki.tags.InsertPageTag
      */
-    public WikiPage setRealPage( final WikiPage page ) {
+    @Override
+    public WikiPage setRealPage( final Page page ) {
         final WikiPage old = m_realPage;
-        m_realPage = page;
+        m_realPage = ( WikiPage )page;
         updateCommand( m_command.getRequestContext() );
         return old;
     }
@@ -323,6 +326,7 @@ public class WikiContext implements Cloneable, Command {
      *  @see org.apache.wiki.tags.InsertPageTag
      *  @see org.apache.wiki.parser.JSPWikiMarkupParser
      */
+    @Override
     public WikiPage getRealPage()
     {
         return m_realPage;
@@ -334,6 +338,7 @@ public class WikiContext implements Cloneable, Command {
      *  @return A complete URL to the new page to redirect to
      *  @since 2.2
      */
+    @Override
     public String getRedirectURL() {
         final String pagename = m_page.getName();
         String redirURL = m_engine.getManager( CommandResolver.class ).getSpecialPageReference( pagename );
@@ -354,6 +359,7 @@ public class WikiContext implements Cloneable, Command {
      *
      *  @return The engine owning this context.
      */
+    @Override
     public WikiEngine getEngine() {
         return ( WikiEngine )m_engine;
     }
@@ -363,6 +369,7 @@ public class WikiContext implements Cloneable, Command {
      *
      *  @return the page which was fetched.
      */
+    @Override
     public WikiPage getPage()
     {
         return m_page;
@@ -374,8 +381,9 @@ public class WikiContext implements Cloneable, Command {
      *  @param page The wikipage
      *  @since 2.1.37.
      */
-    public void setPage( final WikiPage page ) {
-        m_page = page;
+    @Override
+    public void setPage( final Page page ) {
+        m_page = (WikiPage)page;
         updateCommand( m_command.getRequestContext() );
     }
 
@@ -395,6 +403,7 @@ public class WikiContext implements Cloneable, Command {
      *
      *  @param arg The request context (one of the predefined contexts.)
      */
+    @Override
     public void setRequestContext( final String arg )
     {
         updateCommand( arg );
@@ -426,6 +435,7 @@ public class WikiContext implements Cloneable, Command {
      *  @param key The variable name.
      *  @return The variable contents.
      */
+    @Override
     public Object getVariable( final String key )
     {
         return m_variableMap.get( key );
@@ -438,6 +448,7 @@ public class WikiContext implements Cloneable, Command {
      *  @param key The variable name.
      *  @param data The variable value.
      */
+    @Override
     public void setVariable( final String key, final Object data ) {
         m_variableMap.put( key, data );
         updateCommand( m_command.getRequestContext() );
@@ -451,6 +462,7 @@ public class WikiContext implements Cloneable, Command {
      * @param defValue Default value for the boolean
      * @return {@code true} or {@code false}.
      */
+    @Override
     public boolean getBooleanWikiProperty( final String key, final boolean defValue ) {
         final Object bool = getVariable( key );
         if( bool != null ) {
@@ -469,6 +481,7 @@ public class WikiContext implements Cloneable, Command {
      *  @param paramName Parameter name to look for.
      *  @return HTTP parameter, or null, if no such parameter existed.
      */
+    @Override
     public String getHttpParameter( final String paramName ) {
         String result = null;
         if( m_request != null ) {
@@ -485,6 +498,7 @@ public class WikiContext implements Cloneable, Command {
      *  @return Null, if no HTTP request was done.
      *  @since 2.0.13.
      */
+    @Override
     public HttpServletRequest getHttpRequest()
     {
         return m_request;
@@ -496,6 +510,7 @@ public class WikiContext implements Cloneable, Command {
      *  @param dir The template name
      *  @since 2.1.15.
      */
+    @Override
     public void setTemplate( final String dir )
     {
         m_template = dir;
@@ -526,6 +541,7 @@ public class WikiContext implements Cloneable, Command {
      *  @since 2.1.15.
      *  @return template name
      */
+    @Override
     public String getTemplate()
     {
         return m_template;
@@ -538,6 +554,7 @@ public class WikiContext implements Cloneable, Command {
      *
      *  @return The current user; or maybe null in case of internal calls.
      */
+    @Override
     public Principal getCurrentUser() {
         if (m_session == null) {
             // This shouldn't happen, really...
@@ -552,6 +569,7 @@ public class WikiContext implements Cloneable, Command {
      *  @param page The page to which to link.
      *  @return An URL to the page.  This honours the current absolute/relative setting.
      */
+    @Override
     public String getViewURL( final String page ) {
         return getURL( VIEW, page, null );
     }
@@ -563,6 +581,7 @@ public class WikiContext implements Cloneable, Command {
      *  @param page The page to which to link
      *  @return An URL to the page, honours the absolute/relative setting in jspwiki.properties
      */
+    @Override
     public String getURL( final String context, final String page ) {
         return getURL( context, page, null );
     }
@@ -577,6 +596,7 @@ public class WikiContext implements Cloneable, Command {
      *
      *  @return An URL to the given context and page.
      */
+    @Override
     public String getURL( final String context, final String page, final String params ) {
         // FIXME: is rather slow
         return m_engine.getURL( context, page, params );
@@ -657,6 +677,7 @@ public class WikiContext implements Cloneable, Command {
      *
      *  @return The Session associated with this context.
      */
+    @Override
     public WikiSession getWikiSession() {
         return ( WikiSession )m_session;
     }
@@ -729,6 +750,7 @@ public class WikiContext implements Cloneable, Command {
      *  @since 2.4.46
      *  @return true, if the user has all permissions.
      */
+    @Override
     public boolean hasAdminPermissions() {
         return m_engine.getManager( AuthorizationManager.class ).checkPermission( getWikiSession(), new AllPermission( m_engine.getApplicationName() ) );
     }
