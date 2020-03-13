@@ -82,7 +82,7 @@
     <plugin.assembly.version>3.2.0</plugin.assembly.version>
     <plugin.clean.version>3.1.0</plugin.clean.version>
     <plugin.compiler.version>3.8.1</plugin.compiler.version>
-    <plugin.dependency.version>3.1.1</plugin.dependency.version>
+    <plugin.dependency.version>3.1.2</plugin.dependency.version>
     <plugin.eclipse.version>2.10</plugin.eclipse.version>
     <plugin.enforcer.version>1.4.1</plugin.enforcer.version>
     <plugin.idea.version>2.2.1</plugin.idea.version>
