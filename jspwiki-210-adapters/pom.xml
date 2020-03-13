@@ -34,6 +34,14 @@
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-main</artifactId>
       <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-api</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>

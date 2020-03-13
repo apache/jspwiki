@@ -22,21 +22,28 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
 
+import java.lang.reflect.Method;
 import java.util.Properties;
+
+import static org.apache.wiki.api.filters.FilterSupportOperations.executePageFilterPhase;
+import static org.apache.wiki.api.filters.FilterSupportOperations.methodOfNonPublicAPI;
 
 
 /**
- *  Provides a definition for a page filter.  A page filter is a class that can be used to transform the WikiPage content being saved or
- *  being loaded at any given time.
- *  <p>
- *  Note that the WikiContext.getPage() method always returns the context in which text is rendered, i.e. the original request.  Thus the
- *  content may actually be different content than what what the wikiContext.getPage() implies!  This happens often if you are for example
- *  including multiple pages on the same page.
- *  <p>
- *  PageFilters must be thread-safe!  There is only one instance of each PageFilter per each Engine invocation.  If you need to store data
- *  persistently, use VariableManager, or WikiContext.
- *  <p>
- *  As of 2.5.30, initialize() gains access to the Engine.
+ *  <p>Provides a definition for a page filter. A page filter is a class that can be used to transform the WikiPage content being saved or
+ *  being loaded at any given time.</p>
+ *  <p>Note that the Context#getPage() method always returns the context in which text is rendered, i.e. the original request. Thus the
+ *  content may actually be different content than what what the Context#getPage() implies! This happens often if you are for example
+ *  including multiple pages on the same page.</p>
+ *  <p>PageFilters must be thread-safe! There is only one instance of each PageFilter per each Engine invocation. If you need to store data
+ *  persistently, use VariableManager, or WikiContext.</p>
+ *  <p><strong>Design notes</strong></p>
+ *  <p>As of 2.5.30, initialize() gains access to the Engine.</p>
+ *  <p>As of 2.11.0.M7, almost all methods from BasicPageFilter end up here as default methods.</p>
+ *  <p>In order to preserve backwards compatibility with filters not using the public API, these default methods checks if a given filter
+ *  is using the old, non public API and, if that's the case attempt to execute the old, non public api corresponding method. If the filter
+ *  uses the public API, then the default callback is used. None of the default callbacks do anything, so it is a good idea for you to
+ *  implement only methods that you need.</p>
  */
 public interface PageFilter {
 
@@ -47,7 +54,7 @@ public interface PageFilter {
      *  @param properties The properties ripped from filters.xml.
      *  @throws FilterException If the filter could not be initialized. If this is thrown, the filter is not added to the internal queues.
      */
-    void initialize( Engine engine, Properties properties ) throws FilterException;
+    void initialize( final Engine engine, final Properties properties ) throws FilterException;
 
     /**
      *  This method is called whenever a page has been loaded from the provider, but not yet been sent through the markup-translation
@@ -55,36 +62,42 @@ public interface PageFilter {
      *
      *  @param context The current context.
      *  @param content WikiMarkup.
-     *  @return The modified wikimarkup content.
+     *  @return The modified wikimarkup content. Default implementation returns the markup as received.
      *  @throws FilterException If something goes wrong.  Throwing this causes the entire page processing to be abandoned.
      */
     default String preTranslate( final Context context, final String content ) throws FilterException {
-        return content;
+        final Method m = methodOfNonPublicAPI( this, "preTranslate", "org.apache.wiki.WikiContext", "java.lang.String" );
+        return executePageFilterPhase( () -> content, m, this, context, content );
+        // return content;
     }
 
     /**
      *  This method is called after a page has been fed through the translation process, so anything you are seeing here is translated
      *  content.  If you want to do any of your own WikiMarkup2HTML translation, do it here.
      *  
-     *  @param wikiContext The WikiContext.
-     *  @param htmlContent The translated HTML
-     *  @return The modified HTML
+     *  @param context The WikiContext.
+     *  @param htmlContent The translated HTML.
+     *  @return The modified HTML. Default implementation returns the translated html as received.
      *  @throws FilterException If something goes wrong.  Throwing this causes the entire page processing to be abandoned.
      */
-    default String postTranslate( final Context wikiContext, final String htmlContent ) throws FilterException {
-        return htmlContent;
+    default String postTranslate( final Context context, final String htmlContent ) throws FilterException {
+        final Method m = methodOfNonPublicAPI( this, "postTranslate", "org.apache.wiki.WikiContext", "java.lang.String" );
+        return executePageFilterPhase( () -> htmlContent, m, this, context, htmlContent );
+        // return htmlContent;
     }
 
     /**
      *  This method is called before the page has been saved to the PageProvider.
      *  
-     *  @param wikiContext The WikiContext
+     *  @param context The WikiContext
      *  @param content The wikimarkup that the user just wanted to save.
-     *  @return The modified wikimarkup
+     *  @return The modified wikimarkup. Default implementation returns the markup as received.
      *  @throws FilterException If something goes wrong.  Throwing this causes the entire page processing to be abandoned.
      */
-    default String preSave( final Context wikiContext, final String content ) throws FilterException {
-        return content;
+    default String preSave( final Context context, final String content ) throws FilterException {
+        final Method m = methodOfNonPublicAPI( this, "preSave", "org.apache.wiki.WikiContext", "java.lang.String" );
+        return executePageFilterPhase( () -> content, m, this, context, content );
+        // return content;
     }
 
     /**
@@ -93,11 +106,15 @@ public interface PageFilter {
      *  <p>
      *  Since the result is discarded from this method, this is only useful for things like counters, etc.
      *  
-     *  @param wikiContext The WikiContext
+     *  @param context The WikiContext
      *  @param content The content which was just stored.
      *  @throws FilterException If something goes wrong.  As the page is already saved, This is just logged.
      */
-    default void postSave( final Context wikiContext, final String content ) throws FilterException {}
+    default void postSave( final Context context, final String content ) throws FilterException {
+        final Method m = methodOfNonPublicAPI( this, "postSave", "org.apache.wiki.WikiContext", "java.lang.String" );
+        executePageFilterPhase( () -> null, m, this, content );
+        // empty method
+    }
 
     /**
      *  Called for every filter, e.g. on wiki engine shutdown. Use this if you have to 
@@ -106,6 +123,10 @@ public interface PageFilter {
      *  @param engine The Engine which owns this filter.
      *  @since 2.5.36
      */
-    default void destroy( final Engine engine ) {}
+    default void destroy( final Engine engine ) {
+        final Method m = methodOfNonPublicAPI( this, "destroy", "org.apache.wiki.WikiEngine" );
+        executePageFilterPhase( () -> null, m, this, engine );
+        // empty method
+    }
 
 }
