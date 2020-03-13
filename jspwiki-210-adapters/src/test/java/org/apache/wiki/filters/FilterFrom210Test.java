@@ -1,5 +1,6 @@
 package org.apache.wiki.filters;
 
+import com.example.filters.TwoXFilter;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
@@ -20,12 +21,11 @@ public class FilterFrom210Test {
         final WikiEngine engine = TestEngine.build( props ); // trigger page filter#initialize
         final FilterManager fm = engine.getManager( FilterManager.class );
         final RenderingManager rm = engine.getManager( RenderingManager.class );
-        Assertions.assertTrue( fm.getFilterList().stream().anyMatch( f -> f instanceof ProfanityFilter ) );
+        Assertions.assertTrue( fm.getFilterList().stream().anyMatch( f -> f instanceof TwoXFilter ) );
 
         final WikiContext context = new WikiContext( engine, new WikiPage( engine, "Testpage" ) );
         final String res = rm.textToHTML( context,"Incredible and super important content here" ); // trigger pre / post translate
-        // Assertions.assertEquals( "see how I care about yor content - hmmm...", res );
-        Assertions.assertEquals( "Incredible and super important content here", res );
+        Assertions.assertEquals( "see how I care about yor content - hmmm...", res );
     }
 
 }

@@ -27,6 +27,7 @@ public class TwoXFilterTest {
     @Test
     public void testFilter() throws Exception {
         final TwoXFilter txf = new TwoXFilter();
+        txf.initialize( null, null );
         Assertions.assertEquals("see how I care about yor content - hmmm...", txf.postTranslate( null, null ) );
     }
 

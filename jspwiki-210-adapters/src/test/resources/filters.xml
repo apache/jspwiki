@@ -20,12 +20,12 @@
 
 <pagefilters>
 
-   <filter>
+   <!--<filter>
       <class>org.apache.wiki.filters.ProfanityFilter</class>
-   </filter>
-   
-   <!-- <filter>
-      <class>com.example.filters.TwoXFilter</class>
    </filter> -->
+   
+   <filter>
+      <class>com.example.filters.TwoXFilter</class>
+   </filter>
 
 </pagefilters>
