@@ -37,7 +37,7 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.RedirectException;
-import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.user.UserProfile;
@@ -108,7 +108,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *
  *  @since 2.1.112
  */
-public class SpamFilter extends BasicPageFilter {
+public class SpamFilter extends BasePageFilter {
 	
     private static final String ATTR_SPAMFILTER_SCORE = "spamfilter.score";
     private static final String REASON_REGEXP = "Regexp";

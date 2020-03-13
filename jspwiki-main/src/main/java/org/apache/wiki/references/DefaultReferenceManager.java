@@ -28,7 +28,7 @@ import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.event.WikiEvent;
@@ -120,7 +120,7 @@ import java.util.TreeSet;
 // FIXME: The way that we save attributes is now a major booboo, and must be
 //        replace forthwith.  However, this is a workaround for the great deal
 //        of problems that occur here...
-public class DefaultReferenceManager extends BasicPageFilter implements ReferenceManager {
+public class DefaultReferenceManager extends BasePageFilter implements ReferenceManager {
 
     /**
      *  Maps page wikiname to a Collection of pages it refers to. The Collection must contain Strings. The Collection may contain

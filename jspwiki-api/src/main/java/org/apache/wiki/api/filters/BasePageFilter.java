@@ -21,14 +21,18 @@ package org.apache.wiki.api.filters;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
 
+import java.lang.reflect.Method;
 import java.util.Properties;
+
+import static org.apache.wiki.api.filters.FilterSupportOperations.executePageFilterPhase;
+import static org.apache.wiki.api.filters.FilterSupportOperations.methodOfNonPublicAPI;
 
 
 /**
  * Provides a base implementation of a PageFilter.  None of the callbacks do anything, so it is a good idea for you to extend from this
  * class and implement only methods that you need.
  */
-public class BasicPageFilter implements PageFilter {
+public class BasePageFilter implements PageFilter {
 
     protected Engine m_engine;
 
@@ -40,6 +44,8 @@ public class BasicPageFilter implements PageFilter {
     @Override
     public void initialize( final Engine engine, final Properties properties ) throws FilterException {
         m_engine = engine;
+        final Method m = methodOfNonPublicAPI( this, "initialize", "org.apache.wiki.WikiEngine", "java.util.Properties" );
+        executePageFilterPhase( () -> null, m, this, engine, properties );
     }
 
 }

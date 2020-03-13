@@ -29,7 +29,7 @@ import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
@@ -56,7 +56,7 @@ import java.util.Set;
  *
  *  @since 2.2.21.
  */
-public class DefaultSearchManager extends BasicPageFilter implements SearchManager {
+public class DefaultSearchManager extends BasePageFilter implements SearchManager {
 
     private static final Logger log = Logger.getLogger( DefaultSearchManager.class );
 

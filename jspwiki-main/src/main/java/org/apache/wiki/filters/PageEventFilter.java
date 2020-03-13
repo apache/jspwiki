@@ -22,7 +22,7 @@ package org.apache.wiki.filters;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
-import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
@@ -48,7 +48,7 @@ import java.util.Properties;
   *
   * @see org.apache.wiki.event.WikiEventManager
   */
-public class PageEventFilter extends BasicPageFilter {
+public class PageEventFilter extends BasePageFilter {
 
     /**
      * Called whenever a new PageFilter is instantiated and reset.

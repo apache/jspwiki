@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
-import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.parser.CreoleToJSPWikiTranslator;
 
 import java.util.Properties;
@@ -41,7 +41,7 @@ import java.util.Properties;
  *
  * @see <a href="http://www.wikicreole.org/wiki/MixedMode">[[WikiCreole:MixedMode]]</a> 
  */
-public class CreoleFilter extends BasicPageFilter {
+public class CreoleFilter extends BasePageFilter {
     
     private static final Logger log = Logger.getLogger(CreoleFilter.class);
     

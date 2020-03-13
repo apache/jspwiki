@@ -19,12 +19,12 @@
 package org.apache.wiki.filters;
 
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.filters.BasePageFilter;
 
 import java.util.Properties;
 
 
-public class TestFilter extends BasicPageFilter {
+public class TestFilter extends BasePageFilter {
 	
     public Properties m_properties;
 

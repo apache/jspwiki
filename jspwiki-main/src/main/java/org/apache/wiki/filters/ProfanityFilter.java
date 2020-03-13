@@ -20,7 +20,7 @@ package org.apache.wiki.filters;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Context;
-import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.BufferedReader;
@@ -37,7 +37,7 @@ import java.util.List;
  *  is case unsensitive.
  *
  */
-public class ProfanityFilter extends BasicPageFilter {
+public class ProfanityFilter extends BasePageFilter {
 	
     private static final Logger log = Logger.getLogger( ProfanityFilter.class );
     

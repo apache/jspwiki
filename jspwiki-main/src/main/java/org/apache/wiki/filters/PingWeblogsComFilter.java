@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.api.filters.BasicPageFilter;
+import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.xmlrpc.AsyncCallback;
 import org.apache.xmlrpc.XmlRpcClient;
 
@@ -39,7 +39,7 @@ import java.util.Vector;
 // FIXME: rpc endpoint must be configurable
 // FIXME: Should really be settable per-page.
 // FIXME: Weblog name has been set to stone
-public class PingWeblogsComFilter extends BasicPageFilter {
+public class PingWeblogsComFilter extends BasePageFilter {
 
     private static final Logger log = Logger.getLogger( PingWeblogsComFilter.class );
 
