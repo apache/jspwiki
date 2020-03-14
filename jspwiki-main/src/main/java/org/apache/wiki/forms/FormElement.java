@@ -18,14 +18,13 @@
  */
 package org.apache.wiki.forms;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.plugin.Plugin;
 
 /**
  */
-public abstract class FormElement
-    implements WikiPlugin
-{
+public abstract class FormElement implements Plugin {
+
     /**
      * In order to make the form-to-handler parameter transfer easier,
      * we prefix all user-specified FORM element names with HANDLERPARAM_PREFIX
@@ -43,9 +42,7 @@ public abstract class FormElement
      */
     public static final String FORM_VALUES_CARRIER = "nbpf_values";
 
-    /**
-     *   Show values.  Value is <tt>{@value}</tt>.
-     */
+    /** Show values.  Value is <tt>{@value}</tt>. */
     public static final String HIDE_SUCCESS = "onsuccess";
 
     // Parameter names:
@@ -53,10 +50,7 @@ public abstract class FormElement
     public static final String PARAM_SUBMITHANDLER = "submit";
     /** Plugin parameter, mandatory, indicates what form element to insert. */
     public static final String PARAM_ELEMENT    = "element";
-    /** 
-     * Plugin parameter, mandatory in output element, indicates
-     * WikiPlugin to use to handle form submitted data.
-     */
+    /** Plugin parameter, mandatory in output element, indicates Plugin to use to handle form submitted data. */
     public static final String PARAM_HANDLER    = "handler";
     /** Plugin parameter, mandatory in open/output: name of the form. */
     public static final String PARAM_FORM       = "form";
@@ -82,25 +76,23 @@ public abstract class FormElement
     //public static final String CONTEXT_FORMINFO = "FormPluginInfo";
 
     /**
-     * Utility method stores a FormInfo object into the WikiContext.
+     * Utility method stores a FormInfo object into the Context.
      * 
      * @param ctx The Context to store it in
      * @param info The FormInfo to store.
      */
-    protected void storeFormInfo( WikiContext ctx, FormInfo info )
-    {
+    protected void storeFormInfo( final Context ctx, final FormInfo info ) {
         ctx.setVariable( FORM_VALUES_CARRIER, info );
     }
 
     /**
-     * Attempts to retrieve information on the currently handled
-     * form from the WikiContext.
+     * Attempts to retrieve information on the currently handled form from the Context.
      * 
      * @param ctx The Context
      * @return The FormInfo from the context
      */
-    protected FormInfo getFormInfo( WikiContext ctx )
-    {
+    protected FormInfo getFormInfo( final Context ctx ) {
         return ( FormInfo )ctx.getVariable( FORM_VALUES_CARRIER );
     }
+
 }

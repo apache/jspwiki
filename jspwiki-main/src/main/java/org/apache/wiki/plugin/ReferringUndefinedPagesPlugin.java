@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
@@ -45,7 +45,8 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
     /** Parameter name for setting the text to show when the maximum items is overruled. Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXTRAS = "extras";
 
-    @Override public String execute( final WikiContext context, final Map<String, String> params) throws PluginException {
+    @Override
+    public String execute( final Context context, final Map<String, String> params) throws PluginException {
         final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
         final ReferenceManager referenceManager = context.getEngine().getManager( ReferenceManager.class );

@@ -21,6 +21,7 @@ package org.apache.wiki.plugin;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.pages.PageManager;
@@ -49,45 +50,37 @@ import java.util.ResourceBundle;
  *  <li><b>maxwidth</b> - maximum width, in chars, of generated links.</li>
  *  </ul>
  */
-public class ReferringPagesPlugin
-    extends AbstractReferralPlugin
-{
-    private static Logger log = Logger.getLogger( ReferringPagesPlugin.class );
+public class ReferringPagesPlugin extends AbstractReferralPlugin {
+
+    private static final Logger log = Logger.getLogger( ReferringPagesPlugin.class );
 
     /** Parameter name for setting the maximum items to show.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAX      = "max";
 
-    /** Parameter name for setting the text to show when the maximum items is overruled.
-     *  Value is <tt>{@value}</tt>.
-     */
+    /** Parameter name for setting the text to show when the maximum items is overruled. Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXTRAS   = "extras";
 
-    /**
-     *  Parameter name for choosing the page.  Value is <tt>{@value}</tt>.
-     */
+    /** Parameter name for choosing the page.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_PAGE     = "page";
 
     /**
      *  {@inheritDoc}
      */
-    @Override public String execute( final WikiContext context, final Map<String, String> params )
-        throws PluginException
-    {
+    @Override
+    public String execute( final Context context, final Map<String, String> params ) throws PluginException {
         final ReferenceManager refmgr = context.getEngine().getManager( ReferenceManager.class );
         String pageName = params.get( PARAM_PAGE );
         final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
         StringBuilder result = new StringBuilder( 256 );
 
-        if( pageName == null )
-        {
+        if( pageName == null ) {
             pageName = context.getPage().getName();
         }
 
         final WikiPage page = context.getEngine().getManager( PageManager.class ).getPage( pageName );
 
-        if( page != null )
-        {
+        if( page != null ) {
             Collection< String > links  = refmgr.findReferrers( page.getName() );
             String wikitext = "";
 
@@ -96,8 +89,7 @@ public class ReferringPagesPlugin
             final int items = TextUtil.parseIntParameter( params.get( PARAM_MAX ), ALL_ITEMS );
 
             String extras = TextUtil.replaceEntities( params.get( PARAM_EXTRAS ) );
-            if( extras == null )
-            {
+            if( extras == null ) {
                 extras = rb.getString("referringpagesplugin.more");
             }
 
@@ -105,8 +97,7 @@ public class ReferringPagesPlugin
                 log.debug( "Fetching referring pages for " + page.getName() + " with a max of "+items);
             }
 
-            if( links != null && links.size() > 0 )
-            {
+            if( links != null && links.size() > 0 ) {
                 links = filterAndSortCollection( links );
                 wikitext = wikitizeCollection( links, m_separator, items );
 
@@ -126,20 +117,15 @@ public class ReferringPagesPlugin
             //
             // If nothing was left after filtering or during search
             //
-            if (links == null || links.size() == 0)
-            {
-                wikitext = rb.getString("referringpagesplugin.nobody");
+            if( links == null || links.size() == 0 ) {
+                wikitext = rb.getString( "referringpagesplugin.nobody" );
 
                 result.append( makeHTML( context, wikitext ) );
-            }
-            else
-            {
-                if( m_show.equals( PARAM_SHOW_VALUE_COUNT ) )
-                {
+            } else {
+                if( m_show.equals( PARAM_SHOW_VALUE_COUNT ) ) {
                     result = new StringBuilder();
                     result.append( links.size() );
-                    if( m_lastModified )
-                    {
+                    if( m_lastModified ) {
                         result.append( " (" + m_dateFormat.format( m_dateLastModified ) + ")" );
                     }
                 }

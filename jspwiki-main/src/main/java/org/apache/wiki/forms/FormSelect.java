@@ -19,7 +19,7 @@
 
 package org.apache.wiki.forms;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
@@ -34,36 +34,30 @@ import java.util.ResourceBundle;
 /**
  *  Creates a Form select field.
  */
-public class FormSelect
-    extends FormElement
-{
+public class FormSelect extends FormElement {
+
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map< String, String > params )
-        throws PluginException
-    {
+    @Override
+    public String execute( final Context ctx, final Map< String, String > params ) throws PluginException {
         // Don't render if no error and error-only-rendering is on.
-        FormInfo info = getFormInfo( ctx );
-
-        ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final FormInfo info = getFormInfo( ctx );
+        final ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         Map< String, String > previousValues = null;
-        
-        if ( info != null )
-        {
-            if ( info.hide() )
-            {
+
+        if( info != null ) {
+            if( info.hide() ) {
                 return "<p>" + rb.getString( "forminput.noneedtoshow" ) + "</p>";
             }
             previousValues = info.getSubmission();
         }
 
-        if ( previousValues == null )
-        {
-            previousValues = new HashMap< String, String >();
+        if( previousValues == null ) {
+            previousValues = new HashMap<>();
         }
 
-        Element field = buildSelect( params, previousValues, rb );
+        final Element field = buildSelect( params, previousValues, rb );
 
         // We should look for extra params, e.g. width, ..., here.
         return XhtmlUtil.serialize(field); // ctx.getEngine().getContentEncoding()
@@ -74,12 +68,11 @@ public class FormSelect
      * Builds a Select element.
      */
     private Element buildSelect(
-            Map<String,String> pluginParams,
-            Map<String,String> ctxValues, 
-            ResourceBundle rb )
-            throws PluginException
-    {
-        String inputName = pluginParams.get( PARAM_INPUTNAME );
+            final Map< String, String > pluginParams,
+            final Map< String, String > ctxValues,
+            final ResourceBundle rb )
+            throws PluginException {
+        final String inputName = pluginParams.get( PARAM_INPUTNAME );
         if ( inputName == null ) {
             throw new PluginException( rb.getString( "formselect.namemissing" ) );
         }
@@ -87,8 +80,7 @@ public class FormSelect
         String inputValue = pluginParams.get( PARAM_VALUE );
         String previousValue = ctxValues.get( inputName );
         //
-        // We provide several ways to override the separator, in case
-        // some input application the default value.
+        // We provide several ways to override the separator, in case some input application the default value.
         //
         String optionSeparator = pluginParams.get( "separator" );
         if ( optionSeparator == null ) {
@@ -118,30 +110,26 @@ public class FormSelect
         	inputValue = "";
         }
 
-        // If values from the context contain the separator, we assume
-        // that the plugin or something else has given us a better
+        // If values from the context contain the separator, we assume that the plugin or something else has given us a better
         // list to display.
         boolean contextValueOverride = false;
         if ( previousValue != null ) {
-            if ( previousValue.indexOf( optionSeparator ) != -1 ) {
+            if ( previousValue.contains( optionSeparator ) ) {
                 inputValue = previousValue;
                 previousValue = null;
             } else {
-                // If a context value exists, but it's not a list,
-                // it'll just override any existing selector
-                // indications.
+                // If a context value exists, but it's not a list, it'll just override any existing selector indications.
                 contextValueOverride = true;
             }
         }
 
-        String[] options = inputValue.split( optionSeparator );
+        final String[] options = inputValue.split( optionSeparator );
         int previouslySelected = -1;
         
-        Element[] optionElements = new Element[options.length];
+        final Element[] optionElements = new Element[options.length];
         
         //
-        //  Figure out which one of the options to select: prefer the one
-        //  that was previously selected, otherwise try to find the one
+        //  Figure out which one of the options to select: prefer the one that was previously selected, otherwise try to find the one
         //  with the "select" marker.
         //
         for( int i = 0; i < options.length; i++ ) {
@@ -155,7 +143,7 @@ public class FormSelect
             if ( previouslySelected == -1 ) {
                 if ( !contextValueOverride && indicated > 0 ) {
                     previouslySelected = indicated;
-                } else if ( previousValue != null && options[i].equals( previousValue ) ) {
+                } else if ( options[ i ].equals( previousValue ) ) {
                     previouslySelected = i;
                 }
             }
@@ -171,11 +159,12 @@ public class FormSelect
         	optionElements[previouslySelected].setAttribute(XHTML.ATTR_selected,"true");
         }
 
-        Element select = XhtmlUtil.element(XHTML.select);
+        final Element select = XhtmlUtil.element(XHTML.select);
         select.setAttribute(XHTML.ATTR_name,HANDLERPARAM_PREFIX + inputName);
-        for ( Element option : optionElements ) {
+        for ( final Element option : optionElements ) {
             select.addContent(option);
         }
         return select;
     }
+
 }

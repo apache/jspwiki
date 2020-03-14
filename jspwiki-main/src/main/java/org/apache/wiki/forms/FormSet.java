@@ -18,12 +18,12 @@
  */
 package org.apache.wiki.forms;
 
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.Plugin;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
 
 /**
  * FormSet is a companion WikiPlugin for Form. 
@@ -56,39 +56,32 @@ import org.apache.wiki.api.plugin.WikiPlugin;
  *
  * @see FormInfo
  */
-public class FormSet
-    implements WikiPlugin
-{    
+public class FormSet implements Plugin {
+
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map< String, String > params )
-        throws PluginException
-    {
-        String formName = params.get( FormElement.PARAM_FORM );
-        if( formName == null || formName.trim().length() == 0 )
-        {
+    @Override
+    public String execute( final Context ctx, final Map< String, String > params ) throws PluginException {
+        final String formName = params.get( FormElement.PARAM_FORM );
+        if( formName == null || formName.trim().length() == 0 ) {
             return "";
         }
 
-        FormInfo info = (FormInfo)ctx.getVariable( FormElement.FORM_VALUES_CARRIER );
+        FormInfo info = ctx.getVariable( FormElement.FORM_VALUES_CARRIER );
 
-        if( info == null || formName.equals( info.getName() ) == false )
-        {
+        if( info == null || !formName.equals( info.getName() ) ) {
             info = new FormInfo();
             ctx.setVariable( FormElement.FORM_VALUES_CARRIER, info );
         }
 
         //
-        //  Create a copy for the context.  Unfortunately we need to 
-        //  create slightly modified copy, because otherwise on next
-        //  invocation this might be coming from a cache; so we can't
-        //  modify the original param string.
+        //  Create a copy for the context.  Unfortunately we need to create slightly modified copy, because otherwise on next
+        //  invocation this might be coming from a cache; so we can't modify the original param string.
         //
         info.setName( formName );
-        Map< String, String > hm = new HashMap< String, String >();
+        final Map< String, String > hm = new HashMap<>();
         hm.putAll( params );
-        
         hm.remove( FormElement.PARAM_FORM );
         info.addSubmission( hm );
         

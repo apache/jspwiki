@@ -21,9 +21,10 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.util.TextUtil;
 
@@ -46,26 +47,21 @@ import java.util.Map;
  *  </ul>
  *  
  */
-public class Note implements WikiPlugin
-{
-    /**
-     *  Property name for setting the image for the note.  Value is <tt>{@value}</tt>.
-     */
+public class Note implements Plugin {
+
+    /** Property name for setting the image for the note.  Value is <tt>{@value}</tt>. */
     public static final String PROP_NOTE_IMAGE    = "notePlugin.imageName";
     
-    /**
-     *  The default name for the note.  Value is <tt>{@value}</tt>.
-     */
+    /** The default name for the note.  Value is <tt>{@value}</tt>. */
     public static final String DEFAULT_NOTE_IMAGE = "note.png";
 
     /**
      *  {@inheritDoc}
      */
-    @Override public String execute( final WikiContext context, final Map<String, String> params) throws PluginException
-    {
+    @Override
+    public String execute( final Context context, final Map<String, String> params) throws PluginException {
         final String commandline = params.get(DefaultPluginManager.PARAM_CMDLINE);
-        if (commandline == null || commandline.length() == 0)
-        {
+        if (commandline == null || commandline.length() == 0) {
             return "Unable to obtain plugin command line from parameter'" + DefaultPluginManager.PARAM_CMDLINE + "'"; // I18N
         }
 
@@ -77,18 +73,15 @@ public class Note implements WikiPlugin
                commentText + "\" title=\"" + commentText + "\"/>";
     }
 
-    private String imageUrl( final WikiContext ctx )
-    {
+    private String imageUrl( final Context ctx ) {
         final Engine engine = ctx.getEngine();
-        String commentImage = engine.getWikiProperties().getProperty(PROP_NOTE_IMAGE,
-                                                                     DEFAULT_NOTE_IMAGE);
-
-        commentImage = "images/"+commentImage;
+        String commentImage = engine.getWikiProperties().getProperty( PROP_NOTE_IMAGE, DEFAULT_NOTE_IMAGE );
+        commentImage = "images/" + commentImage;
         
         String resource = engine.getManager( TemplateManager.class ).findResource( ctx, engine.getTemplateDir(), commentImage );
         
         // JSPWIKI-876 Fixed error with Note Plugin. Only one preceding "/" is needed.
-        if (resource != null && resource.startsWith("/")) {
+        if( resource != null && resource.startsWith( "/" ) ) {
         	resource = resource.substring(1);
         }
         return ctx.getURL( WikiContext.NONE, resource );

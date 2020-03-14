@@ -18,10 +18,10 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.util.TextUtil;
 
@@ -43,7 +43,7 @@ import java.util.Map;
  *  </ul>
  *  @since 2.3.84
  */
-public class SessionsPlugin implements WikiPlugin {
+public class SessionsPlugin implements Plugin {
 
     /** The parameter name for setting the property value. */
     public static final String PARAM_PROP = "property";
@@ -52,7 +52,7 @@ public class SessionsPlugin implements WikiPlugin {
      *  {@inheritDoc}
      */
     @Override
-    public String execute( final WikiContext context, final Map<String, String> params ) throws PluginException {
+    public String execute( final Context context, final Map<String, String> params ) throws PluginException {
         final Engine engine = context.getEngine();
         final String prop = params.get( PARAM_PROP );
 

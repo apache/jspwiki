@@ -21,9 +21,10 @@ package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.references.ReferenceManager;
 import org.jdom2.Element;
@@ -32,14 +33,13 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- *  A WikiPlugin that creates an index of pages according to a certain pattern.
+ *  A Plugin that creates an index of pages according to a certain pattern.
  *  <br />
  *  The default is to include all pages.
  *  <p>
@@ -55,17 +55,17 @@ import java.util.regex.Pattern;
  *  
  * @author Ichiro Furusato
  */
-public class IndexPlugin extends AbstractReferralPlugin implements WikiPlugin
-{
-    private static Logger log = Logger.getLogger(IndexPlugin.class);
+public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
+
+    private static final Logger log = Logger.getLogger(IndexPlugin.class);
 
     private Namespace xmlns_XHTML = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
     
     /**
      * {@inheritDoc}
      */
-    @Override public String execute( final WikiContext context, final Map<String,String> params ) throws PluginException
-    {
+    @Override
+    public String execute( final Context context, final Map<String,String> params ) throws PluginException {
         final String include = params.get(PARAM_INCLUDE);
         final String exclude = params.get(PARAM_EXCLUDE);
         
@@ -102,34 +102,27 @@ public class IndexPlugin extends AbstractReferralPlugin implements WikiPlugin
         return out.outputString(masterDiv);
     }
 
-
-    private Element getLink( final String href, final String content )
-    {
-        final Element a = new Element("a",xmlns_XHTML);
-        a.setAttribute("href",href);
-        a.addContent(content);
+    private Element getLink( final String href, final String content ) {
+        final Element a = new Element( "a", xmlns_XHTML );
+        a.setAttribute( "href", href );
+        a.addContent( content );
         return a;
     }
 
-    
-    private Element makeHeader( final String initialChar )
-    {
-        final Element span = getElement("span","section");
-        final Element a = new Element("a",xmlns_XHTML);
-        a.setAttribute("id",initialChar);
-        a.addContent(initialChar);
-        span.addContent(a);
+    private Element makeHeader( final String initialChar ) {
+        final Element span = getElement( "span", "section" );
+        final Element a = new Element( "a", xmlns_XHTML );
+        a.setAttribute( "id", initialChar );
+        a.addContent( initialChar );
+        span.addContent( a );
         return span;
     }
 
-    
-    private Element getElement( final String gi, final String classValue )
-    {
-        final Element elt = new Element(gi,xmlns_XHTML);
-        elt.setAttribute("class",classValue);
+    private Element getElement( final String gi, final String classValue ) {
+        final Element elt = new Element( gi, xmlns_XHTML );
+        elt.setAttribute( "class", classValue );
         return elt;
     }
-    
 
     /**
      *  Grabs a list of all pages and filters them according to the include/exclude patterns.
@@ -140,15 +133,16 @@ public class IndexPlugin extends AbstractReferralPlugin implements WikiPlugin
      * @return A list containing page names which matched the filters.
      * @throws ProviderException
      */
-    private List<String> listPages( final WikiContext context, final String include, final String exclude ) throws ProviderException {
+    private List<String> listPages( final Context context, final String include, final String exclude ) throws ProviderException {
         final Pattern includePtrn = include != null ? Pattern.compile( include ) : Pattern.compile(".*");
         final Pattern excludePtrn = exclude != null ? Pattern.compile( exclude ) : Pattern.compile("\\p{Cntrl}"); // there are no control characters in page names
         final List< String > result = new ArrayList<>();
         final Set< String > pages = context.getEngine().getManager( ReferenceManager.class ).findCreated();
-        for ( final Iterator<String> i = pages.iterator(); i.hasNext(); ) {
-            final String pageName = i.next();
-            if ( excludePtrn.matcher( pageName ).matches() ) continue;
-            if ( includePtrn.matcher( pageName ).matches() ) {
+        for( final String pageName : pages ) {
+            if( excludePtrn.matcher( pageName ).matches() ) {
+                continue;
+            }
+            if( includePtrn.matcher( pageName ).matches() ) {
                 result.add( pageName );
             }
         }

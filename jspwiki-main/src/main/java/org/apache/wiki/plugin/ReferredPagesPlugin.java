@@ -26,10 +26,11 @@ import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.TextUtil;
@@ -54,7 +55,7 @@ import java.util.Map;
  *  </ul>
  *
  */
-public class ReferredPagesPlugin implements WikiPlugin {
+public class ReferredPagesPlugin implements Plugin {
 
     private static final Logger log = Logger.getLogger( ReferredPagesPlugin.class );
     private Engine         m_engine;
@@ -94,9 +95,10 @@ public class ReferredPagesPlugin implements WikiPlugin {
     /**
      *  {@inheritDoc}
      */
-    @Override public String execute( final WikiContext context, final Map<String, String> params ) throws PluginException {
+    @Override
+    public String execute( final Context context, final Map<String, String> params ) throws PluginException {
         m_engine = context.getEngine();
-        final WikiPage page = context.getPage();
+        final Page page = context.getPage();
         if( page == null ) {
             return "";
         }
@@ -179,7 +181,7 @@ public class ReferredPagesPlugin implements WikiPlugin {
     /**
      * Retrieves a list of all referred pages. Is called recursively depending on the depth parameter.
      */
-    private void getReferredPages( final WikiContext context, final String pagename, int depth ) {
+    private void getReferredPages( final Context context, final String pagename, int depth ) {
         if( depth >= m_depth ) {
             return;  // end of recursion
         }
@@ -195,7 +197,7 @@ public class ReferredPagesPlugin implements WikiPlugin {
         handleLinks( context, allPages, ++depth, pagename );
     }
 
-    private void handleLinks( final WikiContext context, final Collection<String> links, final int depth, final String pagename) {
+    private void handleLinks( final Context context, final Collection<String> links, final int depth, final String pagename) {
         boolean isUL = false;
         final HashSet< String > localLinkSet = new HashSet<>();  // needed to skip multiple
         // links to the same page

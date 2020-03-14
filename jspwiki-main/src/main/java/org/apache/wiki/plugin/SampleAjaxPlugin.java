@@ -18,30 +18,29 @@
  */
 package org.apache.wiki.plugin;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import org.apache.wiki.ajax.WikiAjaxServlet;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.Plugin;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.ajax.WikiAjaxServlet;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @since 2.10.2-svn10
  */
-public class SampleAjaxPlugin implements WikiPlugin, WikiAjaxServlet {
+public class SampleAjaxPlugin implements Plugin, WikiAjaxServlet {
 	
 	private static final String SERVLET_MAPPING = "SampleAjaxPlugin";
 
 	@Override
-    public String execute(WikiContext context, Map<String, String> params) throws PluginException {
-    	String id = Integer.toString(this.hashCode());
-        String html= "<div onclick='Wiki.ajaxHtmlCall(\"/"+SERVLET_MAPPING+"/ajaxAction\",[12,45],\"result"+id+"\",\"Loading...\")' style='color: blue; cursor: pointer'>Press Me</div>\n"+
+    public String execute( final Context context, final Map<String, String> params) throws PluginException {
+    	final String id = Integer.toString(this.hashCode());
+        final String html= "<div onclick='Wiki.ajaxHtmlCall(\"/"+SERVLET_MAPPING+"/ajaxAction\",[12,45],\"result"+id+"\",\"Loading...\")' style='color: blue; cursor: pointer'>Press Me</div>\n"+
                         "<div id='result"+id+"'></div>";
         return html;
     }
@@ -50,15 +49,15 @@ public class SampleAjaxPlugin implements WikiPlugin, WikiAjaxServlet {
 	public String getServletMapping() {
 		return SERVLET_MAPPING;
 	}
-	
+
 	@Override
-	public void service(HttpServletRequest request, HttpServletResponse response, String actionName, List<String> params) throws ServletException, IOException {
-        try {
-            Thread.sleep(5000); // Wait 5 seconds
-        } catch (Exception e) {}
-        response.getWriter().print("You called! actionName="+actionName+" params="+params);		
+	public void service( final HttpServletRequest request, final HttpServletResponse response, final String actionName, final List< String > params )
+			throws ServletException, IOException {
+		try {
+			Thread.sleep( 5000 ); // Wait 5 seconds
+		} catch( final Exception e ) {
+		}
+		response.getWriter().print( "You called! actionName=" + actionName + " params=" + params );
 	}
-
-
 
 }

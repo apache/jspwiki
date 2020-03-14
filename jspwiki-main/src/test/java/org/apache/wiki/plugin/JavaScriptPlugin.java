@@ -18,11 +18,11 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.InitializablePlugin;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 
 import java.util.Map;
 
@@ -32,15 +32,17 @@ import java.util.Map;
  *  <P>
  *  Parameters: text - text to return.
  */
-public class JavaScriptPlugin implements WikiPlugin, InitializablePlugin {
+public class JavaScriptPlugin implements Plugin, InitializablePlugin {
 
     protected static boolean c_inited = false;
     
-    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    @Override
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         return "<script language=\"JavaScript\"><!--\nfoo='';\n--></script>\n";
     }
 
-    @Override public void initialize( final Engine engine ) throws PluginException {
+    @Override
+    public void initialize( final Engine engine ) throws PluginException {
         c_inited = true;
     }
 

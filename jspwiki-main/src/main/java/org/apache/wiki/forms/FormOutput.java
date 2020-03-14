@@ -20,6 +20,7 @@
 package org.apache.wiki.forms;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.plugin.DefaultPluginManager;
@@ -33,9 +34,7 @@ import java.util.ResourceBundle;
 
 /**
  */
-public class FormOutput
-        extends FormElement
-{
+public class FormOutput extends FormElement {
     /**
      * Executes the FormHandler specified in a Form 'output' plugin,
      * using entries provided in the HttpRequest as FormHandler
@@ -55,7 +54,8 @@ public class FormOutput
      * @param params {@inheritDoc}
      * @return {@inheritDoc}
      */
-    @Override public String execute( final WikiContext ctx, final Map< String, String > params ) throws PluginException {
+    @Override
+    public String execute( final Context ctx, final Map< String, String > params ) throws PluginException {
         //  If there is no HTTP request, returns immediately.
         if( ctx.getHttpRequest() == null ) {
             return "";

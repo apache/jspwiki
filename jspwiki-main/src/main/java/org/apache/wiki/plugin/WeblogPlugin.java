@@ -21,14 +21,15 @@ package org.apache.wiki.plugin;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.plugin.PluginElement;
 import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageManager;
@@ -84,7 +85,7 @@ import java.util.regex.Pattern;
 // FIXME: Add "entries" param as an alternative to "days".
 // FIXME: Entries arrive in wrong order.
 
-public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
+public class WeblogPlugin implements Plugin, ParserStagePlugin {
 
     private static final Logger log = Logger.getLogger(WeblogPlugin.class);
     private static final Pattern HEADINGPATTERN;
@@ -159,7 +160,7 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
      *  {@inheritDoc}
      */
     @Override
-    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         final Calendar   startTime;
         final Calendar   stopTime;
         int        numDays = DEFAULT_DAYS;
@@ -270,7 +271,7 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
      *  @param entry
      *  @throws ProviderException
      */
-    private void addEntryHTML( final WikiContext context, final DateFormat entryFormat, final boolean hasComments,
+    private void addEntryHTML( final Context context, final DateFormat entryFormat, final boolean hasComments,
                                final StringBuilder buffer, final WikiPage entry, final Map< String, String > params) {
         final Engine engine = context.getEngine();
         final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
@@ -289,7 +290,7 @@ public class WeblogPlugin implements WikiPlugin, ParserStagePlugin {
         //
         //  Append the text of the latest version.  Reset the context to that page.
         //
-        final WikiContext entryCtx = (WikiContext) context.clone();
+        final Context entryCtx = context.clone();
         entryCtx.setPage( entry );
 
         String html = engine.getManager( RenderingManager.class ).getHTML( entryCtx, engine.getManager( PageManager.class ).getPage( entry.getName() ) );

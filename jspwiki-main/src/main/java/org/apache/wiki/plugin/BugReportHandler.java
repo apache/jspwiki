@@ -19,12 +19,13 @@
 package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.RedirectException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
@@ -54,7 +55,7 @@ import java.util.StringTokenizer;
  *  </ul>
  *
  */
-public class BugReportHandler implements WikiPlugin {
+public class BugReportHandler implements Plugin {
 
     private static final Logger log = Logger.getLogger( BugReportHandler.class );
     private static final String DEFAULT_DATEFORMAT = "dd-MMM-yyyy HH:mm:ss zzz";
@@ -73,7 +74,8 @@ public class BugReportHandler implements WikiPlugin {
     /**
      *  {@inheritDoc}
      */
-    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    @Override
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         final String title = params.get( PARAM_TITLE );
         String description = params.get( PARAM_DESCRIPTION );
         String version = params.get( PARAM_VERSION );
@@ -140,7 +142,7 @@ public class BugReportHandler implements WikiPlugin {
             //  Now create a new page for this bug report
             final String pageName = findNextPage( context, title, params.get( PARAM_PAGE ) );
             final WikiPage newPage = new WikiPage( context.getEngine(), pageName );
-            final WikiContext newContext = (WikiContext)context.clone();
+            final Context newContext = (Context)context.clone();
             newContext.setPage( newPage );
             context.getEngine().getManager( PageManager.class ).saveText( newContext, str.toString() );
 
@@ -162,7 +164,7 @@ public class BugReportHandler implements WikiPlugin {
      *  Finds a free page name for adding the bug report.  Tries to construct a page, and if it's found, adds a number to it
      *  and tries again.
      */
-    private synchronized String findNextPage( final WikiContext context, final String title, final String baseName ) {
+    private synchronized String findNextPage( final Context context, final String title, final String baseName ) {
         final String basicPageName = ( ( baseName != null ) ? baseName : "Bug" ) + MarkupParser.cleanLink( title );
         final Engine engine = context.getEngine();
 

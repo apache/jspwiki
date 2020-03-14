@@ -18,16 +18,17 @@
  */
 package org.apache.wiki.plugin;
 
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.Plugin;
+import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.preferences.Preferences.TimeFormat;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
-import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.preferences.Preferences.TimeFormat;
 
 /**
  *  Just displays the current date and time.
@@ -38,40 +39,32 @@ import org.apache.wiki.preferences.Preferences.TimeFormat;
  *  @since 1.7.8
  *  @see java.text.SimpleDateFormat
  */
-public class CurrentTimePlugin implements WikiPlugin
-{
+public class CurrentTimePlugin implements Plugin {
+
     // private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
 
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext context, Map<String, String> params )
-        throws PluginException
-    {
-        String formatString = params.get("format");
-        
-        try
-        {
-            SimpleDateFormat fmt;
-            
-            if( formatString != null )
-            {
+    @Override
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
+        final String formatString = params.get( "format" );
+
+        try {
+            final SimpleDateFormat fmt;
+            if( formatString != null ) {
                 fmt = new SimpleDateFormat( formatString );
-            }
-            else
-            {
+            } else {
                 fmt = Preferences.getDateFormat( context, TimeFormat.DATETIME );
             }
 
-            Date d = new Date();  // Now.
+            final Date d = new Date();  // Now.
 
             return fmt.format( d );
-        }
-        catch( IllegalArgumentException e )
-        {
-            ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
-            
-            throw new PluginException( rb.getString("currenttimeplugin.badformat") + e.getMessage() );
+        } catch( final IllegalArgumentException e ) {
+            final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+
+            throw new PluginException( rb.getString( "currenttimeplugin.badformat" ) + e.getMessage() );
         }
     }
 

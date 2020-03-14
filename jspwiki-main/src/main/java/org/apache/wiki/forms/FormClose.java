@@ -18,47 +18,40 @@
  */
 package org.apache.wiki.forms;
 
-import java.util.Map;
-import java.util.ResourceBundle;
-
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
+
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  *  Closes a WikiForm.
  *
  */
-public class FormClose
-    extends FormElement
-{
+public class FormClose extends FormElement {
+
     /**
      * Builds a Form close tag. Removes any information on the form from
      * the WikiContext.
      * 
      * {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map< String, String > params )
-        throws PluginException
-    {
-    	StringBuilder tags = new StringBuilder();
-        tags.append( "</form>\n" );
-        tags.append( "</div>" );
-
+    @Override
+    public String execute( final Context ctx, final Map< String, String > params ) throws PluginException {
         // Don't render if no error and error-only-rendering is on.
-        FormInfo info = getFormInfo( ctx );
-        if( info != null && info.hide() )
-        {
-            ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final FormInfo info = getFormInfo( ctx );
+        if( info != null && info.hide() ) {
+            final ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
             return "<p>" + rb.getString( "formclose.noneedtoshow" ) + "</p>";
         }
 
-        // Get rid of remaining form data, so it doesn't mess up other forms.
-        // After this, it is safe to add other Forms.
+        // Get rid of remaining form data, so it doesn't mess up other forms. After this, it is safe to add other Forms.
         storeFormInfo( ctx, null );
 
-        return tags.toString();
-
+        return "  </form>\n" +
+               "</div>";
     }
+
 }

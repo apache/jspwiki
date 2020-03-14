@@ -19,9 +19,10 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.comparators.PrincipalComparator;
@@ -40,7 +41,7 @@ import java.util.Map;
  *
  *  @since 2.4.19
  */
-public class Groups implements WikiPlugin {
+public class Groups implements Plugin {
 
     private static final Comparator<Principal> COMPARATOR = new PrincipalComparator();
     
@@ -48,7 +49,7 @@ public class Groups implements WikiPlugin {
      *  {@inheritDoc}
      */
     @Override
-    public String execute( final WikiContext context, final Map<String, String> params ) throws PluginException {
+    public String execute( final Context context, final Map<String, String> params ) throws PluginException {
         // Retrieve groups, and sort by name
         final Engine engine = context.getEngine();
         final GroupManager groupMgr = engine.getManager( GroupManager.class );

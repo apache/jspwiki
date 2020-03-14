@@ -20,9 +20,11 @@ package org.apache.wiki.plugin;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
@@ -53,9 +55,8 @@ import java.util.ResourceBundle;
  *
  *  @since 2.1.37
  */
-public class InsertPage
-    implements WikiPlugin
-{
+public class InsertPage implements Plugin {
+
     /** Parameter name for setting the page.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_PAGENAME  = "page";
     /** Parameter name for setting the style.  Value is <tt>{@value}</tt>. */
@@ -75,37 +76,37 @@ public class InsertPage
 
     private static final String ONCE_COOKIE = "JSPWiki.Once.";
 
-    /** This attribute is stashed in the WikiContext to make sure that we don't
-     *  have circular references.
-     */
+    /** This attribute is stashed in the WikiContext to make sure that we don't have circular references. */
     public static final String ATTR_RECURSE    = "org.apache.wiki.plugin.InsertPage.recurseCheck";
 
     /**
      *  {@inheritDoc}
      */
     @Override @SuppressWarnings("unchecked")
-    public String execute( final WikiContext context, final Map<String, String> params ) throws PluginException {
+    public String execute( final Context context, final Map<String, String> params ) throws PluginException {
         final Engine engine = context.getEngine();
 
         final StringBuilder res = new StringBuilder();
 
         final String clazz        = params.get( PARAM_CLASS );
         final String includedPage = params.get( PARAM_PAGENAME );
-        String style        = params.get( PARAM_STYLE );
-        final Boolean showOnce    = "once".equals( params.get( PARAM_SHOW ) );
+        String style              = params.get( PARAM_STYLE );
+        final boolean showOnce    = "once".equals( params.get( PARAM_SHOW ) );
         final String defaultstr   = params.get( PARAM_DEFAULT );
-        final int    section      = TextUtil.parseIntParameter(params.get( PARAM_SECTION ), -1 );
-        int    maxlen       = TextUtil.parseIntParameter(params.get( PARAM_MAXLENGTH ), -1 );
+        final int section         = TextUtil.parseIntParameter(params.get( PARAM_SECTION ), -1 );
+        int maxlen                = TextUtil.parseIntParameter(params.get( PARAM_MAXLENGTH ), -1 );
 
         final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
+        if( style == null ) {
+            style = DEFAULT_STYLE;
+        }
 
-        if( style == null ) style = DEFAULT_STYLE;
+        if( maxlen == -1 ) {
+            maxlen = Integer.MAX_VALUE;
+        }
 
-        if( maxlen == -1 ) maxlen = Integer.MAX_VALUE;
-
-        if( includedPage != null )
-        {
+        if( includedPage != null ) {
             final WikiPage page;
             try {
                 final String pageName = engine.getFinalPageName( includedPage );
@@ -119,29 +120,19 @@ public class InsertPage
                 return res.toString();
             }
 
-            if( page != null )
-            {
-                //
+            if( page != null ) {
                 //  Check for recursivity
-                //
+                List<String> previousIncludes = context.getVariable( ATTR_RECURSE );
 
-                List<String> previousIncludes = (List<String>)context.getVariable( ATTR_RECURSE );
-
-                if( previousIncludes != null )
-                {
-                    if( previousIncludes.contains( page.getName() ) )
-                    {
+                if( previousIncludes != null ) {
+                    if( previousIncludes.contains( page.getName() ) ) {
                         return "<span class=\"error\">Error: Circular reference - you can't include a page in itself!</span>";
                     }
-                }
-                else
-                {
+                } else {
                     previousIncludes = new ArrayList<>();
                 }
 
-                //
                 // Check for permissions
-                //
                 final AuthorizationManager mgr = engine.getManager( AuthorizationManager.class );
 
                 if( !mgr.checkPermission( context.getWikiSession(), PermissionFactory.getPagePermission( page, "view") ) ) {
@@ -149,10 +140,8 @@ public class InsertPage
                     return res.toString();
                 }
 
-                //
                 // Show Once
                 // Check for page-cookie, only include page if cookie is not yet set
-                //
                 String cookieName = "";
 
                 if( showOnce ) {
@@ -187,8 +176,7 @@ public class InsertPage
                     }
                 }
 
-                if( pageData.length() > maxlen )
-                {
+                if( pageData.length() > maxlen ) {
                     pageData = pageData.substring( 0, maxlen )+" ...";
                     moreLink = "<p><a href=\""+context.getURL(WikiContext.VIEW,includedPage)+"\">"+rb.getString("insertpage.more")+"</a></p>";
                 }
@@ -209,27 +197,19 @@ public class InsertPage
                 //
                 previousIncludes.remove( page.getName() );
                 context.setVariable( ATTR_RECURSE, previousIncludes );
-            }
-            else
-            {
-                if( defaultstr != null )
-                {
+            } else {
+                if( defaultstr != null ) {
                     res.append( defaultstr );
-                }
-                else
-                {
-                    res.append("There is no page called '"+includedPage+"'.  Would you like to ");
-                    res.append("<a href=\""+context.getURL( WikiContext.EDIT, includedPage )+"\">create it?</a>");
+                } else {
+                    res.append( "There is no page called '" + includedPage + "'.  Would you like to " );
+                    res.append( "<a href=\"" + context.getURL( WikiContext.EDIT, includedPage ) + "\">create it?</a>" );
                 }
             }
+        } else {
+            res.append( "<span class=\"error\">" );
+            res.append( "You have to define a page!" );
+            res.append( "</span>" );
         }
-        else
-        {
-            res.append("<span class=\"error\">");
-            res.append("You have to define a page!");
-            res.append("</span>");
-        }
-
         return res.toString();
     }
 

@@ -21,9 +21,11 @@ package org.apache.wiki.plugin;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
@@ -47,7 +49,7 @@ import java.util.ResourceBundle;
  *
  * @since 1.9.21
  */
-public class WeblogEntryPlugin implements WikiPlugin {
+public class WeblogEntryPlugin implements Plugin {
 
     private static final Logger log = Logger.getLogger(WeblogEntryPlugin.class);
     private static final int MAX_BLOG_ENTRIES = 10_000; // Just a precaution.
@@ -88,7 +90,7 @@ public class WeblogEntryPlugin implements WikiPlugin {
      * {@inheritDoc}
      */
     @Override
-    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
         final Engine engine = context.getEngine();
 

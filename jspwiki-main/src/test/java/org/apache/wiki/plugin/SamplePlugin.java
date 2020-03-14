@@ -18,11 +18,10 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.plugin.PluginElement;
-import org.apache.wiki.api.plugin.WikiPlugin;
 
 import java.util.Map;
 
@@ -32,12 +31,12 @@ import java.util.Map;
  *  Parameters: text - text to return.
  *  Any _body content gets appended between brackets.
  */
-public class SamplePlugin implements WikiPlugin, ParserStagePlugin {
+public class SamplePlugin implements Plugin, ParserStagePlugin {
 	
     protected static boolean c_rendered = false;
     
     @Override
-    public String execute( final WikiContext context, final Map< String, String > params ) {
+    public String execute( final Context context, final Map< String, String > params ) {
         final StringBuilder sb = new StringBuilder();
         final String text = params.get("text");
 

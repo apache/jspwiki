@@ -19,7 +19,7 @@
 
 package org.apache.wiki.forms;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
@@ -35,8 +35,8 @@ import java.util.ResourceBundle;
 /**
  *  Creates a simple input text field.
  */
-public class FormInput extends FormElement
-{
+public class FormInput extends FormElement {
+
     /** Parameter name for setting the type.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TYPE  = "type";
 
@@ -50,15 +50,14 @@ public class FormInput extends FormElement
      * 
      * {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map< String, String > params )
-        throws PluginException
-    {
-        String inputName  = params.get( PARAM_INPUTNAME );
+    @Override
+    public String execute( final Context ctx, final Map< String, String > params ) throws PluginException {
+        final String inputName  = params.get( PARAM_INPUTNAME );
         String inputValue = params.get( PARAM_VALUE );
-        String inputType  = params.get( PARAM_TYPE );
-        String size       = params.get( PARAM_SIZE );
-        String checked    = params.get( PARAM_CHECKED );
-        ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final String inputType  = params.get( PARAM_TYPE );
+        final String size       = params.get( PARAM_SIZE );
+        final String checked    = params.get( PARAM_CHECKED );
+        final ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
         if ( inputName == null ) {
             throw new PluginException( rb.getString( "forminput.namemissing" ) );
@@ -68,35 +67,29 @@ public class FormInput extends FormElement
         }
         
         // Don't render if no error and error-only-rendering is on.
-        FormInfo info = getFormInfo( ctx );
+        final FormInfo info = getFormInfo( ctx );
         Map< String, String > previousValues = null;
-        if ( info != null )
-        {
-            if ( info.hide() )
-            {
+        if ( info != null ) {
+            if ( info.hide() ) {
 //              return XhtmlUtil.serialize(XhtmlUtil.element(XHTML.p,rb.getString("forminput.noneedtoshow"))); // nope
                 return "<p>" + rb.getString( "forminput.noneedtoshow" ) + "</p>";
             }
             previousValues = info.getSubmission();
         }
 
-        if ( previousValues == null )
-        {
-            previousValues = new HashMap< String, String >();
+        if ( previousValues == null ) {
+            previousValues = new HashMap<>();
         }
 
         // In order to isolate posted form elements into their own
         // map, prefix the variable name here. It will be stripped
         // when the handler plugin is executed.
         
-        Element field = XhtmlUtil.input(inputType,HANDLERPARAM_PREFIX + inputName,inputValue);
-        
-        field.setAttribute(XHTML.ATTR_class,
-                String.valueOf(TextUtil.isPositive(checked) || "checked".equalsIgnoreCase(checked)));
-        
-        String oldValue = previousValues.get( inputName );
-        if ( oldValue != null )
-        {
+        final Element field = XhtmlUtil.input(inputType,HANDLERPARAM_PREFIX + inputName,inputValue);
+        field.setAttribute( XHTML.ATTR_class, String.valueOf( TextUtil.isPositive( checked ) || "checked".equalsIgnoreCase( checked ) ) );
+
+        final String oldValue = previousValues.get( inputName );
+        if ( oldValue != null ) {
             field.setAttribute(XHTML.ATTR_value,oldValue);
         }
 
@@ -106,4 +99,5 @@ public class FormInput extends FormElement
 
         return XhtmlUtil.serialize(field); // ctx.getEngine().getContentEncoding()
     }
+
 }

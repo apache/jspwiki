@@ -18,14 +18,16 @@
  */
 package org.apache.wiki.forms;
 
-import java.text.MessageFormat;
-import java.util.Map;
-import java.util.ResourceBundle;
-
+import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.preferences.Preferences;
+
+import java.text.MessageFormat;
+import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  *  Opens a WikiForm.
@@ -63,11 +65,9 @@ import org.apache.wiki.preferences.Preferences;
  * be a useless option.)
  *
  */
-public class FormOpen
-    extends FormElement
-{
-    private static org.apache.log4j.Logger log =
-        org.apache.log4j.Logger.getLogger( FormOpen.class );
+public class FormOpen extends FormElement {
+
+    private static final Logger log = Logger.getLogger( FormOpen.class );
 
     /** Parameter name for setting the method (GET or POST).  Value is <tt>{@value}</tt>. */
     public static final String PARAM_METHOD = "method";
@@ -75,17 +75,15 @@ public class FormOpen
     /**
      *  {@inheritDoc}
      */
-    public String execute( WikiContext ctx, Map< String, String > params )
-        throws PluginException
-    {
-        ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
-        String formName = params.get( PARAM_FORM );
-        if( formName == null )
-        {
+    @Override
+    public String execute( final Context ctx, final Map< String, String > params ) throws PluginException {
+        final ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final String formName = params.get( PARAM_FORM );
+        if( formName == null ) {
             throw new PluginException( MessageFormat.format( rb.getString( "formopen.missingparam" ), PARAM_FORM ) );
         }
-        String hide     = params.get( PARAM_HIDEFORM );
-        String sourcePage = ctx.getPage().getName();
+        final String hide     = params.get( PARAM_HIDEFORM );
+        final String sourcePage = ctx.getPage().getName();
         String submitServlet = params.get( PARAM_SUBMITHANDLER );
         if( submitServlet == null )
             submitServlet = ctx.getURL( WikiContext.VIEW, sourcePage );
@@ -93,41 +91,28 @@ public class FormOpen
         String method = params.get( PARAM_METHOD );
         if( method == null ) method="post";
 
-        if( !(method.equalsIgnoreCase("get") || method.equalsIgnoreCase("post")) )
-        {
+        if( !( method.equalsIgnoreCase( "get" ) || method.equalsIgnoreCase( "post" ) ) ) {
             throw new PluginException( rb.getString( "formopen.postorgetonly" ) );
         }
 
         FormInfo info = getFormInfo( ctx );
-        if( info != null )
-        {
+        if( info != null ) {
             // Previous information may be the result of submitting
             // this form, or of a FormSet plugin, or both. If it
             // exists and is for this form, fine.
-            if( formName.equals( info.getName() ) )
-            {
+            if( formName.equals( info.getName() ) ) {
                 log.debug( "Previous FormInfo for this form was found in context." );
-                // If the FormInfo exists, and if we're supposed to display on
-                // error only, we need to exit now.
-                if( hide != null &&
-                    HIDE_SUCCESS.equals( hide ) &&
-                    info.getStatus() == FormInfo.EXECUTED )
-                {
+                // If the FormInfo exists, and if we're supposed to display on error only, we need to exit now.
+                if( HIDE_SUCCESS.equals( hide ) && info.getStatus() == FormInfo.EXECUTED ) {
                     info.setHide( true );
                     return "<p>" + rb.getString( "formopen.noneedtoshow" ) + "</p>";
                 }
-            }
-            else
-            {
-                // This would mean that a new form was started without
-                // closing an old one.  Get rid of the garbage.
+            } else {
+                // This would mean that a new form was started without closing an old one.  Get rid of the garbage.
                 info = new FormInfo();
             }
-        }
-        else
-        {
-            // No previous FormInfo available; store now, so it'll be
-            // available for upcoming Form input elements.
+        } else {
+            // No previous FormInfo available; store now, so it'll be available for upcoming Form input elements.
             info = new FormInfo();
             storeFormInfo( ctx, info );
         }
@@ -135,16 +120,11 @@ public class FormOpen
         info.setName( formName );
         info.setAction( submitServlet );
 
-        StringBuilder tag = new StringBuilder( 40 );
-        tag.append( "<div class=\"wikiform\">\n" );
-        tag.append( "<form action=\"" + submitServlet );
-        tag.append( "\" name=\"" + formName );
-        tag.append( "\" accept-charset=\"" + ctx.getEngine().getContentEncoding() );
-        tag.append( "\" method=\""+method+"\" enctype=\"application/x-www-form-urlencoded\">\n" );
-        tag.append( "  <input type=\"hidden\" name=\"" + PARAM_FORMNAMEHIDDEN );
-        tag.append( "\" value=\"" + formName + "\"/>\n" );
-
-        return tag.toString();
+        return "<div class=\"wikiform\">\n" +
+                  "<form action=\"" + submitServlet + "\" name=\"" + formName + "\" " +
+                        "accept-charset=\"" + ctx.getEngine().getContentEncoding() + "\" " +
+                        "method=\"" + method + "\" enctype=\"application/x-www-form-urlencoded\">\n" +
+                  "  <input type=\"hidden\" name=\"" + PARAM_FORMNAMEHIDDEN + "\" value=\"" + formName + "\"/>\n";
     }
 
 }

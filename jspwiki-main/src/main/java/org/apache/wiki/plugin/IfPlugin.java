@@ -26,10 +26,10 @@ import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
@@ -109,13 +109,13 @@ import java.util.Map;
  *
  *  <p>The functional, decision-making part of this plugin may be called from
  *  other code (e.g., other plugins) since it is available as a static method
- *  {@link #ifInclude(WikiContext,Map)}. Note that the plugin body may contain
+ *  {@link #ifInclude(Context,Map)}. Note that the plugin body may contain
  *  references to other plugins.</p>
  *
  *  @since 2.6
  */
-public class IfPlugin implements WikiPlugin
-{
+public class IfPlugin implements Plugin {
+
     /** The parameter name for setting the group to check.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_GROUP    = "group";
 
@@ -143,7 +143,8 @@ public class IfPlugin implements WikiPlugin
     /**
      *  {@inheritDoc}
      */
-    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    @Override 
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         return ifInclude( context,params )
                 ? context.getEngine().getManager( RenderingManager.class ).textToHTML( context, params.get( DefaultPluginManager.PARAM_BODY ) )
                 : "" ;
@@ -161,7 +162,7 @@ public class IfPlugin implements WikiPlugin
      * @throws PluginException If something goes wrong
      * @return True, if the condition holds.
      */
-    public static boolean ifInclude( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    public static boolean ifInclude( final Context context, final Map< String, String > params ) throws PluginException {
         final String group    = params.get( PARAM_GROUP );
         final String user     = params.get( PARAM_USER );
         final String ip       = params.get( PARAM_IP );
@@ -192,7 +193,7 @@ public class IfPlugin implements WikiPlugin
         return include;
     }
 
-    private static boolean checkExists( final WikiContext context, final String page, final String exists ) {
+    private static boolean checkExists( final Context context, final String page, final String exists ) {
         if( exists == null ) {
             return false;
         }
@@ -206,7 +207,7 @@ public class IfPlugin implements WikiPlugin
         return varContent == null ^ TextUtil.isPositive( exists );
     }
 
-    private static boolean checkGroup( final WikiContext context, final String group ) {
+    private static boolean checkGroup( final Context context, final String group ) {
         if( group == null ) {
             return false;
         }
@@ -230,7 +231,7 @@ public class IfPlugin implements WikiPlugin
         return include;
     }
 
-    private static boolean checkUser( final WikiContext context, final String user ) {
+    private static boolean checkUser( final Context context, final String user ) {
         if( user == null || context.getCurrentUser() == null ) {
             return false;
         }
@@ -255,7 +256,7 @@ public class IfPlugin implements WikiPlugin
     }
 
     // TODO: Add subnetwork matching, e.g. 10.0.0.0/8
-    private static boolean checkIP( final WikiContext context, final String ipaddr ) {
+    private static boolean checkIP( final Context context, final String ipaddr ) {
         if( ipaddr == null || context.getHttpRequest() == null ) {
             return false;
         }

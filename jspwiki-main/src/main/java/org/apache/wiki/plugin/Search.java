@@ -20,10 +20,11 @@ package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.search.SearchResult;
@@ -48,7 +49,7 @@ import java.util.Map;
  *
  *  @since
  */
-public class Search implements WikiPlugin {
+public class Search implements Plugin {
 
     private static final Logger log = Logger.getLogger(Search.class);
 
@@ -67,58 +68,44 @@ public class Search implements WikiPlugin {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("unchecked")
     @Override
-    public String execute( final WikiContext context, final Map<String, String> params ) throws PluginException {
+    public String execute( final Context context, final Map<String, String> params ) throws PluginException {
         int maxItems = Integer.MAX_VALUE;
-        Collection<SearchResult> results = null;
+        final Collection< SearchResult > results;
 
         final String queryString = params.get( PARAM_QUERY );
-        String set         = params.get( PARAM_SET );
+        String set               = params.get( PARAM_SET );
         final String max         = params.get( PARAM_MAX );
 
         if ( set == null ) set = DEFAULT_SETNAME;
         if ( max != null ) maxItems = Integer.parseInt( max );
 
-        if ( queryString == null )
-        {
-            results = (Collection<SearchResult>)context.getVariable( set );
-        }
-        else
-        {
-            try
-            {
+        if ( queryString == null ) {
+            results = context.getVariable( set );
+        } else {
+            try {
                 results = doBasicQuery( context, queryString );
                 context.setVariable( set, results );
-            }
-            catch( final Exception e )
-            {
-                return "<div class='error'>"+e.getMessage()+"</div>\n";
+            } catch( final Exception e ) {
+                return "<div class='error'>" + e.getMessage() + "</div>\n";
             }
         }
 
         String res = "";
 
-        if ( results != null )
-        {
+        if ( results != null ) {
             res = renderResults(results,context,maxItems);
         }
 
         return res;
     }
 
-    private Collection<SearchResult> doBasicQuery( final WikiContext context, final String query )
-        throws ProviderException, IOException
-    {
-        log.debug("Searching for string "+query);
-
-        final Collection<SearchResult> list = context.getEngine().getManager( SearchManager.class ).findPages( query, context );
-
-        return list;
+    private Collection<SearchResult> doBasicQuery( final Context context, final String query ) throws ProviderException, IOException {
+        log.debug( "Searching for string " + query );
+        return context.getEngine().getManager( SearchManager.class ).findPages( query, context );
     }
 
-    private String renderResults( final Collection<SearchResult> results, final WikiContext context, final int maxItems )
-    {
+    private String renderResults( final Collection<SearchResult> results, final Context context, final int maxItems ) {
         final Engine engine = context.getEngine();
 
         final Element table = XhtmlUtil.element(XHTML.table);
@@ -139,16 +126,15 @@ public class Search implements WikiPlugin {
         row.addContent(th2);
 
         int idx = 0;
-        for ( final Iterator<SearchResult> i = results.iterator(); i.hasNext() && idx++ <= maxItems; )
-        {
+        for ( final Iterator<SearchResult> i = results.iterator(); i.hasNext() && idx++ <= maxItems; ) {
             final SearchResult sr = i.next();
             row = XhtmlUtil.element(XHTML.tr);
 
             final Element name = XhtmlUtil.element(XHTML.td);
             name.setAttribute(XHTML.ATTR_width,"30%");
 
-            name.addContent( XhtmlUtil.link(context.getURL( WikiContext.VIEW, sr.getPage().getName()),
-                    engine.getManager( RenderingManager.class ).beautifyTitle(sr.getPage().getName())) );
+            name.addContent( XhtmlUtil.link(context.getURL( WikiContext.VIEW, sr.getPage().getName() ),
+                             engine.getManager( RenderingManager.class ).beautifyTitle(sr.getPage().getName() ) ) );
 
             row.addContent(name);
 
@@ -157,8 +143,7 @@ public class Search implements WikiPlugin {
             table.addContent(row);
         }
 
-        if ( results.isEmpty() )
-        {
+        if ( results.isEmpty() ) {
             row = XhtmlUtil.element(XHTML.tr);
 
             final Element td = XhtmlUtil.element(XHTML.td);

@@ -22,9 +22,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.pages.PageManager;
@@ -56,7 +57,7 @@ import java.util.Map;
  *  <li><b>dateFormat</b> - the date format to use, the default is "dd.MM.yyyy"</li>
  *  </ul>
  */
-public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiPlugin {
+public class RecentChangesPlugin extends AbstractReferralPlugin implements Plugin {
 	
     private static final Logger log = Logger.getLogger( RecentChangesPlugin.class );
     
@@ -76,7 +77,8 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     /**
      * {@inheritDoc}
      */
-    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    @Override
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         final int since = TextUtil.parseIntParameter( params.get( "since" ), DEFAULT_DAYS );
         String spacing  = "4";
         boolean showAuthor = true;
@@ -227,7 +229,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
     // locale, but that is at odds with the 1st version of this plugin. We seek to preserve the
     // behaviour of that first version, so to get the default format, the user must explicitly do
     // something like: dateFormat='' timeformat='' which is a odd, but probably okay.
-    private DateFormat getTimeFormat( final WikiContext context, final Map< String, String > params ) {
+    private DateFormat getTimeFormat( final Context context, final Map< String, String > params ) {
         final String formatString = get( params, DEFAULT_TIME_FORMAT, PARAM_TIME_FORMAT );
         if( StringUtils.isBlank( formatString ) ) {
             return Preferences.getDateFormat( context, TimeFormat.TIME );
@@ -236,7 +238,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements WikiP
         return new SimpleDateFormat( formatString );
     }
 
-    private DateFormat getDateFormat( final WikiContext context, final Map< String, String > params ) {
+    private DateFormat getDateFormat( final Context context, final Map< String, String > params ) {
         final String formatString = get( params, DEFAULT_DATE_FORMAT, PARAM_DATE_FORMAT );
         if( StringUtils.isBlank( formatString ) ) {
             return Preferences.getDateFormat( context, TimeFormat.DATE );

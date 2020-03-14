@@ -20,9 +20,10 @@ package org.apache.wiki.plugin;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.util.TextUtil;
 
 import java.text.SimpleDateFormat;
@@ -45,7 +46,7 @@ import java.util.TreeSet;
  *
  *  @since 1.9.21
  */
-public class WeblogArchivePlugin implements WikiPlugin {
+public class WeblogArchivePlugin implements Plugin {
 
     /** Parameter name for setting the page.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_PAGE = "page";
@@ -55,18 +56,19 @@ public class WeblogArchivePlugin implements WikiPlugin {
     /**
      *  {@inheritDoc}
      */
-    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    @Override
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         final Engine engine = context.getEngine();
 
         //  Parameters
         String weblogName = params.get( PARAM_PAGE );
 
-        if( weblogName == null ) weblogName = context.getPage().getName();
+        if( weblogName == null ) {
+            weblogName = context.getPage().getName();
+        }
 
-
-        m_monthUrlFormat = new SimpleDateFormat("'"+
-                                                context.getURL( WikiContext.VIEW, weblogName,
-                                                                "weblog.startDate='ddMMyy'&amp;weblog.days=%d")+"'");
+        final String pttrn = "'" + context.getURL( WikiContext.VIEW, weblogName,"weblog.startDate='ddMMyy'&amp;weblog.days=%d" ) + "'";
+        m_monthUrlFormat = new SimpleDateFormat( pttrn );
 
         final StringBuilder sb = new StringBuilder();
         sb.append( "<div class=\"weblogarchive\">\n" );
@@ -122,12 +124,9 @@ public class WeblogArchivePlugin implements WikiPlugin {
         final SimpleDateFormat monthfmt = new SimpleDateFormat( "MMMM" );
         final String result;
 
-        if( m_monthUrlFormat == null )
-        {
+        if( m_monthUrlFormat == null ) {
             result = monthfmt.format( day.getTime() );
-        }
-        else
-        {
+        } else {
             final Calendar cal = (Calendar)day.clone();
             final int firstDay = cal.getActualMinimum( Calendar.DATE );
             final int lastDay  = cal.getActualMaximum( Calendar.DATE );
@@ -151,16 +150,13 @@ public class WeblogArchivePlugin implements WikiPlugin {
      */
     private static class ArchiveComparator implements Comparator< Calendar > {
 
-        @Override public int compare( final Calendar a, final Calendar b )
-        {
-            if( a == null || b == null )
-            {
+        @Override
+        public int compare( final Calendar a, final Calendar b ) {
+            if( a == null || b == null ) {
                 throw new ClassCastException( "Invalid calendar supplied for comparison." );
             }
 
-            if( a.get( Calendar.YEAR ) == b.get( Calendar.YEAR ) &&
-                a.get( Calendar.MONTH ) == b.get( Calendar.MONTH ) )
-            {
+            if( a.get( Calendar.YEAR ) == b.get( Calendar.YEAR ) && a.get( Calendar.MONTH ) == b.get( Calendar.MONTH ) ) {
                 return 0;
             }
 
@@ -168,4 +164,5 @@ public class WeblogArchivePlugin implements WikiPlugin {
             return b.getTime().before( a.getTime() ) ? -1 : 1;
         }
     }
+
 }

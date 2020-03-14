@@ -18,30 +18,26 @@
  */
 package org.apache.wiki.plugin;
 
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.Plugin;
+
 import java.util.Map;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.exceptions.PluginException;
 
 /**
  *  Implements a simple plugin that just returns its text.
  *  <P>
  *  Parameters: text - text to return.
- *
  */
-public class SamplePlugin3
-    implements org.apache.wiki.api.plugin.WikiPlugin
-{
-    public void initialize( WikiEngine engine )
-        throws PluginException
-    {
+public class SamplePlugin3 implements Plugin {
+
+    public void initialize( final Engine engine ) throws PluginException {
     }
 
-    public String execute( WikiContext context, Map< String, String > params )
-        throws PluginException
-    {
-        return params.get("text");
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
+        return params.get( "text" );
     }
 
 }

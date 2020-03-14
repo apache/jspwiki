@@ -29,11 +29,12 @@ import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.InitializablePlugin;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -76,7 +77,7 @@ import java.util.TreeMap;
  * 
  * @since 2.8
  */
-public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin, InitializablePlugin {
+public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, InitializablePlugin {
 
     private static final Logger log = Logger.getLogger( PageViewPlugin.class );
 
@@ -156,7 +157,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
      *  {@inheritDoc}
      */
     @Override
-    public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         final PageViewManager manager = c_singleton;
         String result = STR_EMPTY;
 
@@ -285,9 +286,9 @@ public class PageViewPlugin extends AbstractReferralPlugin implements WikiPlugin
          * @return String Wiki page snippet
          * @throws PluginException Malformed pattern parameter.
          */
-        public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+        public String execute( final Context context, final Map< String, String > params ) throws PluginException {
             final Engine engine = context.getEngine();
-            final WikiPage page = context.getPage();
+            final Page page = context.getPage();
             String result = STR_EMPTY;
 
             if( page != null ) {

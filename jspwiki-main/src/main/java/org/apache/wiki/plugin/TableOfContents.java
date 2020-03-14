@@ -20,10 +20,11 @@ package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.pages.PageManager;
@@ -51,10 +52,9 @@ import java.util.ResourceBundle;
  *
  *  @since 2.2
  */
-public class TableOfContents
-    implements WikiPlugin, HeadingListener
-{
-    private static Logger log = Logger.getLogger( TableOfContents.class );
+public class TableOfContents implements Plugin, HeadingListener {
+
+    private static final Logger log = Logger.getLogger( TableOfContents.class );
 
     /** Parameter name for setting the title. */
     public static final String PARAM_TITLE = "title";
@@ -82,12 +82,11 @@ public class TableOfContents
     /**
      *  {@inheritDoc}
      */
-    @Override public void headingAdded( final WikiContext context, final Heading hd )
-    {
-        log.debug("HD: "+hd.m_level+", "+hd.m_titleText+", "+hd.m_titleAnchor);
+    @Override
+    public void headingAdded( final Context context, final Heading hd ) {
+        log.debug( "HD: " + hd.m_level + ", " + hd.m_titleText + ", " + hd.m_titleAnchor );
 
-        switch( hd.m_level )
-        {
+        switch( hd.m_level ) {
           case Heading.HEADING_SMALL:
             m_buf.append("<li class=\"toclevel-3\">");
             m_level3Index++;
@@ -104,18 +103,15 @@ public class TableOfContents
             throw new InternalWikiException("Unknown depth in toc! (Please submit a bug report.)");
         }
 
-        if (m_level1Index < m_starting)
-        {
+        if( m_level1Index < m_starting ) {
             // in case we never had a large heading ...
             m_level1Index++;
         }
-        if ((m_lastLevel == Heading.HEADING_SMALL) && (hd.m_level != Heading.HEADING_SMALL))
-        {
+        if( ( m_lastLevel == Heading.HEADING_SMALL ) && ( hd.m_level != Heading.HEADING_SMALL ) ) {
             m_level3Index = 0;
         }
-        if ( ((m_lastLevel == Heading.HEADING_SMALL) || (m_lastLevel == Heading.HEADING_MEDIUM)) &&
-                  (hd.m_level == Heading.HEADING_LARGE) )
-        {
+        if( ( ( m_lastLevel == Heading.HEADING_SMALL ) || ( m_lastLevel == Heading.HEADING_MEDIUM ) ) && ( hd.m_level
+                == Heading.HEADING_LARGE ) ) {
             m_level3Index = 0;
             m_level2Index = 0;
         }
@@ -151,15 +147,13 @@ public class TableOfContents
     /**
      *  {@inheritDoc}
      */
-    @Override public String execute( final WikiContext context, final Map<String, String> params )
-        throws PluginException
-    {
+    @Override
+    public String execute( final Context context, final Map<String, String> params ) throws PluginException {
         final Engine engine = context.getEngine();
-        final WikiPage page = context.getPage();
+        final Page page = context.getPage();
         final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
-        if( context.getVariable( VAR_ALREADY_PROCESSING ) != null )
-        {
+        if( context.getVariable( VAR_ALREADY_PROCESSING ) != null ) {
             //return rb.getString("tableofcontents.title");
             return "<a href=\"#section-TOC\" class=\"toc\">"+rb.getString("tableofcontents.title")+"</a>";
         }
@@ -171,38 +165,29 @@ public class TableOfContents
 
         final String title = params.get(PARAM_TITLE);
         sb.append("<h4 id=\"section-TOC\">");
-        if( title != null )
-        {
-            sb.append(TextUtil.replaceEntities(title));
+        if( title != null ) {
+            sb.append( TextUtil.replaceEntities( title ) );
+        } else {
+            sb.append( rb.getString( "tableofcontents.title" ) );
         }
-        else
-        {
-            sb.append(rb.getString("tableofcontents.title"));
-        }
-        sb.append("</h4>\n");
+        sb.append( "</h4>\n" );
 
         // should we use an ordered list?
         m_usingNumberedList = false;
-        if (params.containsKey(PARAM_NUMBERED))
-        {
-            final String numbered = params.get(PARAM_NUMBERED);
-            if (numbered.equalsIgnoreCase("true"))
-            {
+        if( params.containsKey( PARAM_NUMBERED ) ) {
+            final String numbered = params.get( PARAM_NUMBERED );
+            if( numbered.equalsIgnoreCase( "true" ) ) {
                 m_usingNumberedList = true;
-            }
-            else if (numbered.equalsIgnoreCase("yes"))
-            {
+            } else if( numbered.equalsIgnoreCase( "yes" ) ) {
                 m_usingNumberedList = true;
             }
         }
 
         // if we are using a numbered list, get the rest of the parameters (if any) ...
-        if (m_usingNumberedList)
-        {
+        if (m_usingNumberedList) {
             int start = 0;
             final String startStr = params.get(PARAM_START);
-            if ((startStr != null) && (startStr.matches("^\\d+$")))
-            {
+            if( ( startStr != null ) && ( startStr.matches( "^\\d+$" ) ) ) {
                 start = Integer.parseInt(startStr);
             }
             if (start < 0) start = 0;

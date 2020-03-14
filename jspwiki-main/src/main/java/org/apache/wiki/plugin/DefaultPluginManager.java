@@ -33,6 +33,7 @@ import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.InitializablePlugin;
@@ -315,7 +316,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
      *  @since 2.0
      */
     @Override
-    public String execute( final WikiContext context, final String classname, final Map< String, String > params ) throws PluginException {
+    public String execute( final Context context, final String classname, final Map< String, String > params ) throws PluginException {
         if( !m_pluginsEnabled ) {
             return "";
         }
@@ -323,17 +324,13 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
         final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
         final boolean debug = TextUtil.isPositive( params.get( PARAM_DEBUG ) );
         try {
-            //
             //   Create...
-            //
             final WikiPlugin plugin = newWikiPlugin( classname, rb );
             if( plugin == null ) {
                 return "Plugin '" + classname + "' not compatible with this version of JSPWiki";
             }
 
-            //
             //  ...and launch.
-            //
             try {
                 return plugin.execute( context, params );
             } catch( final PluginException e ) {

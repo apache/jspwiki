@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.references.ReferenceManager;
 
@@ -40,7 +40,8 @@ public class UndefinedPagesPlugin extends AbstractReferralPlugin {
     /**
      *  {@inheritDoc}
      */
-    @Override public String execute( final WikiContext context, final Map< String, String > params ) throws PluginException {
+    @Override
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         final ReferenceManager refmgr = context.getEngine().getManager( ReferenceManager.class );
         super.initialize( context, params );
 

@@ -20,17 +20,6 @@
  */
 package org.apache.wiki.plugin;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.MalformedPatternException;
@@ -38,10 +27,19 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.util.TextUtil;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  *  Denounces a link by removing it from any search engine.
@@ -55,9 +53,9 @@ import org.apache.wiki.util.TextUtil;
  *
  *  @since 2.1.40.
  */
-public class Denounce implements WikiPlugin
-{
-    private static Logger     log = Logger.getLogger(Denounce.class);
+public class Denounce implements Plugin {
+
+    private static final Logger log = Logger.getLogger(Denounce.class);
 
     /** Parameter name for setting the link.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LINK = "link";
@@ -85,24 +83,24 @@ public class Denounce implements WikiPlugin
     {
         try
         {
-            PatternCompiler compiler = new GlobCompiler();
-            ClassLoader loader = Denounce.class.getClassLoader();
+            final PatternCompiler compiler = new GlobCompiler();
+            final ClassLoader loader = Denounce.class.getClassLoader();
 
-            InputStream in = loader.getResourceAsStream( PROPERTYFILE );
+            final InputStream in = loader.getResourceAsStream( PROPERTYFILE );
 
             if( in == null )
             {
                 throw new IOException("No property file found! (Check the installation, it should be there.)");
             }
 
-            Properties props = new Properties();
+            final Properties props = new Properties();
             props.load( in );
 
             c_denounceText = props.getProperty( PROP_DENOUNCETEXT, c_denounceText );
 
-            for( Enumeration< ? > e = props.propertyNames(); e.hasMoreElements(); )
+            for( final Enumeration< ? > e = props.propertyNames(); e.hasMoreElements(); )
             {
-                String name = (String) e.nextElement();
+                final String name = (String) e.nextElement();
 
                 try
                 {
@@ -119,7 +117,7 @@ public class Denounce implements WikiPlugin
                         c_hostPatterns.add( compiler.compile( props.getProperty(name) ) );
                     }
                 }
-                catch( MalformedPatternException ex )
+                catch( final MalformedPatternException ex )
                 {
                     log.error( "Malformed URL pattern in "+PROPERTYFILE+": "+props.getProperty(name), ex );
                 }
@@ -127,11 +125,11 @@ public class Denounce implements WikiPlugin
 
             log.debug("Added "+c_refererPatterns.size()+c_agentPatterns.size()+c_hostPatterns.size()+" crawlers to denounce list.");
         }
-        catch( IOException e )
+        catch( final IOException e )
         {
             log.error( "Unable to load URL patterns from "+PROPERTYFILE, e );
         }
-        catch( Exception e )
+        catch( final Exception e )
         {
             log.error( "Unable to initialize Denounce plugin", e );
         }
@@ -141,10 +139,8 @@ public class Denounce implements WikiPlugin
      *  {@inheritDoc}
      */
     @Override
-    public String execute( WikiContext context, Map<String, String> params )
-        throws PluginException
-    {
-        String link = params.get( PARAM_LINK );
+    public String execute( final Context context, final Map<String, String> params ) throws PluginException {
+        final String link = params.get( PARAM_LINK );
         String text = params.get( PARAM_TEXT );
         boolean linkAllowed = true;
 
@@ -153,7 +149,7 @@ public class Denounce implements WikiPlugin
             throw new PluginException("Denounce: No parameter "+PARAM_LINK+" defined!");
         }
 
-        HttpServletRequest request = context.getHttpRequest();
+        final HttpServletRequest request = context.getHttpRequest();
 
         if( request != null )
         {
@@ -174,14 +170,10 @@ public class Denounce implements WikiPlugin
     /**
      *  Returns true, if the path is found among the referers.
      */
-    private boolean matchPattern( List< Pattern > list, String path )
-    {
-        PatternMatcher matcher = new Perl5Matcher();
-
-        for( Iterator< Pattern > i = list.iterator(); i.hasNext(); )
-        {
-            if( matcher.matches( path, i.next() ) )
-            {
+    private boolean matchPattern( final List< Pattern > list, final String path ) {
+        final PatternMatcher matcher = new Perl5Matcher();
+        for( final Pattern pattern : list ) {
+            if( matcher.matches( path, pattern ) ) {
                 return true;
             }
         }
@@ -191,13 +183,13 @@ public class Denounce implements WikiPlugin
 
     // FIXME: Should really return immediately when a match is found.
 
-    private boolean matchHeaders( HttpServletRequest request )
+    private boolean matchHeaders( final HttpServletRequest request )
     {
         //
         //  User Agent
         //
 
-        String userAgent = request.getHeader("User-Agent");
+        final String userAgent = request.getHeader("User-Agent");
 
         if( userAgent != null && matchPattern( c_agentPatterns, userAgent ) )
         {
@@ -209,7 +201,7 @@ public class Denounce implements WikiPlugin
         //  Referrer header
         //
 
-        String refererPath = request.getHeader("Referer");
+        final String refererPath = request.getHeader("Referer");
 
         if( refererPath != null && matchPattern( c_refererPatterns, refererPath ) )
         {
@@ -221,7 +213,7 @@ public class Denounce implements WikiPlugin
         //  Host
         //
 
-        String host = request.getRemoteHost();
+        final String host = request.getRemoteHost();
 
         if( host != null && matchPattern( c_hostPatterns, host ) )
         {

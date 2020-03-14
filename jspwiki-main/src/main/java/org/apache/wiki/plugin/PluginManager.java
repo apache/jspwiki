@@ -20,6 +20,7 @@ package org.apache.wiki.plugin;
 
 import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.modules.ModuleManager;
@@ -97,7 +98,7 @@ public interface PluginManager extends ModuleManager {
      *
      * @since 2.0
      */
-    String execute( WikiContext context, String classname, Map< String, String > params ) throws PluginException;
+    String execute( Context context, String classname, Map< String, String > params ) throws PluginException;
 
     /**
      * Parses plugin arguments.  Handles quotes and all other kewl stuff.
