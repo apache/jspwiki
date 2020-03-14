@@ -229,6 +229,9 @@ public interface Context extends Cloneable /*, Command*/ {
         return getEngine().getURL( context, page, params );
     }
 
+    /** {@inheritDoc} */
+    Context clone();
+
     /**
      * Returns the Command associated with this Context.
      *

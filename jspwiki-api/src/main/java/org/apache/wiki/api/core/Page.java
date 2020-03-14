@@ -180,4 +180,7 @@ public interface Page extends Cloneable {
      */
     //void setAcl( Acl acl );
 
+    /** {@inheritDoc} */
+    Page clone();
+
 }
