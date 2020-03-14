@@ -12,13 +12,12 @@
  * limitations under the License.
  */
 
-
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.plugin.Plugin;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  *  Implements a simple plugin that just returns its text.
@@ -26,18 +25,13 @@ import java.util.*;
  *  Parameters: text - text to return.
  *
  */
-public class SamplePlugin2
-    implements WikiPlugin
-{
-    public void initialize( WikiEngine engine )
-        throws PluginException
-    {
+public class SamplePlugin2 implements Plugin {
+
+    public void initialize( final Engine engine ) throws PluginException {
     }
 
-    public String execute( WikiContext context, Map< String, String > params )
-        throws PluginException
-    {
-        return params.get("text");
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
+        return params.get( "text" );
     }
 
 }
