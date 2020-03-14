@@ -101,7 +101,8 @@ public class ContextualDiffProvider implements DiffProvider {
      * 
      * {@inheritDoc}
      */
-    @Override public String getProviderInfo()
+    @Override
+    public String getProviderInfo()
     {
         return "ContextualDiffProvider";
     }
@@ -111,7 +112,8 @@ public class ContextualDiffProvider implements DiffProvider {
      *      
      * {@inheritDoc}
      */
-    @Override public void initialize( final Engine engine, final Properties properties) throws NoRequiredPropertyException, IOException {
+    @Override
+    public void initialize( final Engine engine, final Properties properties) throws NoRequiredPropertyException, IOException {
         final String configuredLimit = properties.getProperty( PROP_UNCHANGED_CONTEXT_LIMIT, Integer.toString( LIMIT_MAX_VALUE ) );
         int limit = LIMIT_MAX_VALUE;
         try {
@@ -131,7 +133,8 @@ public class ContextualDiffProvider implements DiffProvider {
      * 
      * {@inheritDoc}
      */
-    @Override public synchronized String makeDiffHtml( final WikiContext ctx, final String wikiOld, final String wikiNew ) {
+    @Override
+    public synchronized String makeDiffHtml( final WikiContext ctx, final String wikiOld, final String wikiNew ) {
         //
         // Sequencing handles lineterminator to <br /> and every-other consequtive space to a &nbsp;
         //
@@ -273,11 +276,13 @@ public class ContextualDiffProvider implements DiffProvider {
             m_firstElem = orig.last() + 1;
         }
 
-        @Override public void visit( final Revision rev ) {
+        @Override
+        public void visit( final Revision rev ) {
             // GNDN (Goes nowhere, does nothing)
         }
 
-        @Override public void visit( final AddDelta delta ) {
+        @Override
+        public void visit( final AddDelta delta ) {
             updateState( delta );
 
             // We have run Deletes up to now. Flush them out.
@@ -297,7 +302,8 @@ public class ContextualDiffProvider implements DiffProvider {
             }
         }
 
-        @Override public void visit( final ChangeDelta delta ) {
+        @Override
+        public void visit( final ChangeDelta delta ) {
             updateState( delta );
 
             // We are in "neutral mode". A Change might be merged with an add or delete.
@@ -310,7 +316,8 @@ public class ContextualDiffProvider implements DiffProvider {
             addNew( delta.getRevised() );
         }
 
-        @Override public void visit( final DeleteDelta delta ) {
+        @Override
+        public void visit( final DeleteDelta delta ) {
             updateState( delta );
 
             // We have run Adds up to now. Flush them out.

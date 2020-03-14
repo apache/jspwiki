@@ -21,13 +21,14 @@ package org.apache.wiki.pages;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiBackgroundThread;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -225,9 +226,9 @@ public class DefaultPageManager implements PageManager {
     }
 
     @Override
-    public void saveText( final WikiContext context, final String text ) throws WikiException {
+    public void saveText( final Context context, final String text ) throws WikiException {
         // Check if page data actually changed; bail if not
-        final WikiPage page = context.getPage();
+        final Page page = context.getPage();
         final String oldText = getPureText( page );
         final String proposedText = TextUtil.normalizePostData( text );
         if ( oldText != null && oldText.equals( proposedText ) ) {

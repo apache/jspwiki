@@ -20,8 +20,8 @@ package org.apache.wiki.stress;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.TextUtil;

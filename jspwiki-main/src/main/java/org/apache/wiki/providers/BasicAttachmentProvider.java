@@ -20,10 +20,11 @@ package org.apache.wiki.providers;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.search.QueryItem;
@@ -359,7 +360,7 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
      *  {@inheritDoc}
      */
     @Override
-    public List< Attachment > listAttachments( final WikiPage page ) throws ProviderException {
+    public List< Attachment > listAttachments( final Page page ) throws ProviderException {
         final List< Attachment > result = new ArrayList<>();
         final File dir = findPageDir( page.getName() );
         if( dir != null ) {
@@ -423,8 +424,8 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
         final ArrayList< Attachment > list = new ArrayList<>();
         final String[] pagesWithAttachments = attDir.list( new AttachmentFilter() );
 
-        for( int i = 0; i < pagesWithAttachments.length; i++ ) {
-            String pageId = unmangleName( pagesWithAttachments[ i ] );
+        for( final String pagesWithAttachment : pagesWithAttachments ) {
+            String pageId = unmangleName( pagesWithAttachment );
             pageId = pageId.substring( 0, pageId.length() - DIR_EXTENSION.length() );
 
             final Collection< Attachment > c = listAttachments( new WikiPage( m_engine, pageId ) );
@@ -444,7 +445,7 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Attachment getAttachmentInfo( final WikiPage page, final String name, int version ) throws ProviderException {
+    public Attachment getAttachmentInfo( final Page page, final String name, int version ) throws ProviderException {
         final Attachment att = new Attachment( m_engine, page.getName(), name );
         final File dir = findAttachmentDir( att );
 

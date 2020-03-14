@@ -18,10 +18,10 @@
  */
 package org.apache.wiki.search;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.WikiProvider;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -56,6 +56,6 @@ public interface SearchProvider extends WikiProvider {
      * @throws ProviderException if the search provider failed.
      * @throws IOException if for some reason the query could not be executed.
      */
-    Collection< SearchResult > findPages( String query, WikiContext wikiContext ) throws ProviderException, IOException;
+    Collection< SearchResult > findPages( String query, Context wikiContext ) throws ProviderException, IOException;
 
 }

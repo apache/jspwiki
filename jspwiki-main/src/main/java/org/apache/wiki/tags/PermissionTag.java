@@ -20,8 +20,8 @@ package org.apache.wiki.tags;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.permissions.AllPermission;

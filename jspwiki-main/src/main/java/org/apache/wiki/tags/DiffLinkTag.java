@@ -20,8 +20,8 @@ package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.pages.PageManager;
 
 import javax.servlet.jsp.JspWriter;

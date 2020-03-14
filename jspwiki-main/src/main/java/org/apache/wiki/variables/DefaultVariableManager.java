@@ -19,13 +19,13 @@
 package org.apache.wiki.variables;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.Release;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.filters.PageFilter;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -71,7 +71,7 @@ public class DefaultVariableManager implements VariableManager {
      *  {@inheritDoc}
      */
     @Override
-    public String parseAndGetValue( final WikiContext context, final String link ) throws IllegalArgumentException, NoSuchVariableException {
+    public String parseAndGetValue( final Context context, final String link ) throws IllegalArgumentException, NoSuchVariableException {
         if( !link.startsWith( "{$" ) ) {
             throw new IllegalArgumentException( "Link does not start with {$" );
         }
@@ -88,7 +88,7 @@ public class DefaultVariableManager implements VariableManager {
      */
     @Override
     // FIXME: somewhat slow.
-    public String expandVariables( final WikiContext context, final String source ) {
+    public String expandVariables( final Context context, final String source ) {
         final StringBuilder result = new StringBuilder();
         for( int i = 0; i < source.length(); i++ ) {
             if( source.charAt(i) == '{' ) {
@@ -123,7 +123,7 @@ public class DefaultVariableManager implements VariableManager {
      *  {@inheritDoc}
      */
     @Override
-    public String getValue( final WikiContext context, final String varName, final String defValue ) {
+    public String getValue( final Context context, final String varName, final String defValue ) {
         try {
             return getValue( context, varName );
         } catch( final NoSuchVariableException e ) {
@@ -135,7 +135,7 @@ public class DefaultVariableManager implements VariableManager {
      *  {@inheritDoc}
      */
     @Override
-    public String getVariable( final WikiContext context, final String name ) {
+    public String getVariable( final Context context, final String name ) {
         return getValue( context, name, null );
     }
 
@@ -143,7 +143,7 @@ public class DefaultVariableManager implements VariableManager {
      *  {@inheritDoc}
      */
     @Override
-    public String getValue( final WikiContext context, final String varName ) throws IllegalArgumentException, NoSuchVariableException {
+    public String getValue( final Context context, final String varName ) throws IllegalArgumentException, NoSuchVariableException {
         if( varName == null ) {
             throw new IllegalArgumentException( "Null variable name." );
         }
@@ -209,7 +209,7 @@ public class DefaultVariableManager implements VariableManager {
             //
             // And the final straw: see if the current page has named metadata.
             //
-            final WikiPage pg = context.getPage();
+            final Page pg = context.getPage();
             if( pg != null ) {
                 final Object metadata = pg.getAttribute( varName );
                 if( metadata != null ) {
@@ -221,7 +221,7 @@ public class DefaultVariableManager implements VariableManager {
             // And the final straw part 2: see if the "real" current page has named metadata. This allows
             // a parent page to control a inserted page through defining variables
             //
-            final WikiPage rpg = context.getRealPage();
+            final Page rpg = context.getRealPage();
             if( rpg != null ) {
                 final Object metadata = rpg.getAttribute( varName );
                 if( metadata != null ) {
@@ -272,11 +272,11 @@ public class DefaultVariableManager implements VariableManager {
      *  @since 2.7.0
      */
     @SuppressWarnings( "unused" )
-    private static class SystemVariables
-    {
-        private final WikiContext m_context;
+    private static class SystemVariables {
 
-        public SystemVariables( final WikiContext context )
+        private final Context m_context;
+
+        public SystemVariables( final Context context )
         {
             m_context=context;
         }

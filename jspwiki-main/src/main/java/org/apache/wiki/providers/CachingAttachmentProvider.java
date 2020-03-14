@@ -22,11 +22,11 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.search.QueryItem;
@@ -180,7 +180,7 @@ public class CachingAttachmentProvider implements WikiAttachmentProvider {
      * {@inheritDoc}
      */
     @Override
-    public List< Attachment > listAttachments( final WikiPage page) throws ProviderException {
+    public List< Attachment > listAttachments( final Page page) throws ProviderException {
         log.debug("Listing attachments for " + page);
         final Element element = m_cache.get(page.getName());
 
@@ -269,7 +269,7 @@ public class CachingAttachmentProvider implements WikiAttachmentProvider {
      *
      *  @return The newly fetched object from the provider.
      */
-    private List<Attachment> refresh( final WikiPage page ) throws ProviderException
+    private List<Attachment> refresh( final Page page ) throws ProviderException
     {
         final List<Attachment> c = m_provider.listAttachments( page );
         m_cache.put(new Element(page.getName(), c));
@@ -282,7 +282,7 @@ public class CachingAttachmentProvider implements WikiAttachmentProvider {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public Attachment getAttachmentInfo( final WikiPage page, final String name, final int version) throws ProviderException {
+    public Attachment getAttachmentInfo( final Page page, final String name, final int version) throws ProviderException {
         if (log.isDebugEnabled()) {
             log.debug("Getting attachments for " + page + ", name=" + name + ", version=" + version);
         }

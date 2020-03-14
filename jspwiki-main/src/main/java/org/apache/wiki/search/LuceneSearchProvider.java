@@ -49,12 +49,12 @@ import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiBackgroundThread;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthorizationManager;
@@ -455,7 +455,7 @@ public class LuceneSearchProvider implements SearchProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Collection< SearchResult > findPages( final String query, final WikiContext wikiContext ) throws ProviderException {
+    public Collection< SearchResult > findPages( final String query, final Context wikiContext ) throws ProviderException {
         return findPages( query, FLAG_CONTEXTS, wikiContext );
     }
 
@@ -473,7 +473,7 @@ public class LuceneSearchProvider implements SearchProvider {
      *  @return A Collection of SearchResult instances
      *  @throws ProviderException if there is a problem with the backend
      */
-    public Collection< SearchResult > findPages( final String query, final int flags, final WikiContext wikiContext ) throws ProviderException {
+    public Collection< SearchResult > findPages( final String query, final int flags, final Context wikiContext ) throws ProviderException {
         ArrayList<SearchResult> list = null;
         Highlighter highlighter = null;
 

@@ -18,10 +18,10 @@
  */
 package org.apache.wiki.diff;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.providers.WikiProvider;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -40,7 +40,7 @@ public interface DiffProvider extends WikiProvider {
      * @param oldWikiText the old text
      * @param newWikiText the new text
      */
-    String makeDiffHtml( WikiContext context, String oldWikiText, String newWikiText );
+    String makeDiffHtml( Context context, String oldWikiText, String newWikiText );
     
     /**
      *  If there is no diff provider set, this provider will work instead.
@@ -49,20 +49,23 @@ public interface DiffProvider extends WikiProvider {
         /**
          *  {@inheritDoc}
          */
-        @Override public String makeDiffHtml( final WikiContext ctx, final String oldWikiText, final String newWikiText ) {
+        @Override
+        public String makeDiffHtml( final Context ctx, final String oldWikiText, final String newWikiText ) {
             return "You are using the NullDiffProvider, check your properties file.";
         }
 
         /**
          *  {@inheritDoc}
          */
-        @Override public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
+        @Override
+        public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
         }
 
         /**
          *  {@inheritDoc}
          */
-        @Override public String getProviderInfo()
+        @Override
+        public String getProviderInfo()
         {
             return "NullDiffProvider";
         }

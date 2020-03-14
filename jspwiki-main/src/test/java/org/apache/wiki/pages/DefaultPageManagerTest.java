@@ -23,7 +23,7 @@ import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.CachingProvider;
