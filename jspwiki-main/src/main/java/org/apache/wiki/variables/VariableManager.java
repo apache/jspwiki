@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.variables;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 
 /**
@@ -47,7 +47,7 @@ public interface VariableManager {
      *  @throws IllegalArgumentException If the format is not valid (does not start with "{$", is zero length, etc.)
      *  @throws NoSuchVariableException If a variable is not known.
      */
-    String parseAndGetValue( WikiContext context, String link ) throws IllegalArgumentException, NoSuchVariableException;
+    String parseAndGetValue( Context context, String link ) throws IllegalArgumentException, NoSuchVariableException;
 
     /**
      *  This method does in-place expansion of any variables.  However, the expansion is not done twice, that is,
@@ -59,10 +59,10 @@ public interface VariableManager {
      *  @param source  The source string.
      *  @return The source string with variables expanded.
      */
-    String expandVariables( WikiContext context, String source );
+    String expandVariables( Context context, String source );
 
     /**
-     *  Returns the value of a named variable.  See {@link #getValue(WikiContext, String)}. The only difference is that
+     *  Returns the value of a named variable.  See {@link #getValue(Context, String)}. The only difference is that
      *  this method does not throw an exception, but it returns the given default value instead.
      *
      *  @param context WikiContext
@@ -70,7 +70,7 @@ public interface VariableManager {
      *  @param defValue A default value.
      *  @return The variable value, or if not found, the default value.
      */
-    String getValue( WikiContext context, String varName, String defValue );
+    String getValue( Context context, String varName, String defValue );
 
     /**
      *  Shortcut to getValue(). However, this method does not throw a NoSuchVariableException, but returns null
@@ -81,7 +81,7 @@ public interface VariableManager {
      *  @return Variable value, or null, if there is no such variable.
      *  @since 2.2 on Engine, moved to VariableManager on 2.11.0
      */
-    String getVariable( WikiContext context, String name );
+    String getVariable( Context context, String name );
 
     /**
      *  Returns a value of the named variable.  The resolving order is
@@ -107,6 +107,6 @@ public interface VariableManager {
      *  @throws IllegalArgumentException If the name is somehow broken.
      *  @throws NoSuchVariableException If a variable is not known.
      */
-    String getValue( WikiContext context, String varName ) throws IllegalArgumentException, NoSuchVariableException;
+    String getValue( Context context, String varName ) throws IllegalArgumentException, NoSuchVariableException;
 
 }

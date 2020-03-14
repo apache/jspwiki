@@ -32,6 +32,7 @@ import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.attachment.AttachmentManager;
@@ -170,7 +171,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @param context The WikiContext which controls the parsing
      *  @param in Where the data is read from.
      */
-    public JSPWikiMarkupParser( final WikiContext context, final Reader in )
+    public JSPWikiMarkupParser( final Context context, final Reader in )
     {
         super( context, in );
         initialize();

@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.tasks;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.workflow.Step;
 
@@ -48,7 +48,7 @@ public interface TasksManager {
      * @param proposedText text proposed to be saved on the wiki page.
      * @return a pre-save WikiPage task.
      */
-    Step buildPreSaveWikiPageTask( WikiContext context, String proposedText );
+    Step buildPreSaveWikiPageTask( Context context, String proposedText );
     
     /**
      * Builds a save WikiPage task.

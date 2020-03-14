@@ -18,9 +18,9 @@
  */
 package org.apache.wiki.tasks.pages;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.tasks.TasksManager;
@@ -40,7 +40,7 @@ import java.security.Principal;
 public class PreSaveWikiPageTask extends Task {
 
     private static final long serialVersionUID = 6304715570092804615L;
-    private final WikiContext m_context;
+    private final Context m_context;
     private final String m_proposedText;
 
     /**
@@ -49,7 +49,7 @@ public class PreSaveWikiPageTask extends Task {
      * @param context The WikiContext
      * @param proposedText The text that was just saved.
      */
-    public PreSaveWikiPageTask( final WikiContext context, final String proposedText ) {
+    public PreSaveWikiPageTask( final Context context, final String proposedText ) {
         super( TasksManager.WIKIPAGE_PRESAVE_TASK_MESSAGE_KEY );
         m_context = context;
         m_proposedText = proposedText;
@@ -65,7 +65,7 @@ public class PreSaveWikiPageTask extends Task {
         final Workflow workflow = getWorkflow();
 
         // Get the wiki page
-        final WikiPage page = m_context.getPage();
+        final Page page = m_context.getPage();
 
         // Figure out who the author was. Prefer the author set programmatically; otherwise get from the current logged in user
         if( page.getAuthor() == null ) {

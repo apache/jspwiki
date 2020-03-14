@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.PropertyReader;
@@ -162,7 +163,7 @@ public class Preferences
      *  @param name
      *  @return the preference value
      */
-    public static String getPreference( final WikiContext wikiContext, final String name ) {
+    public static String getPreference( final Context wikiContext, final String name ) {
         final HttpServletRequest request = wikiContext.getHttpRequest();
         if ( request == null ) return null;
 
@@ -201,7 +202,7 @@ public class Preferences
      * @return a Locale object.
      * @since 2.8
      */
-    public static Locale getLocale( final WikiContext context ) {
+    public static Locale getLocale( final Context context ) {
         Locale loc = null;
 
         final String langSetting = getPreference( context, "Language" );
@@ -254,7 +255,7 @@ public class Preferences
      *  @return A localized string (or from the default language, if not found)
      *  @throws MissingResourceException If the bundle cannot be found
      */
-    public static ResourceBundle getBundle( final WikiContext context, final String bundle )
+    public static ResourceBundle getBundle( final Context context, final String bundle )
         throws MissingResourceException
     {
         final Locale loc = getLocale( context );
@@ -272,7 +273,7 @@ public class Preferences
      *  @return A SimpleTimeFormat object which you can use to render
      *  @since 2.8
      */
-    public static SimpleDateFormat getDateFormat( final WikiContext context, final TimeFormat tf )
+    public static SimpleDateFormat getDateFormat( final Context context, final TimeFormat tf )
     {
         final InternationalizationManager imgr = context.getEngine().getManager( InternationalizationManager.class );
         final Locale clientLocale = getLocale( context );
@@ -338,10 +339,8 @@ public class Preferences
      *  @return A ready-rendered date.
      *  @since 2.8
      */
-    public static String renderDate( final WikiContext context, final Date date, final TimeFormat tf )
-    {
+    public static String renderDate( final Context context, final Date date, final TimeFormat tf ) {
         final DateFormat df = getDateFormat( context, tf );
-
         return df.format( date );
     }
 
@@ -355,8 +354,7 @@ public class Preferences
      *
      *  @since 2.8
      */
-    public enum TimeFormat
-    {
+    public enum TimeFormat {
         /** A time format, no date. */
         TIME,
 
@@ -366,4 +364,5 @@ public class Preferences
         /** A date+time format. */
         DATETIME
     }
+
 }

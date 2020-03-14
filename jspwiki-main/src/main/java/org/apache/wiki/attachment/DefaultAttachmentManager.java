@@ -24,7 +24,9 @@ import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.pages.PageManager;
@@ -136,7 +138,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
 
     /** {@inheritDoc} */
     @Override
-    public String getAttachmentInfoName( final WikiContext context, final String attachmentname ) {
+    public String getAttachmentInfoName( final Context context, final String attachmentname ) {
         final Attachment att;
         try {
             att = getAttachmentInfo( context, attachmentname );
@@ -156,12 +158,12 @@ public class DefaultAttachmentManager implements AttachmentManager {
 
     /** {@inheritDoc} */
     @Override
-    public Attachment getAttachmentInfo( final WikiContext context, String attachmentname, final int version ) throws ProviderException {
+    public Attachment getAttachmentInfo( final Context context, String attachmentname, final int version ) throws ProviderException {
         if( m_provider == null ) {
             return null;
         }
 
-        WikiPage currentPage = null;
+        Page currentPage = null;
 
         if( context != null ) {
             currentPage = context.getPage();

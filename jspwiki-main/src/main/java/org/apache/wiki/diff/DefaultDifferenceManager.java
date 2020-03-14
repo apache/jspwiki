@@ -20,7 +20,7 @@
 package org.apache.wiki.diff;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.pages.PageManager;
@@ -87,7 +87,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
      * @return XHTML, or empty string, if no difference detected.
      */
     @Override
-    public String makeDiff( final WikiContext context, final String firstWikiText, final String secondWikiText ) {
+    public String makeDiff( final Context context, final String firstWikiText, final String secondWikiText ) {
         String diff;
         try {
             diff = m_provider.makeDiffHtml( context, firstWikiText, secondWikiText );
@@ -114,7 +114,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
      *  @return A HTML-ized difference between two pages.  If there is no difference, returns an empty string.
      */
     @Override
-    public String getDiff( final WikiContext context, final int version1, final int version2 ) {
+    public String getDiff( final Context context, final int version1, final int version2 ) {
         final String page = context.getPage().getName();
         String page1 = context.getEngine().getManager( PageManager.class ).getPureText( page, version1 );
         final String page2 = context.getEngine().getManager( PageManager.class ).getPureText( page, version2 );

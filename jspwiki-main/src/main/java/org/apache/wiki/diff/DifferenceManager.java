@@ -19,7 +19,7 @@
 
 package org.apache.wiki.diff;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 
 
 /**
@@ -38,7 +38,7 @@ public interface DifferenceManager {
      * @param secondWikiText the new text
      * @return XHTML, or empty string, if no difference detected.
      */
-    String makeDiff( WikiContext context, String firstWikiText, String secondWikiText );
+    String makeDiff( Context context, String firstWikiText, String secondWikiText );
 
     /**
      *  Returns a diff of two versions of a page.
@@ -51,7 +51,7 @@ public interface DifferenceManager {
      *
      *  @return A HTML-ized difference between two pages.  If there is no difference, returns an empty string.
      */
-    String getDiff( WikiContext context, int version1, int version2 );
+    String getDiff( Context context, int version1, int version2 );
 
 }
 

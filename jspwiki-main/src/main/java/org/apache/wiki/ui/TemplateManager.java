@@ -20,6 +20,7 @@ package org.apache.wiki.ui;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.preferences.Preferences;
@@ -135,7 +136,7 @@ public interface TemplateManager extends ModuleManager {
      *  @param name the name of the resource to fine
      *  @return the path to the resource
      */
-    String findResource( WikiContext ctx, String template, String name );
+    String findResource( Context ctx, String template, String name );
 
     /**
      *   Lists the skins available under this template.  Returns an empty Set, if there are no extra skins available.  Note that

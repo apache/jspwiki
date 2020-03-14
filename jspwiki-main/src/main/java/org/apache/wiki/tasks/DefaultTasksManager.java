@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.tasks;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.tasks.auth.SaveUserProfileTask;
 import org.apache.wiki.tasks.pages.PreSaveWikiPageTask;
@@ -37,7 +37,7 @@ public class DefaultTasksManager implements TasksManager {
      * {@inheritDoc}
      */
     @Override
-    public Step buildPreSaveWikiPageTask( final WikiContext context, final String proposedText ) {
+    public Step buildPreSaveWikiPageTask( final Context context, final String proposedText ) {
         return new PreSaveWikiPageTask( context, proposedText );
     }
     

@@ -19,7 +19,7 @@
 package org.apache.wiki.filters;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -238,10 +238,10 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
      *  @throws FilterException If any of the filters throws a FilterException
      *  @return The modified WikiMarkup
      *
-     *  @see PageFilter#preTranslate(WikiContext, String)
+     *  @see PageFilter#preTranslate(Context, String)
      */
     @Override
-    public String doPreTranslateFiltering( final WikiContext context, String pageData ) throws FilterException {
+    public String doPreTranslateFiltering( final Context context, String pageData ) throws FilterException {
         fireEvent( WikiPageEvent.PRE_TRANSLATE_BEGIN, context );
         for( final PageFilter f : m_pageFilters ) {
             pageData = f.preTranslate( context, pageData );
@@ -259,10 +259,10 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
      *  @param htmlData HTML data to be passed through the postTranslate
      *  @throws FilterException If any of the filters throws a FilterException
      *  @return The modified HTML
-     *  @see PageFilter#postTranslate(WikiContext, String)
+     *  @see PageFilter#postTranslate(Context, String)
      */
     @Override
-    public String doPostTranslateFiltering( final WikiContext context, String htmlData ) throws FilterException {
+    public String doPostTranslateFiltering( final Context context, String htmlData ) throws FilterException {
         fireEvent( WikiPageEvent.POST_TRANSLATE_BEGIN, context );
         for( final PageFilter f : m_pageFilters ) {
             htmlData = f.postTranslate( context, htmlData );
@@ -280,10 +280,10 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
      *  @param pageData WikiMarkup data to be passed through the preSave chain.
      *  @throws FilterException If any of the filters throws a FilterException
      *  @return The modified WikiMarkup
-     *  @see PageFilter#preSave(WikiContext, String)
+     *  @see PageFilter#preSave(Context, String)
      */
     @Override
-    public String doPreSaveFiltering( final WikiContext context, String pageData ) throws FilterException {
+    public String doPreSaveFiltering( final Context context, String pageData ) throws FilterException {
         fireEvent( WikiPageEvent.PRE_SAVE_BEGIN, context );
         for( final PageFilter f : m_pageFilters ) {
             pageData = f.preSave( context, pageData );
@@ -301,10 +301,10 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
      *  @param pageData WikiMarkup data to be passed through the postSave chain.
      *  @throws FilterException If any of the filters throws a FilterException
      *
-     *  @see PageFilter#postSave(WikiContext, String)
+     *  @see PageFilter#postSave(Context, String)
      */
     @Override
-    public void doPostSaveFiltering( final WikiContext context, final String pageData ) throws FilterException {
+    public void doPostSaveFiltering( final Context context, final String pageData ) throws FilterException {
         fireEvent( WikiPageEvent.POST_SAVE_BEGIN, context );
         for( final PageFilter f : m_pageFilters ) {
             // log.info("POSTSAVE: "+f.toString() );
@@ -347,7 +347,7 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
      * @param type      the WikiPageEvent type to be fired.
      * @param context   the WikiContext of the event.
      */
-    public void fireEvent( final int type, final WikiContext context ) {
+    public void fireEvent( final int type, final Context context ) {
         if( WikiEventManager.isListening(this ) && WikiPageEvent.isValidType( type ) )  {
             WikiEventManager.fireEvent(this, new WikiPageEvent( m_engine, type, context.getPage().getName() ) );
         }

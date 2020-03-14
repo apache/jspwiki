@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.filters;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.modules.ModuleManager;
@@ -62,9 +62,9 @@ public interface FilterManager extends ModuleManager {
      *  @throws FilterException If any of the filters throws a FilterException
      *  @return The modified WikiMarkup
      *  
-     *  @see PageFilter#preTranslate(WikiContext, String)
+     *  @see PageFilter#preTranslate(Context, String)
      */
-    String doPreTranslateFiltering( WikiContext context, String pageData ) throws FilterException;
+    String doPreTranslateFiltering( Context context, String pageData ) throws FilterException;
     
     /**
      *  Does the filtering after HTML translation.
@@ -73,9 +73,9 @@ public interface FilterManager extends ModuleManager {
      *  @param htmlData HTML data to be passed through the postTranslate
      *  @throws FilterException If any of the filters throws a FilterException
      *  @return The modified HTML
-     *  @see PageFilter#postTranslate(WikiContext, String)
+     *  @see PageFilter#postTranslate(Context, String)
      */
-    String doPostTranslateFiltering( WikiContext context, String htmlData ) throws FilterException;
+    String doPostTranslateFiltering( Context context, String htmlData ) throws FilterException;
     
     /**
      *  Does the filtering before a save to the page repository.
@@ -84,9 +84,9 @@ public interface FilterManager extends ModuleManager {
      *  @param pageData WikiMarkup data to be passed through the preSave chain.
      *  @throws FilterException If any of the filters throws a FilterException
      *  @return The modified WikiMarkup
-     *  @see PageFilter#preSave(WikiContext, String)
+     *  @see PageFilter#preSave(Context, String)
      */
-    String doPreSaveFiltering( WikiContext context, String pageData ) throws FilterException;
+    String doPreSaveFiltering( Context context, String pageData ) throws FilterException;
     
     /**
      *  Does the page filtering after the page has been saved.
@@ -95,9 +95,9 @@ public interface FilterManager extends ModuleManager {
      *  @param pageData WikiMarkup data to be passed through the postSave chain.
      *  @throws FilterException If any of the filters throws a FilterException
      * 
-     *  @see PageFilter#postSave(WikiContext, String)
+     *  @see PageFilter#postSave(Context, String)
      */
-    void doPostSaveFiltering( WikiContext context, String pageData ) throws FilterException;
+    void doPostSaveFiltering( Context context, String pageData ) throws FilterException;
     
     /**
      *  Returns the list of filters currently installed.  Note that this is not

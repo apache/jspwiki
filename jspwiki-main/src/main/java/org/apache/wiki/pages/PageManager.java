@@ -18,8 +18,9 @@
  */
 package org.apache.wiki.pages;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
@@ -93,7 +94,7 @@ public interface PageManager extends WikiEventListener {
      *  @return String of WikiText.
      *  @since 2.1.13, moved to PageManager on 2.11.0.
      */
-    default String getPureText( final WikiPage page ) {
+    default String getPureText( final Page page ) {
         return getPureText( page.getName(), page.getVersion() );
     }
 
@@ -124,12 +125,12 @@ public interface PageManager extends WikiEventListener {
      *  Returns the un-HTMLized text of the given version of a page in the given context.  USE THIS METHOD if you don't know what doing.
      *  <p>
      *  This method also replaces the &lt; and &amp; -characters with their respective HTML entities, thus making it suitable
-     *  for inclusion on an HTML page.  If you want to have the page text without any conversions, use {@link #getPureText(WikiPage)}.
+     *  for inclusion on an HTML page.  If you want to have the page text without any conversions, use {@link #getPureText(Page)}.
      *
      *  @since 1.9.15.
      *  @param page A page reference (not an attachment)
      *  @return The page content as HTMLized String.
-     *  @see PageManager#getPureText(WikiPage)
+     *  @see PageManager#getPureText(Page)
      */
     default String getText( final WikiPage page ) {
         return getText( page.getName(), page.getVersion() );
@@ -151,7 +152,7 @@ public interface PageManager extends WikiEventListener {
      *  Individual PageFilters, such as the {@link org.apache.wiki.filters.SpamFilter} may also throw a
      *  {@link org.apache.wiki.api.exceptions.RedirectException}.
      */
-    void saveText( WikiContext context, String text ) throws WikiException;
+    void saveText( Context context, String text ) throws WikiException;
 
     /**
      * Puts the page text into the repository.  Note that this method does NOT update
@@ -335,7 +336,7 @@ public interface PageManager extends WikiEventListener {
      *  @throws ProviderException If something goes badly wrong.
      *  @since 2.0
      */
-    default boolean wikiPageExists( final WikiPage page ) throws ProviderException {
+    default boolean wikiPageExists( final Page page ) throws ProviderException {
         if( page != null ) {
             return wikiPageExists( page.getName(), page.getVersion() );
         }

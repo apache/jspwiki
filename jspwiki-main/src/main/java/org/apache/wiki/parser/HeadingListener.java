@@ -18,19 +18,20 @@
  */
 package org.apache.wiki.parser;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
+
 
 /**
- *  Provides a listener interface for headings.  This is used in parsing,
- *  and e.g. the TableOfContents is built using this listener.
+ *  Provides a listener interface for headings.  This is used in parsing, and e.g. the TableOfContents is built using this listener.
  */
-public interface HeadingListener
-{
+public interface HeadingListener {
+
     /**
      *  Is called whenever a heading is encountered in the stream.
      *  
      *  @param context The WikiContext
      *  @param hd The heading which was just encountered.
      */
-    void headingAdded( WikiContext context, Heading hd );
+    void headingAdded( Context context, Heading hd );
+
 }

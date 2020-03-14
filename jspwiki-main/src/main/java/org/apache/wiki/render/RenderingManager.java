@@ -20,8 +20,8 @@ package org.apache.wiki.render;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.StringTransmutator;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
@@ -97,7 +97,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @param pagedata the page data
      *  @return A MarkupParser instance.
      */
-    MarkupParser getParser( WikiContext context, String pagedata );
+    MarkupParser getParser( Context context, String pagedata );
 
     /**
      *  Returns a cached document, if one is found.
@@ -106,7 +106,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      * @param pagedata the page data
      * @return the rendered wiki document
      */
-    WikiDocument getRenderedDocument( WikiContext context, String pagedata );
+    WikiDocument getRenderedDocument( Context context, String pagedata );
 
     /**
      * Returns a WikiRenderer instance, initialized with the given context and doc. The object is an XHTMLRenderer,
@@ -116,7 +116,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      * @param doc The document to render
      * @return A WikiRenderer for this document, or null, if no such renderer could be instantiated.
      */
-    WikiRenderer getRenderer( WikiContext context, WikiDocument doc );
+    WikiRenderer getRenderer( Context context, WikiDocument doc );
 
     /**
      * Returns a WikiRenderer instance meant for WYSIWYG editing, initialized with the given
@@ -127,7 +127,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      * @param doc The document to render
      * @return A WikiRenderer instance meant for WYSIWYG editing, for this document, or null, if no such renderer could be instantiated.
      */
-    WikiRenderer getWysiwygRenderer( WikiContext context, WikiDocument doc );
+    WikiRenderer getWysiwygRenderer( Context context, WikiDocument doc );
 
     /**
      *  Simply renders a WikiDocument to a String.  This version does not get the document from the cache - in fact, it does
@@ -140,7 +140,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @return Rendered HTML.
      *  @throws IOException If the WikiDocument is poorly formed.
      */
-    String getHTML( WikiContext context, WikiDocument doc ) throws IOException;
+    String getHTML( Context context, WikiDocument doc ) throws IOException;
 
     /**
      *  Returns the converted HTML of the page using a different context than the default context.
@@ -149,7 +149,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @param  page WikiPage reference.
      *  @return HTML-rendered version of the page.
      */
-    String getHTML( WikiContext context, WikiPage page );
+    String getHTML( Context context, WikiPage page );
 
     /**
      *  Returns the converted HTML of the page's specific version. The version must be a positive integer, otherwise the current
@@ -171,7 +171,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *   @param pagedata the page data
      *   @return XHTML data.
      */
-    default String getHTML( final WikiContext context, final String pagedata ) {
+    default String getHTML( final Context context, final String pagedata ) {
         try {
             final WikiDocument doc = getRenderedDocument( context, pagedata );
             return getHTML( context, doc );
@@ -199,7 +199,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @param context  The WikiContext in which the page is to be rendered
      *  @return Rendered page text
      */
-    String textToHTML( WikiContext context, String pagedata );
+    String textToHTML( Context context, String pagedata );
 
     /**
      *  Helper method for doing the HTML translation.
@@ -212,7 +212,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @param justParse Just parses the pagedata, does not actually render.  In this case, this methods an empty string.
      *  @return HTML-rendered page text.
      */
-    String textToHTML( WikiContext context,
+    String textToHTML( Context context,
                        String pagedata,
                        StringTransmutator localLinkHook,
                        StringTransmutator extLinkHook,
@@ -230,7 +230,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *
      *  @return HTML-rendered page text.
      */
-    default String textToHTML( final WikiContext context,
+    default String textToHTML( final Context context,
                                final String pagedata,
                                final StringTransmutator localLinkHook,
                                final StringTransmutator extLinkHook ) {
@@ -247,7 +247,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @param attLinkHook   Is called whenever an attachment link is found
      *  @return HTML-rendered page text.
      */
-    default String textToHTML( final WikiContext context,
+    default String textToHTML( final Context context,
                                final String pagedata,
                                final StringTransmutator localLinkHook,
                                final StringTransmutator extLinkHook,

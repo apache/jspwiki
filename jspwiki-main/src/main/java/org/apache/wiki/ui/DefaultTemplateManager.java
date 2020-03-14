@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.modules.BaseModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
@@ -176,12 +177,12 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
 
     /** {@inheritDoc} */
     @Override
-    public String findResource( final WikiContext ctx, final String template, final String name ) {
+    public String findResource( final Context ctx, final String template, final String name ) {
         if( m_engine.getServletContext() != null ) {
             return findResource( m_engine.getServletContext(), template, name );
         }
 
-        return getPath(template)+"/"+name;
+        return getPath( template ) + "/" + name;
     }
 
     /*

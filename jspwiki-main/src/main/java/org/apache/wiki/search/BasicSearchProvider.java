@@ -19,8 +19,8 @@
 package org.apache.wiki.search;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -138,7 +138,7 @@ public class BasicSearchProvider implements SearchProvider {
         return "";
     }
 
-    private Collection< SearchResult > findPages( final QueryItem[] query, final WikiContext wikiContext ) {
+    private Collection< SearchResult > findPages( final QueryItem[] query, final Context wikiContext ) {
         final TreeSet< SearchResult > res = new TreeSet<>( new SearchResultComparator() );
         final SearchMatcher matcher = new SearchMatcher( m_engine, query );
         final Collection< WikiPage > allPages;
@@ -179,7 +179,7 @@ public class BasicSearchProvider implements SearchProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Collection< SearchResult > findPages( final String query, final WikiContext wikiContext ) {
+    public Collection< SearchResult > findPages( final String query, final Context wikiContext ) {
         return findPages( parseQuery( query ), wikiContext );
     }
 

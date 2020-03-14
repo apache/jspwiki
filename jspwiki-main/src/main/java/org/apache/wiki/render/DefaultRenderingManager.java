@@ -26,6 +26,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -190,7 +191,7 @@ public class DefaultRenderingManager implements RenderingManager {
      *  {@inheritDoc}
      */
     @Override
-    public MarkupParser getParser( final WikiContext context, final String pagedata ) {
+    public MarkupParser getParser( final Context context, final String pagedata ) {
     	try {
 			return ClassUtil.getMappedObject( m_markupParserClass, context, new StringReader( pagedata ) );
 		} catch( final ReflectiveOperationException | IllegalArgumentException e ) {
@@ -204,7 +205,7 @@ public class DefaultRenderingManager implements RenderingManager {
      */
     @Override
     // FIXME: The cache management policy is not very good: deleted/changed pages should be detected better.
-    public WikiDocument getRenderedDocument( final WikiContext context, final String pagedata ) {
+    public WikiDocument getRenderedDocument( final Context context, final String pagedata ) {
         final String pageid = context.getRealPage().getName() + VERSION_DELIMITER +
                               context.getRealPage().getVersion() + VERSION_DELIMITER +
                               context.getVariable( WikiContext.VAR_EXECUTE_PLUGINS );
@@ -244,7 +245,7 @@ public class DefaultRenderingManager implements RenderingManager {
         return null;
     }
 
-    boolean useCache( final WikiContext context ) {
+    boolean useCache( final Context context ) {
         return m_useCache && WikiContext.VIEW.equals( context.getRequestContext() );
     }
 
@@ -252,7 +253,7 @@ public class DefaultRenderingManager implements RenderingManager {
      *  {@inheritDoc}
      */
     @Override
-    public String getHTML( final WikiContext context, final WikiDocument doc ) throws IOException {
+    public String getHTML( final Context context, final WikiDocument doc ) throws IOException {
         final Boolean wysiwygVariable = ( Boolean )context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         final boolean wysiwygEditorMode;
         if( wysiwygVariable != null ) {
@@ -274,7 +275,7 @@ public class DefaultRenderingManager implements RenderingManager {
      *  {@inheritDoc}
      */
     @Override
-    public String getHTML( final WikiContext context, final WikiPage page ) {
+    public String getHTML( final Context context, final WikiPage page ) {
         final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page.getName(), page.getVersion() );
         return textToHTML( context, pagedata );
     }
@@ -287,9 +288,10 @@ public class DefaultRenderingManager implements RenderingManager {
      *  @param version Version number to fetch
      *  @return HTML-rendered page text.
      */
-    @Override public String getHTML( final String pagename, final int version ) {
+    @Override
+    public String getHTML( final String pagename, final int version ) {
         final WikiPage page = m_engine.getManager( PageManager.class ).getPage( pagename, version );
-        final WikiContext context = new WikiContext( m_engine, page );
+        final Context context = new WikiContext( m_engine, page );
         context.setRequestContext( WikiContext.NONE );
         return getHTML( context, page );
     }
@@ -298,7 +300,7 @@ public class DefaultRenderingManager implements RenderingManager {
      *  {@inheritDoc}
      */
     @Override
-    public String textToHTML( final WikiContext context, String pagedata ) {
+    public String textToHTML( final Context context, String pagedata ) {
         String result = "";
 
         final boolean runFilters = "true".equals( m_engine.getManager( VariableManager.class ).getValue( context,VariableManager.VAR_RUNFILTERS,"true" ) );
@@ -331,7 +333,7 @@ public class DefaultRenderingManager implements RenderingManager {
      *  {@inheritDoc}
      */
     @Override
-    public String textToHTML( final WikiContext context,
+    public String textToHTML( final Context context,
                               String pagedata,
                               final StringTransmutator localLinkHook,
                               final StringTransmutator extLinkHook,
@@ -394,7 +396,7 @@ public class DefaultRenderingManager implements RenderingManager {
      *  {@inheritDoc}
      */
     @Override
-    public WikiRenderer getRenderer( final WikiContext context, final WikiDocument doc ) {
+    public WikiRenderer getRenderer( final Context context, final WikiDocument doc ) {
         final Object[] params = { context, doc };
         return getRenderer( params, m_rendererConstructor );
     }
@@ -403,7 +405,7 @@ public class DefaultRenderingManager implements RenderingManager {
      *  {@inheritDoc}
      */
     @Override
-    public WikiRenderer getWysiwygRenderer( final WikiContext context, final WikiDocument doc ) {
+    public WikiRenderer getWysiwygRenderer( final Context context, final WikiDocument doc ) {
         final Object[] params = { context, doc };
         return getRenderer( params, m_rendererWysiwygConstructor );
     }

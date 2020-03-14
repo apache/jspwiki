@@ -24,7 +24,7 @@ import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.wiki.StringTransmutator;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.util.TextUtil;
 import org.jdom2.Element;
@@ -51,7 +51,7 @@ public abstract class MarkupParser {
     private int m_pos = -1; // current position in reader stream
 
     protected Engine m_engine;
-    protected WikiContext m_context;
+    protected Context m_context;
 
     /** Optionally stores internal wikilinks */
     protected ArrayList< StringTransmutator > m_localLinkMutatorChain = new ArrayList<>();
@@ -131,7 +131,7 @@ public abstract class MarkupParser {
      *  @param context The WikiContext.
      *  @param in The reader from which we are reading the bytes from.
      */
-    protected MarkupParser( final WikiContext context, final Reader in ) {
+    protected MarkupParser( final Context context, final Reader in ) {
         m_engine = context.getEngine();
         m_context = context;
         m_linkParsingOperations = new LinkParsingOperations( m_context );
