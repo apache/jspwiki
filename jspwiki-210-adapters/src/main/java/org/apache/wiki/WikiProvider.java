@@ -30,10 +30,7 @@ import java.util.Properties;
  *
  *  @since 2.0
  */
-public interface WikiProvider {
-
-    /** Passing this to any method should get the latest version */
-    int LATEST_VERSION = -1;
+public interface WikiProvider extends org.apache.wiki.api.providers.WikiProvider {
 
     /**
      *  Initializes the page provider.
@@ -43,14 +40,12 @@ public interface WikiProvider {
      *  @throws NoRequiredPropertyException If the provider needs a property which is not found in the property set
      *  @throws IOException If there is an IO problem
      */
-    void initialize( Engine engine, Properties properties ) throws NoRequiredPropertyException, IOException;
+    @Override
+    default void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
+        initialize( engine.adapt( WikiEngine.class ), properties );
+    }
 
-    /**
-     *  Return a valid HTML string for information.  May be anything.
-     *  @since 1.6.4
-     *  @return A string describing the provider.
-     */
-    String getProviderInfo();
+    default void initialize( final WikiEngine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {}
 
 }
 
