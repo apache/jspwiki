@@ -208,7 +208,7 @@ public class DefaultRenderingManager implements RenderingManager {
     public WikiDocument getRenderedDocument( final Context context, final String pagedata ) {
         final String pageid = context.getRealPage().getName() + VERSION_DELIMITER +
                               context.getRealPage().getVersion() + VERSION_DELIMITER +
-                              context.getVariable( WikiContext.VAR_EXECUTE_PLUGINS );
+                              context.getVariable( Context.VAR_EXECUTE_PLUGINS );
 
         if( useCache( context ) ) {
             final Element element = m_documentCache.get( pageid );
@@ -254,7 +254,7 @@ public class DefaultRenderingManager implements RenderingManager {
      */
     @Override
     public String getHTML( final Context context, final WikiDocument doc ) throws IOException {
-        final Boolean wysiwygVariable = ( Boolean )context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = context.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         final boolean wysiwygEditorMode;
         if( wysiwygVariable != null ) {
             wysiwygEditorMode = wysiwygVariable;
