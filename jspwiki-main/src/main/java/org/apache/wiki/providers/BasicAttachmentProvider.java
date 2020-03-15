@@ -148,7 +148,6 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
         wikipage = mangleName( wikipage );
 
         final File f = new File( m_storageDir, wikipage + DIR_EXTENSION );
-
         if( f.exists() && !f.isDirectory() ) {
             throw new ProviderException( "Storage dir '" + f.getAbsolutePath() + "' is not a directory!" );
         }
@@ -189,27 +188,21 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
     }
 
     /**
-     *  Goes through the repository and decides which version is
-     *  the newest one in that directory.
+     * Goes through the repository and decides which version is the newest one in that directory.
      *
-     *  @return Latest version number in the repository, or 0, if
-     *          there is no page in the repository.
+     * @return Latest version number in the repository, or 0, if there is no page in the repository.
      */
     private int findLatestVersion( final Attachment att ) throws ProviderException {
         final File attDir  = findAttachmentDir( att );
-
-        // log.debug("Finding pages in "+attDir.getAbsolutePath());
         final String[] pages = attDir.list( new AttachmentVersionFilter() );
-
         if( pages == null ) {
             return 0; // No such thing found.
         }
 
         int version = 0;
-        for( int i = 0; i < pages.length; i++ ) {
-            // log.debug("Checking: "+pages[i]);
-            final int cutpoint = pages[ i ].indexOf( '.' );
-            final String pageNum = ( cutpoint > 0 ) ? pages[ i ].substring( 0, cutpoint ) : pages[ i ];
+        for( final String page : pages ) {
+            final int cutpoint = page.indexOf( '.' );
+            final String pageNum = ( cutpoint > 0 ) ? page.substring( 0, cutpoint ) : page;
 
             try {
                 final int res = Integer.parseInt( pageNum );
@@ -363,37 +356,35 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
     public List< Attachment > listAttachments( final Page page ) throws ProviderException {
         final List< Attachment > result = new ArrayList<>();
         final File dir = findPageDir( page.getName() );
-        if( dir != null ) {
-            final String[] attachments = dir.list();
-            if( attachments != null ) {
-                //  We now have a list of all potential attachments in the directory.
-                for( int i = 0; i < attachments.length; i++ ) {
-                    final File f = new File( dir, attachments[i] );
-                    if( f.isDirectory() ) {
-                        String attachmentName = unmangleName( attachments[i] );
+        final String[] attachments = dir.list();
+        if( attachments != null ) {
+            //  We now have a list of all potential attachments in the directory.
+            for( final String attachment : attachments ) {
+                final File f = new File( dir, attachment );
+                if( f.isDirectory() ) {
+                    String attachmentName = unmangleName( attachment );
 
-                        //  Is it a new-stylea attachment directory?  If yes, we'll just deduce the name.  If not, however,
-                        //  we'll check if there's a suitable property file in the directory.
-                        if( attachmentName.endsWith( ATTDIR_EXTENSION ) ) {
-                            attachmentName = attachmentName.substring( 0, attachmentName.length() - ATTDIR_EXTENSION.length() );
-                        } else {
-                            final File propFile = new File( f, PROPERTY_FILE );
-                            if( !propFile.exists() ) {
-                                //  This is not obviously a JSPWiki attachment, so let's just skip it.
-                                continue;
-                            }
+                    //  Is it a new-stylea attachment directory?  If yes, we'll just deduce the name.  If not, however,
+                    //  we'll check if there's a suitable property file in the directory.
+                    if( attachmentName.endsWith( ATTDIR_EXTENSION ) ) {
+                        attachmentName = attachmentName.substring( 0, attachmentName.length() - ATTDIR_EXTENSION.length() );
+                    } else {
+                        final File propFile = new File( f, PROPERTY_FILE );
+                        if( !propFile.exists() ) {
+                            //  This is not obviously a JSPWiki attachment, so let's just skip it.
+                            continue;
                         }
-
-                        final Attachment att = getAttachmentInfo( page, attachmentName, WikiProvider.LATEST_VERSION );
-                        //  Sanity check - shouldn't really be happening, unless you mess with the repository directly.
-                        if( att == null ) {
-                            throw new ProviderException("Attachment disappeared while reading information:"+
-                                                        " if you did not touch the repository, there is a serious bug somewhere. "+
-                                                        "Attachment = " + attachments[ i ] + ", decoded = " + attachmentName );
-                        }
-
-                        result.add( att );
                     }
+
+                    final Attachment att = getAttachmentInfo( page, attachmentName, WikiProvider.LATEST_VERSION );
+                    //  Sanity check - shouldn't really be happening, unless you mess with the repository directly.
+                    if( att == null ) {
+                        throw new ProviderException( "Attachment disappeared while reading information:"
+                                + " if you did not touch the repository, there is a serious bug somewhere. " + "Attachment = " + attachment
+                                + ", decoded = " + attachmentName );
+                    }
+
+                    result.add( att );
                 }
             }
         }
@@ -405,8 +396,7 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Collection< Attachment > findAttachments( final QueryItem[] query )
-    {
+    public Collection< Attachment > findAttachments( final QueryItem[] query ) {
         return new ArrayList<>();
     }
 
@@ -461,26 +451,25 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
         att.setVersion( version );
         
         // Should attachment be cachable by the client (browser)?
-        if (m_disableCache != null) {
-            final Matcher matcher = m_disableCache.matcher(name);
-            if (matcher.matches()) {
-                att.setCacheable(false);
+        if( m_disableCache != null ) {
+            final Matcher matcher = m_disableCache.matcher( name );
+            if( matcher.matches() ) {
+                att.setCacheable( false );
             }
         }
 
         // System.out.println("Fetching info on version "+version);
         try {
-            final Properties props = getPageProperties(att);
+            final Properties props = getPageProperties( att );
             att.setAuthor( props.getProperty( version+".author" ) );
             final String changeNote = props.getProperty( version+".changenote" );
             if( changeNote != null ) {
-                att.setAttribute(WikiPage.CHANGENOTE, changeNote);
+                att.setAttribute( WikiPage.CHANGENOTE, changeNote );
             }
 
             final File f = findFile( dir, att );
-
             att.setSize( f.length() );
-            att.setLastModified( new Date(f.lastModified()) );
+            att.setLastModified( new Date( f.lastModified() ) );
         } catch( final FileNotFoundException e ) {
             log.error( "Can't get attachment properties for " + att, e );
             return null;
@@ -499,10 +488,8 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
     @Override
     public List< Attachment > getVersionHistory( final Attachment att ) {
         final ArrayList< Attachment > list = new ArrayList<>();
-
         try {
             final int latest = findLatestVersion( att );
-
             for( int i = latest; i >= 1; i-- ) {
                 final Attachment a = getAttachmentInfo( new WikiPage( m_engine, att.getParentName() ), att.getFileName(), i );
 
@@ -533,9 +520,8 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
     public void deleteAttachment( final Attachment att ) throws ProviderException {
         final File dir = findAttachmentDir( att );
         final String[] files = dir.list();
-
-        for( int i = 0; i < files.length; i++ ) {
-            final File file = new File( dir.getAbsolutePath() + "/" + files[ i ] );
+        for( final String s : files ) {
+            final File file = new File( dir.getAbsolutePath() + "/" + s );
             file.delete();
         }
         dir.delete();
