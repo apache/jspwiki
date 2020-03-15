@@ -169,7 +169,7 @@ public interface AuthorizationManager {
      * Checks whether the current user has access to the wiki context, by obtaining the required Permission ({@link WikiContext#requiredPermission()})
      * and delegating the access check to {@link #checkPermission(Session, Permission)}. If the user is allowed, this method returns
      * <code>true</code>; <code>false</code> otherwise. If access is allowed, the wiki context will be added to the request as an attribute
-     * with the key name {@link org.apache.wiki.WikiContext#ATTR_CONTEXT}. Note that this method will automatically redirect the user to
+     * with the key name {@link org.apache.wiki.api.core.Context#ATTR_CONTEXT}. Note that this method will automatically redirect the user to
      * a login or error page, as appropriate, if access fails. This is NOT guaranteed to be default behavior in the future.
      *
      * @param context wiki context to check if it is accesible
@@ -187,7 +187,7 @@ public interface AuthorizationManager {
      * and delegating the access check to {@link #checkPermission(Session, Permission)}.
      * If the user is allowed, this method returns <code>true</code>;
      * <code>false</code> otherwise. Also, the wiki context will be added to the request as attribute
-     * with the key name {@link org.apache.wiki.WikiContext#ATTR_CONTEXT}.
+     * with the key name {@link org.apache.wiki.api.core.Context#ATTR_CONTEXT}.
      *
      * @param context wiki context to check if it is accesible
      * @param response The servlet response object

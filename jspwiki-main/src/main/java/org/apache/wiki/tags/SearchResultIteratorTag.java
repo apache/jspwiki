@@ -20,9 +20,10 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Command;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.search.SearchResult;
-import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.PageCommand;
 
 import javax.servlet.http.HttpServletRequest;
@@ -95,10 +96,10 @@ public class SearchResultIteratorTag extends IteratorTag {
             final Engine engine = m_wikiContext.getEngine();
             final HttpServletRequest request = m_wikiContext.getHttpRequest();
             final Command command = PageCommand.VIEW.targetedCommand( r.getPage() );
-            final WikiContext context = new WikiContext( engine, request, command );
+            final Context context = new WikiContext( engine, request, command );
 
             // Stash it in the page context
-            pageContext.setAttribute( WikiContext.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
+            pageContext.setAttribute( Context.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
             pageContext.setAttribute( getId(), r );
 
             return EVAL_BODY_BUFFERED;

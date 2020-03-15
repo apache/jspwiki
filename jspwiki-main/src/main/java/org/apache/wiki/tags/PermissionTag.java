@@ -20,6 +20,7 @@ package org.apache.wiki.tags;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.auth.AuthorizationManager;
@@ -29,7 +30,6 @@ import org.apache.wiki.auth.permissions.GroupPermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.GroupCommand;
 
 import java.security.Permission;

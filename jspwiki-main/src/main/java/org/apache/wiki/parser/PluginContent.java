@@ -23,13 +23,12 @@ import org.apache.oro.text.regex.MatchResult;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.plugin.PluginElement;
-import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.variables.VariableManager;
@@ -118,7 +117,7 @@ public class PluginContent extends Text implements PluginElement {
             return getPluginName();
         }
 
-        final WikiContext context = doc.getContext();
+        final Context context = doc.getContext();
         if( context == null ) {
             log.info( "WikiContext garbage-collected, cannot proceed" );
             return getPluginName();
@@ -131,7 +130,7 @@ public class PluginContent extends Text implements PluginElement {
     @Override
     public String invoke( final Context context ) {
 		String result;
-		final Boolean wysiwygVariable = ( Boolean )context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
+		final Boolean wysiwygVariable = context.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         boolean wysiwygEditorMode = false;
         if( wysiwygVariable != null ) {
             wysiwygEditorMode = wysiwygVariable;
@@ -151,7 +150,7 @@ public class PluginContent extends Text implements PluginElement {
                 final String cmdLine = m_params.get( CMDLINE ).replaceAll( LINEBREAK, ELEMENT_BR );
                 result = result + cmdLine + PLUGIN_END;
             } else {
-                final Boolean b = ( Boolean )context.getVariable( WikiContext.VAR_EXECUTE_PLUGINS );
+                final Boolean b = context.getVariable( Context.VAR_EXECUTE_PLUGINS );
                 if (b != null && !b ) {
                     return BLANK;
                 }
@@ -162,18 +161,18 @@ public class PluginContent extends Text implements PluginElement {
                 //  Parse any variable instances from the string
                 for( final Map.Entry< String, String > e : m_params.entrySet() ) {
                     String val = e.getValue();
-                    val = engine.getManager( VariableManager.class).expandVariables( ( WikiContext )context, val );
+                    val = engine.getManager( VariableManager.class).expandVariables( context, val );
                     parsedParams.put( e.getKey(), val );
                 }
                 final PluginManager pm = engine.getManager( PluginManager.class );
-                result = pm.execute( ( WikiContext )context, m_pluginName, parsedParams );
+                result = pm.execute( context, m_pluginName, parsedParams );
             }
         } catch( final Exception e ) {
             if( wysiwygEditorMode ) {
                 result = "";
             } else {
                 // log.info("Failed to execute plugin",e);
-                final ResourceBundle rb = Preferences.getBundle( ( WikiContext )context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+                final ResourceBundle rb = Preferences.getBundle( context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
                 result = MarkupParser.makeError( MessageFormat.format( rb.getString( "plugin.error.insertionfailed" ), 
                 		                                               context.getRealPage().getWiki(), 
                 		                                               context.getRealPage().getName(), 
@@ -189,9 +188,9 @@ public class PluginContent extends Text implements PluginElement {
     public void executeParse( final Context context ) throws PluginException {
         final PluginManager pm = context.getEngine().getManager( PluginManager.class );
         if( pm.pluginsEnabled() ) {
-            final ResourceBundle rb = Preferences.getBundle( ( WikiContext )context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+            final ResourceBundle rb = Preferences.getBundle( context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE);
             final Map< String, String > params = getParameters();
-            final WikiPlugin plugin = pm.newWikiPlugin( getPluginName(), rb );
+            final Plugin plugin = pm.newWikiPlugin( getPluginName(), rb );
             try {
                 if( plugin instanceof ParserStagePlugin ) {
                     ( ( ParserStagePlugin )plugin ).executeParser(this, context, params );

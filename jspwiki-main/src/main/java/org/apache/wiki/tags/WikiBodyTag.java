@@ -20,6 +20,7 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
@@ -40,7 +41,7 @@ public abstract class WikiBodyTag extends BodyTagSupport implements TryCatchFina
 
     public int doStartTag() throws JspException {
         try {
-            m_wikiContext = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+            m_wikiContext = (WikiContext) pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
             if( m_wikiContext == null ) {
                 throw new JspException("WikiContext may not be NULL - serious internal problem!");
             }
@@ -61,7 +62,7 @@ public abstract class WikiBodyTag extends BodyTagSupport implements TryCatchFina
      */
     public abstract int doWikiStartTag() throws JspException, IOException;
 
-    public void doCatch(Throwable arg0) throws Throwable {
+    public void doCatch( final Throwable arg0) throws Throwable {
     }
 
     public void doFinally()

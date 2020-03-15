@@ -34,7 +34,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.UserManager;
@@ -202,7 +202,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             m_camelCaseLinks  = TextUtil.getBooleanProperty( props, PROP_CAMELCASELINKS, m_camelCaseLinks );
         }
 
-        final Boolean wysiwygVariable = (Boolean)m_context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = m_context.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         if( wysiwygVariable != null ) {
             m_wysiwygEditorMode = wysiwygVariable;
         }
@@ -244,14 +244,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *
      * @param param A Heading object.
      */
-    protected void callHeadingListenerChain( final Heading param )
-    {
+    protected void callHeadingListenerChain( final Heading param ) {
         final List< HeadingListener > list = m_headingListenerChain;
-
-        for( final Iterator< HeadingListener > i = list.iterator(); i.hasNext(); )
-        {
-            final HeadingListener h = i.next();
-
+        for( final HeadingListener h : list ) {
             h.headingAdded( m_context, param );
         }
     }
@@ -814,7 +809,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      */
     private JSPWikiMarkupParser getCleanTranslator() {
         if( m_cleanTranslator == null ) {
-            final WikiContext dummyContext = new WikiContext( m_engine, m_context.getHttpRequest(), m_context.getPage() );
+            final Context dummyContext = new WikiContext( m_engine, m_context.getHttpRequest(), m_context.getPage() );
             m_cleanTranslator = new JSPWikiMarkupParser( dummyContext, null );
             m_cleanTranslator.m_allowHTML = true;
         }
@@ -1028,7 +1023,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         if( !m_parseAccessRules ) {
             return m_currentElement;
         }
-        final WikiPage page = m_context.getRealPage();
+        final WikiPage page = ( WikiPage )m_context.getRealPage();
         // UserDatabase db = m_context.getEngine().getUserDatabase();
 
         if( ruleLine.startsWith( "{" ) ) {
@@ -1128,7 +1123,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 log.info( m_context.getRealPage().getWiki() + " : " + m_context.getRealPage().getName() + " - Failed to insert plugin: " + e.getMessage() );
                 //log.info( "Root cause:",e.getRootThrowable() );
                 if( !m_wysiwygEditorMode ) {
-                    final ResourceBundle rbPlugin = Preferences.getBundle( m_context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+                    final ResourceBundle rbPlugin = Preferences.getBundle( m_context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
                     return addElement( makeError( MessageFormat.format( rbPlugin.getString( "plugin.error.insertionfailed" ),
                     		                                            m_context.getRealPage().getWiki(),
                     		                                            m_context.getRealPage().getName(),

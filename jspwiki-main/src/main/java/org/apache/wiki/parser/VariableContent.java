@@ -20,6 +20,7 @@ package org.apache.wiki.parser;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.variables.VariableManager;
 import org.jdom2.Text;
@@ -43,8 +44,7 @@ public class VariableContent extends Text {
      *  
      *  @param varName The name of the variable.
      */
-    public VariableContent( final String varName )
-    {
+    public VariableContent( final String varName ) {
         m_varName = varName;
     }
     
@@ -53,21 +53,22 @@ public class VariableContent extends Text {
      *   
      *   @return The rendered value of the variable.
      */
-    @Override public String getValue() {
+    @Override
+    public String getValue() {
         String result;
-        final WikiDocument root = (WikiDocument) getDocument();
+        final WikiDocument root = ( WikiDocument )getDocument();
 
         if( root == null ) {
             // See similar note in PluginContent
             return m_varName;
         }
         
-        final WikiContext context = root.getContext();
+        final Context context = root.getContext();
         if( context == null ) {
             return "No WikiContext available: INTERNAL ERROR";
         }
     
-        final Boolean wysiwygEditorMode = ( Boolean )context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygEditorMode = context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
         if( wysiwygEditorMode != null && wysiwygEditorMode ) {
             result = "[" + m_varName + "]";
         } else {
@@ -80,20 +81,24 @@ public class VariableContent extends Text {
 
         return StringEscapeUtils.escapeXml11( result );
     }
-    
+
     /**
-     *  Returns exactly getValue().
-     *  @return Whatever getValue() returns.
+     * Returns exactly getValue().
+     *
+     * @return Whatever getValue() returns.
      */
-    @Override public String getText() {
+    @Override
+    public String getText() {
         return getValue();
     }
 
     /**
-     *  Returns a debug-suitable string.
-     *  @return Debug string
+     * Returns a debug-suitable string.
+     *
+     * @return Debug string
      */
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "VariableElement[\"" + m_varName + "\"]";
     }
 

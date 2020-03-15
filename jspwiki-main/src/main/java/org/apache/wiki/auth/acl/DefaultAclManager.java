@@ -21,6 +21,7 @@ package org.apache.wiki.auth.acl;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
@@ -141,7 +142,7 @@ public class DefaultAclManager implements AclManager {
             } else {
                 //  Or, try parsing the page
                 final WikiContext ctx = new WikiContext( m_engine, page );
-                ctx.setVariable( WikiContext.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
+                ctx.setVariable( Context.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
                 m_engine.getManager( RenderingManager.class ).getHTML(ctx, page);
 
                 if (page.getAcl() == null) {

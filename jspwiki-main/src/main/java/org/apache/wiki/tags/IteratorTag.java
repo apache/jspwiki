@@ -21,6 +21,7 @@ package org.apache.wiki.tags;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -56,7 +57,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
      *  
      *  @param arg A Collection which will be iterated.
      */
-    public void setList( Collection< ? > arg )
+    public void setList( final Collection< ? > arg )
     {
         if( arg != null )
             m_iterator = arg.iterator();
@@ -66,7 +67,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
      *  Sets the collection list, but using an array.
      *  @param arg An array of objects which will be iterated.
      */
-    public void setList( Object[] arg )
+    public void setList( final Object[] arg )
     {
         if( arg != null )
         {
@@ -119,17 +120,18 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
         //
         //  Build a clone of the current context
         //
-        WikiContext context = (WikiContext)m_wikiContext.clone();
+        final WikiContext context = m_wikiContext.clone();
         
-        Object o = m_iterator.next();
+        final Object o = m_iterator.next();
         
-        if( o instanceof WikiPage )
+        if( o instanceof WikiPage ) {
             context.setPage( (WikiPage)o );
+        }
 
         //
         //  Push it to the iterator stack, and set the id.
         //
-        pageContext.setAttribute( WikiContext.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
+        pageContext.setAttribute( Context.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
         pageContext.setAttribute( getId(), o );
     }
 
@@ -140,7 +142,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
     public int doEndTag()
     {
         // Return back to the original.
-        pageContext.setAttribute( WikiContext.ATTR_CONTEXT, m_wikiContext, PageContext.REQUEST_SCOPE );
+        pageContext.setAttribute( Context.ATTR_CONTEXT, m_wikiContext, PageContext.REQUEST_SCOPE );
 
         return EVAL_PAGE;
     }
@@ -155,11 +157,11 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
         {
             try
             {
-                JspWriter out = getPreviousOut();
+                final JspWriter out = getPreviousOut();
                 out.print(bodyContent.getString());
                 bodyContent.clearBody();
             }
-            catch( IOException e )
+            catch( final IOException e )
             {
                 log.error("Unable to get inner tag text", e);
                 // FIXME: throw something?
@@ -186,7 +188,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
      *  @throws Throwable I have no idea why this would throw anything
      */
     @Override
-    public void doCatch(Throwable arg0) throws Throwable
+    public void doCatch( final Throwable arg0) throws Throwable
     {
     }
 

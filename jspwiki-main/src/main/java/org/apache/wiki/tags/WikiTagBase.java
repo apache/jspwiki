@@ -20,6 +20,7 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.jsp.JspException;
@@ -62,7 +63,7 @@ public abstract class WikiTagBase extends TagSupport implements TryCatchFinally 
     
     public int doStartTag() throws JspException {
         try {
-            m_wikiContext = ( WikiContext )pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+            m_wikiContext = ( WikiContext )pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
             if( m_wikiContext == null ) {
                 throw new JspException("WikiContext may not be NULL - serious internal problem!");
             }

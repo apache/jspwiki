@@ -20,7 +20,7 @@
 package org.apache.wiki.diff;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -64,18 +64,20 @@ public class TraditionalDiffProvider implements DiffProvider {
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.WikiProvider#getProviderInfo()
+     * @see org.apache.wiki.api.providers.WikiProvider#getProviderInfo()
      */
-    @Override public String getProviderInfo()
+    @Override
+    public String getProviderInfo()
     {
         return "TraditionalDiffProvider";
     }
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.WikiProvider#initialize(org.apache.wiki.api.core.Engine, java.util.Properties)
+     * @see org.apache.wiki.api.providers.WikiProvider#initialize(org.apache.wiki.api.core.Engine, java.util.Properties)
      */
-    @Override public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
+    @Override
+    public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
     }
 
     /**
@@ -88,7 +90,8 @@ public class TraditionalDiffProvider implements DiffProvider {
      * 
      * @return Full HTML diff.
      */
-    @Override public String makeDiffHtml( final WikiContext ctx, final String p1, final String p2 ) {
+    @Override
+    public String makeDiffHtml( final Context ctx, final String p1, final String p2 ) {
         final String diffResult;
 
         try {
@@ -120,33 +123,37 @@ public class TraditionalDiffProvider implements DiffProvider {
     private static final class RevisionPrint implements RevisionVisitor {
 
         private StringBuffer m_result;
-        private WikiContext  m_context;
+        private Context  m_context;
         private ResourceBundle m_rb;
         
-        private RevisionPrint( final WikiContext ctx, final StringBuffer sb ) {
+        private RevisionPrint( final Context ctx, final StringBuffer sb ) {
             m_result = sb;
             m_context = ctx;
             m_rb = Preferences.getBundle( ctx, InternationalizationManager.CORE_BUNDLE );
         }
 
-        @Override public void visit( final Revision rev ) {
+        @Override
+        public void visit( final Revision rev ) {
             // GNDN (Goes nowhere, does nothing)
         }
 
-        @Override public void visit( final AddDelta delta ) {
+        @Override
+        public void visit( final AddDelta delta ) {
             final Chunk changed = delta.getRevised();
             print( changed, m_rb.getString( "diff.traditional.added" ) );
             changed.toString( m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE );
         }
 
-        @Override public void visit( final ChangeDelta delta ) {
+        @Override
+        public void visit( final ChangeDelta delta ) {
             final Chunk changed = delta.getOriginal();
             print(changed, m_rb.getString( "diff.traditional.changed" ) );
             changed.toString( m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE );
             delta.getRevised().toString( m_result, CSS_DIFF_ADDED, CSS_DIFF_CLOSE );
         }
 
-        @Override public void visit( final DeleteDelta delta ) {
+        @Override
+        public void visit( final DeleteDelta delta ) {
             final Chunk changed = delta.getOriginal();
             print( changed, m_rb.getString( "diff.traditional.removed" ) );
             changed.toString( m_result, CSS_DIFF_REMOVED, CSS_DIFF_CLOSE );
@@ -175,4 +182,5 @@ public class TraditionalDiffProvider implements DiffProvider {
             m_result.append( CSS_DIFF_CLOSE );
         }
     }
+
 }

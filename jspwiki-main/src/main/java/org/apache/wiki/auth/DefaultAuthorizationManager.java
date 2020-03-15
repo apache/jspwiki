@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
@@ -204,8 +205,8 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
 
         // Stash the wiki context
-        if ( context.getHttpRequest() != null && context.getHttpRequest().getAttribute( WikiContext.ATTR_CONTEXT ) == null ) {
-            context.getHttpRequest().setAttribute( WikiContext.ATTR_CONTEXT, context );
+        if ( context.getHttpRequest() != null && context.getHttpRequest().getAttribute( Context.ATTR_CONTEXT ) == null ) {
+            context.getHttpRequest().setAttribute( Context.ATTR_CONTEXT, context );
         }
 
         // If access not allowed, redirect

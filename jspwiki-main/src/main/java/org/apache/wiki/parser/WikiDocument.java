@@ -18,8 +18,8 @@
 */
 package org.apache.wiki.parser;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 import org.jdom2.Document;
 
 import java.lang.ref.WeakReference;
@@ -36,16 +36,16 @@ public class WikiDocument extends Document {
 
     private static final long serialVersionUID = 1L;
     
-    private WikiPage m_page;
+    private Page m_page;
     private String m_wikiText;
-    private WeakReference< WikiContext > m_context;
+    private WeakReference< Context > m_context;
     
     /**
      *  Creates a new WikiDocument for a specific page.
      * 
      *  @param page The page to which this document refers to.
      */
-    public WikiDocument( final WikiPage page )
+    public WikiDocument( final Page page )
     {
         m_page = page;
     }
@@ -75,7 +75,7 @@ public class WikiDocument extends Document {
      *  
      *  @return The WikiPage
      */
-    public WikiPage getPage()
+    public Page getPage()
     {
         return m_page;
     }
@@ -87,7 +87,7 @@ public class WikiDocument extends Document {
      *  
      *  @param ctx A WikiContext.
      */
-    public void setContext( final WikiContext ctx )
+    public void setContext( final Context ctx )
     {
         m_context = new WeakReference<>( ctx );
     }
@@ -98,7 +98,7 @@ public class WikiDocument extends Document {
      * had previously been garbage-collected.
      * @return the wiki context
      */
-    public WikiContext getContext()
+    public Context getContext()
     {
         return m_context.get();
     }
