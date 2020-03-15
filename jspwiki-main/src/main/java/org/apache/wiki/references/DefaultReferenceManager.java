@@ -26,6 +26,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.api.providers.WikiProvider;
@@ -363,7 +364,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
     /**
      *  Serializes hashmaps to disk.  The format is private, don't touch it.
      */
-    private synchronized void serializeAttrsToDisk( final WikiPage p ) {
+    private synchronized void serializeAttrsToDisk( final Page p ) {
         final StopWatch sw = new StopWatch();
         sw.start();
 
@@ -418,7 +419,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      */
     @Override
 	public void postSave( final Context context, final String content ) {
-        final WikiPage page = ( WikiPage )context.getPage();
+        final Page page = context.getPage();
         updateReferences( page.getName(), scanWikiLinks( page, content ) );
         serializeAttrsToDisk( page );
     }
@@ -431,7 +432,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  @return a Collection of Strings
      */
     @Override
-    public Collection< String > scanWikiLinks( final WikiPage page, final String pagedata ) {
+    public Collection< String > scanWikiLinks( final Page page, final String pagedata ) {
         final LinkCollector localCollector = new LinkCollector();
         m_engine.getManager( RenderingManager.class ).textToHTML( new WikiContext( m_engine, page ),
                                                                   pagedata,

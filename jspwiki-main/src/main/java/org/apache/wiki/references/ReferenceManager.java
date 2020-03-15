@@ -19,6 +19,7 @@
 package org.apache.wiki.references;
 
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.event.WikiEventListener;
@@ -60,7 +61,7 @@ public interface ReferenceManager extends PageFilter, InternalModule, WikiEventL
      *  @param pagedata The page contents
      *  @return a Collection of Strings
      */
-    Collection< String > scanWikiLinks( final WikiPage page, final String pagedata );
+    Collection< String > scanWikiLinks( final Page page, final String pagedata );
 
     /**
      * Updates the m_referedTo and m_referredBy hashmaps when a page has been deleted.

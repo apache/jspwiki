@@ -555,7 +555,7 @@ public class SpamFilter extends BasePageFilter {
                 final String userAgent     = req.getHeader( "User-Agent" );
                 final String referrer      = req.getHeader( "Referer");
                 final String permalink     = context.getViewURL( context.getPage().getName() );
-                final String commentType   = ( ( WikiContext )context ).getRequestContext().equals( WikiContext.COMMENT ) ? "comment" : "edit";
+                final String commentType   = context.getRequestContext().equals( WikiContext.COMMENT ) ? "comment" : "edit";
                 final String commentAuthor = context.getCurrentUser().getName();
                 final String commentAuthorEmail = null;
                 final String commentAuthorURL   = null;
@@ -683,7 +683,7 @@ public class SpamFilter extends BasePageFilter {
                 }
             }
 
-            final Attachment att = context.getEngine().getManager( AttachmentManager.class ).getAttachmentInfo( ( WikiContext )context, m_blacklist );
+            final Attachment att = context.getEngine().getManager( AttachmentManager.class ).getAttachmentInfo( context, m_blacklist );
             if( att != null ) {
                 if( m_spamPatterns == null || m_spamPatterns.isEmpty() || att.getLastModified().after( m_lastRebuild ) ) {
                     rebuild = true;
