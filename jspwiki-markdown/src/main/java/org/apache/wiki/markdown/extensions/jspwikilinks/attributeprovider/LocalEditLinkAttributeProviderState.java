@@ -20,7 +20,7 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.html.Attributes;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
@@ -35,10 +35,10 @@ import java.util.ResourceBundle;
  */
 public class LocalEditLinkAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final String url;
 
-    public LocalEditLinkAttributeProviderState( final WikiContext wikiContext, final String url ) {
+    public LocalEditLinkAttributeProviderState( final Context wikiContext, final String url ) {
         this.wikiContext = wikiContext;
         this.url = url;
     }

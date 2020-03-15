@@ -26,8 +26,8 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 import com.vladsch.flexmark.util.misc.Extension;
 import org.apache.oro.text.regex.Pattern;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.markdown.MarkdownForJSPWikiExtension;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.WikiDocument;
@@ -45,7 +45,7 @@ public class MarkdownDocument extends WikiDocument {
 
 	private final Node md;
 
-	public MarkdownDocument( final WikiPage page, final Node md ) {
+	public MarkdownDocument( final Page page, final Node md ) {
 		super( page );
 		this.md = md;
 	}
@@ -60,7 +60,7 @@ public class MarkdownDocument extends WikiDocument {
 	 * @param context current wikicontext
 	 * @return configuration options for MarkdownRenderers.
 	 */
-	public static MutableDataSet options( final WikiContext context, final boolean isImageInlining, final List< Pattern > inlineImagePatterns ) {
+	public static MutableDataSet options( final Context context, final boolean isImageInlining, final List< Pattern > inlineImagePatterns ) {
 		final MutableDataSet options = new MutableDataSet();
 		options.setFrom( ParserEmulationProfile.COMMONMARK );
 		// align style of Markdown's footnotes extension with jspwiki footnotes refs

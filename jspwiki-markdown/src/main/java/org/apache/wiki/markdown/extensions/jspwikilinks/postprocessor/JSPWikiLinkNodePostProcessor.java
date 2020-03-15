@@ -26,7 +26,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oro.text.regex.Pattern;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
@@ -42,14 +42,14 @@ import java.util.List;
  */
 public class JSPWikiLinkNodePostProcessor extends NodePostProcessor {
 
-    protected final WikiContext m_context;
+    protected final Context m_context;
     protected final LinkParsingOperations linkOperations;
     private final boolean isImageInlining;
     private final List< Pattern > inlineImagePatterns;
     protected boolean m_useOutlinkImage = true;
     protected final Document document;
 
-    public JSPWikiLinkNodePostProcessor( final WikiContext m_context,
+    public JSPWikiLinkNodePostProcessor( final Context m_context,
                                          final Document document,
                                          final boolean isImageInlining,
                                          final List< Pattern > inlineImagePatterns ) {

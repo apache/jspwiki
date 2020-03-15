@@ -22,7 +22,7 @@ import com.vladsch.flexmark.html.renderer.DelegatingNodeRendererFactory;
 import com.vladsch.flexmark.html.renderer.NodeRenderer;
 import com.vladsch.flexmark.html.renderer.NodeRendererFactory;
 import com.vladsch.flexmark.util.data.DataHolder;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 
 import java.util.Set;
 
@@ -32,9 +32,9 @@ import java.util.Set;
  */
 public class JSPWikiNodeRendererFactory implements DelegatingNodeRendererFactory {
 
-    final WikiContext wikiContext;
+    final Context wikiContext;
 
-    public JSPWikiNodeRendererFactory( final WikiContext wikiContext ) {
+    public JSPWikiNodeRendererFactory( final Context wikiContext ) {
         this.wikiContext = wikiContext;
     }
 

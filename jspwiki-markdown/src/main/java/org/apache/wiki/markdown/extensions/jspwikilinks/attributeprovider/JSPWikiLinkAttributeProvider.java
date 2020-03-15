@@ -24,7 +24,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.html.Attributes;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oro.text.regex.Pattern;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.util.TextUtil;
@@ -39,12 +39,12 @@ import java.util.List;
  */
 public class JSPWikiLinkAttributeProvider implements AttributeProvider {
 
-    protected final WikiContext wikiContext;
+    protected final Context wikiContext;
     protected final LinkParsingOperations linkOperations;
     private final boolean isImageInlining;
     private final List< Pattern > inlineImagePatterns;
 
-    public JSPWikiLinkAttributeProvider( final WikiContext wikiContext,
+    public JSPWikiLinkAttributeProvider( final Context wikiContext,
                                          final boolean isImageInlining,
                                          final List< Pattern > inlineImagePatterns ) {
         this.wikiContext = wikiContext;

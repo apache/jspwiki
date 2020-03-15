@@ -22,7 +22,7 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.data.MutableDataHolder;
 import org.apache.oro.text.regex.Pattern;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider.JSPWikiLinkAttributeProviderFactory;
 import org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor.JSPWikiNodePostProcessorFactory;
 import org.apache.wiki.markdown.renderer.JSPWikiNodeRendererFactory;
@@ -35,11 +35,11 @@ import java.util.List;
  */
 public class MarkdownForJSPWikiExtension implements Parser.ParserExtension, HtmlRenderer.HtmlRendererExtension {
 
-	private final WikiContext context;
+	private final Context context;
 	private final boolean isImageInlining;
 	private final List< Pattern > inlineImagePatterns;
 
-	public MarkdownForJSPWikiExtension( final WikiContext context,
+	public MarkdownForJSPWikiExtension( final Context context,
 										final boolean isImageInlining,
 										final List< Pattern > inlineImagePatterns ) {
 		this.context = context;

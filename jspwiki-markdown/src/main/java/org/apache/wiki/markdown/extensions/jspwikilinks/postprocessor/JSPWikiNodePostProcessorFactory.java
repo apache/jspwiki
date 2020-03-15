@@ -24,7 +24,7 @@ import com.vladsch.flexmark.parser.block.NodePostProcessorFactory;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.data.DataHolder;
 import org.apache.oro.text.regex.Pattern;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 
 import java.util.List;
 
@@ -34,11 +34,11 @@ import java.util.List;
  */
 public class JSPWikiNodePostProcessorFactory extends NodePostProcessorFactory {
 
-    private final WikiContext m_context;
+    private final Context m_context;
     private final boolean isImageInlining;
     private final List< Pattern > inlineImagePatterns;
 
-    public JSPWikiNodePostProcessorFactory( final WikiContext m_context,
+    public JSPWikiNodePostProcessorFactory( final Context m_context,
                                             final DataHolder options,
                                             final boolean isImageInlining,
                                             final List< Pattern > inlineImagePatterns ) {

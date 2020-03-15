@@ -19,11 +19,10 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import com.vladsch.flexmark.util.ast.Node;
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.util.html.Attributes;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
-
-import com.vladsch.flexmark.util.html.Attributes;
 
 
 /**
@@ -31,9 +30,9 @@ import com.vladsch.flexmark.util.html.Attributes;
  */
 public class LocalReadLinkAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
-    final WikiContext wikiContext;
+    final Context wikiContext;
 
-    public LocalReadLinkAttributeProviderState( final WikiContext wikiContext ) {
+    public LocalReadLinkAttributeProviderState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
     }
 

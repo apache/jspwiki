@@ -20,7 +20,7 @@ package org.apache.wiki.parser.markdown;
 
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.parser.MarkupParser;
@@ -37,7 +37,7 @@ public class MarkdownParser extends MarkupParser {
 
     private final Parser parser;
 
-    public MarkdownParser( final WikiContext context, final Reader in ) {
+    public MarkdownParser( final Context context, final Reader in ) {
         super( context, in );
         if( context.getEngine().getManager( UserManager.class ).getUserDatabase() == null || 
             context.getEngine().getManager( AuthorizationManager.class ) == null ) {

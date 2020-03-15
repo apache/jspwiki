@@ -23,7 +23,7 @@ import com.vladsch.flexmark.html.AttributeProviderFactory;
 import com.vladsch.flexmark.html.IndependentAttributeProviderFactory;
 import com.vladsch.flexmark.html.renderer.LinkResolverContext;
 import org.apache.oro.text.regex.Pattern;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 
 import java.util.List;
 
@@ -33,11 +33,11 @@ import java.util.List;
  */
 public class JSPWikiLinkAttributeProviderFactory extends IndependentAttributeProviderFactory {
 
-    final WikiContext wikiContext;
+    final Context wikiContext;
     private final boolean isImageInlining;
     private final List< Pattern > inlineImagePatterns;
 
-    public JSPWikiLinkAttributeProviderFactory( final WikiContext wikiContext,
+    public JSPWikiLinkAttributeProviderFactory( final Context wikiContext,
                                                 final boolean isImageInlining,
                                                 final List< Pattern > inlineImagePatterns ) {
         this.wikiContext = wikiContext;

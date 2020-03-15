@@ -23,6 +23,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 
 
@@ -31,9 +32,9 @@ import org.apache.wiki.markdown.nodes.JSPWikiLink;
  */
 public class LocalFootnoteRefLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
 
-    public LocalFootnoteRefLinkNodePostProcessorState( final WikiContext wikiContext ) {
+    public LocalFootnoteRefLinkNodePostProcessorState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
     }
 
