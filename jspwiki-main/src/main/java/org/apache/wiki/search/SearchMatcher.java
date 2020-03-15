@@ -20,6 +20,8 @@ package org.apache.wiki.search;
 
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.search.QueryItem;
+import org.apache.wiki.api.search.SearchResult;
 
 import java.io.BufferedReader;
 import java.io.IOException;

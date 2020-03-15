@@ -27,6 +27,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
@@ -36,7 +37,6 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.FileSystemProvider;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
@@ -408,7 +408,7 @@ public class TestEngine extends WikiEngine
      * @return (english) contents corresponding to the given page name.
      */
     public String getI18nHTML( final String pagename ) {
-        final WikiPage page = getPageManager().getPage( pagename, WikiPageProvider.LATEST_VERSION );
+        final WikiPage page = getPageManager().getPage( pagename, PageProvider.LATEST_VERSION );
         final WikiContext context = new WikiContext( this, newHttpRequest(), page );
         context.setRequestContext( WikiContext.NONE );
         return getRenderingManager().getHTML( context, page );

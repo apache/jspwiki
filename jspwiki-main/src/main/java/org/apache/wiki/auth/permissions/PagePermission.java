@@ -19,7 +19,7 @@
 package org.apache.wiki.auth.permissions;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
 
 import java.io.Serializable;
 import java.security.Permission;
@@ -149,7 +149,7 @@ public final class PagePermission extends Permission implements Serializable
      * (*:*) and set of actions.
      * @param actions
      */
-    private PagePermission( String actions )
+    private PagePermission( final String actions )
     {
         this( WILDCARD + WIKI_SEPARATOR + WILDCARD, actions );
     }
@@ -163,7 +163,7 @@ public final class PagePermission extends Permission implements Serializable
      * @param page the wiki page
      * @param actions the allowed actions for this page
      */
-    public PagePermission( String page, String actions )
+    public PagePermission( final String page, final String actions )
     {
         super( page );
 
@@ -171,8 +171,8 @@ public final class PagePermission extends Permission implements Serializable
         // Strip out attachment separator; it is irrelevant.
         
         // FIXME3.0: Assumes attachment separator is "/".
-        String[] pathParams = StringUtils.split( page, WIKI_SEPARATOR );
-        String pageName;
+        final String[] pathParams = StringUtils.split( page, WIKI_SEPARATOR );
+        final String pageName;
         if ( pathParams.length >= 2 )
         {
             m_wiki = pathParams[0].length() > 0 ? pathParams[0] : null;
@@ -183,14 +183,14 @@ public final class PagePermission extends Permission implements Serializable
             m_wiki = null;
             pageName = pathParams[0];
         }
-        int pos = pageName.indexOf( ATTACHMENT_SEPARATOR );
+        final int pos = pageName.indexOf( ATTACHMENT_SEPARATOR );
         m_page = ( pos == -1 ) ? pageName : pageName.substring( 0, pos );
 
         // Parse actions
-        String[] pageActions = StringUtils.split( actions.toLowerCase(), ACTION_SEPARATOR );
+        final String[] pageActions = StringUtils.split( actions.toLowerCase(), ACTION_SEPARATOR );
         Arrays.sort( pageActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
-        StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder();
         for( int i = 0; i < pageActions.length; i++ )
         {
             buffer.append( pageActions[i] );
@@ -204,11 +204,11 @@ public final class PagePermission extends Permission implements Serializable
 
     /**
      * Creates a new PagePermission for a specified page and set of actions.
+     *
      * @param page The wikipage.
      * @param actions A set of actions; a comma-separated list of actions.
      */
-    public PagePermission( WikiPage page, String actions )
-    {
+    public PagePermission( final Page page, final String actions ) {
         this( page.getWiki() + WIKI_SEPARATOR + page.getName(), actions );
     }
 
@@ -218,15 +218,13 @@ public final class PagePermission extends Permission implements Serializable
      * @param obj {@inheritDoc}
      * @return {@inheritDoc}
      */
-    public boolean equals( Object obj )
-    {
-        if ( !( obj instanceof PagePermission ) )
-        {
+    public boolean equals( final Object obj ) {
+        if ( !( obj instanceof PagePermission ) ) {
             return false;
         }
-        PagePermission p = (PagePermission) obj;
+        final PagePermission p = ( PagePermission )obj;
         return  p.m_mask == m_mask && p.m_page.equals( m_page )
-                && p.m_wiki != null && p.m_wiki.equals( m_wiki );
+             && p.m_wiki != null && p.m_wiki.equals( m_wiki );
     }
 
     /**
@@ -264,12 +262,11 @@ public final class PagePermission extends Permission implements Serializable
      * Returns the hash code for this PagePermission.
      * @return {@inheritDoc}
      */
-    public int hashCode()
-    {
+    public int hashCode() {
         //  If the wiki has not been set, uses a dummy value for the hashcode
         //  calculation.  This may occur if the page given does not refer
         //  to any particular wiki
-        String wiki = m_wiki != null ? m_wiki : "dummy_value";
+        final String wiki = m_wiki != null ? m_wiki : "dummy_value";
         return m_mask + ( ( 13 * m_actionString.hashCode() ) * 23 * wiki.hashCode() );
     }
 
@@ -296,7 +293,7 @@ public final class PagePermission extends Permission implements Serializable
      * @param permission {@inheritDoc}
      * @return {@inheritDoc}
      */
-    public boolean implies( Permission permission )
+    public boolean implies( final Permission permission )
     {
         // Permission must be a PagePermission
         if ( !( permission instanceof PagePermission ) )
@@ -305,8 +302,8 @@ public final class PagePermission extends Permission implements Serializable
         }
 
         // Build up an "implied mask"
-        PagePermission p = (PagePermission) permission;
-        int impliedMask = impliedMask( m_mask );
+        final PagePermission p = (PagePermission) permission;
+        final int impliedMask = impliedMask( m_mask );
 
         // If actions aren't a proper subset, return false
         if ( ( impliedMask & p.m_mask ) != p.m_mask )
@@ -315,11 +312,11 @@ public final class PagePermission extends Permission implements Serializable
         }
 
         // See if the tested permission's wiki is implied
-        boolean impliedWiki = isSubset( m_wiki, p.m_wiki );
+        final boolean impliedWiki = isSubset( m_wiki, p.m_wiki );
 
         // If this page is "*", the tested permission's
         // page is implied
-        boolean impliedPage = isSubset( m_page, p.m_page );
+        final boolean impliedPage = isSubset( m_page, p.m_page );
 
         return  impliedWiki && impliedPage;
     }
@@ -343,7 +340,7 @@ public final class PagePermission extends Permission implements Serializable
      */
     public String toString()
     {
-        String wiki = ( m_wiki == null ) ? "" : m_wiki;
+        final String wiki = ( m_wiki == null ) ? "" : m_wiki;
         return "(\"" + this.getClass().getName() + "\",\"" + wiki + WIKI_SEPARATOR + m_page + "\",\"" + getActions() + "\")";
     }
 
@@ -389,7 +386,7 @@ public final class PagePermission extends Permission implements Serializable
      * @return the results of the test, where <code>true</code> indicates that
      *         <code>subSet</code> is a subset of <code>superSet</code>
      */
-    protected static boolean isSubset( String superSet, String subSet )
+    protected static boolean isSubset( final String superSet, final String subSet )
     {
         // If either is null, return false
         if ( superSet == null || subSet == null )
@@ -412,14 +409,14 @@ public final class PagePermission extends Permission implements Serializable
         // If super starts with "*", sub must end with everything after the *
         if ( superSet.startsWith( WILDCARD ) )
         {
-            String suffix = superSet.substring( 1 );
+            final String suffix = superSet.substring( 1 );
             return subSet.endsWith( suffix );
         }
 
         // If super ends with "*", sub must start with everything before *
         if ( superSet.endsWith( WILDCARD ) )
         {
-            String prefix = superSet.substring( 0, superSet.length() - 1 );
+            final String prefix = superSet.substring( 0, superSet.length() - 1 );
             return subSet.startsWith( prefix );
         }
 
@@ -432,15 +429,15 @@ public final class PagePermission extends Permission implements Serializable
      * @param actions the actions for this permission, separated by commas
      * @return the binary actions mask
      */
-    protected static int createMask( String actions )
+    protected static int createMask( final String actions )
     {
         if ( actions == null || actions.length() == 0 )
         {
             throw new IllegalArgumentException( "Actions cannot be blank or null" );
         }
         int mask = 0;
-        String[] actionList = StringUtils.split( actions, ACTION_SEPARATOR );
-        for( String action : actionList )
+        final String[] actionList = StringUtils.split( actions, ACTION_SEPARATOR );
+        for( final String action : actionList )
         {
             if ( action.equalsIgnoreCase( VIEW_ACTION ) )
             {

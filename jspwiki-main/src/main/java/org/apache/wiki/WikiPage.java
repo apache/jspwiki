@@ -20,11 +20,11 @@ package org.apache.wiki;
 
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclImpl;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.providers.WikiPageProvider;
 
 import java.util.Date;
 import java.util.Enumeration;
@@ -39,36 +39,16 @@ import java.util.Map;
 //        author, date, etc. should also be part of the metadata.  We also
 //        need to figure out the metadata lifecycle.
 
-public class WikiPage implements Page, Comparable< WikiPage > {
+public class WikiPage implements Page {
 
     private       String     m_name;
     private       Engine     m_engine;
     private       String     m_wiki;
     private Date             m_lastModified;
     private long             m_fileSize = -1;
-    private int              m_version = WikiPageProvider.LATEST_VERSION;
+    private int              m_version = PageProvider.LATEST_VERSION;
     private String           m_author = null;
     private final Map<String,Object> m_attributes = new HashMap<>();
-
-    /**
-     *  "Summary" is a short summary of the page.  It is a String.
-     */
-    public static final String DESCRIPTION = "summary";
-
-    /** A special variable name for storing a page alias. */
-    public static final String ALIAS = "alias";
-    
-    /** A special variable name for storing a redirect note */
-    public static final String REDIRECT = "redirect";
-
-    /** A special variable name for storing the author. */
-    public static final String AUTHOR = "author";
-    
-    /** A special variable name for storing a changenote. */
-    public static final String CHANGENOTE = "changenote";
-
-    /** A special variable name for storing a viewcount. */
-    public static final String VIEWCOUNT = "viewcount";
     
     private Acl m_accessList = null;
     
@@ -362,7 +342,7 @@ public class WikiPage implements Page, Comparable< WikiPage > {
      *  @return -1, 0 or 1
      */
     @Override
-    public int compareTo( final WikiPage page ) {
+    public int compareTo( final Page page ) {
         if( this == page ) {
             return 0; // the same object
         }

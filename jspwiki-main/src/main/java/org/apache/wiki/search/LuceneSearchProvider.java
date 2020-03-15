@@ -56,12 +56,13 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.providers.WikiProvider;
+import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
@@ -206,8 +207,8 @@ public class LuceneSearchProvider implements SearchProvider {
 
                 final Directory luceneDir = new SimpleFSDirectory( dir.toPath() );
                 try( final IndexWriter writer = getIndexWriter( luceneDir ) ) {
-                    final Collection< WikiPage > allPages = m_engine.getManager( PageManager.class ).getAllPages();
-                    for( final WikiPage page : allPages ) {
+                    final Collection< Page > allPages = m_engine.getManager( PageManager.class ).getAllPages();
+                    for( final Page page : allPages ) {
                         try {
                             final String text = m_engine.getManager( PageManager.class ).getPageText( page.getName(), WikiProvider.LATEST_VERSION );
                             luceneIndexPage( page, text, writer );
@@ -499,7 +500,7 @@ public class LuceneSearchProvider implements SearchProvider {
                 final int docID = hit.doc;
                 final Document doc = searcher.doc( docID );
                 final String pageName = doc.get( LUCENE_ID );
-                final WikiPage page = m_engine.getManager( PageManager.class ).getPage( pageName, WikiPageProvider.LATEST_VERSION );
+                final Page page = m_engine.getManager( PageManager.class ).getPage( pageName, PageProvider.LATEST_VERSION );
 
                 if( page != null ) {
                     final PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
@@ -602,18 +603,18 @@ public class LuceneSearchProvider implements SearchProvider {
     // FIXME: This class is dumb; needs to have a better implementation
     private static class SearchResultImpl implements SearchResult {
 
-        private WikiPage m_page;
+        private Page m_page;
         private int      m_score;
         private String[] m_contexts;
 
-        public SearchResultImpl( final WikiPage page, final int score, final String[] contexts ) {
+        public SearchResultImpl( final Page page, final int score, final String[] contexts ) {
             m_page = page;
             m_score = score;
             m_contexts = contexts != null ? contexts.clone() : null;
         }
 
         @Override
-        public WikiPage getPage()
+        public Page getPage()
         {
             return m_page;
         }

@@ -24,19 +24,19 @@ import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.BasePageFilter;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.providers.WikiProvider;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
@@ -167,8 +167,8 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
     /**
      *  Does a full reference update.  Does not sync; assumes that you do it afterwards.
      */
-    private void updatePageReferences( final WikiPage page ) throws ProviderException {
-        final String content = m_engine.getManager( PageManager.class ).getPageText( page.getName(), WikiPageProvider.LATEST_VERSION );
+    private void updatePageReferences( final Page page ) throws ProviderException {
+        final String content = m_engine.getManager( PageManager.class ).getPageText( page.getName(), PageProvider.LATEST_VERSION );
         final Collection< String > links = scanWikiLinks( page, content );
         final TreeSet< String > res = new TreeSet<>( links );
         final List< Attachment > attachments = m_engine.getManager( AttachmentManager.class ).listAttachments( page );
@@ -186,7 +186,8 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  @since 2.2
      *  @throws ProviderException If reading of pages fails.
      */
-    @Override public void initialize( final Collection< WikiPage > pages ) throws ProviderException {
+    @Override
+    public void initialize( final Collection< WikiPage > pages ) throws ProviderException {
         log.debug( "Initializing new ReferenceManager with " + pages.size() + " initial pages." );
         final StopWatch sw = new StopWatch();
         sw.start();
@@ -201,16 +202,16 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
             //  Yes, this is a kludge.  We know.  Will be fixed.
             final long saved = unserializeFromDisk();
 
-            for( final WikiPage page : pages ) {
+            for( final Page page : pages ) {
                 unserializeAttrsFromDisk( page );
             }
 
             //  Now we must check if any of the pages have been changed  while we were in the electronic la-la-land,
             //  and update the references for them.
-            for( final WikiPage page : pages ) {
+            for( final Page page : pages ) {
                 if( !( page instanceof Attachment ) ) {
                     // Refresh with the latest copy
-                    final WikiPage wp = m_engine.getManager( PageManager.class ).getPage( page.getName() );
+                    final Page wp = m_engine.getManager( PageManager.class ).getPage( page.getName() );
 
                     if( wp.getLastModified() == null ) {
                         log.fatal( "Provider returns null lastModified.  Please submit a bug report." );
@@ -314,7 +315,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
     /**
      *  Reads the serialized data from the disk back to memory. Returns the date when the data was last written on disk
      */
-    private synchronized long unserializeAttrsFromDisk( final WikiPage p ) throws IOException, ClassNotFoundException {
+    private synchronized long unserializeAttrsFromDisk( final Page p ) throws IOException, ClassNotFoundException {
         long saved = 0L;
 
         //  Find attribute cache, and check if it exists
@@ -455,7 +456,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  @param page Name of the page to remove from the maps.
      */
     @Override
-    public synchronized void pageRemoved( final WikiPage page ) {
+    public synchronized void pageRemoved( final Page page ) {
         pageRemoved( page.getName() );
     }
 
@@ -506,7 +507,8 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *
      *  @param page wiki page for which references should be updated
      */
-    @Override public void updateReferences( final WikiPage page ) {
+    @Override
+    public void updateReferences( final Page page ) {
         final String pageData = m_engine.getManager( PageManager.class ).getPureText( page.getName(), WikiProvider.LATEST_VERSION );
         updateReferences( page.getName(), scanWikiLinks( page, pageData ) );
     }
@@ -521,7 +523,8 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  @param page Name of the page to update.
      *  @param references A Collection of Strings, each one pointing to a page this page references.
      */
-    @Override public synchronized void updateReferences( final String page, final Collection< String > references ) {
+    @Override
+    public synchronized void updateReferences( final String page, final Collection< String > references ) {
         internalUpdateReferences( page, references );
         serializeToDisk();
     }

@@ -72,14 +72,14 @@ public interface ReferenceManager extends PageFilter, InternalModule, WikiEventL
      *
      *  @param page Name of the page to remove from the maps.
      */
-    void pageRemoved( final WikiPage page );
+    void pageRemoved( final Page page );
 
     /**
      *  Updates all references for the given page.
      *
      *  @param page wiki page for which references should be updated
      */
-    void updateReferences( final WikiPage page );
+    void updateReferences( final Page page );
 
     /**
      *  Updates the referred pages of a new or edited WikiPage. If a refersTo entry for this page already exists, it is removed

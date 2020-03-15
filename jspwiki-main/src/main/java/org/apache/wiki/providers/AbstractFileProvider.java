@@ -22,12 +22,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.providers.WikiProvider;
-import org.apache.wiki.search.QueryItem;
+import org.apache.wiki.api.search.QueryItem;
+import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.search.SearchMatcher;
-import org.apache.wiki.search.SearchResult;
 import org.apache.wiki.search.SearchResultComparator;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
@@ -62,7 +64,7 @@ import java.util.TreeSet;
  *
  *  @since 2.1.21.
  */
-public abstract class AbstractFileProvider implements WikiPageProvider {
+public abstract class AbstractFileProvider implements PageProvider {
 
     private static final Logger log = Logger.getLogger(AbstractFileProvider.class);
     private String m_pageDirectory = "/tmp/";
@@ -78,9 +80,7 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
     public static final int DEFAULT_MAX_PROPKEYLENGTH = 255;
     public static final int DEFAULT_MAX_PROPVALUELENGTH = 4096;
 
-    /**
-     * This parameter limits the number of custom page properties allowed on a page
-     */
+    /** This parameter limits the number of custom page properties allowed on a page */
     public static int MAX_PROPLIMIT = DEFAULT_MAX_PROPLIMIT;
 
     /**
@@ -93,15 +93,12 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
      */
     public static int MAX_PROPVALUELENGTH = DEFAULT_MAX_PROPVALUELENGTH;
 
-    /**
-     *  Name of the property that defines where page directories are.
-     */
+    /** Name of the property that defines where page directories are. */
     public static final String PROP_PAGEDIR = "jspwiki.fileSystemProvider.pageDir";
 
     /**
-     *  All files should have this extension to be recognized as JSPWiki files.
-     *  We default to .txt, because that is probably easiest for Windows users,
-     *  and guarantees correct handling.
+     *  All files should have this extension to be recognized as JSPWiki files. We default to .txt, because that is probably easiest for
+     *  Windows users, and guarantees correct handling.
      */
     public static final String FILE_EXT = ".txt";
 
@@ -125,8 +122,7 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
 
         if( !f.exists() ) {
             if( !f.mkdirs() ) {
-                throw new IOException(
-                        "Failed to create page directory " + f.getAbsolutePath() + " , please check property " + PROP_PAGEDIR );
+                throw new IOException( "Failed to create page directory " + f.getAbsolutePath() + " , please check property " + PROP_PAGEDIR );
             }
         } else {
             if( !f.isDirectory() ) {
@@ -211,9 +207,8 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
      *  @param page The name of the page.
      *  @return A File to the page.  May be null.
      */
-    protected File findPage( final String page )
-    {
-        return new File( m_pageDirectory, mangleName(page)+FILE_EXT );
+    protected File findPage( final String page ) {
+        return new File( m_pageDirectory, mangleName( page ) + FILE_EXT );
     }
 
     /**
@@ -270,7 +265,7 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void putPageText( final WikiPage page, final String text ) throws ProviderException {
+    public void putPageText( final Page page, final String text ) throws ProviderException {
         final File file = findPage( page.getName() );
         try( final PrintWriter out = new PrintWriter( new OutputStreamWriter( new FileOutputStream( file ), m_encoding ) ) ) {
             out.print( text );
@@ -283,9 +278,9 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Collection< WikiPage > getAllPages()  throws ProviderException {
+    public Collection< Page > getAllPages()  throws ProviderException {
         log.debug("Getting all pages...");
-        final ArrayList< WikiPage > set = new ArrayList<>();
+        final ArrayList< Page > set = new ArrayList<>();
         final File wikipagedir = new File( m_pageDirectory );
         final File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
 
@@ -297,8 +292,7 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
         for( final File wikipage : wikipages ) {
             final String wikiname = wikipage.getName();
             final int cutpoint = wikiname.lastIndexOf( FILE_EXT );
-
-            final WikiPage page = getPageInfo( unmangleName( wikiname.substring( 0, cutpoint ) ), WikiPageProvider.LATEST_VERSION );
+            final Page page = getPageInfo( unmangleName( wikiname.substring( 0, cutpoint ) ), PageProvider.LATEST_VERSION );
             if( page == null ) {
                 // This should not really happen.
                 // FIXME: Should we throw an exception here?
@@ -319,7 +313,7 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
      *  @return {@inheritDoc}
      */
     @Override
-    public Collection< WikiPage > getAllChangedSince( final Date date )
+    public Collection< Page > getAllChangedSince( final Date date )
     {
         return new ArrayList<>(); // FIXME
     }
@@ -391,9 +385,9 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public List< WikiPage > getVersionHistory( final String page ) throws ProviderException {
-        final ArrayList< WikiPage > list = new ArrayList<>();
-        list.add( getPageInfo( page, WikiPageProvider.LATEST_VERSION ) );
+    public List< Page > getVersionHistory( final String page ) throws ProviderException {
+        final ArrayList< Page > list = new ArrayList<>();
+        list.add( getPageInfo( page, PageProvider.LATEST_VERSION ) );
 
         return list;
     }
@@ -432,23 +426,23 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
      *
      * @since 2.10.2
      */
-    protected void setCustomProperties( final WikiPage page, final Properties properties ) {
+    protected void setCustomProperties( final Page page, final Properties properties ) {
         final Enumeration< ? > propertyNames = properties.propertyNames();
     	while( propertyNames.hasMoreElements() ) {
             final String key = ( String )propertyNames.nextElement();
-            if( !key.equals( WikiPage.AUTHOR ) && !key.equals( WikiPage.CHANGENOTE ) && !key.equals( WikiPage.VIEWCOUNT ) ) {
+            if( !key.equals( Page.AUTHOR ) && !key.equals( Page.CHANGENOTE ) && !key.equals( Page.VIEWCOUNT ) ) {
                 page.setAttribute( key, properties.get( key ) );
             }
     	}
     }
 
     /**
-     * Get custom properties using {@link #addCustomProperties(WikiPage, Properties)}, validate them using {@link #validateCustomPageProperties(Properties)}
+     * Get custom properties using {@link #addCustomProperties(Page, Properties)}, validate them using {@link #validateCustomPageProperties(Properties)}
      * and add them to default properties provided
      *
      * @since 2.10.2
      */
-    protected void getCustomProperties( final WikiPage page, final Properties defaultProperties ) throws IOException {
+    protected void getCustomProperties( final Page page, final Properties defaultProperties ) throws IOException {
         final Properties customPageProperties = addCustomProperties( page, defaultProperties );
         validateCustomPageProperties( customPageProperties );
         defaultProperties.putAll( customPageProperties );
@@ -464,7 +458,7 @@ public abstract class AbstractFileProvider implements WikiPageProvider {
      * @param props the default properties of this page
      * @return default implementation returns empty Properties.
      */
-    protected Properties addCustomProperties( final WikiPage page, final Properties props ) {
+    protected Properties addCustomProperties( final Page page, final Properties props ) {
         final Properties customProperties = new Properties();
         if( page != null ) {
             final Map< String, Object > atts = page.getAttributes();

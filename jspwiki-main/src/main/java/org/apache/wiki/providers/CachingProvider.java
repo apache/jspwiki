@@ -23,22 +23,22 @@ import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.PageProvider;
+import org.apache.wiki.api.search.QueryItem;
+import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
-import org.apache.wiki.search.QueryItem;
-import org.apache.wiki.search.SearchResult;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
@@ -46,13 +46,10 @@ import java.util.TreeSet;
 
 
 /**
- *  Provides a caching page provider.  This class rests on top of a
- *  real provider class and provides a cache to speed things up.  Only
- *  if the cache copy of the page text has expired, we fetch it from
- *  the provider.
+ *  Provides a caching page provider.  This class rests on top of a real provider class and provides a cache to speed things up.  Only
+ *  if the cache copy of the page text has expired, we fetch it from the provider.
  *  <p>
- *  This class does not detect if someone has modified the page
- *  externally, not through JSPWiki routines.
+ *  This class does not detect if someone has modified the page externally, not through JSPWiki routines.
  *  <p>
  *  Heavily based on ideas by Chris Brooking.
  *  <p>
@@ -61,16 +58,14 @@ import java.util.TreeSet;
  *  @since 1.6.4
  */
 // FIXME: Synchronization is a bit inconsistent in places.
-// FIXME: A part of the stuff is now redundant, since we could easily use the text cache
-//        for a lot of things.  RefactorMe.
-
-public class CachingProvider implements WikiPageProvider {
+// FIXME: A part of the stuff is now redundant, since we could easily use the text cache for a lot of things.  RefactorMe.
+public class CachingProvider implements PageProvider {
 
     private static final Logger log = Logger.getLogger( CachingProvider.class );
 
     private CacheManager m_cacheManager = CacheManager.getInstance();
 
-    private WikiPageProvider m_provider;
+    private PageProvider m_provider;
     // FIXME: Find another way to the search engine to use instead of from Engine?
     private Engine m_engine;
 
@@ -154,8 +149,7 @@ public class CachingProvider implements WikiPageProvider {
 
         try {
             final Class< ? > providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname );
-
-            m_provider = ( WikiPageProvider )providerclass.newInstance();
+            m_provider = ( PageProvider )providerclass.newInstance();
 
             log.debug( "Initializing real provider class " + m_provider );
             m_provider.initialize( engine, properties );
@@ -171,23 +165,24 @@ public class CachingProvider implements WikiPageProvider {
         }
     }
 
-
-    private WikiPage getPageInfoFromCache( final String name) throws ProviderException {
+    private Page getPageInfoFromCache( final String name) throws ProviderException {
         // Sanity check; seems to occur sometimes
-        if (name == null) return null;
+        if( name == null ) {
+            return null;
+        }
 
-        final Element cacheElement = m_cache.get(name);
-        if (cacheElement == null) {
-            final WikiPage refreshed = m_provider.getPageInfo(name, WikiPageProvider.LATEST_VERSION);
-            if (refreshed != null) {
-                m_cache.put(new Element(name, refreshed));
+        final Element cacheElement = m_cache.get( name );
+        if( cacheElement == null ) {
+            final Page refreshed = m_provider.getPageInfo( name, PageProvider.LATEST_VERSION );
+            if( refreshed != null ) {
+                m_cache.put( new Element( name, refreshed ) );
                 return refreshed;
-            }  else {
+            } else {
                 // page does not exist anywhere
                 return null;
             }
         }
-        return (WikiPage) cacheElement.getObjectValue();
+        return ( Page )cacheElement.getObjectValue();
     }
 
 
@@ -195,40 +190,32 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public boolean pageExists( final String pageName, final int version )
-    {
-        if( pageName == null ) return false;
-
-        WikiPage p = null;
-
-        try
-        {
-            p = getPageInfoFromCache( pageName );
-        }
-        catch( final ProviderException e )
-        {
-            log.info("Provider failed while trying to check if page exists: "+pageName);
+    public boolean pageExists( final String pageName, final int version ) {
+        if( pageName == null ) {
             return false;
         }
 
-        if( p != null )
-        {
-            final int latestVersion = p.getVersion();
+        final Page p;
+        try {
+            p = getPageInfoFromCache( pageName );
+        } catch( final ProviderException e ) {
+            log.info( "Provider failed while trying to check if page exists: " + pageName );
+            return false;
+        }
 
-            if( version == latestVersion || version == LATEST_VERSION )
-            {
+        if( p != null ) {
+            final int latestVersion = p.getVersion();
+            if( version == latestVersion || version == LATEST_VERSION ) {
                 return true;
             }
 
             return m_provider.pageExists( pageName, version );
         }
 
-        try
-        {
+        try {
             return getPageInfo( pageName, version ) != null;
+        } catch( final ProviderException e ) {
         }
-        catch( final ProviderException e )
-        {}
 
         return false;
     }
@@ -237,50 +224,32 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public boolean pageExists( final String pageName )
-    {
-        if( pageName == null ) return false;
-
-        WikiPage p = null;
-
-        try
-        {
-            p = getPageInfoFromCache( pageName );
-        }
-        catch( final ProviderException e )
-        {
-            log.info("Provider failed while trying to check if page exists: "+pageName);
+    public boolean pageExists( final String pageName ) {
+        if( pageName == null ) {
             return false;
         }
 
-        //
-        //  A null item means that the page either does not
-        //  exist, or has not yet been cached; a non-null
-        //  means that the page does exist.
-        //
-        if( p != null )
-        {
+        final Page p;
+        try {
+            p = getPageInfoFromCache( pageName );
+        } catch( final ProviderException e ) {
+            log.info( "Provider failed while trying to check if page exists: " + pageName );
+            return false;
+        }
+
+        //  A null item means that the page either does not exist, or has not yet been cached; a non-null means that the page does exist.
+        if( p != null ) {
             return true;
         }
 
-        //
-        //  If we have a list of all pages in memory, then any page
-        //  not in the cache must be non-existent.
-        //
-        if( m_gotall )
-        {
+        //  If we have a list of all pages in memory, then any page not in the cache must be non-existent.
+        if( m_gotall ) {
             return false;
         }
 
-        //
-        //  We could add the page to the cache here as well,
-        //  but in order to understand whether that is a
-        //  good thing or not we would need to analyze
-        //  the JSPWiki calling patterns extensively.  Presumably
-        //  it would be a good thing if pageExists() is called
-        //  many times before the first getPageText() is called,
-        //  and the whole page is cached.
-        //
+        //  We could add the page to the cache here as well, but in order to understand whether that is a good thing or not we would
+        //  need to analyze the JSPWiki calling patterns extensively.  Presumably it would be a good thing if pageExists() is called
+        //  many times before the first getPageText() is called, and the whole page is cached.
         return m_provider.pageExists( pageName );
     }
 
@@ -288,30 +257,21 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public String getPageText( final String pageName, final int version )
-        throws ProviderException
-    {
-        String result = null;
-
-        if( pageName == null ) return null;
-
-        if( version == WikiPageProvider.LATEST_VERSION )
-        {
-            result = getTextFromCache( pageName );
+    public String getPageText( final String pageName, final int version ) throws ProviderException {
+        if( pageName == null ) {
+            return null;
         }
-        else
-        {
-            final WikiPage p = getPageInfoFromCache( pageName );
 
-            //
+        final String result;
+        if( version == PageProvider.LATEST_VERSION ) {
+            result = getTextFromCache( pageName );
+        } else {
+            final Page p = getPageInfoFromCache( pageName );
+
             //  Or is this the latest version fetched by version number?
-            //
-            if( p != null && p.getVersion() == version )
-            {
+            if( p != null && p.getVersion() == version ) {
                 result = getTextFromCache( pageName );
-            }
-            else
-            {
+            } else {
                 result = m_provider.getPageText( pageName, version );
             }
         }
@@ -320,20 +280,20 @@ public class CachingProvider implements WikiPageProvider {
     }
 
 
-    private String getTextFromCache( final String pageName) throws ProviderException {
-        String text = null;
-
-        if (pageName == null) return null;
-
-        final Element cacheElement = m_textCache.get(pageName);
-
-        if (cacheElement != null) {
-            m_cacheHits++;
-            return (String) cacheElement.getObjectValue();
+    private String getTextFromCache( final String pageName ) throws ProviderException {
+        if (pageName == null) {
+            return null;
         }
-        if (pageExists(pageName)) {
-            text = m_provider.getPageText(pageName, WikiPageProvider.LATEST_VERSION);
-            m_textCache.put(new Element(pageName, text));
+
+        final String text;
+        final Element cacheElement = m_textCache.get(pageName);
+        if( cacheElement != null ) {
+            m_cacheHits++;
+            return ( String )cacheElement.getObjectValue();
+        }
+        if( pageExists( pageName ) ) {
+            text = m_provider.getPageText( pageName, PageProvider.LATEST_VERSION );
+            m_textCache.put( new Element( pageName, text ) );
             m_cacheMisses++;
             return text;
         }
@@ -345,19 +305,17 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void putPageText( final WikiPage page, final String text) throws ProviderException {
-        synchronized (this) {
-            m_provider.putPageText(page, text);
-
-            page.setLastModified(new Date());
+    public void putPageText( final Page page, final String text ) throws ProviderException {
+        synchronized( this ) {
+            m_provider.putPageText( page, text );
+            page.setLastModified( new Date() );
 
             // Refresh caches properly
+            m_cache.remove( page.getName() );
+            m_textCache.remove( page.getName() );
+            m_historyCache.remove( page.getName() );
 
-            m_cache.remove(page.getName());
-            m_textCache.remove(page.getName());
-            m_historyCache.remove(page.getName());
-
-            getPageInfoFromCache(page.getName());
+            getPageInfoFromCache( page.getName() );
         }
     }
 
@@ -365,19 +323,16 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Collection< WikiPage > getAllPages() throws ProviderException {
-        final Collection< WikiPage > all;
+    public Collection< Page > getAllPages() throws ProviderException {
+        final Collection< Page > all;
 
-        if (m_gotall == false) {
+        if ( !m_gotall ) {
             all = m_provider.getAllPages();
 
             // Make sure that all pages are in the cache.
-
-            synchronized (this) {
-                for ( final Iterator< WikiPage > i = all.iterator(); i.hasNext(); ) {
-                    final WikiPage p = i.next();
-
-                    m_cache.put(new Element(p.getName(), p));
+            synchronized( this ) {
+                for( final Page p : all ) {
+                    m_cache.put( new Element( p.getName(), p ) );
                 }
 
                 m_gotall = true;
@@ -385,11 +340,11 @@ public class CachingProvider implements WikiPageProvider {
         } else {
             @SuppressWarnings("unchecked") final List< String > keys = m_cache.getKeysWithExpiryCheck();
             all = new TreeSet<>();
-            for ( final String key : keys) {
-                final Element element = m_cache.get(key);
-                final WikiPage cachedPage = ( WikiPage )element.getObjectValue();
-                if (cachedPage != null) {
-                    all.add(cachedPage);
+            for( final String key : keys ) {
+                final Element element = m_cache.get( key );
+                final Page cachedPage = ( Page )element.getObjectValue();
+                if( cachedPage != null ) {
+                    all.add( cachedPage );
                 }
             }
         }
@@ -408,8 +363,7 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Collection< WikiPage > getAllChangedSince( final Date date )
-    {
+    public Collection< Page > getAllChangedSince( final Date date ) {
         return m_provider.getAllChangedSince( date );
     }
 
@@ -417,9 +371,7 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public int getPageCount()
-        throws ProviderException
-    {
+    public int getPageCount() throws ProviderException {
         return m_provider.getPageCount();
     }
 
@@ -427,29 +379,18 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public Collection< SearchResult > findPages( final QueryItem[] query )
-    {
-        //
-        //  If the provider is a fast searcher, then
-        //  just pass this request through.
-        //
+    public Collection< SearchResult > findPages( final QueryItem[] query ) {
+        //  If the provider is a fast searcher, then just pass this request through.
         return m_provider.findPages( query );
-
         // FIXME: Does not implement fast searching
     }
 
-    //
-    //  FIXME: Kludge: make sure that the page is also parsed and it gets all the
-    //         necessary variables.
-    //
-
-    private void refreshMetadata( final WikiPage page ) {
+    //  FIXME: Kludge: make sure that the page is also parsed and it gets all the necessary variables.
+    private void refreshMetadata( final Page page ) {
         if( page != null && !page.hasMetadata() ) {
             final RenderingManager mgr = m_engine.getManager( RenderingManager.class );
-
             try {
                 final String data = m_provider.getPageText( page.getName(), page.getVersion() );
-
                 final WikiContext ctx = new WikiContext( m_engine, page );
                 final MarkupParser parser = mgr.getParser( ctx, data );
 
@@ -464,39 +405,25 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public WikiPage getPageInfo( final String pageName, final int version ) throws ProviderException
-    {
-        WikiPage page = null;
-        final WikiPage cached = getPageInfoFromCache( pageName );
-
-        final int latestcached = (cached != null) ? cached.getVersion() : Integer.MIN_VALUE;
-
-        if( version == WikiPageProvider.LATEST_VERSION || version == latestcached )
-        {
-            if( cached == null )
-            {
-                final WikiPage data = m_provider.getPageInfo( pageName, version );
-
-                if( data != null )
-                {
-                    m_cache.put(new Element(pageName, data));
+    public Page getPageInfo( final String pageName, final int version ) throws ProviderException {
+        final Page page;
+        final Page cached = getPageInfoFromCache( pageName );
+        final int latestcached = ( cached != null ) ? cached.getVersion() : Integer.MIN_VALUE;
+        if( version == PageProvider.LATEST_VERSION || version == latestcached ) {
+            if( cached == null ) {
+                final Page data = m_provider.getPageInfo( pageName, version );
+                if( data != null ) {
+                    m_cache.put( new Element( pageName, data ) );
                 }
                 page = data;
-            }
-            else
-            {
+            } else {
                 page = cached;
             }
-        }
-        else
-        {
+        } else {
             // We do not cache old versions.
             page = m_provider.getPageInfo( pageName, version );
-            //refreshMetadata( page );
         }
-
         refreshMetadata( page );
-
         return page;
     }
 
@@ -505,18 +432,18 @@ public class CachingProvider implements WikiPageProvider {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public List< WikiPage > getVersionHistory( final String pageName) throws ProviderException {
-        List< WikiPage > history = null;
-
-        if (pageName == null) return null;
-        final Element element = m_historyCache.get(pageName);
-
-        if (element != null) {
+    public List< Page > getVersionHistory( final String pageName) throws ProviderException {
+        final List< Page > history;
+        if( pageName == null ) {
+            return null;
+        }
+        final Element element = m_historyCache.get( pageName );
+        if( element != null ) {
             m_historyCacheHits++;
-            history = ( List< WikiPage > )element.getObjectValue();
+            history = ( List< Page > )element.getObjectValue();
         } else {
-            history = m_provider.getVersionHistory(pageName);
-            m_historyCache.put( new Element( pageName, history ));
+            history = m_provider.getVersionHistory( pageName );
+            m_historyCache.put( new Element( pageName, history ) );
             m_historyCacheMisses++;
         }
 
@@ -529,44 +456,32 @@ public class CachingProvider implements WikiPageProvider {
      * @return A plain string with all the above mentioned values.
      */
     @Override
-    public synchronized String getProviderInfo()
-    {
-        return "Real provider: "+m_provider.getClass().getName()+
-                ". Cache misses: "+m_cacheMisses+
-                ". Cache hits: "+m_cacheHits+
-                ". History cache hits: "+m_historyCacheHits+
-                ". History cache misses: "+m_historyCacheMisses;
+    public synchronized String getProviderInfo() {
+        return "Real provider: " + m_provider.getClass().getName()+
+                ". Cache misses: " + m_cacheMisses+
+                ". Cache hits: " + m_cacheHits+
+                ". History cache hits: " + m_historyCacheHits+
+                ". History cache misses: " + m_historyCacheMisses;
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public void deleteVersion( final String pageName, final int version )
-        throws ProviderException
-    {
-        //
-        //  Luckily, this is such a rare operation it is okay
-        //  to synchronize against the whole thing.
-        //
-        synchronized( this )
-        {
-            final WikiPage cached = getPageInfoFromCache( pageName );
+    public void deleteVersion( final String pageName, final int version ) throws ProviderException {
+        //  Luckily, this is such a rare operation it is okay to synchronize against the whole thing.
+        synchronized( this ) {
+            final Page cached = getPageInfoFromCache( pageName );
+            final int latestcached = ( cached != null ) ? cached.getVersion() : Integer.MIN_VALUE;
 
-            final int latestcached = (cached != null) ? cached.getVersion() : Integer.MIN_VALUE;
-
-            //
             //  If we have this version cached, remove from cache.
-            //
-            if( version == WikiPageProvider.LATEST_VERSION ||
-                version == latestcached )
-            {
-                m_cache.remove(pageName);
-                m_textCache.remove(pageName);
+            if( version == PageProvider.LATEST_VERSION || version == latestcached ) {
+                m_cache.remove( pageName );
+                m_textCache.remove( pageName );
             }
 
             m_provider.deleteVersion( pageName, version );
-            m_historyCache.remove(pageName);
+            m_historyCache.remove( pageName );
         }
     }
 
@@ -574,18 +489,13 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void deletePage( final String pageName )
-        throws ProviderException
-    {
-        //
+    public void deletePage( final String pageName ) throws ProviderException {
         //  See note in deleteVersion().
-        //
-        synchronized(this)
-        {
-            m_cache.put(new Element(pageName, null));
-            m_textCache.put(new Element( pageName, null ));
-            m_historyCache.put(new Element(pageName, null));
-            m_provider.deletePage(pageName);
+        synchronized( this ) {
+            m_cache.put( new Element( pageName, null ) );
+            m_textCache.put( new Element( pageName, null ) );
+            m_historyCache.put( new Element( pageName, null ) );
+            m_provider.deletePage( pageName );
         }
     }
 
@@ -593,28 +503,28 @@ public class CachingProvider implements WikiPageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void movePage( final String from, final String to) throws ProviderException {
-        m_provider.movePage(from, to);
+    public void movePage( final String from, final String to ) throws ProviderException {
+        m_provider.movePage( from, to );
 
-        synchronized (this) {
+        synchronized( this ) {
             // Clear any cached version of the old page and new page
-            m_cache.remove(from);
-            m_textCache.remove(from);
-            m_historyCache.remove(from);
-            log.debug("Removing to page " + to + " from cache");
-            m_cache.remove(to);
-            m_textCache.remove(to);
-            m_historyCache.remove(to);
+            m_cache.remove( from );
+            m_textCache.remove( from );
+            m_historyCache.remove( from );
+            log.debug( "Removing to page " + to + " from cache" );
+            m_cache.remove( to );
+            m_textCache.remove( to );
+            m_historyCache.remove( to );
         }
     }
 
     /**
      *  Returns the actual used provider.
+     *
      *  @since 2.0
      *  @return The real provider.
      */
-    public WikiPageProvider getRealProvider()
-    {
+    public PageProvider getRealProvider() {
         return m_provider;
     }
 

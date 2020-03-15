@@ -20,15 +20,15 @@ package org.apache.wiki.render;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.StringTransmutator;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
-import org.apache.wiki.providers.WikiPageProvider;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -149,7 +149,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @param  page WikiPage reference.
      *  @return HTML-rendered version of the page.
      */
-    String getHTML( Context context, WikiPage page );
+    String getHTML( Context context, Page page );
 
     /**
      *  Returns the converted HTML of the page's specific version. The version must be a positive integer, otherwise the current
@@ -189,7 +189,7 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
      *  @return HTML-rendered version of the page.
      */
     default String getHTML( final String page ) {
-        return getHTML( page, WikiPageProvider.LATEST_VERSION );
+        return getHTML( page, PageProvider.LATEST_VERSION );
     }
 
     /**

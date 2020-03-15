@@ -137,7 +137,7 @@ public class DefaultAclManager implements AclManager {
         if( acl == null ) {
             //  If null, try the parent.
             if( page instanceof Attachment ) {
-                final WikiPage parent = m_engine.getManager( PageManager.class ).getPage( ( ( Attachment ) page ).getParentName() );
+                final WikiPage parent = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( ( ( Attachment ) page ).getParentName() );
                 acl = getPermissions(parent);
             } else {
                 //  Or, try parsing the page

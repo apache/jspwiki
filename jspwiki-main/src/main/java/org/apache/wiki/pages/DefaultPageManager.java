@@ -22,14 +22,15 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.providers.WikiProvider;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -44,7 +45,6 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.providers.RepositoryModifiedException;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.tasks.TasksManager;
@@ -89,7 +89,7 @@ public class DefaultPageManager implements PageManager {
 
     private static final Logger LOG = Logger.getLogger( DefaultPageManager.class );
 
-    private WikiPageProvider m_provider;
+    private PageProvider m_provider;
 
     private Engine m_engine;
 
@@ -127,7 +127,7 @@ public class DefaultPageManager implements PageManager {
         try {
             LOG.debug("Page provider class: '" + classname + "'");
             final Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", classname);
-            m_provider = (WikiPageProvider) providerclass.newInstance();
+            m_provider = ( PageProvider ) providerclass.newInstance();
 
             LOG.debug("Initializing page provider class " + m_provider);
             m_provider.initialize(m_engine, props);
@@ -155,7 +155,7 @@ public class DefaultPageManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#getProvider()
      */
     @Override
-    public WikiPageProvider getProvider() {
+    public PageProvider getProvider() {
         return m_provider;
     }
 
@@ -164,7 +164,7 @@ public class DefaultPageManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#getAllPages()
      */
     @Override
-    public Collection< WikiPage > getAllPages() throws ProviderException {
+    public Collection< Page > getAllPages() throws ProviderException {
         return m_provider.getAllPages();
     }
 
@@ -186,7 +186,7 @@ public class DefaultPageManager implements PageManager {
             LOG.info( "Repository has been modified externally while fetching page " + pageName );
 
             //  Empty the references and yay, it shall be recalculated
-            final WikiPage p = m_provider.getPageInfo( pageName, version );
+            final Page p = m_provider.getPageInfo( pageName, version );
 
             m_engine.getManager( ReferenceManager.class ).updateReferences( p );
             m_engine.getManager( SearchManager.class ).reindexPage( p );
@@ -285,10 +285,10 @@ public class DefaultPageManager implements PageManager {
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.pages.PageManager#putPageText(org.apache.wiki.WikiPage, java.lang.String)
+     * @see org.apache.wiki.pages.PageManager#putPageText(org.apache.wiki.api.core.Page, java.lang.String)
      */
     @Override
-    public void putPageText( final WikiPage page, final String content ) throws ProviderException {
+    public void putPageText( final Page page, final String content ) throws ProviderException {
         if (page == null || page.getName() == null || page.getName().length() == 0) {
             throw new ProviderException("Illegal page name");
         }
@@ -298,34 +298,30 @@ public class DefaultPageManager implements PageManager {
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.pages.PageManager#lockPage(org.apache.wiki.WikiPage, java.lang.String)
+     * @see org.apache.wiki.pages.PageManager#lockPage(org.apache.wiki.api.core.Page, java.lang.String)
      */
     @Override
-    public PageLock lockPage( final WikiPage page, final String user) {
-        if (m_reaper == null) {
-            //
-            //  Start the lock reaper lazily.  We don't want to start it in
-            //  the constructor, because starting threads in constructors
-            //  is a bad idea when it comes to inheritance.  Besides,
-            //  laziness is a virtue.
-            //
-            m_reaper = new LockReaper(m_engine);
+    public PageLock lockPage( final Page page, final String user ) {
+        if( m_reaper == null ) {
+            //  Start the lock reaper lazily.  We don't want to start it in the constructor, because starting threads in constructors
+            //  is a bad idea when it comes to inheritance.  Besides, laziness is a virtue.
+            m_reaper = new LockReaper( m_engine );
             m_reaper.start();
         }
 
-        fireEvent(WikiPageEvent.PAGE_LOCK, page.getName()); // prior to or after actual lock?
-        PageLock lock = m_pageLocks.get(page.getName());
+        fireEvent( WikiPageEvent.PAGE_LOCK, page.getName() ); // prior to or after actual lock?
+        PageLock lock = m_pageLocks.get( page.getName() );
 
-        if (lock == null) {
+        if( lock == null ) {
             //
             //  Lock is available, so make a lock.
             //
             final Date d = new Date();
-            lock = new PageLock(page, user, d, new Date(d.getTime() + m_expiryTime * 60 * 1000L));
-            m_pageLocks.put(page.getName(), lock);
-            LOG.debug("Locked page " + page.getName() + " for " + user);
+            lock = new PageLock( page, user, d, new Date( d.getTime() + m_expiryTime * 60 * 1000L ) );
+            m_pageLocks.put( page.getName(), lock );
+            LOG.debug( "Locked page " + page.getName() + " for " + user );
         } else {
-            LOG.debug("Page " + page.getName() + " already locked by " + lock.getLocker());
+            LOG.debug( "Page " + page.getName() + " already locked by " + lock.getLocker() );
             lock = null; // Nothing to return
         }
 
@@ -350,10 +346,10 @@ public class DefaultPageManager implements PageManager {
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.pages.PageManager#getCurrentLock(org.apache.wiki.WikiPage)
+     * @see org.apache.wiki.pages.PageManager#getCurrentLock(org.apache.wiki.api.core.Page)
      */
     @Override
-    public PageLock getCurrentLock( final WikiPage page ) {
+    public PageLock getCurrentLock( final Page page ) {
         return m_pageLocks.get( page.getName() );
     }
 
@@ -371,8 +367,8 @@ public class DefaultPageManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#getPage(java.lang.String)
      */
     @Override
-    public WikiPage getPage( final String pagereq ) {
-        return getPage( pagereq, WikiProvider.LATEST_VERSION );
+    public Page getPage( final String pagereq ) {
+        return getPage( pagereq, PageProvider.LATEST_VERSION );
     }
 
     /**
@@ -380,9 +376,9 @@ public class DefaultPageManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#getPage(java.lang.String, int)
      */
     @Override
-    public WikiPage getPage( final String pagereq, final int version ) {
+    public Page getPage( final String pagereq, final int version ) {
         try {
-            WikiPage p = getPageInfo( pagereq, version );
+            Page p = getPageInfo( pagereq, version );
             if( p == null ) {
                 p = m_engine.getManager( AttachmentManager.class ).getAttachmentInfo( null, pagereq );
             }
@@ -399,23 +395,23 @@ public class DefaultPageManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#getPageInfo(java.lang.String, int)
      */
     @Override
-    public WikiPage getPageInfo( final String pageName, final int version) throws ProviderException {
-        if (pageName == null || pageName.length() == 0) {
-            throw new ProviderException("Illegal page name '" + pageName + "'");
+    public Page getPageInfo( final String pageName, final int version) throws ProviderException {
+        if( pageName == null || pageName.length() == 0 ) {
+            throw new ProviderException( "Illegal page name '" + pageName + "'" );
         }
 
-        WikiPage page;
+        Page page;
 
         try {
-            page = m_provider.getPageInfo(pageName, version);
-        } catch ( final RepositoryModifiedException e) {
+            page = m_provider.getPageInfo( pageName, version );
+        } catch( final RepositoryModifiedException e ) {
             //  This only occurs with the latest version.
-            LOG.info("Repository has been modified externally while fetching info for " + pageName);
-            page = m_provider.getPageInfo(pageName, version);
-            if (page != null) {
-                m_engine.getManager( ReferenceManager.class ).updateReferences(page);
+            LOG.info( "Repository has been modified externally while fetching info for " + pageName );
+            page = m_provider.getPageInfo( pageName, version );
+            if( page != null ) {
+                m_engine.getManager( ReferenceManager.class ).updateReferences( page );
             } else {
-                m_engine.getManager( ReferenceManager.class ).pageRemoved(new WikiPage(m_engine, pageName));
+                m_engine.getManager( ReferenceManager.class ).pageRemoved( new WikiPage( m_engine, pageName ) );
             }
         }
 
@@ -427,7 +423,7 @@ public class DefaultPageManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#getVersionHistory(java.lang.String)
      */
     @Override @SuppressWarnings( "unchecked" )
-    public < T extends WikiPage > List< T > getVersionHistory( final String pageName ) {
+    public < T extends Page > List< T > getVersionHistory( final String pageName ) {
         List< T > c = null;
 
         try {
@@ -483,9 +479,9 @@ public class DefaultPageManager implements PageManager {
      * @see org.apache.wiki.pages.PageManager#getRecentChanges()
      */
     @Override
-    public Set< WikiPage > getRecentChanges() {
+    public Set< Page > getRecentChanges() {
         try {
-            final TreeSet< WikiPage > sortedPages = new TreeSet<>( new PageTimeComparator() );
+            final TreeSet< Page > sortedPages = new TreeSet<>( new PageTimeComparator() );
             sortedPages.addAll( getAllPages() );
             sortedPages.addAll( m_engine.getManager( AttachmentManager.class ).getAllAttachments() );
 
@@ -580,10 +576,10 @@ public class DefaultPageManager implements PageManager {
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.pages.PageManager#deleteVersion(org.apache.wiki.WikiPage)
+     * @see org.apache.wiki.pages.PageManager#deleteVersion(org.apache.wiki.api.core.Page)
      */
     @Override
-    public void deleteVersion( final WikiPage page ) throws ProviderException {
+    public void deleteVersion( final Page page ) throws ProviderException {
         if( page instanceof Attachment ) {
             m_engine.getManager( AttachmentManager.class ).deleteVersion( ( Attachment )page );
         } else {
@@ -598,7 +594,7 @@ public class DefaultPageManager implements PageManager {
      */
     @Override
     public void deletePage( final String pageName ) throws ProviderException {
-        final WikiPage p = getPage( pageName );
+        final Page p = getPage( pageName );
         if( p != null ) {
             if( p instanceof Attachment ) {
                 m_engine.getManager( AttachmentManager.class ).deleteAttachment( ( Attachment )p );
@@ -624,10 +620,10 @@ public class DefaultPageManager implements PageManager {
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.pages.PageManager#deletePage(org.apache.wiki.WikiPage)
+     * @see org.apache.wiki.pages.PageManager#deletePage(org.apache.wiki.api.core.Page)
      */
     @Override
-    public void deletePage( final WikiPage page ) throws ProviderException {
+    public void deletePage( final Page page ) throws ProviderException {
         fireEvent( WikiPageEvent.PAGE_DELETE_REQUEST, page.getName() );
         m_provider.deletePage( page.getName() );
         fireEvent( WikiPageEvent.PAGE_DELETED, page.getName() );
@@ -709,13 +705,13 @@ public class DefaultPageManager implements PageManager {
             // Examine each page ACL
             try {
                 int pagesChanged = 0;
-                final Collection< WikiPage > pages = getAllPages();
-                for( final WikiPage page : pages ) {
-                    final boolean aclChanged = changeAcl( page, oldPrincipals, newPrincipal );
+                final Collection< Page > pages = getAllPages();
+                for( final Page page : pages ) {
+                    final boolean aclChanged = changeAcl( ( WikiPage )page, oldPrincipals, newPrincipal );
                     if( aclChanged ) {
                         // If the Acl needed changing, change it now
                         try {
-                            m_engine.getManager( AclManager.class ).setPermissions( page, page.getAcl() );
+                            m_engine.getManager( AclManager.class ).setPermissions( ( WikiPage )page, ( ( WikiPage )page ).getAcl() );
                         } catch( final WikiSecurityException e ) {
                             LOG.error("Could not change page ACL for page " + page.getName() + ": " + e.getMessage(), e);
                         }
@@ -772,7 +768,8 @@ public class DefaultPageManager implements PageManager {
         return pageChanged;
     }
 
-    /* (non-Javadoc)
+    /**
+     * {@inheritDoc}
      * @see org.apache.wiki.pages.PageManager#getPageSorter()
      */
     @Override

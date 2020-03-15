@@ -20,6 +20,7 @@ package org.apache.wiki.providers;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 
 import java.io.File;
@@ -49,7 +50,7 @@ public class FileSystemProvider extends AbstractFileProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void putPageText( final WikiPage page, final String text ) throws ProviderException {
+    public void putPageText( final Page page, final String text ) throws ProviderException {
         try {
             super.putPageText( page, text );
             putPageProperties( page );
@@ -61,26 +62,26 @@ public class FileSystemProvider extends AbstractFileProvider {
     /**
      *  Stores basic metadata to a file.
      */
-    private void putPageProperties( final WikiPage page ) throws IOException {
+    private void putPageProperties( final Page page ) throws IOException {
         final Properties props = new Properties();
         final String author = page.getAuthor();
-        final String changenote = page.getAttribute( WikiPage.CHANGENOTE );
-        final String viewcount = page.getAttribute( WikiPage.VIEWCOUNT );
+        final String changenote = page.getAttribute( Page.CHANGENOTE );
+        final String viewcount = page.getAttribute( Page.VIEWCOUNT );
 
         if( author != null ) {
-            props.setProperty( WikiPage.AUTHOR, author );
+            props.setProperty( Page.AUTHOR, author );
         }
 
         if( changenote != null ) {
-            props.setProperty( WikiPage.CHANGENOTE, changenote );
+            props.setProperty( Page.CHANGENOTE, changenote );
         }
 
         if( viewcount != null ) {
-            props.setProperty( WikiPage.VIEWCOUNT, viewcount );
+            props.setProperty( Page.VIEWCOUNT, viewcount );
         }
 
         // Get additional custom properties from page and add to props
-        getCustomProperties(page, props);
+        getCustomProperties( page, props );
 
         final File file = new File( getPageDirectory(), mangleName( page.getName() ) + PROP_EXT );
         try( final OutputStream out = new FileOutputStream( file ) ) {
@@ -91,7 +92,7 @@ public class FileSystemProvider extends AbstractFileProvider {
     /**
      *  Gets basic metadata from file.
      */
-    private void getPageProperties( final WikiPage page ) throws IOException {
+    private void getPageProperties( final Page page ) throws IOException {
         final File file = new File( getPageDirectory(), mangleName( page.getName() ) + PROP_EXT );
         if( file.exists() ) {
             try( final InputStream in = new FileInputStream( file ) ) {

@@ -22,8 +22,10 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.util.FileUtil;
 
@@ -247,24 +249,17 @@ public class VersioningFileProvider extends AbstractFileProvider {
      *  @throws NoSuchVersionException if there is no such version.
      */
     private int realVersion( final String page, final int requestedVersion ) throws NoSuchVersionException {
-        //
         //  Quickly check for the most common case.
-        //
-        if( requestedVersion == WikiProvider.LATEST_VERSION )
-        {
+        if( requestedVersion == WikiProvider.LATEST_VERSION ) {
             return -1;
         }
 
         final int latest = findLatestVersion(page);
 
-        if( requestedVersion == latest ||
-            (requestedVersion == 1 && latest == -1 ) )
-        {
+        if( requestedVersion == latest || (requestedVersion == 1 && latest == -1 ) ) {
             return -1;
-        }
-        else if( requestedVersion <= 0 || requestedVersion > latest )
-        {
-            throw new NoSuchVersionException("Requested version "+requestedVersion+", but latest is "+latest );
+        } else if( requestedVersion <= 0 || requestedVersion > latest ) {
+            throw new NoSuchVersionException( "Requested version " + requestedVersion + ", but latest is " + latest );
         }
 
         return requestedVersion;
@@ -274,23 +269,19 @@ public class VersioningFileProvider extends AbstractFileProvider {
      *  {@inheritDoc}
      */
     @Override
-    public synchronized String getPageText( final String page, int version )
-        throws ProviderException
-    {
+    public synchronized String getPageText( final String page, int version ) throws ProviderException {
         final File dir = findOldPageDir( page );
 
         version = realVersion( page, version );
-        if( version == -1 )
-        {
-            // We can let the FileSystemProvider take care
-            // of these requests.
-            return super.getPageText( page, WikiPageProvider.LATEST_VERSION );
+        if( version == -1 ) {
+            // We can let the FileSystemProvider take care of these requests.
+            return super.getPageText( page, PageProvider.LATEST_VERSION );
         }
 
         final File pageFile = new File( dir, ""+version+FILE_EXT );
-
-        if( !pageFile.exists() )
+        if( !pageFile.exists() ) {
             throw new NoSuchVersionException("Version "+version+"does not exist.");
+        }
 
         return readFile( pageFile );
     }
@@ -335,11 +326,8 @@ public class VersioningFileProvider extends AbstractFileProvider {
      *  {@inheritDoc}
      */
     @Override
-    public synchronized void putPageText( final WikiPage page, final String text ) throws ProviderException {
-        //
-        //  This is a bit complicated.  We'll first need to
-        //  copy the old file to be the newest file.
-        //
+    public synchronized void putPageText( final Page page, final String text ) throws ProviderException {
+        // This is a bit complicated.  We'll first need to copy the old file to be the newest file.
         final int  latest  = findLatestVersion( page.getName() );
         final File pageDir = findOldPageDir( page.getName() );
         if( !pageDir.exists() ) {
@@ -347,16 +335,12 @@ public class VersioningFileProvider extends AbstractFileProvider {
         }
 
         try {
-            //
             // Copy old data to safety, if one exists.
-            //
             final File oldFile = findPage( page.getName() );
 
-            // Figure out which version should the old page be?
-            // Numbers should always start at 1.
+            // Figure out which version should the old page be? Numbers should always start at 1.
             // "most recent" = -1 ==> 1
             // "first"       = 1  ==> 2
-
             int versionNumber = (latest > 0) ? latest : 1;
             final boolean firstUpdate = (versionNumber == 1);
 
@@ -366,26 +350,18 @@ public class VersioningFileProvider extends AbstractFileProvider {
                      final OutputStream out = new BufferedOutputStream( new FileOutputStream( pageFile ) ) ) {
                     FileUtil.copyContents( in, out );
 
-                    //
                     // We need also to set the date, since we rely on this.
-                    //
                     pageFile.setLastModified( oldFile.lastModified() );
 
-                    //
                     // Kludge to make the property code to work properly.
-                    //
                     versionNumber++;
                 }
             }
 
-            //
             //  Let superclass handler writing data to a new version.
-            //
             super.putPageText( page, text );
 
-            //
             //  Finally, write page version data.
-            //
             // FIXME: No rollback available.
             final Properties props = getPageProperties( page.getName() );
 
@@ -402,8 +378,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
             }
 
             String newAuthor = page.getAuthor();
-            if ( newAuthor == null )
-            {
+            if ( newAuthor == null ) {
                 newAuthor = ( authorFirst != null ) ? authorFirst : "unknown";
             }
             page.setAuthor(newAuthor);
@@ -433,7 +408,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
 
         WikiPage p = null;
 
-        if( version == WikiPageProvider.LATEST_VERSION || version == latest || (version == 1 && latest == -1) ) {
+        if( version == PageProvider.LATEST_VERSION || version == latest || (version == 1 && latest == -1) ) {
             //
             // Yes, we need to talk to the top level directory to get this version.
             //
@@ -442,26 +417,20 @@ public class VersioningFileProvider extends AbstractFileProvider {
             //
             realVersion = (latest >= 0) ? latest : 1;
 
-            p = super.getPageInfo( page, WikiPageProvider.LATEST_VERSION );
+            p = super.getPageInfo( page, PageProvider.LATEST_VERSION );
 
             if( p != null ) {
                 p.setVersion( realVersion );
             }
         } else {
-            //
-            //  The file is not the most recent, so we'll need to
-            //  find it from the deep trenches of the "OLD" directory
-            //  structure.
-            //
+            // The file is not the most recent, so we'll need to find it from the deep trenches of the "OLD" directory structure.
             realVersion = version;
             final File dir = findOldPageDir( page );
-
             if( !dir.exists() || !dir.isDirectory() ) {
                 return null;
             }
 
             final File file = new File( dir, version + FILE_EXT );
-
             if( file.exists() ) {
                 p = new WikiPage( m_engine, page );
 
@@ -470,26 +439,24 @@ public class VersioningFileProvider extends AbstractFileProvider {
             }
         }
 
-        //
         //  Get author and other metadata information (Modification date has already been set.)
-        //
         if( p != null ) {
             try {
                 final Properties props = getPageProperties( page );
                 String author = props.getProperty( realVersion + ".author" );
                 if( author == null ) {
-                    // we might not have a versioned author because the
-                    // old page was last maintained by FileSystemProvider
+                    // we might not have a versioned author because the old page was last maintained by FileSystemProvider
                     final Properties props2 = getHeritagePageProperties( page );
-                    author = props2.getProperty( WikiPage.AUTHOR );
+                    author = props2.getProperty( Page.AUTHOR );
                 }
                 if( author != null ) {
                     p.setAuthor( author );
                 }
 
                 final String changenote = props.getProperty( realVersion + ".changenote" );
-                if( changenote != null )
-                    p.setAttribute( WikiPage.CHANGENOTE, changenote );
+                if( changenote != null ) {
+                    p.setAttribute( Page.CHANGENOTE, changenote );
+                }
 
                 // Set the props values to the page attributes
                 setCustomProperties( p, props );
@@ -506,7 +473,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
      */
     @Override
     public boolean pageExists( final String pageName, final int version ) {
-        if (version == WikiPageProvider.LATEST_VERSION || version == findLatestVersion( pageName ) ) {
+        if (version == PageProvider.LATEST_VERSION || version == findLatestVersion( pageName ) ) {
             return pageExists(pageName);
         }
 
@@ -523,15 +490,11 @@ public class VersioningFileProvider extends AbstractFileProvider {
      */
      // FIXME: Does not get user information.
     @Override
-    public List< WikiPage > getVersionHistory( final String page ) throws ProviderException {
-        final ArrayList< WikiPage > list = new ArrayList<>();
+    public List< Page > getVersionHistory( final String page ) throws ProviderException {
+        final ArrayList< Page > list = new ArrayList<>();
         final int latest = findLatestVersion( page );
-
-        // list.add( getPageInfo(page,WikiPageProvider.LATEST_VERSION) );
-
         for( int i = latest; i > 0; i-- ) {
             final WikiPage info = getPageInfo( page, i );
-
             if( info != null ) {
                 list.add( info );
             }
@@ -541,8 +504,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
     }
 
     /*
-     * Support for migration of simple properties created by the
-     * FileSystemProvider when coming under Versioning management.
+     * Support for migration of simple properties created by the FileSystemProvider when coming under Versioning management.
      * Simulate an initial version.
      */
     private Properties getHeritagePageProperties( final String page ) throws IOException {
@@ -579,9 +541,8 @@ public class VersioningFileProvider extends AbstractFileProvider {
     }
 
     /**
-     *  Removes the relevant page directory under "OLD" -directory as well,
-     *  but does not remove any extra subdirectories from it.  It will only
-     *  touch those files that it thinks to be WikiPages.
+     *  Removes the relevant page directory under "OLD" -directory as well, but does not remove any extra subdirectories from it.
+     *  It will only touch those files that it thinks to be WikiPages.
      *
      *  @param page {@inheritDoc}
      *  @throws {@inheritDoc}
@@ -593,13 +554,11 @@ public class VersioningFileProvider extends AbstractFileProvider {
         final File dir = findOldPageDir( page );
         if( dir.exists() && dir.isDirectory() ) {
             final File[] files = dir.listFiles( new WikiFileFilter() );
-
             for( int i = 0; i < files.length; i++ ) {
                 files[ i ].delete();
             }
 
             final File propfile = new File( dir, PROPERTYFILE );
-
             if( propfile.exists() ) {
                 propfile.delete();
             }
@@ -611,19 +570,17 @@ public class VersioningFileProvider extends AbstractFileProvider {
     /**
      *  {@inheritDoc}
      *
-     *  Deleting versions has never really worked, JSPWiki assumes that version histories are "not gappy".
-     *  Using deleteVersion() is definitely not recommended.
+     *  Deleting versions has never really worked, JSPWiki assumes that version histories are "not gappy". Using deleteVersion() is
+     *  definitely not recommended.
      */
     @Override
     public void deleteVersion( final String page, final int version ) throws ProviderException {
         final File dir = findOldPageDir( page );
         int latest = findLatestVersion( page );
-        if( version == WikiPageProvider.LATEST_VERSION ||
+        if( version == PageProvider.LATEST_VERSION ||
             version == latest ||
             (version == 1 && latest == -1) ) {
-            //
             //  Delete the properties
-            //
             try {
                 final Properties props = getPageProperties( page );
                 props.remove( ((latest > 0) ? latest : 1)+".author" );
@@ -633,13 +590,10 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 throw new ProviderException("Could not modify page properties: " + e.getMessage());
             }
 
-            // We can let the FileSystemProvider take care
-            // of the actual deletion
-            super.deleteVersion( page, WikiPageProvider.LATEST_VERSION );
+            // We can let the FileSystemProvider take care of the actual deletion
+            super.deleteVersion( page, PageProvider.LATEST_VERSION );
 
-            //
             //  Copy the old file to the new location
-            //
             latest = findLatestVersion( page );
 
             final File pageDir = findOldPageDir( page );
@@ -649,9 +603,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                  final OutputStream out = new BufferedOutputStream( new FileOutputStream( pageFile ) ) ) {
                 if( previousFile.exists() ) {
                     FileUtil.copyContents( in, out );
-                    //
                     // We need also to set the date, since we rely on this.
-                    //
                     pageFile.setLastModified( previousFile.lastModified() );
                 }
             } catch( final IOException e ) {
@@ -662,7 +614,6 @@ public class VersioningFileProvider extends AbstractFileProvider {
         }
 
         final File pageFile = new File( dir, ""+version+FILE_EXT );
-
         if( pageFile.exists() ) {
             if( !pageFile.delete() ) {
                 log.error("Unable to delete page." + pageFile.getPath() );
@@ -677,11 +628,11 @@ public class VersioningFileProvider extends AbstractFileProvider {
      */
     // FIXME: This is kinda slow, we should need to do this only once.
     @Override
-    public Collection< WikiPage > getAllPages() throws ProviderException {
-        final Collection< WikiPage > pages = super.getAllPages();
-        final Collection< WikiPage > returnedPages = new ArrayList<>();
-        for( final WikiPage page : pages ) {
-            final WikiPage info = getPageInfo( page.getName(), WikiProvider.LATEST_VERSION );
+    public Collection< Page > getAllPages() throws ProviderException {
+        final Collection< Page > pages = super.getAllPages();
+        final Collection< Page > returnedPages = new ArrayList<>();
+        for( final Page page : pages ) {
+            final Page info = getPageInfo( page.getName(), WikiProvider.LATEST_VERSION );
             returnedPages.add( info );
         }
 
@@ -745,4 +696,5 @@ public class VersioningFileProvider extends AbstractFileProvider {
             this.m_lastModified = lastModified;
         }
     }
+
 }

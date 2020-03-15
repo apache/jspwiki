@@ -22,6 +22,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.WikiProvider;
+import org.apache.wiki.api.search.SearchResult;
 
 import java.io.IOException;
 import java.util.Collection;

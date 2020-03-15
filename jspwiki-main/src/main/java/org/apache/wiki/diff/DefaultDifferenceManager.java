@@ -23,8 +23,8 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.util.ClassUtil;
 
 import java.io.IOException;
@@ -120,7 +120,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
         final String page2 = context.getEngine().getManager( PageManager.class ).getPureText( page, version2 );
 
         // Kludge to make diffs for new pages to work this way.
-        if( version1 == WikiPageProvider.LATEST_VERSION ) {
+        if( version1 == PageProvider.LATEST_VERSION ) {
             page1 = "";
         }
 

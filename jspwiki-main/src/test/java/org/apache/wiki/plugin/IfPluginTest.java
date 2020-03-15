@@ -23,11 +23,12 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ public class IfPluginTest {
      * @return {@link WikiContext} associated to given {@link WikiPage}.
      * @throws WikiException problems while logging in.
      */
-    WikiContext getJanneBasedWikiContextFor( final WikiPage page ) throws WikiException {
+    WikiContext getJanneBasedWikiContextFor( final Page page ) throws WikiException {
         final MockHttpServletRequest request = testEngine.newHttpRequest();
         final Session session =  WikiSession.getWikiSession( testEngine, request );
         testEngine.getAuthenticationManager().login( session, request, Users.JANNE, Users.JANNE_PASS );
@@ -67,7 +68,7 @@ public class IfPluginTest {
         final String expected = "<p>Content visible for Janne Jalkanen</p>\n";
 
         testEngine.saveText( "Test", src );
-        final WikiPage page = testEngine.getManager( PageManager.class ).getPage( "Test", WikiPageProvider.LATEST_VERSION );
+        final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
         final WikiContext context = getJanneBasedWikiContextFor( page );
 
         final String res = testEngine.getRenderingManager().getHTML( context, page );
@@ -86,7 +87,7 @@ public class IfPluginTest {
         final String expected = "\n";
 
         testEngine.saveText( "Test", src );
-        final WikiPage page = testEngine.getManager( PageManager.class ).getPage( "Test", WikiPageProvider.LATEST_VERSION );
+        final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
         final WikiContext context = getJanneBasedWikiContextFor( page );
 
         final String res = testEngine.getRenderingManager().getHTML( context, page );
@@ -104,7 +105,7 @@ public class IfPluginTest {
         final String expected = "<p>Content visible for 127.0.0.1</p>\n";
 
         testEngine.saveText( "Test", src );
-        final WikiPage page = testEngine.getManager( PageManager.class ).getPage( "Test", WikiPageProvider.LATEST_VERSION );
+        final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
         final WikiContext context = getJanneBasedWikiContextFor( page );
 
         final String res = testEngine.getRenderingManager().getHTML( context, page );
@@ -122,7 +123,7 @@ public class IfPluginTest {
         final String expected = "\n";
 
         testEngine.saveText( "Test", src );
-        final WikiPage page = testEngine.getManager( PageManager.class ).getPage( "Test", WikiPageProvider.LATEST_VERSION );
+        final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
         final WikiContext context = getJanneBasedWikiContextFor( page );
 
         final String res = testEngine.getRenderingManager().getHTML( context, page );

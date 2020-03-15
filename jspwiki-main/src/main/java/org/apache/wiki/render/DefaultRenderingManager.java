@@ -25,13 +25,14 @@ import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -42,7 +43,6 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
-import org.apache.wiki.providers.WikiPageProvider;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
@@ -275,7 +275,7 @@ public class DefaultRenderingManager implements RenderingManager {
      *  {@inheritDoc}
      */
     @Override
-    public String getHTML( final Context context, final WikiPage page ) {
+    public String getHTML( final Context context, final Page page ) {
         final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page.getName(), page.getVersion() );
         return textToHTML( context, pagedata );
     }
@@ -290,7 +290,7 @@ public class DefaultRenderingManager implements RenderingManager {
      */
     @Override
     public String getHTML( final String pagename, final int version ) {
-        final WikiPage page = m_engine.getManager( PageManager.class ).getPage( pagename, version );
+        final Page page = m_engine.getManager( PageManager.class ).getPage( pagename, version );
         final Context context = new WikiContext( m_engine, page );
         context.setRequestContext( WikiContext.NONE );
         return getHTML( context, page );
@@ -447,9 +447,9 @@ public class DefaultRenderingManager implements RenderingManager {
                                 log.debug( "Flushing latest version of " + page );
                             }
                             // as there is a new version of the page expire both plugin and pluginless versions of the old page
-                            m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.FALSE );
-                            m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.TRUE );
-                            m_documentCache.remove( page + VERSION_DELIMITER + WikiPageProvider.LATEST_VERSION  + VERSION_DELIMITER + null );
+                            m_documentCache.remove( page + VERSION_DELIMITER + PageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.FALSE );
+                            m_documentCache.remove( page + VERSION_DELIMITER + PageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.TRUE );
+                            m_documentCache.remove( page + VERSION_DELIMITER + PageProvider.LATEST_VERSION  + VERSION_DELIMITER + null );
                         }
                     }
                 }

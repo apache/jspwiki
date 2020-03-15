@@ -19,18 +19,19 @@
 package org.apache.wiki.search;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.PageProvider;
+import org.apache.wiki.api.search.QueryItem;
+import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.providers.WikiPageProvider;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -142,7 +143,7 @@ public class BasicSearchProvider implements SearchProvider {
     private Collection< SearchResult > findPages( final QueryItem[] query, final Context wikiContext ) {
         final TreeSet< SearchResult > res = new TreeSet<>( new SearchResultComparator() );
         final SearchMatcher matcher = new SearchMatcher( m_engine, query );
-        final Collection< WikiPage > allPages;
+        final Collection< Page > allPages;
         try {
             allPages = m_engine.getManager( PageManager.class ).getAllPages();
         } catch( final ProviderException pe ) {
@@ -152,14 +153,14 @@ public class BasicSearchProvider implements SearchProvider {
 
         final AuthorizationManager mgr = m_engine.getManager( AuthorizationManager.class );
 
-        for( final WikiPage page : allPages ) {
+        for( final Page page : allPages ) {
             try {
                 if( page != null ) {
                     final PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
                     if( wikiContext == null || mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
                         final String pageName = page.getName();
                         final String pageContent =
-                                m_engine.getManager( PageManager.class ).getPageText( pageName, WikiPageProvider.LATEST_VERSION ) + attachmentNames( page );
+                                m_engine.getManager( PageManager.class ).getPageText( pageName, PageProvider.LATEST_VERSION ) + attachmentNames( page );
                         final SearchResult comparison = matcher.matchPageContent( pageName, pageContent );
                         if( comparison != null ) {
                             res.add( comparison );

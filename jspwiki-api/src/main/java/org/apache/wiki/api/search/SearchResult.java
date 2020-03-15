@@ -31,7 +31,7 @@ public interface SearchResult {
      *  
      *  @return the WikiPage object containing this result
      */
-    < P extends Page> P getPage();
+    Page getPage();
 
     /**
      *  Returns the score.

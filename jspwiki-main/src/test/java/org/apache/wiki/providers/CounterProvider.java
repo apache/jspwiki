@@ -20,12 +20,15 @@ package org.apache.wiki.providers;
 
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.search.QueryItem;
-import org.apache.wiki.search.SearchResult;
+import org.apache.wiki.api.providers.PageProvider;
+import org.apache.wiki.api.search.QueryItem;
+import org.apache.wiki.api.search.SearchResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
@@ -34,7 +37,7 @@ import java.util.Vector;
 /**
  *  A provider who counts the hits to different parts.
  */
-public class CounterProvider implements WikiPageProvider {
+public class CounterProvider implements PageProvider {
 
     public int m_getPageCalls     = 0;
     public int m_pageExistsCalls  = 0;
@@ -72,14 +75,11 @@ public class CounterProvider implements WikiPageProvider {
     }
 
     @Override
-    public void putPageText( final WikiPage page, final String text )
-        throws ProviderException
-    {
+    public void putPageText( final Page page, final String text ) throws ProviderException {
     }
 
     @Override
-    public boolean pageExists( final String page )
-    {
+    public boolean pageExists( final String page ) {
         m_pageExistsCalls++;
 
         return findPage( page ) != null;
@@ -97,44 +97,33 @@ public class CounterProvider implements WikiPageProvider {
         return null;
     }
 
-    private WikiPage findPage( final String page )
-    {
-        for( int i = 0; i < m_pages.length; i++ )
-        {
-            if( m_pages[i].getName().equals(page) )
-                return m_pages[i];
+    private Page findPage( final String page ) {
+        for( final WikiPage m_page : m_pages ) {
+            if( m_page.getName().equals( page ) ) {
+                return m_page;
+            }
         }
 
         return null;
     }
 
     @Override
-    public WikiPage getPageInfo( final String page, final int version )
-    {            
+    public Page getPageInfo( final String page, final int version ) {
         m_getPageCalls++;
-
-        final WikiPage p = findPage(page);
-
-        return p;
+        return findPage(page);
     }
 
     @Override
-    public Collection< WikiPage > getAllPages()
-    {
+    public Collection< Page > getAllPages() {
         m_getAllPagesCalls++;
-
-        final List<WikiPage> l = new ArrayList<>();
-
-        for( int i = 0; i < m_pages.length; i++ )
-        {
-            l.add( m_pages[i] );
-        }
+        final List<Page> l = new ArrayList<>();
+        Collections.addAll( l, m_pages );
 
         return l;
     }
 
     @Override
-    public Collection< WikiPage > getAllChangedSince( final Date date )
+    public Collection< Page > getAllChangedSince( final Date date )
     {
         return new ArrayList<>();
     }
@@ -146,35 +135,27 @@ public class CounterProvider implements WikiPageProvider {
     }
 
     @Override
-    public List< WikiPage > getVersionHistory( final String page )
+    public List< Page > getVersionHistory( final String page )
     {
         return new Vector<>();
     }
 
     @Override
-    public String getPageText( final String page, final int version )
-    {
+    public String getPageText( final String page, final int version ) {
         m_getPageTextCalls++;
         return m_defaultText;
     }
 
     @Override
-    public void deleteVersion( final String page, final int version )
-    {
+    public void deleteVersion( final String page, final int version ) {
     }
 
     @Override
-    public void deletePage( final String page )
-    {
+    public void deletePage( final String page ) {
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.wiki.providers.WikiPageProvider#movePage(java.lang.String, java.lang.String)
-     */
     @Override
-    public void movePage( final String from, final String to ) throws ProviderException
-    {
+    public void movePage( final String from, final String to ) throws ProviderException {
     }
-    
-    
+
 }

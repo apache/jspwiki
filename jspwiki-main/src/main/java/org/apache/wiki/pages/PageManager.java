@@ -18,13 +18,12 @@
  */
 package org.apache.wiki.pages;
 
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.providers.WikiPageProvider;
 
 import java.util.Collection;
 import java.util.List;
@@ -45,7 +44,7 @@ public interface PageManager extends WikiEventListener {
      *
      * @return A WikiPageProvider instance.
      */
-    WikiPageProvider getProvider();
+    PageProvider getProvider();
 
     /**
      * Returns all pages in some random order.  If you need just the page names,
@@ -55,7 +54,7 @@ public interface PageManager extends WikiEventListener {
      * @return A Collection of WikiPage objects.
      * @throws ProviderException If the backend has problems.
      */
-    Collection< WikiPage > getAllPages() throws ProviderException;
+    Collection< Page > getAllPages() throws ProviderException;
 
     /**
      * Fetches the page text from the repository.  This method also does some sanity checks, like checking for the pageName validity, etc.
@@ -118,7 +117,7 @@ public interface PageManager extends WikiEventListener {
      *  @return WikiText.
      */
     default String getText( final String page ) {
-        return getText( page, WikiPageProvider.LATEST_VERSION );
+        return getText( page, PageProvider.LATEST_VERSION );
     }
 
     /**
@@ -132,7 +131,7 @@ public interface PageManager extends WikiEventListener {
      *  @return The page content as HTMLized String.
      *  @see PageManager#getPureText(Page)
      */
-    default String getText( final WikiPage page ) {
+    default String getText( final Page page ) {
         return getText( page.getName(), page.getVersion() );
     }
 
@@ -162,7 +161,7 @@ public interface PageManager extends WikiEventListener {
      * @param content Wikimarkup to save
      * @throws ProviderException If something goes wrong in the saving phase
      */
-    void putPageText( WikiPage page, String content ) throws ProviderException;
+    void putPageText( Page page, String content ) throws ProviderException;
 
     /**
      * Locks page for editing.  Note, however, that the PageManager will in no way prevent you from actually editing this page;
@@ -172,7 +171,7 @@ public interface PageManager extends WikiEventListener {
      * @param user Username to use for locking
      * @return null, if page could not be locked.
      */
-    PageLock lockPage( WikiPage page, String user );
+    PageLock lockPage( Page page, String user );
 
     /**
      * Marks a page free to be written again.  If there has not been a lock, will fail quietly.
@@ -187,7 +186,7 @@ public interface PageManager extends WikiEventListener {
      * @param page The page to check the lock for
      * @return Current lock, or null, if there is no lock
      */
-    PageLock getCurrentLock( WikiPage page );
+    PageLock getCurrentLock( Page page );
 
     /**
      * Returns a list of currently applicable locks.  Note that by the time you get the list,
@@ -205,7 +204,7 @@ public interface PageManager extends WikiEventListener {
      *  @param pagereq The name of the page to look for.
      *  @return A WikiPage object, or null, if the page by the name could not be found.
      */
-    WikiPage getPage( String pagereq );
+    Page getPage( String pagereq );
 
     /**
      *  Finds the corresponding WikiPage object base on the page name and version.
@@ -219,7 +218,7 @@ public interface PageManager extends WikiEventListener {
      *  is no such version of the page.
      *  @since 1.6.7 (moved to PageManager on 2.11.0).
      */
-    WikiPage getPage( String pagereq, int version );
+    Page getPage( String pagereq, int version );
 
     /**
      * Finds a WikiPage object describing a particular page and version.
@@ -229,7 +228,7 @@ public interface PageManager extends WikiEventListener {
      * @return A WikiPage object, or null, if the page does not exist
      * @throws ProviderException If there is something wrong with the page name or the repository
      */
-    WikiPage getPageInfo( String pageName, int version ) throws ProviderException;
+    Page getPageInfo( String pageName, int version ) throws ProviderException;
 
     /**
      * Gets a version history of page.  Each element in the returned List is a WikiPage.
@@ -238,7 +237,7 @@ public interface PageManager extends WikiEventListener {
      * @return If the page does not exist or there's some problem retrieving the version history, returns null,
      *         otherwise a List of WikiPages / Attachments, each corresponding to a different revision of the page / attachment.
      */
-    < T extends WikiPage > List< T > getVersionHistory( String pageName );
+    < T extends Page > List< T > getVersionHistory( String pageName );
 
     /**
      *  Returns the provider name.
@@ -270,7 +269,7 @@ public interface PageManager extends WikiEventListener {
      *
      *  @return Set of WikiPage objects.
      */
-    Set< WikiPage > getRecentChanges();
+    Set< Page > getRecentChanges();
 
     /**
      * Returns true, if the page exists (any version) on the underlying WikiPageProvider.
@@ -300,7 +299,7 @@ public interface PageManager extends WikiEventListener {
      *  @throws ProviderException If something goes badly wrong.
      *  @since 2.0
      */
-    default boolean pageExists( final WikiPage page ) throws ProviderException {
+    default boolean pageExists( final Page page ) throws ProviderException {
         if( page != null ) {
             return pageExists( page.getName(), page.getVersion() );
         }
@@ -349,7 +348,7 @@ public interface PageManager extends WikiEventListener {
      * @param page The page to delete.
      * @throws ProviderException if the page fails
      */
-    void deleteVersion( WikiPage page ) throws ProviderException;
+    void deleteVersion( Page page ) throws ProviderException;
 
     /**
      *  Deletes a page or an attachment completely, including all versions.  If the page does not exist, does nothing.
@@ -365,7 +364,7 @@ public interface PageManager extends WikiEventListener {
      * @param page The WikiPage to delete
      * @throws ProviderException If the repository operation fails
      */
-    void deletePage( WikiPage page ) throws ProviderException;
+    void deletePage( Page page ) throws ProviderException;
 
     /**
      * Returns the configured {@link PageSorter}.

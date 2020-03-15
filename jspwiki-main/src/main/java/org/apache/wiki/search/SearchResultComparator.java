@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.search;
 
+import org.apache.wiki.api.search.SearchResult;
+
 import java.io.Serializable;
 import java.util.Comparator;
 
