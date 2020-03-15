@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.render;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.parser.WikiDocument;
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ import java.io.IOException;
  */
 public abstract class WikiRenderer {
 
-    protected WikiContext     m_context;
+    protected Context     m_context;
     protected WikiDocument    m_document;
 
     public static final String LINKS_TRANSLATION = "$1#$2";
@@ -44,7 +44,7 @@ public abstract class WikiRenderer {
      *  @param context A WikiContext in which the rendering will take place.
      *  @param doc The WikiDocument which shall be rendered.
      */
-    protected WikiRenderer( final WikiContext context, final WikiDocument doc ) {
+    protected WikiRenderer( final Context context, final WikiDocument doc ) {
         m_context = context;
         m_document = doc;
         doc.setContext( context ); // Make sure it is set

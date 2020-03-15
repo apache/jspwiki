@@ -21,7 +21,7 @@ package org.apache.wiki.render.markdown;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oro.text.regex.Pattern;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.parser.markdown.MarkdownDocument;
@@ -39,7 +39,7 @@ public class MarkdownRenderer extends WikiRenderer {
 
 	private final HtmlRenderer renderer;
 
-	public MarkdownRenderer( final WikiContext context, final WikiDocument doc ) {
+	public MarkdownRenderer( final Context context, final WikiDocument doc ) {
 		super( context, doc );
 		final MarkupParser mp = context.getEngine()
 				                       .getManager( RenderingManager.class )
