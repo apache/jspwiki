@@ -22,7 +22,7 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.modules.ModuleManager;
 
 import java.io.IOException;
@@ -132,13 +132,13 @@ public interface PluginManager extends ModuleManager {
     String execute( WikiContext context, String commandline ) throws PluginException;
     
     /**
-     * Creates a {@link WikiPlugin}.
+     * Creates a {@link Plugin}.
      * 
      * @param pluginName plugin's classname
      * @param rb {@link ResourceBundle} with i18ned text for exceptions.
-     * @return a {@link WikiPlugin}.
-     * @throws PluginException if there is a problem building the {@link WikiPlugin}.
+     * @return a {@link Plugin}.
+     * @throws PluginException if there is a problem building the {@link Plugin}.
      */
-    WikiPlugin newWikiPlugin( String pluginName, ResourceBundle rb ) throws PluginException;
+    Plugin newWikiPlugin( String pluginName, ResourceBundle rb ) throws PluginException;
     
 }

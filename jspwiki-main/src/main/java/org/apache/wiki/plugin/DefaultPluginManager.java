@@ -37,7 +37,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.InitializablePlugin;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.modules.BaseModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
@@ -151,7 +151,7 @@ import java.util.StringTokenizer;
  *      as the regular parameters.  However, since JSPWiki caches the DOM tree to speed up later
  *      places, which means that whatever this method returns would be irrelevant.  You can do some DOM
  *      tree manipulation, though.  The ParserStagePlugin is available from 2.5.30 onwards.</li>
- *  <li>WikiPlugin: The regular kind of plugin which is executed at every rendering stage.  Each
+ *  <li>Plugin: The regular kind of plugin which is executed at every rendering stage.  Each
  *      new page load is guaranteed to invoke the plugin, unlike with the ParserStagePlugins.</li>
  *  </ul>
  *
@@ -321,11 +321,11 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
             return "";
         }
 
-        final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final ResourceBundle rb = Preferences.getBundle( context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
         final boolean debug = TextUtil.isPositive( params.get( PARAM_DEBUG ) );
         try {
             //   Create...
-            final WikiPlugin plugin = newWikiPlugin( classname, rb );
+            final Plugin plugin = newWikiPlugin( classname, rb );
             if( plugin == null ) {
                 return "Plugin '" + classname + "' not compatible with this version of JSPWiki";
             }
@@ -487,7 +487,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
             return "";
         }
 
-        final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final ResourceBundle rb = Preferences.getBundle( context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
         final PatternMatcher matcher = new Perl5Matcher();
 
         try {
@@ -617,7 +617,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
                 m_initialized = true;
 
                 try {
-                    final WikiPlugin p = newPluginInstance(searchPath, externalJars);
+                    final Plugin p = newPluginInstance(searchPath, externalJars);
                     if( p instanceof InitializablePlugin ) {
                         ( ( InitializablePlugin )p ).initialize( engine );
                     }
@@ -700,12 +700,12 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
          *  @throws IllegalAccessException If the class cannot be accessed.
          */
 
-        public WikiPlugin newPluginInstance( final List<String> searchPath, final List<String> externalJars) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        public Plugin newPluginInstance( final List<String> searchPath, final List<String> externalJars) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
             if( m_clazz == null ) {
                 m_clazz = ClassUtil.findClass(searchPath, externalJars ,m_className);
             }
 
-            return (WikiPlugin) m_clazz.newInstance();
+            return (Plugin) m_clazz.newInstance();
         }
 
         /**
@@ -797,16 +797,16 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
     }
 
     /**
-     * Creates a {@link WikiPlugin}.
+     * Creates a {@link Plugin}.
      *
      * @param pluginName plugin's classname
      * @param rb {@link ResourceBundle} with i18ned text for exceptions.
-     * @return a {@link WikiPlugin}.
-     * @throws PluginException if there is a problem building the {@link WikiPlugin}.
+     * @return a {@link Plugin}.
+     * @throws PluginException if there is a problem building the {@link Plugin}.
      */
     @Override
-    public WikiPlugin newWikiPlugin( final String pluginName, final ResourceBundle rb ) throws PluginException {
-        WikiPlugin plugin = null;
+    public Plugin newWikiPlugin( final String pluginName, final ResourceBundle rb ) throws PluginException {
+        Plugin plugin = null;
         WikiPluginInfo pluginInfo = m_pluginClassMap.get( pluginName );
         try {
             if( pluginInfo == null ) {

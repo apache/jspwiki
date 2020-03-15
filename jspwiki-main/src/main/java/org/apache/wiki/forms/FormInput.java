@@ -21,7 +21,7 @@ package org.apache.wiki.forms;
 
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.XHTML;
@@ -57,7 +57,7 @@ public class FormInput extends FormElement {
         final String inputType  = params.get( PARAM_TYPE );
         final String size       = params.get( PARAM_SIZE );
         final String checked    = params.get( PARAM_CHECKED );
-        final ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final ResourceBundle rb = Preferences.getBundle( ctx, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
         if ( inputName == null ) {
             throw new PluginException( rb.getString( "forminput.namemissing" ) );

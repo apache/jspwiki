@@ -23,7 +23,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.references.ReferenceManager;
@@ -67,10 +67,10 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
      *  {@inheritDoc}
      */
     @Override
-    public String execute( final Context context, final Map<String, String> params ) throws PluginException {
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         final ReferenceManager refmgr = context.getEngine().getManager( ReferenceManager.class );
         String pageName = params.get( PARAM_PAGE );
-        final ResourceBundle rb = Preferences.getBundle( context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final ResourceBundle rb = Preferences.getBundle( context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
 
         StringBuilder result = new StringBuilder( 256 );
 

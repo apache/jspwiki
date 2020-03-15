@@ -27,7 +27,6 @@ import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.StringTransmutator;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -443,7 +442,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
         }
 
         @Override
-        public String mutate( final WikiContext context, final String text ) {
+        public String mutate( final Context context, final String text ) {
             if( text.length() > m_length ) {
                 return text.substring( 0, m_length ) + "...";
             }

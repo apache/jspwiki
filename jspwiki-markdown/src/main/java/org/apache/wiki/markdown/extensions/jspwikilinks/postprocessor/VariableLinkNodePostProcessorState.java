@@ -24,6 +24,7 @@ import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.variables.VariableManager;
@@ -39,7 +40,7 @@ public class VariableLinkNodePostProcessorState implements NodePostProcessorStat
 
     public VariableLinkNodePostProcessorState( final WikiContext wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null && wysiwygVariable;
     }
 

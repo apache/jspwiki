@@ -26,7 +26,6 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.Plugin;
-import org.apache.wiki.api.plugin.WikiPlugin;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
@@ -91,7 +90,7 @@ public class WeblogEntryPlugin implements Plugin {
      */
     @Override
     public String execute( final Context context, final Map< String, String > params ) throws PluginException {
-        final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
+        final ResourceBundle rb = Preferences.getBundle(context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE);
         final Engine engine = context.getEngine();
 
         String weblogName = params.get(PARAM_BLOGNAME);

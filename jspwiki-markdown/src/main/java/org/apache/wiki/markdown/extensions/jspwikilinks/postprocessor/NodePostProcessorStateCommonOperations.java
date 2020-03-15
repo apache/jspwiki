@@ -23,6 +23,7 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
 
@@ -46,7 +47,7 @@ class NodePostProcessorStateCommonOperations {
     }
 
     static void addOutlinkImage( final NodeTracker state, final Node node, final WikiContext wikiContext, final boolean useOutlinkImage ) {
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         final boolean wysiwygEditorMode = wysiwygVariable != null && wysiwygVariable;
 
         if( useOutlinkImage && !wysiwygEditorMode ) {

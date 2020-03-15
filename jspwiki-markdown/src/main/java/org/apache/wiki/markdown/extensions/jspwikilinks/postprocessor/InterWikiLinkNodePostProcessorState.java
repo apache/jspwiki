@@ -25,6 +25,7 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.log4j.Logger;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
@@ -61,7 +62,7 @@ public class InterWikiLinkNodePostProcessorState implements NodePostProcessorSta
         this.inlineImagePatterns = inlineImagePatterns;
         this.document = document;
         this.m_useOutlinkImage = wikiContext.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 

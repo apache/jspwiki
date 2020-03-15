@@ -21,7 +21,7 @@ package org.apache.wiki.forms;
 
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
@@ -43,7 +43,7 @@ public class FormSelect extends FormElement {
     public String execute( final Context ctx, final Map< String, String > params ) throws PluginException {
         // Don't render if no error and error-only-rendering is on.
         final FormInfo info = getFormInfo( ctx );
-        final ResourceBundle rb = Preferences.getBundle( ctx, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+        final ResourceBundle rb = Preferences.getBundle( ctx, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
         Map< String, String > previousValues = null;
 
         if( info != null ) {

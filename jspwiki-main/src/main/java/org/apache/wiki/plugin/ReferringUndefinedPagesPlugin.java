@@ -20,7 +20,7 @@ package org.apache.wiki.plugin;
 
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.TextUtil;
@@ -47,8 +47,7 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
 
     @Override
     public String execute( final Context context, final Map<String, String> params) throws PluginException {
-        final ResourceBundle rb = Preferences.getBundle(context, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE);
-
+        final ResourceBundle rb = Preferences.getBundle(context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE);
         final ReferenceManager referenceManager = context.getEngine().getManager( ReferenceManager.class );
 
         final int items = TextUtil.parseIntParameter(params.get(PARAM_MAX), ALL_ITEMS);
@@ -57,39 +56,35 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
             extras = rb.getString("referringundefinedpagesplugin.more");
         }
 
-        final StringBuilder resultHTML = new StringBuilder();
-
-        final Collection<String> uncreatedPages = referenceManager.findUncreated();
-
-        super.initialize(context, params);
-
-        Collection<String> result = null;
+        final Collection< String > uncreatedPages = referenceManager.findUncreated();
+        super.initialize( context, params );
+        Collection< String > result = null;
 
         final TreeMap< String, String > sortedMap = new TreeMap<>();
-        if (uncreatedPages != null) {
-            for ( final String uncreatedPageName : uncreatedPages) {
-                final Collection<String> referrers = referenceManager.findReferrers(uncreatedPageName);
-                if (referrers != null) {
-                    for ( final String referringPage : referrers) {
-                        sortedMap.put(referringPage, "");
+        if( uncreatedPages != null ) {
+            for( final String uncreatedPageName : uncreatedPages ) {
+                final Collection< String > referrers = referenceManager.findReferrers( uncreatedPageName );
+                if( referrers != null ) {
+                    for( final String referringPage : referrers ) {
+                        sortedMap.put( referringPage, "" );
                     }
                 }
             }
             result = sortedMap.keySet();
         }
 
-        result = super.filterAndSortCollection(result);
+        result = super.filterAndSortCollection( result );
 
-        final String wikitext = wikitizeCollection(result, m_separator, items);
-
-        resultHTML.append(makeHTML(context, wikitext));
+        final String wikitext = wikitizeCollection( result, m_separator, items );
+        final StringBuilder resultHTML = new StringBuilder();
+        resultHTML.append( makeHTML( context, wikitext ) );
 
         // add the more.... text
-        if (items < result.size() && items > 0) {
-            final Object[] args = {"" + (result.size() - items)};
-            extras = MessageFormat.format(extras, args);
+        if( items < result.size() && items > 0 ) {
+            final Object[] args = { "" + ( result.size() - items ) };
+            extras = MessageFormat.format( extras, args );
 
-            resultHTML.append("<br/>" + extras + "<br/>");
+            resultHTML.append( "<br/>" + extras + "<br/>" );
         }
         return resultHTML.toString();
     }
