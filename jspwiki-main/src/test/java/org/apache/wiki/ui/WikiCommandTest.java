@@ -22,13 +22,14 @@
  */
 package org.apache.wiki.ui;
 
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.core.Command;
 import org.apache.wiki.auth.permissions.WikiPermission;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 public class WikiCommandTest
 {
@@ -38,7 +39,7 @@ public class WikiCommandTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         testEngine = new TestEngine( props );
         wiki = testEngine.getApplicationName();
     }

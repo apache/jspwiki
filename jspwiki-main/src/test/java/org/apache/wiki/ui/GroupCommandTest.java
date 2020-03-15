@@ -22,21 +22,22 @@
  */
 package org.apache.wiki.ui;
 
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.core.Command;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.permissions.GroupPermission;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Properties;
+
 public class GroupCommandTest
 {
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         new TestEngine( props );
     }
 
@@ -78,7 +79,7 @@ public class GroupCommandTest
     {
         // Get view command
         Command a = GroupCommand.VIEW_GROUP;
-        GroupPrincipal group = new GroupPrincipal( "Test" );
+        final GroupPrincipal group = new GroupPrincipal( "Test" );
 
         // Combine with wiki group; make sure it's not equal to old command
         Command b = a.targetedCommand( group );

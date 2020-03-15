@@ -19,6 +19,7 @@
 package org.apache.wiki.ui;
 
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.exceptions.ProviderException;
 
 import javax.servlet.http.HttpServletRequest;

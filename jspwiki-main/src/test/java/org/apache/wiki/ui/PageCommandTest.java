@@ -24,6 +24,7 @@ package org.apache.wiki.ui;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Command;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.Assertions;

@@ -20,8 +20,8 @@ package org.apache.wiki.url;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.util.TextUtil;
 

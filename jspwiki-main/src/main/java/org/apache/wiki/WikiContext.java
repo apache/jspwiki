@@ -19,6 +19,7 @@
 package org.apache.wiki;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -30,7 +31,6 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.ui.Command;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.ui.GroupCommand;
 import org.apache.wiki.ui.Installer;
@@ -73,17 +73,6 @@ public class WikiContext implements Context, Command {
     protected HttpServletRequest m_request;
 
     private Session m_session;
-
-    public static final String ATTR_CONTEXT = "jspwiki.context";
-
-    /**
-     *  Variable name which tells whether plugins should be executed or not. Value can be either {@code Boolean.TRUE} or
-     *  {@code Boolean.FALSE}. While not set it's value is {@code null}.
-     */
-    public static final String VAR_EXECUTE_PLUGINS = "_PluginContent.execute";
-
-    /** Name of the variable which is set to Boolean.TRUE or Boolean.FALSE depending on whether WYSIWYG is currently in effect. */
-    public static final String VAR_WYSIWYG_EDITOR_MODE = "WYSIWYG_EDITOR_MODE";
 
     /** User is administering JSPWiki (Install, SecurityConfig). */
     public static final String INSTALL = WikiCommand.INSTALL.getRequestContext();
@@ -172,13 +161,12 @@ public class WikiContext implements Context, Command {
     private static final Permission DUMMY_PERMISSION = new PropertyPermission( "os.name", "read" );
 
     /**
-     *  Create a new WikiContext for the given WikiPage. Delegates to {@link #WikiContext(Engine, HttpServletRequest, WikiPage)}.
+     *  Create a new WikiContext for the given WikiPage. Delegates to {@link #WikiContext(Engine, HttpServletRequest, Page)}.
      *
      *  @param engine The Engine that is handling the request.
      *  @param page The WikiPage. If you want to create a WikiContext for an older version of a page, you must use this constructor.
      */
-    public WikiContext( final Engine engine, final WikiPage page )
-    {
+    public WikiContext( final Engine engine, final Page page ) {
         this( engine, null, findCommand( engine, null, page ) );
     }
 
@@ -240,14 +228,14 @@ public class WikiContext implements Context, Command {
 
     /**
      * Creates a new WikiContext for the given Engine, WikiPage and HttpServletRequest. This method simply looks up the appropriate
-     * Command using {@link #findCommand(Engine, HttpServletRequest, WikiPage)} and delegates to
+     * Command using {@link #findCommand(Engine, HttpServletRequest, Page)} and delegates to
      * {@link #WikiContext(Engine, HttpServletRequest, Command)}.
      *
      * @param engine The Engine that is handling the request
      * @param request The HttpServletRequest that should be associated with this context. This parameter may be <code>null</code>.
      * @param page The WikiPage. If you want to create a WikiContext for an older version of a page, you must supply this parameter
      */
-    public WikiContext( final Engine engine, final HttpServletRequest request, final WikiPage page ) {
+    public WikiContext( final Engine engine, final HttpServletRequest request, final Page page ) {
         this( engine, request, findCommand( engine, request, page ) );
     }
 
@@ -260,7 +248,7 @@ public class WikiContext implements Context, Command {
      *  @return a new WikiContext object.
      *
      *  @see org.apache.wiki.ui.CommandResolver
-     *  @see org.apache.wiki.ui.Command
+     *  @see org.apache.wiki.api.core.Command
      *  @since 2.1.15.
      */
     public WikiContext( final Engine engine, final HttpServletRequest request, final String requestContext ) {
@@ -272,7 +260,7 @@ public class WikiContext implements Context, Command {
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.ui.Command#getContentTemplate()
+     * @see org.apache.wiki.api.core.Command#getContentTemplate()
      */
     @Override
     public String getContentTemplate()
@@ -282,7 +270,7 @@ public class WikiContext implements Context, Command {
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.ui.Command#getJSP()
+     * @see org.apache.wiki.api.core.Command#getJSP()
      */
     @Override
     public String getJSP()
@@ -411,7 +399,7 @@ public class WikiContext implements Context, Command {
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.ui.Command#getTarget()
+     * @see org.apache.wiki.api.core.Command#getTarget()
      */
     @Override
     public Object getTarget()
@@ -421,7 +409,7 @@ public class WikiContext implements Context, Command {
 
     /**
      * {@inheritDoc}
-     * @see org.apache.wiki.ui.Command#getURLPattern()
+     * @see org.apache.wiki.api.core.Command#getURLPattern()
      */
     @Override
     public String getURLPattern()
@@ -436,9 +424,9 @@ public class WikiContext implements Context, Command {
      *  @return The variable contents.
      */
     @Override
-    public Object getVariable( final String key )
-    {
-        return m_variableMap.get( key );
+    @SuppressWarnings( "unchecked" )
+    public < T > T getVariable( final String key ) {
+        return ( T )m_variableMap.get( key );
     }
 
     /**
@@ -518,7 +506,7 @@ public class WikiContext implements Context, Command {
 
     /**
      * Returns the target of this wiki context: a page, group name or JSP. If the associated Command is a PageCommand, this method
-     * returns the page's name. Otherwise, this method delegates to the associated Command's {@link org.apache.wiki.ui.Command#getName()}
+     * returns the page's name. Otherwise, this method delegates to the associated Command's {@link org.apache.wiki.api.core.Command#getName()}
      * method. Calling classes can rely on the results of this method for looking up canonically-correct page or group names. Because it
      * does not automatically assume that the wiki context is a PageCommand, calling this method is inherently safer than calling
      * {@code getPage().getName()}.
@@ -732,7 +720,7 @@ public class WikiContext implements Context, Command {
      * Associates a target with the current Command and returns the new targeted Command. If the Command associated with this
      * WikiContext is already "targeted", it is returned instead.
      *
-     * @see org.apache.wiki.ui.Command#targetedCommand(java.lang.Object)
+     * @see org.apache.wiki.api.core.Command#targetedCommand(java.lang.Object)
      *
      * {@inheritDoc}
      */
@@ -800,7 +788,7 @@ public class WikiContext implements Context, Command {
      * @param page the wiki page
      * @return the correct command
      */
-    protected static Command findCommand( final Engine engine, final HttpServletRequest request, final WikiPage page ) {
+    protected static Command findCommand( final Engine engine, final HttpServletRequest request, final Page page ) {
         final String defaultContext = PageCommand.VIEW.getRequestContext();
         Command command = engine.getManager( CommandResolver.class ).findCommand( request, defaultContext );
         if ( command instanceof PageCommand && page != null ) {

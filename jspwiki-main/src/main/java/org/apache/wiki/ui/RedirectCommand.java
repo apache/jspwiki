@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.ui;
 
+import org.apache.wiki.api.core.Command;
+
 import java.security.Permission;
 
 /**
@@ -63,7 +65,7 @@ public final class RedirectCommand extends AbstractCommand {
     }
     
     /**
-     * @see org.apache.wiki.ui.Command#getName()
+     * @see org.apache.wiki.api.core.Command#getName()
      */
     public String getName() {
         final Object target = getTarget();
@@ -76,7 +78,7 @@ public final class RedirectCommand extends AbstractCommand {
     /**
      * No-op; always returns <code>null</code>.
      *
-     * @see org.apache.wiki.ui.Command#requiredPermission()
+     * @see org.apache.wiki.api.core.Command#requiredPermission()
      */
     public Permission requiredPermission() {
         return null;

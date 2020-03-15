@@ -18,6 +18,8 @@
  */
 package org.apache.wiki;
 
+import org.apache.wiki.api.core.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +42,7 @@ public class LinkCollector implements StringTransmutator {
     /**
      * {@inheritDoc}
      */
-    public String mutate( final WikiContext context, final String in ) {
+    public String mutate( final Context context, final String in ) {
         m_items.add( in );
         return in;
     }

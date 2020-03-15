@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.ui;
 
+import org.apache.wiki.api.core.Command;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
 
@@ -123,14 +124,14 @@ public final class WikiCommand extends AbstractCommand {
     /**
      * Always returns the "friendly" JSP name.
      *
-     * @see org.apache.wiki.ui.Command#getName()
+     * @see org.apache.wiki.api.core.Command#getName()
      */
     @Override public String getName() {
         return getJSPFriendlyName();
     }
 
     /**
-     * @see org.apache.wiki.ui.Command#requiredPermission()
+     * @see org.apache.wiki.api.core.Command#requiredPermission()
      */
     @Override public Permission requiredPermission() {
         return m_permission;

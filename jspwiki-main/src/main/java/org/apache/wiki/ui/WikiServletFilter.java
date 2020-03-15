@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -159,7 +160,7 @@ public class WikiServletFilter implements Filter {
      */
     protected WikiContext getWikiContext( final ServletRequest request ) {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
-        return ( WikiContext )httpRequest.getAttribute( WikiContext.ATTR_CONTEXT );
+        return ( WikiContext )httpRequest.getAttribute( Context.ATTR_CONTEXT );
     }
 
     /** 

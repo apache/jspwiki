@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.ui;
 
+import org.apache.wiki.api.core.Command;
 import org.apache.wiki.util.TextUtil;
 
 

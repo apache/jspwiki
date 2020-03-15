@@ -22,6 +22,7 @@
  */
 package org.apache.wiki.ui;
 
+import org.apache.wiki.api.core.Command;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +33,7 @@ public class RedirectCommandTest
     @Test
     public void testStaticCommand()
     {
-        Command a = RedirectCommand.REDIRECT;
+        final Command a = RedirectCommand.REDIRECT;
         Assertions.assertEquals( "", a.getRequestContext() );
         Assertions.assertEquals( "", a.getJSP() );
         Assertions.assertEquals( "%u%n", a.getURLPattern() );
@@ -44,7 +45,7 @@ public class RedirectCommandTest
     @Test
     public void testTargetedCommand()
     {
-        Command a = RedirectCommand.REDIRECT;
+        final Command a = RedirectCommand.REDIRECT;
 
         // Test with local JSP
         Command b = a.targetedCommand( "%uTestPage.jsp" );
