@@ -21,7 +21,6 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -37,12 +36,12 @@ import org.apache.wiki.render.RenderingManager;
 public class AccessRuleLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
     private static final Logger LOG = Logger.getLogger( AccessRuleLinkNodePostProcessorState.class );
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final boolean m_wysiwygEditorMode;
 
-    public AccessRuleLinkNodePostProcessorState( final WikiContext wikiContext ) {
+    public AccessRuleLinkNodePostProcessorState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 
@@ -55,7 +54,7 @@ public class AccessRuleLinkNodePostProcessorState implements NodePostProcessorSt
     public void process( final NodeTracker state, final JSPWikiLink link ) {
         String ruleLine = NodePostProcessorStateCommonOperations.inlineLinkTextOnWysiwyg( state, link, m_wysiwygEditorMode );
         if( wikiContext.getEngine().getManager( RenderingManager.class ).getParser( wikiContext, link.getUrl().toString() ).isParseAccessRules() ) {
-            final WikiPage page = wikiContext.getRealPage();
+            final WikiPage page = ( WikiPage )wikiContext.getRealPage();
             if( ruleLine.startsWith( "{" ) ) {
                 ruleLine = ruleLine.substring( 1 );
             }

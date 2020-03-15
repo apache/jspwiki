@@ -19,184 +19,155 @@
 package org.apache.wiki.htmltowiki;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
+
 
 /**
- *  Defines a Wiki configuration to XHtmlToWikiTranslator, including things like
- *  URLs.
- *
+ * Defines a Wiki configuration to XHtmlToWikiTranslator, including things like URLs.
  */
-public class XHtmlToWikiConfig
-{
+public class XHtmlToWikiConfig {
+
     private String m_outlink = "outlink";
-
     private String m_pageInfoJsp = "PageInfo.jsp";
-
     private String m_wikiJspPage = "Wiki.jsp?page=";
-
     private String m_editJspPage = "Edit.jsp?page=";
-
     private String m_attachPage = "attach?page=";
-
     private String m_pageName;
 
     /**
      *  Creates a new, empty config object.
      */
-    public XHtmlToWikiConfig()
-    {}
+    public XHtmlToWikiConfig() {
+    }
 
     /**
-     *  The constructor initializes the different internal fields
-     *  according to the current URLConstructor.
+     * The constructor initializes the different internal fields according to the current URLConstructor.
      *
      * @param wikiContext A WikiContext
      */
-    public XHtmlToWikiConfig( WikiContext wikiContext )
-    {
+    public XHtmlToWikiConfig( final Context wikiContext ) {
         setWikiContext( wikiContext );
 
-        //
         //  Figure out the actual URLs.
-        //
-        //  NB: The logic here will fail if you add something else after
-        //      the Wiki page name in VIEW or ATTACH
-        //
-
+        //  NB: The logic here will fail if you add something else after the Wiki page name in VIEW or ATTACH
         m_wikiJspPage = wikiContext.getURL( WikiContext.VIEW, "" );
-
         m_editJspPage = wikiContext.getURL( WikiContext.EDIT, "" );
-
         m_attachPage = wikiContext.getURL( WikiContext.ATTACH, "" );
-
         m_pageInfoJsp = wikiContext.getURL( WikiContext.INFO, "" );
     }
 
-    private void setWikiContext( WikiContext wikiContext )
-    {
-        if( wikiContext.getPage() != null )
-        {
+    private void setWikiContext( final Context wikiContext ) {
+        if( wikiContext.getPage() != null ) {
             setPageName( wikiContext.getPage().getName() + '/' );
         }
     }
 
     /**
-     *  Return the URL for the attachments.
-     *  
-     *  @return URL for attachments.
+     * Return the URL for the attachments.
+     *
+     * @return URL for attachments.
      */
-    public String getAttachPage()
-    {
+    public String getAttachPage() {
         return m_attachPage;
     }
 
     /**
-     *  Set the URL for attachments.
-     *  
-     *  @param attachPage The attachment URL.
+     * Set the URL for attachments.
+     *
+     * @param attachPage The attachment URL.
      */
-    public void setAttachPage( String attachPage )
-    {
+    public void setAttachPage( final String attachPage ) {
         m_attachPage = attachPage;
     }
 
     /**
-     *  Gets the URL of the outlink image.
-     *  
-     *  @return The URL of the outlink image.
+     * Gets the URL of the outlink image.
+     *
+     * @return The URL of the outlink image.
      */
-    public String getOutlink()
-    {
+    public String getOutlink() {
         return m_outlink;
     }
 
     /**
-     *  Set the outlink URL.
-     *  
-     *  @param outlink The outlink URL.
+     * Set the outlink URL.
+     *
+     * @param outlink The outlink URL.
      */
-    public void setOutlink( String outlink )
-    {
+    public void setOutlink( final String outlink ) {
         m_outlink = outlink;
     }
 
     /**
-     *  Get the PageInfo.jsp URI.
-     *  
-     *  @return The URI for the page info display.
+     * Get the PageInfo.jsp URI.
+     *
+     * @return The URI for the page info display.
      */
-    public String getPageInfoJsp()
-    {
+    public String getPageInfoJsp() {
         return m_pageInfoJsp;
     }
 
     /**
-     *  Set the URI for the page info display.
-     *  
-     *  @param pageInfoJsp URI for the page info.
+     * Set the URI for the page info display.
+     *
+     * @param pageInfoJsp URI for the page info.
      */
-    public void setPageInfoJsp( String pageInfoJsp )
-    {
+    public void setPageInfoJsp( final String pageInfoJsp ) {
         m_pageInfoJsp = pageInfoJsp;
     }
 
     /**
-     *  Get the page name.
-     *  
-     *  @return The Page Name.
+     * Get the page name.
+     *
+     * @return The Page Name.
      */
-    public String getPageName()
-    {
+    public String getPageName() {
         return m_pageName;
     }
 
-    
     /**
-     *  Set the page name.
-     *  
-     *  @param pageName The name of the page.
+     * Set the page name.
+     *
+     * @param pageName The name of the page.
      */
-    public void setPageName( String pageName )
-    {
+    public void setPageName( final String pageName ) {
         m_pageName = pageName;
     }
 
     /**
-     *  Get the URI to the Wiki.jsp view.
-     *  
-     *  @return The URI to the Wiki.jsp.
+     * Get the URI to the Wiki.jsp view.
+     *
+     * @return The URI to the Wiki.jsp.
      */
-    public String getWikiJspPage()
-    {
+    public String getWikiJspPage() {
         return m_wikiJspPage;
     }
 
     /**
-     *  Set the URI to the Wiki.jsp.
-     *  
-     *  @param wikiJspPage The URI to the Wiki.jsp.
+     * Set the URI to the Wiki.jsp.
+     *
+     * @param wikiJspPage The URI to the Wiki.jsp.
      */
-    public void setWikiJspPage( String wikiJspPage )
-    {
+    public void setWikiJspPage( final String wikiJspPage ) {
         m_wikiJspPage = wikiJspPage;
     }
 
     /**
-     *  Return the URI to the Edit.jsp page.
-     *  
-     *  @return The URI to the Edit.jsp page.
+     * Return the URI to the Edit.jsp page.
+     *
+     * @return The URI to the Edit.jsp page.
      */
-    public String getEditJspPage()
-    {
+    public String getEditJspPage() {
         return m_editJspPage;
     }
 
     /**
-     *  Set the URI to the Edit.jsp page.
-     *  
-     *  @param editJspPage The Edit.jsp URI.
+     * Set the URI to the Edit.jsp page.
+     *
+     * @param editJspPage The Edit.jsp URI.
      */
-    public void setEditJspPage( String editJspPage )
-    {
+    public void setEditJspPage( final String editJspPage ) {
         m_editJspPage = editJspPage;
     }
+
 }

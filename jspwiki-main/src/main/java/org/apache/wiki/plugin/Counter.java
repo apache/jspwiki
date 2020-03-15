@@ -69,7 +69,7 @@ public class Counter implements Plugin {
         }
 
         //  Fetch the old value
-        Integer val = (Integer)context.getVariable( countername );
+        Integer val = context.getVariable( countername );
         if( val == null ) {
             val = 0;
         }

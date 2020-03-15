@@ -24,7 +24,6 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
@@ -42,12 +41,12 @@ import java.util.ResourceBundle;
 public class PluginLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
     private static final Logger LOG = Logger.getLogger( PluginLinkNodePostProcessorState.class );
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final boolean m_wysiwygEditorMode;
 
-    public PluginLinkNodePostProcessorState( final WikiContext wikiContext ) {
+    public PluginLinkNodePostProcessorState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 

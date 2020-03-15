@@ -22,7 +22,6 @@ import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.html.Attributes;
 import org.apache.oro.text.regex.Pattern;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
@@ -39,12 +38,12 @@ public class InterWikiLinkAttributeProviderState implements NodeAttributeProvide
 
     private final boolean hasRef;
     private final boolean m_wysiwygEditorMode;
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final LinkParsingOperations linkOperations;
     private final boolean isImageInlining;
     private final List< Pattern > inlineImagePatterns;
 
-    public InterWikiLinkAttributeProviderState( final WikiContext wikiContext,
+    public InterWikiLinkAttributeProviderState( final Context wikiContext,
                                                 final boolean hasRef,
                                                 final boolean isImageInlining,
                                                 final List< Pattern > inlineImagePatterns ) {
@@ -53,7 +52,7 @@ public class InterWikiLinkAttributeProviderState implements NodeAttributeProvide
         this.linkOperations = new LinkParsingOperations( wikiContext );
         this.isImageInlining = isImageInlining;
         this.inlineImagePatterns = inlineImagePatterns;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 

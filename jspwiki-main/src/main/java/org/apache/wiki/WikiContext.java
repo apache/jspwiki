@@ -452,9 +452,9 @@ public class WikiContext implements Context, Command {
      */
     @Override
     public boolean getBooleanWikiProperty( final String key, final boolean defValue ) {
-        final Object bool = getVariable( key );
+        final String bool = getVariable( key );
         if( bool != null ) {
-            return TextUtil.isPositive( (String) bool );
+            return TextUtil.isPositive( bool );
         }
 
         return TextUtil.getBooleanProperty( getEngine().getWikiProperties(), key, defValue );

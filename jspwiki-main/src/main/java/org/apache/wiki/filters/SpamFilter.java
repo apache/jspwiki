@@ -317,7 +317,7 @@ public class SpamFilter extends BasePageFilter {
         }
 
         if( !m_stopAtFirstMatch ) {
-            final Integer score = ( Integer )context.getVariable( ATTR_SPAMFILTER_SCORE );
+            final Integer score = context.getVariable( ATTR_SPAMFILTER_SCORE );
 
             if( score != null && score.intValue() >= m_scoreLimit ) {
                 throw new RedirectException( "Herb says you got too many points", getRedirectPage( context ) );
@@ -350,7 +350,7 @@ public class SpamFilter extends BasePageFilter {
             throw new RedirectException( message, getRedirectPage( context ) );
         }
 
-        Integer score = ( Integer )context.getVariable( ATTR_SPAMFILTER_SCORE );
+        Integer score = context.getVariable( ATTR_SPAMFILTER_SCORE );
         if( score != null ) {
             score = score + 1;
         } else {

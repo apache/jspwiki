@@ -19,7 +19,6 @@
 package org.apache.wiki.ui;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.ModuleManager;
@@ -257,7 +256,7 @@ public interface TemplateManager extends ModuleManager {
      *  @param type the marker
      *  @return the generated marker comment
      */
-    static String getMarker( final WikiContext context, final String type ) {
+    static String getMarker( final Context context, final String type ) {
         if( type.equals( RESOURCE_JSLOCALIZEDSTRINGS ) ) {
             return getJSLocalizedStrings( context );
         } else if( type.equals( RESOURCE_JSFUNCTION ) ) {
@@ -269,11 +268,11 @@ public interface TemplateManager extends ModuleManager {
     /**
      *  Extract all i18n strings in the javascript domain. (javascript.*) Returns a javascript snippet which defines the LocalizedStings array.
      *
-     *  @param context the {@link WikiContext}
+     *  @param context the {@link Context}
      *  @return Javascript snippet which defines the LocalizedStrings array
      *  @since 2.5.108
      */
-    static String getJSLocalizedStrings( final WikiContext context ) {
+    static String getJSLocalizedStrings( final Context context ) {
         final StringBuilder sb = new StringBuilder();
         sb.append( "var LocalizedStrings = {\n");
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.DEF_TEMPLATE );
@@ -315,9 +314,8 @@ public interface TemplateManager extends ModuleManager {
      *  @param type What kind of a request should be added?
      *  @param resource The resource to add.
      */
-    @SuppressWarnings("unchecked")
-    static void addResourceRequest( final WikiContext ctx, final String type, final String resource ) {
-        HashMap< String, Vector< String > > resourcemap = ( HashMap< String, Vector< String > > ) ctx.getVariable( RESOURCE_INCLUDES );
+    static void addResourceRequest( final Context ctx, final String type, final String resource ) {
+        HashMap< String, Vector< String > > resourcemap = ctx.getVariable( RESOURCE_INCLUDES );
         if( resourcemap == null ) {
             resourcemap = new HashMap<>();
         }
@@ -361,9 +359,8 @@ public interface TemplateManager extends ModuleManager {
      *  @param type The resource request type
      *  @return a String array for the resource requests
      */
-    @SuppressWarnings("unchecked")
-    static String[] getResourceRequests( final WikiContext ctx, final String type ) {
-        final HashMap< String, Vector< String > > hm = ( HashMap< String, Vector< String > > ) ctx.getVariable( RESOURCE_INCLUDES );
+    static String[] getResourceRequests( final Context ctx, final String type ) {
+        final HashMap< String, Vector< String > > hm = ctx.getVariable( RESOURCE_INCLUDES );
         if( hm == null ) {
             return new String[0];
         }
@@ -383,11 +380,10 @@ public interface TemplateManager extends ModuleManager {
      * @param ctx the wiki context
      * @return the array of types requested
      */
-    @SuppressWarnings("unchecked")
-    static String[] getResourceTypes( final WikiContext ctx ) {
+    static String[] getResourceTypes( final Context ctx ) {
         String[] res = new String[0];
         if( ctx != null ) {
-            final HashMap< String, String > hm = ( HashMap< String, String > ) ctx.getVariable( RESOURCE_INCLUDES );
+            final HashMap< String, String > hm = ctx.getVariable( RESOURCE_INCLUDES );
             if( hm != null ) {
                 final Set< String > keys = hm.keySet();
                 res = keys.toArray( res );

@@ -68,7 +68,7 @@ public class VariableContent extends Text {
             return "No WikiContext available: INTERNAL ERROR";
         }
     
-        final Boolean wysiwygEditorMode = context.getVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygEditorMode = context.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         if( wysiwygEditorMode != null && wysiwygEditorMode ) {
             result = "[" + m_varName + "]";
         } else {

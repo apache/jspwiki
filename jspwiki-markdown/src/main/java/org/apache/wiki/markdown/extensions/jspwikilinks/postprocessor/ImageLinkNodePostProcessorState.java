@@ -22,7 +22,7 @@ import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 
@@ -36,7 +36,7 @@ public class ImageLinkNodePostProcessorState implements NodePostProcessorState< 
     private final String urlRef;
     private final LinkParsingOperations linkOperations;
 
-    public ImageLinkNodePostProcessorState( final WikiContext wikiContext, final String urlRef, final boolean isLinkFromText ) {
+    public ImageLinkNodePostProcessorState( final Context wikiContext, final String urlRef, final boolean isLinkFromText ) {
         this.isLinkFromText = isLinkFromText;
         this.urlRef = urlRef;
         this.linkOperations = new LinkParsingOperations( wikiContext );

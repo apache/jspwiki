@@ -20,7 +20,6 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.html.Attributes;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
@@ -33,12 +32,12 @@ import org.apache.wiki.render.WikiRenderer;
  */
 public class WysiwygEditingAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final boolean m_wysiwygEditorMode;
 
-    public WysiwygEditingAttributeProviderState( final WikiContext wikiContext ) {
+    public WysiwygEditingAttributeProviderState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
+        final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 

@@ -19,12 +19,12 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.Attributes;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
-
-import com.vladsch.flexmark.util.html.Attributes;
 
 
 /**
@@ -34,10 +34,10 @@ public class ImageLinkAttributeProviderState implements NodeAttributeProviderSta
 
     private final boolean isLinkFromText;
     private final LinkParsingOperations linkOperations;
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final String urlRef;
 
-    public ImageLinkAttributeProviderState( final WikiContext wikiContext, final String urlRef, final boolean isLinkFromText ) {
+    public ImageLinkAttributeProviderState( final Context wikiContext, final String urlRef, final boolean isLinkFromText ) {
         this.isLinkFromText = isLinkFromText;
         this.urlRef = urlRef;
         this.wikiContext = wikiContext;
