@@ -37,7 +37,10 @@ import java.util.List;
  *  The difference between this class and WikiPageProvider is that there PageProviders handle Unicode text, whereas we handle binary data.
  *  While there are quite a lot of similarities in how we handle things, many providers can really use just one.  In addition,
  *  since binary files can be really large, we rely on Input/OutputStreams.
+ * @deprecated use {@link org.apache.wiki.api.providers.AttachmentProvider} instead
+ * @see org.apache.wiki.api.providers.AttachmentProvider
  */
+@Deprecated
 public interface WikiAttachmentProvider extends WikiProvider {
 
     /**

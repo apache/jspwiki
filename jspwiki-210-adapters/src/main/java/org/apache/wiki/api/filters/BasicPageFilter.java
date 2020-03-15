@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.api.filters;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.core.Context;
@@ -33,11 +34,18 @@ import static org.apache.wiki.api.filters.FilterSupportOperations.methodOfNonPub
 
 /**
  * Hooks all filters not using the public api into it.
+ *
+ * @deprecated use {@link BasePageFilter} instead
+ * @see BasePageFilter
  */
+@Deprecated
 public class BasicPageFilter extends BasePageFilter {
 
     public void initialize( final WikiEngine engine, final Properties properties ) throws FilterException {
         this.m_engine = engine;
+        Logger.getLogger( BasicPageFilter.class ).warn( this.getClass().getName() + " implements deprecated org.apache.wiki.api.filters.BasicPageFilter" );
+        Logger.getLogger( BasicPageFilter.class ).warn( "Please contact the filter's author so there can be a new release of the filter " +
+                                                        "extending the new org.apache.wiki.api.filters.BasePageFilter class" );
     }
 
     public String preTranslate( final WikiContext wikiContext, final String content ) throws FilterException {

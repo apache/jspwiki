@@ -38,7 +38,10 @@ import java.util.List;
  *  instead of name/version.  We will perhaps modify these in the future.  In the mean time, name/version is quite sufficient.
  *  <P>
  *  FIXME: In reality we should have an AbstractWikiPageProvider, which would provide intelligent backups for subclasses.
+ * @deprecated use {@link org.apache.wiki.api.providers.PageProvider} instead
+ * @see org.apache.wiki.api.providers.PageProvider
  */
+@Deprecated
 public interface WikiPageProvider extends WikiProvider {
 
     /**
