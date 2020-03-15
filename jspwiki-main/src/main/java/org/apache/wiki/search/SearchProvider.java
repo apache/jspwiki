@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.search;
 
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.WikiProvider;
 
@@ -34,22 +34,23 @@ import java.util.Collection;
 public interface SearchProvider extends WikiProvider {
 
     /**
-     * Delete a page from the search index
-     * @param page Page to remove from search index
+     * Delete a page from the search index.
+     *
+     * @param page Page to remove from search index.
      */
-    void pageRemoved( WikiPage page );
+    void pageRemoved( Page page );
 
     /**
-     *  Adds a WikiPage for indexing queue. This is called a queue, since
-     *  this method is expected to return pretty quickly, and indexing to
-     *  be done in a separate thread.
+     * Adds a WikiPage for indexing queue. This is called a queue, since this method is expected to return pretty quickly, and indexing to
+     * be done in a separate thread.
      *
      *  @param page The WikiPage to be indexed.
      */
-    void reindexPage( WikiPage page );
+    void reindexPage( Page page );
 
     /**
-     * Search for pages matching a search query
+     * Search for pages matching a search query.
+     *
      * @param query query to search for
      * @param wikiContext the context within which to run the search
      * @return collection of pages that match query

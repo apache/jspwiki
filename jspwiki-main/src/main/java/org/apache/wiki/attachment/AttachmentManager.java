@@ -21,12 +21,13 @@ package org.apache.wiki.attachment;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.WikiProvider;
-import org.apache.wiki.providers.WikiAttachmentProvider;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -141,7 +142,7 @@ public interface AttachmentManager {
      *  @return a valid collection of attachments.
      *  @throws ProviderException If there was something wrong in the backend.
      */
-    List< Attachment > listAttachments( WikiPage wikipage ) throws ProviderException;
+    List< Attachment > listAttachments( Page wikipage ) throws ProviderException;
 
     /**
      *  Returns true, if the page has any attachments at all.  This is a convenience method.
@@ -149,7 +150,7 @@ public interface AttachmentManager {
      *  @param wikipage The wiki page from which you are seeking attachments for.
      *  @return True, if the page has attachments, else false.
      */
-    default boolean hasAttachments( final WikiPage wikipage ) {
+    default boolean hasAttachments( final Page wikipage ) {
         try {
             return listAttachments( wikipage ).size() > 0;
         } catch( final Exception e ) {
@@ -261,7 +262,7 @@ public interface AttachmentManager {
      *
      *  @return The current provider.  May be null, if attachments are disabled.
      */
-    WikiAttachmentProvider getCurrentProvider();
+    AttachmentProvider getCurrentProvider();
 
     /**
      *  Deletes the given attachment version.

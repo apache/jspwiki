@@ -24,14 +24,15 @@ import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
-import org.apache.wiki.providers.WikiAttachmentProvider;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.util.ClassUtil;
@@ -60,7 +61,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
     private String[] m_forceDownloadPatterns;
 
     private static final Logger log = Logger.getLogger( DefaultAttachmentManager.class );
-    private WikiAttachmentProvider m_provider;
+    private AttachmentProvider m_provider;
     private Engine m_engine;
     private CacheManager m_cacheManager = CacheManager.getInstance();
     private Cache m_dynamicAttachments;
@@ -106,7 +107,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
 
             final Class< ? > providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname );
 
-            m_provider = ( WikiAttachmentProvider )providerclass.newInstance();
+            m_provider = ( AttachmentProvider )providerclass.newInstance();
             m_provider.initialize( m_engine, props );
         } catch( final ClassNotFoundException e ) {
             log.error( "Attachment provider class not found",e);
@@ -207,7 +208,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
 
     /** {@inheritDoc} */
     @Override
-    public List< Attachment > listAttachments( final WikiPage wikipage ) throws ProviderException {
+    public List< Attachment > listAttachments( final Page wikipage ) throws ProviderException {
         if( m_provider == null ) {
             return new ArrayList<>();
         }
@@ -320,7 +321,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
 
     /** {@inheritDoc} */
     @Override
-    public WikiAttachmentProvider getCurrentProvider() {
+    public AttachmentProvider getCurrentProvider() {
         return m_provider;
     }
 

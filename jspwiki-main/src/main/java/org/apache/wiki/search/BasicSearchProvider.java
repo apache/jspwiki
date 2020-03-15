@@ -20,11 +20,12 @@ package org.apache.wiki.search;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -61,13 +62,13 @@ public class BasicSearchProvider implements SearchProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void pageRemoved( final WikiPage page ) {}
+    public void pageRemoved( final Page page ) {}
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public void reindexPage( final WikiPage page ) {}
+    public void reindexPage( final Page page ) {}
 
     /**
      *  Parses a query into something that we can use.
@@ -114,7 +115,7 @@ public class BasicSearchProvider implements SearchProvider {
         return items;
     }
 
-    private String attachmentNames( final WikiPage page ) {
+    private String attachmentNames( final Page page ) {
         if( m_engine.getManager( AttachmentManager.class ).hasAttachments( page ) ) {
             final List< Attachment > attachments;
             try {

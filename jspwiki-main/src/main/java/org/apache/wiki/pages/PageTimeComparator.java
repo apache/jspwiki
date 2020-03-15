@@ -19,7 +19,7 @@
 package org.apache.wiki.pages;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
 
 import java.io.Serializable;
 import java.util.Comparator;
@@ -30,37 +30,35 @@ import java.util.Date;
  *  <p>
  *  If the lastModified date is the same, then the next key is the page name. If the page name is also equal, then returns 0 for equality.
  */
-public class PageTimeComparator implements Comparator< WikiPage >, Serializable {
+public class PageTimeComparator implements Comparator< Page >, Serializable {
 	
     private static final long serialVersionUID = 0L;
-
-    private static final Logger log = Logger.getLogger( PageTimeComparator.class ); 
+    private static final Logger log = Logger.getLogger( PageTimeComparator.class );
 
     /**
      *  {@inheritDoc}
      */
-    public int compare( final WikiPage w1, final WikiPage w2 ) {
-        if( w1 == null || w2 == null ) {
+    public int compare( final Page p1, final Page p2 ) {
+        if( p1 == null || p2 == null ) {
             log.error( "W1 or W2 is NULL in PageTimeComparator!");
             return 0; // FIXME: Is this correct?
         }
 
-        final Date w1LastMod = w1.getLastModified();
-        final Date w2LastMod = w2.getLastModified();
+        final Date w1LastMod = p1.getLastModified();
+        final Date w2LastMod = p2.getLastModified();
 
         if( w1LastMod == null ) {
-            log.error( "NULL MODIFY DATE WITH " + w1.getName() );
+            log.error( "NULL MODIFY DATE WITH " + p1.getName() );
             return 0;
         } else if( w2LastMod == null ) {
-            log.error( "NULL MODIFY DATE WITH " + w2.getName() );
+            log.error( "NULL MODIFY DATE WITH " + p2.getName() );
             return 0;
         }
 
         // This gets most recent on top
         final int timecomparison = w2LastMod.compareTo( w1LastMod );
-
         if( timecomparison == 0 ) {
-            return w1.compareTo( w2 );
+            return p1.compareTo( p2 );
         }
 
         return timecomparison;

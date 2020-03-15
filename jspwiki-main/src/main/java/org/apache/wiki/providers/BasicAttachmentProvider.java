@@ -20,14 +20,15 @@ package org.apache.wiki.providers;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.WikiProvider;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.search.QueryItem;
 import org.apache.wiki.pages.PageTimeComparator;
-import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -77,7 +78,7 @@ import java.util.regex.Pattern;
  *   <LI>1.author = author name for version 1 (etc)
  *  </UL>
  */
-public class BasicAttachmentProvider implements WikiAttachmentProvider {
+public class BasicAttachmentProvider implements AttachmentProvider {
 
     private Engine m_engine;
     private String m_storageDir;
@@ -414,14 +415,16 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
         final ArrayList< Attachment > list = new ArrayList<>();
         final String[] pagesWithAttachments = attDir.list( new AttachmentFilter() );
 
-        for( final String pagesWithAttachment : pagesWithAttachments ) {
-            String pageId = unmangleName( pagesWithAttachment );
-            pageId = pageId.substring( 0, pageId.length() - DIR_EXTENSION.length() );
+        if( pagesWithAttachments != null ) {
+            for( final String pagesWithAttachment : pagesWithAttachments ) {
+                String pageId = unmangleName( pagesWithAttachment );
+                pageId = pageId.substring( 0, pageId.length() - DIR_EXTENSION.length() );
 
-            final Collection< Attachment > c = listAttachments( new WikiPage( m_engine, pageId ) );
-            for( final Attachment att : c ) {
-                if( att.getLastModified().after( timestamp ) ) {
-                    list.add( att );
+                final Collection< Attachment > c = listAttachments( new WikiPage( m_engine, pageId ) );
+                for( final Attachment att : c ) {
+                    if( att.getLastModified().after( timestamp ) ) {
+                        list.add( att );
+                    }
                 }
             }
         }
@@ -436,9 +439,8 @@ public class BasicAttachmentProvider implements WikiAttachmentProvider {
      */
     @Override
     public Attachment getAttachmentInfo( final Page page, final String name, int version ) throws ProviderException {
-        final Attachment att = new Attachment( m_engine, page.getName(), name );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, page.getName(), name );
         final File dir = findAttachmentDir( att );
-
         if( !dir.exists() ) {
             // log.debug("Attachment dir not found - thus no attachment can exist.");
             return null;

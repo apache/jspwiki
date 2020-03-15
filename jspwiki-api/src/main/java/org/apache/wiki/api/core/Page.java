@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.Map;
 
 
-public interface Page extends Cloneable {
+public interface Page extends Cloneable, Comparable< Page > {
 
     /** "Summary" is a short summary of the page.  It is a String. */
     String DESCRIPTION = "summary";

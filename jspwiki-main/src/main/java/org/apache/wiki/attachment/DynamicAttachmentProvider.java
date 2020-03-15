@@ -19,6 +19,7 @@
 package org.apache.wiki.attachment;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.exceptions.ProviderException;
 
 import java.io.IOException;

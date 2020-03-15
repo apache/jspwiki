@@ -50,12 +50,13 @@ import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.WikiProvider;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -345,7 +346,7 @@ public class LuceneSearchProvider implements SearchProvider {
      *  @return the created index Document
      *  @throws IOException If there's an indexing problem
      */
-    protected Document luceneIndexPage( final WikiPage page, final String text, final IndexWriter writer ) throws IOException {
+    protected Document luceneIndexPage( final Page page, final String text, final IndexWriter writer ) throws IOException {
         if( log.isDebugEnabled() ) {
             log.debug( "Indexing " + page.getName() + "..." );
         }
@@ -407,7 +408,7 @@ public class LuceneSearchProvider implements SearchProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void pageRemoved( final WikiPage page ) {
+    public void pageRemoved( final Page page ) {
         try( final Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
              final IndexWriter writer = getIndexWriter( luceneDir ) ) {
             final Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
@@ -429,7 +430,7 @@ public class LuceneSearchProvider implements SearchProvider {
      *  @param page WikiPage to add to the update queue.
      */
     @Override
-    public void reindexPage( final WikiPage page ) {
+    public void reindexPage( final Page page ) {
         if( page != null ) {
             final String text;
 

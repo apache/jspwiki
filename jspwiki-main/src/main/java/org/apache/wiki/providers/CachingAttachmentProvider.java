@@ -22,14 +22,15 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.WikiProvider;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.search.QueryItem;
 import org.apache.wiki.attachment.AttachmentManager;
-import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 
@@ -50,11 +51,11 @@ import java.util.Properties;
  *  @since 2.1.64.
  */
 //        EntryRefreshPolicy for that.
-public class CachingAttachmentProvider implements WikiAttachmentProvider {
+public class CachingAttachmentProvider implements AttachmentProvider {
 
     private static final Logger log = Logger.getLogger(CachingAttachmentProvider.class);
 
-    private WikiAttachmentProvider m_provider;
+    private AttachmentProvider m_provider;
 
     private CacheManager m_cacheManager = CacheManager.getInstance();
 
@@ -120,7 +121,7 @@ public class CachingAttachmentProvider implements WikiAttachmentProvider {
 
         try {
             final Class< ? > providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname );
-            m_provider = ( WikiAttachmentProvider )providerclass.newInstance();
+            m_provider = ( AttachmentProvider )providerclass.newInstance();
 
             log.debug( "Initializing real provider class " + m_provider );
             m_provider.initialize( engine, properties );
@@ -287,8 +288,7 @@ public class CachingAttachmentProvider implements WikiAttachmentProvider {
      * {@inheritDoc}
      */
     @Override
-    public List<Attachment> getVersionHistory( final Attachment att )
-    {
+    public List<Attachment> getVersionHistory( final Attachment att ) {
         return m_provider.getVersionHistory( att );
     }
 
@@ -312,7 +312,6 @@ public class CachingAttachmentProvider implements WikiAttachmentProvider {
         m_provider.deleteAttachment( att );
     }
 
-
     /**
      * Gets the provider class name, and cache statistics (misscount and,hitcount of the attachment cache).
      *
@@ -330,7 +329,7 @@ public class CachingAttachmentProvider implements WikiAttachmentProvider {
      *
      *  @return The real provider underneath this one.
      */
-    public WikiAttachmentProvider getRealProvider() {
+    public AttachmentProvider getRealProvider() {
         return m_provider;
     }
 
@@ -339,9 +338,9 @@ public class CachingAttachmentProvider implements WikiAttachmentProvider {
      */
     @Override
     public void moveAttachmentsForPage( final String oldParent, final String newParent ) throws ProviderException {
-        m_provider.moveAttachmentsForPage(oldParent, newParent);
-        m_cache.remove(newParent);
-        m_cache.remove(oldParent);
+        m_provider.moveAttachmentsForPage( oldParent, newParent );
+        m_cache.remove( newParent );
+        m_cache.remove( oldParent );
 
         // This is a kludge to make sure that the pages are removed from the other cache as well.
         final String checkName = oldParent + "/";

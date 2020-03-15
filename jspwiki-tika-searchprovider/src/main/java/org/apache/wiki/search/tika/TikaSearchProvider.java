@@ -33,8 +33,8 @@ import org.apache.tika.metadata.TikaCoreProperties;
 import org.apache.tika.metadata.TikaMetadataKeys;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.search.LuceneSearchProvider;
 import org.xml.sax.ContentHandler;
@@ -86,6 +86,7 @@ public class TikaSearchProvider extends LuceneSearchProvider {
 
     /**
      * {@inheritDoc}
+     *
      * @param att Attachment to get content for. Filename extension is used to determine the type of the attachment.
      * @return String representing the content of the file.
      */

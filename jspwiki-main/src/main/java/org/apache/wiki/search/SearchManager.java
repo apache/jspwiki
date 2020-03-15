@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.search;
 
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.event.WikiEventListener;
@@ -72,7 +72,7 @@ public interface SearchManager extends PageFilter, InternalModule, WikiEventList
      *
      *  @param page  The page to remove
      */
-    default void pageRemoved( final WikiPage page ) {
+    default void pageRemoved( final Page page ) {
         getSearchEngine().pageRemoved( page );
     }
 
@@ -81,7 +81,7 @@ public interface SearchManager extends PageFilter, InternalModule, WikiEventList
      *
      *   @param page The page.
      */
-    default void reindexPage( final WikiPage page ) {
+    default void reindexPage( final Page page ) {
         getSearchEngine().reindexPage( page );
     }
 
