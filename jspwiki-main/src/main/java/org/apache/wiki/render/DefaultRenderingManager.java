@@ -126,7 +126,7 @@ public class DefaultRenderingManager implements RenderingManager {
         final String renderImplName = properties.getProperty( PROP_RENDERER, DEFAULT_RENDERER );
         final String renderWysiwygImplName = properties.getProperty( PROP_WYSIWYG_RENDERER, DEFAULT_WYSIWYG_RENDERER );
 
-        final Class< ? >[] rendererParams = { WikiContext.class, WikiDocument.class };
+        final Class< ? >[] rendererParams = { Context.class, WikiDocument.class };
         m_rendererConstructor = initRenderer( renderImplName, rendererParams );
         m_rendererWysiwygConstructor = initRenderer( renderWysiwygImplName, rendererParams );
 
