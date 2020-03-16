@@ -17,6 +17,23 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-03-16  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-13_
+
+* [JSPWIKI-303](https://issues.apache.org/jira/browse/JSPWIKI-303): JSPWiki-API library creation
+    * Extracted `jspwiki-event` and `jspwiki-api` maven modules from `jspwiki-main`
+    * Created `jspwiki-210-adapters` and `jspwiki-210-test-adaptees` maven modules to ensure backwards 
+    compatibility with custom plugin / filters / page providers not using public API
+    * JSPWiki Plugins, Filters and Page Providers are using the public API
+    * Use of `o.a.w.api.core.Command` instead of `o.a.w.ui.Command` and of `o.a.w.api.search.QueryItem` and 
+    `o.a.w.api.search.SearchResult` instead of their counterparts from the `o.a.w.search` package
+    * Start to introduce `Page`, `Attachment` and `Context` instead of `WikiPage`, `WikiAttachment` and `WikiContext`
+    * JSPWiki API still needs some polishing
+        * `Page` does not deal with ACLs yet
+        * SPI to create objects from the `o.a.w.api.core` package still needs to be done
+        * `WikiPageProvider` and `WikiAttachmentProvider` backwards compatibility still needs to be done
+
 **2020-03-06  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-12_
