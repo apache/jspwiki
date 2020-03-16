@@ -18,7 +18,7 @@ package org.apache.wiki.search.tika;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
