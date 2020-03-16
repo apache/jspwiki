@@ -18,34 +18,13 @@
  */
 package org.apache.wiki.search;
 
-import org.apache.wiki.WikiPage;
-
 
 /**
- *  Defines a search result.
+ * This simple class just fulfils the role of a container for searches.  It tells the word and whether it is requested or not.
+ *
+ * @deprecated - use {@link org.apache.wiki.api.search.QueryItem} instead
+ * @see org.apache.wiki.api.search.QueryItem
  */
-public interface SearchResult {
-    
-	/**
-     *  Return the page.
-     *  
-     *  @return the WikiPage object containing this result
-     */
-    WikiPage getPage();
-
-    /**
-     *  Returns the score.
-     *  
-     *  @return A positive score value.  Note that there is no upper limit for the score.
-     */
-    int getScore();
-
-    /**
-     * Collection of XHTML fragments representing some contexts in which the match was made (a.k.a., "snippets").
-     *
-     * @return the search results
-     * @since 2.4
-     */
-    String[] getContexts();
-
+@Deprecated
+public class QueryItem extends org.apache.wiki.api.search.QueryItem {
 }

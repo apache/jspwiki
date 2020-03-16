@@ -31,7 +31,6 @@ import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageRenameEvent;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.search.SearchManager;
@@ -181,7 +180,7 @@ public class DefaultPageRenamer implements PageRenamer {
             final String sourceText = engine.getManager( PageManager.class ).getPureText( p );
             String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );
 
-            m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), JSPWikiMarkupParser.PROP_CAMELCASELINKS, m_camelCase );
+            m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), MarkupParser.PROP_CAMELCASELINKS, m_camelCase );
             if( m_camelCase ) {
                 newText = replaceCCReferrerString( context, newText, fromPage.getName(), toPage.getName() );
             }

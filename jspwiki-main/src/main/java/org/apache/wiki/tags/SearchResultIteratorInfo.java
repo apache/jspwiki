@@ -18,26 +18,26 @@
  */
 package org.apache.wiki.tags;
 
-import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagData;
+import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
+
 
 /**
  *  Just provides the TEI data for IteratorTag.
  *
  *  @since 2.0
  */
-public class SearchResultIteratorInfo extends TagExtraInfo
-{
-    public VariableInfo[] getVariableInfo(TagData data)
-    {
-        VariableInfo[] var = { new VariableInfo( data.getAttributeString( "id" ),
-                                                 "org.apache.wiki.search.SearchResult",
-                                                 true,
-                                                 VariableInfo.NESTED )
+public class SearchResultIteratorInfo extends TagExtraInfo {
+
+    public VariableInfo[] getVariableInfo( final TagData data ) {
+        final VariableInfo[] var = { new VariableInfo( data.getAttributeString( "id" ),
+                                                      "org.apache.wiki.api.search.SearchResult",
+                                                      true,
+                                                       VariableInfo.NESTED )
         };
 
         return var;
-
     }
+
 }

@@ -57,38 +57,34 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
      *  
      *  @param arg A Collection which will be iterated.
      */
-    public void setList( final Collection< ? > arg )
-    {
-        if( arg != null )
+    public void setList( final Collection< ? > arg ) {
+        if( arg != null ) {
             m_iterator = arg.iterator();
+        }
     }
 
     /**
      *  Sets the collection list, but using an array.
+     *
      *  @param arg An array of objects which will be iterated.
      */
-    public void setList( final Object[] arg )
-    {
-        if( arg != null )
-        {
+    public void setList( final Object[] arg ) {
+        if( arg != null ) {
             m_iterator = Arrays.asList(arg).iterator();
         }
     }
 
     /**
-     *  Clears the iterator away.  After calling this method doStartTag()
-     *  will always return SKIP_BODY
+     *  Clears the iterator away.  After calling this method doStartTag() will always return SKIP_BODY
      */
-    public void clearList()
-    {
+    public void clearList() {
         m_iterator = null;
     }
     
     /**
      *  Override this method to reset your own iterator.
      */
-    public void resetIterator()
-    {
+    public void resetIterator() {
         // No operation here
     }
     
@@ -96,16 +92,13 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
      *  {@inheritDoc}
      */
     @Override
-    public int doStartTag()
-    {
+    public int doStartTag() {
         m_wikiContext = WikiContext.findContext(pageContext);
-        
         resetIterator();
-        
-        if( m_iterator == null ) return SKIP_BODY;
-
-        if( m_iterator.hasNext() )
-        {
+        if( m_iterator == null ) {
+            return SKIP_BODY;
+        }
+        if( m_iterator.hasNext() ) {
             buildContext();
         }
 
@@ -115,15 +108,13 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
     /**
      *  Arg, I hate globals.
      */
-    private void buildContext()
-    {
+    private void buildContext() {
         //
         //  Build a clone of the current context
         //
         final WikiContext context = m_wikiContext.clone();
         
         final Object o = m_iterator.next();
-        
         if( o instanceof WikiPage ) {
             context.setPage( (WikiPage)o );
         }
@@ -139,8 +130,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
      *  {@inheritDoc}
      */
     @Override
-    public int doEndTag()
-    {
+    public int doEndTag() {
         // Return back to the original.
         pageContext.setAttribute( Context.ATTR_CONTEXT, m_wikiContext, PageContext.REQUEST_SCOPE );
 
@@ -151,25 +141,19 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
      *  {@inheritDoc}
      */
     @Override
-    public int doAfterBody()
-    {
-        if( bodyContent != null )
-        {
-            try
-            {
+    public int doAfterBody() {
+        if( bodyContent != null ) {
+            try {
                 final JspWriter out = getPreviousOut();
-                out.print(bodyContent.getString());
+                out.print( bodyContent.getString() );
                 bodyContent.clearBody();
-            }
-            catch( final IOException e )
-            {
-                log.error("Unable to get inner tag text", e);
+            } catch( final IOException e ) {
+                log.error( "Unable to get inner tag text", e );
                 // FIXME: throw something?
             }
         }
 
-        if( m_iterator != null && m_iterator.hasNext() )
-        {
+        if( m_iterator != null && m_iterator.hasNext() ) {
             buildContext();
             return EVAL_BODY_BUFFERED;
         }
@@ -178,29 +162,23 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
     }
     
     /**
-     *  In case your tag throws an exception at any point, you can
-     *  override this method and implement a custom exception handler.
+     *  In case your tag throws an exception at any point, you can override this method and implement a custom exception handler.
      *  <p>
      *  By default, this handler does nothing.
      *  
      *  @param arg0 The Throwable that the tag threw
-     *  
      *  @throws Throwable I have no idea why this would throw anything
      */
     @Override
-    public void doCatch( final Throwable arg0) throws Throwable
-    {
+    public void doCatch( final Throwable arg0) throws Throwable {
     }
 
     /**
-     *  Executed after the tag has been finished.  This is a great place
-     *  to put any cleanup code.  However you <b>must</b> call super.doFinally()
-     *  if you override this method, or else some of the things may not
-     *  work as expected.
+     *  Executed after the tag has been finished.  This is a great place to put any cleanup code.  However you <b>must</b> call
+     *  super.doFinally() if you override this method, or else some of the things may not work as expected.
      */
     @Override
-    public void doFinally()
-    {
+    public void doFinally() {
         resetIterator();
         m_iterator = null;
         m_pageName = null;

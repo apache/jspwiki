@@ -122,16 +122,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
     /** Keep track of duplicate header names.  */
     private Map<String, Integer>   m_titleSectionCounter = new HashMap<>();
 
-    /** If true, consider CamelCase hyperlinks as well. */
-    public static final String     PROP_CAMELCASELINKS   = "jspwiki.translatorReader.camelCaseLinks";
-
-    /** If true, all hyperlinks are translated as well, regardless whether they
-        are surrounded by brackets. */
-    public static final String     PROP_PLAINURIS        = "jspwiki.translatorReader.plainUris";
-
-    /** If true, all outward attachment info links have a small link image appended. */
-    public static final String     PROP_USEATTACHMENTIMAGE = "jspwiki.translatorReader.useAttachmentImage";
-
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
 

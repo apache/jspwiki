@@ -23,7 +23,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.search.SearchResult;
+import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.ui.PageCommand;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,8 +53,8 @@ public class SearchResultIteratorTag extends IteratorTag {
     
     private static final Logger log = Logger.getLogger(SearchResultIteratorTag.class);
     
-    @Override public void release()
-    {
+    @Override
+    public void release() {
         super.release();
         m_maxItems = m_count = 0;
     }
@@ -69,7 +69,8 @@ public class SearchResultIteratorTag extends IteratorTag {
         m_start = arg;
     }
     
-    @Override public final int doStartTag() {
+    @Override
+    public final int doStartTag() {
         //  Do lazy eval if the search results have not been set.
         if( m_iterator == null ) {
             final Collection< ? > searchresults = (Collection< ? >)pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
@@ -79,11 +80,13 @@ public class SearchResultIteratorTag extends IteratorTag {
             
             //  Skip the first few ones...
             m_iterator = searchresults.iterator();
-            while( m_iterator.hasNext() && (skip++ < m_start) ) m_iterator.next();
+            while( m_iterator.hasNext() && (skip++ < m_start) ) {
+                m_iterator.next();
+            }
         }
 
         m_count = 0;
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+        m_wikiContext = ( WikiContext )pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
 
         return nextResult();
     }
@@ -108,7 +111,8 @@ public class SearchResultIteratorTag extends IteratorTag {
         return SKIP_BODY;
     }
 
-    @Override public int doAfterBody() {
+    @Override
+    public int doAfterBody() {
         if( bodyContent != null ) {
             try {
                 final JspWriter out = getPreviousOut();
@@ -123,7 +127,8 @@ public class SearchResultIteratorTag extends IteratorTag {
         return nextResult();
     }
 
-    @Override public int doEndTag() {
+    @Override
+    public int doEndTag() {
         m_iterator = null;
         return super.doEndTag();
     }
