@@ -20,6 +20,7 @@
 package org.apache.wiki;
 
 import net.sf.ehcache.CacheManager;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.modules.ModuleManager;
@@ -260,8 +261,8 @@ public class WikiEngineTest {
         engine.saveText( NAME1, "[{SET foo=bar}]" );
         engine.saveText( NAME1, "[{SET foo=notbar}]");
 
-        final WikiPage v1 = engine.getManager( PageManager.class ).getPage( NAME1, 1 );
-        final WikiPage v2 = engine.getManager( PageManager.class ).getPage( NAME1, 2 );
+        final Page v1 = engine.getManager( PageManager.class ).getPage( NAME1, 1 );
+        final Page v2 = engine.getManager( PageManager.class ).getPage( NAME1, 2 );
 
         Assertions.assertEquals( "bar", v1.getAttribute("foo"), "V1" );
         Assertions.assertEquals( "notbar", v2.getAttribute("foo"), "V2" );
@@ -319,7 +320,7 @@ public class WikiEngineTest {
             m_engine.getManager( PageManager.class ).saveText( context, "test" + i );
         }
 
-        final WikiPage p3 = m_engine.getManager( PageManager.class ).getPage( NAME1, -1 );
+        final Page p3 = m_engine.getManager( PageManager.class ).getPage( NAME1, -1 );
         Assertions.assertNull( p3.getAttribute( WikiPage.CHANGENOTE ) );
     }
 

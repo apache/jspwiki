@@ -24,6 +24,7 @@ import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockServletContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -408,7 +409,7 @@ public class TestEngine extends WikiEngine
      * @return (english) contents corresponding to the given page name.
      */
     public String getI18nHTML( final String pagename ) {
-        final WikiPage page = getPageManager().getPage( pagename, PageProvider.LATEST_VERSION );
+        final Page page = getPageManager().getPage( pagename, PageProvider.LATEST_VERSION );
         final WikiContext context = new WikiContext( this, newHttpRequest(), page );
         context.setRequestContext( WikiContext.NONE );
         return getRenderingManager().getHTML( context, page );

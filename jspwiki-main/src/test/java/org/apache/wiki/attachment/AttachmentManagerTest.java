@@ -17,6 +17,7 @@ import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.pages.PageManager;
@@ -88,7 +89,7 @@ public class AttachmentManagerTest {
     public void testSimpleStore()
         throws Exception
     {
-        final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
@@ -118,7 +119,7 @@ public class AttachmentManagerTest {
     public void testSimpleStoreSpace()
         throws Exception
     {
-        final Attachment att = new Attachment( m_engine, NAME1, "test file.txt" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test file.txt" );
 
         att.setAuthor( "FirstPost" );
 
@@ -150,7 +151,7 @@ public class AttachmentManagerTest {
     public void testSimpleStoreByVersion()
         throws Exception
     {
-        final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
@@ -181,7 +182,7 @@ public class AttachmentManagerTest {
     public void testMultipleStore()
         throws Exception
     {
-        final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
@@ -223,7 +224,7 @@ public class AttachmentManagerTest {
     public void testListAttachments()
         throws Exception
     {
-        final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
@@ -242,7 +243,7 @@ public class AttachmentManagerTest {
     @Test
     public void testSimpleStoreWithoutExt() throws Exception
     {
-        final Attachment att = new Attachment( m_engine, NAME1, "test1" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1" );
 
         att.setAuthor( "FirstPost" );
 
@@ -275,7 +276,7 @@ public class AttachmentManagerTest {
     @Test
     public void testExists() throws Exception
     {
-        final Attachment att = new Attachment( m_engine, NAME1, "test1" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1" );
 
         att.setAuthor( "FirstPost" );
 
@@ -287,7 +288,7 @@ public class AttachmentManagerTest {
     @Test
     public void testExists2() throws Exception
     {
-        final Attachment att = new Attachment( m_engine, NAME1, "test1.bin" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.bin" );
 
         att.setAuthor( "FirstPost" );
 
@@ -299,7 +300,7 @@ public class AttachmentManagerTest {
     @Test
     public void testExistsSpace() throws Exception
     {
-        final Attachment att = new Attachment( m_engine, NAME1, "test file.bin" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test file.bin" );
 
         att.setAuthor( "FirstPost" );
 
@@ -311,7 +312,7 @@ public class AttachmentManagerTest {
     @Test
     public void testExistsUTF1() throws Exception
     {
-        final Attachment att = new Attachment( m_engine, NAME1, "test\u00e4.bin" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test\u00e4.bin" );
 
         att.setAuthor( "FirstPost" );
 
@@ -323,7 +324,7 @@ public class AttachmentManagerTest {
     @Test
     public void testExistsUTF2() throws Exception
     {
-        final Attachment att = new Attachment( m_engine, NAMEU, "test\u00e4.bin" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAMEU, "test\u00e4.bin" );
 
         att.setAuthor( "FirstPost" );
 
@@ -339,7 +340,7 @@ public class AttachmentManagerTest {
         {
             m_engine.saveText( "TestPage", "xx" );
 
-            final Attachment att = new Attachment( m_engine, "TestPages", "foo.bin" );
+            final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, "TestPages", "foo.bin" );
 
             att.setAuthor("MonicaBellucci");
             m_manager.storeAttachment( att, makeAttachmentFile() );

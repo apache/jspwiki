@@ -28,6 +28,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Command;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.AfterEach;
@@ -126,7 +127,7 @@ public class CommandResolverTest {
 
     @Test
     public void testFindWikiActionWithParams() {
-        final WikiPage page = m_engine.getManager( PageManager.class ).getPage( "SinglePage" );
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "SinglePage" );
 
         // Passing an EDIT request with page param yields a wrapped action
         MockHttpServletRequest request = m_engine.newHttpRequest( "/Edit.jsp?page=SinglePage" );

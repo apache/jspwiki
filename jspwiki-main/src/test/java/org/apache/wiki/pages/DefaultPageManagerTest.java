@@ -23,8 +23,9 @@ import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.providers.WikiProvider;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
@@ -97,7 +98,7 @@ public class DefaultPageManagerTest {
         final File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
         Assertions.assertTrue( saved.exists(), "Didn't create it!" );
 
-        final WikiPage page = engine.getManager( PageManager.class ).getPage( NAME1, WikiProvider.LATEST_VERSION );
+        final Page page = engine.getManager( PageManager.class ).getPage( NAME1, WikiProvider.LATEST_VERSION );
         engine.getManager( PageManager.class ).deletePage( page.getName() );
         Assertions.assertFalse( saved.exists(), "Page has not been removed!" );
     }
@@ -105,7 +106,7 @@ public class DefaultPageManagerTest {
     @Test
     public void testDeletePageAndAttachments() throws Exception {
         engine.saveText( NAME1, "Test" );
-        final Attachment att = new Attachment( engine, NAME1, "TestAtt.txt" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         engine.getAttachmentManager().storeAttachment( att, engine.makeAttachmentFile() );
 
@@ -118,7 +119,7 @@ public class DefaultPageManagerTest {
         Assertions.assertTrue( saved.exists(), "Didn't create it!" );
         Assertions.assertTrue( attfile.exists(), "Attachment dir does not exist" );
 
-        final WikiPage page = engine.getManager( PageManager.class ).getPage( NAME1, WikiProvider.LATEST_VERSION );
+        final Page page = engine.getManager( PageManager.class ).getPage( NAME1, WikiProvider.LATEST_VERSION );
 
         engine.getManager( PageManager.class ).deletePage( page.getName() );
 
@@ -129,7 +130,7 @@ public class DefaultPageManagerTest {
     @Test
     public void testDeletePageAndAttachments2() throws Exception {
         engine.saveText( NAME1, "Test" );
-        Attachment att = new Attachment( engine, NAME1, "TestAtt.txt" );
+        Attachment att = new org.apache.wiki.attachment.Attachment( engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         engine.getAttachmentManager().storeAttachment( att, engine.makeAttachmentFile() );
 
@@ -142,7 +143,7 @@ public class DefaultPageManagerTest {
         Assertions.assertTrue( saved.exists(), "Didn't create it!" );
         Assertions.assertTrue( attfile.exists(), "Attachment dir does not exist" );
 
-        final WikiPage page = engine.getManager( PageManager.class ).getPage( NAME1, WikiProvider.LATEST_VERSION );
+        final Page page = engine.getManager( PageManager.class ).getPage( NAME1, WikiProvider.LATEST_VERSION );
         Assertions.assertNotNull( page, "page" );
 
         att = engine.getAttachmentManager().getAttachmentInfo(NAME1+"/TestAtt.txt");
@@ -164,7 +165,7 @@ public class DefaultPageManagerTest {
         engine.saveText( NAME1, "Test2" );
         engine.saveText( NAME1, "Test3" );
 
-        final WikiPage page = engine.getManager( PageManager.class ).getPage( NAME1, 3 );
+        final Page page = engine.getManager( PageManager.class ).getPage( NAME1, 3 );
         engine.getManager( PageManager.class ).deleteVersion( page );
         Assertions.assertNull( engine.getManager( PageManager.class ).getPage( NAME1, 3 ), "got page" );
 
@@ -181,7 +182,7 @@ public class DefaultPageManagerTest {
         engine.saveText( NAME1, "Test2" );
         engine.saveText( NAME1, "Test3" );
 
-        final WikiPage page = engine.getManager( PageManager.class ).getPage( NAME1, 1 );
+        final Page page = engine.getManager( PageManager.class ).getPage( NAME1, 1 );
         engine.getManager( PageManager.class ).deleteVersion( page );
         Assertions.assertNull( engine.getManager( PageManager.class ).getPage( NAME1, 1 ), "got page" );
 
@@ -196,7 +197,7 @@ public class DefaultPageManagerTest {
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
         props.setProperty( "jspwiki.usePageCache", "false" );
         final WikiEngine engine = new TestEngine( props );
-        final WikiPage p = engine.getManager( PageManager.class ).getPage( "test", -1 );
+        final Page p = engine.getManager( PageManager.class ).getPage( "test", -1 );
         final VerySimpleProvider vsp = (VerySimpleProvider) engine.getManager( PageManager.class ).getProvider();
 
         Assertions.assertEquals( "test", vsp.m_latestReq, "wrong page" );

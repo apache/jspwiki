@@ -20,8 +20,8 @@ package org.apache.wiki.auth;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -438,7 +438,7 @@ public class AuthorizationManagerTest
         final String src = "[{ALLOW edit Alice}] ";
         m_engine.saveText( "Test", src );
 
-        final WikiPage p = m_engine.getManager( PageManager.class ).getPage( "Test" );
+        final Page p = m_engine.getManager( PageManager.class ).getPage( "Test" );
         final Permission view = PermissionFactory.getPagePermission( p, "view" );
         final Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 
@@ -559,7 +559,7 @@ public class AuthorizationManagerTest
         final String src = "[{ALLOW edit Authenticated}] ";
         m_engine.saveText( "Test", src );
 
-        final WikiPage p = m_engine.getManager( PageManager.class ).getPage( "Test" );
+        final Page p = m_engine.getManager( PageManager.class ).getPage( "Test" );
         final Permission view = PermissionFactory.getPagePermission( p, "view" );
         final Permission edit = PermissionFactory.getPagePermission( p, "edit" );
 

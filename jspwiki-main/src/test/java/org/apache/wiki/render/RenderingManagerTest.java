@@ -22,7 +22,7 @@ import net.sf.ehcache.CacheManager;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
@@ -114,7 +114,7 @@ public class RenderingManagerTest {
 
         for( int i = 0; i < 300; i++ )
         {
-            final WikiPage page = m_engine.getManager( PageManager.class ).getPage( "TestPage" );
+            final Page page = m_engine.getManager( PageManager.class ).getPage( "TestPage" );
             final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page );
 
             final WikiContext context = new WikiContext( m_engine, page );
@@ -136,7 +136,7 @@ public class RenderingManagerTest {
         sw.start();
 
         for( int i = 0; i < 300; i++ ) {
-            final WikiPage page = m_engine.getManager( PageManager.class ).getPage( "TestPage" );
+            final Page page = m_engine.getManager( PageManager.class ).getPage( "TestPage" );
             final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page );
             final WikiContext context = new WikiContext( m_engine, page );
             final String html = m_manager.getHTML( context, pagedata );

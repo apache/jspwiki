@@ -19,7 +19,7 @@
 package org.apache.wiki.stress;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.junit.jupiter.api.AfterEach;
@@ -68,7 +68,7 @@ public class StressTestVersioningProvider {
         mark.stop();
 
         System.out.println("Benchmark: "+mark.toString(2000)+" pages/second");
-        final WikiPage pageinfo = engine.getManager( PageManager.class ).getPage( NAME1 );
+        final Page pageinfo = engine.getManager( PageManager.class ).getPage( NAME1 );
 
         Assertions.assertEquals( maxver, pageinfo.getVersion(), "wrong version" );
 
@@ -98,7 +98,7 @@ public class StressTestVersioningProvider {
         mark.reset();
 
         mark.start();
-        final Collection< WikiPage > pages = engine.getManager( PageManager.class ).getAllPages();
+        final Collection< Page > pages = engine.getManager( PageManager.class ).getAllPages();
         mark.stop();
 
         System.out.println("Got a list of all pages in "+mark);
@@ -106,7 +106,7 @@ public class StressTestVersioningProvider {
         mark.reset();
         mark.start();
 
-        for( final WikiPage page : pages ) {
+        for( final Page page : pages ) {
             final String foo = engine.getManager( PageManager.class ).getPureText( page );
             Assertions.assertNotNull( foo );
         }

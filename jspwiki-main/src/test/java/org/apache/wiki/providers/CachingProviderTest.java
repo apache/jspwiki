@@ -21,7 +21,7 @@ package org.apache.wiki.providers;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.FileUtil;
 import org.awaitility.Awaitility;
@@ -93,7 +93,7 @@ public class CachingProviderTest
         out.close();
 
         Awaitility.await( "testSneakyAdd" ).until( () -> engine.getManager( PageManager.class ).getPage( "Testi" ) != null );
-        final WikiPage p = engine.getManager( PageManager.class ).getPage( "Testi" );
+        final Page p = engine.getManager( PageManager.class ).getPage( "Testi" );
         Assertions.assertNotNull( p, "page did not exist?" );
 
         final String text = engine.getManager( PageManager.class ).getText( "Testi");

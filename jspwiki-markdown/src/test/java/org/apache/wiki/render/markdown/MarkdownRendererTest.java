@@ -105,7 +105,7 @@ public class MarkdownRendererTest {
         Assertions.assertEquals( "<p> This should be visible if the ACL allows you to see it</p>\n", translate( src ) );
         // in any case, we also check that the created wikipage has the ACL added
         Assertions.assertEquals( "  user = PerryMason: ((\"org.apache.wiki.auth.permissions.PagePermission\",\"JSPWiki:testpage\",\"view\"))\n",
-        		                 testEngine.getManager( PageManager.class ).getPage( PAGE_NAME ).getAcl().toString() );
+                                 ( ( WikiPage )testEngine.getManager( PageManager.class ).getPage( PAGE_NAME ) ).getAcl().toString() );
     }
 
     @Test

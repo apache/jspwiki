@@ -20,8 +20,8 @@
 package org.apache.wiki.providers;
 
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.util.FileUtil;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionFactory;
@@ -123,7 +123,7 @@ public class BasicAttachmentProviderTest {
     @Test
     public void testPutAttachmentUTF8() throws Exception {
         final File in = makeAttachmentFile();
-        final Attachment att = new Attachment( m_engine, NAME1, "\u3072\u3048\u308b\u00e5\u00e4\u00f6test.f\u00fc\u00fc" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "\u3072\u3048\u308b\u00e5\u00e4\u00f6test.f\u00fc\u00fc" );
 
         m_provider.putAttachmentData( att, new FileInputStream(in) );
         final List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
@@ -134,7 +134,7 @@ public class BasicAttachmentProviderTest {
 
     @Test
     public void testGetAttachmentDataRaisesProviderExceptionIfInexistentFileOnDisk() {
-        final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
         Assertions.assertThrows( ProviderException.class, () -> m_provider.getAttachmentData( att ) );
     }
 
@@ -164,12 +164,12 @@ public class BasicAttachmentProviderTest {
     @Test
     public void testListAll() throws Exception {
         final File in = makeAttachmentFile();
-        final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
         awaitility().await( "testListAll" ).until( attachmentIsSaved( att ) );
 
-        final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
+        final Attachment att2 = new org.apache.wiki.attachment.Attachment( m_engine, NAME2, "test2.txt" );
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
 
         final List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
@@ -193,12 +193,12 @@ public class BasicAttachmentProviderTest {
         final File sDir = new File(m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ) );
         makeExtraFile( sDir, "foobar.blob" );
 
-        final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
         awaitility().await( "testListAllExtrafile" ).until( attachmentIsSaved( att ) );
 
-        final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
+        final Attachment att2 = new org.apache.wiki.attachment.Attachment( m_engine, NAME2, "test2.txt" );
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
 
         final List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
@@ -221,13 +221,13 @@ public class BasicAttachmentProviderTest {
         final File sDir = new File( m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ) );
         final File attDir = new File( sDir, NAME1+"-att" );
 
-        final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
         makeExtraFile( attDir, "ping.pong" );
 
         awaitility().await( "testListAllExtrafileInAttachmentDir" ).until( attachmentIsSaved( att ) );
 
-        final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
+        final Attachment att2 = new org.apache.wiki.attachment.Attachment( m_engine, NAME2, "test2.txt" );
 
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
 
@@ -250,7 +250,7 @@ public class BasicAttachmentProviderTest {
         final File in = makeAttachmentFile();
         final File sDir = new File(m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ));
         final File attDir = new File( sDir, NAME1+"-att" );
-        final Attachment att = new Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
         // This is our extraneous directory.
@@ -259,7 +259,7 @@ public class BasicAttachmentProviderTest {
 
         awaitility().await( "testListAllExtradirInAttachmentDir" ).until( attachmentIsSaved( att ) );
 
-        final Attachment att2 = new Attachment( m_engine, NAME2, "test2.txt" );
+        final Attachment att2 = new org.apache.wiki.attachment.Attachment( m_engine, NAME2, "test2.txt" );
 
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
 
@@ -277,12 +277,12 @@ public class BasicAttachmentProviderTest {
     @Test
     public void testListAllNoExtension() throws Exception {
         final File in = makeAttachmentFile();
-        final Attachment att = new Attachment( m_engine, NAME1, "test1." );
+        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1." );
         m_provider.putAttachmentData( att, new FileInputStream(in) );
 
         awaitility().await( "testListAllNoExtension" ).until( attachmentIsSaved( att ) );
 
-        final Attachment att2 = new Attachment( m_engine, NAME2, "test2." );
+        final Attachment att2 = new org.apache.wiki.attachment.Attachment( m_engine, NAME2, "test2." );
         m_provider.putAttachmentData( att2, new FileInputStream(in) );
 
         final List< Attachment > res = m_provider.listAllChanged( new Date( 0L ) );

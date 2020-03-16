@@ -25,7 +25,7 @@ package org.apache.wiki.rss;
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
@@ -81,7 +81,7 @@ public class RSSGeneratorTest {
 
         final WeblogPlugin blogplugin = new WeblogPlugin();
 
-        final List< WikiPage > entries = blogplugin.findBlogEntries( m_testEngine,
+        final List< Page > entries = blogplugin.findBlogEntries( m_testEngine,
                                                                "TestBlog",
                                                                new Date(0),
                                                                new Date(Long.MAX_VALUE) );
@@ -112,7 +112,7 @@ public class RSSGeneratorTest {
 
         final WeblogPlugin blogplugin = new WeblogPlugin();
 
-        final List< WikiPage > entries = blogplugin.findBlogEntries( m_testEngine,
+        final List< Page > entries = blogplugin.findBlogEntries( m_testEngine,
                                                                "TestBlog",
                                                                new Date(0),
                                                                new Date(Long.MAX_VALUE) );

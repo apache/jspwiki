@@ -22,6 +22,7 @@ import net.sf.ehcache.CacheManager;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.pages.PageManager;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;

@@ -21,7 +21,7 @@ package org.apache.wiki.plugin;
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -65,9 +65,9 @@ public class PageViewPluginTest
     @Test
     public void testShowCountsBasic() throws Exception
     {
-        final WikiPage page1 = testEngine.getManager( PageManager.class ).getPage( "TestPage01" );
+        final Page page1 = testEngine.getManager( PageManager.class ).getPage( "TestPage01" );
         final WikiContext context1 = new WikiContext( testEngine, page1 );
-        final WikiPage page2 = testEngine.getManager( PageManager.class ).getPage( "TestPage02" );
+        final Page page2 = testEngine.getManager( PageManager.class ).getPage( "TestPage02" );
         final WikiContext context2 = new WikiContext( testEngine, page2 );
 
         // generate counts:
@@ -79,7 +79,7 @@ public class PageViewPluginTest
         final String pageViewPageContent = "[{PageViewPlugin show='list''\n\n* {1} ({2} views)\n}]";
         testEngine.saveText( "PageViews", pageViewPageContent );
 
-        final WikiPage pageviews = testEngine.getManager( PageManager.class ).getPage( "PageViews" );
+        final Page pageviews = testEngine.getManager( PageManager.class ).getPage( "PageViews" );
         final WikiContext contextPV = new WikiContext( testEngine, pageviews );
 
         final String result = testEngine.getRenderingManager().getHTML( contextPV, pageviews );
@@ -95,9 +95,9 @@ public class PageViewPluginTest
     {
         testEngine.saveText( "TestPageExcluded", "this is test page that should be excluded [{PageViewPlugin}]" );
 
-        final WikiPage page1 = testEngine.getManager( PageManager.class ).getPage( "TestPage01" );
+        final Page page1 = testEngine.getManager( PageManager.class ).getPage( "TestPage01" );
         final WikiContext context1 = new WikiContext( testEngine, page1 );
-        final WikiPage page2 = testEngine.getManager( PageManager.class ).getPage( "TestPage02" );
+        final Page page2 = testEngine.getManager( PageManager.class ).getPage( "TestPage02" );
         final WikiContext context2 = new WikiContext( testEngine, page2 );
 
         // generate counts:
@@ -109,7 +109,7 @@ public class PageViewPluginTest
         final String pageViewPageContent = "[{PageViewPlugin show='list' exclude='TestPageExcl*' '\n\n* {1} ({2} views)\n}]";
         testEngine.saveText( "PageViews", pageViewPageContent );
 
-        final WikiPage pageviews = testEngine.getManager( PageManager.class ).getPage( "PageViews" );
+        final Page pageviews = testEngine.getManager( PageManager.class ).getPage( "PageViews" );
         final WikiContext contextPV = new WikiContext( testEngine, pageviews );
 
         final String result = testEngine.getRenderingManager().getHTML( contextPV, pageviews );
@@ -126,9 +126,9 @@ public class PageViewPluginTest
     @Test
     public void testShowCountsSorted() throws Exception
     {
-        final WikiPage page1 = testEngine.getManager( PageManager.class ).getPage( "TestPage01" );
+        final Page page1 = testEngine.getManager( PageManager.class ).getPage( "TestPage01" );
         final WikiContext context1 = new WikiContext( testEngine, page1 );
-        final WikiPage page2 = testEngine.getManager( PageManager.class ).getPage( "TestPage02" );
+        final Page page2 = testEngine.getManager( PageManager.class ).getPage( "TestPage02" );
         final WikiContext context2 = new WikiContext( testEngine, page2 );
 
         // generate counts:
@@ -140,7 +140,7 @@ public class PageViewPluginTest
         final String pageViewPageContent = "[{PageViewPlugin show='list' sort=count '\n\n* {1} ({2} views)\n}]";
         testEngine.saveText( "PageViews", pageViewPageContent );
 
-        final WikiPage pageviews = testEngine.getManager( PageManager.class ).getPage( "PageViews" );
+        final Page pageviews = testEngine.getManager( PageManager.class ).getPage( "PageViews" );
         final WikiContext contextPV = new WikiContext( testEngine, pageviews );
 
         final String result = testEngine.getRenderingManager().getHTML( contextPV, pageviews );
@@ -160,13 +160,13 @@ public class PageViewPluginTest
         testEngine.saveText( "TestPage03", "this is test page 03 [{PageViewPlugin}]" );
         testEngine.saveText( "TestPage04", "this is test page 04 [{PageViewPlugin}]" );
 
-        final WikiPage page1 = testEngine.getManager( PageManager.class ).getPage( "TestPage01" );
+        final Page page1 = testEngine.getManager( PageManager.class ).getPage( "TestPage01" );
         final WikiContext context1 = new WikiContext( testEngine, page1 );
-        final WikiPage page2 = testEngine.getManager( PageManager.class ).getPage( "TestPage02" );
+        final Page page2 = testEngine.getManager( PageManager.class ).getPage( "TestPage02" );
         final WikiContext context2 = new WikiContext( testEngine, page2 );
-        final WikiPage page3 = testEngine.getManager( PageManager.class ).getPage( "TestPage03" );
+        final Page page3 = testEngine.getManager( PageManager.class ).getPage( "TestPage03" );
         final WikiContext context3 = new WikiContext( testEngine, page3 );
-        final WikiPage page4 = testEngine.getManager( PageManager.class ).getPage( "TestPage04" );
+        final Page page4 = testEngine.getManager( PageManager.class ).getPage( "TestPage04" );
         final WikiContext context4 = new WikiContext( testEngine, page4 );
 
         // generate counts:
@@ -180,7 +180,7 @@ public class PageViewPluginTest
         final String pageViewPageContent = "[{PageViewPlugin show='list' entries=3'\n\n* {1} ({2} views)\n}]";
         testEngine.saveText( "PageViews", pageViewPageContent );
 
-        final WikiPage pageviews = testEngine.getManager( PageManager.class ).getPage( "PageViews" );
+        final Page pageviews = testEngine.getManager( PageManager.class ).getPage( "PageViews" );
         final WikiContext contextPV = new WikiContext( testEngine, pageviews );
 
         final String result = testEngine.getRenderingManager().getHTML( contextPV, pageviews );
