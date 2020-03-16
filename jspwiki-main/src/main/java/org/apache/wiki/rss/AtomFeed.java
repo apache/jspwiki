@@ -22,6 +22,7 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -55,7 +56,7 @@ public class AtomFeed extends Feed {
      *  
      *  @param c A WikiContext.
      */
-    public AtomFeed( final WikiContext c )
+    public AtomFeed( final Context c )
     {
         super(c);
     }

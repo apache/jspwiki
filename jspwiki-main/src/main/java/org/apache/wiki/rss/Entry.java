@@ -22,112 +22,105 @@ import org.apache.wiki.api.core.Page;
 
 
 /**
- *  Represents an entry, that is, an unit of change, in a Feed.
+ * Represents an entry, that is, an unit of change, in a Feed.
  */
-public class Entry
-{
+public class Entry {
+
     private String m_content;
     private String m_url;
     private String m_title;
-    private Page   m_page;
+    private Page m_page;
     private String m_author;
-   /**
-     *  Set the author of this entry.
-     *  
-     *  @param author Name of the author.
+
+    /**
+     * Set the author of this entry.
+     *
+     * @param author Name of the author.
      */
-    public void setAuthor( final String author )
-    {
+    public void setAuthor( final String author ) {
         m_author = author;
     }
 
     /**
-     *  Return the author set by setAuthor().
-     *  
-     *  @return A String representing the author.
+     * Return the author set by setAuthor().
+     *
+     * @return A String representing the author.
      */
-    public String getAuthor()
-    {
+    public String getAuthor() {
         return m_author;
     }
 
     /**
-     *  Returns the page set by {@link #setPage(Page)}.
-     *  
-     *  @return The WikiPage to which this Entry refers to.
+     * Returns the page set by {@link #setPage(Page)}.
+     *
+     * @return The WikiPage to which this Entry refers to.
      */
-    public Page getPage()
-    {
+    public Page getPage() {
         return m_page;
     }
 
     /**
-     *  Sets the WikiPage to which this Entry refers to.
-     *  
-     *  @param p A valid WikiPage.
+     * Sets the WikiPage to which this Entry refers to.
+     *
+     * @param p A valid WikiPage.
      */
     public void setPage( final Page p ) {
         m_page = p;
     }
 
     /**
-     *  Sets a title for the change.  For example, a WebLog entry might use the
-     *  post title, or a Wiki change could use something like "XXX changed page YYY".
-     *  
-     *  @param title A String description of the change.
+     * Sets a title for the change.  For example, a WebLog entry might use the
+     * post title, or a Wiki change could use something like "XXX changed page YYY".
+     *
+     * @param title A String description of the change.
      */
-    public void setTitle( final String title )
-    {
+    public void setTitle( final String title ) {
         m_title = title;
     }
 
     /**
-     *  Returns the title.
-     *  
-     *  @return The title set in setTitle.
+     * Returns the title.
+     *
+     * @return The title set in setTitle.
      */
-    public String getTitle()
-    {
+    public String getTitle() {
         return m_title;
     }
 
     /**
-     *  Set the URL - the permalink - of the Entry.
-     *  
-     *  @param url An absolute URL to the entry.
+     * Set the URL - the permalink - of the Entry.
+     *
+     * @param url An absolute URL to the entry.
      */
-    public void setURL( final String url )
-    {
+    public void setURL( final String url ) {
         m_url = url;
     }
 
     /**
-     *  Return the URL set by setURL().
-     *  
-     *  @return The URL.
+     * Return the URL set by setURL().
+     *
+     * @return The URL.
      */
-    public String getURL()
-    {
+    public String getURL() {
         return m_url;
     }
 
     /**
-     *  Set the content of this entry.
-     *  
-     *  @param content A String of the content.
+     * Set the content of this entry.
+     *
+     * @param content A String of the content.
      */
-    public void setContent( final String content )
-    {
+    public void setContent( final String content ) {
         m_content = content;
     }
 
     /**
-     *  Return the content set by {@link #setContent(String)}.
-     *  
-     *  @return Whatever was set by setContent().
+     * Return the content set by {@link #setContent(String)}.
+     *
+     * @return Whatever was set by setContent().
      */
-    public String getContent()
-    {
+    public String getContent() {
         return m_content;
     }
+
 }

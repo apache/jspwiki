@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
@@ -257,7 +258,7 @@ public class RSSGenerator {
      * @return Fully formed XML.
      * @throws IllegalArgumentException If an illegal mode is given.
      */
-    public String generateFeed( final WikiContext wikiContext, final List< Page > changed, final String mode, final String type ) throws IllegalArgumentException {
+    public String generateFeed( final Context wikiContext, final List< Page > changed, final String mode, final String type ) throws IllegalArgumentException {
         final Feed feed;
         final String res;
 
@@ -296,7 +297,7 @@ public class RSSGenerator {
 
     /**
      * Turns RSS generation on or off. This setting is used to set the "enabled" flag only for use by callers, and does not
-     * actually affect whether the {@link #generate()} or {@link #generateFeed(WikiContext, List, String, String)} methods output anything.
+     * actually affect whether the {@link #generate()} or {@link #generateFeed(Context, List, String, String)} methods output anything.
      *
      * @param enabled whether RSS generation is considered enabled.
      */
@@ -312,7 +313,7 @@ public class RSSGenerator {
      *  @param feed A Feed to generate the feed to.
      *  @return feed.getString().
      */
-    protected String generateFullWikiRSS( final WikiContext wikiContext, final Feed feed ) {
+    protected String generateFullWikiRSS( final Context wikiContext, final Feed feed ) {
         feed.setChannelTitle( m_engine.getApplicationName() );
         feed.setFeedURL( m_engine.getBaseURL() );
         feed.setChannelLanguage( m_channelLanguage );
@@ -359,7 +360,7 @@ public class RSSGenerator {
      * @param feed A Feed object to fill.
      * @return the RSS representation of the wiki context
      */
-    protected String generateWikiPageRSS( final WikiContext wikiContext, final List< Page > changed, final Feed feed ) {
+    protected String generateWikiPageRSS( final Context wikiContext, final List< Page > changed, final Feed feed ) {
         feed.setChannelTitle( m_engine.getApplicationName()+": "+wikiContext.getPage().getName() );
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
         final String language = m_engine.getManager( VariableManager.class ).getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
@@ -412,7 +413,7 @@ public class RSSGenerator {
      *  @param feed A valid Feed object.  The feed will be used to create the RSS/Atom, depending on which kind of an object you want to put in it.
      *  @return A String of valid RSS or Atom.
      */
-    protected String generateBlogRSS( final WikiContext wikiContext, final List< Page > changed, final Feed feed ) {
+    protected String generateBlogRSS( final Context wikiContext, final List< Page > changed, final Feed feed ) {
         if( log.isDebugEnabled() ) {
             log.debug( "Generating RSS for blog, size=" + changed.size() );
         }

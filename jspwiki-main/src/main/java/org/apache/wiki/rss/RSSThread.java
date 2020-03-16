@@ -95,7 +95,6 @@ public class RSSThread extends WikiBackgroundThread {
             } finally {
                 m_watchdog.exitState();
             }
-
         }
     }
         

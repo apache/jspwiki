@@ -21,6 +21,7 @@ package org.apache.wiki.rss;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -36,7 +37,6 @@ import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -52,7 +52,7 @@ public class RSS20Feed extends Feed
      *
      *  @param context The WikiContext.
      */
-    public RSS20Feed( final WikiContext context )
+    public RSS20Feed( final Context context )
     {
         super( context );
     }
@@ -82,10 +82,7 @@ public class RSS20Feed extends Feed
             if( engine.getManager( AttachmentManager.class ).hasAttachments( p ) && servletContext != null ) {
                 try {
                     final List< Attachment > c = engine.getManager( AttachmentManager.class ).listAttachments( p );
-
-                    for( final Iterator< Attachment > a = c.iterator(); a.hasNext(); ) {
-                        final Attachment att = a.next();
-
+                    for( final Attachment att : c ) {
                         final Element attEl = new Element( "enclosure" );
                         attEl.setAttribute( "url", engine.getURL( WikiContext.ATTACH, att.getName(), null ) );
                         attEl.setAttribute( "length", Long.toString( att.getSize() ) );
