@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.TagData;
+import javax.servlet.jsp.tagext.TagExtraInfo;
 import javax.servlet.jsp.tagext.VariableInfo;
 
 /**
@@ -29,10 +29,10 @@ import javax.servlet.jsp.tagext.VariableInfo;
  */
 public class HistoryIteratorInfo extends TagExtraInfo
 {
-    public VariableInfo[] getVariableInfo(TagData data)
+    public VariableInfo[] getVariableInfo( final TagData data)
     {
-        VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
-                                                 "org.apache.wiki.WikiPage",
+        final VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
+                                                 "org.apache.wiki.api.core.Page",
                                                  true,
                                                  VariableInfo.NESTED )
         };
