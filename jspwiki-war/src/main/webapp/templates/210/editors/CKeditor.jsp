@@ -26,7 +26,7 @@
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.filters.*" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
-<%@ page import="org.apache.wiki.parser.JSPWikiMarkupParser" %>
+<%@ page import="org.apache.wiki.parser.MarkupParser" %>
 <%@ page import="org.apache.wiki.render.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
@@ -40,7 +40,7 @@
     This provides the WYSIWYG CKeditor for JSPWiki.
 --%>
 <%
-    WikiContext context = WikiContext.findContext( pageContext );
+    Context context = WikiContext.findContext( pageContext );
     Engine engine = context.getEngine();
 
     /* local download of CKeditor */
@@ -52,12 +52,12 @@
            "//cdn.ckeditor.com/4.5.1/standard/ckeditor.js" );
     */
 
-    context.setVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
+    context.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
     context.setVariable( VariableManager.VAR_RUNFILTERS,  "false" );
 
-    WikiPage wikiPage = context.getPage();
-    String originalCCLOption = (String)wikiPage.getAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS );
-    wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, "false" );
+    Page wikiPage = context.getPage();
+    String originalCCLOption = (String)wikiPage.getAttribute( MarkupParser.PROP_CAMELCASELINKS );
+    wikiPage.setAttribute( MarkupParser.PROP_CAMELCASELINKS, "false" );
 
     String usertext = EditorManager.getEditedText(pageContext);
 
@@ -68,7 +68,7 @@
   String clone = request.getParameter( "clone" );
   if( clone != null )
   {
-    WikiPage p = engine.getManager( PageManager.class ).getPage( clone );
+    Page p = engine.getManager( PageManager.class ).getPage( clone );
     if( p != null )
     {
         AuthorizationManager mgr = engine.getManager( AuthorizationManager.class );
@@ -113,14 +113,13 @@
    context.setVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE, Boolean.FALSE );
 
    context.setVariable( VariableManager.VAR_RUNFILTERS,  null );
-   wikiPage.setAttribute( JSPWikiMarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
+   wikiPage.setAttribute( MarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 
    /*not used
    String templateDir = (String)copyOfWikiProperties.get( Engine.PROP_TEMPLATEDIR );
 
    String protocol = "http://";
-   if( request.isSecure() )
-   {
+   if( request.isSecure() ) {
        protocol = "https://";
    }
    */

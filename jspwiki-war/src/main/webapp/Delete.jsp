@@ -48,8 +48,8 @@
     }
     String pagereq = wikiContext.getName();
 
-    WikiPage wikipage      = wikiContext.getPage();
-    WikiPage latestversion = wiki.getManager( PageManager.class ).getPage( pagereq );
+    Page wikipage      = wikiContext.getPage();
+    Page latestversion = wiki.getManager( PageManager.class ).getPage( pagereq );
 
     String delete = request.getParameter( "delete" );
     String deleteall = request.getParameter( "delete-all" );
@@ -65,8 +65,7 @@
         redirTo = ((Attachment)wikipage).getParentName();
     }
 
-    if( deleteall != null )
-    {
+    if( deleteall != null ) {
         log.info("Deleting page "+pagereq+". User="+request.getRemoteUser()+", host="+HttpUtil.getRemoteAddress(request) );
 
         wiki.getManager( PageManager.class ).deletePage( pagereq );
@@ -80,20 +79,16 @@
 
         response.sendRedirect( TextUtil.replaceString( wiki.getURL( WikiContext.VIEW, redirTo, "tab="+request.getParameter("tab") ),"&amp;","&" ));
         return;
-    }
-    else if( delete != null )
-    {
+    } else if( delete != null ) {
         log.info("Deleting a range of pages from "+pagereq);
 
-        for( Enumeration< String > params = request.getParameterNames(); params.hasMoreElements(); )
-        {
+        for( Enumeration< String > params = request.getParameterNames(); params.hasMoreElements(); ) {
             String paramName = params.nextElement();
 
-            if( paramName.startsWith("delver") )
-            {
+            if( paramName.startsWith("delver") ) {
                 int version = Integer.parseInt( paramName.substring(7) );
 
-                WikiPage p = wiki.getManager( PageManager.class ).getPage( pagereq, version );
+                Page p = wiki.getManager( PageManager.class ).getPage( pagereq, version );
 
                 log.debug("Deleting version "+version);
                 wiki.getManager( PageManager.class ).deleteVersion( p );
@@ -103,7 +98,6 @@
         response.sendRedirect(
             TextUtil.replaceString( wiki.getURL( WikiContext.VIEW, redirTo, "tab=" + request.getParameter( "tab" ) ),"&amp;","&" )
         );
-
 
         return;
     }

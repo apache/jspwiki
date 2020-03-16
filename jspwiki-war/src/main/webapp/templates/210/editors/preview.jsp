@@ -20,6 +20,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.filters.*" %>
@@ -31,7 +32,7 @@
         This is a special editor component for JSPWiki preview storage.
 --%>
 <%
-   WikiContext context = WikiContext.findContext( pageContext );
+   Context context = WikiContext.findContext( pageContext );
    String usertext = (String)pageContext.getAttribute( EditorManager.ATTR_EDITEDTEXT, PageContext.REQUEST_SCOPE );
    if( usertext == null ) usertext = "";
 

@@ -90,8 +90,8 @@
         text = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);
     }
 
-    WikiPage wikipage = wikiContext.getPage();
-    WikiPage latestversion = wiki.getManager( PageManager.class ).getPage( pagereq );
+    Page wikipage = wikiContext.getPage();
+    Page latestversion = wiki.getManager( PageManager.class ).getPage( pagereq );
 
     if( latestversion == null ) {
         latestversion = wikiContext.getPage();
@@ -121,7 +121,7 @@
             return;
         }
 
-        WikiPage modifiedPage = (WikiPage)wikiContext.getPage().clone();
+        Page modifiedPage = (Page)wikiContext.getPage().clone();
 
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
@@ -160,9 +160,9 @@
         session.removeAttribute("changenote");
 
         if( changenote != null && changenote.length() > 0 ) {
-            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
+            modifiedPage.setAttribute( Page.CHANGENOTE, changenote );
         } else {
-            modifiedPage.removeAttribute( WikiPage.CHANGENOTE );
+            modifiedPage.removeAttribute( Page.CHANGENOTE );
         }
 
         //

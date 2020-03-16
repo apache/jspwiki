@@ -36,7 +36,7 @@
         This is a plain editor for JSPWiki.
 --%>
 <%
-   WikiContext context = WikiContext.findContext( pageContext );
+   Context context = WikiContext.findContext( pageContext );
    Engine engine = context.getEngine();
 
    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
@@ -50,7 +50,7 @@
   String clone = request.getParameter( "clone" );
   if( clone != null )
   {
-    WikiPage p = engine.getManager( PageManager.class ).getPage( clone );
+    Page p = engine.getManager( PageManager.class ).getPage( clone );
     if( p != null )
     {
         AuthorizationManager mgr = engine.getManager( AuthorizationManager.class );

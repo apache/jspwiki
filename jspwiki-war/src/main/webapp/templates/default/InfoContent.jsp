@@ -18,6 +18,7 @@
 --%>
 
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
@@ -35,8 +36,8 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext c = WikiContext.findContext(pageContext);
-  WikiPage wikiPage = c.getPage();
+  Context c = WikiContext.findContext(pageContext);
+  Page wikiPage = c.getPage();
   int attCount = c.getEngine().getManager( AttachmentManager.class ).listAttachments( c.getPage() ).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
@@ -44,7 +45,7 @@
   String creationAuthor ="";
 
   //FIXME -- seems not to work correctly for attachments !!
-  WikiPage firstPage = c.getEngine().getManager( PageManager.class ).getPage( wikiPage.getName(), 1 );
+  Page firstPage = c.getEngine().getManager( PageManager.class ).getPage( wikiPage.getName(), 1 );
   if( firstPage != null )
   {
     creationAuthor = firstPage.getAuthor();
@@ -203,7 +204,7 @@
           </wiki:CheckVersion>
         </td>
 
-        <c:set var="changenote" value="<%= (String)currentPage.getAttribute( WikiPage.CHANGENOTE ) %>" />
+        <c:set var="changenote" value="<%= (String)currentPage.getAttribute( Page.CHANGENOTE ) %>" />
         <td class="changenote"><c:out value="${changenote}"/></td>
 
       </tr>
@@ -370,7 +371,7 @@
       </wiki:Permission>
       --%>
 
-      <c:set var="changenote" value="<%= (String)att.getAttribute( WikiPage.CHANGENOTE ) %>" />
+      <c:set var="changenote" value="<%= (String)att.getAttribute( Page.CHANGENOTE ) %>" />
         <td class="changenote"><c:out value="${changenote}"/></td>
 
     </tr>

@@ -19,17 +19,19 @@
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page import="java.util.*" %>
+<%@ page import="java.util.Collection" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="org.apache.commons.lang3.*" %>
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.search.SearchResult" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ page import="org.apache.wiki.search.SearchResult" %>
+<%@ page import="org.apache.wiki.search.SearchManager" %>
 <%@ page import="org.apache.wiki.ui.*" %>
-<%@ page import="java.util.*" %>
-<%@ page import="java.util.Collection" %>
-<%@ page import="org.apache.commons.lang3.*" %>
-<%@ page import="java.net.URLEncoder" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
@@ -41,14 +43,14 @@
     wiki = WikiEngine.getInstance( getServletConfig() );
   }
   Logger log = Logger.getLogger("JSPWikiSearch");
-  WikiEngine wiki;
+  Engine wiki;
 %>
 <%
   /* ********************* actual start ********************* */
   /* FIXME: too much hackin on this level -- should better happen in toplevel jsp's */
   /* Create wiki context and check for authorization */
   WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.FIND );
-  if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+  if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
 
   String query = request.getParameter( "query");
 
@@ -56,21 +58,18 @@
   {
     try
     {
-      Collection< SearchResult > list = wiki.getSearchManager().findPages( query, wikiContext );
+      Collection< SearchResult > list = wiki.getManager( SearchManager.class ).findPages( query, wikiContext );
 
       //  Filter down to only those that we actually have a permission to view
-      AuthorizationManager mgr = wiki.getAuthorizationManager();
+      AuthorizationManager mgr = wiki.getManager( AuthorizationManager.class );
 
-      //ArrayList< SearchResult > items = new ArrayList<>();
-      //"The '<>' Diamond operator is not allowed for source level below 1.7"
-      //The compiler that eg. tomcat is running is older than 1.7. -- need mod to tomcat/conf/web.xml
-      ArrayList< SearchResult > items = new ArrayList< SearchResult >();
+      ArrayList< SearchResult > items = new ArrayList<>();
 
       for( Iterator< SearchResult > i = list.iterator(); i.hasNext(); )
       {
         SearchResult r = i.next();
 
-        WikiPage p = r.getPage();
+        Page p = r.getPage();
 
         PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
 

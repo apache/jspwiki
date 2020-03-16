@@ -24,18 +24,21 @@
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
+<%@ page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
-<%@ page import="org.apache.wiki.ui.EditorManager" %>
-<%@ page import="org.apache.wiki.util.HttpUtil" %>
-<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.pages.PageLock" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
-<%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.preferences.Preferences.TimeFormat" %>
+<%@ page import="org.apache.wiki.ui.EditorManager" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
+<%@ page import="org.apache.wiki.util.HttpUtil" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.variables.VariableManager" %>
+<%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ page import="javax.servlet.http.Cookie" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -58,10 +61,10 @@
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.COMMENT );
-    if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+    if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     if( wikiContext.getCommand().getTarget() == null ) {
         response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
         return;
@@ -84,8 +87,8 @@
     String remember = TextUtil.replaceEntities( request.getParameter("remember") );
     String changenote = TextUtil.replaceEntities( request.getParameter( "changenote" ) );
 
-    WikiPage wikipage = wikiContext.getPage();
-    WikiPage latestversion = wiki.getPageManager().getPage( pagereq );
+    Page wikipage = wikiContext.getPage();
+    Page latestversion = wiki.getManager( PageManager.class ).getPage( pagereq );
 
     session.removeAttribute( EditorManager.REQ_EDITEDTEXT );
 
@@ -141,7 +144,7 @@
 
         //  Modifications are written here before actual saving
 
-        WikiPage modifiedPage = (WikiPage)wikiContext.getPage().clone();
+        Page modifiedPage = (Page)wikiContext.getPage().clone();
 
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
@@ -156,8 +159,8 @@
         //
         //  We expire ALL locks at this moment, simply because someone has already broken it.
         //
-        PageLock lock = wiki.getPageManager().getCurrentLock( wikipage );
-        wiki.getPageManager().unlockPage( lock );
+        PageLock lock = wiki.getManager( PageManager.class ).getCurrentLock( wikipage );
+        wiki.getManager( PageManager.class ).unlockPage( lock );
         session.removeAttribute( "lock-"+pagereq );
 
         //
@@ -166,15 +169,15 @@
         modifiedPage.setAuthor( storedUser );
 
         if( changenote != null ) {
-            modifiedPage.setAttribute( WikiPage.CHANGENOTE, changenote );
+            modifiedPage.setAttribute( Page.CHANGENOTE, changenote );
         } else {
-            modifiedPage.removeAttribute( WikiPage.CHANGENOTE );
+            modifiedPage.removeAttribute( Page.CHANGENOTE );
         }
 
         //
         //  Build comment part
         //
-        StringBuffer pageText = new StringBuffer(wiki.getPageManager().getPureText( wikipage ));
+        StringBuffer pageText = new StringBuffer( wiki.getManager( PageManager.class ).getPureText( wikipage ));
 
         log.debug("Page initial contents are "+pageText.length()+" chars");
 
@@ -229,7 +232,7 @@
 
         try {
             wikiContext.setPage( modifiedPage );
-            wiki.getPageManager().saveText( wikiContext, pageText.toString() );
+            wiki.getManager( PageManager.class ).saveText( wikiContext, pageText.toString() );
         } catch( DecisionRequiredException e ) {
         	String redirect = wikiContext.getURL(WikiContext.VIEW,"ApprovalRequiredForPageChanges");
             response.sendRedirect( redirect );
@@ -251,7 +254,7 @@
         PageLock lock = (PageLock) session.getAttribute( "lock-"+pagereq );
 
         if( lock != null ) {
-            wiki.getPageManager().unlockPage( lock );
+            wiki.getManager( PageManager.class ).unlockPage( lock );
             session.removeAttribute( "lock-"+pagereq );
         }
         response.sendRedirect( wikiContext.getViewURL(pagereq) );
@@ -277,7 +280,7 @@
     //
     //  Attempt to lock the page.
     //
-    PageLock lock = wiki.getPageManager().lockPage( wikipage, storedUser );
+    PageLock lock = wiki.getManager( PageManager.class ).lockPage( wikipage, storedUser );
 
     if( lock != null ) {
         session.setAttribute( "lock-"+pagereq, lock );
@@ -288,6 +291,6 @@
     response.setHeader( "Cache-control", "max-age=0" );
     response.setDateHeader( "Expires", new Date().getTime() );
     response.setDateHeader( "Last-Modified", new Date().getTime() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "EditTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "EditTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" />

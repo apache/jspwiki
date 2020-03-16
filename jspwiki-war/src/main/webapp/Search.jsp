@@ -21,10 +21,11 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.search.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ page import="org.apache.wiki.search.*" %>
+<%@ page import="org.apache.wiki.search.SearchManager" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -58,25 +59,17 @@
 
         query = TextUtil.replaceEntities( query );
 
-        pageContext.setAttribute( "query",
-                                  query,
-                                  PageContext.REQUEST_SCOPE );
+        pageContext.setAttribute( "query", query, PageContext.REQUEST_SCOPE );
 
         //
         //  Did the user click on "go"?
         //
-        if( go != null )
-        {
-            if( list != null && list.size() > 0 )
-            {
+        if( go != null ) {
+            if( list != null && list.size() > 0 ) {
                 SearchResult sr = list.iterator().next();
-
-                WikiPage wikiPage = sr.getPage();
-
+                Page wikiPage = sr.getPage();
                 String url = wikiContext.getViewURL( wikiPage.getName() );
-
                 response.sendRedirect( url );
-
                 return;
             }
         }

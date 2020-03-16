@@ -55,7 +55,7 @@
     // Create wiki context and check for authorization
     WikiContext wikiContext = new WikiContext( wiki, request, "rss" );
     if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
-    WikiPage wikipage = wikiContext.getPage();
+    Page wikipage = wikiContext.getPage();
 
     // Redirect if RSS generation not on
     if( wiki.getManager( RSSGenerator.class ) == null ) {
@@ -94,7 +94,7 @@
     //
     //  Now, list items.
     //
-    List< WikiPage > changed;
+    List< Page > changed;
     
     if( "blog".equals( mode ) ) {
         WeblogPlugin plug = new WeblogPlugin();
@@ -109,8 +109,8 @@
     boolean hasChanged = false;
     Date    latest     = new Date(0);
 
-    for( Iterator< WikiPage > i = changed.iterator(); i.hasNext(); ) {
-        WikiPage p = i.next();
+    for( Iterator< Page > i = changed.iterator(); i.hasNext(); ) {
+        Page p = i.next();
 
         if( !HttpUtil.checkFor304( request, p.getName(), p.getLastModified() ) ) hasChanged = true;
         if( p.getLastModified().after( latest ) ) latest = p.getLastModified();
