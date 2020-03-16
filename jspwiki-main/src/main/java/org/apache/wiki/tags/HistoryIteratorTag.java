@@ -21,6 +21,7 @@ package org.apache.wiki.tags;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.pages.PageManager;
@@ -64,9 +65,9 @@ public class HistoryIteratorTag extends IteratorTag  {
                 m_iterator = versions.iterator();
 
                 if( m_iterator.hasNext() ) {
-                    final WikiContext context = ( WikiContext )m_wikiContext.clone();
+                    final WikiContext context = m_wikiContext.clone();
                     context.setPage( ( WikiPage )m_iterator.next() );
-                    pageContext.setAttribute( WikiContext.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
+                    pageContext.setAttribute( Context.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
                     pageContext.setAttribute( getId(), context.getPage() );
                 } else {
                     return SKIP_BODY;
@@ -96,9 +97,9 @@ public class HistoryIteratorTag extends IteratorTag  {
         }
 
         if( m_iterator != null && m_iterator.hasNext() ) {
-            final WikiContext context = ( WikiContext )m_wikiContext.clone();
+            final WikiContext context = m_wikiContext.clone();
             context.setPage( ( WikiPage )m_iterator.next() );
-            pageContext.setAttribute( WikiContext.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
+            pageContext.setAttribute( Context.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
             pageContext.setAttribute( getId(), context.getPage() );
             return EVAL_BODY_BUFFERED;
         }
