@@ -215,6 +215,13 @@ public interface Context extends Cloneable, Command {
     String getRedirectURL();
 
     /**
+     * Returns the Command associated with this Context.
+     *
+     * @return the command
+     */
+    Command getCommand();
+
+    /**
      *  Creates an URL for the given request context.
      *
      *  @param context e.g. WikiContext.EDIT
@@ -242,12 +249,5 @@ public interface Context extends Cloneable, Command {
 
     /** {@inheritDoc} */
     Context clone();
-
-    /**
-     * Returns the Command associated with this Context.
-     *
-     * @return the command
-     */
-    //Command getCommand();
 
 }
