@@ -200,7 +200,7 @@ public class WikiContext implements Context, Command {
 
         // If page not supplied, default to front page to avoid NPEs
         if( m_page == null ) {
-            m_page = m_engine.getManager( PageManager.class ).getPage( m_engine.getFrontPage() );
+            m_page = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( m_engine.getFrontPage() );
 
             // Front page does not exist?
             if( m_page == null ) {

@@ -19,11 +19,11 @@
 package org.apache.wiki.rss;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.Release;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.variables.VariableManager;
 import org.jdom2.Element;
@@ -68,45 +68,32 @@ public class RSS20Feed extends Feed
         if( m_wikiContext.getHttpRequest() != null )
             servletContext = m_wikiContext.getHttpRequest().getSession().getServletContext();
 
-        for( final Iterator< Entry > i = m_entries.iterator(); i.hasNext(); )
-        {
-            final Entry e = i.next();
-            final WikiPage p = e.getPage();
-
+        for( final Entry e : m_entries ) {
+            final Page p = e.getPage();
             final String url = e.getURL();
-
-            final Element item = new Element("item");
-
-            item.addContent( new Element("link").setText(url) );
-
-            item.addContent( new Element("title").setText( e.getTitle()) );
-
-            item.addContent( new Element("description").setText( e.getContent()) );
+            final Element item = new Element( "item" );
+            item.addContent( new Element( "link" ).setText( url ) );
+            item.addContent( new Element( "title" ).setText( e.getTitle() ) );
+            item.addContent( new Element( "description" ).setText( e.getContent() ) );
 
             //
             //  Attachments for enclosures
             //
+            if( engine.getManager( AttachmentManager.class ).hasAttachments( p ) && servletContext != null ) {
+                try {
+                    final List< Attachment > c = engine.getManager( AttachmentManager.class ).listAttachments( p );
 
-            if( engine.getManager( AttachmentManager.class ).hasAttachments(p) && servletContext != null )
-            {
-                try
-                {
-                    final List< Attachment > c = engine.getManager( AttachmentManager.class ).listAttachments(p);
-
-                    for( final Iterator< Attachment > a = c.iterator(); a.hasNext(); )
-                    {
+                    for( final Iterator< Attachment > a = c.iterator(); a.hasNext(); ) {
                         final Attachment att = a.next();
 
-                        final Element attEl = new Element("enclosure");
+                        final Element attEl = new Element( "enclosure" );
                         attEl.setAttribute( "url", engine.getURL( WikiContext.ATTACH, att.getName(), null ) );
-                        attEl.setAttribute( "length", Long.toString(att.getSize()) );
+                        attEl.setAttribute( "length", Long.toString( att.getSize() ) );
                         attEl.setAttribute( "type", getMimeType( servletContext, att.getFileName() ) );
 
                         item.addContent( attEl );
                     }
-                }
-                catch( final ProviderException ex )
-                {
+                } catch( final ProviderException ex ) {
                     // FIXME: log.info("Can't get attachment data",ex);
                 }
             }
@@ -116,11 +103,11 @@ public class RSS20Feed extends Feed
             //
             final Calendar cal = Calendar.getInstance();
             cal.setTime( p.getLastModified() );
-            cal.add( Calendar.MILLISECOND,
-                     - (cal.get( Calendar.ZONE_OFFSET ) +
-                        (cal.getTimeZone().inDaylightTime( p.getLastModified() ) ? cal.get( Calendar.DST_OFFSET ) : 0 )) );
+            cal.add( Calendar.MILLISECOND, -( cal.get( Calendar.ZONE_OFFSET ) + ( cal.getTimeZone().inDaylightTime( p.getLastModified() ) ?
+                    cal.get( Calendar.DST_OFFSET ) :
+                    0 ) ) );
 
-            item.addContent( new Element("pubDate").setText(fmt.format(cal.getTime())) );
+            item.addContent( new Element( "pubDate" ).setText( fmt.format( cal.getTime() ) ) );
 
             list.add( item );
         }

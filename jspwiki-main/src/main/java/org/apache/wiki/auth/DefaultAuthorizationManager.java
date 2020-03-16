@@ -21,7 +21,6 @@ package org.apache.wiki.auth;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
@@ -70,7 +69,7 @@ import java.util.WeakHashMap;
  * <p>Default implementation for {@link AuthorizationManager}</p>
  * {@inheritDoc}
  *
- * <p>See the {@link #checkPermission(WikiSession, Permission)} and {@link #hasRoleOrPrincipal(WikiSession, Principal)} methods for more
+ * <p>See the {@link #checkPermission(Session, Permission)} and {@link #hasRoleOrPrincipal(Session, Principal)} methods for more
  * information on the authorization logic.</p>
  * @since 2.3
  * @see AuthenticationManager
@@ -128,7 +127,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
 
         // If the page or ACL is null, it's allowed.
         final String pageName = ((PagePermission)permission).getPage();
-        final WikiPage page = m_engine.getManager( PageManager.class ).getPage( pageName );
+        final WikiPage page = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( pageName );
         final Acl acl = ( page == null) ? null : m_engine.getManager( AclManager.class ).getPermissions( page );
         if( page == null ||  acl == null || acl.isEmpty() ) {
             fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );

@@ -23,6 +23,7 @@ import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.auth.GroupPrincipal;
@@ -149,7 +150,7 @@ public final class DefaultCommandResolver implements CommandResolver {
         // If we were passed a page parameter, try to resolve it
         if ( command instanceof PageCommand && pageName != null ) {
             // If there's a matching WikiPage, "wrap" the command
-            final WikiPage page = resolvePage( request, pageName );
+            final Page page = resolvePage( request, pageName );
             return command.targetedCommand( page );
         }
 
@@ -294,7 +295,7 @@ public final class DefaultCommandResolver implements CommandResolver {
      * {@inheritDoc}
      */
     @Override
-    public WikiPage resolvePage( final HttpServletRequest request, String page ) {
+    public Page resolvePage( final HttpServletRequest request, String page ) {
         // See if the user included a version parameter
         int version = WikiProvider.LATEST_VERSION;
         final String rev = request.getParameter( "version" );
@@ -307,7 +308,7 @@ public final class DefaultCommandResolver implements CommandResolver {
             }
         }
 
-        WikiPage wikipage = m_engine.getManager( PageManager.class ).getPage( page, version );
+        Page wikipage = m_engine.getManager( PageManager.class ).getPage( page, version );
         if ( wikipage == null ) {
             page = MarkupParser.cleanLink( page );
             wikipage = new WikiPage( m_engine, page );

@@ -18,9 +18,10 @@
  */
 package org.apache.wiki.auth.permissions;
 
+import org.apache.wiki.api.core.Page;
+
 import java.util.WeakHashMap;
 
-import org.apache.wiki.WikiPage;
 
 /**
  *  Provides a factory for Permission objects.  Since the Permissions are immutable,
@@ -40,7 +41,7 @@ public final class PermissionFactory
      *  This is a WeakHashMap<Integer,PagePermission>, which stores the
      *  cached page permissions.
      */
-    private static WeakHashMap<Integer, PagePermission> c_cache = new WeakHashMap<Integer, PagePermission>();
+    private static WeakHashMap<Integer, PagePermission> c_cache = new WeakHashMap<>();
     
     /**
      *  Get a permission object for a WikiPage and a set of actions.
@@ -49,7 +50,7 @@ public final class PermissionFactory
      *  @param actions A list of actions.
      *  @return A PagePermission object, presenting this page+actions combination.
      */
-    public static PagePermission getPagePermission( WikiPage page, String actions )
+    public static PagePermission getPagePermission( final Page page, final String actions )
     {
         return getPagePermission( page.getWiki(), page.getName(), actions );
     }
@@ -61,7 +62,7 @@ public final class PermissionFactory
      *  @param actions A list of actions.
      *  @return A PagePermission object, presenting this page+actions combination.
      */
-    public static PagePermission getPagePermission( String page, String actions )
+    public static PagePermission getPagePermission( final String page, final String actions )
     {
         return getPagePermission( "", page, actions );
     }
@@ -74,7 +75,7 @@ public final class PermissionFactory
      *  @param actions A list of actions.
      *  @return A PagePermission object.
      */
-    private static PagePermission getPagePermission( String wiki, String page, String actions )
+    private static PagePermission getPagePermission( final String wiki, String page, final String actions )
     {
         PagePermission perm;
         //
@@ -86,7 +87,7 @@ public final class PermissionFactory
         // Alternative implementation below, but it does create an extra StringBuffer.
         //String         key = wiki+":"+page+":"+actions;
         
-        Integer key = wiki.hashCode() ^ page.hashCode() ^ actions.hashCode();
+        final Integer key = wiki.hashCode() ^ page.hashCode() ^ actions.hashCode();
    
         //
         //  It's fine if two threads update the cache, since the objects mean the same

@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.pages.PageManager;
 
@@ -36,7 +36,8 @@ public class NoSuchPageTag extends WikiTagBase {
     
     private String m_pageName;
 
-    @Override public void initTag() {
+    @Override
+    public void initTag() {
         super.initTag();
         m_pageName = null;
     }
@@ -51,9 +52,10 @@ public class NoSuchPageTag extends WikiTagBase {
         return m_pageName;
     }
 
-    @Override public int doWikiStartTag() throws IOException, ProviderException {
+    @Override
+    public int doWikiStartTag() throws IOException, ProviderException {
         final Engine engine = m_wikiContext.getEngine();
-        final WikiPage page;
+        final Page page;
 
         if( m_pageName == null ) {
             page = m_wikiContext.getPage();

@@ -21,9 +21,10 @@ package org.apache.wiki.tags;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
 
@@ -80,9 +81,9 @@ public class AttachmentsIteratorTag extends IteratorTag {
 
                 if( m_iterator.hasNext() ) {
                     final Attachment  att = (Attachment) m_iterator.next();
-                    final WikiContext context = (WikiContext)m_wikiContext.clone();
+                    final Context context = m_wikiContext.clone();
                     context.setPage( att );
-                    pageContext.setAttribute( WikiContext.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
+                    pageContext.setAttribute( Context.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
                     pageContext.setAttribute( getId(), att );
                 } else {
                     return SKIP_BODY;
@@ -118,9 +119,9 @@ public class AttachmentsIteratorTag extends IteratorTag {
 
         if( m_iterator != null && m_iterator.hasNext() ) {
             final Attachment att = ( Attachment )m_iterator.next();
-            final WikiContext context = ( WikiContext )m_wikiContext.clone();
+            final Context context = m_wikiContext.clone();
             context.setPage( att );
-            pageContext.setAttribute( WikiContext.ATTR_CONTEXT,  context, PageContext.REQUEST_SCOPE );
+            pageContext.setAttribute( Context.ATTR_CONTEXT,  context, PageContext.REQUEST_SCOPE );
             pageContext.setAttribute( getId(), att );
 
             return EVAL_BODY_BUFFERED;

@@ -29,6 +29,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -546,7 +547,7 @@ public class AttachmentServlet extends HttpServlet {
         //  same name than some other previous attachment, then that attachment gains a new version.
         Attachment att = mgr.getAttachmentInfo( context.getPage().getName() );
         if( att == null ) {
-            att = new Attachment( m_engine, parentPage, filename );
+            att = new org.apache.wiki.attachment.Attachment( m_engine, parentPage, filename );
             created = true;
         }
         att.setSize( contentLength );

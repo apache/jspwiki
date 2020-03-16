@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.AttachmentManager;
@@ -592,7 +593,7 @@ public class WikiEngine implements Engine {
      */
     public void initReferenceManager() throws WikiException {
         try {
-            final ArrayList< WikiPage > pages = new ArrayList<>();
+            final ArrayList< Page > pages = new ArrayList<>();
             pages.addAll( m_pageManager.getAllPages() );
             pages.addAll( m_attachmentManager.getAllAttachments() );
 

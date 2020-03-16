@@ -21,10 +21,11 @@ package org.apache.wiki.tags;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.WikiProvider;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.LinkParsingOperations;
@@ -208,7 +209,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                 final String parms = (m_version != null) ? "version="+getVersion() : null;
 
                 //  Internal wiki link, but is it an attachment link?
-                final WikiPage p = engine.getManager( PageManager.class ).getPage( m_pageName );
+                final Page p = engine.getManager( PageManager.class ).getPage( m_pageName );
                 if( p instanceof Attachment ) {
                     url = m_wikiContext.getURL( WikiContext.ATTACH, m_pageName );
                 } else if( (hashMark = m_ref.indexOf('#')) != -1 ) {
@@ -234,7 +235,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                 }
             }
         } else if( m_pageName != null && m_pageName.length() > 0 ) {
-            final WikiPage p = engine.getManager( PageManager.class ).getPage( m_pageName );
+            final Page p = engine.getManager( PageManager.class ).getPage( m_pageName );
 
             String parms = (m_version != null) ? "version="+getVersion() : null;
 
@@ -294,7 +295,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
             int r2;
 
             if( DiffLinkTag.VER_LATEST.equals( getVersion() ) ) {
-                final WikiPage latest = engine.getManager( PageManager.class ).getPage( page, WikiProvider.LATEST_VERSION );
+                final Page latest = engine.getManager( PageManager.class ).getPage( page, WikiProvider.LATEST_VERSION );
 
                 r1 = latest.getVersion();
             } else if( DiffLinkTag.VER_PREVIOUS.equals(getVersion()) ) {
@@ -307,7 +308,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
             }
 
             if( DiffLinkTag.VER_LATEST.equals(m_compareToVersion) ) {
-                final WikiPage latest = engine.getManager( PageManager.class ).getPage( page, WikiProvider.LATEST_VERSION );
+                final Page latest = engine.getManager( PageManager.class ).getPage( page, WikiProvider.LATEST_VERSION );
 
                 r2 = latest.getVersion();
             } else if( DiffLinkTag.VER_PREVIOUS.equals(m_compareToVersion) ) {

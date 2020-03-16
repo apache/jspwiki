@@ -18,17 +18,17 @@
  */
 package org.apache.wiki.xmlrpc;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
+
 
 /**
- *  Any wiki RPC handler should implement this so that they can be properly
- *  initialized and recognized by JSPWiki.
+ *  Any wiki RPC handler should implement this so that they can be properly initialized and recognized by JSPWiki.
  *
  *  @since 2.1.7
  */
-// FIXME3.0: This class is fast becoming obsolete.  It should be moved to the "rpc" package
-//           in 3.0
-public interface WikiRPCHandler
-{
-    void initialize( WikiContext context );
+// FIXME3.0: This class is fast becoming obsolete.  It should be moved to the "rpc" package in 3.0
+public interface WikiRPCHandler {
+
+    void initialize( Context context );
+
 }

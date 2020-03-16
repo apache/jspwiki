@@ -19,8 +19,8 @@
 package org.apache.wiki.tags;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Command;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.auth.AuthorizationManager;
@@ -103,10 +103,10 @@ public class PermissionTag extends WikiTagBase {
      *  @return true if granted, false if not
      */
     private boolean checkPermission( final String permission ) {
-        final Session session            = m_wikiContext.getWikiSession();
-        final WikiPage    page           = m_wikiContext.getPage();
-        final AuthorizationManager mgr   = m_wikiContext.getEngine().getManager( AuthorizationManager.class );
-        boolean gotPermission      = false;
+        final Session session          = m_wikiContext.getWikiSession();
+        final Page page                = m_wikiContext.getPage();
+        final AuthorizationManager mgr = m_wikiContext.getEngine().getManager( AuthorizationManager.class );
+        boolean gotPermission          = false;
         
         if ( CREATE_GROUPS.equals( permission ) || CREATE_PAGES.equals( permission ) || EDIT_PREFERENCES.equals( permission ) || EDIT_PROFILE.equals( permission ) || LOGIN.equals( permission ) ) {
             gotPermission = mgr.checkPermission( session, new WikiPermission( page.getWiki(), permission ) );
@@ -131,7 +131,7 @@ public class PermissionTag extends WikiTagBase {
             //  Edit tag also checks that we're not trying to edit an old version: they cannot be edited.
             //
             if( EDIT.equals(permission) ) {
-                final WikiPage latest = m_wikiContext.getEngine().getManager( PageManager.class ).getPage( page.getName() );
+                final Page latest = m_wikiContext.getEngine().getManager( PageManager.class ).getPage( page.getName() );
                 if( page.getVersion() != WikiProvider.LATEST_VERSION && latest.getVersion() != page.getVersion() ) {
                     return false;
                 }

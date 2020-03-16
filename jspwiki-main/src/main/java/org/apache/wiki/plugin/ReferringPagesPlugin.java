@@ -20,8 +20,8 @@ package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.pages.PageManager;
@@ -78,7 +78,7 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
             pageName = context.getPage().getName();
         }
 
-        final WikiPage page = context.getEngine().getManager( PageManager.class ).getPage( pageName );
+        final Page page = context.getEngine().getManager( PageManager.class ).getPage( pageName );
 
         if( page != null ) {
             Collection< String > links  = refmgr.findReferrers( page.getName() );

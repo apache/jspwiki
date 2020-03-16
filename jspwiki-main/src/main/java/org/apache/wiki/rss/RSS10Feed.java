@@ -19,8 +19,8 @@
 package org.apache.wiki.rss;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -80,7 +80,7 @@ public class RSS10Feed extends Feed {
             content.addContent( entry.getContent() );
             item.addContent( content );
 
-            final WikiPage p = entry.getPage();
+            final Page p = entry.getPage();
             if( p.getVersion() != -1 ) {
                 item.addContent( new Element( "version", NS_WIKI ).addContent( Integer.toString( p.getVersion() ) ) );
             }

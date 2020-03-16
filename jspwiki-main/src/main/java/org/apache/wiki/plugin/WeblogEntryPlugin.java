@@ -23,6 +23,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.Plugin;
@@ -108,11 +109,11 @@ public class WeblogEntryPlugin implements Plugin {
     }
 
     private int findFreeEntry( final Engine engine, final String baseName, final String date ) throws ProviderException {
-        final Collection< WikiPage > everyone = engine.getManager( PageManager.class ).getAllPages();
+        final Collection< Page > everyone = engine.getManager( PageManager.class ).getAllPages();
         final String startString = WeblogPlugin.makeEntryPage(baseName, date, "");
         int max = 0;
 
-        for( final WikiPage p : everyone ) {
+        for( final Page p : everyone ) {
             if( p.getName().startsWith( startString ) ) {
                 try {
                     final String probableId = p.getName().substring( startString.length() );

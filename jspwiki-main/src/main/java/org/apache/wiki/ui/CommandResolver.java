@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Command;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -135,6 +135,6 @@ public interface CommandResolver {
      * @param page the name of the page to look up; this page <em>must</em> exist
      * @return the wiki page
      */
-    WikiPage resolvePage( HttpServletRequest request, String page );
+    Page resolvePage( HttpServletRequest request, String page );
 
 }

@@ -19,8 +19,8 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.pages.PageManager;
 
@@ -54,8 +54,8 @@ public class DiffLinkTag extends WikiLinkTag {
     private String m_version    = VER_LATEST;
     private String m_newVersion = VER_LATEST;
 
-    @Override public void initTag()
-    {
+    @Override
+    public void initTag() {
         super.initTag();
         m_version = m_newVersion = VER_LATEST;
     }
@@ -80,7 +80,8 @@ public class DiffLinkTag extends WikiLinkTag {
         m_newVersion = arg;
     }
 
-    @Override public final int doWikiStartTag() throws IOException {
+    @Override
+    public final int doWikiStartTag() throws IOException {
         final Engine engine = m_wikiContext.getEngine();
         String pageName = m_pageName;
 
@@ -102,8 +103,8 @@ public class DiffLinkTag extends WikiLinkTag {
             return SKIP_BODY;
         }
 
-        if( VER_LATEST.equals(getVersion()) ) {
-            final WikiPage latest = engine.getManager( PageManager.class ).getPage( pageName, WikiProvider.LATEST_VERSION );
+        if( VER_LATEST.equals( getVersion() ) ) {
+            final Page latest = engine.getManager( PageManager.class ).getPage( pageName, WikiProvider.LATEST_VERSION );
             if( latest == null ) {
                 // This may occur if matchEnglishPlurals is on, and we access the wrong page name
                 return SKIP_BODY;
@@ -119,7 +120,7 @@ public class DiffLinkTag extends WikiLinkTag {
         }
 
         if( VER_LATEST.equals( getNewVersion() ) ) {
-            final WikiPage latest = engine.getManager( PageManager.class ).getPage( pageName, WikiProvider.LATEST_VERSION );
+            final Page latest = engine.getManager( PageManager.class ).getPage( pageName, WikiProvider.LATEST_VERSION );
             r2 = latest.getVersion();
         } else if( VER_PREVIOUS.equals( getNewVersion() ) ) {
             r2 = m_wikiContext.getPage().getVersion() - 1;

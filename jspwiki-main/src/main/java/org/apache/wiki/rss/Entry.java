@@ -18,25 +18,25 @@
  */
 package org.apache.wiki.rss;
 
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
+
 
 /**
  *  Represents an entry, that is, an unit of change, in a Feed.
  */
 public class Entry
 {
-    private String   m_content;
-    private String   m_url;
-    private String   m_title;
-    private WikiPage m_page;
-    private String   m_author;
-
-    /**
+    private String m_content;
+    private String m_url;
+    private String m_title;
+    private Page   m_page;
+    private String m_author;
+   /**
      *  Set the author of this entry.
      *  
      *  @param author Name of the author.
      */
-    public void setAuthor( String author )
+    public void setAuthor( final String author )
     {
         m_author = author;
     }
@@ -52,11 +52,11 @@ public class Entry
     }
 
     /**
-     *  Returns the page set by {@link #setPage(WikiPage)}.
+     *  Returns the page set by {@link #setPage(Page)}.
      *  
      *  @return The WikiPage to which this Entry refers to.
      */
-    public WikiPage getPage()
+    public Page getPage()
     {
         return m_page;
     }
@@ -66,8 +66,7 @@ public class Entry
      *  
      *  @param p A valid WikiPage.
      */
-    public void setPage( WikiPage p )
-    {
+    public void setPage( final Page p ) {
         m_page = p;
     }
 
@@ -77,7 +76,7 @@ public class Entry
      *  
      *  @param title A String description of the change.
      */
-    public void setTitle( String title )
+    public void setTitle( final String title )
     {
         m_title = title;
     }
@@ -97,7 +96,7 @@ public class Entry
      *  
      *  @param url An absolute URL to the entry.
      */
-    public void setURL( String url )
+    public void setURL( final String url )
     {
         m_url = url;
     }
@@ -117,7 +116,7 @@ public class Entry
      *  
      *  @param content A String of the content.
      */
-    public void setContent( String content )
+    public void setContent( final String content )
     {
         m_content = content;
     }

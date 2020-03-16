@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.references;
 
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.PageFilter;
@@ -52,7 +51,7 @@ public interface ReferenceManager extends PageFilter, InternalModule, WikiEventL
      *  @since 2.2
      *  @throws ProviderException If reading of pages fails.
      */
-    void initialize( final Collection<WikiPage> pages ) throws ProviderException;
+    void initialize( final Collection< Page > pages ) throws ProviderException;
 
     /**
      *  Reads a WikiPageful of data from a String and returns all links internal to this Wiki in a Collection.

@@ -18,9 +18,9 @@
  */
 package org.apache.wiki.xmlrpc;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
@@ -56,21 +56,22 @@ public abstract class AbstractRPCHandler implements WikiRPCHandler {
     public static final String LINK_INLINE   = "inline";
 
     protected Engine m_engine;
-    protected WikiContext m_context;
+    protected Context m_context;
 
     /** This is the currently implemented JSPWiki XML-RPC code revision. */
     public static final int RPC_VERSION = 1;
 
-    @Override public void initialize( final WikiContext context ) {
+    @Override
+    public void initialize( final Context context ) {
         m_context = context;
         m_engine  = context.getEngine();
     }
 
-    protected abstract Hashtable encodeWikiPage( WikiPage p );
+    protected abstract Hashtable encodeWikiPage( Page p );
 
     public Vector getRecentChanges( final Date since ) {
         checkPermission( PagePermission.VIEW );
-        final Set< WikiPage > pages = m_engine.getManager( PageManager.class ).getRecentChanges();
+        final Set< Page > pages = m_engine.getManager( PageManager.class ).getRecentChanges();
         final Vector< Hashtable< ?, ? > > result = new Vector<>();
 
         // Transform UTC into local time.
@@ -79,7 +80,7 @@ public abstract class AbstractRPCHandler implements WikiRPCHandler {
         cal.add( Calendar.MILLISECOND, cal.get( Calendar.ZONE_OFFSET ) +
                   (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) );
 
-        for( final WikiPage page : pages ) {
+        for( final Page page : pages ) {
             if( page.getLastModified().after( cal.getTime() ) ) {
                 result.add( encodeWikiPage( page ) );
             }

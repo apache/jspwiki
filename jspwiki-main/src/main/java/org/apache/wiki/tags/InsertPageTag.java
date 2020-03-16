@@ -21,6 +21,7 @@ package org.apache.wiki.tags;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
@@ -60,7 +61,8 @@ public class InsertPageTag extends WikiTagBase {
     protected String m_pageName = null;
     private   int    m_mode = HTML;
 
-    @Override public void initTag() {
+    @Override
+    public void initTag() {
         super.initTag();
         m_pageName = null;
         m_mode = HTML;
@@ -84,9 +86,10 @@ public class InsertPageTag extends WikiTagBase {
         }
     }
 
-    @Override public final int doWikiStartTag() throws IOException, ProviderException {
+    @Override
+    public final int doWikiStartTag() throws IOException, ProviderException {
         final Engine engine = m_wikiContext.getEngine();
-        final WikiPage insertedPage;
+        final Page insertedPage;
 
         //
         //  NB: The page might not really exist if the user is currently
@@ -120,4 +123,5 @@ public class InsertPageTag extends WikiTagBase {
 
         return SKIP_BODY;
     }
+
 }

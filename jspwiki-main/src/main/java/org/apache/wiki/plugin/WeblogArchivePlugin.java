@@ -19,9 +19,9 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.util.TextUtil;
@@ -82,13 +82,13 @@ public class WeblogArchivePlugin implements Plugin {
 
         if( months.size() > 0 ) {
             year = ( months.iterator().next() ).get( Calendar.YEAR );
-            sb.append( "<li class=\"archiveyear\">" + year + "</li>\n" );
+            sb.append( "<li class=\"archiveyear\">" ).append( year ).append( "</li>\n" );
         }
 
         for( final Calendar cal : months ) {
             if( cal.get( Calendar.YEAR ) != year ) {
                 year = cal.get( Calendar.YEAR );
-                sb.append( "<li class=\"archiveyear\">" + year + "</li>\n" );
+                sb.append( "<li class=\"archiveyear\">" ).append( year ).append( "</li>\n" );
             }
             sb.append( "  <li>" );
             sb.append( getMonthLink( cal ) );
@@ -106,9 +106,9 @@ public class WeblogArchivePlugin implements Plugin {
 
         final WeblogPlugin pl = new WeblogPlugin();
 
-        final List< WikiPage > blogEntries = pl.findBlogEntries( engine, page, new Date(0L), new Date() );
+        final List< Page > blogEntries = pl.findBlogEntries( engine, page, new Date(0L), new Date() );
 
-        for( final WikiPage p : blogEntries ) {
+        for( final Page p : blogEntries ) {
             // FIXME: Not correct, should parse page creation time.
             final Date d = p.getLastModified();
             final Calendar cal = Calendar.getInstance();

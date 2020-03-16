@@ -22,14 +22,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.ajax.AjaxUtil;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.filters.BasePageFilter;
+import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
@@ -261,7 +262,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
         if( event instanceof WikiPageEvent && event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST ) {
             final String pageName = ( ( WikiPageEvent ) event ).getPageName();
 
-            final WikiPage p = m_engine.getManager( PageManager.class ).getPage( pageName );
+            final Page p = m_engine.getManager( PageManager.class ).getPage( pageName );
             if( p != null ) {
                 pageRemoved( p );
             }

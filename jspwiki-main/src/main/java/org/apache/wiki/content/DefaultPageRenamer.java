@@ -22,10 +22,11 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageRenameEvent;
@@ -83,11 +84,11 @@ public class DefaultPageRenamer implements PageRenamer {
         
         //  Preconditions: "from" page must exist, and "to" page must not yet exist.
         final Engine engine = context.getEngine();
-        final WikiPage fromPage = engine.getManager( PageManager.class ).getPage( renameFrom );
+        final Page fromPage = engine.getManager( PageManager.class ).getPage( renameFrom );
         if( fromPage == null ) {
             throw new WikiException("No such page "+renameFrom);
         }
-        WikiPage toPage = engine.getManager( PageManager.class ).getPage( renameToClean );
+        Page toPage = engine.getManager( PageManager.class ).getPage( renameToClean );
         if( toPage != null ) {
             throw new WikiException( "Page already exists " + renameToClean );
         }
@@ -98,7 +99,7 @@ public class DefaultPageRenamer implements PageRenamer {
         //  Remove references to attachments under old name
         final List< Attachment > attachmentsOldName = engine.getManager( AttachmentManager.class ).listAttachments( fromPage );
         for( final Attachment att: attachmentsOldName ) {
-            final WikiPage fromAttPage = engine.getManager( PageManager.class ).getPage( att.getName() );
+            final Page fromAttPage = engine.getManager( PageManager.class ).getPage( att.getName() );
             engine.getManager( ReferenceManager.class ).pageRemoved( fromAttPage );
         }
 
@@ -130,7 +131,7 @@ public class DefaultPageRenamer implements PageRenamer {
         
         final Collection< Attachment > attachmentsNewName = engine.getManager( AttachmentManager.class ).listAttachments( toPage );
         for( final Attachment att:attachmentsNewName ) {
-            final WikiPage toAttPage = engine.getManager( PageManager.class ).getPage( att.getName() );
+            final Page toAttPage = engine.getManager( PageManager.class ).getPage( att.getName() );
             // add reference to attachment under new page name
             engine.getManager( ReferenceManager.class ).updateReferences( toAttPage );
             engine.getManager( SearchManager.class ).reindexPage( att );
@@ -163,7 +164,7 @@ public class DefaultPageRenamer implements PageRenamer {
      *  @param fromPage The old page
      *  @param toPage The new page
      */
-    private void updateReferrers( final WikiContext context, final WikiPage fromPage, final WikiPage toPage, final Set< String > referrers ) {
+    private void updateReferrers( final WikiContext context, final Page fromPage, final Page toPage, final Set< String > referrers ) {
         if( referrers.isEmpty() ) { // No referrers
             return;
         }
@@ -175,7 +176,7 @@ public class DefaultPageRenamer implements PageRenamer {
                 pageName = toPage.getName();
             }
             
-            final WikiPage p = engine.getManager( PageManager.class ).getPage( pageName );
+            final Page p = engine.getManager( PageManager.class ).getPage( pageName );
 
             final String sourceText = engine.getManager( PageManager.class ).getPureText( p );
             String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );
@@ -200,7 +201,7 @@ public class DefaultPageRenamer implements PageRenamer {
         }
     }
 
-    private Set<String> getReferencesToChange( final WikiPage fromPage, final Engine engine ) {
+    private Set<String> getReferencesToChange( final Page fromPage, final Engine engine ) {
         final Set< String > referrers = new TreeSet<>();
         final Collection< String > r = engine.getManager( ReferenceManager.class ).findReferrers( fromPage.getName() );
         if( r != null ) {

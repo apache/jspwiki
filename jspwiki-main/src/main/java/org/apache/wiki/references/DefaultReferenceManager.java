@@ -23,7 +23,6 @@ import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -187,7 +186,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  @throws ProviderException If reading of pages fails.
      */
     @Override
-    public void initialize( final Collection< WikiPage > pages ) throws ProviderException {
+    public void initialize( final Collection< Page > pages ) throws ProviderException {
         log.debug( "Initializing new ReferenceManager with " + pages.size() + " initial pages." );
         final StopWatch sw = new StopWatch();
         sw.start();
@@ -226,7 +225,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
             buildKeyLists( pages );
 
             // Scan the existing pages from disk and update references in the manager.
-            for( final WikiPage page : pages ) {
+            for( final Page page : pages ) {
                 // We cannot build a reference list from the contents of attachments, so we skip them.
                 if( !( page instanceof Attachment ) ) {
                     updatePageReferences( page );
@@ -628,7 +627,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *
      * @param pages a Collection containing WikiPage objects.
      */
-    private synchronized void buildKeyLists( final Collection< WikiPage > pages ) {
+    private synchronized void buildKeyLists( final Collection< Page > pages ) {
         m_refersTo.clear();
         m_referredBy.clear();
         if( pages == null ) {
@@ -636,7 +635,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
         }
 
         try {
-            for( final WikiPage page : pages ) {
+            for( final Page page : pages ) {
                 // We add a non-null entry to referredBy to indicate the referred page exists
                 m_referredBy.put( page.getName(), new TreeSet<>() );
                 // Just add a key to refersTo; the keys need to be in sync with referredBy.

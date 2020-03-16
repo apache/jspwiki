@@ -22,6 +22,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.PageFilter;
+import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.modules.InternalModule;
 

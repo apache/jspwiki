@@ -19,9 +19,9 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.Plugin;
@@ -106,7 +106,7 @@ public class InsertPage implements Plugin {
         }
 
         if( includedPage != null ) {
-            final WikiPage page;
+            final Page page;
             try {
                 final String pageName = engine.getFinalPageName( includedPage );
                 if( pageName != null ) {

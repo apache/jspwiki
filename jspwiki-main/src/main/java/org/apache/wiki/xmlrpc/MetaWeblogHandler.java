@@ -21,7 +21,9 @@ package org.apache.wiki.xmlrpc;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -56,13 +58,13 @@ public class MetaWeblogHandler implements WikiRPCHandler {
 
     private static final Logger log = Logger.getLogger( MetaWeblogHandler.class );
 
-    private WikiContext m_context;
+    private Context m_context;
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public void initialize( final WikiContext context )
+    public void initialize( final Context context )
     {
         m_context = context;
     }
@@ -76,7 +78,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
      *
      *  @throws XmlRpcException with the correct error message, if auth fails.
      */
-    private void checkPermissions( final WikiPage page,
+    private void checkPermissions( final Page page,
                                    final String username,
                                    final String password,
                                    final String permission ) throws XmlRpcException {
@@ -106,7 +108,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
      *  @return An empty hashtable.
      */
     public Hashtable< Object, Object > getCategories( final String blogid, final String username, final String password )  throws XmlRpcException {
-        final WikiPage page = m_context.getEngine().getManager( PageManager.class ).getPage( blogid );
+        final Page page = m_context.getEngine().getManager( PageManager.class ).getPage( blogid );
         checkPermissions( page, username, password, "view" );
         return new Hashtable<>();
     }
@@ -121,8 +123,8 @@ public class MetaWeblogHandler implements WikiRPCHandler {
      *  @param page The actual entry page
      *  @return A metaWeblog entry struct.
      */
-    private Hashtable< String,Object > makeEntry( final WikiPage page ) {
-        final WikiPage firstVersion = m_context.getEngine().getManager( PageManager.class ).getPage( page.getName(), 1 );
+    private Hashtable< String,Object > makeEntry( final Page page ) {
+        final Page firstVersion = m_context.getEngine().getManager( PageManager.class ).getPage( page.getName(), 1 );
         final Hashtable< String, Object > ht = new Hashtable<>();
         ht.put( "dateCreated", firstVersion.getLastModified() );
         ht.put( "link", getURL(page.getName() ) );
@@ -167,16 +169,16 @@ public class MetaWeblogHandler implements WikiRPCHandler {
     public Hashtable getRecentPosts( final String blogid, final String username, final String password, final int numberOfPosts ) throws XmlRpcException {
         final Hashtable<String, Hashtable<String, Object>> result = new Hashtable<>();
         log.info( "metaWeblog.getRecentPosts() called");
-        final WikiPage page = m_context.getEngine().getManager( PageManager.class ).getPage( blogid );
+        final Page page = m_context.getEngine().getManager( PageManager.class ).getPage( blogid );
         checkPermissions( page, username, password, "view" );
 
         final WeblogPlugin plugin = new WeblogPlugin();
-        final List< WikiPage > changed = plugin.findBlogEntries( m_context.getEngine(), blogid, new Date( 0L ), new Date() );
+        final List< Page > changed = plugin.findBlogEntries( m_context.getEngine(), blogid, new Date( 0L ), new Date() );
         changed.sort( new PageTimeComparator() );
 
         int items = 0;
-        for( final Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < numberOfPosts; items++ ) {
-            final WikiPage p = i.next();
+        for( final Iterator< Page > i = changed.iterator(); i.hasNext() && items < numberOfPosts; items++ ) {
+            final Page p = i.next();
             result.put( "entry", makeEntry( p ) );
         }
 
@@ -201,7 +203,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
                            final boolean publish ) throws XmlRpcException {
         log.info("metaWeblog.newPost() called");
         final Engine engine = m_context.getEngine();
-        final WikiPage page = engine.getManager( PageManager.class ).getPage( blogid );
+        final Page page = engine.getManager( PageManager.class ).getPage( blogid );
         checkPermissions( page, username, password, "createPages" );
 
         try {
@@ -248,7 +250,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
 
         log.info( "metaWeblog.newMediaObject() called" );
 
-        final WikiPage page = engine.getManager( PageManager.class ).getPage( blogid );
+        final Page page = engine.getManager( PageManager.class ).getPage( blogid );
         checkPermissions( page, username, password, "upload" );
 
         final String name = (String) content.get( "name" );
@@ -286,11 +288,11 @@ public class MetaWeblogHandler implements WikiRPCHandler {
         log.info("metaWeblog.editPost("+postid+") called");
 
         // FIXME: Is postid correct?  Should we determine it from the page name?
-        final WikiPage page = engine.getManager( PageManager.class ).getPage( postid );
+        final Page page = engine.getManager( PageManager.class ).getPage( postid );
         checkPermissions( page, username, password, "edit" );
 
         try {
-            final WikiPage entryPage = (WikiPage)page.clone();
+            final Page entryPage = page.clone();
             entryPage.setAuthor( username );
 
             final WikiContext context = new WikiContext( engine, entryPage );
@@ -317,7 +319,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
      */
     Hashtable< String, Object > getPost( final String postid, final String username, final String password ) throws XmlRpcException {
         final String wikiname = "FIXME";
-        final WikiPage page = m_context.getEngine().getManager( PageManager.class ).getPage( wikiname );
+        final Page page = m_context.getEngine().getManager( PageManager.class ).getPage( wikiname );
         checkPermissions( page, username, password, "view" );
         return makeEntry( page );
     }

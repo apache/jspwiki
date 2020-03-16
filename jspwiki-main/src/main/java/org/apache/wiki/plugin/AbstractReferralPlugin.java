@@ -27,9 +27,9 @@ import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.StringTransmutator;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.pages.PageManager;
@@ -252,7 +252,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
         initSorter( context, params );
     }
 
-    protected List< WikiPage > filterWikiPageCollection( final Collection< WikiPage > pages ) {
+    protected List< Page > filterWikiPageCollection( final Collection< Page > pages ) {
         final List< String > pageNames = filterCollection( pages.stream()
                                                           .map( page -> page.getName() )
                                                           .collect( Collectors.toList() ) );
@@ -273,10 +273,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
 
         final PatternMatcher pm = new Perl5Matcher();
 
-        for( final Iterator< String > i = c.iterator(); i.hasNext(); )
-        {
-            final String pageName = i.next();
-
+        for( final String pageName : c ) {
             //
             //  If include parameter exists, then by default we include only those
             //  pages in it (excluding the ones in the exclude pattern list).
@@ -285,48 +282,37 @@ public abstract class AbstractReferralPlugin implements Plugin {
             //
             boolean includeThis = m_include == null;
 
-            if( m_include != null )
-            {
-                for( int j = 0; j < m_include.length; j++ )
-                {
-                    if( pm.matches( pageName, m_include[j] ) )
-                    {
+            if( m_include != null ) {
+                for( final Pattern pattern : m_include ) {
+                    if( pm.matches( pageName, pattern ) ) {
                         includeThis = true;
                         break;
                     }
                 }
             }
 
-            if( m_exclude != null )
-            {
-                for( int j = 0; j < m_exclude.length; j++ )
-                {
-                    if( pm.matches( pageName, m_exclude[j] ) )
-                    {
+            if( m_exclude != null ) {
+                for( final Pattern pattern : m_exclude ) {
+                    if( pm.matches( pageName, pattern ) ) {
                         includeThis = false;
                         break; // The inner loop, continue on the next item
                     }
                 }
             }
 
-            if( includeThis )
-            {
+            if( includeThis ) {
                 result.add( pageName );
                 //
                 //  if we want to show the last modified date of the most recently change page, we keep a "high watermark" here:
-                WikiPage page = null;
-                if( m_lastModified )
-                {
+                final Page page;
+                if( m_lastModified ) {
                     page = m_engine.getManager( PageManager.class ).getPage( pageName );
-                    if( page != null )
-                    {
+                    if( page != null ) {
                         final Date lastModPage = page.getLastModified();
-                        if( log.isDebugEnabled() )
-                        {
+                        if( log.isDebugEnabled() ) {
                             log.debug( "lastModified Date of page " + pageName + " : " + m_dateLastModified );
                         }
-                        if( lastModPage.after( m_dateLastModified ) )
-                        {
+                        if( lastModPage.after( m_dateLastModified ) ) {
                             m_dateLastModified = lastModPage;
                         }
                     }
@@ -358,10 +344,10 @@ public abstract class AbstractReferralPlugin implements Plugin {
      *  @param numItems How many items to show.
      *  @return The WikiText
      */
-    protected String wikitizeCollection( final Collection< String > links, final String separator, final int numItems )
-    {
-        if( links == null || links.isEmpty() )
+    protected String wikitizeCollection( final Collection< String > links, final String separator, final int numItems ) {
+        if( links == null || links.isEmpty() ) {
             return "";
+        }
 
         final StringBuilder output = new StringBuilder();
 
@@ -404,25 +390,19 @@ public abstract class AbstractReferralPlugin implements Plugin {
      *  @return HTML
      *  @since 1.6.4
      */
-    protected String makeHTML( final Context context, final String wikitext )
-    {
+    protected String makeHTML( final Context context, final String wikitext ) {
         String result = "";
 
         final RenderingManager mgr = m_engine.getManager( RenderingManager.class );
 
-        try
-        {
+        try {
             final MarkupParser parser = mgr.getParser(context, wikitext);
-
             parser.addLinkTransmutator( new CutMutator(m_maxwidth) );
             parser.enableImageInlining( false );
 
             final WikiDocument doc = parser.parse();
-
             result = mgr.getHTML( context, doc );
-        }
-        catch( final IOException e )
-        {
+        } catch( final IOException e ) {
             log.error("Failed to convert page data to HTML", e);
         }
 

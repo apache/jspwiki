@@ -23,6 +23,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.attachment.Attachment;
@@ -151,7 +152,7 @@ public class RSSGenerator {
         return s.trim();
     }
 
-    private String getAuthor( final WikiPage page ) {
+    private String getAuthor( final Page page ) {
         String author = page.getAuthor();
         if( author == null ) {
             author = "An unknown author";
@@ -181,7 +182,7 @@ public class RSSGenerator {
         return sb.toString();
     }
 
-    private String getPageDescription( final WikiPage page ) {
+    private String getPageDescription( final Page page ) {
         final StringBuilder buf = new StringBuilder();
         final String author = getAuthor( page );
         final WikiContext ctx = new WikiContext( m_engine, page );
@@ -200,7 +201,7 @@ public class RSSGenerator {
         return buf.toString();
     }
 
-    private String getEntryDescription( final WikiPage page ) {
+    private String getEntryDescription( final Page page ) {
         final String res;
         if( page instanceof Attachment ) {
             res = getAttachmentDescription( (Attachment)page );
@@ -212,7 +213,7 @@ public class RSSGenerator {
     }
 
     // FIXME: This should probably return something more intelligent
-    private String getEntryTitle( final WikiPage page )
+    private String getEntryTitle( final Page page )
     {
         return page.getName() + ", version " + page.getVersion();
     }
@@ -256,7 +257,7 @@ public class RSSGenerator {
      * @return Fully formed XML.
      * @throws IllegalArgumentException If an illegal mode is given.
      */
-    public String generateFeed( final WikiContext wikiContext, final List< WikiPage > changed, final String mode, final String type ) throws IllegalArgumentException {
+    public String generateFeed( final WikiContext wikiContext, final List< Page > changed, final String mode, final String type ) throws IllegalArgumentException {
         final Feed feed;
         final String res;
 
@@ -317,12 +318,12 @@ public class RSSGenerator {
         feed.setChannelLanguage( m_channelLanguage );
         feed.setChannelDescription( m_channelDescription );
 
-        final Set< WikiPage > changed = m_engine.getManager( PageManager.class ).getRecentChanges();
+        final Set< Page > changed = m_engine.getManager( PageManager.class ).getRecentChanges();
 
         final Session session = WikiSession.guestSession( m_engine );
         int items = 0;
-        for( final Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
-            final WikiPage page = i.next();
+        for( final Iterator< Page > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
+            final Page page = i.next();
 
             //  Check if the anonymous user has view access to this page.
             if( !m_engine.getManager( AuthorizationManager.class ).checkPermission(session, new PagePermission(page,PagePermission.VIEW_ACTION) ) ) {
@@ -358,7 +359,7 @@ public class RSSGenerator {
      * @param feed A Feed object to fill.
      * @return the RSS representation of the wiki context
      */
-    protected String generateWikiPageRSS( final WikiContext wikiContext, final List< WikiPage > changed, final Feed feed ) {
+    protected String generateWikiPageRSS( final WikiContext wikiContext, final List< Page > changed, final Feed feed ) {
         feed.setChannelTitle( m_engine.getApplicationName()+": "+wikiContext.getPage().getName() );
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
         final String language = m_engine.getManager( VariableManager.class ).getVariable( wikiContext, PROP_CHANNEL_LANGUAGE );
@@ -377,8 +378,8 @@ public class RSSGenerator {
         changed.sort( new PageTimeComparator() );
 
         int items = 0;
-        for( final Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
-            final WikiPage page = i.next();
+        for( final Iterator< Page > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
+            final Page page = i.next();
             final Entry e = new Entry();
             e.setPage( page );
             String url;
@@ -411,7 +412,7 @@ public class RSSGenerator {
      *  @param feed A valid Feed object.  The feed will be used to create the RSS/Atom, depending on which kind of an object you want to put in it.
      *  @return A String of valid RSS or Atom.
      */
-    protected String generateBlogRSS( final WikiContext wikiContext, final List< WikiPage > changed, final Feed feed ) {
+    protected String generateBlogRSS( final WikiContext wikiContext, final List< Page > changed, final Feed feed ) {
         if( log.isDebugEnabled() ) {
             log.debug( "Generating RSS for blog, size=" + changed.size() );
         }
@@ -440,8 +441,8 @@ public class RSSGenerator {
         changed.sort( new PageTimeComparator() );
 
         int items = 0;
-        for( final Iterator< WikiPage > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
-            final WikiPage page = i.next();
+        for( final Iterator< Page > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
+            final Page page = i.next();
             final Entry e = new Entry();
             e.setPage( page );
             final String url;

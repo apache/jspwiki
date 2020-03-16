@@ -31,6 +31,7 @@ import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -38,7 +39,6 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.RedirectException;
 import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.api.providers.WikiProvider;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.pages.PageManager;
@@ -368,7 +368,7 @@ public class SpamFilter extends BasePageFilter {
      * @param list
      * @return A Collection of the Patterns that were found from the lists.
      */
-    private Collection< Pattern > parseWordList( final WikiPage source, final String list ) {
+    private Collection< Pattern > parseWordList( final Page source, final String list ) {
         final ArrayList< Pattern > compiledpatterns = new ArrayList<>();
 
         if( list != null ) {
@@ -676,7 +676,7 @@ public class SpamFilter extends BasePageFilter {
             boolean rebuild = false;
 
             //  Rebuild, if the spam words page, the attachment or the IP ban page has changed since.
-            final WikiPage sourceSpam = context.getEngine().getManager( PageManager.class ).getPage( m_forbiddenWordsPage );
+            final Page sourceSpam = context.getEngine().getManager( PageManager.class ).getPage( m_forbiddenWordsPage );
             if( sourceSpam != null ) {
                 if( m_spamPatterns == null || m_spamPatterns.isEmpty() || sourceSpam.getLastModified().after( m_lastRebuild ) ) {
                     rebuild = true;
@@ -690,7 +690,7 @@ public class SpamFilter extends BasePageFilter {
                 }
             }
 
-            final WikiPage sourceIPs = context.getEngine().getManager( PageManager.class ).getPage( m_forbiddenIPsPage );
+            final Page sourceIPs = context.getEngine().getManager( PageManager.class ).getPage( m_forbiddenIPsPage );
             if( sourceIPs != null ) {
                 if( m_IPPatterns == null || m_IPPatterns.isEmpty() || sourceIPs.getLastModified().after( m_lastRebuild ) ) {
                     rebuild = true;

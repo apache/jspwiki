@@ -23,6 +23,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.pages.PageManager;
@@ -104,7 +105,7 @@ public class AtomAPIServlet extends HttpServlet {
 
         try {
             final String blogid = getPageName( request );
-            final WikiPage page = m_engine.getManager( PageManager.class ).getPage( blogid );
+            final Page page = m_engine.getManager( PageManager.class ).getPage( blogid );
             if( page == null ) {
                 throw new ServletException( "Page " + blogid + " does not exist, cannot add blog post." );
             }
@@ -174,8 +175,8 @@ public class AtomAPIServlet extends HttpServlet {
     }
 
     private Entry getBlogEntry( final String entryid ) {
-        final WikiPage page = m_engine.getManager( PageManager.class ).getPage( entryid );
-        final WikiPage firstVersion = m_engine.getManager( PageManager.class ).getPage( entryid, 1 );
+        final Page page = m_engine.getManager( PageManager.class ).getPage( entryid );
+        final Page firstVersion = m_engine.getManager( PageManager.class ).getPage( entryid, 1 );
         final Entry entry = SyndicationFactory.newSyndicationEntry();
         final String pageText = m_engine.getManager( PageManager.class ).getText(page.getName());
         final int firstLine = pageText.indexOf('\n');
@@ -207,12 +208,12 @@ public class AtomAPIServlet extends HttpServlet {
      *  Creates and outputs a full list of all available blogs
      */
     private Feed listBlogs() throws ProviderException {
-        final Collection< WikiPage > pages = m_engine.getManager( PageManager.class ).getAllPages();
+        final Collection< Page > pages = m_engine.getManager( PageManager.class ).getAllPages();
         final Feed feed = SyndicationFactory.newSyndicationFeed();
         feed.setTitle("List of blogs at this site");
         feed.setModified( new Date() );
 
-        for( final WikiPage p : pages ) {
+        for( final Page p : pages ) {
             //  List only weblogs
             //  FIXME: Unfortunately, a weblog is not known until it has een executed once, because plugins are off during the initial startup phase.
             log.debug( p.getName() + " = " + p.getAttribute( WeblogPlugin.ATTR_ISWEBLOG ) );

@@ -20,8 +20,8 @@ package org.apache.wiki.ui.admin.beans;
 
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
@@ -90,7 +90,7 @@ public class SearchManagerBean extends SimpleAdminBean {
 
                 @Override
                 public void backgroundTask() throws Exception {
-                    final Collection< WikiPage > allPages = m_engine.getManager( PageManager.class ).getAllPages();
+                    final Collection< Page > allPages = m_engine.getManager( PageManager.class ).getAllPages();
 
                     final SearchManager mgr = m_engine.getManager( SearchManager.class );
                     m_max = allPages.size();
@@ -104,7 +104,7 @@ public class SearchManagerBean extends SimpleAdminBean {
                     };
                     m_engine.getManager( ProgressManager.class ).startProgress( pi, PROGRESS_ID );
 
-                    for( final WikiPage page : allPages ) {
+                    for( final Page page : allPages ) {
                         mgr.reindexPage( page );
                         m_count++;
                     }

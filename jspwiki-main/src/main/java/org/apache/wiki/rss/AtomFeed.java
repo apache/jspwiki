@@ -20,11 +20,11 @@ package org.apache.wiki.rss;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.Release;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
@@ -84,7 +84,7 @@ public class AtomFeed extends Feed {
         }
 
         for( final Entry e : m_entries ) {
-            final WikiPage p = e.getPage();
+            final Page p = e.getPage();
             final Element entryEl = getElement( "entry" );
 
             //  Mandatory elements

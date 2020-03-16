@@ -20,9 +20,9 @@ package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.ParserStagePlugin;
@@ -243,13 +243,13 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
         stopTime.set( Calendar.SECOND, 59 );
 
         final StringBuilder sb = new StringBuilder();
-        final List<WikiPage> blogEntries = findBlogEntries( engine, weblogName, startTime.getTime(), stopTime.getTime() );
+        final List< Page > blogEntries = findBlogEntries( engine, weblogName, startTime.getTime(), stopTime.getTime() );
         blogEntries.sort( new PageDateComparator() );
 
         sb.append("<div class=\"weblog\">\n");
 
-        for( final Iterator< WikiPage > i = blogEntries.iterator(); i.hasNext() && maxEntries-- > 0 ; ) {
-            final WikiPage p = i.next();
+        for( final Iterator< Page > i = blogEntries.iterator(); i.hasNext() && maxEntries-- > 0 ; ) {
+            final Page p = i.next();
             if( mgr.checkPermission( context.getWikiSession(), new PagePermission(p, PagePermission.VIEW_ACTION) ) ) {
                 addEntryHTML( context, entryFormat, hasComments, sb, p, params );
             }
@@ -271,7 +271,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
      *  @throws ProviderException
      */
     private void addEntryHTML( final Context context, final DateFormat entryFormat, final boolean hasComments,
-                               final StringBuilder buffer, final WikiPage entry, final Map< String, String > params) {
+                               final StringBuilder buffer, final Page entry, final Map< String, String > params) {
         final Engine engine = context.getEngine();
         final ResourceBundle rb = Preferences.getBundle(context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE);
 
@@ -398,17 +398,17 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
      *  @param end   The end date which is the last to be considered
      *  @return a list of pages with their FIRST revisions.
      */
-    public List< WikiPage > findBlogEntries( final Engine engine, String baseName, final Date start, final Date end ) {
+    public List< Page > findBlogEntries( final Engine engine, String baseName, final Date start, final Date end ) {
         final PageManager mgr = engine.getManager( PageManager.class );
         final Set< String > allPages = engine.getManager( ReferenceManager.class ).findCreated();
-        final ArrayList<WikiPage> result = new ArrayList<>();
+        final ArrayList< Page > result = new ArrayList<>();
 
         baseName = makeEntryPage( baseName );
 
         for( final String pageName : allPages ) {
             if( pageName.startsWith( baseName ) ) {
                 try {
-                    final WikiPage firstVersion = mgr.getPageInfo( pageName, 1 );
+                    final Page firstVersion = mgr.getPageInfo( pageName, 1 );
                     final Date d = firstVersion.getLastModified();
 
                     if( d.after( start ) && d.before( end ) ) {
@@ -426,11 +426,11 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
     /**
      *  Reverse comparison.
      */
-    private static class PageDateComparator implements Comparator< WikiPage > {
+    private static class PageDateComparator implements Comparator< Page > {
 
         /**{@inheritDoc}*/
         @Override
-        public int compare( final WikiPage page1, final WikiPage page2 ) {
+        public int compare( final Page page1, final Page page2 ) {
             if( page1 == null || page2 == null ) {
                 return 0;
             }

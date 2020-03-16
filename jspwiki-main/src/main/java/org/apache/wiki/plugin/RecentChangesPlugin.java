@@ -24,6 +24,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.attachment.Attachment;
@@ -103,7 +104,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements Plugi
         log.debug("Calculating recent changes from "+sincedate.getTime());
 
         // FIXME: Should really have a since date on the getRecentChanges method.
-        Collection< WikiPage > changes = engine.getManager( PageManager.class ).getRecentChanges();
+        Collection< Page > changes = engine.getManager( PageManager.class ).getRecentChanges();
         super.initialize( context, params );
         changes = filterWikiPageCollection( changes );
         
@@ -117,7 +118,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements Plugi
             rt.setAttribute( XHTML.ATTR_class, "recentchanges" );
             rt.setAttribute( XHTML.ATTR_cellpadding, spacing );
 
-            for( final WikiPage pageref : changes ) {
+            for( final Page pageref : changes ) {
                 final Date lastmod = pageref.getLastModified();
 
                 if( lastmod.before( sincedate.getTime() ) ) {
