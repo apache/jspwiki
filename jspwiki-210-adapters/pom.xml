@@ -27,7 +27,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jspwiki-210-adapters</artifactId>
-  <name>Apache JSPWiki adapters for extensions not using public api</name>
+  <name>Apache JSPWiki adapters for pre-public api</name>
 
   <dependencies>
     <dependency>
@@ -67,8 +67,9 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-210-test-adaptees</artifactId>
-      <scope>test</scope>
       <version>${project.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
