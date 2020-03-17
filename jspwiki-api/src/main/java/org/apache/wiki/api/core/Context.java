@@ -59,10 +59,10 @@ public interface Context extends Cloneable, Command {
     /**
      *  Sets the WikiPage that is being handled.
      *
-     *  @param WikiPage The wikipage
+     *  @param wikiPage The wikipage
      *  @since 2.1.37.
      */
-    void setPage( Page WikiPage );
+    void setPage( Page wikiPage );
 
     /**
      *  Gets a reference to the real WikiPage whose content is currently being rendered. If your plugin e.g. does some variable setting, be
@@ -89,12 +89,12 @@ public interface Context extends Cloneable, Command {
      *  with InsertPageTag, you should consider what you want to do - do you wish to really reference the "master" WikiPage or the included
      *  page.
      *
-     *  @param WikiPage  The real WikiPage which is being rendered.
+     *  @param wikiPage  The real WikiPage which is being rendered.
      *  @return The previous real page
      *  @since 2.3.14
      *  @see org.apache.wiki.tags.InsertPageTag
      */
-    Page setRealPage( Page WikiPage );
+    Page setRealPage( Page wikiPagePage );
 
     /**
      *  Returns the handling engine.
