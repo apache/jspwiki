@@ -83,7 +83,7 @@ public class BasicPageFilter extends BasePageFilter {
 
     public void postSave( final Context wikiContext, final String content ) throws FilterException {
         final Method m = methodOfNonPublicAPI( this, "postSave", "org.apache.wiki.WikiContext", "java.lang.String" );
-        executePageFilterPhase( () -> null, m, this, content );
+        executePageFilterPhase( () -> null, m, this, wikiContext, content );
         // empty method
     }
 
