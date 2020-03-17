@@ -70,12 +70,11 @@ public final class HttpUtil {
      */
     public static String retrieveCookieValue( final HttpServletRequest request, final String cookieName ) {
         final Cookie[] cookies = request.getCookies();
-
         if( cookies != null ) {
             for( final Cookie cookie : cookies ) {
                 if( cookie.getName().equals( cookieName ) ) {
                     String value = cookie.getValue();
-                    if( value.length() == 0 ) {
+                    if( value == null || value.length() == 0 ) {
                         return null;
                     }
                     if( value.charAt( 0 ) == '"' && value.charAt( value.length() - 1 ) == '"' ) {
@@ -180,7 +179,7 @@ public final class HttpUtil {
     }
 
 	static boolean notBeginningWithHttpOrHttps( final String uri ) {
-		return uri.length() > 0 && !( ( uri.startsWith("http://" ) || uri.startsWith( "https://" ) ) );
+		return uri.length() > 0 && !( uri.startsWith("http://" ) || uri.startsWith( "https://" ) );
 	}
 
     /**
@@ -203,12 +202,12 @@ public final class HttpUtil {
             // Ensure that the 'page=xyz' attribute is removed
             // FIXME: Is it really the mandate of this routine to do that?
             //
-            final int pos1 = res.indexOf("page=");
+            final int pos1 = res.indexOf( "page=" );
             if( pos1 >= 0 ) {
                 String tmpRes = res.substring( 0, pos1 );
-                final int pos2 = res.indexOf( "&",pos1 ) + 1;
-                if ( ( pos2 > 0 ) && ( pos2 < res.length() ) ) {
-                    tmpRes = tmpRes + res.substring(pos2);
+                final int pos2 = res.indexOf( '&', pos1 ) + 1;
+                if( ( pos2 > 0 ) && ( pos2 < res.length() ) ) {
+                    tmpRes = tmpRes + res.substring( pos2 );
                 }
                 res = tmpRes;
             }

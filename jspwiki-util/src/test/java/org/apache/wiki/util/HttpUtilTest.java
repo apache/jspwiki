@@ -18,8 +18,11 @@
  */
 package org.apache.wiki.util;
 
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import javax.servlet.http.Cookie;
 
 
 public class HttpUtilTest {
@@ -45,6 +48,22 @@ public class HttpUtilTest {
         Assertions.assertTrue( HttpUtil.isIPV4Address( "12.123.123.123" ) );
         Assertions.assertTrue( HttpUtil.isIPV4Address( "012.123.123.123" ) );
         Assertions.assertTrue( HttpUtil.isIPV4Address( "123.123.123.123" ) );
+    }
+
+    @Test
+    public void testRetrieveCookieValue() {
+        final Cookie[] cookies = new Cookie[] { new Cookie( "cookie1", "value1" ),
+                                                new Cookie( "cookie2", "\"value2\"" ),
+                                                new Cookie( "cookie3", "" ),
+                                                new Cookie( "cookie4", null ) };
+        final MockHttpServletRequest req = new MockHttpServletRequest( "/wiki", "/example" );
+        req.setCookies( cookies );
+
+        Assertions.assertEquals( "value1", HttpUtil.retrieveCookieValue( req, "cookie1" ) );
+        Assertions.assertEquals( "value2", HttpUtil.retrieveCookieValue( req, "cookie2" ) );
+        Assertions.assertNull( HttpUtil.retrieveCookieValue( req, "cookie3" ) );
+        Assertions.assertNull( HttpUtil.retrieveCookieValue( req, "cookie4" ) );
+        Assertions.assertNull( HttpUtil.retrieveCookieValue( req, "cookie5" ) );
     }
 
 }
