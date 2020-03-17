@@ -26,5 +26,21 @@ package org.apache.wiki.search;
  * @see org.apache.wiki.api.search.QueryItem
  */
 @Deprecated
-public class QueryItem extends org.apache.wiki.api.search.QueryItem {
+public class QueryItem {
+
+    /** The word is required to be in the pages */
+    public static final int REQUIRED  = 1;
+
+    /** The word may NOT be in the pages */
+    public static final int FORBIDDEN = -1;
+
+    /** The word should be in the pages, but the search engine may use its own discretion. */
+    public static final int REQUESTED = 0;
+
+    /** The word that is being searched */
+    public String word;
+
+    /** The type of the word.  See above for types.  The default is REQUESTED. */
+    public int type = REQUESTED;
+
 }
