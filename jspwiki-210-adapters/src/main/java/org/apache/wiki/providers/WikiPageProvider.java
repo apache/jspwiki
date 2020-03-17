@@ -19,8 +19,8 @@
 package org.apache.wiki.providers;
 
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.WikiProvider;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.search.QueryItem;
 import org.apache.wiki.search.SearchResult;
 
