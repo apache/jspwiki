@@ -70,11 +70,11 @@
     <nekohtml.version>1.9.22</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
-    <selenide.version>5.7.0</selenide.version>
+    <selenide.version>5.10.0</selenide.version>
     <slf4j.version>1.7.30</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
-    <tika.version>1.23</tika.version>
-    <tomcat.version>9.0.31</tomcat.version>
+    <tika.version>1.24</tika.version>
+    <tomcat.version>9.0.33</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
@@ -88,7 +88,7 @@
     <plugin.idea.version>2.2.1</plugin.idea.version>
     <plugin.install.version>2.5.2</plugin.install.version>
     <plugin.jar.version>3.2.0</plugin.jar.version>
-    <plugin.javadoc.version>3.1.1</plugin.javadoc.version>
+    <plugin.javadoc.version>3.2.0</plugin.javadoc.version>
     <plugin.jxr.version>3.0.0</plugin.jxr.version>
     <plugin.project-info-reports.version>3.0.0</plugin.project-info-reports.version>
     <plugin.release.version>3.0.0-M1</plugin.release.version>
