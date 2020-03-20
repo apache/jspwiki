@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.attachment;
 
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
 
@@ -42,6 +43,17 @@ public class Attachment extends WikiPage implements org.apache.wiki.api.core.Att
         super( engine, parentPage + "/" + fileName );
         m_parentName = parentPage;
         m_fileName = fileName;
+    }
+
+    /**
+     * Creates a new attachment.  The final name of the attachment will be a synthesis of the parent page name and the file name.
+     *
+     * @param engine     The Engine which is hosting this attachment.
+     * @param parentPage The page which will contain this attachment.
+     * @param fileName   The file name for the attachment.
+     */
+    public Attachment( final WikiEngine engine, final String parentPage, final String fileName ) {
+        this( ( Engine )engine, parentPage, fileName );
     }
 
     /**

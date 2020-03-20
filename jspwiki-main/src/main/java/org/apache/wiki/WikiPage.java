@@ -51,10 +51,10 @@ public class WikiPage implements Page {
     private final Map<String,Object> m_attributes = new HashMap<>();
     
     private Acl m_accessList = null;
-    
+
     /**
      *  Create a new WikiPage using a given engine and name.
-     *  
+     *
      *  @param engine The Engine that owns this page.
      *  @param name   The name of the page.
      */
@@ -62,6 +62,16 @@ public class WikiPage implements Page {
         m_engine = engine;
         m_name = name;
         m_wiki = engine.getApplicationName();
+    }
+
+    /**
+     *  Create a new WikiPage using a given engine and name.
+     *
+     *  @param engine The Engine that owns this page.
+     *  @param name   The name of the page.
+     */
+    public WikiPage( final WikiEngine engine, final String name ) {
+        this( ( Engine )engine, name );
     }
 
     /**
