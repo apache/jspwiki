@@ -26,6 +26,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.BasicAttachmentProvider;
@@ -2601,7 +2602,7 @@ public class JSPWikiMarkupParserTest
         }
         finally
         {
-            final String files = testEngine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
+            final String files = testEngine.getWikiProperties().getProperty( AttachmentProvider.PROP_STORAGEDIR );
             final File storagedir = new File( files, PAGE_NAME+BasicAttachmentProvider.DIR_EXTENSION );
 
             if( storagedir.exists() && storagedir.isDirectory() ) {

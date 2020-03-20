@@ -25,8 +25,8 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.WikiProvider;
-import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
@@ -113,7 +113,7 @@ public class DefaultPageManagerTest {
         final String files = engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
         final File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
 
-        final String atts = engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
+        final String atts = engine.getWikiProperties().getProperty( AttachmentProvider.PROP_STORAGEDIR );
         final File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
 
         Assertions.assertTrue( saved.exists(), "Didn't create it!" );
@@ -137,7 +137,7 @@ public class DefaultPageManagerTest {
         final String files = engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
         final File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
 
-        final String atts = engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
+        final String atts = engine.getWikiProperties().getProperty( AttachmentProvider.PROP_STORAGEDIR );
         final File attfile = new File( atts, NAME1+"-att/TestAtt.txt-dir" );
 
         Assertions.assertTrue( saved.exists(), "Didn't create it!" );

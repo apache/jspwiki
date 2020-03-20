@@ -83,9 +83,6 @@ public class BasicAttachmentProvider implements AttachmentProvider {
     private Engine m_engine;
     private String m_storageDir;
     
-    /** The property name for where the attachments should be stored.  Value is <tt>{@value}</tt>. */
-    public static final String PROP_STORAGEDIR = "jspwiki.basicAttachmentProvider.storageDir";
-    
     /*
      * Disable client cache for files with patterns
      * since 2.5.96
@@ -466,7 +463,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
             att.setAuthor( props.getProperty( version+".author" ) );
             final String changeNote = props.getProperty( version+".changenote" );
             if( changeNote != null ) {
-                att.setAttribute( WikiPage.CHANGENOTE, changeNote );
+                att.setAttribute( Page.CHANGENOTE, changeNote );
             }
 
             final File f = findFile( dir, att );
@@ -569,7 +566,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 
         // If it exists, we're overwriting an old page (this has already been confirmed at a higher level), so delete any existing attachments.
         if( destDir.exists() ) {
-            log.error( "Page rename failed because target dirctory " + destDir + " exists" );
+            log.error( "Page rename failed because target directory " + destDir + " exists" );
         } else {
             // destDir.getParentFile().mkdir();
             srcDir.renameTo( destDir );

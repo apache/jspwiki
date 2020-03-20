@@ -22,6 +22,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -32,7 +33,6 @@ import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.TextUtil;
 
@@ -61,7 +61,7 @@ public class Installer {
     public static final String INSTALL_ERROR = "Installer.Error";
     public static final String INSTALL_WARNING = "Installer.Warning";
     public static final String APP_NAME = Engine.PROP_APPNAME;
-    public static final String STORAGE_DIR = BasicAttachmentProvider.PROP_STORAGEDIR;
+    public static final String STORAGE_DIR = AttachmentProvider.PROP_STORAGEDIR;
     public static final String PAGE_DIR = FileSystemProvider.PROP_PAGEDIR;
     public static final String WORK_DIR = Engine.PROP_WORKDIR;
     public static final String ADMIN_GROUP = "Admin";
