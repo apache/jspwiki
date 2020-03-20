@@ -28,7 +28,7 @@ import org.apache.wiki.WikiPage;
  * @see org.apache.wiki.api.search.SearchResult
  */
 @Deprecated
-public interface SearchResult {
+public interface SearchResult extends org.apache.wiki.api.search.SearchResult {
     
 	/**
      *  Return the page.
@@ -36,20 +36,5 @@ public interface SearchResult {
      *  @return the WikiPage object containing this result
      */
     WikiPage getPage();
-
-    /**
-     *  Returns the score.
-     *
-     *  @return A positive score value.  Note that there is no upper limit for the score.
-     */
-    int getScore();
-
-    /**
-     * Collection of XHTML fragments representing some contexts in which the match was made (a.k.a., "snippets").
-     *
-     * @return the search results
-     * @since 2.4
-     */
-    String[] getContexts();
 
 }

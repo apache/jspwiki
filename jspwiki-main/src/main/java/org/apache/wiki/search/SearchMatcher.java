@@ -18,10 +18,10 @@
  */
 package org.apache.wiki.search;
 
+import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.search.QueryItem;
-import org.apache.wiki.api.search.SearchResult;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,13 +42,23 @@ public class SearchMatcher {
 
     /**
      *  Creates a new SearchMatcher.
-     *  
+     *
      *  @param engine The Engine
      *  @param queries A list of queries
      */
     public SearchMatcher( final Engine engine, final QueryItem[] queries ) {
         m_engine = engine;
         m_queries = queries != null ? queries.clone() : null;
+    }
+
+    /**
+     *  Creates a new SearchMatcher.
+     *
+     *  @param engine The Engine
+     *  @param queries A list of queries
+     */
+    public SearchMatcher( final WikiEngine engine, final org.apache.wiki.search.QueryItem[] queries ) {
+        this( ( Engine )engine, queries );
     }
 
     /**
@@ -62,7 +72,7 @@ public class SearchMatcher {
      * @return A SearchResult item, or null, there are no queries
      * @throws IOException If reading page content fails
      */
-    public SearchResult matchPageContent( final String wikiname, final String pageText ) throws IOException {
+    public org.apache.wiki.search.SearchResult matchPageContent( final String wikiname, final String pageText ) throws IOException {
         if( m_queries == null ) {
             return null;
         }
@@ -116,7 +126,7 @@ public class SearchMatcher {
     /**
      *  A local search result.
      */
-    public class SearchResultImpl implements SearchResult {
+    public class SearchResultImpl implements org.apache.wiki.search.SearchResult {
     	
         int      m_score;
         WikiPage m_page;
