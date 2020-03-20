@@ -27,7 +27,8 @@ import java.util.Map;
 
 
 /**
- *  Defines an interface for plugins.  Any instance of a wiki plugin should implement this interface.
+ * Defines an interface for plugins.  Any instance of a wiki plugin should implement this interface.
+ *
  * @deprecated use {@link Plugin} instead
  * @see Plugin
  */

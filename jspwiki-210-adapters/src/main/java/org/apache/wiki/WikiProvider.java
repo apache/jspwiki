@@ -26,10 +26,12 @@ import java.util.Properties;
 
 
 /**
- *  A generic Wiki provider for all sorts of things that the Wiki can store.
+ * Hooks all WikiProviders not using the public API into it.
  *
- *  @since 2.0
+ * @deprecated - implement directly {@link org.apache.wiki.api.providers.WikiProvider}.
+ * @see org.apache.wiki.api.providers.WikiProvider
  */
+@Deprecated
 public interface WikiProvider extends org.apache.wiki.api.providers.WikiProvider {
 
     /**
@@ -45,6 +47,14 @@ public interface WikiProvider extends org.apache.wiki.api.providers.WikiProvider
         initialize( engine.adapt( WikiEngine.class ), properties );
     }
 
+    /**
+     *  Initializes the page provider.
+     *
+     *  @param engine Engine to own this provider
+     *  @param properties A set of properties used to initialize this provider
+     *  @throws NoRequiredPropertyException If the provider needs a property which is not found in the property set
+     *  @throws IOException If there is an IO problem
+     */
     default void initialize( final WikiEngine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {}
 
 }
