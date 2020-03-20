@@ -28,6 +28,7 @@ import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -49,15 +50,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.AbstractMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 
 /**
  *  Simple test engine that always assumes pages are found.
  */
-public class TestEngine extends WikiEngine
-{
-    static Logger log = Logger.getLogger( TestEngine.class );
+public class TestEngine extends WikiEngine {
+    private static final Logger log = Logger.getLogger( TestEngine.class );
 
     private Session m_adminWikiSession = null;
     private Session m_janneWikiSession = null;
@@ -67,34 +69,28 @@ public class TestEngine extends WikiEngine
     private static Properties combinedProperties = null;
 
     /**
-     * Creates WikiSession with the privileges of the administrative user.
-     * For testing purposes, obviously.
+     * Creates WikiSession with the privileges of the administrative user. For testing purposes, obviously.
+     *
      * @return the wiki session
      * @throws WikiSecurityException
      */
-    public Session adminSession() throws WikiSecurityException
-    {
-        if ( m_adminWikiSession == null )
-        {
+    public Session adminSession() throws WikiSecurityException {
+        if ( m_adminWikiSession == null ) {
             // Set up long-running admin session
             final HttpServletRequest request = newHttpRequest();
             m_adminWikiSession = WikiSession.getWikiSession( this, request );
-            this.getAuthenticationManager().login( m_adminWikiSession, request,
-                                                   Users.ADMIN,
-                                                   Users.ADMIN_PASS );
+            this.getAuthenticationManager().login( m_adminWikiSession, request, Users.ADMIN, Users.ADMIN_PASS );
         }
         return m_adminWikiSession;
     }
 
     /**
-     * Creates guest WikiSession with the no privileges.
-     * For testing purposes, obviously.
+     * Creates guest WikiSession with the no privileges. For testing purposes, obviously.
+     *
      * @return the wiki session
      */
-    public Session guestSession()
-    {
-        if ( m_guestWikiSession == null )
-        {
+    public Session guestSession() {
+        if ( m_guestWikiSession == null ) {
             // Set up guest session
             final HttpServletRequest request = newHttpRequest();
             m_guestWikiSession = WikiSession.getWikiSession( this, request );
@@ -103,15 +99,13 @@ public class TestEngine extends WikiEngine
     }
 
     /**
-     * Creates WikiSession with the privileges of the Janne.
-     * For testing purposes, obviously.
+     * Creates WikiSession with the privileges of the Janne. For testing purposes, obviously.
+     *
      * @return the wiki session
      * @throws WikiSecurityException
      */
-    public Session janneSession() throws WikiSecurityException
-    {
-        if ( m_janneWikiSession == null )
-        {
+    public Session janneSession() throws WikiSecurityException {
+        if ( m_janneWikiSession == null ) {
             // Set up a test Janne session
             final HttpServletRequest request = newHttpRequest();
             m_janneWikiSession = WikiSession.getWikiSession( this, request );
@@ -120,10 +114,46 @@ public class TestEngine extends WikiEngine
         return m_janneWikiSession;
     }
 
+    /**
+     * Obtains a TestEngine using {@link #getTestProperties()}.
+     *
+     * @return TestEngine using {@link #getTestProperties()}.
+     */
     public static TestEngine build() {
         return build( getTestProperties() );
     }
 
+    /**
+     * Obtains a TestEngine using {@link #getTestProperties()} and additional configuration.
+     *
+     * @param entries additional configuration entries that may overwrite default test properties.
+     * @return TestEngine using {@link #getTestProperties()} and additional configuration.
+     */
+    public static TestEngine build( final Map.Entry< String, String >... entries ) {
+        final Properties properties = getTestProperties();
+        for( final Map.Entry< String, String > entry : entries ) {
+            properties.setProperty( entry.getKey(), entry.getValue() );
+        }
+        return build( properties );
+    }
+
+    /**
+     * Helper method, intended to be imported statically, to ease passing properties to {@link #build(Map.Entry[])}.
+     *
+     * @param prop property name.
+     * @param value property value.
+     * @return populated entry ready to be used in {@link #build(Map.Entry[])}.
+     */
+    public static Map.Entry< String, String > with( final String prop, final String value ) {
+        return new AbstractMap.SimpleEntry<>( prop, value );
+    }
+
+    /**
+     * Obtains a TestEngine using the provided properties.
+     *
+     * @param props configuration entries.
+     * @return TestEngine using the provided properties.
+     */
     public static TestEngine build( final Properties props ) {
         try {
             return new TestEngine( props );
@@ -333,7 +363,7 @@ public class TestEngine extends WikiEngine
         final Properties properties = getTestProperties();
 
         try {
-            final String files = properties.getProperty( BasicAttachmentProvider.PROP_STORAGEDIR );
+            final String files = properties.getProperty( AttachmentProvider.PROP_STORAGEDIR );
             final File f = new File( files, TextUtil.urlEncodeUTF8( page ) + BasicAttachmentProvider.DIR_EXTENSION );
 
             deleteAll( f );
