@@ -66,7 +66,8 @@ public class DefaultPageRenamer implements PageRenamer {
      *  @return The final new name (in case it had to be modified)
      *  @throws WikiException If the page cannot be renamed.
      */
-    @Override public String renamePage( final WikiContext context, final String renameFrom, final String renameTo, final boolean changeReferrers ) throws WikiException {
+    @Override
+    public String renamePage( final WikiContext context, final String renameFrom, final String renameTo, final boolean changeReferrers ) throws WikiException {
         //  Sanity checks first
         if( renameFrom == null || renameFrom.length() == 0 ) {
             throw new WikiException( "From name may not be null or empty" );
@@ -149,7 +150,8 @@ public class DefaultPageRenamer implements PageRenamer {
      * @param oldName the former page name
      * @param newName the new page name
      */
-    @Override public void firePageRenameEvent( final String oldName, final String newName ) {
+    @Override
+    public void firePageRenameEvent( final String oldName, final String newName ) {
         if( WikiEventManager.isListening(this) ) {
             WikiEventManager.fireEvent(this, new WikiPageRenameEvent(this, oldName, newName ) );
         }
@@ -344,11 +346,10 @@ public class DefaultPageRenamer implements PageRenamer {
                 return original + "|" + newlink;
             }
             
-            return newlink +
-                   ( ( hash > 0 ) ? original.substring( hash ) : "" ) +
-                   ( ( slash > 0 ) ? original.substring( slash ) : "" ) ;
+            return newlink + ( ( hash > 0 ) ? original.substring( hash ) : "" ) + ( ( slash > 0 ) ? original.substring( slash ) : "" ) ;
         }
         
         return original;
     }
+
 }
