@@ -402,75 +402,91 @@ public class WikiEngine implements Engine {
         //
         // FIXME: This part of the code is getting unwieldy.  We must think of a better way to do the startup-sequence.
         try {
-            //  Initializes the CommandResolver
+            final String aclClassName = m_properties.getProperty( PROP_ACL_MANAGER_IMPL, ClassUtil.getMappedClass( AclManager.class.getName() ).getName() );
+            final String urlConstructorClassnName = TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" );
+            final Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url", urlConstructorClassnName );
+
             m_commandResolver = ClassUtil.getMappedObject( CommandResolver.class.getName(), this, props );
-            final Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url",
-                                                             TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" ) );
+            managers.put( CommandResolver.class, m_commandResolver );
+
             m_urlConstructor = ( URLConstructor ) urlclass.getDeclaredConstructor().newInstance();
             m_urlConstructor.initialize( this, props );
+            managers.put( URLConstructor.class, m_urlConstructor );
 
             m_pageManager           = ClassUtil.getMappedObject( PageManager.class.getName(), this, props );
-            m_pluginManager         = ClassUtil.getMappedObject( PluginManager.class.getName(), this, props );
-            m_differenceManager     = ClassUtil.getMappedObject( DifferenceManager.class.getName(), this, props );
-            m_attachmentManager     = ClassUtil.getMappedObject( AttachmentManager.class.getName(), this, props );
-            m_variableManager       = ClassUtil.getMappedObject( VariableManager.class.getName(), props );
-            m_renderingManager      = ClassUtil.getMappedObject( RenderingManager.class.getName() );
-            m_searchManager         = ClassUtil.getMappedObject( SearchManager.class.getName(), this, props );
-            m_authenticationManager = ClassUtil.getMappedObject( AuthenticationManager.class.getName() );
-            m_authorizationManager  = ClassUtil.getMappedObject( AuthorizationManager.class.getName() );
-            m_userManager           = ClassUtil.getMappedObject( UserManager.class.getName() );
-            m_groupManager          = ClassUtil.getMappedObject( GroupManager.class.getName() );
-            m_editorManager         = ClassUtil.getMappedObject( EditorManager.class.getName(), this );
-            m_progressManager       = ClassUtil.getMappedObject( ProgressManager.class.getName(), this );
-            m_editorManager.initialize( props );
-
-            // Initialize the authentication, authorization, user and acl managers
-            m_authenticationManager.initialize( this, props );
-            m_authorizationManager.initialize( this, props );
-
-            managers.put( CommandResolver.class, m_commandResolver );
-            managers.put( URLConstructor.class, m_urlConstructor );
             managers.put( PageManager.class, m_pageManager );
+
+            m_pluginManager         = ClassUtil.getMappedObject( PluginManager.class.getName(), this, props );
             managers.put( PluginManager.class, m_pluginManager );
+
+            m_differenceManager     = ClassUtil.getMappedObject( DifferenceManager.class.getName(), this, props );
             managers.put( DifferenceManager.class, m_differenceManager );
+
+            m_attachmentManager     = ClassUtil.getMappedObject( AttachmentManager.class.getName(), this, props );
             managers.put( AttachmentManager.class, m_attachmentManager );
+
+            m_variableManager       = ClassUtil.getMappedObject( VariableManager.class.getName(), props );
             managers.put( VariableManager.class, m_variableManager );
-            managers.put( RenderingManager.class, m_renderingManager );
+
+            m_searchManager         = ClassUtil.getMappedObject( SearchManager.class.getName(), this, props );
             managers.put( SearchManager.class, m_searchManager );
+
+            m_authenticationManager = ClassUtil.getMappedObject( AuthenticationManager.class.getName() );
+            m_authenticationManager.initialize( this, props );
             managers.put( AuthenticationManager.class, m_authenticationManager );
+
+            m_authorizationManager  = ClassUtil.getMappedObject( AuthorizationManager.class.getName() );
+            m_authorizationManager.initialize( this, props );
             managers.put( AuthorizationManager.class, m_authorizationManager );
+
+            m_userManager           = ClassUtil.getMappedObject( UserManager.class.getName() );
+            m_userManager.initialize( this, props );
             managers.put( UserManager.class, m_userManager );
 
-            m_userManager.initialize( this, props );
+            m_groupManager          = ClassUtil.getMappedObject( GroupManager.class.getName() );
             m_groupManager.initialize( this, props );
-            m_aclManager = getAclManager();
+            managers.put( GroupManager.class, m_groupManager );
+
+            m_editorManager         = ClassUtil.getMappedObject( EditorManager.class.getName(), this );
+            m_editorManager.initialize( props );
+            managers.put( EditorManager.class, m_editorManager );
+
+            m_progressManager       = ClassUtil.getMappedObject( ProgressManager.class.getName(), this );
+            managers.put( ProgressManager.class, m_progressManager );
+
+            m_aclManager = ClassUtil.getMappedObject( aclClassName ); // TODO: I am not sure whether this is the right call
+            m_aclManager.initialize( this, m_properties );
+            managers.put( AclManager.class, m_aclManager );
 
             // Start the Workflow manager
             m_workflowMgr = ClassUtil.getMappedObject(WorkflowManager.class.getName());
             m_workflowMgr.initialize(this, props);
+            managers.put( WorkflowManager.class, m_workflowMgr );
+
             m_tasksManager = ClassUtil.getMappedObject(TasksManager.class.getName());
+            managers.put( TasksManager.class, m_tasksManager );
 
             m_internationalizationManager = ClassUtil.getMappedObject(InternationalizationManager.class.getName(),this);
+            managers.put( InternationalizationManager.class, m_internationalizationManager );
+
             m_templateManager = ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
+            managers.put( TemplateManager.class, m_templateManager );
 
             // Since we want to use a page filters initilize() method as a engine startup listener where we can initialize global event
             // listeners, it must be called lastly, so that all object references in the engine are availabe to the initialize() method
             m_filterManager = ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
-
-            managers.put( GroupManager.class, m_groupManager );
-            managers.put( EditorManager.class, m_editorManager );
-            managers.put( ProgressManager.class, m_progressManager );
-            managers.put( AclManager.class, m_aclManager );
-            managers.put( WorkflowManager.class, m_workflowMgr );
-            managers.put( TasksManager.class, m_tasksManager );
-            managers.put( InternationalizationManager.class, m_internationalizationManager );
-            managers.put( TemplateManager.class, m_templateManager );
             managers.put( FilterManager.class, m_filterManager );
 
             m_adminBeanManager = ClassUtil.getMappedObject(AdminBeanManager.class.getName(),this);
+            managers.put( AdminBeanManager.class, m_adminBeanManager );
+
+            m_pageRenamer = ClassUtil.getMappedObject( PageRenamer.class.getName(), this, props );
+            managers.put( PageRenamer.class, m_pageRenamer );
 
             // RenderingManager depends on FilterManager events.
+            m_renderingManager = ClassUtil.getMappedObject( RenderingManager.class.getName() );
             m_renderingManager.initialize( this, props );
+            managers.put( RenderingManager.class, m_renderingManager );
 
             //  ReferenceManager has the side effect of loading all pages.  Therefore after this point, all page attributes are available.
             //  initReferenceManager is indirectly using m_filterManager, therefore it has to be called after it was initialized.
@@ -479,12 +495,6 @@ public class WikiEngine implements Engine {
             //  Hook the different manager routines into the system.
             m_filterManager.addPageFilter( m_referenceManager, -1001 );
             m_filterManager.addPageFilter( m_searchManager, -1002 );
-
-            m_pageRenamer = ClassUtil.getMappedObject( PageRenamer.class.getName(), this, props );
-
-            managers.put( ReferenceManager.class, m_referenceManager );
-            managers.put( AdminBeanManager.class, m_adminBeanManager );
-            managers.put( PageRenamer.class, m_pageRenamer );
         } catch( final RuntimeException e ) {
             // RuntimeExceptions may occur here, even if they shouldn't.
             log.fatal( "Failed to start managers.", e );
@@ -508,6 +518,7 @@ public class WikiEngine implements Engine {
         try {
             if( TextUtil.getBooleanProperty( props, RSSGenerator.PROP_GENERATE_RSS,false ) ) {
                 m_rssGenerator = ClassUtil.getMappedObject( RSSGenerator.class.getName(), this, props );
+                managers.put( RSSGenerator.class, m_rssGenerator );
             }
         } catch( final Exception e ) {
             log.error( "Unable to start RSS generator - JSPWiki will still work, but there will be no RSS feed.", e );
@@ -515,7 +526,6 @@ public class WikiEngine implements Engine {
 
         // Start the RSS generator & generator thread
         if( m_rssGenerator != null ) {
-            managers.put( RSSGenerator.class, m_rssGenerator );
             m_rssFile = TextUtil.getStringProperty( props, RSSGenerator.PROP_RSSFILE, "rss.rdf" );
             final File rssFile;
             if( m_rssFile.startsWith( File.separator ) ) { // honor absolute pathnames:
@@ -601,6 +611,7 @@ public class WikiEngine implements Engine {
             if( m_referenceManager == null ) {
                 m_referenceManager = ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
                 m_referenceManager.initialize( pages );
+                managers.put( ReferenceManager.class, m_referenceManager );
             }
 
         } catch( final ProviderException e ) {
@@ -987,17 +998,7 @@ public class WikiEngine implements Engine {
      * @return The current AclManager.
      */
     public AclManager getAclManager()  {
-        if( m_aclManager == null ) {
-            try {
-                final String s = m_properties.getProperty( PROP_ACL_MANAGER_IMPL, ClassUtil.getMappedClass( AclManager.class.getName() ).getName() );
-                m_aclManager = ClassUtil.getMappedObject(s); // TODO: I am not sure whether this is the right call
-                m_aclManager.initialize( this, m_properties );
-            } catch( final ReflectiveOperationException | IllegalArgumentException e ) {
-                log.fatal( "unable to instantiate class for AclManager: " + e.getMessage() );
-                throw new InternalWikiException( "Cannot instantiate AclManager, please check logs.", e );
-            }
-        }
-        return m_aclManager;
+        return getManager( AclManager.class );
     }
 
     /**
