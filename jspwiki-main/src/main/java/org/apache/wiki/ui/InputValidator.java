@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
@@ -36,28 +36,25 @@ import java.util.regex.Pattern;
  * @since 2.3.54
  */
 public final class InputValidator {
+
     /** Standard input validator. */
-    public static final int STANDARD       = 0;
-
+    public static final int STANDARD = 0;
     /** Input validator for e-mail addresses. **/
-    public static final int EMAIL          = 1;
-
+    public static final int EMAIL    = 1;
     /** @since 2.4.82 */
-    public static final int ID             = 2;
+    public static final int ID        = 2;
 
+    /**
+     * Used when checking against IDs such as a full name when saving groups.
+     * @since 2.4.82
+     */
+    protected static final Pattern ID_PATTERN     = Pattern.compile( "[\\x00\\r\\n\\x0f\"'<>;&\\xff{}]" );
     protected static final Pattern EMAIL_PATTERN  = Pattern.compile( "^[0-9a-zA-Z-_\\.\\+]+@([0-9a-zA-Z-_]+\\.)+[a-zA-Z]+$" );
-
     protected static final Pattern UNSAFE_PATTERN = Pattern.compile( "[\\x00\\r\\n\\x0f\"':<>\\[\\];#&@\\xff{}\\$%\\\\]" );
 
-    /** Used when checking against IDs such as a full name when saving groups.
-     *  @since 2.4.82 */
-    protected static final Pattern ID_PATTERN     = Pattern.compile( "[\\x00\\r\\n\\x0f\"'<>;&\\xff{}]" );
-
-    private final String           m_form;
-
-    private final Session          m_session;
-
-    private final WikiContext      m_context;
+    private final String m_form;
+    private final Session m_session;
+    private final Context m_context;
 
     /**
      * Constructs a new input validator for a specific form and wiki session. When validation errors are detected, they will be added to
@@ -66,7 +63,7 @@ public final class InputValidator {
      * @param form the ID or name of the form this validator should be associated with
      * @param context the wiki context
      */
-    public InputValidator( final String form, final WikiContext context ) {
+    public InputValidator( final String form, final Context context ) {
         m_form = form;
         m_context = context;
         m_session = context.getWikiSession();

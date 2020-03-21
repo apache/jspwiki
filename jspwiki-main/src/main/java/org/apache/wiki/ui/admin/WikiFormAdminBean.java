@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.ui.admin;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.render.RenderingManager;
 
@@ -31,29 +31,22 @@ import java.util.Map;
  *  This class is still experimental.
  *
  */
-public abstract class WikiFormAdminBean
-    implements AdminBean
-{
-    public abstract String getForm( WikiContext context );
-    
-    public abstract void handleResponse( WikiContext context, Map< ?, ? > params );
+public abstract class WikiFormAdminBean implements AdminBean {
 
-    @Override public String doGet( final WikiContext context)
-    {
+    public abstract String getForm( Context context );
+    
+    public abstract void handleResponse( Context context, Map< ?, ? > params );
+
+    @Override
+    public String doGet( final Context context ) {
         String result = "";
-        
-        final String wikiMarkup = getForm(context);
-        
+        final String wikiMarkup = getForm( context );
         final RenderingManager mgr = context.getEngine().getManager( RenderingManager.class );
-        
         final WikiDocument doc;
-        try
-        {
+        try {
             doc = mgr.getParser( context, wikiMarkup ).parse();
-            result = mgr.getHTML(context, doc);
-        }
-        catch ( final IOException e)
-        {
+            result = mgr.getHTML( context, doc );
+        } catch( final IOException e ) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -61,9 +54,9 @@ public abstract class WikiFormAdminBean
         return result;
     }
 
-    public String handlePost( final WikiContext context, final HttpServletRequest req, final HttpServletResponse resp)
-    {
-        return null;
+    public String handlePost( final Context context, final HttpServletRequest req, final HttpServletResponse resp ) {
         // FIXME: Not yet implemented
+        return null;
     }
+
 }

@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.management.SimpleMBean;
 import org.apache.wiki.ui.admin.AdminBean;
@@ -48,74 +48,65 @@ public class PlainEditorAdminBean extends SimpleMBean implements AdminBean {
     public PlainEditorAdminBean() throws NotCompliantMBeanException {
     }
     
-    @Override public String doGet( final WikiContext context)
-    {
+    @Override
+    public String doGet( final Context context) {
         final HttpServletRequest req = context.getHttpRequest();
-        
-        if( req != null && req.getMethod().equals("POST") && getTitle().equals( req.getParameter("form") ) )
-        {
+        if( req != null && req.getMethod().equals("POST") && getTitle().equals( req.getParameter("form") ) ) {
             return doPost( context );
         }
         String base = TEMPLATE;
-        
         base = TextUtil.replaceString( base, "%checked", "checked='checked'" );
         base = TextUtil.replaceString( base, "%messages", "" );
-        
         return base;
     }
 
-    @Override public String doPost( final WikiContext context )
-    {
+    @Override
+    public String doPost( final Context context ) {
         final HttpServletRequest req = context.getHttpRequest();
-        
         final boolean checked = "checked".equals( req.getParameter( "id" ) );
         
         // Make changes
-        
         String base = TEMPLATE;
-        
         base = TextUtil.replaceString( base, "%checked", checked ? "checked='checked'" : "" );
         base = TextUtil.replaceString( base, "%messages", "<br /><font color='red'>Your settings have been saved</font>" );
-        
         return base;
     }
-    
-    @Override public String getTitle()
-    {
+
+    @Override
+    public String getTitle() {
         return "Plain editor";
     }
 
-    @Override public int getType()
-    {
+    @Override
+    public int getType() {
         return EDITOR;
     }
 
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return true;
     }
 
-    @Override public String getId()
-    {
+    @Override
+    public String getId() {
         return "editor.plain";
     }
-    
-    public boolean getChecked()
-    {
+
+    public boolean getChecked() {
         return m_checked;
     }
-    
-    @Override public String[] getAttributeNames()
-    {
+
+    @Override
+    public String[] getAttributeNames() {
         return ATTRIBUTES;
     }
 
-    @Override public String[] getMethodNames()
-    {
+    @Override
+    public String[] getMethodNames() {
         return METHODS;
     }
 
-    @Override public void initialize( final Engine engine ) {
+    @Override
+    public void initialize( final Engine engine ) {
     }
 
 }

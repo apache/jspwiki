@@ -20,10 +20,10 @@ package org.apache.wiki.auth;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.ajax.AjaxUtil;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
@@ -285,7 +285,7 @@ public class DefaultUserManager implements UserManager {
 
     /** {@inheritDoc} */
     @Override
-    public UserProfile parseProfile( final WikiContext context ) {
+    public UserProfile parseProfile( final Context context ) {
         // Retrieve the user's profile (may have been previously cached)
         final UserProfile profile = getUserProfile( context.getWikiSession() );
         final HttpServletRequest request = context.getHttpRequest();
@@ -315,7 +315,7 @@ public class DefaultUserManager implements UserManager {
 
     /** {@inheritDoc} */
     @Override
-    public void validateProfile( final WikiContext context, final UserProfile profile ) {
+    public void validateProfile( final Context context, final UserProfile profile ) {
         final boolean isNew = profile.isNew();
         final Session session = context.getWikiSession();
         final InputValidator validator = new InputValidator( SESSION_MESSAGES, context );
