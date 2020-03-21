@@ -85,15 +85,13 @@ public class Preferences extends HashMap< String,String > {
      *
      *  @param pageContext The page context.
      */
-    // FIXME: The way that date preferences are chosen is currently a bit wacky: it all
-    //        gets saved to the cookie based on the browser state with which the user
-    //        happened to first arrive to the site with.  This, unfortunately, means that
-    //        even if the user changes e.g. language preferences (like in a web cafe),
-    //        the old preferences still remain in a site cookie.
+    // FIXME: The way that date preferences are chosen is currently a bit wacky: it all gets saved to the cookie based on the browser state
+    //        with which the user happened to first arrive to the site with.  This, unfortunately, means that even if the user changes e.g.
+    //        language preferences (like in a web cafe), the old preferences still remain in a site cookie.
     public static void reloadPreferences( final PageContext pageContext ) {
         final Preferences prefs = new Preferences();
         final Properties props = PropertyReader.loadWebAppProps( pageContext.getServletContext() );
-        final WikiContext ctx = WikiContext.findContext( pageContext );
+        final Context ctx = WikiContext.findContext( pageContext );
         final String dateFormat = ctx.getEngine().getManager( InternationalizationManager.class )
                                            .get( InternationalizationManager.CORE_BUNDLE, getLocale( ctx ), "common.datetimeformat" );
 
@@ -130,16 +128,14 @@ public class Preferences extends HashMap< String,String > {
      */
 	private static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs ) {
         final String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, "JSPWikiUserPrefs" ) );
-
         if( prefVal != null ) {
             // Convert prefVal JSON to a generic hashmap
-            @SuppressWarnings("unchecked") final Map<String,String> map = new Gson().fromJson(prefVal, Map.class );
-
-            for (String key : map.keySet()) {
+            @SuppressWarnings( "unchecked" ) final Map< String, String > map = new Gson().fromJson( prefVal, Map.class );
+            for( String key : map.keySet() ) {
                 key = TextUtil.replaceEntities( key );
                 // Sometimes this is not a String as it comes from the Cookie set by Javascript
-                final Object value = map.get(key);
-                if (value != null) {
+                final Object value = map.get( key );
+                if( value != null ) {
                     prefs.put( key, value.toString() );
                 }
             }
@@ -156,10 +152,11 @@ public class Preferences extends HashMap< String,String > {
      */
     public static String getPreference( final Context wikiContext, final String name ) {
         final HttpServletRequest request = wikiContext.getHttpRequest();
-        if ( request == null ) return null;
+        if ( request == null ) {
+            return null;
+        }
 
         final Preferences prefs = (Preferences)request.getSession().getAttribute( SESSIONPREFS );
-
         if( prefs != null ) {
             return prefs.get( name );
         }
@@ -239,7 +236,7 @@ public class Preferences extends HashMap< String,String > {
      * Locates the i18n ResourceBundle given.  This method interprets the request locale, and uses that to figure out which language the
      * user wants.
      *
-     * @param context {@link WikiContext} holding the user's locale
+     * @param context {@link Context} holding the user's locale
      * @param bundle  The name of the bundle you are looking for.
      * @return A localized string (or from the default language, if not found)
      * @throws MissingResourceException If the bundle cannot be found
