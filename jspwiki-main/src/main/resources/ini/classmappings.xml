@@ -108,6 +108,10 @@
     <mappedClass>org.apache.wiki.render.DefaultRenderingManager</mappedClass>
   </mapping>
   <mapping>
+    <requestedClass>org.apache.wiki.rss.RSSGenerator</requestedClass>
+    <mappedClass>org.apache.wiki.rss.DefaultRSSGenerator</mappedClass>
+  </mapping>
+  <mapping>
     <requestedClass>org.apache.wiki.search.SearchManager</requestedClass>
     <mappedClass>org.apache.wiki.search.DefaultSearchManager</mappedClass>
   </mapping>
