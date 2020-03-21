@@ -35,7 +35,7 @@ public class AllPermissionCollection extends PermissionCollection
 
     private boolean           m_readOnly      = false;
 
-    protected final Hashtable<Permission, Permission> m_permissions    = new Hashtable<Permission, Permission>();
+    protected final Hashtable<Permission, Permission> m_permissions    = new Hashtable<>();
 
     /**
      * Adds an AllPermission object to this AllPermissionCollection. If this
@@ -47,9 +47,9 @@ public class AllPermissionCollection extends PermissionCollection
      * @param permission {@inheritDoc}
      */
     @Override
-    public void add( Permission permission )
+    public void add( final Permission permission )
     {
-        if ( !AllPermission.isJSPWikiPermission( permission ) )
+        if ( !PermissionChecks.isJSPWikiPermission( permission ) )
         {
             throw new IllegalArgumentException(
                     "Permission must be of type org.apache.wiki.permissions.*Permission." );
@@ -96,7 +96,7 @@ public class AllPermissionCollection extends PermissionCollection
      * 
      * @return {@inheritDoc}
      */
-    public boolean implies( Permission permission )
+    public boolean implies( final Permission permission )
     {
         // If nothing in the collection yet, fail fast
         if ( !m_notEmpty )
@@ -105,16 +105,16 @@ public class AllPermissionCollection extends PermissionCollection
         }
 
         // If not one of our permission types, it's not implied
-        if ( !AllPermission.isJSPWikiPermission( permission ) )
+        if ( !PermissionChecks.isJSPWikiPermission( permission ) )
         {
             return false;
         }
 
         // Step through each AllPermission
-        Enumeration<Permission> permEnum = m_permissions.elements();
+        final Enumeration<Permission> permEnum = m_permissions.elements();
         while( permEnum.hasMoreElements() )
         {
-            Permission storedPermission = permEnum.nextElement();
+            final Permission storedPermission = permEnum.nextElement();
             if ( storedPermission.implies( permission ) )
             {
                 return true;
