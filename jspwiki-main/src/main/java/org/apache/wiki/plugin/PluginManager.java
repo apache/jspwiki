@@ -19,7 +19,6 @@
 package org.apache.wiki.plugin;
 
 import org.apache.oro.text.regex.Pattern;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
@@ -117,19 +116,18 @@ public interface PluginManager extends ModuleManager {
     Map< String, String > parseArgs( String argstring ) throws IOException;
 
     /**
-     * Parses a plugin.  Plugin commands are of the form:
-     * {@code [{INSERT myplugin WHERE param1=value1, param2=value2}] }
-     * myplugin may either be a class name or a plugin alias.
-     * <P>
-     * This is the main entry point that is used.
+     *  Parses a plugin.  Plugin commands are of the form:<br/>
+     *  {@code [{INSERT myplugin WHERE param1=value1, param2=value2}]}<br/>
+     *  myplugin may either be a class name or a plugin alias.
+     *  <P>
+     *  This is the main entry point that is used.
      *
-     * @param context The current WikiContext.
-     * @param commandline The full command line, including plugin name, parameters and body.
-     * @return HTML as returned by the plugin, or possibly an error message.
-     *
-     * @throws PluginException From the plugin itself, it propagates, waah!
+     *  @param context The current WikiContext.
+     *  @param commandline The full command line, including plugin name, parameters and body.
+     *  @return HTML as returned by the plugin, or possibly an error message.
+     *  @throws PluginException From the plugin itself, it propagates, waah!
      */
-    String execute( WikiContext context, String commandline ) throws PluginException;
+    String execute( Context context, String commandline ) throws PluginException;
     
     /**
      * Creates a {@link Plugin}.
