@@ -52,11 +52,14 @@ public class SearchMatcher {
     }
 
     /**
-     *  Creates a new SearchMatcher.
+     * Creates a new SearchMatcher.
      *
-     *  @param engine The Engine
-     *  @param queries A list of queries
+     * @param engine The Engine
+     * @param queries A list of queries
+     * @deprecated kept for compatibility with page/attachment providers not using public API. Use {@code SearchMatcher(Engine, QueryItem)}
+     * instead.
      */
+    @Deprecated
     public SearchMatcher( final WikiEngine engine, final org.apache.wiki.search.QueryItem[] queries ) {
         this( ( Engine )engine, queries );
     }
