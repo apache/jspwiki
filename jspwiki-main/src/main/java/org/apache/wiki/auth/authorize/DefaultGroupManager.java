@@ -20,6 +20,7 @@ package org.apache.wiki.auth.authorize;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
@@ -318,6 +319,39 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             }
             // Re-throw security exception
             throw new WikiSecurityException( e.getMessage(), e );
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void validateGroup( final Context context, final Group group ) {
+        final InputValidator validator = new InputValidator( MESSAGES_KEY, context );
+
+        // Name cannot be null or one of the restricted names
+        try {
+            checkGroupName( context, group.getName() );
+        } catch( final WikiSecurityException e ) {
+        }
+
+        // Member names must be "safe" strings
+        final Principal[] members = group.members();
+        for( final Principal member : members ) {
+            validator.validateNotNull( member.getName(), "Full name", InputValidator.ID );
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void checkGroupName( final Context context, final String name ) throws WikiSecurityException {
+        // TODO: groups cannot have the same name as a user
+
+        // Name cannot be null
+        final InputValidator validator = new InputValidator( MESSAGES_KEY, context );
+        validator.validateNotNull( name, "Group name" );
+
+        // Name cannot be one of the restricted names either
+        if( ArrayUtils.contains( Group.RESTRICTED_GROUPNAMES, name ) ) {
+            throw new WikiSecurityException( "The group name '" + name + "' is illegal. Choose another." );
         }
     }
 

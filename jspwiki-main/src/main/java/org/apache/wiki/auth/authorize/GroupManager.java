@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.auth.authorize;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.Authorizer;
@@ -27,10 +26,8 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
-import org.apache.wiki.ui.InputValidator;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.Principal;
 
 
 /**
@@ -185,22 +182,7 @@ public interface GroupManager extends Authorizer, WikiEventListener {
      * @param context the current wiki context
      * @param group the supplied Group
      */
-    default void validateGroup( final Context context, final Group group ) {
-        final InputValidator validator = new InputValidator( MESSAGES_KEY, context );
-
-        // Name cannot be null or one of the restricted names
-        try {
-            checkGroupName( context, group.getName() );
-        } catch( final WikiSecurityException e ) {
-        }
-
-        // Member names must be "safe" strings
-        final Principal[] members = group.members();
-        for( final Principal member : members ) {
-            validator.validateNotNull( member.getName(), "Full name", InputValidator.ID );
-        }
-    }
-
+    void validateGroup( final Context context, final Group group );
 
     /**
      * Checks if a String is blank or a restricted Group name, and if it is, appends an error to the Session's message list.
@@ -210,18 +192,7 @@ public interface GroupManager extends Authorizer, WikiEventListener {
      * @throws WikiSecurityException if <code>session</code> is <code>null</code> or the Group name is illegal
      * @see Group#RESTRICTED_GROUPNAMES
      */
-    default void checkGroupName( final Context context, final String name ) throws WikiSecurityException {
-        // TODO: groups cannot have the same name as a user
-
-        // Name cannot be null
-        final InputValidator validator = new InputValidator( MESSAGES_KEY, context );
-        validator.validateNotNull( name, "Group name" );
-
-        // Name cannot be one of the restricted names either
-        if( ArrayUtils.contains( Group.RESTRICTED_GROUPNAMES, name ) ) {
-            throw new WikiSecurityException( "The group name '" + name + "' is illegal. Choose another." );
-        }
-    }
+    void checkGroupName( final Context context, final String name ) throws WikiSecurityException;
 
     // events processing .......................................................
 
