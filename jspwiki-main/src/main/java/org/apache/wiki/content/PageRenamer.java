@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.content;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
 
 /**
@@ -39,7 +39,7 @@ public interface PageRenamer {
      *  @return The final new name (in case it had to be modified)
      *  @throws WikiException If the page cannot be renamed.
      */
-    String renamePage( WikiContext context, String renameFrom, String renameTo, boolean changeReferrers ) throws WikiException;
+    String renamePage( Context context, String renameFrom, String renameTo, boolean changeReferrers ) throws WikiException;
 
     /**
      * Fires a WikiPageRenameEvent to all registered listeners. Currently not used internally by JSPWiki itself, but you can use it for

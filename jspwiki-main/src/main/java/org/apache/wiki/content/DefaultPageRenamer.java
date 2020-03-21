@@ -20,9 +20,8 @@ package org.apache.wiki.content;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -67,7 +66,7 @@ public class DefaultPageRenamer implements PageRenamer {
      *  @throws WikiException If the page cannot be renamed.
      */
     @Override
-    public String renamePage( final WikiContext context, final String renameFrom, final String renameTo, final boolean changeReferrers ) throws WikiException {
+    public String renamePage( final Context context, final String renameFrom, final String renameTo, final boolean changeReferrers ) throws WikiException {
         //  Sanity checks first
         if( renameFrom == null || renameFrom.length() == 0 ) {
             throw new WikiException( "From name may not be null or empty" );
@@ -113,7 +112,7 @@ public class DefaultPageRenamer implements PageRenamer {
         if( toPage == null ) {
             throw new InternalWikiException( "Rename seems to have failed for some strange reason - please check logs!" );
         }
-        toPage.setAttribute( WikiPage.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
+        toPage.setAttribute( Page.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
         toPage.setAuthor( context.getCurrentUser().getName() );
         engine.getManager( PageManager.class ).putPageText( toPage, engine.getManager( PageManager.class ).getPureText( toPage ) );
 
@@ -165,7 +164,7 @@ public class DefaultPageRenamer implements PageRenamer {
      *  @param fromPage The old page
      *  @param toPage The new page
      */
-    private void updateReferrers( final WikiContext context, final Page fromPage, final Page toPage, final Set< String > referrers ) {
+    private void updateReferrers( final Context context, final Page fromPage, final Page toPage, final Set< String > referrers ) {
         if( referrers.isEmpty() ) { // No referrers
             return;
         }
@@ -188,7 +187,7 @@ public class DefaultPageRenamer implements PageRenamer {
             }
             
             if( !sourceText.equals( newText ) ) {
-                p.setAttribute( WikiPage.CHANGENOTE, fromPage.getName()+" ==> "+toPage.getName() );
+                p.setAttribute( Page.CHANGENOTE, fromPage.getName()+" ==> "+toPage.getName() );
                 p.setAuthor( context.getCurrentUser().getName() );
          
                 try {
@@ -227,7 +226,7 @@ public class DefaultPageRenamer implements PageRenamer {
     /**
      *  Replaces camelcase links.
      */
-    private String replaceCCReferrerString( final WikiContext context, final String sourceText, final String from, final String to ) {
+    private String replaceCCReferrerString( final Context context, final String sourceText, final String from, final String to ) {
         final StringBuilder sb = new StringBuilder( sourceText.length()+32 );
         final Pattern linkPattern = Pattern.compile( "\\p{Lu}+\\p{Ll}+\\p{Lu}+[\\p{L}\\p{Digit}]*" );
         final Matcher matcher = linkPattern.matcher( sourceText );
@@ -253,7 +252,7 @@ public class DefaultPageRenamer implements PageRenamer {
         return sb.toString();
     }
 
-    private String replaceReferrerString( final WikiContext context, final String sourceText, final String from, final String to ) {
+    private String replaceReferrerString( final Context context, final String sourceText, final String from, final String to ) {
         final StringBuilder sb = new StringBuilder( sourceText.length()+32 );
         
         // This monstrosity just looks for a JSPWiki link pattern.  But it is pretty cool for a regexp, isn't it?  If you can
@@ -313,7 +312,7 @@ public class DefaultPageRenamer implements PageRenamer {
     /**
      *  This method does a correct replacement of a single link, taking into account anchors and attachments.
      */
-    private String replaceSingleLink( final WikiContext context, final String original, final String from, final String newlink ) {
+    private String replaceSingleLink( final Context context, final String original, final String from, final String newlink ) {
         final int hash = original.indexOf( '#' );
         final int slash = original.indexOf( '/' );
         String realLink = original;

@@ -22,7 +22,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
@@ -242,7 +241,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
 
     /** {@inheritDoc} */
     @Override
-    public InputStream getAttachmentStream( final WikiContext ctx, final Attachment att ) throws ProviderException, IOException {
+    public InputStream getAttachmentStream( final Context ctx, final Attachment att ) throws ProviderException, IOException {
         if( m_provider == null ) {
             return null;
         }
@@ -256,7 +255,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
 
     /** {@inheritDoc} */
     @Override
-    public void storeDynamicAttachment( final WikiContext ctx, final DynamicAttachment att ) {
+    public void storeDynamicAttachment( final Context ctx, final DynamicAttachment att ) {
         m_dynamicAttachments.put( new Element( att.getName(), att ) );
     }
 

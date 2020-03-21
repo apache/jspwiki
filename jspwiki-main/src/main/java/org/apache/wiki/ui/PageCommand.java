@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Command;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 
@@ -92,7 +92,7 @@ public final class PageCommand extends AbstractCommand {
     private PageCommand( final String requestContext,
                          final String urlPattern,
                          final String contentTemplate,
-                         final WikiPage target,
+                         final Page target,
                          final String action ) {
         super( requestContext, urlPattern, contentTemplate, target );
         m_action = action;
@@ -112,10 +112,10 @@ public final class PageCommand extends AbstractCommand {
      * @throws IllegalArgumentException if the target is not of the correct type
      */
     public Command targetedCommand( final Object target ) {
-        if( !( target instanceof WikiPage ) ) {
-            throw new IllegalArgumentException( "Target must non-null and of type WikiPage." );
+        if( !( target instanceof Page ) ) {
+            throw new IllegalArgumentException( "Target must non-null and of type Page." );
         }
-        return new PageCommand( getRequestContext(), getURLPattern(), getContentTemplate(), ( WikiPage )target, m_action );
+        return new PageCommand( getRequestContext(), getURLPattern(), getContentTemplate(), ( Page )target, m_action );
     }
 
     /**
@@ -126,7 +126,7 @@ public final class PageCommand extends AbstractCommand {
         if( target == null ) {
             return getJSPFriendlyName();
         }
-        return ( ( WikiPage )target ).getName();
+        return ( ( Page )target ).getName();
     }
 
     /**

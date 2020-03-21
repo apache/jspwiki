@@ -199,7 +199,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
 
     /** {@inheritDoc} */
     @Override
-    public boolean hasAccess( final WikiContext context, final HttpServletResponse response, final boolean redirect ) throws IOException {
+    public boolean hasAccess( final Context context, final HttpServletResponse response, final boolean redirect ) throws IOException {
         final boolean allowed = checkPermission( context.getWikiSession(), context.requiredPermission() );
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
 

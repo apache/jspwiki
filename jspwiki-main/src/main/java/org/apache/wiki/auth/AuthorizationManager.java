@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.auth;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -166,7 +166,7 @@ public interface AuthorizationManager {
     boolean hasRoleOrPrincipal( Session session, Principal principal );
 
     /**
-     * Checks whether the current user has access to the wiki context, by obtaining the required Permission ({@link WikiContext#requiredPermission()})
+     * Checks whether the current user has access to the wiki context, by obtaining the required Permission ({@link Context#requiredPermission()})
      * and delegating the access check to {@link #checkPermission(Session, Permission)}. If the user is allowed, this method returns
      * <code>true</code>; <code>false</code> otherwise. If access is allowed, the wiki context will be added to the request as an attribute
      * with the key name {@link org.apache.wiki.api.core.Context#ATTR_CONTEXT}. Note that this method will automatically redirect the user to
@@ -177,13 +177,13 @@ public interface AuthorizationManager {
      * @return the result of the access check
      * @throws IOException In case something goes wrong
      */
-    default boolean hasAccess( final WikiContext context, final HttpServletResponse response ) throws IOException {
+    default boolean hasAccess( final Context context, final HttpServletResponse response ) throws IOException {
         return hasAccess( context, response, true );
     }
 
     /**
      * Checks whether the current user has access to the wiki context (and
-     * optionally redirects if not), by obtaining the required Permission ({@link WikiContext#requiredPermission()})
+     * optionally redirects if not), by obtaining the required Permission ({@link Context#requiredPermission()})
      * and delegating the access check to {@link #checkPermission(Session, Permission)}.
      * If the user is allowed, this method returns <code>true</code>;
      * <code>false</code> otherwise. Also, the wiki context will be added to the request as attribute
@@ -195,7 +195,7 @@ public interface AuthorizationManager {
      * @return the result of the access check
      * @throws IOException If something goes wrong
      */
-    boolean hasAccess( final WikiContext context, final HttpServletResponse response, final boolean redirect ) throws IOException;
+    boolean hasAccess( final Context context, final HttpServletResponse response, final boolean redirect ) throws IOException;
 
     /**
      * Initializes AuthorizationManager with an engine and set of properties. Expects to find property 'jspwiki.authorizer' with a valid

@@ -20,7 +20,6 @@ package org.apache.wiki.attachment;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
@@ -191,7 +190,7 @@ public interface AttachmentManager {
      *  @throws ProviderException If the backend fails due to some reason
      *  @throws IOException If the stream cannot be opened
      */
-    InputStream getAttachmentStream( WikiContext ctx, Attachment att ) throws ProviderException, IOException;
+    InputStream getAttachmentStream( Context ctx, Attachment att ) throws ProviderException, IOException;
 
     /**
      *  Stores a dynamic attachment.  Unlike storeAttachment(), this just stores the attachment in the memory.
@@ -199,7 +198,7 @@ public interface AttachmentManager {
      *  @param ctx A WikiContext
      *  @param att An attachment to store
      */
-    void storeDynamicAttachment( WikiContext ctx, DynamicAttachment att );
+    void storeDynamicAttachment( Context ctx, DynamicAttachment att );
 
     /**
      *  Finds a DynamicAttachment.  Normally, you should just use {@link #getAttachmentInfo(String)} , since that will find also

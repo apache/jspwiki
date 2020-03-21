@@ -19,7 +19,7 @@
 package org.apache.wiki.auth.authorize;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.Authorizer;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -115,7 +115,7 @@ public interface GroupManager extends Authorizer, WikiEventListener {
      * @throws WikiSecurityException if the group name isn't allowed, or if <code>create</code> is <code>false</code>
      *                               and the Group does not exist
      */
-    default Group parseGroup( final WikiContext context, final boolean create ) throws WikiSecurityException {
+    default Group parseGroup( final Context context, final boolean create ) throws WikiSecurityException {
         // Extract parameters
         final HttpServletRequest request = context.getHttpRequest();
         final String name = request.getParameter( "group" );
@@ -185,7 +185,7 @@ public interface GroupManager extends Authorizer, WikiEventListener {
      * @param context the current wiki context
      * @param group the supplied Group
      */
-    default void validateGroup( final WikiContext context, final Group group ) {
+    default void validateGroup( final Context context, final Group group ) {
         final InputValidator validator = new InputValidator( MESSAGES_KEY, context );
 
         // Name cannot be null or one of the restricted names
@@ -210,7 +210,7 @@ public interface GroupManager extends Authorizer, WikiEventListener {
      * @throws WikiSecurityException if <code>session</code> is <code>null</code> or the Group name is illegal
      * @see Group#RESTRICTED_GROUPNAMES
      */
-    default void checkGroupName( final WikiContext context, final String name ) throws WikiSecurityException {
+    default void checkGroupName( final Context context, final String name ) throws WikiSecurityException {
         // TODO: groups cannot have the same name as a user
 
         // Name cannot be null
