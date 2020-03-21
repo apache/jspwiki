@@ -45,7 +45,6 @@ import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.rss.RSSGenerator;
-import org.apache.wiki.rss.RSSThread;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.tasks.TasksManager;
 import org.apache.wiki.ui.CommandResolver;
@@ -518,24 +517,11 @@ public class WikiEngine implements Engine {
         try {
             if( TextUtil.getBooleanProperty( props, RSSGenerator.PROP_GENERATE_RSS,false ) ) {
                 m_rssGenerator = ClassUtil.getMappedObject( RSSGenerator.class.getName(), this, props );
+                m_rssGenerator.initialize( this, props );
                 managers.put( RSSGenerator.class, m_rssGenerator );
             }
         } catch( final Exception e ) {
             log.error( "Unable to start RSS generator - JSPWiki will still work, but there will be no RSS feed.", e );
-        }
-
-        // Start the RSS generator & generator thread
-        if( m_rssGenerator != null ) {
-            m_rssFile = TextUtil.getStringProperty( props, RSSGenerator.PROP_RSSFILE, "rss.rdf" );
-            final File rssFile;
-            if( m_rssFile.startsWith( File.separator ) ) { // honor absolute pathnames:
-                rssFile = new File(m_rssFile );
-            } else { // relative path names are anchored from the webapp root path:
-                rssFile = new File( getRootPath(), m_rssFile );
-            }
-            final int rssInterval = TextUtil.getIntegerProperty( props, RSSGenerator.PROP_INTERVAL, 3600 );
-            final RSSThread rssThread = new RSSThread( this, rssFile, rssInterval );
-            rssThread.start();
         }
 
         fireEvent( WikiEngineEvent.INITIALIZED ); // initialization complete
@@ -664,7 +650,7 @@ public class WikiEngine implements Engine {
     @Override
     public String getGlobalRSSURL() {
         if( m_rssGenerator != null && m_rssGenerator.isEnabled() ) {
-            return getBaseURL() + "/" + m_rssFile;
+            return getBaseURL() + "/" + m_rssGenerator.getRssFile();
         }
 
         return null;

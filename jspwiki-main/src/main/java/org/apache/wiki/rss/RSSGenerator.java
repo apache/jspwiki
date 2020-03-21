@@ -37,6 +37,7 @@ import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -63,6 +64,8 @@ public class RSSGenerator {
     private static final Logger log = Logger.getLogger( RSSGenerator.class );
     private Engine m_engine;
 
+    /** The RSS file to generate. */
+    private String m_rssFile;
     private String m_channelDescription = "";
     private String m_channelLanguage = "en-us";
     private boolean m_enabled = true;
@@ -136,6 +139,25 @@ public class RSSGenerator {
         m_engine = engine;
         m_channelDescription = properties.getProperty( PROP_CHANNEL_DESCRIPTION, m_channelDescription );
         m_channelLanguage = properties.getProperty( PROP_CHANNEL_LANGUAGE, m_channelLanguage );
+        m_rssFile = TextUtil.getStringProperty( properties, RSSGenerator.PROP_RSSFILE, "rss.rdf" );
+    }
+
+    /**
+     * Start the RSS generator & generator thread
+     *
+     * @param engine the engine
+     * @param properties the properties
+     */
+    public void initialize( final Engine engine, final Properties properties ) {
+        final File rssFile;
+        if( m_rssFile.startsWith( File.separator ) ) { // honor absolute pathnames
+            rssFile = new File( m_rssFile );
+        } else { // relative path names are anchored from the webapp root path
+            rssFile = new File( engine.getRootPath(), m_rssFile );
+        }
+        final int rssInterval = TextUtil.getIntegerProperty( properties, RSSGenerator.PROP_INTERVAL, 3600 );
+        final RSSThread rssThread = new RSSThread( engine, rssFile, rssInterval );
+        rssThread.start();
     }
 
     /**
@@ -214,8 +236,7 @@ public class RSSGenerator {
     }
 
     // FIXME: This should probably return something more intelligent
-    private String getEntryTitle( final Page page )
-    {
+    private String getEntryTitle( final Page page ) {
         return page.getName() + ", version " + page.getVersion();
     }
 
@@ -290,8 +311,7 @@ public class RSSGenerator {
      *
      * @return whether RSS generation is currently enabled
      */
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return m_enabled;
     }
 
@@ -301,9 +321,12 @@ public class RSSGenerator {
      *
      * @param enabled whether RSS generation is considered enabled.
      */
-    public synchronized void setEnabled( final boolean enabled )
-    {
+    public synchronized void setEnabled( final boolean enabled ) {
         m_enabled = enabled;
+    }
+
+    public String getRssFile() {
+        return m_rssFile;
     }
 
     /**
