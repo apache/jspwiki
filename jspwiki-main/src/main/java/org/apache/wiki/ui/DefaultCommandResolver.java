@@ -56,7 +56,7 @@ public final class DefaultCommandResolver implements CommandResolver {
     static {
         CONTEXTS = new HashMap<>();
         JSPS = new HashMap<>();
-        final Command[] commands = AbstractCommand.allCommands();
+        final Command[] commands = AllCommands.get();
         for( final Command command : commands ) {
             JSPS.put( command.getJSP(), command );
             CONTEXTS.put( command.getRequestContext(), command );

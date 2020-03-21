@@ -52,14 +52,14 @@ public interface CommandResolver {
 
     /**
      * Attempts to locate a wiki command for a supplied request context. The resolution technique is simple: we examine the list of
-     * Commands returned by {@link AbstractCommand#allCommands()} and return the one whose <code>requestContext</code> matches the
+     * Commands returned by {@link AllCommands#get()} and return the one whose <code>requestContext</code> matches the
      * supplied context. If the supplied context does not resolve to a known Command, this method throws an {@link IllegalArgumentException}.
      *
      * @param context the request context
      * @return the resolved context
      */
     static Command findCommand( final String context ) {
-        return Arrays.stream( AbstractCommand.allCommands() )
+        return Arrays.stream( AllCommands.get() )
                      .filter( c -> c.getRequestContext().equals( context ) )
                      .findFirst()
                      .orElseThrow( () -> new IllegalArgumentException( "Unsupported wiki context: " + context + "." ) );

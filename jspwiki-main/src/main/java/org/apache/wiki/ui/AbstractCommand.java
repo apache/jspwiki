@@ -29,37 +29,6 @@ import org.apache.wiki.util.TextUtil;
  */
 public abstract class AbstractCommand implements Command {
 
-    private static final Command[] ALL_COMMANDS = new Command[] {
-        PageCommand.ATTACH,
-        PageCommand.COMMENT,
-        PageCommand.CONFLICT,
-        PageCommand.DELETE,
-        PageCommand.DIFF,
-        PageCommand.EDIT,
-        PageCommand.INFO,
-        PageCommand.NONE,
-        PageCommand.OTHER,
-        PageCommand.PREVIEW,
-        PageCommand.RENAME,
-        PageCommand.RSS,
-        PageCommand.UPLOAD,
-        PageCommand.VIEW,
-        GroupCommand.DELETE_GROUP,
-        GroupCommand.EDIT_GROUP,
-        GroupCommand.VIEW_GROUP,
-        WikiCommand.CREATE_GROUP,
-        WikiCommand.ERROR,
-        WikiCommand.FIND,
-        WikiCommand.INSTALL,
-        WikiCommand.LOGIN,
-        WikiCommand.LOGOUT,
-        WikiCommand.MESSAGE,
-        WikiCommand.PREFS,
-        WikiCommand.WORKFLOW,
-        WikiCommand.ADMIN,
-        RedirectCommand.REDIRECT
-    };
-
     private static final String HTTPS = "HTTPS://";
     private static final String HTTP = "HTTP://";
 
@@ -88,7 +57,7 @@ public abstract class AbstractCommand implements Command {
         }
 
         m_requestContext = requestContext;
-        if ( urlPattern.toUpperCase().startsWith( HTTP ) || urlPattern.toUpperCase().endsWith( HTTPS ) ) {
+        if ( urlPattern.toUpperCase().startsWith( HTTP ) || urlPattern.toUpperCase().startsWith( HTTPS ) ) {
             // For an HTTP/HTTPS url, pass it through without modification
             m_jsp = urlPattern;
             m_jspFriendlyName = "Special Page";
@@ -131,54 +100,45 @@ public abstract class AbstractCommand implements Command {
     }
 
     /**
-     * Returns a defensively-created array of all static Commands.
-     *
-     * @return the array of commands
-     */
-    public static Command[] allCommands() {
-        return ALL_COMMANDS.clone();
-    }
-
-    /**
-     * @see org.apache.wiki.ui.Command#targetedCommand(Object)
+     * @see org.apache.wiki.api.core.Command#targetedCommand(Object)
      */
     public abstract Command targetedCommand( final Object target );
 
     /**
-     * @see org.apache.wiki.ui.Command#getContentTemplate()
+     * @see org.apache.wiki.api.core.Command#getContentTemplate()
      */
     public final String getContentTemplate() {
         return m_contentTemplate;
     }
 
     /**
-     * @see org.apache.wiki.ui.Command#getJSP()
+     * @see org.apache.wiki.api.core.Command#getJSP()
      */
     public final String getJSP() {
         return m_jsp;
     }
 
     /**
-     * @see org.apache.wiki.ui.Command#getName()
+     * @see org.apache.wiki.api.core.Command#getName()
      */
     public abstract String getName();
 
     /**
-     * @see org.apache.wiki.ui.Command#getRequestContext()
+     * @see org.apache.wiki.api.core.Command#getRequestContext()
      */
     public final String getRequestContext() {
         return m_requestContext;
     }
 
     /**
-     * @see org.apache.wiki.ui.Command#getTarget()
+     * @see org.apache.wiki.api.core.Command#getTarget()
      */
     public final Object getTarget() {
         return m_target;
     }
 
     /**
-     * @see org.apache.wiki.ui.Command#getURLPattern()
+     * @see org.apache.wiki.api.core.Command#getURLPattern()
      */
     public final String getURLPattern() {
         return m_urlPattern;
