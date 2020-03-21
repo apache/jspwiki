@@ -32,24 +32,17 @@ import java.util.Properties;
 
 public class RecentChangesPluginTest {
     Properties props = TestEngine.getTestProperties();
-
-    TestEngine testEngine;
+    TestEngine testEngine = TestEngine.build( props );
+    PluginManager manager = new DefaultPluginManager(testEngine, props);
 
     WikiContext context;
 
-    PluginManager manager;
-
     @BeforeEach
     public void setUp() throws Exception {
-        CacheManager.getInstance().removeAllCaches();
-        testEngine = new TestEngine(props);
-
         testEngine.saveText("TestPage01", "Some Text for testing 01");
         testEngine.saveText("TestPage02", "Some Text for testing 02");
         testEngine.saveText("TestPage03", "Some Text for testing 03");
         testEngine.saveText("TestPage04", "Some Text for testing 04");
-
-        manager = new DefaultPluginManager(testEngine, props);
     }
 
     @AfterEach
@@ -60,6 +53,7 @@ public class RecentChangesPluginTest {
         testEngine.deleteTestPage("TestPage04");
 
         TestEngine.emptyWorkDir();
+        CacheManager.getInstance().removeAllCaches();
     }
 
     /**
@@ -90,8 +84,7 @@ public class RecentChangesPluginTest {
     public void testParmInClude() throws Exception {
         context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage02"));
 
-        final String res = manager.execute( context,
-                                      "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}" );
+        final String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}" );
 
         Assertions.assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
         Assertions.assertFalse(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));
@@ -126,11 +119,10 @@ public class RecentChangesPluginTest {
     public void testNoRecentChanges() throws Exception {
         context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage04"));
 
-        final String res = manager.execute( context,
-                                      "{INSERT org.apache.wiki.plugin.RecentChangesPlugin since='-1'}" );
+        final String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin since='-1'}" );
 
-        Assertions.assertTrue( "<table class=\"recentchanges\" cellpadding=\"4\"></table>".equals( res ) );
-        Assertions.assertFalse( "<table class=\"recentchanges\" cellpadding=\"4\" />".equals( res ) );
+        Assertions.assertEquals( "<table class=\"recentchanges\" cellpadding=\"4\"></table>", res );
+        Assertions.assertNotEquals( "<table class=\"recentchanges\" cellpadding=\"4\" />", res );
     }
 
 }

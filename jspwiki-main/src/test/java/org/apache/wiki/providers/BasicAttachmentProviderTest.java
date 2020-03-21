@@ -45,7 +45,7 @@ public class BasicAttachmentProviderTest {
     public static final String NAME2 = "AfterFirstTestPage";
 
     Properties props = TestEngine.getTestProperties();
-    TestEngine m_engine;
+    TestEngine m_engine = TestEngine.build( props );
     BasicAttachmentProvider m_provider;
 
     /** This is the sound of my head hitting the keyboard. */
@@ -53,8 +53,6 @@ public class BasicAttachmentProviderTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        m_engine = new TestEngine( props );
-
         m_provider = new BasicAttachmentProvider();
         m_provider.initialize( m_engine, props );
 
