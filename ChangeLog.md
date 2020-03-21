@@ -17,6 +17,28 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-03-21  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-14_
+
+* [JSPWIKI-303](https://issues.apache.org/jira/browse/JSPWIKI-303): JSPWiki-API library creation
+    * added compatibility to page / attachment providers not using the public API
+        * `jspwiki.pageProvider` should be set to `WikiPageAdapterProvider` and then `jspwiki.pageProvider.adapter.impl` 
+        to the actual page provider
+        * `jspwiki.attachmentProvider` should be set to `WikiAttachmentAdapterProvider` and then `jspwiki.attachmentProvider.adapter.impl` 
+        to the actual attachment provider
+        * see `WikiProviderAdaptersTest` on the jspwiki-210-adapters module for an example
+    * `Page` does not deal with ACLs yet
+    * SPI to create objects from the `o.a.w.api.core` package still needs to be done
+
+* Added more helper methods to `TestEngine` to ease building customized instances (again, see `WikiProviderAdaptersTest` on the 
+jspwiki-210-adapters module for an example)
+
+* Dependency updates
+    * Tika to 1.24
+    * Tomcat to 9.0.33
+    * Selenide to 5.10.0
+
 **2020-03-16  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-13_
