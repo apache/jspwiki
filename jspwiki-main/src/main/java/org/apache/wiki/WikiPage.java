@@ -65,11 +65,13 @@ public class WikiPage implements Page {
     }
 
     /**
-     *  Create a new WikiPage using a given engine and name.
+     * Create a new WikiPage using a given engine and name.
      *
-     *  @param engine The Engine that owns this page.
-     *  @param name   The name of the page.
+     * @param engine The Engine that owns this page.
+     * @param name   The name of the page.
+     * @deprecated kept for compatibility with page/attachment providers not using public API. Use {@code WikiPage(Engine, String)} instead.
      */
+    @Deprecated
     public WikiPage( final WikiEngine engine, final String name ) {
         this( ( Engine )engine, name );
     }
@@ -160,8 +162,7 @@ public class WikiPage implements Page {
      *  @param date The date
      */
     @Override
-    public void setLastModified( final Date date )
-    {
+    public void setLastModified( final Date date ) {
         m_lastModified = date;
     }
 

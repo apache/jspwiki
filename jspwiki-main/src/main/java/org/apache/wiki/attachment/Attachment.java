@@ -51,7 +51,9 @@ public class Attachment extends WikiPage implements org.apache.wiki.api.core.Att
      * @param engine     The Engine which is hosting this attachment.
      * @param parentPage The page which will contain this attachment.
      * @param fileName   The file name for the attachment.
+     * @deprecated kept for compatibility with page/attachment providers not using public API. Use {@code Attachment(Engine, String, String)} instead.
      */
+    @Deprecated
     public Attachment( final WikiEngine engine, final String parentPage, final String fileName ) {
         this( ( Engine )engine, parentPage, fileName );
     }
