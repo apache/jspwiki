@@ -20,6 +20,7 @@ package org.apache.wiki.ui;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.modules.BaseModuleManager;
@@ -93,7 +94,7 @@ public class DefaultEditorManager extends BaseModuleManager implements EditorMan
 
     /** {@inheritDoc} */
     @Override
-    public String getEditorName( final WikiContext context ) {
+    public String getEditorName( final Context context ) {
         if( context.getRequestContext().equals( WikiContext.PREVIEW ) ) {
             return EDITOR_PREVIEW;
         }
@@ -133,7 +134,7 @@ public class DefaultEditorManager extends BaseModuleManager implements EditorMan
 
     /** {@inheritDoc} */
     @Override
-    public String getEditorPath( final WikiContext context ) {
+    public String getEditorPath( final Context context ) {
         final String editor = getEditorName( context );
         final WikiEditorInfo ed = m_editors.get( editor );
         final String path;

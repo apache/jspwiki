@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.modules.ModuleManager;
 
 import javax.servlet.jsp.PageContext;
@@ -83,7 +83,7 @@ public interface EditorManager extends ModuleManager {
      * @param context The context that is chosen.
      * @return The name of the chosen editor. If no match could be found, will revert to the default "plain" editor.
      */
-    String getEditorName( WikiContext context );
+    String getEditorName( Context context );
 
     /**
      *  Returns a list of editors as Strings of editor names.
@@ -98,7 +98,7 @@ public interface EditorManager extends ModuleManager {
      *  @param context WikiContext from where the editor name is retrieved.
      *  @return e.g. "editors/plain.jsp"
      */
-    String getEditorPath( WikiContext context );
+    String getEditorPath( Context context );
 
     /**
      *  Convenience function which examines the current context and attempts to figure out whether the edited text is in the HTTP
