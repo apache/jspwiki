@@ -55,7 +55,7 @@ public class SearchManagerTest {
 
         CacheManager.getInstance().removeAllCaches();
         m_engine = new TestEngine( props );
-        m_mgr = m_engine.getSearchManager();
+        m_mgr = m_engine.getManager( SearchManager.class );
     }
 
     @AfterEach

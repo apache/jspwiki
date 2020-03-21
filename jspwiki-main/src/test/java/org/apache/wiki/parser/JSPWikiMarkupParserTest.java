@@ -30,6 +30,7 @@ import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.BasicAttachmentProvider;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.render.XHTMLRenderer;
 import org.apache.wiki.stress.Benchmark;
 import org.apache.wiki.util.TextUtil;
@@ -806,7 +807,7 @@ public class JSPWikiMarkupParserTest
 
         testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
 
-        final String src = "["+testEngine2.getRenderingManager().beautifyTitle("TestPage/TestAtt.txt")+"]";
+        final String src = "["+testEngine2.getManager( RenderingManager.class ).beautifyTitle("TestPage/TestAtt.txt")+"]";
 
         Assertions.assertEquals( "<a class=\"attachment\" href=\"/test/attach/TestPage/TestAtt.txt\">Test Page/TestAtt.txt</a>"+
                       "<a href=\"/test/PageInfo.jsp?page=TestPage/TestAtt.txt\" class=\"infolink\"><img src=\"/test/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a>",

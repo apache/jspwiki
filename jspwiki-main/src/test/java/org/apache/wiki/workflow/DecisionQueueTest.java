@@ -56,11 +56,11 @@ public class DecisionQueueTest
 
         final Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine(props);
-        m_queue = m_engine.getWorkflowManager().getDecisionQueue();
+        m_queue = m_engine.getManager( WorkflowManager.class ).getDecisionQueue();
         adminSession = m_engine.adminSession();
         janneSession = m_engine.janneSession();
         w = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
-        w.setWorkflowManager(m_engine.getWorkflowManager());
+        w.setWorkflowManager( m_engine.getManager( WorkflowManager.class ) );
         d1 = new SimpleDecision(w, "decision1.key", new GroupPrincipal("Admin"));
         d2 = new SimpleDecision(w, "decision2.key", new WikiPrincipal("Owner2"));
         d3 = new SimpleDecision(w, "decision3.key", janneSession.getUserPrincipal());
@@ -168,7 +168,7 @@ public class DecisionQueueTest
 
         // Create a workflow with 3 steps, with a Decision for Janne in the middle
         w = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
-        w.setWorkflowManager(m_engine.getWorkflowManager());
+        w.setWorkflowManager( m_engine.getManager( WorkflowManager.class ) );
         final Step startTask = new TaskTest.NormalTask(w);
         final Step endTask = new TaskTest.NormalTask(w);
         final Decision decision = new SimpleDecision(w, "decision.Actor1Decision", janne);

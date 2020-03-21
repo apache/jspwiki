@@ -23,10 +23,12 @@ import net.sf.ehcache.CacheManager;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.references.ReferenceManager;
+import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -122,8 +124,8 @@ public class WikiEngineTest {
      */
     @Test
     public void testAttachmentRefs() throws Exception {
-        final ReferenceManager refMgr = m_engine.getReferenceManager();
-        final AttachmentManager attMgr = m_engine.getAttachmentManager();
+        final ReferenceManager refMgr = m_engine.getManager( ReferenceManager.class );
+        final AttachmentManager attMgr = m_engine.getManager( AttachmentManager.class );
         m_engine.saveText( NAME1, "fooBar");
 
         final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
@@ -165,8 +167,8 @@ public class WikiEngineTest {
 
     @Test
     public void testAttachmentRefs2() throws Exception {
-        final ReferenceManager refMgr = m_engine.getReferenceManager();
-        final AttachmentManager attMgr = m_engine.getAttachmentManager();
+        final ReferenceManager refMgr = m_engine.getManager( ReferenceManager.class );
+        final AttachmentManager attMgr = m_engine.getManager( AttachmentManager.class );
 
         m_engine.saveText( NAME1, "[TestAtt.txt]");
 
@@ -206,8 +208,8 @@ public class WikiEngineTest {
      */
     @Test
     public void testAttachmentRefs3() throws Exception {
-        final ReferenceManager refMgr = m_engine.getReferenceManager();
-        final AttachmentManager attMgr = m_engine.getAttachmentManager();
+        final ReferenceManager refMgr = m_engine.getManager( ReferenceManager.class );
+        final AttachmentManager attMgr = m_engine.getManager( AttachmentManager.class );
 
         m_engine.saveText( NAME1, "fooBar");
 
@@ -231,8 +233,8 @@ public class WikiEngineTest {
      */
     @Test
     public void testAttachmentRefs4() throws Exception {
-        final ReferenceManager refMgr = m_engine.getReferenceManager();
-        final AttachmentManager attMgr = m_engine.getAttachmentManager();
+        final ReferenceManager refMgr = m_engine.getManager( ReferenceManager.class );
+        final AttachmentManager attMgr = m_engine.getManager( AttachmentManager.class );
 
         m_engine.saveText( NAME1, "[TestPage2]");
 
@@ -279,7 +281,7 @@ public class WikiEngineTest {
     @Test
     public void testParsedVariables() throws Exception {
         m_engine.saveText( "TestPage", "[{SET foo=bar}][{SamplePlugin text='{$foo}'}]");
-        final String res = m_engine.getRenderingManager().getHTML( "TestPage" );
+        final String res = m_engine.getManager( RenderingManager.class ).getHTML( "TestPage" );
 
         Assertions.assertEquals( "bar\n", res );
     }
@@ -292,16 +294,16 @@ public class WikiEngineTest {
         m_engine.saveText( "RenameBugTestPage", "Mary had a little generic object" );
         m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
 
-        Collection< String > pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
+        Collection< String > pages = m_engine.getManager( ReferenceManager.class ).findReferrers( "RenameBugTestPage" );
         Assertions.assertEquals( "OldNameTestPage", pages.iterator().next(), "has one" );
 
         final WikiContext ctx = new WikiContext( m_engine, m_engine.getManager( PageManager.class ).getPage("OldNameTestPage") );
-        m_engine.getPageRenamer().renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
+        m_engine.getManager( PageRenamer.class ).renamePage( ctx, "OldNameTestPage", "NewNameTestPage", true );
 
         Assertions.assertFalse( m_engine.getManager( PageManager.class ).wikiPageExists( "OldNameTestPage"), "did not vanish" );
         Assertions.assertTrue( m_engine.getManager( PageManager.class ).wikiPageExists( "NewNameTestPage"), "did not appear" );
 
-        pages = m_engine.getReferenceManager().findReferrers( "RenameBugTestPage" );
+        pages = m_engine.getManager( ReferenceManager.class ).findReferrers( "RenameBugTestPage" );
         Assertions.assertEquals( 1, pages.size(),  "wrong # of referrers" );
         Assertions.assertEquals( "NewNameTestPage", pages.iterator().next(), "has wrong referrer" );
     }

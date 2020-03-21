@@ -48,7 +48,7 @@ public class AttachmentManagerTest {
     @BeforeEach
     public void setUp() throws Exception {
         m_engine  = TestEngine.build();
-        m_manager = m_engine.getAttachmentManager();
+        m_manager = m_engine.getManager( AttachmentManager.class );
 
         m_engine.saveText( NAME1, "Foobar" );
         m_engine.saveText( NAMEU, "Foobar" );

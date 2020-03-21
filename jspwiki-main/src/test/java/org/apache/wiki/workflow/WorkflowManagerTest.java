@@ -18,8 +18,6 @@
  */
 package org.apache.wiki.workflow;
 
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -28,6 +26,8 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
 
 public class WorkflowManagerTest
 {
@@ -38,15 +38,15 @@ public class WorkflowManagerTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine(props);
-        wm = m_engine.getWorkflowManager();
+        wm = m_engine.getManager( WorkflowManager.class );
         // Create a workflow with 3 steps, with a Decision in the middle
         w = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
-        w.setWorkflowManager(m_engine.getWorkflowManager());
-        Step startTask = new TaskTest.NormalTask(w);
-        Step endTask = new TaskTest.NormalTask(w);
-        Decision decision = new SimpleDecision(w, "decision.editWikiApproval", new WikiPrincipal("Actor1"));
+        w.setWorkflowManager( m_engine.getManager( WorkflowManager.class ) );
+        final Step startTask = new TaskTest.NormalTask(w);
+        final Step endTask = new TaskTest.NormalTask(w);
+        final Decision decision = new SimpleDecision(w, "decision.editWikiApproval", new WikiPrincipal("Actor1"));
         startTask.addSuccessor(Outcome.STEP_COMPLETE, decision);
         decision.addSuccessor(Outcome.DECISION_APPROVE, endTask);
         w.setFirstStep(startTask);
@@ -78,12 +78,12 @@ public class WorkflowManagerTest
         wm.start(w);
         Assertions.assertEquals(1, wm.getWorkflows().size());
         Assertions.assertEquals(0, wm.getCompletedWorkflows().size());
-        Workflow workflow = (Workflow)wm.getWorkflows().iterator().next();
+        final Workflow workflow = (Workflow)wm.getWorkflows().iterator().next();
         Assertions.assertEquals(w, workflow);
         Assertions.assertEquals(1, workflow.getId());
 
         // After forcing a decision on step 2, the workflow should complete and vanish from the cache
-        Decision d = (Decision)w.getCurrentStep();
+        final Decision d = (Decision)w.getCurrentStep();
         d.decide(Outcome.DECISION_APPROVE);
         Assertions.assertEquals(0, wm.getWorkflows().size());
         Assertions.assertEquals(1, wm.getCompletedWorkflows().size());
@@ -110,7 +110,7 @@ public class WorkflowManagerTest
         {
             Assertions.assertEquals(new GroupPrincipal("Admin"), wm.getApprover("workflow.saveWikiPage"));
         }
-        catch (WikiException e)
+        catch ( final WikiException e)
         {
             // Swallow
             return;

@@ -252,7 +252,7 @@ public class WikiSessionTest
     public static Session assertedSession( final TestEngine engine, final String name, final Principal[] roles ) throws Exception
     {
         // We can use cookies right?
-        if ( !engine.getAuthenticationManager().allowsCookieAssertions() )
+        if ( !engine.getManager( AuthenticationManager.class ).allowsCookieAssertions() )
         {
             throw new IllegalStateException( "Couldn't set up asserted user: login config doesn't allow cookies." );
         }
@@ -292,7 +292,7 @@ public class WikiSessionTest
 
         // Log in the user with credentials
         final Session session = WikiSession.getWikiSession( engine, request );
-        engine.getAuthenticationManager().login( session, request, id, password );
+        engine.getManager( AuthenticationManager.class ).login( session, request, id, password );
 
         // Make sure the user is actually authenticated
         if ( !session.isAuthenticated() )

@@ -27,9 +27,12 @@ import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.WikiProvider;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
+import org.apache.wiki.references.ReferenceManager;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -108,7 +111,7 @@ public class DefaultPageManagerTest {
         engine.saveText( NAME1, "Test" );
         final Attachment att = new org.apache.wiki.attachment.Attachment( engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
-        engine.getAttachmentManager().storeAttachment( att, engine.makeAttachmentFile() );
+        engine.getManager( AttachmentManager.class ).storeAttachment( att, engine.makeAttachmentFile() );
 
         final String files = engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
         final File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
@@ -132,7 +135,7 @@ public class DefaultPageManagerTest {
         engine.saveText( NAME1, "Test" );
         Attachment att = new org.apache.wiki.attachment.Attachment( engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
-        engine.getAttachmentManager().storeAttachment( att, engine.makeAttachmentFile() );
+        engine.getManager( AttachmentManager.class ).storeAttachment( att, engine.makeAttachmentFile() );
 
         final String files = engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
         final File saved = new File( files, NAME1+FileSystemProvider.FILE_EXT );
@@ -146,13 +149,13 @@ public class DefaultPageManagerTest {
         final Page page = engine.getManager( PageManager.class ).getPage( NAME1, WikiProvider.LATEST_VERSION );
         Assertions.assertNotNull( page, "page" );
 
-        att = engine.getAttachmentManager().getAttachmentInfo(NAME1+"/TestAtt.txt");
+        att = engine.getManager( AttachmentManager.class ).getAttachmentInfo(NAME1+"/TestAtt.txt");
         engine.getManager( PageManager.class ).deletePage(att.getName());
         engine.getManager( PageManager.class ).deletePage( NAME1 );
         Assertions.assertNull( engine.getManager( PageManager.class ).getPage(NAME1), "Page not removed" );
         Assertions.assertNull( engine.getManager( PageManager.class ).getPage(NAME1+"/TestAtt.txt"), "Att not removed" );
 
-        final Collection< String > refs = engine.getReferenceManager().findReferrers(NAME1);
+        final Collection< String > refs = engine.getManager( ReferenceManager.class ).findReferrers(NAME1);
         Assertions.assertNull( refs, "referrers" );
     }
 
@@ -225,7 +228,7 @@ public class DefaultPageManagerTest {
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
         props.setProperty( "jspwiki.usePageCache", "false" );
         final WikiEngine engine = new TestEngine( props );
-        final String p = engine.getRenderingManager().getHTML( "test", -1 );
+        final String p = engine.getManager( RenderingManager.class ).getHTML( "test", -1 );
         final VerySimpleProvider vsp = (VerySimpleProvider) engine.getManager( PageManager.class ).getProvider();
 
         Assertions.assertEquals( "test", vsp.m_latestReq, "wrong page" );
@@ -239,7 +242,7 @@ public class DefaultPageManagerTest {
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
         props.setProperty( "jspwiki.usePageCache", "true" );
         final WikiEngine engine = new TestEngine( props );
-        final String p = engine.getRenderingManager().getHTML( VerySimpleProvider.PAGENAME, -1 );
+        final String p = engine.getManager( RenderingManager.class ).getHTML( VerySimpleProvider.PAGENAME, -1 );
         final CachingProvider cp = (CachingProvider)engine.getManager( PageManager.class ).getProvider();
         final VerySimpleProvider vsp = (VerySimpleProvider) cp.getRealProvider();
 

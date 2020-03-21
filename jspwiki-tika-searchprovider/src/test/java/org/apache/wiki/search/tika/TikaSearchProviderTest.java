@@ -20,6 +20,7 @@ import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.search.SearchManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,7 @@ public class TikaSearchProviderTest {
         engine.addAttachment( "Test-tika", "aaa-diagram.pdf", filePdf );
         engine.addAttachment( "Test-tika", "favicon.png", filePng );
 
-        final TikaSearchProvider tsp = ( TikaSearchProvider )engine.getSearchManager().getSearchEngine();
+        final TikaSearchProvider tsp = ( TikaSearchProvider )engine.getManager( SearchManager.class ).getSearchEngine();
 
         final Attachment attPdf = engine.getManager( AttachmentManager.class ).getAttachmentInfo( "Test-tika/aaa-diagram.pdf" );
         final String pdfIndexed = tsp.getAttachmentContent( attPdf );

@@ -102,7 +102,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
         final GroupManager groupManager = m_engine.getGroupManager();
         final PageManager pageManager = m_engine.getManager( PageManager.class );
-        final AuthorizationManager authManager = m_engine.getAuthorizationManager();
+        final AuthorizationManager authManager = m_engine.getManager( AuthorizationManager.class );
         final int oldGroupCount = groupManager.getRoles().length;
         final int oldPageCount = pageManager.getTotalPageCount();
 
@@ -315,7 +315,7 @@ public class UserManagerTest {
         Assertions.assertEquals( oldUserCount, m_db.getWikiNames().length );
 
         // Now, look in Admin's queue, and verify there's a pending Decision there
-        final DecisionQueue dq = m_engine.getWorkflowManager().getDecisionQueue();
+        final DecisionQueue dq = m_engine.getManager( WorkflowManager.class ).getDecisionQueue();
         final Collection< Decision > decisions = dq.getActorDecisions( m_engine.adminSession() );
         Assertions.assertEquals( 1, decisions.size() );
 
@@ -366,7 +366,7 @@ public class UserManagerTest {
         Assertions.assertEquals( oldUserCount, m_db.getWikiNames().length );
 
         // Now, look in Admin's queue, and verify there's a pending Decision there
-        final DecisionQueue dq = m_engine.getWorkflowManager().getDecisionQueue();
+        final DecisionQueue dq = m_engine.getManager( WorkflowManager.class ).getDecisionQueue();
         final Collection< Decision > decisions = dq.getActorDecisions( m_engine.adminSession() );
         Assertions.assertEquals( 1, decisions.size() );
 

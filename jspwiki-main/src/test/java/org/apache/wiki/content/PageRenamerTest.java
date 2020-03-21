@@ -26,7 +26,9 @@ import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.WikiProvider;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.references.ReferenceManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,7 +75,7 @@ public class PageRenamerTest
     @Test
     public void testSimpleRename() throws Exception {
         // Count the number of existing references
-        final int refCount = m_engine.getReferenceManager().findCreated().size();
+        final int refCount = m_engine.getManager( ReferenceManager.class ).findCreated().size();
 
         m_engine.saveText("TestPage", "the big lazy dog thing" );
 
@@ -81,7 +83,7 @@ public class PageRenamerTest
 
         final WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", false);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", false);
 
         final Page newpage = m_engine.getManager( PageManager.class ).getPage("FooTest");
 
@@ -89,7 +91,7 @@ public class PageRenamerTest
         Assertions.assertNull( m_engine.getManager( PageManager.class ).getPage("TestPage"), "old page not gone" );
 
         // Refmgr
-        final Collection< String > refs = m_engine.getReferenceManager().findCreated();
+        final Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findCreated();
 
         Assertions.assertTrue( refs.contains("FooTest"), "FooTest does not exist" );
         Assertions.assertFalse( refs.contains("TestPage"), "TestPage exists" );
@@ -107,17 +109,17 @@ public class PageRenamerTest
 
         final WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
         final String data = m_engine.getManager( PageManager.class ).getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
         Assertions.assertEquals( "[FooTest]", data.trim(), "no rename" );
 
-        Collection< String > refs = m_engine.getReferenceManager().findReferrers("TestPage");
+        Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findReferrers("TestPage");
 
         Assertions.assertNull( refs, "oldpage" );
 
-        refs = m_engine.getReferenceManager().findReferrers( "FooTest" );
+        refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "FooTest" );
         Assertions.assertEquals( 1, refs.size(), "new size" );
         Assertions.assertEquals( "TestPage2", refs.iterator().next(), "wrong ref" );
     }
@@ -133,16 +135,16 @@ public class PageRenamerTest
 
         final WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
         final String data = m_engine.getManager( PageManager.class ).getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
         Assertions.assertEquals( "FooTest", data.trim(), "no rename" );
-        Collection< String > refs = m_engine.getReferenceManager().findReferrers("TestPage");
+        Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findReferrers("TestPage");
 
         Assertions.assertNull( refs, "oldpage" );
 
-        refs = m_engine.getReferenceManager().findReferrers( "FooTest" );
+        refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "FooTest" );
         Assertions.assertEquals( 1, refs.size(), "new size" );
         Assertions.assertEquals( "TestPage2", refs.iterator().next(), "wrong ref" );
     }
@@ -158,16 +160,16 @@ public class PageRenamerTest
 
         final WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
         final String data = m_engine.getManager( PageManager.class ).getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
         Assertions.assertEquals( "[FooTest#heading1]", data.trim(), "no rename" );
-        Collection< String > refs = m_engine.getReferenceManager().findReferrers("TestPage");
+        Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findReferrers("TestPage");
 
         Assertions.assertNull( refs, "oldpage" );
 
-        refs = m_engine.getReferenceManager().findReferrers( "FooTest" );
+        refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "FooTest" );
         Assertions.assertEquals( 1, refs.size(), "new size" );
         Assertions.assertEquals( "TestPage2", refs.iterator().next(), "wrong ref" );
     }
@@ -183,7 +185,7 @@ public class PageRenamerTest
 
         final WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
         final String data = m_engine.getManager( PageManager.class ).getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
@@ -191,11 +193,11 @@ public class PageRenamerTest
                                  data.trim(), 
                                  "no rename" );
 
-        Collection< String > refs = m_engine.getReferenceManager().findReferrers("TestPage");
+        Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findReferrers("TestPage");
 
         Assertions.assertNull( refs, "oldpage" );
 
-        refs = m_engine.getReferenceManager().findReferrers( "FooTest" );
+        refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "FooTest" );
         Assertions.assertEquals( 1, refs.size(), "new size" );
         Assertions.assertEquals( "TestPage2", refs.iterator().next(), "wrong ref" );
     }
@@ -211,7 +213,7 @@ public class PageRenamerTest
 
         final WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.getPageRenamer().renamePage(context, "Test", "TestPage", true);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, "Test", "TestPage", true);
 
         final String data = m_engine.getManager( PageManager.class ).getPureText("TestPage2", WikiProvider.LATEST_VERSION );
 
@@ -231,29 +233,29 @@ public class PageRenamerTest
 
         final WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.getPageRenamer().renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
         final String data = m_engine.getManager( PageManager.class ).getPureText("TestPage2", WikiProvider.LATEST_VERSION);
 
         Assertions.assertEquals( "[FooTest/foo.txt] [linktext|FooTest/bar.jpg]", data.trim(), "no rename" );
 
-        Attachment att = m_engine.getAttachmentManager().getAttachmentInfo("FooTest/foo.txt");
+        Attachment att = m_engine.getManager( AttachmentManager.class ).getAttachmentInfo("FooTest/foo.txt");
         Assertions.assertNotNull( att, "footext" );
 
-        att = m_engine.getAttachmentManager().getAttachmentInfo("FooTest/bar.jpg");
+        att = m_engine.getManager( AttachmentManager.class ).getAttachmentInfo("FooTest/bar.jpg");
         Assertions.assertNotNull( att, "barjpg" );
 
-        att = m_engine.getAttachmentManager().getAttachmentInfo("TestPage/bar.jpg");
+        att = m_engine.getManager( AttachmentManager.class ).getAttachmentInfo("TestPage/bar.jpg");
         Assertions.assertNull( att, "testpage/bar.jpg exists" );
 
-        att = m_engine.getAttachmentManager().getAttachmentInfo("TestPage/foo.txt");
+        att = m_engine.getManager( AttachmentManager.class ).getAttachmentInfo("TestPage/foo.txt");
         Assertions.assertNull( att, "testpage/foo.txt exists" );
 
-        Collection< String > refs = m_engine.getReferenceManager().findReferrers("TestPage/bar.jpg");
+        Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findReferrers("TestPage/bar.jpg");
 
         Assertions.assertNull( refs, "oldpage" );
 
-        refs = m_engine.getReferenceManager().findReferrers( "FooTest/bar.jpg" );
+        refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "FooTest/bar.jpg" );
         Assertions.assertEquals( 1, refs.size(), "new size" );
         Assertions.assertEquals( "TestPage2", refs.iterator().next(), "wrong ref" );
     }
@@ -310,7 +312,7 @@ public class PageRenamerTest
 
         final WikiContext context = new WikiContext(m_engine, p);
 
-        m_engine.getPageRenamer().renamePage(context, src, dst, true);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, src, dst, true);
     }
 
     @Test
@@ -486,10 +488,10 @@ public class PageRenamerTest
         final String data = m_engine.getManager( PageManager.class ).getPureText( "TestPageReferring", WikiProvider.LATEST_VERSION );
         Assertions.assertEquals( "[Test Page Referred|TestPageReferredNew]", data.trim(), "page not renamed" );
 
-        Collection< String > refs = m_engine.getReferenceManager().findReferrers( "TestPageReferred" );
+        Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "TestPageReferred" );
         Assertions.assertNull( refs, "oldpage" );
 
-        refs = m_engine.getReferenceManager().findReferrers( "TestPageReferredNew" );
+        refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "TestPageReferredNew" );
         Assertions.assertEquals( 1, refs.size(), "new size" );
         Assertions.assertEquals( "TestPageReferring", refs.iterator().next(), "wrong ref" );
     }
@@ -507,10 +509,10 @@ public class PageRenamerTest
         final String data = m_engine.getManager( PageManager.class ).getPureText( "RenameTest", WikiProvider.LATEST_VERSION );
         Assertions.assertEquals( "[link one|Link uno] [link two]", data.trim(), "page not renamed" );
 
-        Collection< String > refs = m_engine.getReferenceManager().findReferrers( "Link one" );
+        Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "Link one" );
         Assertions.assertNull( refs, "oldpage" );
 
-        refs = m_engine.getReferenceManager().findReferrers( "Link uno" );
+        refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "Link uno" );
         Assertions.assertEquals( 1, refs.size(), "new size" );
         Assertions.assertEquals( "RenameTest", refs.iterator().next() , "wrong ref");
     }

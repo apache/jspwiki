@@ -26,6 +26,7 @@ import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
@@ -84,7 +85,7 @@ public class AuthorizationManagerTest
 
         // Initialize the test engine
         m_engine = new TestEngine( props );
-        m_auth = m_engine.getAuthorizationManager();
+        m_auth = m_engine.getManager( AuthorizationManager.class );
         m_groupMgr = m_engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( m_engine );
     }
@@ -265,7 +266,7 @@ public class AuthorizationManagerTest
         final File f = m_engine.makeAttachmentFile();
         final Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
         att.setAuthor( "FirstPost" );
-        m_engine.getAttachmentManager().storeAttachment( att, f );
+        m_engine.getManager( AttachmentManager.class ).storeAttachment( att, f );
 
         final Attachment p = (Attachment) m_engine.getManager( PageManager.class ).getPage( "Test/test1.txt" );
         final Permission view = PermissionFactory.getPagePermission( p, "view" );
@@ -282,7 +283,7 @@ public class AuthorizationManagerTest
         Assertions.assertFalse( m_auth.checkPermission( session, edit ), "Bob !view Test/test1.txt" );
 
         // Delete test page & attachment
-        m_engine.getAttachmentManager().deleteAttachment( att );
+        m_engine.getManager( AttachmentManager.class ).deleteAttachment( att );
         m_engine.getManager( PageManager.class ).deletePage( "Test" );
     }
 
@@ -296,7 +297,7 @@ public class AuthorizationManagerTest
         final File f = m_engine.makeAttachmentFile();
         final Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
         att.setAuthor( "FirstPost" );
-        m_engine.getAttachmentManager().storeAttachment( att, f );
+        m_engine.getManager( AttachmentManager.class ).storeAttachment( att, f );
 
         final Attachment p = (Attachment) m_engine.getManager( PageManager.class ).getPage( "Test/test1.txt" );
         final Permission view = PermissionFactory.getPagePermission( p, "view" );
@@ -313,7 +314,7 @@ public class AuthorizationManagerTest
         Assertions.assertFalse( m_auth.checkPermission( session, view ), "Bar !edit Test" );
 
         // Delete test page & attachment
-        m_engine.getAttachmentManager().deleteAttachment( att );
+        m_engine.getManager( AttachmentManager.class ).deleteAttachment( att );
         m_engine.getManager( PageManager.class ).deletePage( "Test" );
     }
 
@@ -510,13 +511,13 @@ public class AuthorizationManagerTest
     public void testResolveUsers() throws WikiException
     {
         // We should be able to resolve a user by login, user, or wiki name
-        final UserProfile profile = m_engine.getUserManager().getUserDatabase().newProfile();
+        final UserProfile profile = m_engine.getManager( UserManager.class ).getUserDatabase().newProfile();
         profile.setEmail( "authmanagertest@tester.net" );
         profile.setFullname( "AuthorizationManagerTest User" );
         profile.setLoginName( "authmanagertest" );
         try
         {
-            m_engine.getUserManager().getUserDatabase().save( profile );
+            m_engine.getManager( UserManager.class ).getUserDatabase().save( profile );
         }
         catch( final WikiSecurityException e )
         {
@@ -527,7 +528,7 @@ public class AuthorizationManagerTest
         Assertions.assertEquals( new WikiPrincipal( "AuthorizationManagerTestUser", WikiPrincipal.WIKI_NAME ), m_auth.resolvePrincipal( "AuthorizationManagerTestUser" ) );
         try
         {
-            m_engine.getUserManager().getUserDatabase().deleteByLoginName( "authmanagertest" );
+            m_engine.getManager( UserManager.class ).getUserDatabase().deleteByLoginName( "authmanagertest" );
         }
         catch( final WikiSecurityException e )
         {
@@ -668,7 +669,7 @@ public class AuthorizationManagerTest
 
         // Initialize the test engine
         m_engine = new TestEngine( props );
-        m_auth = m_engine.getAuthorizationManager();
+        m_auth = m_engine.getManager( AuthorizationManager.class );
         m_groupMgr = m_engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( m_engine );
 

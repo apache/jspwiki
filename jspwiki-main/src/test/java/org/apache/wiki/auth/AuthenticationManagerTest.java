@@ -89,7 +89,7 @@ public class AuthenticationManagerTest {
     public void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine( props );
-        m_auth = m_engine.getAuthenticationManager();
+        m_auth = m_engine.getManager( AuthenticationManager.class );
         m_groupMgr = m_engine.getGroupManager();
         m_session = WikiSessionTest.adminSession( m_engine );
     }
@@ -138,7 +138,7 @@ public class AuthenticationManagerTest {
         // Init the engine and verify that we initialized with a custom auth
         // login module
         final WikiEngine engine = new TestEngine( props );
-        final DefaultAuthenticationManager authMgr = ( DefaultAuthenticationManager )engine.getAuthenticationManager();
+        final DefaultAuthenticationManager authMgr = ( DefaultAuthenticationManager )engine.getManager( AuthenticationManager.class );
         Assertions.assertEquals( CookieAssertionLoginModule.class, authMgr.m_loginModuleClass );
     }
 
@@ -154,7 +154,7 @@ public class AuthenticationManagerTest {
         // Init the engine and verify that we initialized with the correct
         // options
         final WikiEngine engine = new TestEngine( props );
-        final DefaultAuthenticationManager authMgr = ( DefaultAuthenticationManager )engine.getAuthenticationManager();
+        final DefaultAuthenticationManager authMgr = ( DefaultAuthenticationManager )engine.getManager( AuthenticationManager.class );
         final Map<String, String> options = authMgr.m_loginModuleOptions;
         Assertions.assertEquals( 3, options.size() );
         Assertions.assertTrue( options.containsKey( "key1" ) );

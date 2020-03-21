@@ -27,8 +27,10 @@ import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.PageProvider;
+import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -52,7 +54,7 @@ public class IfPluginTest {
     WikiContext getJanneBasedWikiContextFor( final Page page ) throws WikiException {
         final MockHttpServletRequest request = testEngine.newHttpRequest();
         final Session session =  WikiSession.getWikiSession( testEngine, request );
-        testEngine.getAuthenticationManager().login( session, request, Users.JANNE, Users.JANNE_PASS );
+        testEngine.getManager( AuthenticationManager.class ).login( session, request, Users.JANNE, Users.JANNE_PASS );
         return new WikiContext( testEngine, request, page );
     }
 
@@ -71,7 +73,7 @@ public class IfPluginTest {
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
         final WikiContext context = getJanneBasedWikiContextFor( page );
 
-        final String res = testEngine.getRenderingManager().getHTML( context, page );
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
         Assertions.assertEquals( expected, res );
     }
 
@@ -90,7 +92,7 @@ public class IfPluginTest {
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
         final WikiContext context = getJanneBasedWikiContextFor( page );
 
-        final String res = testEngine.getRenderingManager().getHTML( context, page );
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
         Assertions.assertEquals( expected, res );
     }
 
@@ -108,7 +110,7 @@ public class IfPluginTest {
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
         final WikiContext context = getJanneBasedWikiContextFor( page );
 
-        final String res = testEngine.getRenderingManager().getHTML( context, page );
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
         Assertions.assertEquals( expected, res );
     }
 
@@ -126,7 +128,7 @@ public class IfPluginTest {
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
         final WikiContext context = getJanneBasedWikiContextFor( page );
 
-        final String res = testEngine.getRenderingManager().getHTML( context, page );
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
         Assertions.assertEquals( expected, res );
     }
 

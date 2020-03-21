@@ -17,28 +17,27 @@
     under the License.
  */
 package org.apache.wiki.auth.login;
-import java.security.Principal;
-import java.util.HashMap;
-import java.util.Properties;
-import java.util.Set;
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.auth.AuthenticationManager;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.authorize.Role;
+import org.apache.wiki.auth.user.UserDatabase;
+import org.apache.wiki.auth.user.XMLUserDatabase;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import javax.servlet.http.Cookie;
-
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
-import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.auth.authorize.Role;
-import org.apache.wiki.auth.user.UserDatabase;
-import org.apache.wiki.auth.user.XMLUserDatabase;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import java.security.Principal;
+import java.util.HashMap;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  */
@@ -53,30 +52,28 @@ public class CookieAssertionLoginModuleTest
     @Test
     public final void testLogin()
     {
-        MockHttpServletRequest request = m_engine.newHttpRequest();
+        final MockHttpServletRequest request = m_engine.newHttpRequest();
         try
         {
             // We can use cookies right?
-            Assertions.assertTrue( m_engine.getAuthenticationManager().allowsCookieAssertions() );
+            Assertions.assertTrue( m_engine.getManager( AuthenticationManager.class ).allowsCookieAssertions() );
 
             // Test using Cookie and IP address (AnonymousLoginModule succeeds)
-            Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
+            final Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
             request.setCookies( new Cookie[] { cookie } );
             m_subject = new Subject();
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
-            LoginModule module = new CookieAssertionLoginModule();
-            module.initialize( m_subject, handler,
-                              new HashMap<String, Object>(),
-                              new HashMap<String, Object>() );
+            final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
+            final LoginModule module = new CookieAssertionLoginModule();
+            module.initialize( m_subject, handler, new HashMap<>(), new HashMap<>() );
             module.login();
             module.commit();
-            Set< Principal > principals = m_subject.getPrincipals();
+            final Set< Principal > principals = m_subject.getPrincipals();
             Assertions.assertEquals( 1, principals.size() );
             Assertions.assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
             Assertions.assertFalse( principals.contains( Role.ASSERTED ) );
             Assertions.assertFalse( principals.contains( Role.ALL ) );
         }
-        catch( LoginException e )
+        catch( final LoginException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );
@@ -86,19 +83,17 @@ public class CookieAssertionLoginModuleTest
     @Test
     public final void testLogout()
     {
-        MockHttpServletRequest request = m_engine.newHttpRequest();
-        Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
+        final MockHttpServletRequest request = m_engine.newHttpRequest();
+        final Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
         request.setCookies( new Cookie[] { cookie } );
         try
         {
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
-            LoginModule module = new CookieAssertionLoginModule();
-            module.initialize( m_subject, handler,
-                              new HashMap<String, Object>(),
-                              new HashMap<String, Object>() );
+            final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
+            final LoginModule module = new CookieAssertionLoginModule();
+            module.initialize( m_subject, handler, new HashMap<>(), new HashMap<>() );
             module.login();
             module.commit();
-            Set< Principal > principals = m_subject.getPrincipals();
+            final Set< Principal > principals = m_subject.getPrincipals();
             Assertions.assertEquals( 1, principals.size() );
             Assertions.assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
             Assertions.assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -106,7 +101,7 @@ public class CookieAssertionLoginModuleTest
             module.logout();
             Assertions.assertEquals( 0, principals.size() );
         }
-        catch( LoginException e )
+        catch( final LoginException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );
@@ -119,7 +114,7 @@ public class CookieAssertionLoginModuleTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
         m_engine = new TestEngine(props);
         m_db = new XMLUserDatabase();
@@ -128,7 +123,7 @@ public class CookieAssertionLoginModuleTest
         {
             m_db.initialize( m_engine, props );
         }
-        catch( NoRequiredPropertyException e )
+        catch( final NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );

@@ -18,51 +18,44 @@
  */
 package org.apache.wiki.workflow;
 
-import java.util.Locale;
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class OutcomeTest
-{
+import java.util.Locale;
+
+public class OutcomeTest {
 
     @Test
-    public void testGetKey()
-    {
-        Assertions.assertEquals("outcome.decision.approve", Outcome.DECISION_APPROVE.getMessageKey());
-        Assertions.assertEquals("outcome.decision.hold", Outcome.DECISION_HOLD.getMessageKey());
-        Assertions.assertEquals("outcome.decision.deny", Outcome.DECISION_DENY.getMessageKey());
-        Assertions.assertEquals("outcome.decision.reassign", Outcome.DECISION_REASSIGN.getMessageKey());
+    public void testGetKey() {
+        Assertions.assertEquals( "outcome.decision.approve", Outcome.DECISION_APPROVE.getMessageKey() );
+        Assertions.assertEquals( "outcome.decision.hold", Outcome.DECISION_HOLD.getMessageKey() );
+        Assertions.assertEquals( "outcome.decision.deny", Outcome.DECISION_DENY.getMessageKey() );
+        Assertions.assertEquals( "outcome.decision.reassign", Outcome.DECISION_REASSIGN.getMessageKey() );
     }
 
     @Test
-    public void testHashCode()
-    {
-        Assertions.assertEquals("outcome.decision.approve".hashCode(), Outcome.DECISION_APPROVE.hashCode());
-        Assertions.assertEquals("outcome.decision.hold".hashCode()*2, Outcome.DECISION_HOLD.hashCode());
-        Assertions.assertEquals("outcome.decision.deny".hashCode(), Outcome.DECISION_DENY.hashCode());
-        Assertions.assertEquals("outcome.decision.reassign".hashCode()*2, Outcome.DECISION_REASSIGN.hashCode());
+    public void testHashCode() {
+        Assertions.assertEquals( "outcome.decision.approve".hashCode(), Outcome.DECISION_APPROVE.hashCode() );
+        Assertions.assertEquals( "outcome.decision.hold".hashCode() * 2, Outcome.DECISION_HOLD.hashCode() );
+        Assertions.assertEquals( "outcome.decision.deny".hashCode(), Outcome.DECISION_DENY.hashCode() );
+        Assertions.assertEquals( "outcome.decision.reassign".hashCode() * 2, Outcome.DECISION_REASSIGN.hashCode() );
     }
 
     @Test
-    public void testEquals()
-    {
-        Assertions.assertEquals(Outcome.DECISION_APPROVE, Outcome.DECISION_APPROVE);
-        Assertions.assertNotSame(Outcome.DECISION_APPROVE, Outcome.DECISION_REASSIGN);
+    public void testEquals() {
+        Assertions.assertEquals( Outcome.DECISION_APPROVE, Outcome.DECISION_APPROVE );
+        Assertions.assertNotSame( Outcome.DECISION_APPROVE, Outcome.DECISION_REASSIGN );
     }
 
     @Test
-    public void testMessage() throws Exception
-    {
-        Properties props = TestEngine.getTestProperties();
-        WikiEngine engine = new TestEngine(props);
-        InternationalizationManager i18n = engine.getInternationalizationManager();
-        String core = "templates.default";
-        Locale rootLocale = Locale.ROOT;
+    public void testMessage() {
+        final WikiEngine engine = TestEngine.build();
+        final InternationalizationManager i18n = engine.getManager( InternationalizationManager.class );
+        final String core = "templates.default";
+        final Locale rootLocale = Locale.ROOT;
         Outcome o;
 
         o = Outcome.DECISION_APPROVE;
@@ -79,8 +72,7 @@ public class OutcomeTest
     }
 
     @Test
-    public void testIsCompletion()
-    {
+    public void testIsCompletion() {
         Assertions.assertTrue(Outcome.DECISION_ACKNOWLEDGE.isCompletion());
         Assertions.assertTrue(Outcome.DECISION_APPROVE.isCompletion());
         Assertions.assertTrue(Outcome.DECISION_DENY.isCompletion());
@@ -92,36 +84,29 @@ public class OutcomeTest
     }
 
     @Test
-    public void testForName()
-    {
-        try
-        {
-            Assertions.assertEquals(Outcome.DECISION_ACKNOWLEDGE, Outcome.forName("outcome.decision.acknowledge"));
-            Assertions.assertEquals(Outcome.DECISION_APPROVE, Outcome.forName("outcome.decision.approve"));
-            Assertions.assertEquals(Outcome.DECISION_DENY, Outcome.forName("outcome.decision.deny"));
-            Assertions.assertEquals(Outcome.DECISION_HOLD, Outcome.forName("outcome.decision.hold"));
-            Assertions.assertEquals(Outcome.DECISION_REASSIGN, Outcome.forName("outcome.decision.reassign"));
-            Assertions.assertEquals(Outcome.STEP_ABORT, Outcome.forName("outcome.step.abort"));
-            Assertions.assertEquals(Outcome.STEP_COMPLETE, Outcome.forName("outcome.step.complete"));
-            Assertions.assertEquals(Outcome.STEP_CONTINUE, Outcome.forName("outcome.step.continue"));
-        }
-        catch (NoSuchOutcomeException e)
-        {
+    public void testForName() {
+        try {
+            Assertions.assertEquals( Outcome.DECISION_ACKNOWLEDGE, Outcome.forName( "outcome.decision.acknowledge" ) );
+            Assertions.assertEquals( Outcome.DECISION_APPROVE, Outcome.forName( "outcome.decision.approve" ) );
+            Assertions.assertEquals( Outcome.DECISION_DENY, Outcome.forName( "outcome.decision.deny" ) );
+            Assertions.assertEquals( Outcome.DECISION_HOLD, Outcome.forName( "outcome.decision.hold" ) );
+            Assertions.assertEquals( Outcome.DECISION_REASSIGN, Outcome.forName( "outcome.decision.reassign" ) );
+            Assertions.assertEquals( Outcome.STEP_ABORT, Outcome.forName( "outcome.step.abort" ) );
+            Assertions.assertEquals( Outcome.STEP_COMPLETE, Outcome.forName( "outcome.step.complete" ) );
+            Assertions.assertEquals( Outcome.STEP_CONTINUE, Outcome.forName( "outcome.step.continue" ) );
+        } catch( final NoSuchOutcomeException e ) {
             // We should never get here
-            Assertions.fail("Could not look up an Outcome...");
+            Assertions.fail( "Could not look up an Outcome..." );
         }
 
         // Look for a non-existent one
-        try
-        {
-            Outcome.forName("outcome.decision.nonexistent");
-        }
-        catch (NoSuchOutcomeException e)
-        {
+        try {
+            Outcome.forName( "outcome.decision.nonexistent" );
+        } catch( final NoSuchOutcomeException e ) {
             return;
         }
         // We should never get here
-        Assertions.fail("Could not look up an Outcome...");
+        Assertions.fail( "Could not look up an Outcome..." );
     }
 
 }

@@ -24,6 +24,7 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.FileSystemProvider;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -163,7 +164,7 @@ public class MassiveRepositoryTest {
         {
             final String page = getName( random.nextInt( numPages ) );
             
-            final String content = engine.getRenderingManager().getHTML( page, WikiProvider.LATEST_VERSION );
+            final String content = engine.getManager( RenderingManager.class ).getHTML( page, WikiProvider.LATEST_VERSION );
               
             Assertions.assertNotNull(content);
             

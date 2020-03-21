@@ -48,7 +48,7 @@ public class ReferenceManagerTest  {
         engine.saveText( "TestPage", "Reference to [Foobar]." );
         engine.saveText( "Foobar", "Reference to [Foobar2], [Foobars], [Foobar]" );
 
-        mgr = engine.getReferenceManager();
+        mgr = engine.getManager( ReferenceManager.class );
     }
 
     @AfterEach

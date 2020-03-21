@@ -21,6 +21,7 @@ package org.apache.wiki.plugin;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -41,7 +42,7 @@ public class GroupsTest {
 
         testEngine.saveText( "Test", src );
 
-        final String res = testEngine.getRenderingManager().getHTML( "Test" );
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( "Test" );
 
         Assertions.assertEquals( "<a href=\"/test/Group.jsp?group=Admin\">Admin</a>, "
                 + "<a href=\"/test/Group.jsp?group=Art\">Art</a>, "

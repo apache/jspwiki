@@ -75,7 +75,7 @@ public class RSSGeneratorTest {
         newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
         m_testEngine.saveText( newPage, "!Title2\r\n__Bar__" );
 
-        final RSSGenerator gen = m_testEngine.getRSSGenerator();
+        final RSSGenerator gen = m_testEngine.getManager( RSSGenerator.class );
 
         final WikiContext context = new WikiContext( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage("TestBlog") );
 
@@ -89,8 +89,8 @@ public class RSSGeneratorTest {
         final Feed feed = new RSS10Feed( context );
         final String blog = gen.generateBlogRSS( context, entries, feed );
 
-        Assertions.assertTrue( blog.indexOf("<description>Foo</description>") != -1, "has Foo" );
-        Assertions.assertTrue( blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1, "has proper Bar" );
+        Assertions.assertTrue( blog.contains( "<description>Foo</description>" ), "has Foo" );
+        Assertions.assertTrue( blog.contains( "&lt;b&gt;Bar&lt;/b&gt;" ), "has proper Bar" );
     }
 
     @Test
@@ -106,7 +106,7 @@ public class RSSGeneratorTest {
         newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
         m_testEngine.saveText( newPage, "!Title2\r\n__Bar__" );
 
-        final RSSGenerator gen = m_testEngine.getRSSGenerator();
+        final RSSGenerator gen = m_testEngine.getManager( RSSGenerator.class );
 
         final WikiContext context = new WikiContext( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage("TestBlog") );
 

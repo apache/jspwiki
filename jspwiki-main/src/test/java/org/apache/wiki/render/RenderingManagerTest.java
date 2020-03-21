@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test;
 public class RenderingManagerTest {
 
     TestEngine       m_engine = TestEngine.build();
-    RenderingManager m_manager = m_engine.getRenderingManager();
+    RenderingManager m_manager = m_engine.getManager( RenderingManager.class );
 
     @AfterEach
     public void tearDown() throws Exception {
@@ -44,7 +44,7 @@ public class RenderingManagerTest {
     @Test
     public void testBeautifyTitle() {
         final String src = "WikiNameThingy";
-        Assertions.assertEquals("Wiki Name Thingy", m_engine.getRenderingManager().beautifyTitle( src ) );
+        Assertions.assertEquals("Wiki Name Thingy", m_engine.getManager( RenderingManager.class ).beautifyTitle( src ) );
     }
 
     /**
@@ -53,7 +53,7 @@ public class RenderingManagerTest {
     @Test
     public void testBeautifyTitleAcronym() {
         final String src = "JSPWikiPage";
-        Assertions.assertEquals("JSP Wiki Page", m_engine.getRenderingManager().beautifyTitle( src ) );
+        Assertions.assertEquals("JSP Wiki Page", m_engine.getManager( RenderingManager.class ).beautifyTitle( src ) );
     }
 
     /**
@@ -62,19 +62,19 @@ public class RenderingManagerTest {
     @Test
     public void testBeautifyTitleAcronym2() {
         final String src = "DELETEME";
-        Assertions.assertEquals("DELETEME", m_engine.getRenderingManager().beautifyTitle( src ) );
+        Assertions.assertEquals("DELETEME", m_engine.getManager( RenderingManager.class ).beautifyTitle( src ) );
     }
 
     @Test
     public void testBeautifyTitleAcronym3() {
         final String src = "JSPWikiFAQ";
-        Assertions.assertEquals("JSP Wiki FAQ", m_engine.getRenderingManager().beautifyTitle( src ) );
+        Assertions.assertEquals("JSP Wiki FAQ", m_engine.getManager( RenderingManager.class ).beautifyTitle( src ) );
     }
 
     @Test
     public void testBeautifyTitleNumbers() {
         final String src = "TestPage12";
-        Assertions.assertEquals("Test Page 12", m_engine.getRenderingManager().beautifyTitle( src ) );
+        Assertions.assertEquals("Test Page 12", m_engine.getManager( RenderingManager.class ).beautifyTitle( src ) );
     }
 
     /**
@@ -83,7 +83,7 @@ public class RenderingManagerTest {
     @Test
     public void testBeautifyTitleArticle() {
         final String src = "ThisIsAPage";
-        Assertions.assertEquals("This Is A Page", m_engine.getRenderingManager().beautifyTitle( src ) );
+        Assertions.assertEquals("This Is A Page", m_engine.getManager( RenderingManager.class ).beautifyTitle( src ) );
     }
 
     @Test
@@ -92,7 +92,7 @@ public class RenderingManagerTest {
         final String name = "Test1";
         m_engine.saveText( name, text );
 
-        final String data = m_engine.getRenderingManager().getHTML( name );
+        final String data = m_engine.getManager( RenderingManager.class ).getHTML( name );
         Assertions.assertEquals( "<i>Foobar.</i>\n", data );
     }
 

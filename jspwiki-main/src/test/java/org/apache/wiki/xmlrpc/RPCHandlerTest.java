@@ -25,6 +25,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.xmlrpc.XmlRpcException;
 import org.junit.jupiter.api.AfterEach;
@@ -105,7 +106,7 @@ public class RPCHandlerTest
         m_engine.saveText( NAME1, "Foo" );
         final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
-        m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
+        m_engine.getManager( AttachmentManager.class ).storeAttachment( att, m_engine.makeAttachmentFile() );
         final Page directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
         time = getCalendarTime( directInfo.getLastModified() );
         final Vector recentChanges = m_handler.getRecentChanges( time );
@@ -176,7 +177,7 @@ public class RPCHandlerTest
 
         final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
-        m_engine.getAttachmentManager().storeAttachment( att, m_engine.makeAttachmentFile() );
+        m_engine.getManager( AttachmentManager.class ).storeAttachment( att, m_engine.makeAttachmentFile() );
 
         // Test.
 

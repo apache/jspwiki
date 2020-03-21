@@ -25,6 +25,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.markdown.MarkdownParser;
 import org.junit.jupiter.api.AfterEach;
@@ -195,7 +196,7 @@ public class MarkdownRendererTest {
 
         final Attachment att = new Attachment( testEngine, "Test", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
-        testEngine.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
+        testEngine.getManager( AttachmentManager.class ).storeAttachment( att, testEngine.makeAttachmentFile() );
 
         Assertions.assertEquals( "<p>This should be an <a href=\"/test/attach/Test/TestAtt.txt\" class=\"attachment\">attachment link</a>" +
                                  "<a href=\"/test/PageInfo.jsp?page=Test/TestAtt.txt\" class=\"infolink\">" +

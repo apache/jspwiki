@@ -53,7 +53,7 @@ public class ApprovalWorkflowTest {
 
         // Start the wiki engine
         m_engine = new TestEngine( props );
-        m_wm = m_engine.getWorkflowManager();
+        m_wm = m_engine.getManager( WorkflowManager.class );
         m_dq = m_wm.getDecisionQueue();
         m_builder = WorkflowBuilder.getBuilder( m_engine );
     }
@@ -75,7 +75,7 @@ public class ApprovalWorkflowTest {
         final Workflow w = m_builder.buildApprovalWorkflow(submitter, workflowApproverKey,
                                                    prepTask, decisionKey, facts,
                                                    completionTask, rejectedMessageKey);
-        w.setWorkflowManager( m_engine.getWorkflowManager() );
+        w.setWorkflowManager( m_engine.getManager( WorkflowManager.class ) );
 
         // Check to see if the workflow built correctly
         Assertions.assertFalse( w.isStarted() || w.isCompleted() || w.isAborted() );
@@ -83,7 +83,7 @@ public class ApprovalWorkflowTest {
         Assertions.assertEquals( "workflow.approvalWorkflow", w.getMessageKey() );
         Assertions.assertEquals( Workflow.CREATED, w.getCurrentState() );
         Assertions.assertEquals( new WikiPrincipal("Submitter"), w.getOwner() );
-        Assertions.assertEquals( m_engine.getWorkflowManager(), w.getWorkflowManager() );
+        Assertions.assertEquals( m_engine.getManager( WorkflowManager.class ), w.getWorkflowManager() );
         Assertions.assertEquals( 0, w.getHistory().size() );
 
         // Our dummy "task complete" attributes should still be null
@@ -149,7 +149,7 @@ public class ApprovalWorkflowTest {
         final Workflow w = m_builder.buildApprovalWorkflow(submitter, workflowApproverKey,
                                                    prepTask, decisionKey, facts,
                                                    completionTask, rejectedMessageKey);
-        w.setWorkflowManager( m_engine.getWorkflowManager() );
+        w.setWorkflowManager( m_engine.getManager( WorkflowManager.class ) );
 
         // Start the workflow
         w.start();
@@ -242,7 +242,7 @@ public class ApprovalWorkflowTest {
     @Test
     public void testSaveWikiPageWithException() {
         // Add a PageFilter that rejects all save attempts
-        final FilterManager fm = m_engine.getFilterManager();
+        final FilterManager fm = m_engine.getManager( FilterManager.class );
         fm.addPageFilter( new AbortFilter(), 0 );
 
         // Create a sample test page and try to save it

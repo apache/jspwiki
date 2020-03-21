@@ -164,7 +164,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
         final WikiEngine e = WikiEngine.getInstance(req.getSession().getServletContext(), null);
         boolean valid = false;
         if( container != null ) {
-            valid = e.getAuthorizationManager().checkPermission( WikiSession.getWikiSession( e, req ), container.permission );
+            valid = e.getManager( AuthorizationManager.class ).checkPermission( WikiSession.getWikiSession( e, req ), container.permission );
         }
         return valid;
     }

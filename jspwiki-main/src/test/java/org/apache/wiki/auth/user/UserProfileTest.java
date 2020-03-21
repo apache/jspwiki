@@ -18,9 +18,8 @@
  */
 package org.apache.wiki.auth.user;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.auth.UserManager;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -28,22 +27,14 @@ import java.util.Date;
 /**
  *  Tests the DefaultUserProfile class.
  */
-public class UserProfileTest
-{
-    private UserDatabase m_db;
+public class UserProfileTest {
 
-    @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-            WikiEngine engine  = new TestEngine();
-            m_db = engine.getUserManager().getUserDatabase();
-    }
+    TestEngine engine = TestEngine.build();
+    UserDatabase m_db = engine.getManager( UserManager.class ).getUserDatabase();
 
     @Test
-    public void testSetAttribute()
-    {
-        UserProfile p = m_db.newProfile();
+    public void testSetAttribute() {
+        final UserProfile p = m_db.newProfile();
         Assertions.assertEquals( 0, p.getAttributes().size() );
 
         p.getAttributes().put( "MyAttribute", "some arbitrary value." );
@@ -59,9 +50,8 @@ public class UserProfileTest
     }
 
     @Test
-    public void testSetLockExpiry()
-    {
-        UserProfile p = m_db.newProfile();
+    public void testSetLockExpiry() {
+        final UserProfile p = m_db.newProfile();
         Assertions.assertNull( p.getLockExpiry() );
         Assertions.assertFalse( p.isLocked() );
 
@@ -76,7 +66,7 @@ public class UserProfileTest
         Assertions.assertNull( p.getLockExpiry() );
 
         // Now set a lock for 100 seconds in the future; lock should be reported correctly
-        Date future = new Date( System.currentTimeMillis() + 100000 );
+        final Date future = new Date( System.currentTimeMillis() + 100000 );
         p.setLockExpiry( future );
         Assertions.assertTrue( p.isLocked() );
         Assertions.assertEquals( future, p.getLockExpiry() );
@@ -88,36 +78,33 @@ public class UserProfileTest
     }
 
     @Test
-    public void testSetUid()
-    {
-        UserProfile p = m_db.newProfile();
+    public void testSetUid() {
+        final UserProfile p = m_db.newProfile();
         Assertions.assertNotSame( "1234567890", p.getUid() );
         p.setUid( "1234567890" );
         Assertions.assertEquals( "1234567890", p.getUid() );
     }
 
     @Test
-    public void testEquals()
-    {
-        UserProfile p = m_db.newProfile();
-        UserProfile p2 = m_db.newProfile();
+    public void testEquals() {
+        final UserProfile p = m_db.newProfile();
+        final UserProfile p2 = m_db.newProfile();
 
         p.setFullname("Alice");
         p2.setFullname("Bob");
 
-        Assertions.assertFalse( p.equals( p2 ) );
+        Assertions.assertNotEquals( p, p2 );
     }
 
     @Test
-    public void testEquals2()
-    {
-        UserProfile p = m_db.newProfile();
-        UserProfile p2 = m_db.newProfile();
+    public void testEquals2() {
+        final UserProfile p = m_db.newProfile();
+        final UserProfile p2 = m_db.newProfile();
 
         p.setFullname("Alice");
         p2.setFullname("Alice");
 
-        Assertions.assertTrue( p.equals( p2 ) );
+        Assertions.assertEquals( p, p2 );
     }
 
 }

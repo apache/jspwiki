@@ -25,6 +25,7 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -148,7 +149,7 @@ public class DefaultPluginManagerTest {
     @Test
     public void testParserPlugin() throws Exception {
         engine.getManager( PageManager.class ).saveText(context, "[{SamplePlugin render=true}]");
-        engine.getRenderingManager().getHTML( "Testpage" );
+        engine.getManager( RenderingManager.class ).getHTML( "Testpage" );
         Assertions.assertTrue( SamplePlugin.c_rendered );
     }
 
