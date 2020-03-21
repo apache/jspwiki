@@ -43,22 +43,20 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.TimeZone;
 
+
 /**
  *  Represents an object which is used to store user preferences.
- *
  */
-public class Preferences
-    extends HashMap<String,String>
-{
+public class Preferences extends HashMap< String,String > {
+
     private static final long serialVersionUID = 1L;
 
     /**
-     *  The name under which a Preferences object is stored in the HttpSession.
-     *  Its value is {@value}.
+     * The name under which a Preferences object is stored in the HttpSession. Its value is {@value}.
      */
     public static final String SESSIONPREFS = "prefs";
 
-    private static Logger log = Logger.getLogger( Preferences.class );
+    private static final Logger log = Logger.getLogger( Preferences.class );
 
     /**
      *  This is an utility method which is called to make sure that the
@@ -74,10 +72,8 @@ public class Preferences
      *
      *  @param pageContext The JSP PageContext.
      */
-    public static void setupPreferences( final PageContext pageContext )
-    {
+    public static void setupPreferences( final PageContext pageContext ) {
         //HttpSession session = pageContext.getSession();
-
         //if( session.getAttribute( SESSIONPREFS ) == null )
         //{
             reloadPreferences( pageContext );
@@ -94,8 +90,7 @@ public class Preferences
     //        happened to first arrive to the site with.  This, unfortunately, means that
     //        even if the user changes e.g. language preferences (like in a web cafe),
     //        the old preferences still remain in a site cookie.
-    public static void reloadPreferences( final PageContext pageContext )
-    {
+    public static void reloadPreferences( final PageContext pageContext ) {
         final Preferences prefs = new Preferences();
         final Properties props = PropertyReader.loadWebAppProps( pageContext.getServletContext() );
         final WikiContext ctx = WikiContext.findContext( pageContext );
@@ -122,20 +117,16 @@ public class Preferences
 
         // FIXME: editormanager reads jspwiki.editor -- which of both properties should continue
         prefs.put("editor", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.editor", "plain" ) );
-
         parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs );
-
         pageContext.getSession().setAttribute( SESSIONPREFS, prefs );
     }
 
 
     /**
-     *  Parses new-style preferences stored as JSON objects and stores them
-     *  in the session.  Everything in the cookie is stored.
+     * Parses new-style preferences stored as JSON objects and stores them in the session.  Everything in the cookie is stored.
      *
-     *  @param request
-     *  @param prefs The default hashmap of preferences
-     *
+     * @param request
+     * @param prefs The default hashmap of preferences
      */
 	private static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs ) {
         final String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, "JSPWikiUserPrefs" ) );
@@ -184,16 +175,14 @@ public class Preferences
      *  @param name
      *  @return the preference value
      */
-    public static String getPreference( final PageContext pageContext, final String name )
-    {
-        final Preferences prefs = (Preferences)pageContext.getSession().getAttribute( SESSIONPREFS );
-
-        if( prefs != null )
+    public static String getPreference( final PageContext pageContext, final String name ) {
+        final Preferences prefs = ( Preferences )pageContext.getSession().getAttribute( SESSIONPREFS );
+        if( prefs != null ) {
             return prefs.get( name );
+        }
 
         return null;
     }
-
 
     /**
      * Get Locale according to user-preference settings or the user browser locale
@@ -214,13 +203,14 @@ public class Preferences
             String variant  = "";
 
             final String[] res = StringUtils.split( langSetting, "-_" );
-
-            if( res.length > 2 ) variant = res[2];
-            if( res.length > 1 ) country = res[1];
-
+            if( res.length > 2 ) {
+                variant = res[ 2 ];
+            }
+            if( res.length > 1 ) {
+                country = res[ 1 ];
+            }
             if( res.length > 0 ) {
-                language = res[0];
-
+                language = res[ 0 ];
                 loc = new Locale( language, country, variant );
             }
         }
@@ -241,57 +231,48 @@ public class Preferences
             loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
         }
 
-        log.debug( "using locale "+loc.toString() );
+        log.debug( "using locale " + loc.toString() );
         return loc;
     }
 
     /**
-     *  Locates the i18n ResourceBundle given.  This method interprets
-     *  the request locale, and uses that to figure out which language the
-     *  user wants.
-     *  @see org.apache.wiki.i18n.InternationalizationManager
-     *  @param context {@link WikiContext} holding the user's locale
-     *  @param bundle  The name of the bundle you are looking for.
-     *  @return A localized string (or from the default language, if not found)
-     *  @throws MissingResourceException If the bundle cannot be found
+     * Locates the i18n ResourceBundle given.  This method interprets the request locale, and uses that to figure out which language the
+     * user wants.
+     *
+     * @param context {@link WikiContext} holding the user's locale
+     * @param bundle  The name of the bundle you are looking for.
+     * @return A localized string (or from the default language, if not found)
+     * @throws MissingResourceException If the bundle cannot be found
+     * @see org.apache.wiki.i18n.InternationalizationManager
      */
-    public static ResourceBundle getBundle( final Context context, final String bundle )
-        throws MissingResourceException
-    {
+    public static ResourceBundle getBundle( final Context context, final String bundle ) throws MissingResourceException {
         final Locale loc = getLocale( context );
         final InternationalizationManager i18n = context.getEngine().getManager( InternationalizationManager.class );
         return i18n.getBundle( bundle, loc );
     }
 
     /**
-     *  Get SimpleTimeFormat according to user browser locale and preferred time
-     *  formats. If not found, it will revert to whichever format is set for the
-     *  default
+     * Get SimpleTimeFormat according to user browser locale and preferred time formats. If not found, it will revert to whichever format
+     * is set for the default.
      *
-     *  @param context WikiContext to use for rendering.
-     *  @param tf Which version of the dateformat you are looking for?
-     *  @return A SimpleTimeFormat object which you can use to render
-     *  @since 2.8
+     * @param context WikiContext to use for rendering.
+     * @param tf Which version of the dateformat you are looking for?
+     * @return A SimpleTimeFormat object which you can use to render
+     * @since 2.8
      */
-    public static SimpleDateFormat getDateFormat( final Context context, final TimeFormat tf )
-    {
+    public static SimpleDateFormat getDateFormat( final Context context, final TimeFormat tf ) {
         final InternationalizationManager imgr = context.getEngine().getManager( InternationalizationManager.class );
         final Locale clientLocale = getLocale( context );
         final String prefTimeZone = getPreference( context, "TimeZone" );
         String prefDateFormat;
 
         log.debug("Checking for preferences...");
-
-        switch( tf )
-        {
+        switch( tf ) {
             case DATETIME:
                 prefDateFormat = getPreference( context, "DateFormat" );
                 log.debug("Preferences fmt = "+prefDateFormat);
-                if( prefDateFormat == null )
-                {
-                    prefDateFormat = imgr.get( InternationalizationManager.CORE_BUNDLE,
-                                               clientLocale,
-                                               "common.datetimeformat" );
+                if( prefDateFormat == null ) {
+                    prefDateFormat = imgr.get( InternationalizationManager.CORE_BUNDLE, clientLocale,"common.datetimeformat" );
                     log.debug("Using locale-format = "+prefDateFormat);
                 }
                 break;
@@ -308,36 +289,29 @@ public class Preferences
                 throw new InternalWikiException( "Got a TimeFormat for which we have no value!" );
         }
 
-        try
-        {
+        try {
             final SimpleDateFormat fmt = new SimpleDateFormat( prefDateFormat, clientLocale );
-
-            if( prefTimeZone != null )
-            {
+            if( prefTimeZone != null ) {
                 final TimeZone tz = TimeZone.getTimeZone( prefTimeZone );
                 // TimeZone tz = TimeZone.getDefault();
                 // tz.setRawOffset(Integer.parseInt(prefTimeZone));
-
                 fmt.setTimeZone( tz );
             }
 
             return fmt;
-        }
-        catch( final Exception e )
-        {
+        } catch( final Exception e ) {
             return null;
         }
     }
 
     /**
-     *  A simple helper function to render a date based on the user preferences.
-     *  This is useful for example for all plugins.
+     * A simple helper function to render a date based on the user preferences. This is useful for example for all plugins.
      *
-     *  @param context  The context which is used to get the preferences
-     *  @param date     The date to render.
-     *  @param tf       In which format the date should be rendered.
-     *  @return A ready-rendered date.
-     *  @since 2.8
+     * @param context  The context which is used to get the preferences
+     * @param date     The date to render.
+     * @param tf       In which format the date should be rendered.
+     * @return A ready-rendered date.
+     * @since 2.8
      */
     public static String renderDate( final Context context, final Date date, final TimeFormat tf ) {
         final DateFormat df = getDateFormat( context, tf );
