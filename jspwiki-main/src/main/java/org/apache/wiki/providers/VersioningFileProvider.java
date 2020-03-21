@@ -384,7 +384,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
             page.setAuthor(newAuthor);
             props.setProperty( versionNumber + ".author", newAuthor );
 
-            final String changeNote = page.getAttribute(WikiPage.CHANGENOTE);
+            final String changeNote = page.getAttribute( Page.CHANGENOTE );
             if( changeNote != null ) {
                 props.setProperty( versionNumber + ".changenote", changeNote );
             }
@@ -402,11 +402,11 @@ public class VersioningFileProvider extends AbstractFileProvider {
      *  {@inheritDoc}
      */
     @Override
-    public WikiPage getPageInfo( final String page, final int version ) throws ProviderException {
+    public Page getPageInfo( final String page, final int version ) throws ProviderException {
         final int latest = findLatestVersion( page );
         final int realVersion;
 
-        WikiPage p = null;
+        Page p = null;
 
         if( version == PageProvider.LATEST_VERSION || version == latest || (version == 1 && latest == -1) ) {
             //
@@ -494,7 +494,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
         final ArrayList< Page > list = new ArrayList<>();
         final int latest = findLatestVersion( page );
         for( int i = latest; i > 0; i-- ) {
-            final WikiPage info = getPageInfo( page, i );
+            final Page info = getPageInfo( page, i );
             if( info != null ) {
                 list.add( info );
             }
@@ -521,7 +521,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 final Properties props = new Properties();
                 props.load( in );
 
-                final String originalAuthor = props.getProperty( WikiPage.AUTHOR );
+                final String originalAuthor = props.getProperty( Page.AUTHOR );
                 if ( originalAuthor.length() > 0 ) {
                     // simulate original author as if already versioned but put non-versioned property in special cache too
                     props.setProperty( "1.author", originalAuthor );

@@ -367,13 +367,13 @@ public abstract class AbstractFileProvider implements PageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public WikiPage getPageInfo( final String page, final int version ) throws ProviderException {
+    public Page getPageInfo( final String page, final int version ) throws ProviderException {
         final File file = findPage( page );
         if( !file.exists() ) {
             return null;
         }
 
-        final WikiPage p = new WikiPage( m_engine, page );
+        final Page p = new WikiPage( m_engine, page );
         p.setLastModified( new Date( file.lastModified() ) );
 
         return p;

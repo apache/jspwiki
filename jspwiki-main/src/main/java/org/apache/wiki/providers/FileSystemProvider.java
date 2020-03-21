@@ -120,8 +120,8 @@ public class FileSystemProvider extends AbstractFileProvider {
      *  {@inheritDoc}
      */
     @Override
-    public WikiPage getPageInfo( final String page, final int version ) throws ProviderException {
-        final WikiPage p = super.getPageInfo( page, version );
+    public Page getPageInfo( final String page, final int version ) throws ProviderException {
+        final Page p = super.getPageInfo( page, version );
         if( p != null ) {
             try {
                 getPageProperties( p );
