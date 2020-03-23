@@ -31,14 +31,12 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+
 /**
  *  Simple wrapper class for the Wiki page attributes.  The Wiki page content is moved around in Strings, though.
  */
-
-// FIXME: We need to rethink how metadata is being used - probably the 
-//        author, date, etc. should also be part of the metadata.  We also
+// FIXME: We need to rethink how metadata is being used - probably the author, date, etc. should also be part of the metadata.  We also
 //        need to figure out the metadata lifecycle.
-
 public class WikiPage implements Page {
 
     private       String     m_name;
@@ -48,15 +46,15 @@ public class WikiPage implements Page {
     private long             m_fileSize = -1;
     private int              m_version = PageProvider.LATEST_VERSION;
     private String           m_author = null;
-    private final Map<String,Object> m_attributes = new HashMap<>();
-    
+    private final Map< String, Object > m_attributes = new HashMap<>();
+
     private Acl m_accessList = null;
 
     /**
-     *  Create a new WikiPage using a given engine and name.
+     * Create a new WikiPage using a given engine and name.
      *
-     *  @param engine The Engine that owns this page.
-     *  @param name   The name of the page.
+     * @param engine The Engine that owns this page.
+     * @param name   The name of the page.
      */
     public WikiPage( final Engine engine, final String name ) {
         m_engine = engine;
@@ -77,89 +75,79 @@ public class WikiPage implements Page {
     }
 
     /**
-     *  Returns the name of the page.
-     *  
-     *  @return The page name.
+     * Returns the name of the page.
+     *
+     * @return The page name.
      */
     @Override
-    public String getName()
-    {
+    public String getName() {
         return m_name;
     }
 
     /**
-     *  A WikiPage may have a number of attributes, which might or might not be 
-     *  available.  Typically attributes are things that do not need to be stored
-     *  with the wiki page to the page repository, but are generated
-     *  on-the-fly.  A provider is not required to save them, but they
-     *  can do that if they really want.
+     * A WikiPage may have a number of attributes, which might or might not be available.  Typically attributes are things that do not need
+     * to be stored with the wiki page to the page repository, but are generated on-the-fly.  A provider is not required to save them, but
+     * they can do that if they really want.
      *
-     *  @param key The key using which the attribute is fetched
-     *  @return The attribute.  If the attribute has not been set, returns null.
+     * @param key The key using which the attribute is fetched
+     * @return The attribute.  If the attribute has not been set, returns null.
      */
     @Override
     @SuppressWarnings( "unchecked" )
-    public < T > T getAttribute( final String key )
-    {
+    public < T > T getAttribute( final String key ) {
         return ( T )m_attributes.get( key );
     }
 
     /**
-     *  Sets an metadata attribute.
-     *  
-     *  @see #getAttribute(String)
-     *  @param key The key for the attribute used to fetch the attribute later on.
-     *  @param attribute The attribute value
+     * Sets an metadata attribute.
+     *
+     * @param key       The key for the attribute used to fetch the attribute later on.
+     * @param attribute The attribute value
+     * @see #getAttribute(String)
      */
     @Override
-    public void setAttribute( final String key, final Object attribute )
-    {
+    public void setAttribute( final String key, final Object attribute ) {
         m_attributes.put( key, attribute );
     }
 
     /**
-     * Returns the full attributes Map, in case external code needs
-     * to iterate through the attributes.
-     * 
+     * Returns the full attributes Map, in case external code needs to iterate through the attributes.
+     *
      * @return The attribute Map.  Please note that this is a direct
-     *         reference, not a copy.
+     * reference, not a copy.
      */
     @Override
-    public Map< String, Object > getAttributes()
-    {
+    public Map< String, Object > getAttributes() {
         return m_attributes;
     }
 
     /**
-     *  Removes an attribute from the page, if it exists.
-     *  
-     *  @param  key The key for the attribute
-     *  @return If the attribute existed, returns the object.
-     *  @since 2.1.111
+     * Removes an attribute from the page, if it exists.
+     *
+     * @param key The key for the attribute
+     * @return If the attribute existed, returns the object.
+     * @since 2.1.111
      */
     @Override
     @SuppressWarnings( "unchecked" )
-    public < T > T removeAttribute( final String key )
-    {
+    public < T > T removeAttribute( final String key ) {
         return ( T )m_attributes.remove( key );
     }
 
     /**
-     *  Returns the date when this page was last modified.
-     *  
-     *  @return The last modification date
+     * Returns the date when this page was last modified.
+     *
+     * @return The last modification date
      */
     @Override
-    public Date getLastModified()
-    {
+    public Date getLastModified() {
         return m_lastModified;
     }
 
     /**
-     *  Sets the last modification date.  In general, this is only
-     *  changed by the provider.
-     *  
-     *  @param date The date
+     * Sets the last modification date.  In general, this is only changed by the provider.
+     *
+     * @param date The date
      */
     @Override
     public void setLastModified( final Date date ) {
@@ -167,60 +155,54 @@ public class WikiPage implements Page {
     }
 
     /**
-     *  Sets the page version.  In general, this is only changed
-     *  by the provider.
-     *  
-     *  @param version The version number
+     * Sets the page version.  In general, this is only changed by the provider.
+     *
+     * @param version The version number
      */
     @Override
-    public void setVersion( final int version )
-    {
+    public void setVersion( final int version ) {
         m_version = version;
     }
 
     /**
-     *  Returns the version that this WikiPage instance represents.
-     *  
-     *  @return the version number of this page.
+     * Returns the version that this WikiPage instance represents.
+     *
+     * @return the version number of this page.
      */
     @Override
-    public int getVersion()
-    {
+    public int getVersion() {
         return m_version;
     }
 
     /**
-     *  Returns the size of the page.
-     *  
-     *  @return the size of the page. 
-     *  @since 2.1.109
+     * Returns the size of the page.
+     *
+     * @return the size of the page.
+     * @since 2.1.109
      */
     @Override
-    public long getSize()
-    {
+    public long getSize() {
         return m_fileSize;
     }
 
     /**
-     *  Sets the size.  Typically called by the provider only.
-     *  
-     *  @param size The size of the page.
-     *  @since 2.1.109
+     * Sets the size.  Typically called by the provider only.
+     *
+     * @param size The size of the page.
+     * @since 2.1.109
      */
     @Override
-    public void setSize( final long size )
-    {
+    public void setSize( final long size ) {
         m_fileSize = size;
     }
 
     /**
-     *  Returns the Acl for this page.  May return <code>null</code>, in case there is no Acl defined, or it has not yet been set by
-     *  {@link #setAcl(Acl)}.
-     *  
-     *  @return The access control list.  May return null, if there is no acl.
+     * Returns the Acl for this page.  May return <code>null</code>, in case there is no Acl defined, or it has not yet been set by
+     * {@link #setAcl(Acl)}.
+     *
+     * @return The access control list.  May return null, if there is no acl.
      */
-    public Acl getAcl()
-    {
+    public Acl getAcl() {
         return m_accessList;
     }
 
@@ -231,46 +213,42 @@ public class WikiPage implements Page {
      *
      * @param acl The Acl to set
      */
-    public void setAcl( final Acl acl )
-    {
+    public void setAcl( final Acl acl ) {
         m_accessList = acl;
     }
 
     /**
-     *  Sets the author of the page.  Typically called only by the provider.
-     *  
-     *  @param author The author name.
+     * Sets the author of the page.  Typically called only by the provider.
+     *
+     * @param author The author name.
      */
     @Override
-    public void setAuthor( final String author )
-    {
+    public void setAuthor( final String author ) {
         m_author = author;
     }
 
     /**
-     *  Returns author name, or null, if no author has been defined.
-     *  
-     *  @return Author name, or possibly null.
+     * Returns author name, or null, if no author has been defined.
+     *
+     * @return Author name, or possibly null.
      */
     @Override
-    public String getAuthor()
-    {
+    public String getAuthor() {
         return m_author;
     }
-    
+
     /**
-     *  Returns the wiki name for this page
-     *  
-     *  @return The name of the wiki.
+     * Returns the wiki name for this page
+     *
+     * @return The name of the wiki.
      */
     @Override
-    public String getWiki()
-    {
+    public String getWiki() {
         return m_wiki;
     }
 
     /**
-     *  This method will remove all metadata from the page.
+     * This method will remove all metadata from the page.
      */
     @Override
     public void invalidateMetadata() {
@@ -282,34 +260,31 @@ public class WikiPage implements Page {
     private boolean m_hasMetadata = false;
 
     /**
-     *  Returns <code>true</code> if the page has valid metadata; that is, it has been parsed. Note that this method is a kludge to
-     *  support our pre-3.0 metadata system, and as such will go away with the new API.
-     *  
-     *  @return true, if the page has metadata.
+     * Returns <code>true</code> if the page has valid metadata; that is, it has been parsed. Note that this method is a kludge to
+     * support our pre-3.0 metadata system, and as such will go away with the new API.
+     *
+     * @return true, if the page has metadata.
      */
     @Override
-    public boolean hasMetadata()
-    {
+    public boolean hasMetadata() {
         return m_hasMetadata;
     }
 
     /**
-     *  Sets the metadata flag to true.  Never call.
+     * Sets the metadata flag to true.  Never call.
      */
     @Override
-    public void setHasMetadata()
-    {
+    public void setHasMetadata() {
         m_hasMetadata = true;
     }
 
     /**
-     *  Returns a debug-suitable version of the page.
-     *  
-     *  @return A debug string.
+     * Returns a debug-suitable version of the page.
+     *
+     * @return A debug string.
      */
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "WikiPage [" + m_wiki + ":" + m_name + ",ver=" + m_version + ",mod=" + m_lastModified + "]";
     }
 
@@ -322,15 +297,11 @@ public class WikiPage implements Page {
     @Override
     public WikiPage clone() {
         final WikiPage p = new WikiPage( m_engine, m_name );
-       
         p.m_wiki         = m_wiki;
-            
         p.m_author       = m_author;
         p.m_version      = m_version;
         p.m_lastModified = m_lastModified != null ? (Date)m_lastModified.clone() : null;
-
         p.m_fileSize     = m_fileSize;
-
         for( final Map.Entry< String, Object > entry : m_attributes.entrySet() ) {
             p.m_attributes.put( entry.getKey(), entry.getValue() );
         }
@@ -391,12 +362,12 @@ public class WikiPage implements Page {
         return false;
     }
     */
+
     /**
-     *  {@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return m_name.hashCode() * m_version;
     }
 
