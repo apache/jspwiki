@@ -17,6 +17,21 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-03-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-15_
+
+* [JSPWIKI-303](https://issues.apache.org/jira/browse/JSPWIKI-303): JSPWiki-API library creation
+    * `Page` deals with ACLs
+
+* Refactor `WikiEngine` initialization, in order to prepare for building and configuring custom 
+managers (somewhat related to [JSPWIKI-806](https://issues.apache.org/jira/browse/JSPWIKI-806) - 
+EntityManager Proposal) 
+
+* Dependency updates
+    * Lucene to 8.5.0
+    * JUnit to 5.6.1
+
 **2020-03-21  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-14_
