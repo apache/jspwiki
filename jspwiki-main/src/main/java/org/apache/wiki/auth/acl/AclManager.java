@@ -18,8 +18,9 @@
  */
 package org.apache.wiki.auth.acl;
 
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.auth.WikiSecurityException;
 
 import java.util.Properties;
@@ -50,7 +51,7 @@ public interface AclManager {
      * @throws WikiSecurityException if the ruleLine was faulty somehow.
      * @since 2.1.121
      */
-    Acl parseAcl( WikiPage page, String ruleLine ) throws WikiSecurityException;
+    Acl parseAcl( Page page, String ruleLine ) throws WikiSecurityException;
 
     /**
      * Returns the access control list for the page. If the ACL has not been parsed yet, it is done on-the-fly. If the page has a
@@ -61,7 +62,7 @@ public interface AclManager {
      * @since 2.2.121
      * @return the Acl representing permissions for the page
      */
-    Acl getPermissions( WikiPage page );
+    Acl getPermissions( Page page );
 
     /**
      * Sets the access control list for the page and persists it.
@@ -71,6 +72,6 @@ public interface AclManager {
      * @since 2.5
      * @throws WikiSecurityException if the ACL cannot be set or persisted
      */
-    void setPermissions( WikiPage page, Acl acl ) throws WikiSecurityException;
+    void setPermissions( Page page, Acl acl ) throws WikiSecurityException;
 
 }

@@ -22,6 +22,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Acl;
+import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -34,8 +36,6 @@ import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
-import org.apache.wiki.auth.acl.Acl;
-import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.user.UserProfile;
@@ -707,11 +707,11 @@ public class DefaultPageManager implements PageManager {
                 int pagesChanged = 0;
                 final Collection< Page > pages = getAllPages();
                 for( final Page page : pages ) {
-                    final boolean aclChanged = changeAcl( ( WikiPage )page, oldPrincipals, newPrincipal );
+                    final boolean aclChanged = changeAcl( page, oldPrincipals, newPrincipal );
                     if( aclChanged ) {
                         // If the Acl needed changing, change it now
                         try {
-                            m_engine.getManager( AclManager.class ).setPermissions( ( WikiPage )page, ( ( WikiPage )page ).getAcl() );
+                            m_engine.getManager( AclManager.class ).setPermissions( page, page.getAcl() );
                         } catch( final WikiSecurityException e ) {
                             LOG.error("Could not change page ACL for page " + page.getName() + ": " + e.getMessage(), e);
                         }
@@ -735,11 +735,11 @@ public class DefaultPageManager implements PageManager {
      * @param newPrincipal the Principal that should receive the old Principals' permissions
      * @return <code>true</code> if the Acl was actually changed; <code>false</code> otherwise
      */
-    protected boolean changeAcl( final WikiPage page, final Principal[] oldPrincipals, final Principal newPrincipal ) {
+    protected boolean changeAcl( final Page page, final Principal[] oldPrincipals, final Principal newPrincipal ) {
         final Acl acl = page.getAcl();
         boolean pageChanged = false;
         if( acl != null ) {
-            final Enumeration< AclEntry > entries = acl.entries();
+            final Enumeration< AclEntry > entries = acl.aclEntries();
             final Collection< AclEntry > entriesToAdd = new ArrayList<>();
             final Collection< AclEntry > entriesToRemove = new ArrayList<>();
             while( entries.hasMoreElements() ) {

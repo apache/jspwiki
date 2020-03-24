@@ -20,11 +20,13 @@ package org.apache.wiki.auth.acl;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Acl;
+import org.apache.wiki.api.core.AclEntry;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -85,7 +87,7 @@ public class DefaultAclManager implements AclManager {
 
     /** {@inheritDoc} */
     @Override
-    public Acl parseAcl( final WikiPage page, final String ruleLine ) throws WikiSecurityException {
+    public Acl parseAcl( final Page page, final String ruleLine ) throws WikiSecurityException {
         Acl acl = page.getAcl();
         if (acl == null) {
             acl = new AclImpl();
@@ -99,7 +101,7 @@ public class DefaultAclManager implements AclManager {
             while( fieldToks.hasMoreTokens() ) {
                 final String principalName = fieldToks.nextToken(",").trim();
                 final Principal principal = m_auth.resolvePrincipal(principalName);
-                final AclEntry oldEntry = acl.getEntry(principal);
+                final AclEntry oldEntry = acl.getAclEntry(principal);
 
                 if( oldEntry != null ) {
                     log.debug( "Adding to old acl list: " + principal + ", " + actions );
@@ -129,7 +131,7 @@ public class DefaultAclManager implements AclManager {
 
     /** {@inheritDoc} */
     @Override
-    public Acl getPermissions( final WikiPage page ) {
+    public Acl getPermissions( final Page page ) {
         //  Does the page already have cached ACLs?
         Acl acl = page.getAcl();
         log.debug( "page=" + page.getName() + "\n" + acl );
@@ -137,7 +139,7 @@ public class DefaultAclManager implements AclManager {
         if( acl == null ) {
             //  If null, try the parent.
             if( page instanceof Attachment ) {
-                final WikiPage parent = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( ( ( Attachment ) page ).getParentName() );
+                final Page parent = m_engine.getManager( PageManager.class ).getPage( ( ( Attachment ) page ).getParentName() );
                 acl = getPermissions(parent);
             } else {
                 //  Or, try parsing the page
@@ -157,7 +159,7 @@ public class DefaultAclManager implements AclManager {
 
     /** {@inheritDoc} */
     @Override
-    public void setPermissions( final WikiPage page, final Acl acl ) throws WikiSecurityException {
+    public void setPermissions( final Page page, final Acl acl ) throws WikiSecurityException {
         final PageManager pageManager = m_engine.getManager( PageManager.class );
 
         // Forcibly expire any page locks
@@ -188,7 +190,7 @@ public class DefaultAclManager implements AclManager {
     protected static String printAcl( final Acl acl ) {
         // Extract the ACL entries into a Map with keys == permissions, values == principals
         final Map< String, List< Principal > > permissionPrincipals = new TreeMap<>();
-        final Enumeration< AclEntry > entries = acl.entries();
+        final Enumeration< AclEntry > entries = acl.aclEntries();
         while( entries.hasMoreElements() ) {
             final AclEntry entry = entries.nextElement();
             final Principal principal = entry.getPrincipal();

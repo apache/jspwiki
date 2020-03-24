@@ -20,14 +20,14 @@ package org.apache.wiki.auth;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Acl;
+import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.auth.acl.Acl;
-import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.auth.authorize.GroupManager;
@@ -127,7 +127,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
 
         // If the page or ACL is null, it's allowed.
         final String pageName = ((PagePermission)permission).getPage();
-        final WikiPage page = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( pageName );
+        final Page page = m_engine.getManager( PageManager.class ).getPage( pageName );
         final Acl acl = ( page == null) ? null : m_engine.getManager( AclManager.class ).getPermissions( page );
         if( page == null ||  acl == null || acl.isEmpty() ) {
             fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
@@ -146,7 +146,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         for( Principal aclPrincipal : aclPrincipals ) {
             // If the ACL principal we're looking at is unresolved, try to resolve it here & correct the Acl
             if ( aclPrincipal instanceof UnresolvedPrincipal ) {
-                final AclEntry aclEntry = acl.getEntry( aclPrincipal );
+                final AclEntry aclEntry = acl.getAclEntry( aclPrincipal );
                 aclPrincipal = resolvePrincipal( aclPrincipal.getName() );
                 if ( aclEntry != null && !( aclPrincipal instanceof UnresolvedPrincipal ) ) {
                     aclEntry.setPrincipal( aclPrincipal );

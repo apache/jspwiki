@@ -62,7 +62,7 @@ public interface Acl {
      *
      * @return an enumeration of the entries in this ACL.
      */
-    Enumeration< AclEntry > entries();
+    Enumeration< AclEntry > aclEntries();
 
     /**
      * Returns <code>true</code>, if this Acl is empty.
@@ -88,7 +88,7 @@ public interface Acl {
      * @param principal the principal to search for
      * @return the AclEntry associated with the principal, or <code>null</code>
      */
-    AclEntry getEntry( Principal principal );
+    AclEntry getAclEntry( Principal principal );
 
     /**
      * Removes an ACL entry from this ACL.

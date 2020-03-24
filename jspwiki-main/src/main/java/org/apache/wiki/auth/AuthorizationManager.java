@@ -77,7 +77,7 @@ public interface AuthorizationManager {
      * Returns <code>true</code> or <code>false</code>, depending on whether a Permission is allowed for the Subject associated with
      * a supplied Session. The access control algorithm works this way:
      * <ol>
-     * <li>The {@link org.apache.wiki.auth.acl.Acl} for the page is obtained</li>
+     * <li>The {@link org.apache.wiki.api.core.Acl} for the page is obtained</li>
      * <li>The Subject associated with the current {@link org.apache.wiki.api.core.Session} is obtained</li>
      * <li>If the Subject's Principal set includes the Role Principal that is the administrator group, always allow the Permission</li>
      * <li>For all permissions, check to see if the Permission is allowed according to the default security policy. If it isn't, deny

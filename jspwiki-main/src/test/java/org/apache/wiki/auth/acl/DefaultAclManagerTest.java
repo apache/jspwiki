@@ -20,7 +20,9 @@ package org.apache.wiki.auth.acl;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Acl;
+import org.apache.wiki.api.core.AclEntry;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.PermissionFactory;
@@ -55,12 +57,12 @@ public class DefaultAclManagerTest
     @Test
     public void testGetPermissions()
     {
-        WikiPage page = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( "TestDefaultPage" );
+        Page page = m_engine.getManager( PageManager.class ).getPage( "TestDefaultPage" );
         Acl acl = m_engine.getManager( AclManager.class ).getPermissions( page );
         Assertions.assertNotNull( page.getAcl() );
         Assertions.assertTrue(page.getAcl().isEmpty());
 
-        page = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( "TestAclPage" );
+        page = m_engine.getManager( PageManager.class ).getPage( "TestAclPage" );
         acl = m_engine.getManager( AclManager.class ).getPermissions( page );
         Assertions.assertNotNull( page.getAcl() );
         Assertions.assertFalse(page.getAcl().isEmpty());
@@ -161,7 +163,7 @@ public class DefaultAclManagerTest
     public void testPrintAcl()
     {
         // Verify that the printed Acl for the test page is OK
-        final WikiPage page = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( "TestAclPage" );
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestAclPage" );
         Acl acl = m_engine.getManager( AclManager.class ).getPermissions( page );
         final String aclString = DefaultAclManager.printAcl( acl );
         Assertions.assertEquals( "[{ALLOW edit Charlie,Herman}]\n", aclString );

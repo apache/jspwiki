@@ -203,7 +203,21 @@ public class WikiPage implements Page {
      * @return The access control list.  May return null, if there is no acl.
      */
     public Acl getAcl() {
-        return m_accessList;
+        return (org.apache.wiki.auth.acl.Acl)m_accessList;
+    }
+
+    /**
+     * Sets the Acl for this page. Note that method does <em>not</em> persist the Acl itself to back-end storage or in page markup;
+     * it merely sets the internal field that stores the Acl. To persist the Acl, callers should invoke
+     * {@link org.apache.wiki.auth.acl.AclManager#setPermissions(WikiPage, Acl)}.
+     *
+     * @param acl The Acl to set
+     * @deprecated use {@link #setAcl(org.apache.wiki.api.core.Acl)}
+     * @see #setAcl(org.apache.wiki.api.core.Acl)
+     */
+    @Deprecated
+    public void setAcl( final Acl acl ) {
+        setAcl( ( org.apache.wiki.api.core.Acl )acl );
     }
 
     /**
@@ -213,8 +227,8 @@ public class WikiPage implements Page {
      *
      * @param acl The Acl to set
      */
-    public void setAcl( final Acl acl ) {
-        m_accessList = acl;
+    public void setAcl( final org.apache.wiki.api.core.Acl acl ) {
+        m_accessList = ( Acl )acl;
     }
 
     /**

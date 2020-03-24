@@ -169,7 +169,7 @@ public interface Page extends Cloneable, Comparable< Page > {
      *
      *  @return The access control list.  May return null, if there is  no acl.
      */
-    //Acl getAcl();
+    Acl getAcl();
 
     /**
      * Sets the Acl for this page. Note that method does <em>not</em> persist the Acl itself to back-end storage or in page markup;
@@ -178,7 +178,7 @@ public interface Page extends Cloneable, Comparable< Page > {
      *
      * @param acl The Acl to set
      */
-    //void setAcl( Acl acl );
+    void setAcl( Acl acl );
 
     /** {@inheritDoc} */
     Page clone();

@@ -18,97 +18,81 @@
  */
 package org.apache.wiki.auth.acl;
 
-import java.security.Permission;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 /**
  * <p>
- * Defines an access control list (ACL) for wiki pages. An Access Control List
- * is a data structure used to guard access to resources. An ACL can be thought
- * of as a data structure with multiple ACL entries. Each ACL entry, of
- * interface type AclEntry, contains a set of positive permissions associated
- * with a particular principal. (A principal represents an entity such as an
- * individual user or a group). The ACL Entries in each ACL observe the
- * following rules:
+ * Deprecated, interface kept in order to keep backwards compatibility with versions up to 2.11.0.M6. {@link org.apache.wiki.api.core.Acl}
+ * should be used instead.
  * </p>
- * <ul>
- * <li>Each principal can have at most one ACL entry; that is, multiple ACL
- * entries are not allowed for any principal. Each entry specifies the set of
- * permissions that are to be granted</li>
- * <li>If there is no entry for a particular principal, then the principal is
- * considered to have a null (empty) permission set</li>
- * </ul>
- * <p>
- * This interface is a highly stripped-down derivation of the
- * java.security.acl.Acl interface. In particular, the notion of an Acl "owner"
- * has been eliminated, since JWPWiki pages do not have owners. An additional
- * simplification compared to the standard Java package is that negative
- * permissions have been eliminated. Instead, JSPWiki assumes a "default-deny"
- * security stance: principals are granted no permissions by default, and
- * posesses only those that have been explicitly granted to them. And finally,
- * the getPermissions() and checkPermission() methods have been eliminated due
- * to the complexities associated with resolving Role principal membership.
- * </p>
+ * {@inheritDoc}
  * @since 2.3
+ * @deprecated use {@link org.apache.wiki.api.core.Acl} insteaad
+ * @see org.apache.wiki.api.core.Acl
  */
-public interface Acl
-{
+@Deprecated
+public interface Acl extends org.apache.wiki.api.core.Acl {
+
     /**
-     * Adds an ACL entry to this ACL. An entry associates a principal (e.g., an
-     * individual or a group) with a set of permissions. Each principal can have
-     * at most one positive ACL entry, specifying permissions to be granted to
-     * the principal. If there is already an ACL entry already in the ACL, false
-     * is returned.
+     * Adds an ACL entry to this ACL. An entry associates a principal (e.g., an individual or a group) with a set of permissions. Each
+     * principal can have at most one positive ACL entry, specifying permissions to be granted to the principal. If there is already an
+     * ACL entry already in the ACL, false is returned.
+     *
      * @param entry - the ACL entry to be added to this ACL
-     * @return true on success, false if an entry of the same type (positive or
-     *         negative) for the same principal is already present in this ACL
+     * @return true on success, false if an entry of the same type (positive or negative) for the same principal is already present in this ACL
+     * @deprecated use {@link #addEntry(org.apache.wiki.api.core.AclEntry)} instead.
+     * @see #addEntry(org.apache.wiki.api.core.AclEntry
      */
-    boolean addEntry( AclEntry entry );
+    @Deprecated
+    default boolean addEntry( final AclEntry entry ) {
+        return addEntry( ( org.apache.wiki.api.core.AclEntry )entry );
+    }
 
     /**
-     * Returns an enumeration of the entries in this ACL. Each element in the
-     * enumeration is of type AclEntry.
+     * Returns an enumeration of the entries in this ACL. Each element in the enumeration is of type AclEntry.
+     *
      * @return an enumeration of the entries in this ACL.
+     * @deprecated use {@link #aclEntries()} instead.
+     * @see #aclEntries()
      */
-    Enumeration< AclEntry > entries();
+    @Deprecated
+    default Enumeration< AclEntry > entries() {
+        final List< AclEntry> entries = Collections.list( aclEntries() ) // iterates list two times - this is ok as we don't expect too many elements inside aclEntries()
+                                                   .stream()
+                                                   .map( entry -> ( AclEntry )entry )
+                                                   .collect( Collectors.toList() );
+        return Collections.enumeration( entries );
+    }
 
     /**
-     * Returns <code>true</code>, if this Acl is empty.
-     * @return the result
-     * @since 2.4.68
-     */
-    boolean isEmpty();
-
-    /**
-     * Returns all Principal objects assigned a given Permission in the access
-     * control list. The Princiapls returned are those that have been granted
-     * either the supplied permission, or a permission implied by the supplied
-     * permission. Principals are not "expanded" if they are a role or group.
-     * @param permission the permission to search for
-     * @return an array of Principals posessing the permission
-     */
-    Principal[] findPrincipals( Permission permission );
-
-    /**
-     * Returns an AclEntry for a supplied Principal, or <code>null</code> if
-     * the Principal does not have a matching AclEntry.
+     * Returns an AclEntry for a supplied Principal, or <code>null</code> if the Principal does not have a matching AclEntry.
+     *
      * @param principal the principal to search for
      * @return the AclEntry associated with the principal, or <code>null</code>
+     * @deprecated use {@link #getAclEntry(Principal)} instead.
+     * @see #getAclEntry(Principal)
      */
-    AclEntry getEntry( Principal principal );
+    @Deprecated
+    default AclEntry getEntry( final Principal principal ) {
+        return ( AclEntry )getAclEntry( principal );
+    }
 
     /**
      * Removes an ACL entry from this ACL.
+     *
      * @param entry the ACL entry to be removed from this ACL
      * @return true on success, false if the entry is not part of this ACL
+     * @deprecated use {@link #removeEntry(org.apache.wiki.api.core.AclEntry)} instead.
+     * @see #removeEntry(org.apache.wiki.api.core.AclEntry
      */
-    boolean removeEntry( AclEntry entry );
-
-    /**
-     * Returns a string representation of the contents of this Acl.
-     * @return the string representation
-     */
-    String toString();
+    @Deprecated
+    default boolean removeEntry( final AclEntry entry ) {
+        return removeEntry( ( org.apache.wiki.api.core.AclEntry )entry );
+    }
 
 }
