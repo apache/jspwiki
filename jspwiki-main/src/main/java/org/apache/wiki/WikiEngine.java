@@ -24,6 +24,7 @@ import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.attachment.AttachmentManager;
@@ -104,9 +105,6 @@ public class WikiEngine implements Engine {
     /** Stores properties. */
     private Properties m_properties;
 
-    /** Does the work in renaming pages. */
-    private PageRenamer m_pageRenamer = null;
-
     /** Should the user info be saved with the page data as well? */
     private boolean m_saveUserInfo = true;
 
@@ -115,66 +113,6 @@ public class WikiEngine implements Engine {
 
     /** Store the file path to the basic URL.  When we're not running as a servlet, it defaults to the user's current directory. */
     private String m_rootPath = System.getProperty( "user.dir" );
-
-    /** Stores references between wikipages. */
-    private ReferenceManager  m_referenceManager = null;
-
-    /** Stores the Plugin manager */
-    private PluginManager     m_pluginManager;
-
-    /** Stores the Variable manager */
-    private VariableManager   m_variableManager;
-
-    /** Stores the Attachment manager */
-    private AttachmentManager m_attachmentManager = null;
-
-    /** Stores the Page manager */
-    private PageManager       m_pageManager = null;
-
-    /** Stores the authorization manager */
-    private AuthorizationManager m_authorizationManager = null;
-
-    /** Stores the authentication manager.*/
-    private AuthenticationManager m_authenticationManager = null;
-
-    /** Stores the ACL manager. */
-    private AclManager       m_aclManager = null;
-
-    /** Resolves wiki actions, JSPs and special pages. */
-    private CommandResolver  m_commandResolver = null;
-
-    private TemplateManager  m_templateManager = null;
-
-    /** Does all our diffs for us. */
-    private DifferenceManager m_differenceManager;
-
-    /** Handlers page filters. */
-    private FilterManager    m_filterManager;
-
-    /** Stores the Search manager */
-    private SearchManager    m_searchManager = null;
-
-    /** Facade for managing users */
-    private UserManager      m_userManager = null;
-
-    /** Facade for managing users */
-    private GroupManager     m_groupManager = null;
-
-    private RenderingManager m_renderingManager;
-
-    private EditorManager    m_editorManager;
-
-    private InternationalizationManager m_internationalizationManager;
-
-    private ProgressManager  m_progressManager;
-
-    private TasksManager m_tasksManager;
-
-    /** Constructs URLs */
-    private URLConstructor   m_urlConstructor;
-
-    /** Generates RSS feed when requested. */
-    private RSSGenerator     m_rssGenerator;
 
     /** Store the ServletContext that we're in.  This may be null if WikiEngine is not running inside a servlet container (i.e. when testing). */
     private ServletContext   m_servletContext = null;
@@ -194,12 +132,8 @@ public class WikiEngine implements Engine {
     /** Each engine has their own application id. */
     private String           m_appid = "";
 
-    private boolean          m_isConfigured = false; // Flag.
-
-    /** Each engine has its own workflow manager. */
-    private WorkflowManager m_workflowMgr = null;
-
-    private AdminBeanManager m_adminBeanManager;
+    /** engine is up and running or not */
+    private boolean          m_isConfigured = false;
 
     /** Stores wikiengine attributes. */
     private Map< String, Object > m_attributes = new ConcurrentHashMap<>();
@@ -212,7 +146,6 @@ public class WikiEngine implements Engine {
      *  we throw a RuntimeException if things don't work.
      *
      *  @param config The ServletConfig object for this servlet.
-     *
      *  @return A WikiEngine instance.
      *  @throws InternalWikiException in case something fails. This is a RuntimeException, so be prepared for it.
      */
@@ -243,13 +176,8 @@ public class WikiEngine implements Engine {
      *  @return One fully functional, properly behaving WikiEngine.
      *  @throws InternalWikiException If the WikiEngine instantiation fails.
      */
-
-    // FIXME: Potential make-things-easier thingy here: no need to fetch the wikiengine anymore
-    //        Wiki.jsp.jspInit() [really old code]; it's probably even faster to fetch it
-    //        using this method every time than go to pageContext.getAttribute().
     public static synchronized WikiEngine getInstance( final ServletContext context, Properties props ) throws InternalWikiException {
         WikiEngine engine = ( WikiEngine )context.getAttribute( ATTR_WIKIENGINE );
-
         if( engine == null ) {
             final String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
             context.log(" Assigning new engine to "+appid);
@@ -355,8 +283,8 @@ public class WikiEngine implements Engine {
         m_workDir = TextUtil.getStringProperty( props, PROP_WORKDIR, null );
 
         if( m_workDir == null ) {
-            m_workDir = System.getProperty("java.io.tmpdir", ".");
-            m_workDir += File.separator+Release.APPNAME+"-"+m_appid;
+            m_workDir = System.getProperty( "java.io.tmpdir", "." );
+            m_workDir += File.separator + Release.APPNAME + "-" + m_appid;
         }
 
         try {
@@ -367,16 +295,16 @@ public class WikiEngine implements Engine {
             //  A bunch of sanity checks
             //
             if( !f.exists() ) {
-                throw new WikiException("Work directory does not exist: "+m_workDir);
+                throw new WikiException( "Work directory does not exist: " + m_workDir );
             }
             if( !f.canRead() ) {
-                throw new WikiException("No permission to read work directory: "+m_workDir);
+                throw new WikiException( "No permission to read work directory: " + m_workDir );
             }
             if( !f.canWrite() ) {
-                throw new WikiException("No permission to write to work directory: "+m_workDir);
+                throw new WikiException( "No permission to write to work directory: " + m_workDir );
             }
             if( !f.isDirectory() ) {
-                throw new WikiException("jspwiki.workDir does not point to a directory: "+m_workDir);
+                throw new WikiException( "jspwiki.workDir does not point to a directory: " + m_workDir );
             }
         } catch( final SecurityException e ) {
             log.fatal( "Unable to find or create the working directory: "+m_workDir, e );
@@ -394,101 +322,44 @@ public class WikiEngine implements Engine {
         //
         //  Initialize the important modules.  Any exception thrown by the managers means that we will not start up.
         //
-        // FIXME: This part of the code is getting unwieldy.  We must think of a better way to do the startup-sequence.
         try {
             final String aclClassName = m_properties.getProperty( PROP_ACL_MANAGER_IMPL, ClassUtil.getMappedClass( AclManager.class.getName() ).getName() );
-            final String urlConstructorClassnName = TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" );
-            final Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url", urlConstructorClassnName );
+            final String urlConstructorClassName = TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" );
+            final Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url", urlConstructorClassName );
 
-            m_commandResolver = ClassUtil.getMappedObject( CommandResolver.class.getName(), this, props );
-            managers.put( CommandResolver.class, m_commandResolver );
-
-            m_urlConstructor = ClassUtil.getMappedObject( urlclass.getName() );
-            m_urlConstructor.initialize( this, props );
-            managers.put( URLConstructor.class, m_urlConstructor );
-
-            m_pageManager           = ClassUtil.getMappedObject( PageManager.class.getName(), this, props );
-            managers.put( PageManager.class, m_pageManager );
-
-            m_pluginManager         = ClassUtil.getMappedObject( PluginManager.class.getName(), this, props );
-            managers.put( PluginManager.class, m_pluginManager );
-
-            m_differenceManager     = ClassUtil.getMappedObject( DifferenceManager.class.getName(), this, props );
-            managers.put( DifferenceManager.class, m_differenceManager );
-
-            m_attachmentManager     = ClassUtil.getMappedObject( AttachmentManager.class.getName(), this, props );
-            managers.put( AttachmentManager.class, m_attachmentManager );
-
-            m_variableManager       = ClassUtil.getMappedObject( VariableManager.class.getName(), props );
-            managers.put( VariableManager.class, m_variableManager );
-
-            m_searchManager         = ClassUtil.getMappedObject( SearchManager.class.getName(), this, props );
-            managers.put( SearchManager.class, m_searchManager );
-
-            m_authenticationManager = ClassUtil.getMappedObject( AuthenticationManager.class.getName() );
-            m_authenticationManager.initialize( this, props );
-            managers.put( AuthenticationManager.class, m_authenticationManager );
-
-            m_authorizationManager  = ClassUtil.getMappedObject( AuthorizationManager.class.getName() );
-            m_authorizationManager.initialize( this, props );
-            managers.put( AuthorizationManager.class, m_authorizationManager );
-
-            m_userManager           = ClassUtil.getMappedObject( UserManager.class.getName() );
-            m_userManager.initialize( this, props );
-            managers.put( UserManager.class, m_userManager );
-
-            m_groupManager          = ClassUtil.getMappedObject( GroupManager.class.getName() );
-            m_groupManager.initialize( this, props );
-            managers.put( GroupManager.class, m_groupManager );
-
-            m_editorManager         = ClassUtil.getMappedObject( EditorManager.class.getName(), this );
-            m_editorManager.initialize( this, props );
-            managers.put( EditorManager.class, m_editorManager );
-
-            m_progressManager       = ClassUtil.getMappedObject( ProgressManager.class.getName(), this );
-            managers.put( ProgressManager.class, m_progressManager );
-
-            m_aclManager = ClassUtil.getMappedObject( aclClassName );
-            m_aclManager.initialize( this, props );
-            managers.put( AclManager.class, m_aclManager );
-
-            // Start the Workflow manager
-            m_workflowMgr = ClassUtil.getMappedObject(WorkflowManager.class.getName());
-            m_workflowMgr.initialize(this, props);
-            managers.put( WorkflowManager.class, m_workflowMgr );
-
-            m_tasksManager = ClassUtil.getMappedObject(TasksManager.class.getName());
-            managers.put( TasksManager.class, m_tasksManager );
-
-            m_internationalizationManager = ClassUtil.getMappedObject(InternationalizationManager.class.getName(),this);
-            managers.put( InternationalizationManager.class, m_internationalizationManager );
-
-            m_templateManager = ClassUtil.getMappedObject(TemplateManager.class.getName(), this, props );
-            managers.put( TemplateManager.class, m_templateManager );
-
-            // Since we want to use a page filters initilize() method as a engine startup listener where we can initialize global event
-            // listeners, it must be called lastly, so that all object references in the engine are availabe to the initialize() method
-            m_filterManager = ClassUtil.getMappedObject(FilterManager.class.getName(), this, props );
-            managers.put( FilterManager.class, m_filterManager );
-
-            m_adminBeanManager = ClassUtil.getMappedObject(AdminBeanManager.class.getName(),this);
-            managers.put( AdminBeanManager.class, m_adminBeanManager );
-
-            m_pageRenamer = ClassUtil.getMappedObject( PageRenamer.class.getName(), this, props );
-            managers.put( PageRenamer.class, m_pageRenamer );
+            initComponent( CommandResolver.class, this, props );
+            initComponent( urlclass.getName(), URLConstructor.class, ( Object )null );
+            initComponent( PageManager.class, this, props );
+            initComponent( PluginManager.class, this, props );
+            initComponent( DifferenceManager.class, this, props );
+            initComponent( AttachmentManager.class, this, props );
+            initComponent( VariableManager.class, props );
+            initComponent( SearchManager.class, this, props );
+            initComponent( AuthenticationManager.class, ( Object )null );
+            initComponent( AuthorizationManager.class, ( Object )null );
+            initComponent( UserManager.class, ( Object )null );
+            initComponent( GroupManager.class, ( Object )null );
+            initComponent( EditorManager.class, this );
+            initComponent( ProgressManager.class, this );
+            initComponent( aclClassName, AclManager.class, ( Object )null );
+            initComponent( WorkflowManager.class, ( Object )null );
+            initComponent( TasksManager.class, ( Object )null );
+            initComponent( InternationalizationManager.class, this );
+            initComponent( TemplateManager.class, this, props );
+            initComponent( FilterManager.class, this, props );
+            initComponent( AdminBeanManager.class, this );
+            initComponent( PageRenamer.class, this, props );
 
             // RenderingManager depends on FilterManager events.
-            m_renderingManager = ClassUtil.getMappedObject( RenderingManager.class.getName() );
-            m_renderingManager.initialize( this, props );
-            managers.put( RenderingManager.class, m_renderingManager );
+            initComponent( RenderingManager.class );
 
             //  ReferenceManager has the side effect of loading all pages.  Therefore after this point, all page attributes are available.
             //  initReferenceManager is indirectly using m_filterManager, therefore it has to be called after it was initialized.
             initReferenceManager();
 
             //  Hook the different manager routines into the system.
-            m_filterManager.addPageFilter( getManager( ReferenceManager.class ), -1001 );
-            m_filterManager.addPageFilter( getManager( SearchManager.class ), -1002 );
+            getManager( FilterManager.class ).addPageFilter( getManager( ReferenceManager.class ), -1001 );
+            getManager( FilterManager.class ).addPageFilter( getManager( SearchManager.class ), -1002 );
         } catch( final RuntimeException e ) {
             // RuntimeExceptions may occur here, even if they shouldn't.
             log.fatal( "Failed to start managers.", e );
@@ -511,9 +382,7 @@ public class WikiEngine implements Engine {
         //  Initialize the good-to-have-but-not-fatal modules.
         try {
             if( TextUtil.getBooleanProperty( props, RSSGenerator.PROP_GENERATE_RSS,false ) ) {
-                m_rssGenerator = ClassUtil.getMappedObject( RSSGenerator.class.getName(), this, props );
-                m_rssGenerator.initialize( this, props );
-                managers.put( RSSGenerator.class, m_rssGenerator );
+                initComponent( RSSGenerator.class, this, props );
             }
         } catch( final Exception e ) {
             log.error( "Unable to start RSS generator - JSPWiki will still work, but there will be no RSS feed.", e );
@@ -521,8 +390,25 @@ public class WikiEngine implements Engine {
 
         fireEvent( WikiEngineEvent.INITIALIZED ); // initialization complete
 
-        log.info("WikiEngine configured.");
+        log.info( "WikiEngine configured." );
         m_isConfigured = true;
+    }
+
+    < T > void initComponent( final Class< T > componentClass, final Object... initArgs ) throws Exception {
+        initComponent( componentClass.getName(), componentClass, initArgs );
+    }
+
+    < T > void initComponent( final String componentInitClass, final Class< T > componentClass, final Object... initArgs ) throws Exception {
+        final T component;
+        if( initArgs == null || initArgs.length == 0 ) {
+            component = ClassUtil.getMappedObject( componentInitClass );
+        } else {
+            component = ClassUtil.getMappedObject( componentInitClass, initArgs );
+        }
+        if( Initializable.class.isAssignableFrom( componentClass ) ) {
+            ( ( Initializable )component ).initialize( this, m_properties );
+        }
+        managers.put( componentClass, component );
     }
 
     /** {@inheritDoc} */
@@ -537,9 +423,9 @@ public class WikiEngine implements Engine {
     @SuppressWarnings( "unchecked" )
     public < T > List< T > getManagers( final Class< T > manager ) {
         return ( List< T > )managers.entrySet().stream()
-                                    .filter( e -> manager.isAssignableFrom( e.getKey() ) )
-                                    .map( Map.Entry::getValue )
-                                    .collect( Collectors.toList() );
+                .filter( e -> manager.isAssignableFrom( e.getKey() ) )
+                .map( Map.Entry::getValue )
+                .collect( Collectors.toList() );
     }
 
     /** {@inheritDoc} */
@@ -589,16 +475,14 @@ public class WikiEngine implements Engine {
                 final ArrayList< Page > pages = new ArrayList<>();
                 pages.addAll( getManager( PageManager.class ).getAllPages() );
                 pages.addAll( getManager( AttachmentManager.class ).getAllAttachments() );
+                initComponent( ReferenceManager.class, this );
 
-                m_referenceManager = ClassUtil.getMappedObject( ReferenceManager.class.getName(), this );
-                managers.put( ReferenceManager.class, m_referenceManager );
-
-                m_referenceManager.initialize( pages );
+                getManager( ReferenceManager.class ).initialize( pages );
             }
 
         } catch( final ProviderException e ) {
             log.fatal("PageProvider is unable to list pages: ", e);
-        } catch( final ReflectiveOperationException | IllegalArgumentException e ) {
+        } catch( final Exception e ) {
             throw new WikiException( "Could not instantiate ReferenceManager: " + e.getMessage(), e );
         }
     }
@@ -712,7 +596,6 @@ public class WikiEngine implements Engine {
 
     /** {@inheritDoc} */
     @Override
-    // FIXME: Should use servlet context as a default instead of a constant.
     public String getApplicationName() {
         final String appName = TextUtil.getStringProperty( m_properties, PROP_APPNAME, Release.APPNAME );
         return TextUtil.cleanString( appName, TextUtil.PUNCTUATION_CHARS_ALLOWED );
@@ -1087,6 +970,7 @@ public class WikiEngine implements Engine {
 
     /**
      * Fires a WikiPageEvent to all registered listeners.
+     *
      * @param type  the event type
      */
     protected final void firePageEvent( final int type, final String pageName ) {
