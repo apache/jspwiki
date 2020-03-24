@@ -19,6 +19,8 @@
 
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.ui.admin.*" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
@@ -32,10 +34,10 @@
 %>
 <%
     String bean = request.getParameter("bean");
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = WikiEngine.getInstance( getServletConfig() );
     // Create wiki context and check for authorization
     WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.ADMIN );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
 
     //
     //  This is an experimental feature, so we will turn it off unless the user really wants to.
@@ -68,23 +70,17 @@
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "admin/AdminTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "admin/AdminTemplate.jsp" );
 
     pageContext.setAttribute( "engine", wiki, PageContext.REQUEST_SCOPE );
     pageContext.setAttribute( "context", wikiContext, PageContext.REQUEST_SCOPE );
 
-    if( request.getMethod().equalsIgnoreCase("post") && bean != null )
-    {
-        AdminBean ab = wiki.getAdminBeanManager().findBean( bean );
+    if( request.getMethod().equalsIgnoreCase("post") && bean != null ) {
+        AdminBean ab = wiki.getManager( AdminBeanManager.class ).findBean( bean );
 
-        if( ab != null )
-        {
+        if( ab != null ) {
             ab.doPost( wikiContext );
-        }
-        else
-        {
+        } else {
             wikiContext.getWikiSession().addMessage( "No such bean "+bean+" was found!" );
         }
     }
