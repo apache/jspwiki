@@ -225,7 +225,11 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         return allowed;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * Expects to find property 'jspwiki.authorizer' with a valid Authorizer implementation name to take care of role lookup operations.
+     */
     @Override
     public void initialize( final Engine engine, final Properties properties ) throws WikiException {
         m_engine = engine;

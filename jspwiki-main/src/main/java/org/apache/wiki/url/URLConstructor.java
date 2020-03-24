@@ -18,12 +18,11 @@
  */
 package org.apache.wiki.url;
 
-import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.engine.Initializable;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Properties;
 
 
 /**
@@ -33,15 +32,7 @@ import java.util.Properties;
  *
  *  @since 2.2
  */
-public interface URLConstructor {
-    /**
-     *  Initializes.  Note that the engine is not fully initialized at this
-     *  point, so don't do anything fancy here - use lazy init, if you have to.
-     *
-     *  @param  engine The Engine that this URLConstructor belongs to
-     *  @param properties Properties used to initialize
-     */
-    void initialize( Engine engine, Properties properties );
+public interface URLConstructor extends Initializable {
 
     /**
      *  Constructs the URL with a bunch of parameters.

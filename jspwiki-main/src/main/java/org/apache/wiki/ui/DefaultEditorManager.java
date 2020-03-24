@@ -66,7 +66,11 @@ public class DefaultEditorManager extends BaseModuleManager implements EditorMan
         super( engine );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * Initializes the EditorManager.  It also registers any editors it can find.
+     */
     @Override
     public void initialize( final Engine engine, final Properties props ) {
         registerEditors();

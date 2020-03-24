@@ -21,9 +21,8 @@ package org.apache.wiki.render;
 import org.apache.log4j.Logger;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.api.core.Context;
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
-import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.modules.InternalModule;
@@ -31,7 +30,6 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 
 import java.io.IOException;
-import java.util.Properties;
 
 
 /**
@@ -44,7 +42,7 @@ import java.util.Properties;
  *
  *  @since  2.4
  */
-public interface RenderingManager extends WikiEventListener, InternalModule {
+public interface RenderingManager extends WikiEventListener, InternalModule, Initializable {
 
     /** markup parser property. */
     String PROP_PARSER = "jspwiki.renderingManager.markupParser";
@@ -59,18 +57,6 @@ public interface RenderingManager extends WikiEventListener, InternalModule {
 
     /** Name of the regular page cache. */
     String DOCUMENTCACHE_NAME = "jspwiki.renderingCache";
-
-    /**
-     *  Initializes the RenderingManager.
-     *  Checks for cache size settings, initializes the document cache.
-     *  Looks for alternative WikiRenderers, initializes one, or the default
-     *  XHTMLRenderer, for use.
-     *
-     *  @param engine A Engine instance.
-     *  @param properties A list of properties to get parameters from.
-     *  @throws WikiException If the manager could not be initialized.
-     */
-    void initialize( Engine engine, Properties properties ) throws WikiException;
 
     /**
      *  Beautifies the title of the page by appending spaces in suitable places, if the user has so decreed in the properties when

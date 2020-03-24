@@ -18,14 +18,13 @@
  */
 package org.apache.wiki.workflow;
 
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
 
 import java.security.Principal;
 import java.util.List;
-import java.util.Properties;
 import java.util.Set;
 
 
@@ -35,7 +34,7 @@ import java.util.Set;
  * particular Workflows.
  * </p>
  */
-public interface WorkflowManager extends WikiEventListener {
+public interface WorkflowManager extends WikiEventListener, Initializable {
 
     /** The workflow attribute which stores the wikiContext. */
     String WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT = "wikiContext";
@@ -96,19 +95,6 @@ public interface WorkflowManager extends WikiEventListener {
      * @return the finished workflows
      */
     List< Workflow > getCompletedWorkflows();
-
-    /**
-     * Initializes the WorkflowManager using a specfied Engine and properties. Any properties that begin with
-     * {@link #PROPERTY_APPROVER_PREFIX} will be assumed to be Decisions that require approval. For a given property key, everything
-     * after the prefix denotes the Decision's message key. The property value indicates the Principal (Role, GroupPrincipal, WikiPrincipal)
-     * that must approve the Decision. For example, if the property key/value pair is {@code jspwiki.approver.workflow.saveWikiPage=Admin},
-     * the Decision's message key is <code>workflow.saveWikiPage</code>. The Principal <code>Admin</code> will be resolved via
-     * {@link org.apache.wiki.auth.AuthorizationManager#resolvePrincipal(String)}.
-     *
-     * @param engine the wiki engine to associate with this WorkflowManager
-     * @param props the wiki engine's properties
-     */
-    void initialize( Engine engine, Properties props );
 
     /**
      * Returns <code>true</code> if a workflow matching a particular key contains an approval step.

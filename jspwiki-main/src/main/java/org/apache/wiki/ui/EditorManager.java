@@ -19,11 +19,10 @@
 package org.apache.wiki.ui;
 
 import org.apache.wiki.api.core.Context;
-import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.modules.ModuleManager;
 
 import javax.servlet.jsp.PageContext;
-import java.util.Properties;
 
 
 /**
@@ -44,7 +43,7 @@ import java.util.Properties;
  *
  *  @since 2.4
  */
-public interface EditorManager extends ModuleManager {
+public interface EditorManager extends ModuleManager, Initializable {
 
     /** The property name for setting the editor. Current value is "jspwiki.editor" - not used anymore: replaced by defaultpref.template.editor */
     String PROP_EDITORTYPE = "jspwiki.editor";
@@ -63,14 +62,6 @@ public interface EditorManager extends ModuleManager {
 
     /** Known attribute name for storing the user edited text inside a session or a page context */
     String ATTR_EDITEDTEXT = REQ_EDITEDTEXT;
-
-    /**
-     * Initializes the EditorManager.  It also registers any editors it can find.
-     *
-     * @param engine engine performing the initialization.
-     * @param props  Properties for setup.
-     */
-    void initialize( Engine engine, Properties props );
 
     /**
      *  Returns an editor for the current context.  The editor names are matched in a case insensitive manner.  At the moment, the only

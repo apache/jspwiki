@@ -19,26 +19,16 @@
 package org.apache.wiki.auth.acl;
 
 import org.apache.wiki.api.core.Acl;
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.auth.WikiSecurityException;
-
-import java.util.Properties;
 
 /**
  *  Specifies how to parse and return ACLs from wiki pages.
  *
  *  @since 2.3
  */
-public interface AclManager {
-
-    /**
-     * Initializes the AclManager with a supplied wiki engine and properties.
-     *
-     * @param engine the wiki engine
-     * @param props the initialization properties
-     */
-    void initialize( Engine engine, Properties props );
+public interface AclManager extends Initializable {
 
     /**
      * A helper method for parsing textual AccessControlLists. The line is in form

@@ -20,6 +20,7 @@ package org.apache.wiki.auth.authorize;
 
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.auth.Authorizer;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -41,7 +42,7 @@ import javax.servlet.http.HttpServletRequest;
  * </p>
  * @since 2.4.19
  */
-public interface GroupManager extends Authorizer, WikiEventListener {
+public interface GroupManager extends Initializable, Authorizer, WikiEventListener {
 
     /** Key used for adding UI messages to a user's Session. */
     String MESSAGES_KEY = "group";

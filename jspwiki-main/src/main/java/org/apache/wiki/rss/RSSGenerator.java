@@ -19,12 +19,11 @@
 package org.apache.wiki.rss;
 
 import org.apache.wiki.api.core.Context;
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.util.TextUtil;
 
 import java.util.List;
-import java.util.Properties;
 
 /**
  *  The master class for generating different kinds of Feeds (including RSS1.0, 2.0 and Atom).
@@ -40,7 +39,7 @@ import java.util.Properties;
  *
  *  @since  1.7.5.
  */
-public interface RSSGenerator {
+public interface RSSGenerator extends Initializable {
 
     /** Parameter value to represent RSS 1.0 feeds.  Value is <tt>{@value}</tt>. */
     String RSS10 = "rss10";
@@ -103,14 +102,6 @@ public interface RSSGenerator {
 
     /** Defines the property name for the RSS author email.  Value is <tt>{@value}</tt>. */
     String PROP_RSS_AUTHOREMAIL = "jspwiki.rss.author.email";
-
-    /**
-     * Start the RSS generator & generator thread
-     *
-     * @param engine the engine
-     * @param properties the properties
-     */
-    void initialize( Engine engine, Properties properties );
 
     /**
      *  Generates the RSS resource.  You probably want to output this result into a file or something, or serve as output from a servlet.

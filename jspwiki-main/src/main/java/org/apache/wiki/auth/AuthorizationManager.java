@@ -19,9 +19,8 @@
 package org.apache.wiki.auth;
 
 import org.apache.wiki.api.core.Context;
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
-import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
@@ -32,7 +31,6 @@ import java.io.IOException;
 import java.security.AccessController;
 import java.security.Permission;
 import java.security.Principal;
-import java.util.Properties;
 
 
 /**
@@ -59,7 +57,7 @@ import java.util.Properties;
  * @since 2.3
  * @see AuthenticationManager
  */
-public interface AuthorizationManager {
+public interface AuthorizationManager extends Initializable {
 
     /** The default external Authorizer is the {@link org.apache.wiki.auth.authorize.WebContainerAuthorizer} */
     String DEFAULT_AUTHORIZER = "org.apache.wiki.auth.authorize.WebContainerAuthorizer";
@@ -196,16 +194,6 @@ public interface AuthorizationManager {
      * @throws IOException If something goes wrong
      */
     boolean hasAccess( final Context context, final HttpServletResponse response, final boolean redirect ) throws IOException;
-
-    /**
-     * Initializes AuthorizationManager with an engine and set of properties. Expects to find property 'jspwiki.authorizer' with a valid
-     * Authorizer implementation name to take care of role lookup operations.
-     *
-     * @param engine the wiki engine
-     * @param properties the set of properties used to initialize the wiki engine
-     * @throws WikiException if the AuthorizationManager cannot be initialized
-     */
-    void initialize( final Engine engine, final Properties properties ) throws WikiException;
 
     /**
      * Checks to see if the local security policy allows a particular static Permission.

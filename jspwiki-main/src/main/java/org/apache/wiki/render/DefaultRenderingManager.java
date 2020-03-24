@@ -98,6 +98,9 @@ public class DefaultRenderingManager implements RenderingManager {
 
     /**
      *  {@inheritDoc}
+     *
+     *  Checks for cache size settings, initializes the document cache. Looks for alternative WikiRenderers, initializes one, or the
+     *  default XHTMLRenderer, for use.
      */
     @Override
     public void initialize( final Engine engine, final Properties properties ) throws WikiException {

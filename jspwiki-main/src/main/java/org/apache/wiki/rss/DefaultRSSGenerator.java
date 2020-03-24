@@ -76,7 +76,11 @@ public class DefaultRSSGenerator implements RSSGenerator {
         m_rssFile = TextUtil.getStringProperty( properties, DefaultRSSGenerator.PROP_RSSFILE, "rss.rdf" );
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     *
+     * Start the RSS generator & generator thread
+     */
     @Override
     public void initialize( final Engine engine, final Properties properties ) {
         final File rssFile;

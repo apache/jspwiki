@@ -18,9 +18,8 @@
  */
 package org.apache.wiki.auth;
 
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
-import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
@@ -32,7 +31,6 @@ import javax.security.auth.spi.LoginModule;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 
@@ -47,7 +45,7 @@ import java.util.Set;
  * 
  * @since 2.3
  */
-public interface AuthenticationManager {
+public interface AuthenticationManager extends Initializable {
 
     /** If this jspwiki.properties property is <code>true</code>, logs the IP address of the editor on saving. */
     String PROP_STOREIPADDRESS = "jspwiki.storeIPAddress";
@@ -66,16 +64,6 @@ public interface AuthenticationManager {
 
     /** The {@link LoginModule} to use for custom authentication. */
     String PROP_LOGIN_MODULE = "jspwiki.loginModule.class";
-
-    /**
-     * Creates an AuthenticationManager instance for the given Engine and
-     * the specified set of properties. All initialization for the modules is
-     * done here.
-     * @param engine the wiki engine
-     * @param props the properties used to initialize the wiki engine
-     * @throws WikiException if the AuthenticationManager cannot be initialized
-     */
-    void initialize( Engine engine, Properties props ) throws WikiException;
 
     /**
      * Returns true if this Engine uses container-managed authentication. This method is used primarily for cosmetic purposes in the

@@ -92,6 +92,12 @@ public class DefaultWorkflowManager implements WorkflowManager {
 
     /**
      * {@inheritDoc}
+     *
+     * Any properties that begin with {@link #PROPERTY_APPROVER_PREFIX} will be assumed to be Decisions that require approval. For a given
+     * property key, everything after the prefix denotes the Decision's message key. The property value indicates the Principal (Role,
+     * GroupPrincipal, WikiPrincipal) that must approve the Decision. For example, if the property key/value pair is
+     * {@code jspwiki.approver.workflow.saveWikiPage=Admin}, the Decision's message key is <code>workflow.saveWikiPage</code>. The Principal
+     * <code>Admin</code> will be resolved via {@link org.apache.wiki.auth.AuthorizationManager#resolvePrincipal(String)}.
      */
     @Override
     public void initialize( final Engine engine, final Properties props ) {

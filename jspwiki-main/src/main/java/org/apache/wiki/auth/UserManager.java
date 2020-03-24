@@ -19,8 +19,8 @@
 package org.apache.wiki.auth;
 
 import org.apache.wiki.api.core.Context;
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.user.DuplicateUserException;
 import org.apache.wiki.auth.user.UserDatabase;
@@ -30,7 +30,6 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 
 import java.security.Principal;
-import java.util.Properties;
 
 
 /**
@@ -38,20 +37,12 @@ import java.util.Properties;
  *
  * @since 2.3
  */
-public interface UserManager {
+public interface UserManager extends Initializable {
 
     /** Message key for the "save profile" message. */
     String PROP_DATABASE = "jspwiki.userdatabase";
 
     String JSON_USERS = "users";
-
-    /**
-     * Initializes the engine for its nefarious purposes.
-     *
-     * @param engine the current wiki engine
-     * @param props the wiki engine initialization properties
-     */
-    void initialize( final Engine engine, final Properties props );
 
     /**
      * Returns the UserDatabase employed by this Engine. The UserDatabase is lazily initialized by this method, if it does
