@@ -68,7 +68,7 @@ public class DefaultEditorManager extends BaseModuleManager implements EditorMan
 
     /** {@inheritDoc} */
     @Override
-    public void initialize( final Properties props ) {
+    public void initialize( final Engine engine, final Properties props ) {
         registerEditors();
     }
 

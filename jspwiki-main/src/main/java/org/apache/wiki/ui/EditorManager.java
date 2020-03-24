@@ -19,6 +19,7 @@
 package org.apache.wiki.ui;
 
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.modules.ModuleManager;
 
 import javax.servlet.jsp.PageContext;
@@ -64,11 +65,12 @@ public interface EditorManager extends ModuleManager {
     String ATTR_EDITEDTEXT = REQ_EDITEDTEXT;
 
     /**
-     *  Initializes the EditorManager.  It also registers any editors it can find.
+     * Initializes the EditorManager.  It also registers any editors it can find.
      *
-     *  @param props  Properties for setup.
+     * @param engine engine performing the initialization.
+     * @param props  Properties for setup.
      */
-    void initialize( Properties props );
+    void initialize( Engine engine, Properties props );
 
     /**
      *  Returns an editor for the current context.  The editor names are matched in a case insensitive manner.  At the moment, the only
