@@ -584,15 +584,16 @@ public class WikiEngine implements Engine {
      */
     public void initReferenceManager() throws WikiException {
         try {
-            final ArrayList< Page > pages = new ArrayList<>();
-            pages.addAll( getManager( PageManager.class ).getAllPages() );
-            pages.addAll( getManager( AttachmentManager.class ).getAllAttachments() );
-
             // Build a new manager with default key lists.
             if( getManager( ReferenceManager.class ) == null ) {
-                m_referenceManager = ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
-                m_referenceManager.initialize( pages );
+                final ArrayList< Page > pages = new ArrayList<>();
+                pages.addAll( getManager( PageManager.class ).getAllPages() );
+                pages.addAll( getManager( AttachmentManager.class ).getAllAttachments() );
+
+                m_referenceManager = ClassUtil.getMappedObject( ReferenceManager.class.getName(), this );
                 managers.put( ReferenceManager.class, m_referenceManager );
+
+                m_referenceManager.initialize( pages );
             }
 
         } catch( final ProviderException e ) {
