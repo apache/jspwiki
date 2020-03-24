@@ -403,7 +403,7 @@ public class WikiEngine implements Engine {
             m_commandResolver = ClassUtil.getMappedObject( CommandResolver.class.getName(), this, props );
             managers.put( CommandResolver.class, m_commandResolver );
 
-            m_urlConstructor = ( URLConstructor ) urlclass.getDeclaredConstructor().newInstance();
+            m_urlConstructor = ClassUtil.getMappedObject( urlclass.getName() );
             m_urlConstructor.initialize( this, props );
             managers.put( URLConstructor.class, m_urlConstructor );
 
@@ -442,14 +442,14 @@ public class WikiEngine implements Engine {
             managers.put( GroupManager.class, m_groupManager );
 
             m_editorManager         = ClassUtil.getMappedObject( EditorManager.class.getName(), this );
-            m_editorManager.initialize( props );
+            m_editorManager.initialize( this, props );
             managers.put( EditorManager.class, m_editorManager );
 
             m_progressManager       = ClassUtil.getMappedObject( ProgressManager.class.getName(), this );
             managers.put( ProgressManager.class, m_progressManager );
 
             m_aclManager = ClassUtil.getMappedObject( aclClassName );
-            m_aclManager.initialize( this, m_properties );
+            m_aclManager.initialize( this, props );
             managers.put( AclManager.class, m_aclManager );
 
             // Start the Workflow manager
@@ -487,8 +487,8 @@ public class WikiEngine implements Engine {
             initReferenceManager();
 
             //  Hook the different manager routines into the system.
-            m_filterManager.addPageFilter( m_referenceManager, -1001 );
-            m_filterManager.addPageFilter( m_searchManager, -1002 );
+            m_filterManager.addPageFilter( getManager( ReferenceManager.class ), -1001 );
+            m_filterManager.addPageFilter( getManager( SearchManager.class ), -1002 );
         } catch( final RuntimeException e ) {
             // RuntimeExceptions may occur here, even if they shouldn't.
             log.fatal( "Failed to start managers.", e );
@@ -585,11 +585,11 @@ public class WikiEngine implements Engine {
     public void initReferenceManager() throws WikiException {
         try {
             final ArrayList< Page > pages = new ArrayList<>();
-            pages.addAll( m_pageManager.getAllPages() );
-            pages.addAll( m_attachmentManager.getAllAttachments() );
+            pages.addAll( getManager( PageManager.class ).getAllPages() );
+            pages.addAll( getManager( AttachmentManager.class ).getAllAttachments() );
 
             // Build a new manager with default key lists.
-            if( m_referenceManager == null ) {
+            if( getManager( ReferenceManager.class ) == null ) {
                 m_referenceManager = ClassUtil.getMappedObject(ReferenceManager.class.getName(), this );
                 m_referenceManager.initialize( pages );
                 managers.put( ReferenceManager.class, m_referenceManager );
@@ -635,8 +635,9 @@ public class WikiEngine implements Engine {
     /** {@inheritDoc} */
     @Override
     public String getGlobalRSSURL() {
-        if( m_rssGenerator != null && m_rssGenerator.isEnabled() ) {
-            return getBaseURL() + "/" + m_rssGenerator.getRssFile();
+        final RSSGenerator rssGenerator = getManager( RSSGenerator.class );
+        if( rssGenerator != null && rssGenerator.isEnabled() ) {
+            return getBaseURL() + "/" + rssGenerator.getRssFile();
         }
 
         return null;
@@ -654,7 +655,8 @@ public class WikiEngine implements Engine {
         if( pageName == null ) {
             pageName = getFrontPage();
         }
-        return m_urlConstructor.makeURL( context, pageName, params );
+        final URLConstructor urlConstructor = getManager( URLConstructor.class );
+        return urlConstructor.makeURL( context, pageName, params );
     }
 
     /** {@inheritDoc} */
@@ -704,7 +706,7 @@ public class WikiEngine implements Engine {
     /** {@inheritDoc} */
     @Override
     public String getSpecialPageReference( final String original ) {
-        return m_commandResolver.getSpecialPageReference( original );
+        return getManager( CommandResolver.class ).getSpecialPageReference( original );
     }
 
     /** {@inheritDoc} */
@@ -718,7 +720,7 @@ public class WikiEngine implements Engine {
     /** {@inheritDoc} */
     @Override
     public String getFinalPageName( final String page ) throws ProviderException {
-        return m_commandResolver.getFinalPageName( page );
+        return getManager( CommandResolver.class ).getFinalPageName( page );
     }
 
     /** {@inheritDoc} */
