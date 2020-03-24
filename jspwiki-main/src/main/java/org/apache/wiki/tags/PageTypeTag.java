@@ -18,10 +18,10 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
+import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Page;
 
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.attachment.Attachment;
+import java.io.IOException;
 
 /**
  *  Includes the body, if the current page is of proper type.
@@ -33,43 +33,32 @@ import org.apache.wiki.attachment.Attachment;
  *
  *  @since 2.0
  */
-public class PageTypeTag
-    extends WikiTagBase
-{
+public class PageTypeTag extends WikiTagBase {
+
     private static final long serialVersionUID = 0L;
     
     private String m_type;
 
-    public void initTag()
-    {
+    public void initTag() {
         super.initTag();
         m_type = null;
     }
 
-    public void setType( String arg )
+    public void setType( final String arg )
     {
         m_type = arg.toLowerCase();
     }
 
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiPage   page   = m_wikiContext.getPage();
-
-        if( page != null )
-        {
-            if( m_type.equals("attachment") && page instanceof Attachment )
-            {
+    public final int doWikiStartTag() throws IOException {
+        final Page page = m_wikiContext.getPage();
+        if( page != null ) {
+            if( m_type.equals( "attachment" ) && page instanceof Attachment ) {
                 return EVAL_BODY_INCLUDE;
             }
-            
-            if( m_type.equals("page") && !(page instanceof Attachment) )
-            {
+            if( m_type.equals( "page" ) && !( page instanceof Attachment ) ) {
                 return EVAL_BODY_INCLUDE;
             }
-
-            if( m_type.equals("weblogentry") && !(page instanceof Attachment) && page.getName().indexOf("_blogentry_") != -1 )
-            {
+            if( m_type.equals( "weblogentry" ) && !( page instanceof Attachment ) && page.getName().contains( "_blogentry_" ) ) {
                 return EVAL_BODY_INCLUDE;
             }
         }

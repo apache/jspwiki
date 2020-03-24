@@ -20,7 +20,6 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -173,7 +172,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         final Engine engine = m_wikiContext.getEngine();
 
         if( m_pageName == null ) {
-            final WikiPage page = m_wikiContext.getPage();
+            final Page page = m_wikiContext.getPage();
             if( page != null ) {
                 m_pageName = page.getName();
             }

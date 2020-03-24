@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
@@ -79,7 +79,7 @@ public class CheckLockTag extends WikiTagBase {
     @Override
     public final int doWikiStartTag() throws IOException, ProviderException {
         final Engine engine = m_wikiContext.getEngine();
-        final WikiPage page = m_wikiContext.getPage();
+        final Page page = m_wikiContext.getPage();
 
         if( page != null ) {
             final PageManager mgr = engine.getManager( PageManager.class );

@@ -19,7 +19,6 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
@@ -79,7 +78,7 @@ public class CheckVersionTag extends WikiTagBase {
     @Override
     public final int doWikiStartTag() {
         final Engine engine = m_wikiContext.getEngine();
-        final WikiPage page   = m_wikiContext.getPage();
+        final Page page = m_wikiContext.getPage();
 
         if( page != null && engine.getManager( PageManager.class ).wikiPageExists( page.getName() ) ) {
             final int version = page.getVersion();

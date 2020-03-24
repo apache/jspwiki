@@ -18,10 +18,10 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
+import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Page;
 
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.attachment.Attachment;
+import java.io.IOException;
 
 /**
  *  Writes a link to a parent of a Wiki page.
@@ -34,39 +34,25 @@ import org.apache.wiki.attachment.Attachment;
  *
  *  @since 2.0
  */
-public class LinkToParentTag
-    extends LinkToTag
-{
+public class LinkToParentTag extends LinkToTag {
+
     private static final long serialVersionUID = 0L;
     
-    public int doWikiStartTag()
-        throws IOException
-    {
-        WikiPage p = m_wikiContext.getPage();
+    public int doWikiStartTag() throws IOException {
+        final Page p = m_wikiContext.getPage();
 
-        //
-        //  We just simply set the page to be our parent page
-        //  and call the superclass.
-        //
-        if( p instanceof Attachment )
-        {
+        //  We just simply set the page to be our parent page and call the superclass.
+        if( p instanceof Attachment ) {
             setPage( ((Attachment)p).getParentName() );
-        }
-        else
-        {
-            String name = p.getName();
-
-            int entrystart = name.indexOf("_blogentry_");
-
-            if( entrystart != -1 )
-            {
+        } else {
+            final String name = p.getName();
+            final int entrystart = name.indexOf( "_blogentry_" );
+            if( entrystart != -1 ) {
                 setPage( name.substring( 0, entrystart ) );
             }
 
-            int commentstart = name.indexOf("_comments_");
-                
-            if( commentstart != -1 )
-            {
+            final int commentstart = name.indexOf( "_comments_" );
+            if( commentstart != -1 ) {
                 setPage( name.substring( 0, commentstart ) );
             }
         }

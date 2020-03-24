@@ -288,7 +288,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
             }
             props.setProperty( versionNumber + ".author", author );
 
-            final String changeNote = att.getAttribute( WikiPage.CHANGENOTE );
+            final String changeNote = att.getAttribute( Page.CHANGENOTE );
             if( changeNote != null ) {
                 props.setProperty( versionNumber + ".changenote", changeNote );
             }

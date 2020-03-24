@@ -19,8 +19,8 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
 
 import javax.servlet.jsp.JspWriter;
@@ -60,7 +60,7 @@ public class PageInfoLinkTag extends WikiLinkTag {
         String     pageName = m_pageName;
 
         if( m_pageName == null ) {
-            final WikiPage p = m_wikiContext.getPage();
+            final Page p = m_wikiContext.getPage();
             if( p != null ) {
                 pageName = p.getName();
             } else {

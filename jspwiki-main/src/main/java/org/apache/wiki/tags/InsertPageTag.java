@@ -19,7 +19,6 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -111,7 +110,7 @@ public class InsertPageTag extends WikiTagBase {
             log.debug("Inserting page "+insertedPage);
 
             final JspWriter out = pageContext.getOut();
-            final WikiPage oldPage = m_wikiContext.setRealPage( insertedPage );
+            final Page oldPage = m_wikiContext.setRealPage( insertedPage );
             
             switch( m_mode ) {
               case HTML: out.print( engine.getManager( RenderingManager.class ).getHTML( m_wikiContext, insertedPage ) ); break;

@@ -21,7 +21,6 @@ package org.apache.wiki.plugin;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -197,7 +196,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements Plugi
 
                 // Change note
                 if( showChangenote ) {
-                    final String changenote = pageref.getAttribute( WikiPage.CHANGENOTE );
+                    final String changenote = pageref.getAttribute( Page.CHANGENOTE );
                     final Element td_changenote = XhtmlUtil.element( XHTML.td, changenote );
                     td_changenote.setAttribute( XHTML.ATTR_class, "changenote" );
                     row.addContent( td_changenote );

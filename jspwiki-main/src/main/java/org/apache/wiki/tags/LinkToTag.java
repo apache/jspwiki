@@ -19,8 +19,8 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.attachment.AttachmentManager;
 
 import javax.servlet.jsp.JspWriter;
@@ -28,74 +28,62 @@ import java.io.IOException;
 
 
 /**
- *  Writes a link to a Wiki page.  Body of the link becomes the actual text.
- *  The link is written regardless to whether the page exists or not.
+ * Writes a link to a Wiki page.  Body of the link becomes the actual text.
+ * The link is written regardless to whether the page exists or not.
+ * <P><B>Attributes</B></P>
+ * <UL>
+ * <LI>page - Page name to refer to.  Default is the current page.
+ * <LI>format - either "anchor" or "url" to output either an <A>... or just the HREF part of one.
+ * <LI>template - Which template should we link to.
+ * <LI>title - Is used in page actions to display hover text (tooltip)
+ * <LI>accesskey - Set an accesskey (ALT+[Char])
+ * </UL>
  *
- *  <P><B>Attributes</B></P>
- *  <UL>
- *    <LI>page - Page name to refer to.  Default is the current page.
- *    <LI>format - either "anchor" or "url" to output either an <A>... or just the HREF part of one.
- *    <LI>template - Which template should we link to.
- *    <LI>title - Is used in page actions to display hover text (tooltip)
- *    <LI>accesskey - Set an accesskey (ALT+[Char])
- *  </UL>
- *
- *  @since 2.0
+ * @since 2.0
  */
-public class LinkToTag
-    extends WikiLinkTag
-{
+public class LinkToTag extends WikiLinkTag {
+
     private static final long serialVersionUID = 0L;
 
     private String m_version = null;
     public String m_title = "";
     public String m_accesskey = "";
 
-    @Override public void initTag()
-    {
+    @Override
+    public void initTag() {
         super.initTag();
         m_version = null;
     }
 
-    public String getVersion()
-    {
+    public String getVersion() {
         return m_version;
     }
 
-    public void setVersion( final String arg )
-    {
+    public void setVersion( final String arg ) {
         m_version = arg;
     }
 
-    public void setTitle( final String title )
-    {
+    public void setTitle( final String title ) {
         m_title = title;
     }
 
-    public void setAccesskey( final String access )
-    {
+    public void setAccesskey( final String access ) {
         m_accesskey = access;
     }
 
+    @Override
+    public int doWikiStartTag() throws IOException {
+        String pageName = m_pageName;
+        boolean isattachment = false;
 
-    @Override public int doWikiStartTag()
-        throws IOException
-    {
-        String     pageName = m_pageName;
-        boolean    isattachment = false;
+        if( m_pageName == null ) {
+            final Page p = m_wikiContext.getPage();
 
-        if( m_pageName == null )
-        {
-            final WikiPage p = m_wikiContext.getPage();
-
-            if( p != null )
-            {
+            if( p != null ) {
                 pageName = p.getName();
 
                 isattachment = p instanceof Attachment;
-            }
-            else
-            {
+            } else {
                 return SKIP_BODY;
             }
         }
@@ -105,37 +93,35 @@ public class LinkToTag
         final String linkclass;
         String forceDownload = "";
 
-        if( isattachment )
-        {
-            url = m_wikiContext.getURL(WikiContext.ATTACH, pageName,
-                                       (getVersion() != null) ? "version="+getVersion() : null );
+        if( isattachment ) {
+            url = m_wikiContext.getURL( WikiContext.ATTACH, pageName, ( getVersion() != null ) ? "version=" + getVersion() : null );
             linkclass = "attachment";
 
-            if( m_wikiContext.getEngine().getManager( AttachmentManager.class ).forceDownload( pageName ) )
-            {
+            if( m_wikiContext.getEngine().getManager( AttachmentManager.class ).forceDownload( pageName ) ) {
                 forceDownload = "download ";
             }
 
-        }
-        else
-        {
-        	final StringBuilder params = new StringBuilder();
-            if( getVersion() != null ) params.append( "version="+getVersion() );
-            if( getTemplate() != null ) params.append( (params.length()>0?"&amp;":"") + "skin="+getTemplate() );
+        } else {
+            final StringBuilder params = new StringBuilder();
+            if( getVersion() != null ) {
+                params.append( "version=" ).append( getVersion() );
+            }
+            if( getTemplate() != null ) {
+                params.append( params.length() > 0 ? "&amp;" : "" ).append( "skin=" ).append( getTemplate() );
+            }
 
-            url = m_wikiContext.getURL( WikiContext.VIEW, pageName,
-                                        params.toString() );
+            url = m_wikiContext.getURL( WikiContext.VIEW, pageName, params.toString() );
             linkclass = "wikipage";
         }
 
-        switch( m_format )
-        {
-          case ANCHOR:
-            out.print("<a class=\""+linkclass+"\" href=\""+url+"\" accesskey=\""
-                          + m_accesskey + "\" title=\"" + m_title
-                          + "\" " + forceDownload + ">");
+        switch( m_format ) {
+        case ANCHOR:
+            out.print( "<a class=\"" + linkclass +
+                       "\" href=\"" + url +
+                       "\" accesskey=\"" + m_accesskey +
+                       "\" title=\"" + m_title + "\" " + forceDownload + ">" );
             break;
-          case URL:
+        case URL:
             out.print( url );
             break;
         }

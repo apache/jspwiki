@@ -21,7 +21,6 @@ package org.apache.wiki.plugin;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
@@ -47,8 +46,8 @@ public class IfPluginTest {
     /**
      * Returns a {@link WikiContext} for the given page, with user {@link Users#JANNE} logged in.
      *
-     * @param page given {@link WikiPage}.
-     * @return {@link WikiContext} associated to given {@link WikiPage}.
+     * @param page given {@link Page}.
+     * @return {@link WikiContext} associated to given {@link Page}.
      * @throws WikiException problems while logging in.
      */
     WikiContext getJanneBasedWikiContextFor( final Page page ) throws WikiException {

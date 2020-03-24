@@ -19,7 +19,6 @@
 package org.apache.wiki.providers;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 
@@ -98,16 +97,16 @@ public class FileSystemProvider extends AbstractFileProvider {
             try( final InputStream in = new FileInputStream( file ) ) {
                 final Properties  props = new Properties();
                 props.load( in );
-                page.setAuthor( props.getProperty( WikiPage.AUTHOR ) );
+                page.setAuthor( props.getProperty( Page.AUTHOR ) );
 
-                final String changenote = props.getProperty( WikiPage.CHANGENOTE );
+                final String changenote = props.getProperty( Page.CHANGENOTE );
                 if( changenote != null ) {
-                    page.setAttribute( WikiPage.CHANGENOTE, changenote );
+                    page.setAttribute( Page.CHANGENOTE, changenote );
                 }
 
-                final String viewcount = props.getProperty( WikiPage.VIEWCOUNT );
+                final String viewcount = props.getProperty( Page.VIEWCOUNT );
                 if( viewcount != null ) {
-                    page.setAttribute( WikiPage.VIEWCOUNT, viewcount );
+                    page.setAttribute( Page.VIEWCOUNT, viewcount );
                 }
 
                 // Set the props values to the page attributes

@@ -20,8 +20,8 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.PageContext;
@@ -109,19 +109,12 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
      *  Arg, I hate globals.
      */
     private void buildContext() {
-        //
-        //  Build a clone of the current context
-        //
-        final WikiContext context = m_wikiContext.clone();
-        
+        final Context context = m_wikiContext.clone();
         final Object o = m_iterator.next();
-        if( o instanceof WikiPage ) {
-            context.setPage( (WikiPage)o );
+        if( o instanceof Page ) {
+            context.setPage( ( Page )o );
         }
 
-        //
-        //  Push it to the iterator stack, and set the id.
-        //
         pageContext.setAttribute( Context.ATTR_CONTEXT, context, PageContext.REQUEST_SCOPE );
         pageContext.setAttribute( getId(), o );
     }

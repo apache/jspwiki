@@ -18,9 +18,9 @@
  */
 package org.apache.wiki.tasks.pages;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.pages.PageManager;
@@ -51,11 +51,11 @@ public class SaveWikiPageTask extends Task {
     @Override
     public Outcome execute() throws WikiException {
         // Retrieve attributes
-        final WikiContext context = ( WikiContext ) getWorkflow().getAttribute( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT );
+        final Context context = ( Context ) getWorkflow().getAttribute( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT );
         final String proposedText = (String) getWorkflow().getAttribute( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT );
 
         final Engine engine = context.getEngine();
-        final WikiPage page = context.getPage();
+        final Page page = context.getPage();
 
         // Let the rest of the engine handle actual saving.
         engine.getManager( PageManager.class ).putPageText( page, proposedText );

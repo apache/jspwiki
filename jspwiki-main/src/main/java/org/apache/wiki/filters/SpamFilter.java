@@ -30,7 +30,6 @@ import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -837,7 +836,7 @@ public class SpamFilter extends BasePageFilter {
         }
 
         //  Don't forget to include the change note, too
-        final String changeNote = page.getAttribute( WikiPage.CHANGENOTE );
+        final String changeNote = page.getAttribute( Page.CHANGENOTE );
         if( changeNote != null ) {
             change.append( "\r\n" );
             change.append( changeNote );

@@ -20,8 +20,8 @@ package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
@@ -127,7 +127,7 @@ public class CalendarTag extends WikiTagBase {
     }
 
     private String format( final String txt ) {
-        final WikiPage p = m_wikiContext.getPage();
+        final Page p = m_wikiContext.getPage();
         if( p != null ) {
             return TextUtil.replaceString( txt, "%p", p.getName() );
         }
@@ -197,7 +197,7 @@ public class CalendarTag extends WikiTagBase {
         nextMonth.add( Calendar.MONTH, 1 ); // Now move to 1st day of next month
 
         if ( day.before( nextMonth ) ) {
-            final WikiPage thePage = m_wikiContext.getPage();
+            final Page thePage = m_wikiContext.getPage();
             final String pageName = thePage.getName();
 
             final String calendarDate = m_dateFormat.format( day.getTime() );

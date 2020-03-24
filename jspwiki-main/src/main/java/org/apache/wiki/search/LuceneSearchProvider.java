@@ -307,7 +307,7 @@ public class LuceneSearchProvider implements SearchProvider {
      *  @param page The WikiPage to check
      *  @param text The page text to index.
      */
-    protected synchronized void updateLuceneIndex( final WikiPage page, final String text ) {
+    protected synchronized void updateLuceneIndex( final Page page, final String text ) {
         log.debug("Updating Lucene index for page '" + page.getName() + "'...");
         pageRemoved( page );
 

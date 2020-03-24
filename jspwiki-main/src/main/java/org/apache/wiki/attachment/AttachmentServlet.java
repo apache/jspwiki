@@ -27,10 +27,10 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.RedirectException;
@@ -560,7 +560,7 @@ public class AttachmentServlet extends HttpServlet {
             }
 
             if( changenote != null && changenote.length() > 0 ) {
-                att.setAttribute( WikiPage.CHANGENOTE, changenote );
+                att.setAttribute( Page.CHANGENOTE, changenote );
             }
 
             try {

@@ -18,13 +18,13 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspWriter;
-
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
+
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
+
 
 /**
  *  Writes a comment link.  Body of the link becomes the link text.
@@ -45,58 +45,35 @@ public class CommentLinkTag
      *  {@inheritDoc}
      */
     @Override
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        WikiPage   page     = null;
-        String     pageName = null;
+    public final int doWikiStartTag() throws IOException {
+        final Page page;
+        final String pageName;
         
-        //
         //  Determine the page and the link.
-        //
-        if( m_pageName == null )
-        {
+        if( m_pageName == null ) {
             page = m_wikiContext.getPage();
-            if( page == null )
-            {
+            if( page == null ) {
                 // You can't call this on the page itself anyways.
                 return SKIP_BODY;
             }
-
             pageName = page.getName();
-        }
-        else
-        {
+        } else {
             pageName = m_pageName;
         }
 
-        //
-        //  Finally, print out the correct link, according to what
-        //  user commanded.
-        //
-        JspWriter out = pageContext.getOut();
-
-        switch( m_format )
-        {
-            case ANCHOR:
-                out.print("<a href=\""+getCommentURL(pageName)+"\">");
-                break;
-
-            case URL:
-                out.print( getCommentURL(pageName) );
-                break;
-                
-            default:
-                throw new InternalWikiException("Impossible format "+m_format);
-            
+        //  Finally, print out the correct link, according to what user commanded.
+        final JspWriter out = pageContext.getOut();
+        switch( m_format ) {
+        case ANCHOR: out.print( "<a href=\"" + getCommentURL( pageName ) + "\">" ); break;
+        case URL: out.print( getCommentURL( pageName ) ); break;
+        default: throw new InternalWikiException( "Impossible format " + m_format );
         }
 
         return EVAL_BODY_INCLUDE;
     }
 
-    private String getCommentURL( String pageName )
-    {
-        return m_wikiContext.getURL(WikiContext.COMMENT, pageName);
+    private String getCommentURL( final String pageName ) {
+        return m_wikiContext.getURL( WikiContext.COMMENT, pageName );
     }
 
 }

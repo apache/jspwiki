@@ -141,7 +141,7 @@ public class BugReportHandler implements Plugin {
             //  Now create a new page for this bug report
             final String pageName = findNextPage( context, title, params.get( PARAM_PAGE ) );
             final WikiPage newPage = new WikiPage( context.getEngine(), pageName );
-            final Context newContext = (Context)context.clone();
+            final Context newContext = context.clone();
             newContext.setPage( newPage );
             context.getEngine().getManager( PageManager.class ).saveText( newContext, str.toString() );
 
