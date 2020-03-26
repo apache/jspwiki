@@ -23,7 +23,6 @@ import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.util.HttpUtil;
@@ -91,7 +90,7 @@ public class Preferences extends HashMap< String,String > {
     public static void reloadPreferences( final PageContext pageContext ) {
         final Preferences prefs = new Preferences();
         final Properties props = PropertyReader.loadWebAppProps( pageContext.getServletContext() );
-        final Context ctx = WikiContext.findContext( pageContext );
+        final Context ctx = Context.findContext( pageContext );
         final String dateFormat = ctx.getEngine().getManager( InternationalizationManager.class )
                                            .get( InternationalizationManager.CORE_BUNDLE, getLocale( ctx ), "common.datetimeformat" );
 

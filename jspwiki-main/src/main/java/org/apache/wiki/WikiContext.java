@@ -104,8 +104,7 @@ public class WikiContext implements Context, Command {
     /** User is previewing the changes he just made. */
     public static final String PREVIEW = PageCommand.PREVIEW.getRequestContext();
 
-    /** User has an internal conflict, and does quite not know what to
-        do. Please provide some counseling. */
+    /** User has an internal conflict, and does quite not know what to do. Please provide some counseling. */
     public static final String CONFLICT = PageCommand.CONFLICT.getRequestContext();
 
     /** An error has been encountered and the user needs to be informed. */
@@ -671,13 +670,16 @@ public class WikiContext implements Context, Command {
     }
 
     /**
-     *  This method can be used to find the WikiContext programmatically from a JSP PageContext. We check the request context.
-     *  The wiki context, if it exists, is looked up using the key {@link #ATTR_CONTEXT}.
+     * This method can be used to find the WikiContext programmatically from a JSP PageContext. We check the request context.
+     * The wiki context, if it exists, is looked up using the key {@link #ATTR_CONTEXT}.
      *
-     *  @since 2.4
-     *  @param pageContext the JSP page context
-     *  @return Current WikiContext, or null, of no context exists.
+     * @since 2.4
+     * @param pageContext the JSP page context
+     * @return Current WikiContext, or null, of no context exists.
+     * @deprecated use {@Context#findContext( PageContext )} instead.
+     * @see Context#findContext( PageContext )
      */
+    @Deprecated
     public static WikiContext findContext( final PageContext pageContext ) {
         final HttpServletRequest request = ( HttpServletRequest )pageContext.getRequest();
         return ( WikiContext )request.getAttribute( ATTR_CONTEXT );

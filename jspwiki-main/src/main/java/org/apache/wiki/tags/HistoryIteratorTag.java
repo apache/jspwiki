@@ -19,7 +19,6 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -47,9 +46,10 @@ public class HistoryIteratorTag extends IteratorTag  {
     private static final long serialVersionUID = 0L;
     private static final Logger LOG = Logger.getLogger( HistoryIteratorTag.class );
 
+    /** {@inheritDoc} */
     @Override
     public final int doStartTag() {
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+        m_wikiContext = (Context) pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
         final Engine engine = m_wikiContext.getEngine();
         final Page page = m_wikiContext.getPage();
 
@@ -83,6 +83,7 @@ public class HistoryIteratorTag extends IteratorTag  {
         return SKIP_BODY;
     }
 
+    /** {@inheritDoc} */
     @Override
     public final int doAfterBody() {
         if( bodyContent != null ) {

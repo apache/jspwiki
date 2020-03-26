@@ -19,6 +19,7 @@
 package org.apache.wiki.api.core;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.PageContext;
 import java.security.Principal;
 
 
@@ -249,5 +250,18 @@ public interface Context extends Cloneable, Command {
 
     /** {@inheritDoc} */
     Context clone();
+
+    /**
+     *  This method can be used to find the WikiContext programmatically from a JSP PageContext. We check the request context.
+     *  The wiki context, if it exists, is looked up using the key {@link #ATTR_CONTEXT}.
+     *
+     *  @since 2.4
+     *  @param pageContext the JSP page context
+     *  @return Current WikiContext, or null, of no context exists.
+     */
+    static Context findContext( final PageContext pageContext ) {
+        final HttpServletRequest request = ( HttpServletRequest )pageContext.getRequest();
+        return ( Context )request.getAttribute( ATTR_CONTEXT );
+    }
 
 }

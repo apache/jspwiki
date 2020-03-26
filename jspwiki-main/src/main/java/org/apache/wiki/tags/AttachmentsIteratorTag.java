@@ -19,7 +19,6 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -55,7 +54,7 @@ public class AttachmentsIteratorTag extends IteratorTag {
      */
     @Override
     public final int doStartTag()  {
-        m_wikiContext = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+        m_wikiContext = (Context) pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
         final Engine engine = m_wikiContext.getEngine();
         final AttachmentManager mgr = engine.getManager( AttachmentManager.class );
         final Page page;

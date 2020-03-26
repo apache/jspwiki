@@ -19,7 +19,6 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 
@@ -48,7 +47,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
 	private static final long serialVersionUID = 8945334759300595321L;
 	protected String m_pageName;
     protected Iterator< ? > m_iterator;
-    protected WikiContext m_wikiContext;
+    protected Context m_wikiContext;
 
     private static final Logger log = Logger.getLogger( IteratorTag.class );
 
@@ -88,12 +87,10 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
         // No operation here
     }
     
-    /**
-     *  {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int doStartTag() {
-        m_wikiContext = WikiContext.findContext(pageContext);
+        m_wikiContext = Context.findContext(pageContext);
         resetIterator();
         if( m_iterator == null ) {
             return SKIP_BODY;
@@ -119,9 +116,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
         pageContext.setAttribute( getId(), o );
     }
 
-    /**
-     *  {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int doEndTag() {
         // Return back to the original.
@@ -130,9 +125,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
         return EVAL_PAGE;
     }
 
-    /**
-     *  {@inheritDoc}
-     */
+    /** {@inheritDoc} */
     @Override
     public int doAfterBody() {
         if( bodyContent != null ) {

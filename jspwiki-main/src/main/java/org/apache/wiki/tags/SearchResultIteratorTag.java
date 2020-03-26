@@ -52,7 +52,8 @@ public class SearchResultIteratorTag extends IteratorTag {
     private   int         m_start = 0;
     
     private static final Logger log = Logger.getLogger(SearchResultIteratorTag.class);
-    
+
+    /** {@inheritDoc} */
     @Override
     public void release() {
         super.release();
@@ -68,7 +69,8 @@ public class SearchResultIteratorTag extends IteratorTag {
     {
         m_start = arg;
     }
-    
+
+    /** {@inheritDoc} */
     @Override
     public final int doStartTag() {
         //  Do lazy eval if the search results have not been set.
@@ -86,7 +88,7 @@ public class SearchResultIteratorTag extends IteratorTag {
         }
 
         m_count = 0;
-        m_wikiContext = ( WikiContext )pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+        m_wikiContext = ( Context )pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
 
         return nextResult();
     }
@@ -111,6 +113,7 @@ public class SearchResultIteratorTag extends IteratorTag {
         return SKIP_BODY;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int doAfterBody() {
         if( bodyContent != null ) {
@@ -127,6 +130,7 @@ public class SearchResultIteratorTag extends IteratorTag {
         return nextResult();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int doEndTag() {
         m_iterator = null;

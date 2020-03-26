@@ -21,7 +21,6 @@ package org.apache.wiki.ui;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.modules.BaseModuleManager;
@@ -263,7 +262,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
     /** {@inheritDoc} */
     @Override
     public Map< String, String > listTimeFormats( final PageContext pageContext ) {
-        final WikiContext context = WikiContext.findContext( pageContext );
+        final Context context = Context.findContext( pageContext );
         final Properties props = m_engine.getWikiProperties();
         final ArrayList< String > tfArr = new ArrayList<>(40);
         final LinkedHashMap< String, String > resultMap = new LinkedHashMap<>();

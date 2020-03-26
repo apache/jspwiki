@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.ui.Editor;
 import org.apache.wiki.ui.EditorManager;
@@ -36,8 +36,10 @@ public class EditorIteratorTag extends IteratorTag  {
 
     private static final long serialVersionUID = 0L;
 
-    @Override public final int doStartTag() {
-        m_wikiContext = WikiContext.findContext(pageContext);
+    /** {@inheritDoc} */
+    @Override
+    public final int doStartTag() {
+        m_wikiContext = Context.findContext(pageContext);
         final Engine engine = m_wikiContext.getEngine();
         final EditorManager mgr = engine.getManager( EditorManager.class );
         final String[] editorList = mgr.getEditorList();

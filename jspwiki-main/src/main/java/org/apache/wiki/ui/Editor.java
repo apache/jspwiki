@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
+
 
 /**
  *  Describes an editor.
@@ -28,10 +29,10 @@ import org.apache.wiki.WikiContext;
 public class Editor {
 
     private final String m_editorName;
-    private final WikiContext m_wikiContext;
+    private final Context m_wikiContext;
     private final EditorManager m_editorManager;
 
-    public Editor( final WikiContext wikiContext, final String editorName ) {
+    public Editor( final Context wikiContext, final String editorName ) {
         m_wikiContext = wikiContext;
         m_editorName = editorName;
         m_editorManager = wikiContext.getEngine().getManager( EditorManager.class );
@@ -62,6 +63,7 @@ public class Editor {
         return ifNotSelected;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return m_editorName;
