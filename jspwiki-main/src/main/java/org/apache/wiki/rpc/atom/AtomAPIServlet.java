@@ -20,12 +20,12 @@ package org.apache.wiki.rpc.atom;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
@@ -69,7 +69,7 @@ public class AtomAPIServlet extends HttpServlet {
      */
     @Override
     public void init( final ServletConfig config ) throws ServletException {
-        m_engine = WikiEngine.getInstance( config );
+        m_engine = Wiki.engine( config );
     }
 
     /**
@@ -123,7 +123,7 @@ public class AtomAPIServlet extends HttpServlet {
             final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
             final String pageName = plugin.getNewEntryPage( m_engine, blogid );
             final String username = author.getName();
-            final WikiPage entryPage = new WikiPage( m_engine, pageName );
+            final Page entryPage = new WikiPage( m_engine, pageName );
             entryPage.setAuthor( username );
 
             final WikiContext context = new WikiContext( m_engine, request, entryPage );

@@ -21,6 +21,7 @@ package org.apache.wiki;
 import net.sf.ehcache.CacheManager;
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.url.URLConstructor;
 
 import javax.servlet.RequestDispatcher;
@@ -50,7 +51,7 @@ public class WikiServlet extends HttpServlet {
     @Override
     public void init( final ServletConfig config ) throws ServletException {
         super.init( config );
-        m_engine = WikiEngine.getInstance( config );
+        m_engine = Wiki.engine( config );
         log.info( "WikiServlet initialized." );
     }
 

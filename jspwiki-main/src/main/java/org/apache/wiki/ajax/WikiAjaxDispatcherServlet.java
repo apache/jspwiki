@@ -21,9 +21,9 @@ package org.apache.wiki.ajax;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.util.TextUtil;
@@ -65,7 +65,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
     @Override
     public void init( final ServletConfig config ) throws ServletException {
         super.init( config );
-        m_engine = WikiEngine.getInstance( config );
+        m_engine = Wiki.engine( config );
         PATH_AJAX = "/" + TextUtil.getStringProperty( m_engine.getWikiProperties(), "jspwiki.ajax.url.prefix", "ajax" ) + "/";
         log.info( "WikiAjaxDispatcherServlet initialized." );
     }
@@ -161,7 +161,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
      * @return true if permission is valid
      */
     private boolean validatePermission( final HttpServletRequest req, final AjaxServletContainer container ) {
-        final WikiEngine e = WikiEngine.getInstance(req.getSession().getServletContext(), null);
+        final Engine e = Wiki.engine( req.getSession().getServletContext(), null );
         boolean valid = false;
         if( container != null ) {
             valid = e.getManager( AuthorizationManager.class ).checkPermission( WikiSession.getWikiSession( e, req ), container.permission );

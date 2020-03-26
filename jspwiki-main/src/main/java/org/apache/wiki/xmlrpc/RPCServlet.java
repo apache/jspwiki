@@ -20,8 +20,9 @@ package org.apache.wiki.xmlrpc;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.xmlrpc.ContextXmlRpcHandler;
 import org.apache.xmlrpc.Invoker;
 import org.apache.xmlrpc.XmlRpcContext;
@@ -76,8 +77,9 @@ public class RPCServlet extends HttpServlet {
     /**
      *  Initializes the servlet.
      */
-    @Override public void init( final ServletConfig config ) throws ServletException {
-        m_engine = WikiEngine.getInstance( config );
+    @Override
+    public void init( final ServletConfig config ) throws ServletException {
+        m_engine = Wiki.engine( config );
 
         String handlerName = config.getInitParameter( "handler" );
         String prefix      = config.getInitParameter( "prefix" );
@@ -103,7 +105,8 @@ public class RPCServlet extends HttpServlet {
     /**
      *  Handle HTTP POST.  This is an XML-RPC call, and we'll just forward the query to an XmlRpcServer.
      */
-    @Override public void doPost( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
+    @Override
+    public void doPost( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
         log.debug("Received POST to RPCServlet");
 
         try {
@@ -132,7 +135,8 @@ public class RPCServlet extends HttpServlet {
     /**
      *  Handles HTTP GET.  However, we do not respond to GET requests, other than to show an explanatory text.
      */
-    @Override public void doGet( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
+    @Override
+    public void doGet( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
         log.debug("Received HTTP GET to RPCServlet");
 
         try {
@@ -157,7 +161,8 @@ public class RPCServlet extends HttpServlet {
             m_clazz = clazz;
         }
 
-        @Override public Object execute( final String method, final Vector params, final XmlRpcContext context ) throws Exception {
+        @Override
+        public Object execute( final String method, final Vector params, final XmlRpcContext context ) throws Exception {
             final WikiRPCHandler rpchandler = (WikiRPCHandler) m_clazz.newInstance();
             rpchandler.initialize( ((WikiXmlRpcContext)context).getWikiContext() );
 
@@ -169,27 +174,30 @@ public class RPCServlet extends HttpServlet {
     private static class WikiXmlRpcContext implements XmlRpcContext {
 
         private XmlRpcHandlerMapping m_mapping;
-        private WikiContext m_context;
+        private Context m_context;
 
-        public WikiXmlRpcContext( final XmlRpcHandlerMapping map, final WikiContext ctx ) {
+        public WikiXmlRpcContext( final XmlRpcHandlerMapping map, final Context ctx ) {
             m_mapping = map;
             m_context = ctx;
         }
 
-        @Override public XmlRpcHandlerMapping getHandlerMapping()
+        @Override
+        public XmlRpcHandlerMapping getHandlerMapping()
         {
             return m_mapping;
         }
 
-        @Override public String getPassword() {
+        @Override
+        public String getPassword() {
             return null;
         }
 
-        @Override public String getUserName() {
+        @Override
+        public String getUserName() {
             return null;
         }
 
-        public WikiContext getWikiContext()
+        public Context getWikiContext()
         {
             return m_context;
         }

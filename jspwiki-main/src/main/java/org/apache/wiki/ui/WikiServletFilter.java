@@ -21,10 +21,10 @@ package org.apache.wiki.ui;
 import org.apache.log4j.Logger;
 import org.apache.log4j.NDC;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -78,7 +78,7 @@ public class WikiServletFilter implements Filter {
             context.log( "== JSPWIKI WARNING ==  : This container is running with a security manager. JSPWiki does not yet really support that right now. See issue JSPWIKI-129 for details and information on how to proceed." );
         }
 
-        m_engine = WikiEngine.getInstance( context, null );
+        m_engine = Wiki.engine( context, null );
     }
 
     /**
