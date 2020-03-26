@@ -423,9 +423,9 @@ public class WikiEngine implements Engine {
     @SuppressWarnings( "unchecked" )
     public < T > List< T > getManagers( final Class< T > manager ) {
         return ( List< T > )managers.entrySet().stream()
-                .filter( e -> manager.isAssignableFrom( e.getKey() ) )
-                .map( Map.Entry::getValue )
-                .collect( Collectors.toList() );
+                                               .filter( e -> manager.isAssignableFrom( e.getKey() ) )
+                                               .map( Map.Entry::getValue )
+                                               .collect( Collectors.toList() );
     }
 
     /** {@inheritDoc} */
