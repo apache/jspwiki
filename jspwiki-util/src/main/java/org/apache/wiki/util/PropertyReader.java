@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -50,16 +49,14 @@ public final class PropertyReader {
 	
     /**
      * Path to the base property file, usually overridden by values provided in
-     * a jspwiki-custom.properties file
-     * {@value #DEFAULT_JSPWIKI_CONFIG}
+     * a jspwiki-custom.properties file {@value #DEFAULT_JSPWIKI_CONFIG}
      */
     public static final String DEFAULT_JSPWIKI_CONFIG = "/ini/jspwiki.properties";
 
-    /** The servlet context parameter (from web.xml)  that defines where the
-     *  config file is to be found.
-     *  If it is not defined, checks the Java System Property, if that is not defined either, 
-     *  uses the default as defined by DEFAULT_PROPERTYFILE.
-     *  {@value #DEFAULT_JSPWIKI_CONFIG}
+    /**
+     * The servlet context parameter (from web.xml)  that defines where the config file is to be found. If it is not defined, checks
+     * the Java System Property, if that is not defined either, uses the default as defined by DEFAULT_PROPERTYFILE.
+     * {@value #DEFAULT_JSPWIKI_CONFIG}
      */
     public static final String PARAM_CUSTOMCONFIG = "jspwiki.custom.config";
 
@@ -110,11 +107,10 @@ public final class PropertyReader {
      *  @param context A Servlet Context which is used to find the properties
      *  @return A filled Properties object with all the cascaded properties in place
      */
-    public static Properties loadWebAppProps( ServletContext context ) {
-        String propertyFile = getInitParameter( context, PARAM_CUSTOMCONFIG );
-
-        try( InputStream propertyStream = loadCustomPropertiesFile(context, propertyFile) ) {
-            Properties props = getDefaultProperties();
+    public static Properties loadWebAppProps( final ServletContext context ) {
+        final String propertyFile = getInitParameter( context, PARAM_CUSTOMCONFIG );
+        try( final InputStream propertyStream = loadCustomPropertiesFile(context, propertyFile) ) {
+            final Properties props = getDefaultProperties();
             if( propertyStream == null ) {
                 LOG.info("No custom property file found, relying on JSPWiki defaults.");
             } else {
@@ -131,7 +127,7 @@ public final class PropertyReader {
             expandVars( props );
 
             return props;
-        } catch( Exception e ) {
+        } catch( final Exception e ) {
             LOG.error( "JSPWiki: Unable to load and setup properties from jspwiki.properties. " + e.getMessage() );
         }
 
@@ -141,13 +137,13 @@ public final class PropertyReader {
     /**
      * Figure out where our properties lie.
      * 
-     * @param context
-     * @param propertyFile
-     * @return
-     * @throws FileNotFoundException
+     * @param context servlet context
+     * @param propertyFile property file
+     * @return inputstream holding the properties file
+     * @throws FileNotFoundException properties file not found
      */
-	static InputStream loadCustomPropertiesFile(ServletContext context, String propertyFile) throws FileNotFoundException {
-		InputStream propertyStream;
+	static InputStream loadCustomPropertiesFile( final ServletContext context, final String propertyFile ) throws FileNotFoundException {
+        final InputStream propertyStream;
 		if( propertyFile == null ) {
 		    LOG.info( "No " + PARAM_CUSTOMCONFIG + " defined for this context, looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
 		    //  Use the custom property file at the default location
@@ -166,12 +162,12 @@ public final class PropertyReader {
      *  @return A property set.
      */
     public static Properties getDefaultProperties() {
-        Properties props = new Properties();
-        try( InputStream in = PropertyReader.class.getResourceAsStream( DEFAULT_JSPWIKI_CONFIG ) ) {
+        final Properties props = new Properties();
+        try( final InputStream in = PropertyReader.class.getResourceAsStream( DEFAULT_JSPWIKI_CONFIG ) ) {
             if( in != null ) {
                 props.load( in );
             }
-        } catch( IOException e ) {
+        } catch( final IOException e ) {
             LOG.error( "Unable to load default propertyfile '" + DEFAULT_JSPWIKI_CONFIG + "'" + e.getMessage(), e );
         }
         
@@ -185,15 +181,15 @@ public final class PropertyReader {
      *  @return A property set consisting of the default property set and custom property set, with
      *          the latter's properties replacing the former for any common values
      */
-    public static Properties getCombinedProperties( String fileName ) {
-        Properties newPropertySet = getDefaultProperties();
-        try( InputStream in = PropertyReader.class.getResourceAsStream( fileName ) ) {
+    public static Properties getCombinedProperties( final String fileName ) {
+        final Properties newPropertySet = getDefaultProperties();
+        try( final InputStream in = PropertyReader.class.getResourceAsStream( fileName ) ) {
             if( in != null ) {
                 newPropertySet.load( in );
             } else {
                 LOG.error( "*** Custom property file \"" + fileName + "\" not found, relying on default file alone." );
             }
-        } catch( IOException e ) {
+        } catch( final IOException e ) {
             LOG.error( "Unable to load propertyfile '" + fileName + "'" + e.getMessage(), e );
         }
 
@@ -201,16 +197,13 @@ public final class PropertyReader {
     }
 
     /**
-     *  Returns the ServletContext Init parameter if has been set, otherwise
-     *  checks for a System property of the same name. If neither are defined,
-     *  returns null. This permits both Servlet- and System-defined cascading
-     *  properties.
+     * Returns the ServletContext Init parameter if has been set, otherwise checks for a System property of the same name. If neither are
+     * defined, returns null. This permits both Servlet- and System-defined cascading properties.
      */
-    private static String getInitParameter( ServletContext context, String name ) {
-        String value = context.getInitParameter( name );
-        return ( value != null )
-                ? value
-                : System.getProperty( name ) ;
+    private static String getInitParameter( final ServletContext context, final String name ) {
+        final String value = context.getInitParameter( name );
+        return value != null ? value
+                             : System.getProperty( name ) ;
     }
 
 
@@ -221,7 +214,7 @@ public final class PropertyReader {
      * @param defaultProperties   properties to merge the cascading properties to
      * @since 2.5.x
      */
-    private static void loadWebAppPropsCascade( ServletContext context, Properties defaultProperties ) {
+    private static void loadWebAppPropsCascade( final ServletContext context, final Properties defaultProperties ) {
         if( getInitParameter( context, PARAM_CUSTOMCONFIG_CASCADEPREFIX + "1" ) == null ) {
             LOG.debug( " No cascading properties defined for this context" );
             return;
@@ -229,38 +222,30 @@ public final class PropertyReader {
 
         // get into cascade...
         int depth = 0;
-        boolean more = true;
-        while( more ) {
+        while( true ) {
             depth++;
-            String propertyFile = getInitParameter( context, PARAM_CUSTOMCONFIG_CASCADEPREFIX + depth );
-
+            final String propertyFile = getInitParameter( context, PARAM_CUSTOMCONFIG_CASCADEPREFIX + depth );
             if( propertyFile == null ) {
-                more = false;
                 break;
             }
 
-            try( InputStream propertyStream = new FileInputStream( new File( propertyFile ) ) ) {
+            try( final InputStream propertyStream = new FileInputStream( new File( propertyFile ) ) ) {
                 LOG.info( " Reading additional properties from " + propertyFile + " and merge to cascade." );
-                Properties additionalProps = new Properties();
+                final Properties additionalProps = new Properties();
                 additionalProps.load( propertyStream );
                 defaultProperties.putAll( additionalProps );
-            } catch( Exception e ) {
+            } catch( final Exception e ) {
                 LOG.error( "JSPWiki: Unable to load and setup properties from " + propertyFile + "." + e.getMessage() );
             }
         }
-
-        return;
     }
 
     /**
-     *  You define a property variable by using the prefix "var.x" as a
-     *  property. In property values you can then use the "$x" identifier
+     *  You define a property variable by using the prefix "var.x" as a property. In property values you can then use the "$x" identifier
      *  to use this variable.
      *
-     *  For example you could declare a base directory for all your files
-     *  like this and use it in all your other property definitions with
-     *  a "$basedir". Note that it does not matter if you define the
-     *  variable before its usage.
+     *  For example you could declare a base directory for all your files like this and use it in all your other property definitions with
+     *  a "$basedir". Note that it does not matter if you define the variable before its usage.
      *  <pre>
      *  var.basedir = /p/mywiki;
      *  jspwiki.fileSystemProvider.pageDir =         $basedir/www/
@@ -270,17 +255,17 @@ public final class PropertyReader {
      *
      * @param properties - properties to expand;
      */
-    public static void expandVars(Properties properties) {
+    public static void expandVars( final Properties properties ) {
         //get variable name/values from properties...
-        Map< String, String > vars = new HashMap< String, String >();
+        final Map< String, String > vars = new HashMap<>();
         Enumeration< ? > propertyList = properties.propertyNames();
         while( propertyList.hasMoreElements() ) {
-            String propertyName = ( String )propertyList.nextElement();
-            String propertyValue = properties.getProperty( propertyName );
+            final String propertyName = ( String )propertyList.nextElement();
+            final String propertyValue = properties.getProperty( propertyName );
 
             if ( propertyName.startsWith( PARAM_VAR_DECLARATION ) ) {
-                String varName = propertyName.substring( 4, propertyName.length() ).trim();
-                String varValue = propertyValue.trim();
+                final String varName = propertyName.substring( 4 ).trim();
+                final String varValue = propertyValue.trim();
                 vars.put( varName, varValue );
             }
         }
@@ -288,7 +273,7 @@ public final class PropertyReader {
         //now, substitute $ values in property values with vars...
         propertyList = properties.propertyNames();
         while( propertyList.hasMoreElements() ) {
-            String propertyName = ( String )propertyList.nextElement();
+            final String propertyName = ( String )propertyList.nextElement();
             String propertyValue = properties.getProperty( propertyName );
 
             //skip var properties itself...
@@ -296,11 +281,9 @@ public final class PropertyReader {
                 continue;
             }
 
-            Iterator< Map.Entry< String, String > > iter = vars.entrySet().iterator();
-            while ( iter.hasNext() ) {
-                Map.Entry< String, String > entry = iter.next();
-                String varName = entry.getKey();
-                String varValue = entry.getValue();
+            for( final Map.Entry< String, String > entry : vars.entrySet() ) {
+                final String varName = entry.getKey();
+                final String varValue = entry.getValue();
 
                 //replace old property value, using the same variabe. If we don't overwrite
                 //the same one the next loop works with the original one again and
@@ -308,7 +291,7 @@ public final class PropertyReader {
                 propertyValue = TextUtil.replaceString( propertyValue, PARAM_VAR_IDENTIFIER + varName, varValue );
 
                 //add the new PropertyValue to the properties
-                properties.put(propertyName, propertyValue);
+                properties.put( propertyName, propertyValue );
             }
         }
     }
@@ -321,7 +304,7 @@ public final class PropertyReader {
      * @param resourceName the name of the resource
      * @return the input stream of the resource or <b>null</b> if the resource was not found
      */
-    public static InputStream locateClassPathResource( ServletContext context, String resourceName ) {
+    public static InputStream locateClassPathResource( final ServletContext context, final String resourceName ) {
         InputStream result;
         String currResourceLocation;
 
@@ -358,26 +341,24 @@ public final class PropertyReader {
      * @param name a resource name
      * @return a resource location
      */
-    static String createResourceLocation( String path, String name ) {
+    static String createResourceLocation( final String path, final String name ) {
         Validate.notEmpty( name, "name is empty" );
-        StringBuilder result = new StringBuilder();
+        final StringBuilder result = new StringBuilder();
 
         // strip an ending "/"
-        String sanitizedPath = ( path != null && !path.isEmpty() && path.endsWith( "/" ) ? path.substring( 0, path.length() - 1 ) : path );
+        final String sanitizedPath = ( path != null && !path.isEmpty() && path.endsWith( "/" ) ? path.substring( 0, path.length() - 1 ) : path );
 
         // strip leading "/"
-        String sanitizedName = ( name.startsWith( "/" ) ? name.substring( 1, name.length() ) : name );
+        final String sanitizedName = ( name.startsWith( "/" ) ? name.substring( 1 ) : name );
 
         // append the optional path
-        if( sanitizedPath == null || sanitizedPath.isEmpty() ) {
-            result.append( "/" );
-        } else {
+        if( sanitizedPath != null && !sanitizedPath.isEmpty() ) {
             if( !sanitizedPath.startsWith( "/" ) ) {
                 result.append( "/" );
             }
             result.append( sanitizedPath );
-            result.append( "/" );
         }
+        result.append( "/" );
 
         // append the name
         result.append( sanitizedName );
