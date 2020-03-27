@@ -18,11 +18,9 @@
  */
 package org.apache.wiki.api.spi;
 
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import java.nio.file.ProviderNotFoundException;
 import java.util.Properties;
@@ -31,32 +29,18 @@ import java.util.ServiceLoader;
 
 public class Wiki {
 
-    private static final String ATTR_ENGINE_SPI = "org.apache.wiki.api.core.Engine";
-    private static final String PROP_ENGINE_PROVIDER_IMPL = "jspwiki.provider.impl.engine";
-    private static final String DEFAULT_ENGINE_PROVIDER_IMPL = "org.apache.wiki.spi.EngineSPIDefaultImpl";
+    private static final String PROP_PROVIDER_IMPL_ENGINE = "jspwiki.provider.impl.engine";
+    private static final String DEFAULT_PROVIDER_IMPL_ENGINE = "org.apache.wiki.spi.EngineSPIDefaultImpl";
 
-    public static Engine engine( final ServletConfig config ) {
-        return engine( config.getServletContext(), null );
+    private static EngineSPI engineSPI;
+
+    static void init( final ServletContext context ) {
+        final Properties properties = PropertyReader.loadWebAppProps( context );
+        engineSPI = getSPI( EngineSPI.class, properties, PROP_PROVIDER_IMPL_ENGINE, DEFAULT_PROVIDER_IMPL_ENGINE );
     }
 
-    public static Engine engine( final ServletConfig config, final Properties props ) {
-        return engine( config.getServletContext(), props );
-    }
-
-    public static Engine engine( final ServletContext context, final Properties props ) {
-        final Engine engine = ( Engine )context.getAttribute( ATTR_ENGINE_SPI );
-        if( engine == null ) {
-            final Properties properties = loadPropertiesFrom( context, props );
-            return getSPI( EngineSPI.class, properties, PROP_ENGINE_PROVIDER_IMPL, DEFAULT_ENGINE_PROVIDER_IMPL ).getInstance( context, props );
-        }
-        return engine;
-    }
-
-    static Properties loadPropertiesFrom( final ServletContext context, final Properties props ) {
-        if( props == null ) {
-            return PropertyReader.loadWebAppProps( context );
-        }
-        return props;
+    public static EngineDSL engine() {
+        return new EngineDSL( engineSPI );
     }
 
     static < SPI > SPI getSPI( final Class< SPI > spi, final Properties props, final String prop, final String defValue ) {

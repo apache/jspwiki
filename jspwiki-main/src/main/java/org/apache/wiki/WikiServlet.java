@@ -51,7 +51,7 @@ public class WikiServlet extends HttpServlet {
     @Override
     public void init( final ServletConfig config ) throws ServletException {
         super.init( config );
-        m_engine = Wiki.engine( config );
+        m_engine = Wiki.engine().find( config );
         log.info( "WikiServlet initialized." );
     }
 

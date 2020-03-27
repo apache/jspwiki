@@ -101,6 +101,11 @@
       <listener-class>org.apache.wiki.auth.SessionMonitor</listener-class>
    </listener>
 
+   <!-- servlet context listener to configure API's SPI -->
+   <listener>
+       <listener-class>org.apache.wiki.api.spi.WikiSPIServletContextListener</listener-class>
+   </listener>
+
    <!--
        Now, let's define the XML-RPC interfaces.  You probably don't have to
        touch these.
