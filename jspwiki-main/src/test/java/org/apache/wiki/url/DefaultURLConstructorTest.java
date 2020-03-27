@@ -23,7 +23,6 @@
 package org.apache.wiki.url;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.junit.jupiter.api.Assertions;
@@ -120,7 +119,7 @@ public class DefaultURLConstructorTest
     {
         final URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Edit.jsp?page=Main", c.makeURL(WikiContext.EDIT,"Main",null) );
+        Assertions.assertEquals( "/test/Edit.jsp?page=Main", c.makeURL(ContextEnum.PAGE_EDIT.getRequestContext(),"Main",null) );
     }
 
     @Test
@@ -129,7 +128,7 @@ public class DefaultURLConstructorTest
     {
         final URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",null) );
+        Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(ContextEnum.PAGE_ATTACH.getRequestContext(),"Main/foo.txt",null) );
     }
 
     @Test
@@ -138,7 +137,7 @@ public class DefaultURLConstructorTest
     {
         final URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",null) );
+        Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(ContextEnum.PAGE_ATTACH.getRequestContext(),"Main/foo.txt",null) );
     }
 
     @Test
@@ -147,7 +146,7 @@ public class DefaultURLConstructorTest
     {
         final URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/foo.jsp", c.makeURL(WikiContext.NONE,"foo.jsp",null) );
+        Assertions.assertEquals( "/test/foo.jsp", c.makeURL(ContextEnum.PAGE_NONE.getRequestContext(),"foo.jsp",null) );
     }
 
     @Test
@@ -156,7 +155,7 @@ public class DefaultURLConstructorTest
     {
         final URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/foo.jsp?a=1&amp;b=2", c.makeURL(WikiContext.NONE,"foo.jsp","a=1&amp;b=2") );
+        Assertions.assertEquals( "/test/foo.jsp?a=1&amp;b=2", c.makeURL(ContextEnum.PAGE_NONE.getRequestContext(),"foo.jsp","a=1&amp;b=2") );
     }
 
     @Test

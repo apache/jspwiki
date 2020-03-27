@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
@@ -162,7 +161,7 @@ public class InsertPage implements Plugin {
                  *  its own page, because we need the links to be correct.
                  */
 
-                final WikiContext includedContext = (WikiContext) context.clone();
+                final Context includedContext = context.clone();
                 includedContext.setPage( page );
 
                 String pageData = engine.getManager( PageManager.class ).getPureText( page );
@@ -202,7 +201,7 @@ public class InsertPage implements Plugin {
                     res.append( defaultstr );
                 } else {
                     res.append( "There is no page called '" + includedPage + "'.  Would you like to " );
-                    res.append( "<a href=\"" + context.getURL( WikiContext.EDIT, includedPage ) + "\">create it?</a>" );
+                    res.append( "<a href=\"" + context.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), includedPage ) + "\">create it?</a>" );
                 }
             }
         } else {

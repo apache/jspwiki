@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
@@ -62,7 +62,7 @@ public class Groups implements Plugin {
             final String name = groups[ i ].getName();
             
             // Make URL
-            final String url = engine.getManager( URLConstructor.class ).makeURL( WikiContext.VIEW_GROUP, name,  null );
+            final String url = engine.getManager( URLConstructor.class ).makeURL( ContextEnum.GROUP_VIEW.getRequestContext(), name,  null );
             
             // Create hyperlink
             s.append( "<a href=\"" );

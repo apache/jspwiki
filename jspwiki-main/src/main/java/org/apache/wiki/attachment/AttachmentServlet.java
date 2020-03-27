@@ -25,9 +25,9 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
@@ -185,7 +185,7 @@ public class AttachmentServlet extends HttpServlet {
     // FIXME: Messages would need to be localized somehow.
     @Override
     public void doGet( final HttpServletRequest  req, final HttpServletResponse res ) throws IOException {
-        final Context context = Wiki.context().create( m_engine, req, WikiContext.ATTACH );
+        final Context context = Wiki.context().create( m_engine, req, ContextEnum.PAGE_ATTACH.getRequestContext() );
         final AttachmentManager mgr = m_engine.getManager( AttachmentManager.class );
         final AuthorizationManager authmgr = m_engine.getManager( AuthorizationManager.class );
         final String version = req.getParameter( HDR_VERSION );
@@ -264,7 +264,7 @@ public class AttachmentServlet extends HttpServlet {
                     res.sendRedirect(
                         validateNextPage(
                             TextUtil.urlEncodeUTF8(nextPage),
-                            m_engine.getURL( WikiContext.ERROR, "", null )
+                            m_engine.getURL( ContextEnum.WIKI_ERROR.getRequestContext(), "", null )
                         )
                     );
                 }
@@ -388,7 +388,7 @@ public class AttachmentServlet extends HttpServlet {
     protected String upload( final HttpServletRequest req ) throws RedirectException, IOException {
         final String msg;
         final String attName = "(unknown)";
-        final String errorPage = m_engine.getURL( WikiContext.ERROR, "", null ); // If something bad happened, Upload should be able to take care of most stuff
+        final String errorPage = m_engine.getURL( ContextEnum.WIKI_ERROR.getRequestContext(), "", null ); // If something bad happened, Upload should be able to take care of most stuff
         String nextPage = errorPage;
         final String progressId = req.getParameter( "progressid" );
 
@@ -401,7 +401,7 @@ public class AttachmentServlet extends HttpServlet {
             final FileItemFactory factory = new DiskFileItemFactory();
 
             // Create the context _before_ Multipart operations, otherwise strict servlet containers may fail when setting encoding.
-            final Context context = Wiki.context().create( m_engine, req, WikiContext.ATTACH );
+            final Context context = Wiki.context().create( m_engine, req, ContextEnum.PAGE_ATTACH.getRequestContext() );
             final UploadListener pl = new UploadListener();
 
             m_engine.getManager( ProgressManager.class ).startProgress( pl, progressId );

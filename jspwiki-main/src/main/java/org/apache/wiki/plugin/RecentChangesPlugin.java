@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -136,7 +137,8 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements Plugi
                     olddate = lastmod;
                 }
 
-                final String href = context.getURL( pageref instanceof Attachment ? WikiContext.ATTACH : WikiContext.VIEW, pageref.getName() );
+                final String href = context.getURL( pageref instanceof Attachment ? ContextEnum.PAGE_ATTACH.getRequestContext()
+                                                                                  : ContextEnum.PAGE_VIEW.getRequestContext(), pageref.getName() );
                 Element link = XhtmlUtil.link( href, engine.getManager( RenderingManager.class ).beautifyTitle( pageref.getName() ) );
                 final Element row = XhtmlUtil.element( XHTML.tr );
                 final Element col = XhtmlUtil.element( XHTML.td );

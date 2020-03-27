@@ -18,16 +18,16 @@
  */
 package org.apache.wiki.htmltowiki;
 
-import java.io.IOException;
-import java.io.StringReader;
-
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.input.sax.XMLReaderSAX2Factory;
 import org.jdom2.output.XMLOutputter;
+
+import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * Converting Html to Wiki Markup with NekoHtml for converting html to xhtml and
@@ -55,7 +55,7 @@ public class HtmlStringToWikiTranslator
      *  @throws JDOMException If parsing fails
      *  @throws IOException For other kinds of errors.
      */
-    public String translate( String html ) throws JDOMException, IOException
+    public String translate( final String html ) throws JDOMException, IOException
     {
         return translate( html, new XHtmlToWikiConfig() );
     }
@@ -71,7 +71,7 @@ public class HtmlStringToWikiTranslator
      *  @throws JDOMException If parsing fails
      *  @throws IOException For other kinds of errors.
      */
-    public String translate( String html, WikiContext wikiContext ) throws JDOMException, IOException
+    public String translate( final String html, final Context wikiContext ) throws JDOMException, IOException
     {
         return translate( html, new XHtmlToWikiConfig( wikiContext ) );
     }
@@ -87,11 +87,11 @@ public class HtmlStringToWikiTranslator
      *  @throws IOException For other kinds of errors.
      */
 
-    public String translate( String html, XHtmlToWikiConfig config ) throws JDOMException, IOException
+    public String translate( final String html, final XHtmlToWikiConfig config ) throws JDOMException, IOException
     {
-        Element element = htmlStringToElement( html );
-        XHtmlElementToWikiTranslator xhtmlTranslator = new XHtmlElementToWikiTranslator( element, config );
-        String wikiMarkup = xhtmlTranslator.getWikiString();
+        final Element element = htmlStringToElement( html );
+        final XHtmlElementToWikiTranslator xhtmlTranslator = new XHtmlElementToWikiTranslator( element, config );
+        final String wikiMarkup = xhtmlTranslator.getWikiString();
         return wikiMarkup;
     }
 
@@ -103,11 +103,11 @@ public class HtmlStringToWikiTranslator
      * @throws JDOMException
      * @throws IOException
      */
-    private Element htmlStringToElement( String html ) throws JDOMException, IOException
+    private Element htmlStringToElement( final String html ) throws JDOMException, IOException
     {
-        SAXBuilder builder = new SAXBuilder( new XMLReaderSAX2Factory( true, CYBERNEKO_PARSER), null, null );
-        Document doc = builder.build( new StringReader( html ) );
-        Element element = doc.getRootElement();
+        final SAXBuilder builder = new SAXBuilder( new XMLReaderSAX2Factory( true, CYBERNEKO_PARSER), null, null );
+        final Document doc = builder.build( new StringReader( html ) );
+        final Element element = doc.getRootElement();
         return element;
     }
 
@@ -117,10 +117,10 @@ public class HtmlStringToWikiTranslator
      *  @param element The element to get HTML from.
      *  @return HTML
      */
-    public static String element2String( Element element )
+    public static String element2String( final Element element )
     {
-        Document document = new Document( element );
-        XMLOutputter outputter = new XMLOutputter();
+        final Document document = new Document( element );
+        final XMLOutputter outputter = new XMLOutputter();
         return outputter.outputString( document );
     }
 

@@ -30,7 +30,6 @@ import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.StringTransmutator;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -354,19 +353,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 break;
 
             case ATTACHMENT:
-                final String attlink = m_context.getURL( WikiContext.ATTACH,
-                                                   link );
-
-                final String infolink = m_context.getURL( WikiContext.INFO,
-                                                    link );
-
-                final String imglink = m_context.getURL( WikiContext.NONE,
-                                                   "images/attachment_small.png" );
-
+                final String attlink = m_context.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), link );
+                final String infolink = m_context.getURL( ContextEnum.PAGE_INFO.getRequestContext(), link );
+                final String imglink = m_context.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "images/attachment_small.png" );
                 el = createAnchor( ATTACHMENT, attlink, text, "" );
 
-                if(  m_engine.getManager( AttachmentManager.class ).forceDownload( attlink ) )
-                {
+                if(  m_engine.getManager( AttachmentManager.class ).forceDownload( attlink ) ) {
                     el.setAttribute("download", "");
                 }
 
@@ -924,7 +916,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         {
             if( m_outlinkImageURL == null )
             {
-                m_outlinkImageURL = m_context.getURL( WikiContext.NONE, OUTLINK_IMAGE );
+                m_outlinkImageURL = m_context.getURL( ContextEnum.PAGE_NONE.getRequestContext(), OUTLINK_IMAGE );
             }
 
             el = new Element( "img" ).setAttribute( "class", OUTLINK );
@@ -1205,7 +1197,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     callMutatorChain( m_attachmentLinkMutatorChain, attachment );
 
                     if( m_linkParsingOperations.isImageLink( linkref, isImageInlining(), getInlineImagePatterns() ) ) {
-                        attachment = m_context.getURL( WikiContext.ATTACH, attachment );
+                        attachment = m_context.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), attachment );
                         sb.append( handleImageLink( attachment, linktext, link.hasReference() ) );
                     } else {
                         makeLink( ATTACHMENT, attachment, linktext, null, link.getAttributes() );

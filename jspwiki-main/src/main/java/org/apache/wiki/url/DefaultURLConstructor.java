@@ -19,7 +19,6 @@
 package org.apache.wiki.url;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
@@ -128,9 +127,9 @@ public class DefaultURLConstructor implements URLConstructor {
     @Override
     public String makeURL( final String context, final String name, String parameters ) {
         if( parameters != null && parameters.length() > 0 ) {
-            if( context.equals( WikiContext.ATTACH ) ) {
+            if( context.equals( ContextEnum.PAGE_ATTACH.getRequestContext() ) ) {
                 parameters = "?" + parameters;
-            } else if( context.equals( WikiContext.NONE ) ) {
+            } else if( context.equals( ContextEnum.PAGE_NONE.getRequestContext() ) ) {
                 parameters = name.indexOf( '?' ) != -1 ? "&amp;" : "?" + parameters;
             } else {
                 parameters = "&amp;" + parameters;
@@ -149,7 +148,7 @@ public class DefaultURLConstructor implements URLConstructor {
     @Override
     public String parsePage( final String context, final HttpServletRequest request, final Charset encoding ) {
         String pagereq = request.getParameter( "page" );
-        if( context.equals(WikiContext.ATTACH) ) {
+        if( context.equals( ContextEnum.PAGE_ATTACH.getRequestContext() ) ) {
             pagereq = URLConstructor.parsePageFromURL( request, encoding );
         }
 

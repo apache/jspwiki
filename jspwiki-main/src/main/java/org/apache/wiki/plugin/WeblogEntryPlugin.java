@@ -19,8 +19,8 @@
 package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -104,7 +104,7 @@ public class WeblogEntryPlugin implements Plugin {
             entryText = rb.getString("weblogentryplugin.newentry");
         }
 
-        final String url = context.getURL(WikiContext.NONE, "NewBlogEntry.jsp", "page=" + engine.encodeName( weblogName ) );
+        final String url = context.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "NewBlogEntry.jsp", "page=" + engine.encodeName( weblogName ) );
         return "<a href=\"" + url + "\">" + entryText + "</a>";
     }
 

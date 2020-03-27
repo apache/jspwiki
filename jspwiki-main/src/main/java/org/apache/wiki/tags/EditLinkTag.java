@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
@@ -114,11 +114,11 @@ public class EditLinkTag extends WikiLinkTag {
         final JspWriter out = pageContext.getOut();
         switch( m_format ) {
           case ANCHOR:
-            out.print("<a href=\""+m_wikiContext.getURL(WikiContext.EDIT,pageName, versionString)
-                     +"\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\">");
+            out.print( "<a href=\"" + m_wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), pageName, versionString ) +
+                       "\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\">" );
             break;
           case URL:
-            out.print( m_wikiContext.getURL(WikiContext.EDIT,pageName,versionString) );
+            out.print( m_wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), pageName, versionString ) );
             break;
         }
 

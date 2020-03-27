@@ -19,10 +19,10 @@
 package org.apache.wiki.auth;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
@@ -220,7 +220,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
                 log.info( "User " + currentUser.getName() + " has no access - redirecting (permission=" + context.requiredPermission() + ")" );
                 context.getWikiSession().addMessage( MessageFormat.format( rb.getString("security.error.noaccess"), context.getName() ) );
             }
-            response.sendRedirect( m_engine.getURL(WikiContext.LOGIN, pageurl, null ) );
+            response.sendRedirect( m_engine.getURL( ContextEnum.WIKI_LOGIN.getRequestContext(), pageurl, null ) );
         }
         return allowed;
     }

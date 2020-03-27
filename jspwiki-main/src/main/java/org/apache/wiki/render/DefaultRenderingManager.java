@@ -24,9 +24,9 @@ import net.sf.ehcache.Element;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.wiki.StringTransmutator;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.FilterException;
@@ -250,7 +250,7 @@ public class DefaultRenderingManager implements RenderingManager {
     }
 
     boolean useCache( final Context context ) {
-        return m_useCache && WikiContext.VIEW.equals( context.getRequestContext() );
+        return m_useCache && ContextEnum.PAGE_VIEW.getRequestContext().equals( context.getRequestContext() );
     }
 
     /**
@@ -296,7 +296,7 @@ public class DefaultRenderingManager implements RenderingManager {
     public String getHTML( final String pagename, final int version ) {
         final Page page = m_engine.getManager( PageManager.class ).getPage( pagename, version );
         final Context context = Wiki.context().create( m_engine, page );
-        context.setRequestContext( WikiContext.NONE );
+        context.setRequestContext( ContextEnum.PAGE_NONE.getRequestContext() );
         return getHTML( context, page );
     }
 

@@ -45,10 +45,10 @@ import java.util.ResourceBundle;
 /**
  * Stores the contents of a plugin in a WikiDocument DOM tree.
  * <p/>
- * If the WikiContext.VAR_WYSIWYG_EDITOR_MODE is set to Boolean.TRUE in the context, then the plugin is rendered as WikiMarkup.
+ * If the Context.VAR_WYSIWYG_EDITOR_MODE is set to Boolean.TRUE in the context, then the plugin is rendered as WikiMarkup.
  * This allows an HTML editor to work without rendering the plugin each time as well.
  * <p/>
- * If WikiContext.VAR_EXECUTE_PLUGINS is set to Boolean.FALSE, then the plugin is not executed.
+ * If Context.VAR_EXECUTE_PLUGINS is set to Boolean.FALSE, then the plugin is not executed.
  *
  * @since 2.4
  */

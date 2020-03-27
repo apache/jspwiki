@@ -20,8 +20,8 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
@@ -84,7 +84,7 @@ public class Note implements Plugin {
         if( resource != null && resource.startsWith( "/" ) ) {
         	resource = resource.substring(1);
         }
-        return ctx.getURL( WikiContext.NONE, resource );
+        return ctx.getURL( ContextEnum.PAGE_NONE.getRequestContext(), resource );
     }
 
 

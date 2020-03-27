@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.url;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 
@@ -59,7 +58,7 @@ public class ShortViewURLConstructor extends ShortURLConstructor {
         if( parameters != null && parameters.length() > 0 ) {
             if( context.equals( ContextEnum.PAGE_ATTACH.getRequestContext() ) || context.equals( ContextEnum.PAGE_VIEW.getRequestContext() ) || name == null ) {
                 parameters = "?" + parameters;
-            } else if( context.equals(WikiContext.NONE) ) {
+            } else if( context.equals(ContextEnum.PAGE_NONE.getRequestContext()) ) {
                 parameters = (name.indexOf('?') != -1 ) ? "&amp;" : "?" + parameters;
             } else {
                 parameters = "&amp;" + parameters;

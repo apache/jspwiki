@@ -19,8 +19,8 @@
 package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
@@ -82,7 +82,7 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
 
         if( page != null ) {
             Collection< String > links  = refmgr.findReferrers( page.getName() );
-            String wikitext = "";
+            String wikitext;
 
             super.initialize( context, params );
 
@@ -108,9 +108,13 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
                     final Object[] args = { "" + ( links.size() - items) };
                     extras = MessageFormat.format(extras, args);
 
-                    result.append( "<br />" );
-                    result.append( "<a class='morelink' href='"+context.getURL( WikiContext.INFO, page.getName() )+"' ");
-                    result.append( ">"+extras+"</a><br />");
+                    result.append( "<br />" )
+                          .append( "<a class='morelink' href='" )
+                          .append( context.getURL( ContextEnum.PAGE_INFO.getRequestContext(), page.getName() ) )
+                          .append( "' " )
+                          .append( ">" )
+                          .append( extras )
+                          .append( "</a><br />" );
                 }
             }
 
@@ -126,7 +130,7 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
                     result = new StringBuilder();
                     result.append( links.size() );
                     if( m_lastModified ) {
-                        result.append( " (" + m_dateFormat.format( m_dateLastModified ) + ")" );
+                        result.append( " (" ).append( m_dateFormat.format( m_dateLastModified ) ).append( ")" );
                     }
                 }
             }

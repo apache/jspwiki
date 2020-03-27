@@ -20,7 +20,6 @@ package org.apache.wiki.url;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.util.TextUtil;
@@ -74,45 +73,45 @@ public class ShortURLConstructor extends DefaultURLConstructor {
                 return doReplacement("%u","" );
             }
             return doReplacement( viewurl, name );
-        } else if( context.equals( WikiContext.PREVIEW ) ) {
+        } else if( context.equals( ContextEnum.PAGE_PREVIEW.getRequestContext() ) ) {
             if( name == null ) {
                 return doReplacement("%u","" );
             }
             return doReplacement( viewurl + "?do=Preview", name );
-        } else if( context.equals( WikiContext.EDIT ) ) {
+        } else if( context.equals( ContextEnum.PAGE_EDIT.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=Edit", name );
-        } else if( context.equals( WikiContext.ATTACH ) ) {
+        } else if( context.equals( ContextEnum.PAGE_ATTACH.getRequestContext() ) ) {
             return doReplacement( "%uattach/%n", name );
-        } else if( context.equals( WikiContext.INFO ) ) {
+        } else if( context.equals( ContextEnum.PAGE_INFO.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=PageInfo", name );
-        } else if( context.equals( WikiContext.DIFF ) ) {
+        } else if( context.equals( ContextEnum.PAGE_DIFF.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=Diff", name );
-        } else if( context.equals( WikiContext.NONE ) ) {
+        } else if( context.equals( ContextEnum.PAGE_NONE.getRequestContext() ) ) {
             return doReplacement( "%u%n", name );
-        } else if( context.equals( WikiContext.UPLOAD ) ) {
+        } else if( context.equals( ContextEnum.PAGE_UPLOAD.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=Upload", name ); 
-        } else if( context.equals( WikiContext.COMMENT ) ) {
+        } else if( context.equals( ContextEnum.PAGE_COMMENT.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=Comment", name ); 
-        } else if( context.equals( WikiContext.LOGIN ) ) {
+        } else if( context.equals( ContextEnum.WIKI_LOGIN.getRequestContext() ) ) {
             final String loginUrl = "%pLogin.jsp?redirect=%n";
             return doReplacement( loginUrl, name ); 
-        } else if( context.equals( WikiContext.DELETE ) ) {
+        } else if( context.equals( ContextEnum.PAGE_DELETE.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=Delete", name ); 
-        } else if( context.equals( WikiContext.CONFLICT ) ) {
+        } else if( context.equals( ContextEnum.PAGE_CONFLICT.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=PageModified", name ); 
-        } else if( context.equals( WikiContext.PREFS ) ) {
+        } else if( context.equals( ContextEnum.WIKI_PREFS.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=UserPreferences", name ); 
-        } else if( context.equals( WikiContext.FIND ) ) {
+        } else if( context.equals( ContextEnum.WIKI_FIND.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=Search", name ); 
-        } else if( context.equals( WikiContext.ERROR ) ) {
+        } else if( context.equals( ContextEnum.WIKI_ERROR.getRequestContext() ) ) {
             return doReplacement( "%uError.jsp", name );
-        } else if( context.equals( WikiContext.CREATE_GROUP ) ) {
+        } else if( context.equals( ContextEnum.WIKI_CREATE_GROUP.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=NewGroup", name );
-        } else if( context.equals( WikiContext.DELETE_GROUP ) ) {
+        } else if( context.equals( ContextEnum.GROUP_DELETE.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=DeleteGroup", name );
-        } else if( context.equals( WikiContext.EDIT_GROUP ) ) {
+        } else if( context.equals( ContextEnum.GROUP_EDIT.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=EditGroup", name );
-        } else if( context.equals( WikiContext.VIEW_GROUP ) ) {
+        } else if( context.equals( ContextEnum.GROUP_VIEW.getRequestContext() ) ) {
             return doReplacement( viewurl + "?do=Group&group=%n", name );
         }
         
@@ -127,7 +126,7 @@ public class ShortURLConstructor extends DefaultURLConstructor {
         if( parameters != null && parameters.length() > 0 ) {
             if( context.equals( ContextEnum.PAGE_ATTACH.getRequestContext() ) || context.equals( ContextEnum.PAGE_VIEW.getRequestContext() ) ) {
                 parameters = "?" + parameters;
-            } else if( context.equals(WikiContext.NONE) ) {
+            } else if( context.equals(ContextEnum.PAGE_NONE.getRequestContext()) ) {
                 parameters = (name.indexOf('?') != -1 ) ? "&amp;" : "?" + parameters;
             } else {
                 parameters = "&amp;"+parameters;

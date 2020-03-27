@@ -18,9 +18,9 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -125,7 +125,7 @@ public class Image implements Plugin {
             final Attachment att = mgr.getAttachmentInfo( context, src );
 
             if( att != null ) {
-                src = context.getURL( WikiContext.ATTACH, att.getName() );
+                src = context.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), att.getName() );
             }
         } catch( final ProviderException e ) {
             throw new PluginException( "Attachment info failed: " + e.getMessage() );

@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.htmltowiki;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 
 
 /**
@@ -50,10 +50,10 @@ public class XHtmlToWikiConfig {
 
         //  Figure out the actual URLs.
         //  NB: The logic here will fail if you add something else after the Wiki page name in VIEW or ATTACH
-        m_wikiJspPage = wikiContext.getURL( WikiContext.VIEW, "" );
-        m_editJspPage = wikiContext.getURL( WikiContext.EDIT, "" );
-        m_attachPage = wikiContext.getURL( WikiContext.ATTACH, "" );
-        m_pageInfoJsp = wikiContext.getURL( WikiContext.INFO, "" );
+        m_wikiJspPage = wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), "" );
+        m_editJspPage = wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), "" );
+        m_attachPage = wikiContext.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), "" );
+        m_pageInfoJsp = wikiContext.getURL( ContextEnum.PAGE_INFO.getRequestContext(), "" );
     }
 
     private void setWikiContext( final Context wikiContext ) {

@@ -29,9 +29,9 @@ import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -554,7 +554,7 @@ public class SpamFilter extends BasePageFilter {
                 final String userAgent     = req.getHeader( "User-Agent" );
                 final String referrer      = req.getHeader( "Referer");
                 final String permalink     = context.getViewURL( context.getPage().getName() );
-                final String commentType   = context.getRequestContext().equals( WikiContext.COMMENT ) ? "comment" : "edit";
+                final String commentType   = context.getRequestContext().equals( ContextEnum.PAGE_COMMENT.getRequestContext() ) ? "comment" : "edit";
                 final String commentAuthor = context.getCurrentUser().getName();
                 final String commentAuthorEmail = null;
                 final String commentAuthorURL   = null;
@@ -896,10 +896,10 @@ public class SpamFilter extends BasePageFilter {
      */
     private String getRedirectPage( final Context ctx ) {
         if( m_useCaptcha ) {
-            return ctx.getURL( WikiContext.NONE, "Captcha.jsp", "page= " +ctx.getEngine().encodeName( ctx.getPage().getName() ) );
+            return ctx.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "Captcha.jsp", "page= " +ctx.getEngine().encodeName( ctx.getPage().getName() ) );
         }
 
-        return ctx.getURL( WikiContext.VIEW, m_errorPage );
+        return ctx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), m_errorPage );
     }
 
     /**
@@ -993,7 +993,7 @@ public class SpamFilter extends BasePageFilter {
                 final Change change = getChange( context, EditorManager.getEditedText( pageContext ) );
                 log( context, REJECT, "MissingHash", change.m_change );
 
-                final String redirect = context.getURL( WikiContext.VIEW,"SessionExpired" );
+                final String redirect = context.getURL( ContextEnum.PAGE_VIEW.getRequestContext(),"SessionExpired" );
                 ( ( HttpServletResponse )pageContext.getResponse() ).sendRedirect( redirect );
                 return false;
             }

@@ -19,7 +19,6 @@
 package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
@@ -369,7 +368,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
             final String addcomment = rb.getString("weblogentryplugin.addcomment");
 
             buffer.append( "<a href=\""+
-                           entryCtx.getURL( WikiContext.COMMENT, commentPageName, "nc=" + numComments ) + "\">" +
+                           entryCtx.getURL( ContextEnum.PAGE_COMMENT.getRequestContext(), commentPageName, "nc=" + numComments ) + "\">" +
                            MessageFormat.format( addcomment, numComments ) +
                            "</a>" );
         }

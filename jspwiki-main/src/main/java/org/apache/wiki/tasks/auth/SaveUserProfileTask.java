@@ -1,7 +1,7 @@
 package org.apache.wiki.tasks.auth;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.UserManager;
@@ -67,7 +67,7 @@ public class SaveUserProfileTask extends Task {
                                                  profile.getLoginName(),
                                                  profile.getFullname(),
                                                  profile.getEmail(),
-                                                 m_engine.getURL( WikiContext.LOGIN, null, null ) );
+                                                 m_engine.getURL( ContextEnum.WIKI_LOGIN.getRequestContext(), null, null ) );
                 MailUtil.sendMessage( m_engine.getWikiProperties(), to, subject, content);
             } catch ( final AddressException e) {
                 LOG.debug( e.getMessage(), e );
