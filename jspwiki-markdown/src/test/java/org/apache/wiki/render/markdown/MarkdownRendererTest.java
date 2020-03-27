@@ -20,13 +20,12 @@ package org.apache.wiki.render.markdown;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.spi.Wiki;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.markdown.MarkdownParser;
@@ -196,7 +195,7 @@ public class MarkdownRendererTest {
         final String src = "This should be an [attachment link](Test/TestAtt.txt)";
         newPage( "Test" );
 
-        final Attachment att = new Attachment( testEngine, "Test", "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( testEngine, "Test", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         testEngine.getManager( AttachmentManager.class ).storeAttachment( att, testEngine.makeAttachmentFile() );
 
@@ -292,11 +291,11 @@ public class MarkdownRendererTest {
     }
 
     String translate( final String src ) throws Exception {
-        return translate( new WikiPage( testEngine, PAGE_NAME ), src );
+        return translate( Wiki.contents().page( testEngine, PAGE_NAME ), src );
     }
 
     String translate( final Engine e, final String src ) throws Exception {
-        return translate( e, new WikiPage( testEngine, PAGE_NAME ), src );
+        return translate( e, Wiki.contents().page( testEngine, PAGE_NAME ), src );
     }
 
     String translate( final Page p, final String src ) throws Exception {
