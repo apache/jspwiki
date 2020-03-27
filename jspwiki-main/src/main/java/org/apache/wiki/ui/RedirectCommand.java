@@ -19,6 +19,7 @@
 package org.apache.wiki.ui;
 
 import org.apache.wiki.api.core.Command;
+import org.apache.wiki.api.core.ContextEnum;
 
 import java.security.Permission;
 
@@ -32,11 +33,21 @@ import java.security.Permission;
  */
 public final class RedirectCommand extends AbstractCommand {
 
-    public static final Command REDIRECT = new RedirectCommand( "", "%u%n", null, null );
+    public static final Command REDIRECT = new RedirectCommand( ContextEnum.REDIRECT, null );
 
     /**
      * Constructs a new Command with a specified wiki context, URL pattern, type, and content template. The WikiPage for this action is
      * initialized to <code>null</code>.
+     *
+     * @param currentContext the current context.
+     * @param target the target of the command
+     * @throws IllegalArgumentException if the request content, URL pattern, or type is <code>null</code>
+     */
+    private RedirectCommand( final ContextEnum currentContext, final String target ) {
+        this( currentContext.getRequestContext(), currentContext.getUrlPattern(), currentContext.getContentTemplate(), target );
+    }
+
+    /**
      *
      * @param requestContext the request context
      * @param urlPattern the URL pattern

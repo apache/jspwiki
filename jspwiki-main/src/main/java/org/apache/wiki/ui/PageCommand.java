@@ -19,6 +19,7 @@
 package org.apache.wiki.ui;
 
 import org.apache.wiki.api.core.Command;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
@@ -33,50 +34,37 @@ import java.security.Permission;
  */
 public final class PageCommand extends AbstractCommand {
 
-    public static final Command ATTACH
-        = new PageCommand( "att", "%uattach/%n", null, null, PagePermission.UPLOAD_ACTION );
-
-    public static final Command COMMENT
-        = new PageCommand( "comment", "%uComment.jsp?page=%n", "CommentContent.jsp", null, PagePermission.COMMENT_ACTION );
-
-    public static final Command CONFLICT 
-        = new PageCommand( "conflict", "%uPageModified.jsp?page=%n", "ConflictContent.jsp", null, PagePermission.VIEW_ACTION );
-
-    public static final Command DELETE
-        = new PageCommand( "del", "%uDelete.jsp?page=%n", null, null, PagePermission.DELETE_ACTION );
-
-    public static final Command DIFF
-        = new PageCommand( "diff", "%uDiff.jsp?page=%n", "DiffContent.jsp", null, PagePermission.VIEW_ACTION );
-
-    public static final Command EDIT
-        = new PageCommand( "edit", "%uEdit.jsp?page=%n", "EditContent.jsp", null, PagePermission.EDIT_ACTION );
-
-    public static final Command INFO
-        = new PageCommand( "info", "%uPageInfo.jsp?page=%n", "InfoContent.jsp", null, PagePermission.VIEW_ACTION );
-
-    public static final Command PREVIEW
-        = new PageCommand( "preview", "%uPreview.jsp?page=%n", "PreviewContent.jsp", null, PagePermission.VIEW_ACTION );
-
-    public static final Command RENAME
-        = new PageCommand( "rename", "%uRename.jsp?page=%n", "InfoContent.jsp", null, PagePermission.RENAME_ACTION );
-
-    public static final Command RSS
-        = new PageCommand( "rss", "%urss.jsp", null, null, PagePermission.VIEW_ACTION );
-
-    public static final Command UPLOAD
-        = new PageCommand( "upload", "%uUpload.jsp?page=%n", null, null, PagePermission.UPLOAD_ACTION );
-
-    public static final Command VIEW
-        = new PageCommand( "view", "%uWiki.jsp?page=%n", "PageContent.jsp", null, PagePermission.VIEW_ACTION );
-
-    public static final Command NONE
-        = new PageCommand( "", "%u%n", null, null, null );
-
+    public static final Command ATTACH = new PageCommand( ContextEnum.PAGE_ATTACH, null, PagePermission.UPLOAD_ACTION );
+    public static final Command COMMENT = new PageCommand( ContextEnum.PAGE_COMMENT, null, PagePermission.COMMENT_ACTION );
+    public static final Command CONFLICT = new PageCommand( ContextEnum.PAGE_CONFLICT, null, PagePermission.VIEW_ACTION );
+    public static final Command DELETE = new PageCommand( ContextEnum.PAGE_DELETE, null, PagePermission.DELETE_ACTION );
+    public static final Command DIFF = new PageCommand( ContextEnum.PAGE_DIFF, null, PagePermission.VIEW_ACTION );
+    public static final Command EDIT = new PageCommand( ContextEnum.PAGE_EDIT, null, PagePermission.EDIT_ACTION );
+    public static final Command INFO = new PageCommand( ContextEnum.PAGE_INFO, null, PagePermission.VIEW_ACTION );
+    public static final Command PREVIEW = new PageCommand( ContextEnum.PAGE_PREVIEW, null, PagePermission.VIEW_ACTION );
+    public static final Command RENAME = new PageCommand( ContextEnum.PAGE_RENAME, null, PagePermission.RENAME_ACTION );
+    public static final Command RSS = new PageCommand( ContextEnum.PAGE_RSS, null, PagePermission.VIEW_ACTION );
+    public static final Command UPLOAD = new PageCommand( ContextEnum.PAGE_UPLOAD, null, PagePermission.UPLOAD_ACTION );
+    public static final Command VIEW = new PageCommand( ContextEnum.PAGE_VIEW, null, PagePermission.VIEW_ACTION );
+    public static final Command NONE = new PageCommand( ContextEnum.PAGE_NONE, null, null );
     public static final Command OTHER = NONE;
 
     private final String m_action;
     
     private final Permission m_permission;
+
+    /**
+     * Constructs a new Command with a specified wiki context, URL pattern, type, and content template. The target for this command is
+     * initialized to <code>null</code>.
+     *
+     * @param currentContext the current context.
+     * @param target the target of the command (a WikiPage); may be <code>null</code>
+     * @param action the action used to construct a suitable PagePermission
+     * @throws IllegalArgumentException if the request content, URL pattern, or type is <code>null</code>
+     */
+    private PageCommand( final ContextEnum currentContext, final Page target, final String action ) {
+        this( currentContext.getRequestContext(), currentContext.getUrlPattern(), currentContext.getContentTemplate(), target, action );
+    }
     
     /**
      * Constructs a new Command with a specified wiki context, URL pattern, type, and content template. The target for this command is

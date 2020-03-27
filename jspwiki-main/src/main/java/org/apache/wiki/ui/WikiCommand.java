@@ -19,6 +19,7 @@
 package org.apache.wiki.ui;
 
 import org.apache.wiki.api.core.Command;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.permissions.WikiPermission;
 
@@ -33,39 +34,43 @@ import java.security.Permission;
  */
 public final class WikiCommand extends AbstractCommand {
 
-    public static final Command CREATE_GROUP
-        = new WikiCommand( "createGroup", "%uNewGroup.jsp", "NewGroupContent.jsp", null, WikiPermission.CREATE_GROUPS_ACTION );
-
-    public static final Command ERROR
-        = new WikiCommand( "error", "%uError.jsp", "DisplayMessage.jsp", null, null );
-
-    public static final Command FIND
-        = new WikiCommand( "find", "%uSearch.jsp", "FindContent.jsp", null, null );
-
-    public static final Command INSTALL
-        = new WikiCommand( "install", "%uInstall.jsp", null, null, null );
-
-    public static final Command LOGIN
-        = new WikiCommand( "login", "%uLogin.jsp?redirect=%n", "LoginContent.jsp", null, WikiPermission.LOGIN_ACTION );
-
-    public static final Command LOGOUT
-        = new WikiCommand( "logout", "%uLogout.jsp", null, null, WikiPermission.LOGIN_ACTION );
-
-    public static final Command MESSAGE
-        = new WikiCommand( "message", "%uMessage.jsp", "DisplayMessage.jsp", null, null );
-    
-    public static final Command PREFS
-        = new WikiCommand( "prefs", "%uUserPreferences.jsp", "PreferencesContent.jsp", null, WikiPermission.EDIT_PROFILE_ACTION );
-
-    public static final Command WORKFLOW
-        = new WikiCommand( "workflow", "%uWorkflow.jsp", "WorkflowContent.jsp", null, null );
-
-    public static final Command ADMIN
-        = new WikiCommand( "admin", "%uadmin/Admin.jsp", "AdminContent.jsp", null );
+    public static final Command ADMIN = new WikiCommand( ContextEnum.WIKI_ADMIN, null );
+    public static final Command CREATE_GROUP = new WikiCommand( ContextEnum.WIKI_CREATE_GROUP, null, WikiPermission.CREATE_GROUPS_ACTION );
+    public static final Command ERROR = new WikiCommand( ContextEnum.WIKI_ERROR, null, null );
+    public static final Command FIND = new WikiCommand( ContextEnum.WIKI_FIND, null, null );
+    public static final Command INSTALL = new WikiCommand( ContextEnum.WIKI_INSTALL, null, null );
+    public static final Command LOGIN = new WikiCommand( ContextEnum.WIKI_LOGIN, null, WikiPermission.LOGIN_ACTION );
+    public static final Command LOGOUT = new WikiCommand( ContextEnum.WIKI_LOGOUT, null, WikiPermission.LOGIN_ACTION );
+    public static final Command MESSAGE = new WikiCommand( ContextEnum.WIKI_MESSAGE, null, null );
+    public static final Command PREFS = new WikiCommand( ContextEnum.WIKI_PREFS, null, WikiPermission.EDIT_PROFILE_ACTION );
+    public static final Command WORKFLOW = new WikiCommand( ContextEnum.WIKI_WORKFLOW, null, null );
 
     private final String m_action;
     
     private final Permission m_permission;
+
+    /**
+     * Constructs a new Command with a specified wiki context, URL pattern, type, and content template. The WikiPage for this action is
+     * initialized to <code>null</code>.
+     *
+     * @param currentContext the current context.
+     * @throws IllegalArgumentException if the request content, URL pattern, or type is <code>null</code>
+     */
+    private WikiCommand( final ContextEnum currentContext, final String target ) {
+        this( currentContext.getRequestContext(), currentContext.getUrlPattern(), currentContext.getContentTemplate(), target );
+    }
+
+    /**
+     * Constructs a new Command with a specified wiki context, URL pattern, type, and content template. The WikiPage for this action is
+     * initialized to <code>null</code>.
+     *
+     * @param currentContext the current context.
+     * @param action The action
+     * @throws IllegalArgumentException if the request content, URL pattern, or type is <code>null</code>
+     */
+    private WikiCommand( final ContextEnum currentContext, final String target, final String action ) {
+        this( currentContext.getRequestContext(), currentContext.getUrlPattern(), currentContext.getContentTemplate(), target, action );
+    }
     
     /**
      * Constructs a new Command with a specified wiki context, URL pattern, type, and content template. The WikiPage for this action is
@@ -114,7 +119,8 @@ public final class WikiCommand extends AbstractCommand {
      * @return the new targeted command
      * @throws IllegalArgumentException if the target is not of the correct type
      */
-    @Override public Command targetedCommand( final Object target ) {
+    @Override
+    public Command targetedCommand( final Object target ) {
         if ( !( target instanceof String ) ) {
             throw new IllegalArgumentException( "Target must non-null and of type String." );
         }
@@ -126,14 +132,16 @@ public final class WikiCommand extends AbstractCommand {
      *
      * @see org.apache.wiki.api.core.Command#getName()
      */
-    @Override public String getName() {
+    @Override
+    public String getName() {
         return getJSPFriendlyName();
     }
 
     /**
      * @see org.apache.wiki.api.core.Command#requiredPermission()
      */
-    @Override public Permission requiredPermission() {
+    @Override
+    public Permission requiredPermission() {
         return m_permission;
     }
 

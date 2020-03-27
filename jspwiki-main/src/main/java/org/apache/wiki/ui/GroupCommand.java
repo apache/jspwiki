@@ -19,6 +19,7 @@
 package org.apache.wiki.ui;
 
 import org.apache.wiki.api.core.Command;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.permissions.GroupPermission;
 
@@ -33,29 +34,30 @@ import java.security.Permission;
 public final class GroupCommand extends AbstractCommand {
 
     /** GroupCommand for deleting a group. */
-    public static final Command DELETE_GROUP = new GroupCommand( "deleteGroup",
-                                                       "%uDeleteGroup.jsp?group=%n",
-                                                  null,
-                                                          null,
-                                                                 GroupPermission.DELETE_ACTION );
+    public static final Command DELETE_GROUP = new GroupCommand( ContextEnum.GROUP_DELETE,null, GroupPermission.DELETE_ACTION );
 
     /** GroupCommand for editing a group. */
-       public static final Command EDIT_GROUP = new GroupCommand( "editGroup",
-                                                        "%uEditGroup.jsp?group=%n",
-                                                   "EditGroupContent.jsp",
-                                                            null,
-                                                                 GroupPermission.EDIT_ACTION );
+    public static final Command EDIT_GROUP = new GroupCommand( ContextEnum.GROUP_EDIT, null, GroupPermission.EDIT_ACTION );
 
        /** GroupCommand for viewing a group. */
-    public static final Command VIEW_GROUP = new GroupCommand( "viewGroup",
-                                                     "%uGroup.jsp?group=%n",
-                                                "GroupContent.jsp",
-                                                        null,
-                                                               GroupPermission.VIEW_ACTION );
+    public static final Command VIEW_GROUP = new GroupCommand( ContextEnum.GROUP_VIEW, null, GroupPermission.VIEW_ACTION );
 
     private final String m_action;
     
     private final Permission m_permission;
+
+    /**
+     * Constructs a new Command with a specified wiki context, URL pattern, type, and content template. The WikiPage for this command is
+     * initialized to <code>null</code>.
+     *
+     * @param currentContext the current context.
+     * @param target the target of this command (a GroupPrincipal representing a Group); may be <code>null</code>
+     * @param action the action used to construct a suitable GroupPermission
+     * @throws IllegalArgumentException if the request content, URL pattern, or type is <code>null</code>
+     */
+    private GroupCommand( final ContextEnum currentContext, final GroupPrincipal target, final String action ) {
+        this( currentContext.getRequestContext(), currentContext.getUrlPattern(), currentContext.getContentTemplate(), target, action );
+    }
     
     /**
      * Constructs a new Command with a specified wiki context, URL pattern, type, and content template. The WikiPage for this command is
