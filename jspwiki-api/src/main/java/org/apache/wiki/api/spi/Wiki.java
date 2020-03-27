@@ -31,18 +31,22 @@ public class Wiki {
 
     private static final String PROP_PROVIDER_IMPL_CONTEXT = "jspwiki.provider.impl.context";
     private static final String PROP_PROVIDER_IMPL_ENGINE = "jspwiki.provider.impl.engine";
+    private static final String PROP_PROVIDER_IMPL_SESSION = "jspwiki.provider.impl.session";
     private static final String DEFAULT_PROVIDER_IMPL_CONTEXT = "org.apache.wiki.spi.ContextSPIDefaultImpl";
     private static final String DEFAULT_PROVIDER_IMPL_ENGINE = "org.apache.wiki.spi.EngineSPIDefaultImpl";
+    private static final String DEFAULT_PROVIDER_IMPL_SESSION = "org.apache.wiki.spi.SessionSPIDefaultImpl";
 
     // default values
     private static Properties properties = PropertyReader.getDefaultProperties();
     private static ContextSPI contextSPI = getSPI( ContextSPI.class, properties, PROP_PROVIDER_IMPL_CONTEXT, DEFAULT_PROVIDER_IMPL_CONTEXT );
     private static EngineSPI engineSPI = getSPI( EngineSPI.class, properties, PROP_PROVIDER_IMPL_ENGINE, DEFAULT_PROVIDER_IMPL_ENGINE );
+    private static SessionSPI sessionSPI = getSPI( SessionSPI.class, properties, PROP_PROVIDER_IMPL_SESSION, DEFAULT_PROVIDER_IMPL_SESSION );
 
     static void init( final ServletContext context ) {
         properties = PropertyReader.loadWebAppProps( context );
         contextSPI = getSPI( ContextSPI.class, properties, PROP_PROVIDER_IMPL_CONTEXT, DEFAULT_PROVIDER_IMPL_CONTEXT );
         engineSPI = getSPI( EngineSPI.class, properties, PROP_PROVIDER_IMPL_ENGINE, DEFAULT_PROVIDER_IMPL_ENGINE );
+        sessionSPI = getSPI( SessionSPI.class, properties, PROP_PROVIDER_IMPL_SESSION, DEFAULT_PROVIDER_IMPL_SESSION );
     }
 
     public static ContextDSL context() {
@@ -51,6 +55,10 @@ public class Wiki {
 
     public static EngineDSL engine() {
         return new EngineDSL( engineSPI );
+    }
+
+    public static SessionDSL session() {
+        return new SessionDSL( sessionSPI );
     }
 
     static < SPI > SPI getSPI( final Class< SPI > spi, final Properties props, final String prop, final String defValue ) {

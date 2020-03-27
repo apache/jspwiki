@@ -18,10 +18,10 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.UserManager;
@@ -131,7 +131,7 @@ public class UserProfileTag extends WikiTagBase {
                 //  Default back to the declared user name
                 //
                 final Engine engine = this.m_wikiContext.getEngine();
-                final Session wikiSession = WikiSession.getWikiSession( engine, ( HttpServletRequest )pageContext.getRequest() );
+                final Session wikiSession = Wiki.session().find( engine, ( HttpServletRequest )pageContext.getRequest() );
                 final Principal user = wikiSession.getUserPrincipal();
 
                 if( user != null ) {
@@ -168,7 +168,7 @@ public class UserProfileTag extends WikiTagBase {
      * and extracting those that are of type Group.
      * @return the list of groups, sorted by name
      */
-    public static String printGroups( final WikiContext context ) {
+    public static String printGroups( final Context context ) {
         final Principal[] roles = context.getWikiSession().getRoles();
         final List< String > tempRoles = new ArrayList<>();
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
@@ -203,7 +203,7 @@ public class UserProfileTag extends WikiTagBase {
      * and extracting those that are of type Role.
      * @return the list of roles, sorted by name
      */
-    public static String printRoles( final WikiContext context ) {
+    public static String printRoles( final Context context ) {
         final Principal[] roles = context.getWikiSession().getRoles();
         final List< String > tempRoles = new ArrayList<>();
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );

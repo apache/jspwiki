@@ -18,9 +18,9 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
@@ -40,15 +40,16 @@ public class UserNameTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
 
-    private static String notStartWithBlankOrColon = "^[^( |:)]";
+    private static final String notStartWithBlankOrColon = "^[^( |:)]";
 
-    private static String noColons = "[^:]*";
+    private static final String noColons = "[^:]*";
 
     private static final Pattern VALID_USER_NAME_PATTERN = Pattern.compile(notStartWithBlankOrColon + noColons);
 
-    @Override public final int doWikiStartTag() throws IOException {
+    @Override
+    public final int doWikiStartTag() throws IOException {
         final Engine engine = m_wikiContext.getEngine();
-        final Session wikiSession = WikiSession.getWikiSession(engine, (HttpServletRequest) pageContext.getRequest());
+        final Session wikiSession = Wiki.session().find( engine, ( HttpServletRequest )pageContext.getRequest() );
         final Principal user = wikiSession.getUserPrincipal();
 
         if( user != null ) {

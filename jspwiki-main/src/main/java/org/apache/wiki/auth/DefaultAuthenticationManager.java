@@ -19,10 +19,10 @@
 package org.apache.wiki.auth;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.authorize.WebAuthorizer;
 import org.apache.wiki.auth.authorize.WebContainerAuthorizer;
 import org.apache.wiki.auth.login.AnonymousLoginModule;
@@ -277,12 +277,12 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             log.debug( "Invalidating Session for session ID=" + sid );
         }
         // Retrieve the associated Session and clear the Principal set
-        final Session wikiSession = WikiSession.getWikiSession( m_engine, request );
+        final Session wikiSession = Wiki.session().find( m_engine, request );
         final Principal originalPrincipal = wikiSession.getLoginPrincipal();
         wikiSession.invalidate();
 
         // Remove the wikiSession from the WikiSession cache
-        WikiSession.removeWikiSession( m_engine, request );
+        Wiki.session().remove( m_engine, request );
 
         // We need to flush the HTTP session too
         if( session != null ) {

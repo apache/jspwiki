@@ -30,7 +30,7 @@ import java.io.IOException;
 /**
  * Handles logins made from within JSPWiki.
  *
- * @see org.apache.wiki.WikiSession#getWikiSession(Engine,HttpServletRequest)
+ * @see org.apache.wiki.api.spi.SessionSPI#find(Engine, HttpServletRequest)
  * @since 2.3
  */
 public final class WebContainerCallbackHandler implements CallbackHandler {

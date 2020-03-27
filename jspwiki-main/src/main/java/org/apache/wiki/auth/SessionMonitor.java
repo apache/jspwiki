@@ -19,9 +19,9 @@
 package org.apache.wiki.auth;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
@@ -110,7 +110,7 @@ public class SessionMonitor implements HttpSessionListener {
     }
     /**
      * <p>Looks up the wiki session associated with a user's Http session and adds it to the session cache. This method will return the
-     * "guest session" as constructed by {@link org.apache.wiki.WikiSession#guestSession(Engine)} if the HttpSession is not currently
+     * "guest session" as constructed by {@link org.apache.wiki.api.spi.SessionSPI#guest(Engine)} if the HttpSession is not currently
      * associated with a WikiSession. This method is guaranteed to return a non-<code>null</code> WikiSession.</p>
      * <p>Internally, the session is stored in a HashMap; keys are the HttpSession objects, while the values are
      * {@link java.lang.ref.WeakReference}-wrapped WikiSessions.</p>
@@ -127,7 +127,7 @@ public class SessionMonitor implements HttpSessionListener {
             if( log.isDebugEnabled() ) {
                 log.debug( "Looking up WikiSession for session ID=" + sid + "... not found. Creating guestSession()" );
             }
-            wikiSession = WikiSession.guestSession( m_engine );
+            wikiSession = Wiki.session().guest( m_engine );
             synchronized( m_sessions ) {
                 m_sessions.put( sid, wikiSession );
             }

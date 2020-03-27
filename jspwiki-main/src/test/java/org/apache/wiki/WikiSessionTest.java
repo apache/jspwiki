@@ -26,6 +26,7 @@ import net.sourceforge.stripes.mock.MockServletContext;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -71,7 +72,7 @@ public class WikiSessionTest
         Principal[] principals;
 
         // Test roles for guest session
-        session = WikiSession.guestSession( m_engine );
+        session = Wiki.session().guest( m_engine );
         principals = session.getRoles();
         Assertions.assertTrue(  session.isAnonymous() );
         Assertions.assertFalse( session.isAuthenticated() );
@@ -124,7 +125,7 @@ public class WikiSessionTest
         request = m_engine.newHttpRequest();
         request.setUserPrincipal( null );
         runSecurityFilter(m_engine, request);
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        wikiSession = Wiki.session().find( m_engine, request );
         Assertions.assertTrue( wikiSession.isAnonymous());
     }
 
@@ -138,7 +139,7 @@ public class WikiSessionTest
         request = m_engine.newHttpRequest();
         request.setUserPrincipal( new WikiPrincipal( "Fred Flintstone") );
         runSecurityFilter(m_engine, request);
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        wikiSession = Wiki.session().find( m_engine, request );
         Assertions.assertTrue( wikiSession.isAuthenticated());
         Assertions.assertEquals( "Fred Flintstone", wikiSession.getUserPrincipal().getName() );
     }
@@ -155,7 +156,7 @@ public class WikiSessionTest
         final String cookieName = CookieAssertionLoginModule.PREFS_COOKIE_NAME;
         request.setCookies( new Cookie[] { new Cookie( cookieName, "FredFlintstone" ) } );
         runSecurityFilter(m_engine, request);
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        wikiSession = Wiki.session().find( m_engine, request );
         Assertions.assertTrue( wikiSession.isAsserted());
         Assertions.assertEquals( "FredFlintstone", wikiSession.getUserPrincipal().getName() );
     }
@@ -179,7 +180,7 @@ public class WikiSessionTest
         request.setUserPrincipal( null );
         request.setCookies( new Cookie[] { new Cookie( "JSPWikiUID", uid ) } );
         runSecurityFilter(m_engine, request);
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        wikiSession = Wiki.session().find( m_engine, request );
         Assertions.assertTrue( wikiSession.isAnonymous());
         Assertions.assertFalse( wikiSession.isAuthenticated());
         Assertions.assertEquals( "127.0.0.1", wikiSession.getUserPrincipal().getName() );
@@ -211,7 +212,7 @@ public class WikiSessionTest
         request.setUserPrincipal( null );
         request.setCookies( new Cookie[] { new Cookie( "JSPWikiUID", uid ) } );
         runSecurityFilter(m_engine, request);
-        wikiSession = WikiSession.getWikiSession( m_engine, request );
+        wikiSession = Wiki.session().find( m_engine, request );
         Assertions.assertFalse( wikiSession.isAnonymous());
         Assertions.assertTrue( wikiSession.isAuthenticated());
         Assertions.assertEquals( "Fred Flintstone", wikiSession.getUserPrincipal().getName() );
@@ -236,7 +237,7 @@ public class WikiSessionTest
         runSecurityFilter( engine, request );
 
         // Make sure the user is actually anonymous
-        final Session session = WikiSession.getWikiSession( engine, request );
+        final Session session = Wiki.session().find( engine, request );
         if ( !session.isAnonymous() )
         {
             throw new IllegalStateException( "Session is not anonymous." );
@@ -274,7 +275,7 @@ public class WikiSessionTest
         runSecurityFilter(engine, request);
 
         // Make sure the user is actually asserted
-        return WikiSession.getWikiSession( engine, request );
+        return Wiki.session().find( engine, request );
     }
 
     public static Session adminSession( final TestEngine engine ) throws Exception
@@ -291,7 +292,7 @@ public class WikiSessionTest
         runSecurityFilter(engine, request);
 
         // Log in the user with credentials
-        final Session session = WikiSession.getWikiSession( engine, request );
+        final Session session = Wiki.session().find( engine, request );
         engine.getManager( AuthenticationManager.class ).login( session, request, id, password );
 
         // Make sure the user is actually authenticated
@@ -318,7 +319,7 @@ public class WikiSessionTest
         runSecurityFilter(engine,request);
 
         // Make sure the user is actually authenticated
-        final Session session = WikiSession.getWikiSession( engine, request );
+        final Session session = Wiki.session().find( engine, request );
         if ( !session.isAuthenticated() )
         {
             throw new IllegalStateException( "Could not log in authenticated user '" + id + "'" );
