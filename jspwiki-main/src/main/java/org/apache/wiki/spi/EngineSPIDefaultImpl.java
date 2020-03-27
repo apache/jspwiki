@@ -37,7 +37,7 @@ public class EngineSPIDefaultImpl implements EngineSPI {
      * {@inheritDoc}
      */
     @Override
-    public Engine getInstance( final ServletContext context, final Properties props ) {
+    public Engine find( final ServletContext context, final Properties props ) {
         return WikiEngine.getInstance( context, props );
     }
 

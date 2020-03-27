@@ -36,6 +36,6 @@ public interface EngineSPI {
      * @param props Engine configuration properties.
      * @return a configured {@link Engine} instance.
      */
-    Engine getInstance( ServletContext context, Properties props );
+    Engine find( ServletContext context, Properties props );
 
 }

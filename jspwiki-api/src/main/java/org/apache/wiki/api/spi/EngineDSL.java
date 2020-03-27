@@ -62,7 +62,7 @@ public class EngineDSL {
      * @return a configured {@link Engine} instance.
      */
     public Engine find( final ServletContext context, final Properties props ) {
-        return engineSPI.getInstance( context, props );
+        return engineSPI.find( context, props );
     }
 
 }
