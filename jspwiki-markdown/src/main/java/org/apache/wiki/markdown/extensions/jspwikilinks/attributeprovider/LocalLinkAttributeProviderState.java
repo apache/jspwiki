@@ -22,8 +22,8 @@ import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.html.Attributes;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.oro.text.regex.Pattern;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
@@ -66,7 +66,7 @@ public class LocalLinkAttributeProviderState implements NodeAttributeProviderSta
         if( attachment != null ) {
             if( !linkOperations.isImageLink( link.getUrl().toString(), isImageInlining, inlineImagePatterns ) ) {
                 attributes.replaceValue( "class", MarkupParser.CLASS_ATTACHMENT );
-                final String attlink = wikiContext.getURL( WikiContext.ATTACH, link.getWikiLink() );
+                final String attlink = wikiContext.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), link.getWikiLink() );
                 attributes.replaceValue( "href", attlink );
             } else {
                 new ImageLinkAttributeProviderState( wikiContext, attachment, hasRef ).setAttributes( attributes, link );

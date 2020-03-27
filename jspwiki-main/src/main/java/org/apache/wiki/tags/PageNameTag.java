@@ -18,9 +18,9 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
@@ -38,7 +38,7 @@ public class PageNameTag extends WikiTagBase {
     @Override
     public final int doWikiStartTag() throws IOException {
         final Engine engine = m_wikiContext.getEngine();
-        final WikiPage page = m_wikiContext.getPage();
+        final Page page = m_wikiContext.getPage();
 
         if( page != null ) {
             if( page instanceof Attachment ) {

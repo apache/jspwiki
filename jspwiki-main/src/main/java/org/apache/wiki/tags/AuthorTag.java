@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
@@ -51,7 +51,7 @@ public class AuthorTag extends WikiTagBase {
     @Override
     public final int doWikiStartTag() throws IOException {
         final Engine engine = m_wikiContext.getEngine();
-        final WikiPage   page   = m_wikiContext.getPage();
+        final Page page = m_wikiContext.getPage();
         String author = page.getAuthor();
 
         if( author != null && author.length() > 0 ) {

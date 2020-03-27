@@ -22,8 +22,8 @@ import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
 
@@ -51,7 +51,7 @@ class NodePostProcessorStateCommonOperations {
         final boolean wysiwygEditorMode = wysiwygVariable != null && wysiwygVariable;
 
         if( useOutlinkImage && !wysiwygEditorMode ) {
-            final String m_outlinkImageURL = wikiContext.getURL( WikiContext.NONE, MarkupParser.OUTLINK_IMAGE );
+            final String m_outlinkImageURL = wikiContext.getURL( ContextEnum.PAGE_NONE.getRequestContext(), MarkupParser.OUTLINK_IMAGE );
             final HtmlInline img = new HtmlInline( CharSubSequence.of( "<img class=\""+ MarkupParser.OUTLINK + "\" " +
                                                                               "alt=\"\" src=\""+ m_outlinkImageURL + "\" />" ) );
             node.insertAfter( img );
