@@ -252,6 +252,15 @@ public interface Context extends Cloneable, Command {
     Context clone();
 
     /**
+     *  Creates a deep clone of the Context. This is useful when you want to be sure that you don't accidentally mess with page
+     *  attributes, etc.
+     *
+     *  @since  2.8.0
+     *  @return A deep clone of the Context.
+     */
+    Context deepClone();
+
+    /**
      *  This method can be used to find the WikiContext programmatically from a JSP PageContext. We check the request context.
      *  The wiki context, if it exists, is looked up using the key {@link #ATTR_CONTEXT}.
      *
