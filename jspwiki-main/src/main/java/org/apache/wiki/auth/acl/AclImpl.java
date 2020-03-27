@@ -23,7 +23,9 @@ import org.apache.wiki.api.core.AclEntry;
 import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 
@@ -46,7 +48,7 @@ public class AclImpl implements Acl, Serializable {
     /** {@inheritDoc} */
     @Override
     public Principal[] findPrincipals( final Permission permission ) {
-        final Vector< Principal > principals = new Vector<>();
+        final List< Principal > principals = new ArrayList<>();
         final Enumeration< AclEntry > entries = aclEntries();
         while( entries.hasMoreElements() ) {
             final AclEntry entry = entries.nextElement();
