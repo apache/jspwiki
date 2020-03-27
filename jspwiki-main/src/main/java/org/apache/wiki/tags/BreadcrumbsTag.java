@@ -19,7 +19,7 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.TextUtil;
 
@@ -126,7 +126,7 @@ public class BreadcrumbsTag extends WikiTagBase
             }
         }
 
-        if( m_wikiContext.getRequestContext().equals( WikiContext.VIEW ) ) {
+        if( m_wikiContext.getRequestContext().equals( ContextEnum.PAGE_VIEW.getRequestContext() ) ) {
             if( m_wikiContext.getEngine().getManager( PageManager.class ).wikiPageExists( page ) ) {
                 if( trail.isEmpty() ) {
                     trail.pushItem( page );

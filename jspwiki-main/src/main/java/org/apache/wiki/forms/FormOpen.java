@@ -19,8 +19,8 @@
 package org.apache.wiki.forms;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.preferences.Preferences;
@@ -86,7 +86,7 @@ public class FormOpen extends FormElement {
         final String sourcePage = ctx.getPage().getName();
         String submitServlet = params.get( PARAM_SUBMITHANDLER );
         if( submitServlet == null )
-            submitServlet = ctx.getURL( WikiContext.VIEW, sourcePage );
+            submitServlet = ctx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), sourcePage );
 
         String method = params.get( PARAM_METHOD );
         if( method == null ) method="post";

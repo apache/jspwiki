@@ -19,8 +19,8 @@
 
 package org.apache.wiki.forms;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.plugin.DefaultPluginManager;
@@ -87,7 +87,7 @@ public class FormOutput extends FormElement {
         }
 
         final String sourcePage = ctx.getPage().getName();
-        final String submitServlet = ctx.getURL( WikiContext.VIEW, sourcePage );
+        final String submitServlet = ctx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), sourcePage );
 
         // If there is previous FormInfo available - say, from a
         // FormSet plugin - use it.

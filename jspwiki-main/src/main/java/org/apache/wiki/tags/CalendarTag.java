@@ -19,7 +19,7 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
@@ -201,7 +201,7 @@ public class CalendarTag extends WikiTagBase {
             final String pageName = thePage.getName();
 
             final String calendarDate = m_dateFormat.format( day.getTime() );
-            String url = m_wikiContext.getURL( WikiContext.VIEW, pageName,"calendar.date="+calendarDate );
+            String url = m_wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), pageName,"calendar.date="+calendarDate );
 
             if( queryString != null && queryString.length() > 0 ) {
                 //

@@ -3,8 +3,8 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 
 
@@ -26,7 +26,7 @@ public class LocalFootnoteLinkNodePostProcessorState implements NodePostProcesso
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
-        link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.VIEW, link.getUrl().toString() ) ) );
+        link.setUrl( CharSubSequence.of( wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link.getUrl().toString() ) ) );
     }
 
 }

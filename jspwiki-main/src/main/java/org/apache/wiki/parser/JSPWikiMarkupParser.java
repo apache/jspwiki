@@ -33,6 +33,7 @@ import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
@@ -286,11 +287,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
         switch(type)
         {
             case READ:
-                el = createAnchor( READ, m_context.getURL(WikiContext.VIEW, link), text, section );
+                el = createAnchor( READ, m_context.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link), text, section );
                 break;
 
             case EDIT:
-                el = createAnchor( EDIT, m_context.getURL(WikiContext.EDIT,link), text, "" );
+                el = createAnchor( EDIT, m_context.getURL( ContextEnum.PAGE_EDIT.getRequestContext(),link), text, "" );
                 el.setAttribute("title", MessageFormat.format( rb.getString( "markupparser.link.create" ), link ) );
 
                 break;
@@ -336,7 +337,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 break;
 
             case IMAGEWIKILINK:
-                final String pagelink = m_context.getURL(WikiContext.VIEW,text);
+                final String pagelink = m_context.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), text );
                 el = new Element("img").setAttribute("class","inline");
                 el.setAttribute("src",link);
                 el.setAttribute("alt",text);

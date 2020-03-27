@@ -28,8 +28,8 @@ import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.WikiBackgroundThread;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -346,7 +346,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                     Counter counter = m_counters.get( pagename );
 
                     // only count in view mode, keep storage values in sync
-                    if( increment && WikiContext.VIEW.equalsIgnoreCase( context.getRequestContext() ) ) {
+                    if( increment && ContextEnum.PAGE_VIEW.getRequestContext().equalsIgnoreCase( context.getRequestContext() ) ) {
                         if( counter == null ) {
                             counter = new Counter();
                             m_counters.put( pagename, counter );

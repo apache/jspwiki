@@ -21,6 +21,7 @@ package org.apache.wiki.plugin;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -331,7 +332,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
             }
             buffer.append(html.substring(0, cutoff));
             if (hasBeenCutOff) {
-                buffer.append(" <a href=\""+entryCtx.getURL(WikiContext.VIEW, entry.getName())+"\">"+rb.getString("weblogentryplugin.more")+"</a>\n");
+                buffer.append(" <a href=\""+entryCtx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), entry.getName())+"\">"+rb.getString("weblogentryplugin.more")+"</a>\n");
             }
         } else {
             buffer.append(html);
@@ -347,14 +348,14 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
 
         if( author != null ) {
             if( engine.getManager( PageManager.class ).wikiPageExists(author) ) {
-                author = "<a href=\""+entryCtx.getURL( WikiContext.VIEW, author )+"\">"+engine.getManager( RenderingManager.class ).beautifyTitle(author)+"</a>";
+                author = "<a href=\""+entryCtx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), author )+"\">"+engine.getManager( RenderingManager.class ).beautifyTitle(author)+"</a>";
             }
         } else {
             author = "AnonymousCoward";
         }
 
         buffer.append( MessageFormat.format( rb.getString("weblogentryplugin.postedby"), author));
-        buffer.append( "<a href=\"" + entryCtx.getURL( WikiContext.VIEW, entry.getName() ) + "\">" + rb.getString("weblogentryplugin.permalink") + "</a>" );
+        buffer.append( "<a href=\"" + entryCtx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), entry.getName() ) + "\">" + rb.getString("weblogentryplugin.permalink") + "</a>" );
         final String commentPageName = TextUtil.replaceString( entry.getName(), "blogentry", "comments" );
 
         if( hasComments ) {

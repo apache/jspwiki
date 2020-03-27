@@ -20,6 +20,7 @@ package org.apache.wiki.plugin;
 
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -177,7 +178,7 @@ public class InsertPage implements Plugin {
 
                 if( pageData.length() > maxlen ) {
                     pageData = pageData.substring( 0, maxlen )+" ...";
-                    moreLink = "<p><a href=\""+context.getURL(WikiContext.VIEW,includedPage)+"\">"+rb.getString("insertpage.more")+"</a></p>";
+                    moreLink = "<p><a href=\""+context.getURL( ContextEnum.PAGE_VIEW.getRequestContext(),includedPage)+"\">"+rb.getString("insertpage.more")+"</a></p>";
                 }
 
                 res.append("<div class=\"inserted-page ");

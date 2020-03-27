@@ -20,8 +20,8 @@
 package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.Plugin;
@@ -90,7 +90,7 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
                 } else {
                     currentDiv.addContent(", ");
                 }
-                currentDiv.addContent(getLink(context.getURL(WikiContext.VIEW,name),name));
+                currentDiv.addContent( getLink( context.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), name ), name ) );
             }
             
         } catch( final ProviderException e ) {

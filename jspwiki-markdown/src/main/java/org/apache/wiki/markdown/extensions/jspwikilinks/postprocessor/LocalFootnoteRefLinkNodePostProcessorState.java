@@ -22,8 +22,8 @@ import com.vladsch.flexmark.ast.Text;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 
 
@@ -45,7 +45,7 @@ public class LocalFootnoteRefLinkNodePostProcessorState implements NodePostProce
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
-        link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.VIEW, link.getUrl().toString() ) ) );
+        link.setUrl( CharSubSequence.of( wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link.getUrl().toString() ) ) );
         final Text opBracket = new Text( CharSubSequence.of( "[" ) );
         final Text clBracket = new Text( CharSubSequence.of( "]" ) );
         link.prependChild( opBracket );

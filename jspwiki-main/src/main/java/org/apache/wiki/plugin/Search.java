@@ -19,8 +19,8 @@
 package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -133,7 +133,7 @@ public class Search implements Plugin {
             final Element name = XhtmlUtil.element(XHTML.td);
             name.setAttribute(XHTML.ATTR_width,"30%");
 
-            name.addContent( XhtmlUtil.link(context.getURL( WikiContext.VIEW, sr.getPage().getName() ),
+            name.addContent( XhtmlUtil.link(context.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), sr.getPage().getName() ),
                              engine.getManager( RenderingManager.class ).beautifyTitle(sr.getPage().getName() ) ) );
 
             row.addContent(name);

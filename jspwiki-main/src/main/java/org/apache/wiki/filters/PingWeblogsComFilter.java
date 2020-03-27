@@ -19,8 +19,8 @@
 package org.apache.wiki.filters;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.xmlrpc.AsyncCallback;
@@ -81,10 +81,10 @@ public class PingWeblogsComFilter extends BasePageFilter {
             final XmlRpcClient xmlrpc = new XmlRpcClient(m_pingURL);
             final Vector< String > params = new Vector<>();
             params.addElement( "The Butt Ugly Weblog" ); // FIXME: Must be settable
-            params.addElement( engine.getURL( WikiContext.VIEW, blogName, null ) );
+            params.addElement( engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), blogName, null ) );
 
             if( log.isDebugEnabled() ) {
-                log.debug( "Pinging weblogs.com with URL: " + engine.getURL( WikiContext.VIEW, blogName, null ) );
+                log.debug( "Pinging weblogs.com with URL: " + engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), blogName, null ) );
             }
 
             xmlrpc.executeAsync("weblogUpdates.ping", params, 

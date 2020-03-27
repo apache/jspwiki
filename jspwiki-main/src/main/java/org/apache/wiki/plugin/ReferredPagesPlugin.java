@@ -25,8 +25,8 @@ import org.apache.oro.text.regex.PatternCompiler;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -244,7 +244,7 @@ public class ReferredPagesPlugin implements Plugin {
                     m_result.append("<ul>\n");
                 }
 
-                final String href = context.getURL( WikiContext.VIEW, link );
+                final String href = context.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link );
                 m_result.append( "<li><a class=\"wikipage\" href=\"" + href + "\">" + TextUtil.replaceEntities(link) + "</a>\n" );
                 m_exists.add( link );
                 getReferredPages( context, link, depth );

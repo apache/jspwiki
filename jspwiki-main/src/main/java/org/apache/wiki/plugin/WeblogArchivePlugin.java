@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -67,7 +67,7 @@ public class WeblogArchivePlugin implements Plugin {
             weblogName = context.getPage().getName();
         }
 
-        final String pttrn = "'" + context.getURL( WikiContext.VIEW, weblogName,"weblog.startDate='ddMMyy'&amp;weblog.days=%d" ) + "'";
+        final String pttrn = "'" + context.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), weblogName,"weblog.startDate='ddMMyy'&amp;weblog.days=%d" ) + "'";
         m_monthUrlFormat = new SimpleDateFormat( pttrn );
 
         final StringBuilder sb = new StringBuilder();

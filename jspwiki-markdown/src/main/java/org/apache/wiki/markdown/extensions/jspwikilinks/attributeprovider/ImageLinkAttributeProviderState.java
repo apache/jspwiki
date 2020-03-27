@@ -20,8 +20,8 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.html.Attributes;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
@@ -55,7 +55,7 @@ public class ImageLinkAttributeProviderState implements NodeAttributeProviderSta
             attributes.replaceValue( "class", MarkupParser.CLASS_EXTERNAL );
             attributes.replaceValue( "href", urlRef );
         } else if ( isLinkFromText && linkOperations.linkExists( link.getText().toString() ) ) {
-            final String pagelink = wikiContext.getURL( WikiContext.VIEW, link.getText().toString() );
+            final String pagelink = wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link.getText().toString() );
             attributes.replaceValue( "class", MarkupParser.CLASS_WIKIPAGE );
             attributes.replaceValue( "href", pagelink );
         }

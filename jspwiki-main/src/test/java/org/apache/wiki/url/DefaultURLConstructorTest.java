@@ -24,6 +24,7 @@ package org.apache.wiki.url;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,13 +38,13 @@ public class DefaultURLConstructorTest
 
     Properties props = TestEngine.getTestProperties();
 
-    private URLConstructor getConstructor( String prefix )
+    private URLConstructor getConstructor( final String prefix )
         throws WikiException
     {
         if( prefix != null ) props.setProperty( ShortViewURLConstructor.PROP_PREFIX, prefix );
 
         testEngine = new TestEngine(props);
-        URLConstructor constr = new DefaultURLConstructor();
+        final URLConstructor constr = new DefaultURLConstructor();
 
         constr.initialize( testEngine, props );
 
@@ -54,70 +55,70 @@ public class DefaultURLConstructorTest
     public void testViewURL1()
         throws Exception
     {
-        URLConstructor c = getConstructor("wiki/" );
+        final URLConstructor c = getConstructor("wiki/" );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL( ContextEnum.PAGE_VIEW.getRequestContext(),"Main",null) );
     }
 
     @Test
     public void testViewURL2()
        throws Exception
     {
-        URLConstructor c = getConstructor( null );
+        final URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(ContextEnum.PAGE_VIEW.getRequestContext(),"Main",null) );
     }
 
     @Test
     public void testViewURL3()
        throws Exception
     {
-        URLConstructor c = getConstructor( null );
+        final URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(ContextEnum.PAGE_VIEW.getRequestContext(),"Main",null) );
     }
 
     @Test
     public void testViewURL4()
         throws Exception
     {
-        URLConstructor c = getConstructor( null );
+        final URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(ContextEnum.PAGE_VIEW.getRequestContext(),"Main",null) );
     }
 
     @Test
     public void testViewURL5()
         throws Exception
     {
-        URLConstructor c = getConstructor( "" );
+        final URLConstructor c = getConstructor( "" );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(ContextEnum.PAGE_VIEW.getRequestContext(),"Main",null) );
     }
 
     @Test
     public void testViewURL6()
        throws Exception
     {
-        URLConstructor c = getConstructor( null );
+        final URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(ContextEnum.PAGE_VIEW.getRequestContext(),"Main",null) );
     }
 
     @Test
     public void testViewURL7()
        throws Exception
     {
-        URLConstructor c = getConstructor( "view/" );
+        final URLConstructor c = getConstructor( "view/" );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(WikiContext.VIEW,"Main",null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(ContextEnum.PAGE_VIEW.getRequestContext(),"Main",null) );
     }
 
     @Test
     public void testEditURL1()
         throws Exception
     {
-        URLConstructor c = getConstructor( null );
+        final URLConstructor c = getConstructor( null );
 
         Assertions.assertEquals( "/test/Edit.jsp?page=Main", c.makeURL(WikiContext.EDIT,"Main",null) );
     }
@@ -126,7 +127,7 @@ public class DefaultURLConstructorTest
     public void testAttachURL1()
         throws Exception
     {
-        URLConstructor c = getConstructor( null );
+        final URLConstructor c = getConstructor( null );
 
         Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",null) );
     }
@@ -135,7 +136,7 @@ public class DefaultURLConstructorTest
     public void testAttachURLRelative1()
         throws Exception
     {
-        URLConstructor c = getConstructor( null );
+        final URLConstructor c = getConstructor( null );
 
         Assertions.assertEquals( "/test/attach/Main/foo.txt", c.makeURL(WikiContext.ATTACH,"Main/foo.txt",null) );
     }
@@ -144,7 +145,7 @@ public class DefaultURLConstructorTest
     public void testOtherURL1()
         throws Exception
     {
-        URLConstructor c = getConstructor( null );
+        final URLConstructor c = getConstructor( null );
 
         Assertions.assertEquals( "/test/foo.jsp", c.makeURL(WikiContext.NONE,"foo.jsp",null) );
     }
@@ -153,7 +154,7 @@ public class DefaultURLConstructorTest
     public void testOtherURL2()
         throws Exception
     {
-        URLConstructor c = getConstructor( null );
+        final URLConstructor c = getConstructor( null );
 
         Assertions.assertEquals( "/test/foo.jsp?a=1&amp;b=2", c.makeURL(WikiContext.NONE,"foo.jsp","a=1&amp;b=2") );
     }
@@ -162,9 +163,9 @@ public class DefaultURLConstructorTest
     public void testEmptyURL()
         throws Exception
     {
-        URLConstructor c = getConstructor( null );
+        final URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=", c.makeURL(WikiContext.VIEW,"",null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=", c.makeURL(ContextEnum.PAGE_VIEW.getRequestContext(),"",null) );
     }
 
 }

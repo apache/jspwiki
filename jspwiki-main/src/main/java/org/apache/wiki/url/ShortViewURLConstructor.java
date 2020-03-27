@@ -19,6 +19,7 @@
 package org.apache.wiki.url;
 
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,7 +41,7 @@ public class ShortViewURLConstructor extends ShortURLConstructor {
     
     private String makeURL( final String context, final String name ) {
         final String viewurl = "%p" + m_urlPrefix + "%n";
-        if( context.equals( WikiContext.VIEW ) ) {
+        if( context.equals( ContextEnum.PAGE_VIEW.getRequestContext() ) ) {
             if( name == null ) {
                 return doReplacement("%u","" );
             }
@@ -56,7 +57,7 @@ public class ShortViewURLConstructor extends ShortURLConstructor {
     @Override
     public String makeURL( final String context, final String name, String parameters ) {
         if( parameters != null && parameters.length() > 0 ) {
-            if( context.equals( WikiContext.ATTACH ) || context.equals( WikiContext.VIEW ) || name == null ) {
+            if( context.equals( ContextEnum.PAGE_ATTACH.getRequestContext() ) || context.equals( ContextEnum.PAGE_VIEW.getRequestContext() ) || name == null ) {
                 parameters = "?" + parameters;
             } else if( context.equals(WikiContext.NONE) ) {
                 parameters = (name.indexOf('?') != -1 ) ? "&amp;" : "?" + parameters;
