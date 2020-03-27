@@ -20,9 +20,10 @@
 package org.apache.wiki.variables;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
+import org.apache.wiki.api.spi.Wiki;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ import org.junit.jupiter.api.Test;
 public class DefaultVariableManagerTest {
 
     static VariableManager m_variableManager;
-    static WikiContext m_context;
+    static Context m_context;
 
     static final String PAGE_NAME = "TestPage";
 
@@ -39,7 +40,7 @@ public class DefaultVariableManagerTest {
     public static void setUp() {
         final TestEngine testEngine = TestEngine.build();
         m_variableManager = new DefaultVariableManager( TestEngine.getTestProperties() );
-        m_context = new WikiContext( testEngine, new WikiPage( testEngine, PAGE_NAME ) );
+        m_context = Wiki.context().create( testEngine, new WikiPage( testEngine, PAGE_NAME ) );
     }
 
     @Test

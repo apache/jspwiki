@@ -19,7 +19,6 @@
 package org.apache.wiki.auth.acl;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Attachment;
@@ -27,6 +26,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -143,7 +143,7 @@ public class DefaultAclManager implements AclManager {
                 acl = getPermissions(parent);
             } else {
                 //  Or, try parsing the page
-                final WikiContext ctx = new WikiContext( m_engine, page );
+                final Context ctx = Wiki.context().create( m_engine, page );
                 ctx.setVariable( Context.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
                 m_engine.getManager( RenderingManager.class ).getHTML(ctx, page);
 

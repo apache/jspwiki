@@ -244,8 +244,6 @@ public class WikiContext implements Context, Command {
      *  @param engine The Engine that is handling the request
      *  @param request the HTTP request
      *  @param requestContext the default context to use
-     *  @return a new WikiContext object.
-     *
      *  @see org.apache.wiki.ui.CommandResolver
      *  @see org.apache.wiki.api.core.Command
      *  @since 2.1.15.
@@ -648,8 +646,8 @@ public class WikiContext implements Context, Command {
             copy.m_variableMap = (HashMap<String,Object>)m_variableMap.clone();
             copy.m_request     = m_request;
             copy.m_session     = m_session;
-            copy.m_page        = (WikiPage)m_page.clone();
-            copy.m_realPage    = (WikiPage)m_realPage.clone();
+            copy.m_page        = m_page.clone();
+            copy.m_realPage    = m_realPage.clone();
             return copy;
         }
         catch( final CloneNotSupportedException e ){} // Never happens
@@ -676,7 +674,7 @@ public class WikiContext implements Context, Command {
      * @since 2.4
      * @param pageContext the JSP page context
      * @return Current WikiContext, or null, of no context exists.
-     * @deprecated use {@Context#findContext( PageContext )} instead.
+     * @deprecated use {@link Context#findContext( PageContext )} instead.
      * @see Context#findContext( PageContext )
      */
     @Deprecated

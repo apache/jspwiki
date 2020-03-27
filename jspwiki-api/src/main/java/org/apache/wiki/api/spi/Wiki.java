@@ -29,14 +29,24 @@ import java.util.ServiceLoader;
 
 public class Wiki {
 
+    private static final String PROP_PROVIDER_IMPL_CONTEXT = "jspwiki.provider.impl.context";
     private static final String PROP_PROVIDER_IMPL_ENGINE = "jspwiki.provider.impl.engine";
+    private static final String DEFAULT_PROVIDER_IMPL_CONTEXT = "org.apache.wiki.spi.ContextSPIDefaultImpl";
     private static final String DEFAULT_PROVIDER_IMPL_ENGINE = "org.apache.wiki.spi.EngineSPIDefaultImpl";
 
-    private static EngineSPI engineSPI;
+    // default values
+    private static Properties properties = PropertyReader.getDefaultProperties();
+    private static ContextSPI contextSPI = getSPI( ContextSPI.class, properties, PROP_PROVIDER_IMPL_CONTEXT, DEFAULT_PROVIDER_IMPL_CONTEXT );
+    private static EngineSPI engineSPI = getSPI( EngineSPI.class, properties, PROP_PROVIDER_IMPL_ENGINE, DEFAULT_PROVIDER_IMPL_ENGINE );
 
     static void init( final ServletContext context ) {
-        final Properties properties = PropertyReader.loadWebAppProps( context );
+        properties = PropertyReader.loadWebAppProps( context );
+        contextSPI = getSPI( ContextSPI.class, properties, PROP_PROVIDER_IMPL_CONTEXT, DEFAULT_PROVIDER_IMPL_CONTEXT );
         engineSPI = getSPI( EngineSPI.class, properties, PROP_PROVIDER_IMPL_ENGINE, DEFAULT_PROVIDER_IMPL_ENGINE );
+    }
+
+    public static ContextDSL context() {
+        return new ContextDSL( contextSPI );
     }
 
     public static EngineDSL engine() {

@@ -20,12 +20,13 @@ package org.apache.wiki.content;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.WikiProvider;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.references.ReferenceManager;
@@ -81,7 +82,7 @@ public class PageRenamerTest
 
         final Page p = m_engine.getManager( PageManager.class ).getPage("TestPage");
 
-        final WikiContext context = new WikiContext(m_engine, p);
+        final Context context = Wiki.context().create(m_engine, p);
 
         m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", false);
 
@@ -107,7 +108,7 @@ public class PageRenamerTest
 
         final Page p = m_engine.getManager( PageManager.class ).getPage("TestPage");
 
-        final WikiContext context = new WikiContext(m_engine, p);
+        final Context context = Wiki.context().create(m_engine, p);
 
         m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
@@ -133,7 +134,7 @@ public class PageRenamerTest
 
         final Page p = m_engine.getManager( PageManager.class ).getPage("TestPage");
 
-        final WikiContext context = new WikiContext(m_engine, p);
+        final Context context = Wiki.context().create(m_engine, p);
 
         m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
@@ -158,7 +159,7 @@ public class PageRenamerTest
 
         final Page p = m_engine.getManager( PageManager.class ).getPage("TestPage");
 
-        final WikiContext context = new WikiContext(m_engine, p);
+        final Context context = Wiki.context().create(m_engine, p);
 
         m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
@@ -183,7 +184,7 @@ public class PageRenamerTest
 
         final Page p = m_engine.getManager( PageManager.class ).getPage("TestPage");
 
-        final WikiContext context = new WikiContext(m_engine, p);
+        final Context context = Wiki.context().create(m_engine, p);
 
         m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
@@ -211,7 +212,7 @@ public class PageRenamerTest
 
         final Page p = m_engine.getManager( PageManager.class ).getPage("TestPage");
 
-        final WikiContext context = new WikiContext(m_engine, p);
+        final Context context = Wiki.context().create(m_engine, p);
 
         m_engine.getManager( PageRenamer.class ).renamePage(context, "Test", "TestPage", true);
 
@@ -231,7 +232,7 @@ public class PageRenamerTest
         m_engine.addAttachment("TestPage", "bar.jpg", "pr0n".getBytes() );
         final Page p = m_engine.getManager( PageManager.class ).getPage("TestPage");
 
-        final WikiContext context = new WikiContext(m_engine, p);
+        final Context context = Wiki.context().create(m_engine, p);
 
         m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
@@ -310,7 +311,7 @@ public class PageRenamerTest
     {
         final Page p = m_engine.getManager( PageManager.class ).getPage(src);
 
-        final WikiContext context = new WikiContext(m_engine, p);
+        final Context context = Wiki.context().create(m_engine, p);
 
         m_engine.getManager( PageRenamer.class ).renamePage(context, src, dst, true);
     }

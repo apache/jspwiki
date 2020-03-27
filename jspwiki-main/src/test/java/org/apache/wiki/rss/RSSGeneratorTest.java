@@ -24,8 +24,9 @@ package org.apache.wiki.rss;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
@@ -77,7 +78,7 @@ public class RSSGeneratorTest {
 
         final RSSGenerator gen = m_testEngine.getManager( RSSGenerator.class );
 
-        final WikiContext context = new WikiContext( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage("TestBlog") );
+        final Context context = Wiki.context().create( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage("TestBlog") );
 
         final WeblogPlugin blogplugin = new WeblogPlugin();
 
@@ -108,7 +109,7 @@ public class RSSGeneratorTest {
 
         final RSSGenerator gen = m_testEngine.getManager( RSSGenerator.class );
 
-        final WikiContext context = new WikiContext( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage("TestBlog") );
+        final Context context = Wiki.context().create( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage("TestBlog") );
 
         final WeblogPlugin blogplugin = new WeblogPlugin();
 
@@ -120,8 +121,8 @@ public class RSSGeneratorTest {
         final Feed feed = new RSS20Feed( context );
         final String blog = gen.generateBlogRSS( context, entries, feed );
 
-        Assertions.assertTrue( blog.indexOf("<description>Foo &amp;quot;blah&amp;quot;.</description>") != -1, "has Foo" );
-        Assertions.assertTrue( blog.indexOf("&lt;b&gt;Bar&lt;/b&gt;") != -1, "has proper Bar" );
+        Assertions.assertTrue( blog.contains( "<description>Foo &amp;quot;blah&amp;quot;.</description>" ), "has Foo" );
+        Assertions.assertTrue( blog.contains( "&lt;b&gt;Bar&lt;/b&gt;" ), "has proper Bar" );
     }
 
 }

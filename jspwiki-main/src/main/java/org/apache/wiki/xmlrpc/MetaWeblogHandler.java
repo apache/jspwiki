@@ -24,6 +24,7 @@ import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -209,10 +210,10 @@ public class MetaWeblogHandler implements WikiRPCHandler {
         try {
             final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
             final String pageName = plugin.getNewEntryPage( engine, blogid );
-            final WikiPage entryPage = new WikiPage( engine, pageName );
+            final Page entryPage = new WikiPage( engine, pageName );
             entryPage.setAuthor( username );
 
-            final WikiContext context = new WikiContext( engine, entryPage );
+            final Context context = Wiki.context().create( engine, entryPage );
             final StringBuilder text = new StringBuilder();
             text.append( "!" ).append( content.get( "title" ) );
             text.append( "\n\n" );
@@ -295,7 +296,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
             final Page entryPage = page.clone();
             entryPage.setAuthor( username );
 
-            final WikiContext context = new WikiContext( engine, entryPage );
+            final Context context = Wiki.context().create( engine, entryPage );
 
             final StringBuilder text = new StringBuilder();
             text.append( "!" ).append( content.get( "title" ) );

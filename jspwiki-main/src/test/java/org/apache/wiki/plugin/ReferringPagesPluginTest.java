@@ -22,7 +22,9 @@ package org.apache.wiki.plugin;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.spi.Wiki;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,30 +78,23 @@ public class ReferringPagesPluginTest
         return mkFullLink( page, page );
     }
 
-    private String mkFullLink( final String page, final String link )
-    {
+    private String mkFullLink( final String page, final String link ) {
         return "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page="+link+"\">"+page+"</a>";
     }
 
     @Test
-    public void testSingleReferral()
-        throws Exception
-    {
-        final WikiContext context2 = new WikiContext( engine, new WikiPage(engine, "Foobar") );
+    public void testSingleReferral() throws Exception {
+        final Context context2 = Wiki.context().create( engine, new WikiPage(engine, "Foobar") );
 
-        final String res = manager.execute( context2,
-                                      "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
+        final String res = manager.execute( context2, "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
 
         Assertions.assertEquals( mkLink( "TestPage" )+"<br />",
                       res );
     }
 
     @Test
-    public void testMaxReferences()
-        throws Exception
-    {
-        final String res = manager.execute( context,
-                                      "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
+    public void testMaxReferences() throws Exception {
+        final String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
 
         int count = 0;
         int index = -1;
@@ -125,31 +120,22 @@ public class ReferringPagesPluginTest
     }
 
     @Test
-    public void testReferenceWidth()
-        throws Exception
-    {
-        final WikiContext context2 = new WikiContext( engine, new WikiPage(engine, "Foobar") );
-
-        final String res = manager.execute( context2,
-                                      "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");
-
-        Assertions.assertEquals( mkFullLink( "TestP...", "TestPage" )+"<br />",
-                      res );
+    public void testReferenceWidth() throws Exception {
+        final Context context2 = Wiki.context().create( engine, new WikiPage(engine, "Foobar") );
+        final String res = manager.execute( context2, "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");
+        Assertions.assertEquals( mkFullLink( "TestP...", "TestPage" )+"<br />", res );
     }
 
     @Test
-    public void testInclude()
-        throws Exception
-    {
-        final String res = manager.execute( context,
-                                      "{ReferringPagesPlugin include='*7'}" );
+    public void testInclude() throws Exception {
+        final String res = manager.execute( context, "{ReferringPagesPlugin include='*7'}" );
 
-        Assertions.assertTrue( res.indexOf("Foobar7") != -1, "7" );
-        Assertions.assertTrue( res.indexOf("Foobar6") == -1, "6" );
-        Assertions.assertTrue( res.indexOf("Foobar5") == -1, "5" );
-        Assertions.assertTrue( res.indexOf("Foobar4") == -1, "4" );
-        Assertions.assertTrue( res.indexOf("Foobar3") == -1, "3" );
-        Assertions.assertTrue( res.indexOf("Foobar2") == -1, "2" );
+        Assertions.assertTrue( res.contains( "Foobar7" ), "7" );
+        Assertions.assertEquals( res.indexOf( "Foobar6" ), -1, "6" );
+        Assertions.assertEquals( res.indexOf( "Foobar5" ), -1, "5" );
+        Assertions.assertEquals( res.indexOf( "Foobar4" ), -1, "4" );
+        Assertions.assertEquals( res.indexOf( "Foobar3" ), -1, "3" );
+        Assertions.assertEquals( res.indexOf( "Foobar2" ), -1, "2" );
     }
 
     @Test
@@ -164,10 +150,8 @@ public class ReferringPagesPluginTest
     public void testExclude2()
         throws Exception
     {
-        final String res = manager.execute( context,
-                                      "{ReferringPagesPlugin exclude='*7'}");
-
-        Assertions.assertTrue( res.indexOf("Foobar7") == -1 );
+        final String res = manager.execute( context, "{ReferringPagesPlugin exclude='*7'}");
+        Assertions.assertEquals( res.indexOf( "Foobar7" ), -1 );
     }
 
     @Test
@@ -177,12 +161,12 @@ public class ReferringPagesPluginTest
         final String res = manager.execute( context,
                                       "{ReferringPagesPlugin exclude='*7,*5,*4'}");
 
-        Assertions.assertTrue( res.indexOf("Foobar7") == -1, "7" );
-        Assertions.assertTrue( res.indexOf("Foobar6") != -1, "6" );
-        Assertions.assertTrue( res.indexOf("Foobar5") == -1, "5" );
-        Assertions.assertTrue( res.indexOf("Foobar4") == -1, "4" );
-        Assertions.assertTrue( res.indexOf("Foobar3") != -1, "3" );
-        Assertions.assertTrue( res.indexOf("Foobar2") != -1, "2" );
+        Assertions.assertEquals( res.indexOf( "Foobar7" ), -1, "7" );
+        Assertions.assertTrue( res.contains( "Foobar6" ), "6" );
+        Assertions.assertEquals( res.indexOf( "Foobar5" ), -1, "5" );
+        Assertions.assertFalse( res.contains( "Foobar4" ), "4" );
+        Assertions.assertTrue( res.contains( "Foobar3" ), "3" );
+        Assertions.assertTrue( res.contains( "Foobar2" ), "2" );
     }
 
     @Test

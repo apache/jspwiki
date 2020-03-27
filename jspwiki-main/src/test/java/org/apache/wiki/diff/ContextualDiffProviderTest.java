@@ -20,9 +20,10 @@ package org.apache.wiki.diff;
 
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.spi.Wiki;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +39,7 @@ public class ContextualDiffProviderTest
      * <p>
      * Get it?
      */
-    private void specializedNotation(ContextualDiffProvider diff)
+    private void specializedNotation( final ContextualDiffProvider diff)
     {
         diff.CHANGE_END_HTML = "|";
         diff.CHANGE_START_HTML = "|";
@@ -190,24 +191,24 @@ public class ContextualDiffProviderTest
     }
      */
 
-    private void diffTest(String contextLimit, String oldText, String newText, String expectedDiff)
+    private void diffTest( final String contextLimit, final String oldText, final String newText, final String expectedDiff)
         throws IOException, WikiException
     {
-        ContextualDiffProvider diff = new ContextualDiffProvider();
+        final ContextualDiffProvider diff = new ContextualDiffProvider();
 
         specializedNotation(diff);
 
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         if (null != contextLimit)
             props.put(ContextualDiffProvider.PROP_UNCHANGED_CONTEXT_LIMIT, contextLimit);
 
         diff.initialize(null, props);
 
         PropertyConfigurator.configure(props);
-        TestEngine engine = new TestEngine(props);
+        final TestEngine engine = new TestEngine(props);
 
-        WikiContext ctx = new WikiContext( engine, new WikiPage(engine,"Dummy") );
-        String actualDiff = diff.makeDiffHtml( ctx, oldText, newText);
+        final Context ctx = Wiki.context().create( engine, new WikiPage(engine,"Dummy") );
+        final String actualDiff = diff.makeDiffHtml( ctx, oldText, newText);
 
         Assertions.assertEquals(expectedDiff, actualDiff);
     }

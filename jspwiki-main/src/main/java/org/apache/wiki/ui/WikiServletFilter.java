@@ -78,7 +78,7 @@ public class WikiServletFilter implements Filter {
             context.log( "== JSPWIKI WARNING ==  : This container is running with a security manager. JSPWiki does not yet really support that right now. See issue JSPWIKI-129 for details and information on how to proceed." );
         }
 
-        m_engine = Wiki.engine( context, null );
+        m_engine = Wiki.engine().find( context, null );
     }
 
     /**

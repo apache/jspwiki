@@ -20,10 +20,12 @@ package org.apache.wiki.render.markdown;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
@@ -106,7 +108,7 @@ public class MarkdownRendererTest {
         Assertions.assertEquals( "<p> This should be visible if the ACL allows you to see it</p>\n", translate( src ) );
         // in any case, we also check that the created wikipage has the ACL added
         Assertions.assertEquals( "  user = PerryMason: ((\"org.apache.wiki.auth.permissions.PagePermission\",\"JSPWiki:testpage\",\"view\"))\n",
-                                 ( ( WikiPage )testEngine.getManager( PageManager.class ).getPage( PAGE_NAME ) ).getAcl().toString() );
+                                 ( testEngine.getManager( PageManager.class ).getPage( PAGE_NAME ) ).getAcl().toString() );
     }
 
     @Test
@@ -293,16 +295,16 @@ public class MarkdownRendererTest {
         return translate( new WikiPage( testEngine, PAGE_NAME ), src );
     }
 
-    String translate( final WikiEngine e, final String src ) throws Exception {
+    String translate( final Engine e, final String src ) throws Exception {
         return translate( e, new WikiPage( testEngine, PAGE_NAME ), src );
     }
 
-    String translate( final WikiPage p, final String src ) throws Exception {
+    String translate( final Page p, final String src ) throws Exception {
         return translate( testEngine, p, src );
     }
 
-    String translate( final WikiEngine e, final WikiPage p, final String src ) throws Exception {
-        final WikiContext context = new WikiContext( e, testEngine.newHttpRequest(), p );
+    String translate( final Engine e, final Page p, final String src ) throws Exception {
+        final Context context = Wiki.context().create( e, testEngine.newHttpRequest(), p );
         final MarkdownParser tr = new MarkdownParser( context, new BufferedReader( new StringReader( src ) ) );
         final MarkdownRenderer conv = new MarkdownRenderer( context, tr.parse() );
         newPage( p.getName(), src );

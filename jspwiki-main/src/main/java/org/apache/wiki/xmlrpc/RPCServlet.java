@@ -79,7 +79,7 @@ public class RPCServlet extends HttpServlet {
      */
     @Override
     public void init( final ServletConfig config ) throws ServletException {
-        m_engine = Wiki.engine( config );
+        m_engine = Wiki.engine().find( config );
 
         String handlerName = config.getInitParameter( "handler" );
         String prefix      = config.getInitParameter( "prefix" );
@@ -110,7 +110,7 @@ public class RPCServlet extends HttpServlet {
         log.debug("Received POST to RPCServlet");
 
         try {
-            final WikiContext ctx = new WikiContext( m_engine, request, WikiContext.NONE );
+            final Context ctx = Wiki.context().create( m_engine, request, WikiContext.NONE );
             final XmlRpcContext xmlrpcContext = new WikiXmlRpcContext( m_xmlrpcServer.getHandlerMapping(), ctx );
             final byte[] result = m_xmlrpcServer.execute( request.getInputStream(), xmlrpcContext );
 

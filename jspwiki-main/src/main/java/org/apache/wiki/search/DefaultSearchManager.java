@@ -25,12 +25,14 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.ajax.AjaxUtil;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.api.search.SearchResult;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
@@ -122,7 +124,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                     result = AjaxUtil.toJson( callResults );
                 } else if( actionName.equals( AJAX_ACTION_PAGES ) ) {
                     log.debug("Calling findPages() START");
-                    final WikiContext wikiContext = new WikiContext( m_engine, req, WikiContext.VIEW );
+                    final Context wikiContext = Wiki.context().create( m_engine, req, WikiContext.VIEW );
                     final List< Map< String, Object > > callResults = findPages( itemId, maxResults, wikiContext );
                     log.debug( "Calling findPages() DONE. " + callResults.size() );
                     result = AjaxUtil.toJson( callResults );
@@ -182,7 +184,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
          *  @param maxLength How many hits to return
          *  @return the pages found
          */
-        public List< Map< String, Object > > findPages( final String searchString, final int maxLength, final WikiContext wikiContext ) {
+        public List< Map< String, Object > > findPages( final String searchString, final int maxLength, final Context wikiContext ) {
             final StopWatch sw = new StopWatch();
             sw.start();
 

@@ -22,7 +22,7 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
@@ -30,6 +30,7 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.search.QueryItem;
 import org.apache.wiki.api.search.SearchResult;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
@@ -391,7 +392,7 @@ public class CachingProvider implements PageProvider {
             final RenderingManager mgr = m_engine.getManager( RenderingManager.class );
             try {
                 final String data = m_provider.getPageText( page.getName(), page.getVersion() );
-                final WikiContext ctx = new WikiContext( m_engine, page );
+                final Context ctx = Wiki.context().create( m_engine, page );
                 final MarkupParser parser = mgr.getParser( ctx, data );
 
                 parser.parse();

@@ -16,13 +16,13 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
  */
-
 package org.apache.wiki.plugin;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.spi.Wiki;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,12 +30,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
+
 public class ReferringUndefinedPagesPluginTest {
+
     Properties props = TestEngine.getTestProperties();
 
 	TestEngine testEngine;
 
-	WikiContext context;
+	Context context;
 
 	PluginManager manager;
 
@@ -48,8 +50,9 @@ public class ReferringUndefinedPagesPluginTest {
         testEngine.saveText("TestPage02", "Some Text for testing 02 which refers [NonExistingPageB] ");
 		testEngine.saveText("TestPage03", "Some Text for testing 03 which refers [NonExistingPageC] ");
 
-        context = new WikiContext( testEngine, testEngine.newHttpRequest(), new WikiPage(testEngine,"TestPage") );
-        manager = new DefaultPluginManager( testEngine, props );	}
+        context = Wiki.context().create( testEngine, testEngine.newHttpRequest(), new WikiPage(testEngine,"TestPage") );
+        manager = new DefaultPluginManager( testEngine, props );
+    }
 
     @AfterEach
     public void tearDown() {

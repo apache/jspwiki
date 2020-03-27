@@ -21,10 +21,11 @@ package org.apache.wiki.providers;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.providers.PageProvider;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.FileUtil;
@@ -529,55 +530,55 @@ public class VersioningFileProviderTest
         throws Exception
     {
         final WikiPage p = new WikiPage( engine, NAME1 );
-        p.setAttribute(WikiPage.CHANGENOTE, "Test change" );
-        final WikiContext context = new WikiContext(engine,p);
+        p.setAttribute(Page.CHANGENOTE, "Test change" );
+        final Context context = Wiki.context().create(engine,p);
 
         engine.getManager( PageManager.class ).saveText( context, "test" );
 
         final Page p2 = engine.getManager( PageManager.class ).getPage( NAME1 );
 
-        Assertions.assertEquals( "Test change", p2.getAttribute(WikiPage.CHANGENOTE) );
+        Assertions.assertEquals( "Test change", p2.getAttribute(Page.CHANGENOTE) );
     }
 
     @Test
     public void testChangeNoteOldVersion()
         throws Exception
     {
-        final WikiPage p = new WikiPage( engine, NAME1 );
+        final Page p = new WikiPage( engine, NAME1 );
 
 
-        final WikiContext context = new WikiContext(engine,p);
+        final Context context = Wiki.context().create(engine,p);
 
-        context.getPage().setAttribute(WikiPage.CHANGENOTE, "Test change" );
+        context.getPage().setAttribute(Page.CHANGENOTE, "Test change" );
         engine.getManager( PageManager.class ).saveText( context, "test" );
 
-        context.getPage().setAttribute(WikiPage.CHANGENOTE, "Change 2" );
+        context.getPage().setAttribute(Page.CHANGENOTE, "Change 2" );
         engine.getManager( PageManager.class ).saveText( context, "test2" );
 
         final Page p2 = engine.getManager( PageManager.class ).getPage( NAME1, 1 );
 
-        Assertions.assertEquals( "Test change", p2.getAttribute(WikiPage.CHANGENOTE) );
+        Assertions.assertEquals( "Test change", p2.getAttribute(Page.CHANGENOTE) );
 
         final Page p3 = engine.getManager( PageManager.class ).getPage( NAME1, 2 );
 
-        Assertions.assertEquals( "Change 2", p3.getAttribute(WikiPage.CHANGENOTE) );
+        Assertions.assertEquals( "Change 2", p3.getAttribute(Page.CHANGENOTE) );
     }
 
     @Test
     public void testChangeNoteOldVersion2() throws Exception
     {
-        final WikiPage p = new WikiPage( engine, NAME1 );
+        final Page p = new WikiPage( engine, NAME1 );
 
-        final WikiContext context = new WikiContext(engine,p);
+        final Context context = Wiki.context().create(engine,p);
 
-        context.getPage().setAttribute( WikiPage.CHANGENOTE, "Test change" );
+        context.getPage().setAttribute( Page.CHANGENOTE, "Test change" );
 
         engine.getManager( PageManager.class ).saveText( context, "test" );
 
         for( int i = 0; i < 5; i++ )
         {
-            final WikiPage p2 = (WikiPage)engine.getManager( PageManager.class ).getPage( NAME1 ).clone();
-            p2.removeAttribute(WikiPage.CHANGENOTE);
+            final Page p2 = engine.getManager( PageManager.class ).getPage( NAME1 ).clone();
+            p2.removeAttribute(Page.CHANGENOTE);
 
             context.setPage( p2 );
 
@@ -586,7 +587,7 @@ public class VersioningFileProviderTest
 
         final Page p3 = engine.getManager( PageManager.class ).getPage( NAME1, -1 );
 
-        Assertions.assertEquals( null, (String)p3.getAttribute(WikiPage.CHANGENOTE) );
+        Assertions.assertNull( p3.getAttribute( Page.CHANGENOTE ) );
     }
 
     /*

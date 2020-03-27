@@ -19,8 +19,8 @@
 package org.apache.wiki.rpc.atom;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -69,7 +69,7 @@ public class AtomAPIServlet extends HttpServlet {
      */
     @Override
     public void init( final ServletConfig config ) throws ServletException {
-        m_engine = Wiki.engine( config );
+        m_engine = Wiki.engine().find( config );
     }
 
     /**
@@ -126,7 +126,7 @@ public class AtomAPIServlet extends HttpServlet {
             final Page entryPage = new WikiPage( m_engine, pageName );
             entryPage.setAuthor( username );
 
-            final WikiContext context = new WikiContext( m_engine, request, entryPage );
+            final Context context = Wiki.context().create( m_engine, request, entryPage );
             final StringBuilder text = new StringBuilder();
             text.append( "!" )
                 .append( title.getBody() )
@@ -223,7 +223,7 @@ public class AtomAPIServlet extends HttpServlet {
             }
 
             final String encodedName = TextUtil.urlEncodeUTF8( p.getName() );
-            final WikiContext context = new WikiContext( m_engine, p );
+            final Context context = Wiki.context().create( m_engine, p );
             final String title = TextUtil.replaceEntities( org.apache.wiki.rss.Feed.getSiteName( context ) );
             final Link postlink = createLink( "service.post", m_engine.getBaseURL() + "atom/" + encodedName, title );
             final Link editlink = createLink( "service.edit", m_engine.getBaseURL() + "atom/" + encodedName, title );

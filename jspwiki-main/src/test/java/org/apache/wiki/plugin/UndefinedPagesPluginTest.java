@@ -21,9 +21,10 @@ package org.apache.wiki.plugin;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -37,7 +38,7 @@ public class UndefinedPagesPluginTest {
 
     Properties props = TestEngine.getTestProperties();
     TestEngine testEngine;
-    WikiContext context;
+    Context context;
     PluginManager manager;
 
     @BeforeEach
@@ -48,7 +49,7 @@ public class UndefinedPagesPluginTest {
         testEngine.saveText( "TestPage", "Reference to [Foobar]." );
         testEngine.saveText( "Foobar", "Reference to [Foobar 2], [Foobars]" );
 
-        context = new WikiContext( testEngine, new WikiPage(testEngine, "TestPage") );
+        context = Wiki.context().create( testEngine, new WikiPage(testEngine, "TestPage") );
         manager = new DefaultPluginManager( testEngine, props );
     }
 
@@ -70,7 +71,7 @@ public class UndefinedPagesPluginTest {
      */
     @Test
     public void testSimpleUndefined() throws Exception {
-        final WikiContext context2 = new WikiContext( testEngine, new WikiPage( testEngine, "Foobar" ) );
+        final Context context2 = Wiki.context().create( testEngine, new WikiPage( testEngine, "Foobar" ) );
         final String res = manager.execute( context2,"{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin" );
         final String exp = "[Foobar 2]\\\\";
 

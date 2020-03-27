@@ -21,8 +21,9 @@ package org.apache.wiki.plugin;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.spi.Wiki;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +36,7 @@ public class RecentChangesPluginTest {
     TestEngine testEngine = TestEngine.build( props );
     PluginManager manager = new DefaultPluginManager(testEngine, props);
 
-    WikiContext context;
+    Context context;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -63,7 +64,7 @@ public class RecentChangesPluginTest {
      */
     @Test
     public void testSimple() throws Exception {
-        context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage01"));
+        context = Wiki.context().create(testEngine, new WikiPage(testEngine, "TestPage01"));
 
         final String res = manager.execute(context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin}");
 
@@ -82,7 +83,7 @@ public class RecentChangesPluginTest {
      */
     @Test
     public void testParmInClude() throws Exception {
-        context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage02"));
+        context = Wiki.context().create(testEngine, new WikiPage(testEngine, "TestPage02"));
 
         final String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin include='TestPage02*'}" );
 
@@ -99,7 +100,7 @@ public class RecentChangesPluginTest {
      */
     @Test
     public void testParmExClude() throws Exception {
-        context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage03"));
+        context = Wiki.context().create(testEngine, new WikiPage(testEngine, "TestPage03"));
 
         final String res = manager.execute( context,
                                       "{INSERT org.apache.wiki.plugin.RecentChangesPlugin exclude='TestPage03*'}" );
@@ -117,7 +118,7 @@ public class RecentChangesPluginTest {
      */
     @Test
     public void testNoRecentChanges() throws Exception {
-        context = new WikiContext(testEngine, new WikiPage(testEngine, "TestPage04"));
+        context = Wiki.context().create(testEngine, new WikiPage(testEngine, "TestPage04"));
 
         final String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin since='-1'}" );
 
