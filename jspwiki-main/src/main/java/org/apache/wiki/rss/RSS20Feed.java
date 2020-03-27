@@ -18,10 +18,10 @@
  */
 package org.apache.wiki.rss;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -84,7 +84,7 @@ public class RSS20Feed extends Feed
                     final List< Attachment > c = engine.getManager( AttachmentManager.class ).listAttachments( p );
                     for( final Attachment att : c ) {
                         final Element attEl = new Element( "enclosure" );
-                        attEl.setAttribute( "url", engine.getURL( WikiContext.ATTACH, att.getName(), null ) );
+                        attEl.setAttribute( "url", engine.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), att.getName(), null ) );
                         attEl.setAttribute( "length", Long.toString( att.getSize() ) );
                         attEl.setAttribute( "type", getMimeType( servletContext, att.getFileName() ) );
 

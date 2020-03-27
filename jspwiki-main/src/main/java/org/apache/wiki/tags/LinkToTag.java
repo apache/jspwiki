@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.attachment.AttachmentManager;
 
@@ -94,7 +94,7 @@ public class LinkToTag extends WikiLinkTag {
         String forceDownload = "";
 
         if( isattachment ) {
-            url = m_wikiContext.getURL( WikiContext.ATTACH, pageName, ( getVersion() != null ) ? "version=" + getVersion() : null );
+            url = m_wikiContext.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), pageName, ( getVersion() != null ) ? "version=" + getVersion() : null );
             linkclass = "attachment";
 
             if( m_wikiContext.getEngine().getManager( AttachmentManager.class ).forceDownload( pageName ) ) {
@@ -110,7 +110,7 @@ public class LinkToTag extends WikiLinkTag {
                 params.append( params.length() > 0 ? "&amp;" : "" ).append( "skin=" ).append( getTemplate() );
             }
 
-            url = m_wikiContext.getURL( WikiContext.VIEW, pageName, params.toString() );
+            url = m_wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), pageName, params.toString() );
             linkclass = "wikipage";
         }
 

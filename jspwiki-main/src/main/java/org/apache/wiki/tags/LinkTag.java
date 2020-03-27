@@ -19,8 +19,8 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -60,7 +60,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     private String m_rel       = null;
     private String m_jsp     = null;
     private String m_ref     = null;
-    private String m_context = WikiContext.VIEW;
+    private String m_context = ContextEnum.PAGE_VIEW.getRequestContext();
     private String m_accesskey = null;
     private String m_tabindex = null;
     private String m_templatefile = null;
@@ -73,7 +73,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     public void initTag() {
         super.initTag();
         m_version = m_cssClass = m_style = m_title = m_target = m_compareToVersion = m_rel = m_jsp = m_ref = m_accesskey = m_templatefile = null;
-        m_context = WikiContext.VIEW;
+        m_context = ContextEnum.PAGE_VIEW.getRequestContext();
         m_containedParams = new HashMap<>();
     }
 
@@ -181,11 +181,11 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         if( m_templatefile != null ) {
             final String params = addParamsForRecipient( null, m_containedParams );
             final String template = engine.getTemplateDir();
-            url = engine.getURL( WikiContext.NONE, "templates/"+template+"/"+m_templatefile, params );
+            url = engine.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "templates/"+template+"/"+m_templatefile, params );
         } else if( m_jsp != null ) {
             final String params = addParamsForRecipient( null, m_containedParams );
-            //url = m_wikiContext.getURL( WikiContext.NONE, m_jsp, params );
-            url = engine.getURL( WikiContext.NONE, m_jsp, params );
+            //url = m_wikiContext.getURL( ContextEnum.PAGE_NONE.getRequestContext(), m_jsp, params );
+            url = engine.getURL( ContextEnum.PAGE_NONE.getRequestContext(), m_jsp, params );
         } else if( m_ref != null ) {
             final int interwikipoint;
             if( new LinkParsingOperations( m_wikiContext ).isExternalLink(m_ref) ) {
@@ -210,7 +210,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                 //  Internal wiki link, but is it an attachment link?
                 final Page p = engine.getManager( PageManager.class ).getPage( m_pageName );
                 if( p instanceof Attachment ) {
-                    url = m_wikiContext.getURL( WikiContext.ATTACH, m_pageName );
+                    url = m_wikiContext.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), m_pageName );
                 } else if( (hashMark = m_ref.indexOf('#')) != -1 ) {
                     // It's an internal Wiki link, but to a named section
 
@@ -244,8 +244,8 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                 String ctx = m_context;
                 // Switch context appropriately when attempting to view an
                 // attachment, but don't override the context setting otherwise
-                if( m_context == null || m_context.equals( WikiContext.VIEW ) ) {
-                    ctx = WikiContext.ATTACH;
+                if( m_context == null || m_context.equals( ContextEnum.PAGE_VIEW.getRequestContext() ) ) {
+                    ctx = ContextEnum.PAGE_ATTACH.getRequestContext();
                 }
                 url = engine.getURL( ctx, m_pageName, parms );
                 //url = m_wikiContext.getURL( ctx, m_pageName, parms );
@@ -289,7 +289,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     private String makeBasicURL( final String context, final String page, String parms ) {
         final Engine engine = m_wikiContext.getEngine();
 
-        if( context.equals( WikiContext.DIFF ) ) {
+        if( context.equals( ContextEnum.PAGE_DIFF.getRequestContext() ) ) {
             int r1;
             int r2;
 

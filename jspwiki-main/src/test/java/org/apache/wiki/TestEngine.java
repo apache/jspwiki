@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -446,7 +447,7 @@ public class TestEngine extends WikiEngine {
     public String getI18nHTML( final String pagename ) {
         final Page page = getManager( PageManager.class ).getPage( pagename, PageProvider.LATEST_VERSION );
         final Context context = Wiki.context().create( this, newHttpRequest(), page );
-        context.setRequestContext( WikiContext.NONE );
+        context.setRequestContext( ContextEnum.PAGE_NONE.getRequestContext() );
         return getManager( RenderingManager.class ).getHTML( context, page );
     }
 

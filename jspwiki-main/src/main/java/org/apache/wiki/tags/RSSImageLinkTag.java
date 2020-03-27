@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
@@ -101,7 +101,7 @@ public class RSSImageLinkTag
             } else {
                 final String page = m_pageName != null ? m_pageName : m_wikiContext.getPage().getName();
                 final String params = "page="+page+"&mode="+m_mode;
-                out.print( "<a href='"+m_wikiContext.getURL( WikiContext.NONE, "rss.jsp", params ));
+                out.print( "<a href='"+m_wikiContext.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "rss.jsp", params ));
                 out.print( "' class='feed'" );
                 out.print( " title='"+MessageFormat.format( rb.getString( "rss.title" ), page )+"'>" );
                 out.print( "&nbsp;</a> ");

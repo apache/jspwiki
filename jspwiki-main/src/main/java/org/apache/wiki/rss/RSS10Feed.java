@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.rss;
 
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.util.XhtmlUtil;
@@ -88,7 +88,7 @@ public class RSS10Feed extends Feed {
 
             if( p.getVersion() > 1 ) {
                 item.addContent( new Element( "diff", NS_WIKI )
-                                         .addContent( engine.getURL( WikiContext.DIFF, p.getName(), "r1=-1" ) ) );
+                                         .addContent( engine.getURL( ContextEnum.PAGE_DIFF.getRequestContext(), p.getName(), "r1=-1" ) ) );
             }
 
             //
@@ -128,7 +128,7 @@ public class RSS10Feed extends Feed {
             //
             //  PageHistory
             item.addContent( new Element( "history", NS_WIKI )
-                                    .addContent( engine.getURL( WikiContext.INFO, p.getName(), null ) ) );
+                                    .addContent( engine.getURL( ContextEnum.PAGE_INFO.getRequestContext(), p.getName(), null ) ) );
 
             //
             // Add to root

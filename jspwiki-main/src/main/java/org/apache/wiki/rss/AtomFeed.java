@@ -19,10 +19,10 @@
 package org.apache.wiki.rss;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -105,7 +105,7 @@ public class AtomFeed extends Feed {
                     for( final Attachment att : c ) {
                         final Element attEl = getElement( "link" );
                         attEl.setAttribute( "rel", "enclosure" );
-                        attEl.setAttribute( "href", engine.getURL( WikiContext.ATTACH, att.getName(), null ) );
+                        attEl.setAttribute( "href", engine.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), att.getName(), null ) );
                         attEl.setAttribute( "length", Long.toString( att.getSize() ) );
                         attEl.setAttribute( "type", getMimeType( servletContext, att.getFileName() ) );
 
@@ -148,7 +148,7 @@ public class AtomFeed extends Feed {
         root.addContent( getElement( "link" ).setAttribute( "href", engine.getBaseURL() ) );
         root.addContent( getElement( "generator" ).setText( "JSPWiki " + Release.VERSTR ) );
 
-        final String rssFeedURL  = engine.getURL(WikiContext.NONE, "rss.jsp",
+        final String rssFeedURL  = engine.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "rss.jsp",
                                                  "page=" + engine.encodeName( m_wikiContext.getPage().getName() ) +
                                                  "&mode=" + m_mode +
                                                  "&type=atom" );

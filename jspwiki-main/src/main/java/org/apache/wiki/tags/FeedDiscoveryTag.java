@@ -18,9 +18,9 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.rss.Feed;
 import org.apache.wiki.util.TextUtil;
@@ -36,13 +36,14 @@ public class FeedDiscoveryTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
     
-    @Override public final int doWikiStartTag() throws IOException {
+    @Override
+    public final int doWikiStartTag() throws IOException {
         final Engine engine = m_wikiContext.getEngine();
-        final WikiPage page = m_wikiContext.getPage();
+        final Page page = m_wikiContext.getPage();
 
         final String encodedName = engine.encodeName( page.getName() );
         final String rssURL      = engine.getGlobalRSSURL();
-        final String rssFeedURL  = engine.getURL( WikiContext.NONE, "rss.jsp","page="+encodedName+"&amp;mode=wiki" );
+        final String rssFeedURL  = engine.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "rss.jsp","page="+encodedName+"&amp;mode=wiki" );
         
         if( rssURL != null ) {
             String siteName = Feed.getSiteName(m_wikiContext);
@@ -58,8 +59,8 @@ public class FeedDiscoveryTag extends WikiTagBase {
             */
             // FIXME: This does not work always, as plugins are not initialized until the first fetch
             if( "true".equals( page.getAttribute( WeblogPlugin.ATTR_ISWEBLOG ) ) ) {
-                final String blogFeedURL = engine.getURL( WikiContext.NONE,"rss.jsp","page="+encodedName );
-                final String atomFeedURL = engine.getURL( WikiContext.NONE,"rss.jsp","page="+encodedName+"&amp;type=atom" );
+                final String blogFeedURL = engine.getURL( ContextEnum.PAGE_NONE.getRequestContext(),"rss.jsp","page="+encodedName );
+                final String atomFeedURL = engine.getURL( ContextEnum.PAGE_NONE.getRequestContext(),"rss.jsp","page="+encodedName+"&amp;type=atom" );
         
                 pageContext.getOut().print("<link rel=\"alternate\" type=\"application/rss+xml\" title=\"RSS feed for weblog "+
                                            siteName+".\" href=\""+blogFeedURL+"\" />\n");

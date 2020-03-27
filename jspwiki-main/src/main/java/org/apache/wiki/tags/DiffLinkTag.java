@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.providers.WikiProvider;
@@ -131,7 +131,7 @@ public class DiffLinkTag extends WikiLinkTag {
             r2 = Integer.parseInt( getNewVersion() );
         }
 
-        final String url = m_wikiContext.getURL( WikiContext.DIFF, pageName, "r1="+r1+"&amp;r2="+r2 );
+        final String url = m_wikiContext.getURL( ContextEnum.PAGE_DIFF.getRequestContext(), pageName, "r1="+r1+"&amp;r2="+r2 );
         switch( m_format ) {
           case ANCHOR:
             out.print("<a href=\""+url+"\">");

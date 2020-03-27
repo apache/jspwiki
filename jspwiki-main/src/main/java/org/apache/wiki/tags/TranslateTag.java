@@ -19,7 +19,7 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.render.RenderingManager;
 
 import javax.servlet.jsp.JspException;
@@ -39,9 +39,10 @@ public class TranslateTag
     
     private static final Logger log = Logger.getLogger( TranslateTag.class );
 
-    @Override public final int doAfterBody() throws JspException {
+    @Override
+    public final int doAfterBody() throws JspException {
         try {
-            WikiContext context = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+            Context context = (Context) pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
 
             //  Because the TranslateTag should not affect any of the real page attributes we have to make a clone here.
             context = context.deepClone();

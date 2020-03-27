@@ -18,56 +18,45 @@
  */
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-import javax.servlet.jsp.JspWriter;
+import org.apache.wiki.api.core.ContextEnum;
 
-import org.apache.wiki.WikiContext;
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
+
 
 /**
- *  Writes a link to the upload page.  Body of the link becomes the actual text.
- *  The link is written regardless to whether the page exists or not.
+ * Writes a link to the upload page.  Body of the link becomes the actual text.
+ * The link is written regardless to whether the page exists or not.
+ * <P><B>Attributes</B></P>
+ * <UL>
+ * <LI>page - Page name to refer to.  Default is the current page.
+ * <LI>format - either "anchor" or "url" to output either an <A>... or just the HREF part of one.
+ * </UL>
  *
- *  <P><B>Attributes</B></P>
- *  <UL>
- *    <LI>page - Page name to refer to.  Default is the current page.
- *    <LI>format - either "anchor" or "url" to output either an <A>... or just the HREF part of one.
- *  </UL>
- *
- *  @since 2.0
+ * @since 2.0
  */
-public class UploadLinkTag
-    extends WikiLinkTag
-{
-    private static final long serialVersionUID = 0L;
-    
-    public final int doWikiStartTag()
-        throws IOException
-    {
-        String     pageName = m_pageName;
+public class UploadLinkTag extends WikiLinkTag {
 
-        if( m_pageName == null )
-        {
-            if( m_wikiContext.getPage() != null )
-            {
+    private static final long serialVersionUID = 0L;
+
+    @Override
+    public final int doWikiStartTag() throws IOException {
+        String pageName = m_pageName;
+        if( m_pageName == null ) {
+            if( m_wikiContext.getPage() != null ) {
                 pageName = m_wikiContext.getPage().getName();
-            }
-            else
-            {
+            } else {
                 return SKIP_BODY;
             }
         }
 
-        JspWriter out = pageContext.getOut();
-
-        String url = m_wikiContext.getURL( WikiContext.UPLOAD,
-                                           pageName );
-
-        switch( m_format )
-        {
-          case ANCHOR:
-            out.print("<a target=\"_new\" class=\"uploadlink\" href=\""+url+"\">");
+        final JspWriter out = pageContext.getOut();
+        final String url = m_wikiContext.getURL( ContextEnum.PAGE_UPLOAD.getRequestContext(), pageName );
+        switch( m_format ) {
+        case ANCHOR:
+            out.print( "<a target=\"_new\" class=\"uploadlink\" href=\"" + url + "\">" );
             break;
-          case URL:
+        case URL:
             out.print( url );
             break;
         }

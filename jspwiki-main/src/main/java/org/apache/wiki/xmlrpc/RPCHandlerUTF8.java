@@ -19,9 +19,9 @@
 package org.apache.wiki.xmlrpc;
 
 import org.apache.wiki.LinkCollector;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -195,7 +195,7 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
             if( m_engine.getManager( PageManager.class ).wikiPageExists( link ) ) {
                 ht.put( "href", context.getViewURL( link ) );
             } else {
-                ht.put( "href", context.getURL( WikiContext.EDIT, link ) );
+                ht.put( "href", context.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), link ) );
             }
 
             result.add( ht );
@@ -208,7 +208,7 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
             final Hashtable<String, String> ht = new Hashtable<>();
             ht.put( "page", link );
             ht.put( "type", LINK_LOCAL );
-            ht.put( "href", context.getURL(WikiContext.ATTACH,link) );
+            ht.put( "href", context.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), link ) );
             result.add( ht );
         }
 

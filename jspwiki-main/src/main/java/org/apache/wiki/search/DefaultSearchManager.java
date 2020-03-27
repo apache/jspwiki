@@ -21,11 +21,11 @@ package org.apache.wiki.search;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.ajax.AjaxUtil;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.FilterException;
@@ -124,7 +124,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                     result = AjaxUtil.toJson( callResults );
                 } else if( actionName.equals( AJAX_ACTION_PAGES ) ) {
                     log.debug("Calling findPages() START");
-                    final Context wikiContext = Wiki.context().create( m_engine, req, WikiContext.VIEW );
+                    final Context wikiContext = Wiki.context().create( m_engine, req, ContextEnum.PAGE_VIEW.getRequestContext() );
                     final List< Map< String, Object > > callResults = findPages( itemId, maxResults, wikiContext );
                     log.debug( "Calling findPages() DONE. " + callResults.size() );
                     result = AjaxUtil.toJson( callResults );

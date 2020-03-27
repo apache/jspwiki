@@ -24,11 +24,9 @@ package org.apache.wiki.ui;
 
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.ContextEnum;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.pages.PageManager;
@@ -47,7 +45,7 @@ public class CommandResolverTest {
     @BeforeEach
     public void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
-        props.setProperty( WikiEngine.PROP_MATCHPLURALS, "yes" );
+        props.setProperty( Engine.PROP_MATCHPLURALS, "yes" );
         m_engine = new TestEngine( props );
         resolver = m_engine.getManager( CommandResolver.class );
         m_engine.saveText( "SinglePage", "This is a test." );
@@ -68,14 +66,14 @@ public class CommandResolverTest {
         Assertions.assertEquals( ContextEnum.PAGE_EDIT.getRequestContext(), a.getRequestContext() );
 
         // Ditto for prefs context
-        a = CommandResolver.findCommand( WikiContext.PREFS );
+        a = CommandResolver.findCommand( ContextEnum.WIKI_PREFS.getRequestContext() );
         Assertions.assertEquals( WikiCommand.PREFS, a );
-        Assertions.assertEquals( WikiContext.PREFS, a.getRequestContext() );
+        Assertions.assertEquals( ContextEnum.WIKI_PREFS.getRequestContext(), a.getRequestContext() );
 
         // Ditto for group view context
-        a = CommandResolver.findCommand( WikiContext.VIEW_GROUP );
+        a = CommandResolver.findCommand( ContextEnum.GROUP_VIEW.getRequestContext() );
         Assertions.assertEquals( GroupCommand.VIEW_GROUP, a );
-        Assertions.assertEquals( WikiContext.VIEW_GROUP, a.getRequestContext() );
+        Assertions.assertEquals( ContextEnum.GROUP_VIEW.getRequestContext(), a.getRequestContext() );
 
         // Looking for non-existent context; should result in exception
         Assertions.assertThrows( IllegalArgumentException.class, () -> CommandResolver.findCommand( "nonExistentContext" ) );
@@ -94,12 +92,12 @@ public class CommandResolverTest {
         Assertions.assertNull( a.getTarget() );
 
         // Ditto for prefs context
-        a = resolver.findCommand( request, WikiContext.PREFS );
+        a = resolver.findCommand( request, ContextEnum.WIKI_PREFS.getRequestContext() );
         Assertions.assertEquals( WikiCommand.PREFS, a );
         Assertions.assertNull( a.getTarget() );
 
         // Ditto for group view context
-        a = resolver.findCommand( request, WikiContext.VIEW_GROUP );
+        a = resolver.findCommand( request, ContextEnum.GROUP_VIEW.getRequestContext() );
         Assertions.assertEquals( GroupCommand.VIEW_GROUP, a );
         Assertions.assertNull( a.getTarget() );
 
@@ -167,7 +165,7 @@ public class CommandResolverTest {
         MockHttpServletRequest request = m_engine.newHttpRequest( "/Wiki.jsp" );
         Command a = resolver.findCommand( request, ContextEnum.PAGE_EDIT.getRequestContext() );
         Assertions.assertNotNull( a.getTarget() );
-        Assertions.assertEquals( ((WikiPage)a.getTarget()).getName(), m_engine.getFrontPage() );
+        Assertions.assertEquals( ((Page)a.getTarget()).getName(), m_engine.getFrontPage() );
 
         // Passing an EDIT request with Group JSP yields VIEW_GROUP
         request = m_engine.newHttpRequest( "/Group.jsp" );

@@ -19,7 +19,7 @@
 package org.apache.wiki.tags;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.ui.TemplateManager;
 
@@ -50,7 +50,7 @@ public class ContentTag extends WikiTagBase {
      */
     public void setView( final String s )
     {
-        m_mappings.put( WikiContext.VIEW, s );
+        m_mappings.put( ContextEnum.PAGE_VIEW.getRequestContext(), s );
     }
 
     /**
@@ -60,7 +60,7 @@ public class ContentTag extends WikiTagBase {
      */
     public void setDiff( final String s )
     {
-        m_mappings.put( WikiContext.DIFF, s );
+        m_mappings.put( ContextEnum.PAGE_DIFF.getRequestContext(), s );
     }
 
     /**
@@ -70,7 +70,7 @@ public class ContentTag extends WikiTagBase {
      */
     public void setInfo( final String s )
     {
-        m_mappings.put( WikiContext.INFO, s );
+        m_mappings.put( ContextEnum.PAGE_INFO.getRequestContext(), s );
     }
 
     /**
@@ -80,7 +80,7 @@ public class ContentTag extends WikiTagBase {
      */
     public void setPreview( final String s )
     {
-        m_mappings.put( WikiContext.PREVIEW, s );
+        m_mappings.put( ContextEnum.PAGE_PREVIEW.getRequestContext(), s );
     }
 
     /**
@@ -90,7 +90,7 @@ public class ContentTag extends WikiTagBase {
      */
     public void setConflict( final String s )
     {
-        m_mappings.put( WikiContext.CONFLICT, s );
+        m_mappings.put( ContextEnum.PAGE_CONFLICT.getRequestContext(), s );
     }
 
     /**
@@ -100,7 +100,7 @@ public class ContentTag extends WikiTagBase {
      */
     public void setFind( final String s )
     {
-        m_mappings.put( WikiContext.FIND, s );
+        m_mappings.put( ContextEnum.WIKI_FIND.getRequestContext(), s );
     }
 
     /**
@@ -110,7 +110,7 @@ public class ContentTag extends WikiTagBase {
      */
     public void setPrefs( final String s )
     {
-        m_mappings.put( WikiContext.PREFS, s );
+        m_mappings.put( ContextEnum.WIKI_PREFS.getRequestContext(), s );
     }
 
     /**
@@ -120,7 +120,7 @@ public class ContentTag extends WikiTagBase {
      */
     public void setError( final String s )
     {
-        m_mappings.put( WikiContext.ERROR, s );
+        m_mappings.put( ContextEnum.WIKI_ERROR.getRequestContext(), s );
     }
 
     /**
@@ -130,7 +130,7 @@ public class ContentTag extends WikiTagBase {
      */
     public void setEdit( final String s )
     {
-        m_mappings.put( WikiContext.EDIT, s );
+        m_mappings.put( ContextEnum.PAGE_EDIT.getRequestContext(), s );
     }
 
     /**
@@ -140,7 +140,7 @@ public class ContentTag extends WikiTagBase {
      */
     public void setComment( final String s )
     {
-        m_mappings.put( WikiContext.COMMENT, s );
+        m_mappings.put( ContextEnum.PAGE_COMMENT.getRequestContext(), s );
     }
 
     /**

@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
@@ -70,7 +70,7 @@ public class PageInfoLinkTag extends WikiLinkTag {
 
         if( engine.getManager( PageManager.class ).wikiPageExists(pageName) ) {
             final JspWriter out = pageContext.getOut();
-            final String url = m_wikiContext.getURL( WikiContext.INFO, pageName );
+            final String url = m_wikiContext.getURL( ContextEnum.PAGE_INFO.getRequestContext(), pageName );
 
             switch( m_format ) {
               case ANCHOR: out.print("<a class=\"pageinfo\" href=\""+url+"\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\">"); break;

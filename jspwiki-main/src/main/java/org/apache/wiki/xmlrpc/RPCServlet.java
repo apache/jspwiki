@@ -19,8 +19,8 @@
 package org.apache.wiki.xmlrpc;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.xmlrpc.ContextXmlRpcHandler;
@@ -110,7 +110,7 @@ public class RPCServlet extends HttpServlet {
         log.debug("Received POST to RPCServlet");
 
         try {
-            final Context ctx = Wiki.context().create( m_engine, request, WikiContext.NONE );
+            final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_NONE.getRequestContext() );
             final XmlRpcContext xmlrpcContext = new WikiXmlRpcContext( m_xmlrpcServer.getHandlerMapping(), ctx );
             final byte[] result = m_xmlrpcServer.execute( request.getInputStream(), xmlrpcContext );
 

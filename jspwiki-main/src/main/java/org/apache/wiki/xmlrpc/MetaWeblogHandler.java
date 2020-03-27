@@ -19,9 +19,9 @@
 package org.apache.wiki.xmlrpc;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.spi.Wiki;
@@ -114,7 +114,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
     }
 
     private String getURL( final String page ) {
-        return m_context.getEngine().getURL( WikiContext.VIEW, page,null );
+        return m_context.getEngine().getURL( ContextEnum.PAGE_VIEW.getRequestContext(), page,null );
     }
 
     /**
@@ -263,7 +263,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
             att.setAuthor( username );
             attmgr.storeAttachment( att, new ByteArrayInputStream( data ) );
 
-            url = engine.getURL( WikiContext.ATTACH, att.getName(), null );
+            url = engine.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), att.getName(), null );
         } catch( final Exception e ) {
             log.error( "Failed to upload attachment", e );
             throw new XmlRpcException( 0, "Failed to upload media object: "+e.getMessage() );

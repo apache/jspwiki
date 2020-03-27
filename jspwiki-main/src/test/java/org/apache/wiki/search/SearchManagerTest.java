@@ -21,8 +21,10 @@ package org.apache.wiki.search;
 import net.sf.ehcache.CacheManager;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.search.SearchResult;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -80,7 +82,7 @@ public class SearchManagerTest {
     Callable< Boolean > findsResultsFor( final Collection< SearchResult > res, final String text ) {
         return () -> {
             final MockHttpServletRequest request = m_engine.newHttpRequest();
-            final WikiContext ctx = new WikiContext( m_engine, request, WikiContext.EDIT );
+            final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
             final Collection< SearchResult > search = m_mgr.findPages( text, ctx );
             if( search != null && search.size() > 0 ) {
                 // debugSearchResults( search );
@@ -123,7 +125,7 @@ public class SearchManagerTest {
         final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
         final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
-        final WikiContext ctx = new WikiContext( m_engine, request, WikiContext.EDIT );
+        final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
         m_engine.getManager( PageManager.class ).saveText( ctx, txt );
         m_engine.getManager( PageManager.class ).saveText( ctx, "The Babylon Project was a dream given form. Its goal: to prevent another war by creating a place where humans and aliens could work out their differences peacefully." );
 
@@ -145,7 +147,7 @@ public class SearchManagerTest {
         final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
         final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
-        final WikiContext ctx = new WikiContext( m_engine, request, WikiContext.EDIT );
+        final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
         m_engine.getManager( PageManager.class ).saveText( ctx, txt );
 
         Collection< SearchResult > res = new ArrayList<>();

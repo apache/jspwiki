@@ -19,9 +19,9 @@
 package org.apache.wiki.rss;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
@@ -114,10 +114,10 @@ public class DefaultRSSGenerator implements RSSGenerator {
 
         sb.append( "<br /><hr /><br />" )
           .append( "Parent page: <a href=\"" )
-          .append( m_engine.getURL( WikiContext.VIEW, att.getParentName(), null ) )
+          .append( m_engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), att.getParentName(), null ) )
           .append( "\">" ).append( att.getParentName() ).append( "</a><br />" )
           .append( "Info page: <a href=\"" )
-          .append( m_engine.getURL( WikiContext.INFO, att.getName(), null ) )
+          .append( m_engine.getURL( ContextEnum.PAGE_INFO.getRequestContext(), att.getName(), null ) )
           .append( "\">" ).append( att.getName() ).append( "</a>" );
 
         return sb.toString();
@@ -162,7 +162,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
     @Override
     public String generate() {
         final Context context = Wiki.context().create( m_engine, Wiki.contents().page( m_engine, "__DUMMY" ) );
-        context.setRequestContext( WikiContext.RSS );
+        context.setRequestContext( ContextEnum.PAGE_RSS.getRequestContext() );
         final Feed feed = new RSS10Feed( context );
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + generateFullWikiRSS( context, feed );
     }
@@ -237,9 +237,9 @@ public class DefaultRSSGenerator implements RSSGenerator {
 
             final String url;
             if( page instanceof Attachment ) {
-                url = m_engine.getURL( WikiContext.ATTACH, page.getName(),null );
+                url = m_engine.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), page.getName(),null );
             } else {
-                url = m_engine.getURL( WikiContext.VIEW, page.getName(), null );
+                url = m_engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), page.getName(), null );
             }
 
             final Entry e = new Entry();
@@ -283,9 +283,9 @@ public class DefaultRSSGenerator implements RSSGenerator {
             String url;
 
             if( page instanceof Attachment ) {
-                url = m_engine.getURL( WikiContext.ATTACH, page.getName(), "version=" + page.getVersion() );
+                url = m_engine.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), page.getName(), "version=" + page.getVersion() );
             } else {
-                url = m_engine.getURL( WikiContext.VIEW, page.getName(), "version=" + page.getVersion() );
+                url = m_engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), page.getName(), "version=" + page.getVersion() );
             }
 
             // Unfortunately, this is needed because the code will again go through replacement conversion
@@ -340,9 +340,9 @@ public class DefaultRSSGenerator implements RSSGenerator {
             final String url;
 
             if( page instanceof Attachment ) {
-                url = m_engine.getURL( WikiContext.ATTACH, page.getName(),null );
+                url = m_engine.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), page.getName(),null );
             } else {
-                url = m_engine.getURL( WikiContext.VIEW, page.getName(),null );
+                url = m_engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), page.getName(),null );
             }
 
             e.setURL( url );

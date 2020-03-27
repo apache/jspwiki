@@ -19,7 +19,7 @@
 package org.apache.wiki.tags;
 
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Page;
 
 import javax.servlet.jsp.JspWriter;
@@ -73,7 +73,7 @@ public class CommentLinkTag
     }
 
     private String getCommentURL( final String pageName ) {
-        return m_wikiContext.getURL( WikiContext.COMMENT, pageName );
+        return m_wikiContext.getURL( ContextEnum.PAGE_COMMENT.getRequestContext(), pageName );
     }
 
 }
