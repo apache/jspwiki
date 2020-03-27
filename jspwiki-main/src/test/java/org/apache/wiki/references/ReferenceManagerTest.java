@@ -15,8 +15,8 @@ package org.apache.wiki.references;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -317,7 +317,7 @@ public class ReferenceManagerTest  {
     @Test
     public void testReadLinks() {
         final String src="Foobar. [Foobar].  Frobozz.  [This is a link].";
-        final Object[] result = mgr.scanWikiLinks( new WikiPage( engine, "Test"), src ).toArray();
+        final Object[] result = mgr.scanWikiLinks( Wiki.contents().page( engine, "Test"), src ).toArray();
 
         Assertions.assertEquals( "Foobar", result[0], "item 0" );
         Assertions.assertEquals( "This is a link", result[1], "item 1" );

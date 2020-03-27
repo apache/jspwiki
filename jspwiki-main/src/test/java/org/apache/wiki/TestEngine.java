@@ -24,21 +24,26 @@ import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockServletContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.PageProvider;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.spi.Wiki;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.event.WikiPageEvent;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.AbstractFileProvider;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.providers.FileSystemProvider;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
@@ -79,7 +84,7 @@ public class TestEngine extends WikiEngine {
             // Set up long-running admin session
             final HttpServletRequest request = newHttpRequest();
             m_adminWikiSession = WikiSession.getWikiSession( this, request );
-            this.getAuthenticationManager().login( m_adminWikiSession, request, Users.ADMIN, Users.ADMIN_PASS );
+            this.getManager( AuthenticationManager.class ).login( m_adminWikiSession, request, Users.ADMIN, Users.ADMIN_PASS );
         }
         return m_adminWikiSession;
     }
@@ -109,7 +114,7 @@ public class TestEngine extends WikiEngine {
             // Set up a test Janne session
             final HttpServletRequest request = newHttpRequest();
             m_janneWikiSession = WikiSession.getWikiSession( this, request );
-            this.getAuthenticationManager().login( m_janneWikiSession, request, Users.JANNE, Users.JANNE_PASS );
+            this.getManager( AuthenticationManager.class ).login( m_janneWikiSession, request, Users.JANNE, Users.JANNE_PASS );
         }
         return m_janneWikiSession;
     }
@@ -393,8 +398,8 @@ public class TestEngine extends WikiEngine {
      * @param data
      */
     public void addAttachment( final String pageName, final String attachmentName, final byte[] data ) throws ProviderException, IOException {
-        final Attachment att = new Attachment( this,pageName,attachmentName );
-        getAttachmentManager().storeAttachment( att, new ByteArrayInputStream( data ) );
+        final Attachment att = Wiki.contents().attachment( this,pageName,attachmentName );
+        getManager( AttachmentManager.class ).storeAttachment( att, new ByteArrayInputStream( data ) );
     }
 
     /**
@@ -410,25 +415,25 @@ public class TestEngine extends WikiEngine {
         // Build new request and associate our admin session
         final MockHttpServletRequest request = newHttpRequest();
         final Session wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
-        this.getAuthenticationManager().login( wikiSession, request, Users.ADMIN, Users.ADMIN_PASS );
+        this.getManager( AuthenticationManager.class ).login( wikiSession, request, Users.ADMIN, Users.ADMIN_PASS );
 
         // Create page and wiki context
-        final WikiPage page = new WikiPage( this, pageName );
-        final WikiContext context = new WikiContext( this, request, page );
-        getPageManager().saveText( context, content );
+        final Page page = Wiki.contents().page( this, pageName );
+        final Context context = Wiki.context().create( this, request, page );
+        getManager( PageManager.class ).saveText( context, content );
     }
 
     public void saveTextAsJanne( final String pageName, final String content ) throws WikiException {
         // Build new request and associate our Janne session
         final MockHttpServletRequest request = newHttpRequest();
         final Session wikiSession = SessionMonitor.getInstance( this ).find( request.getSession() );
-        this.getAuthenticationManager().login( wikiSession, request, Users.JANNE, Users.JANNE_PASS );
+        this.getManager( AuthenticationManager.class ).login( wikiSession, request, Users.JANNE, Users.JANNE_PASS );
 
         // Create page and wiki context
-        final WikiPage page = new WikiPage( this, pageName );
+        final Page page = Wiki.contents().page( this, pageName );
         page.setAuthor(Users.JANNE);
-        final WikiContext context = new WikiContext( this, request, page );
-        getPageManager().saveText( context, content );
+        final Context context = Wiki.context().create( this, request, page );
+        getManager( PageManager.class ).saveText( context, content );
     }
 
     /**
@@ -439,10 +444,10 @@ public class TestEngine extends WikiEngine {
      * @return (english) contents corresponding to the given page name.
      */
     public String getI18nHTML( final String pagename ) {
-        final Page page = getPageManager().getPage( pagename, PageProvider.LATEST_VERSION );
-        final WikiContext context = new WikiContext( this, newHttpRequest(), page );
+        final Page page = getManager( PageManager.class ).getPage( pagename, PageProvider.LATEST_VERSION );
+        final Context context = Wiki.context().create( this, newHttpRequest(), page );
         context.setRequestContext( WikiContext.NONE );
-        return getRenderingManager().getHTML( context, page );
+        return getManager( RenderingManager.class ).getHTML( context, page );
     }
 
     public static void trace() {

@@ -18,18 +18,15 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.spi.Wiki;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Properties;
-
 import javax.management.NotCompliantMBeanException;
-
-import org.junit.jupiter.api.Assertions;
-
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.api.exceptions.WikiException;
+import java.util.Properties;
 
 
 public class PluginBeanTest {
@@ -41,18 +38,18 @@ public class PluginBeanTest {
     @Test
     public void testDoGet() throws WikiException, NotCompliantMBeanException {
         testEngine = new TestEngine( props );
-        WikiContext context = new WikiContext( testEngine, new WikiPage( testEngine, "TestPage01" ) );
-        PluginBean pb = new PluginBean( testEngine );
-        String expectedHtml = "<div>" +
-                                "<h4>Plugins</h4>" +
-                                "<table border=\"1\">" +
-                                  "<tr><th>Name</th><th>Alias</th><th>Author</th><th>Notes</th></tr>" +
-                                  "<tr><td>IfPlugin</td><td>If</td><td>Janne Jalkanen</td><td></td></tr>" +
-                                  "<tr><td>Note</td><td></td><td>Janne Jalkanen</td><td></td></tr>" +
-                                  "<tr><td>SamplePlugin</td><td>samplealias</td><td>Janne Jalkanen</td><td></td></tr>" +
-                                  "<tr><td>SamplePlugin2</td><td>samplealias2</td><td>Janne Jalkanen</td><td></td></tr>" +
-                                "</table>" +
-                              "</div>";
+        final Context context = Wiki.context().create( testEngine, Wiki.contents().page( testEngine, "TestPage01" ) );
+        final PluginBean pb = new PluginBean( testEngine );
+        final String expectedHtml = "<div>" +
+                                      "<h4>Plugins</h4>" +
+                                      "<table border=\"1\">" +
+                                        "<tr><th>Name</th><th>Alias</th><th>Author</th><th>Notes</th></tr>" +
+                                        "<tr><td>IfPlugin</td><td>If</td><td>Janne Jalkanen</td><td></td></tr>" +
+                                        "<tr><td>Note</td><td></td><td>Janne Jalkanen</td><td></td></tr>" +
+                                        "<tr><td>SamplePlugin</td><td>samplealias</td><td>Janne Jalkanen</td><td></td></tr>" +
+                                        "<tr><td>SamplePlugin2</td><td>samplealias2</td><td>Janne Jalkanen</td><td></td></tr>" +
+                                      "</table>" +
+                                    "</div>";
         Assertions.assertEquals( expectedHtml, pb.doGet( context ) );
     }
 

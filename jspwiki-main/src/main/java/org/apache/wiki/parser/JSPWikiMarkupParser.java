@@ -31,11 +31,12 @@ import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.UserManager;
@@ -799,7 +800,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      */
     private JSPWikiMarkupParser getCleanTranslator() {
         if( m_cleanTranslator == null ) {
-            final Context dummyContext = new WikiContext( m_engine, m_context.getHttpRequest(), m_context.getPage() );
+            final Context dummyContext = Wiki.context().create( m_engine, m_context.getHttpRequest(), m_context.getPage() );
             m_cleanTranslator = new JSPWikiMarkupParser( dummyContext, null );
             m_cleanTranslator.m_allowHTML = true;
         }
@@ -1013,7 +1014,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         if( !m_parseAccessRules ) {
             return m_currentElement;
         }
-        final WikiPage page = ( WikiPage )m_context.getRealPage();
+        final Page page = m_context.getRealPage();
         // UserDatabase db = m_context.getEngine().getUserDatabase();
 
         if( ruleLine.startsWith( "{" ) ) {

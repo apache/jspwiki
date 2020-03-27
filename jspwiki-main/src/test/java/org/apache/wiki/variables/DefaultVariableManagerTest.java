@@ -20,7 +20,6 @@
 package org.apache.wiki.variables;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.api.spi.Wiki;
@@ -40,7 +39,7 @@ public class DefaultVariableManagerTest {
     public static void setUp() {
         final TestEngine testEngine = TestEngine.build();
         m_variableManager = new DefaultVariableManager( TestEngine.getTestProperties() );
-        m_context = Wiki.context().create( testEngine, new WikiPage( testEngine, PAGE_NAME ) );
+        m_context = Wiki.context().create( testEngine, Wiki.contents().page( testEngine, PAGE_NAME ) );
     }
 
     @Test

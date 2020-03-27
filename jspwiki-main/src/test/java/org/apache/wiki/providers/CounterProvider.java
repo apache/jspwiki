@@ -18,13 +18,13 @@
  */
 package org.apache.wiki.providers;
 
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.search.QueryItem;
 import org.apache.wiki.api.search.SearchResult;
+import org.apache.wiki.api.spi.Wiki;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,26 +45,25 @@ public class CounterProvider implements PageProvider {
     public int m_getAllPagesCalls = 0;
     public int m_initCalls        = 0;
 
-    WikiPage[]    m_pages         = new WikiPage[0];
+    Page[]    m_pages         = new Page[0];
     
     String m_defaultText = "[Foo], [Bar], [Blat], [Blah]";
 
 
     @Override
     public void initialize( final Engine engine, final Properties props ) {
-        m_pages = new WikiPage[]
-                  { new WikiPage(engine, "Foo"),
-                    new WikiPage(engine, "Bar"),
-                    new WikiPage(engine, "Blat"),
-                    new WikiPage(engine, "Blaa") };
+        m_pages = new Page[]
+                  { Wiki.contents().page( engine, "Foo" ),
+                    Wiki.contents().page( engine, "Bar" ),
+                    Wiki.contents().page( engine, "Blat" ),
+                    Wiki.contents().page( engine, "Blaa" ) };
         
         m_initCalls++;
-        
-        for( int i = 0; i < m_pages.length; i++ ) 
-        {
-            m_pages[i].setAuthor("Unknown");
-            m_pages[i].setLastModified( new Date(0L) );
-            m_pages[i].setVersion(1);
+
+        for( final Page m_page : m_pages ) {
+            m_page.setAuthor( "Unknown" );
+            m_page.setLastModified( new Date( 0L ) );
+            m_page.setVersion( 1 );
         }
     }
 
@@ -98,7 +97,7 @@ public class CounterProvider implements PageProvider {
     }
 
     private Page findPage( final String page ) {
-        for( final WikiPage m_page : m_pages ) {
+        for( final Page m_page : m_pages ) {
             if( m_page.getName().equals( page ) ) {
                 return m_page;
             }

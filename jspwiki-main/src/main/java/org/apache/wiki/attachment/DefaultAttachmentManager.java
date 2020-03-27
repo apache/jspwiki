@@ -22,7 +22,6 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -30,6 +29,7 @@ import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.AttachmentProvider;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.references.ReferenceManager;
@@ -288,7 +288,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
         m_provider.putAttachmentData( att, in );
         m_engine.getManager( ReferenceManager.class ).updateReferences( att.getName(), new ArrayList<>() );
 
-        final WikiPage parent = new WikiPage( m_engine, att.getParentName() );
+        final Page parent = Wiki.contents().page( m_engine, att.getParentName() );
         m_engine.getManager( ReferenceManager.class ).updateReferences( parent );
         m_engine.getManager( SearchManager.class ).reindexPage( att );
     }

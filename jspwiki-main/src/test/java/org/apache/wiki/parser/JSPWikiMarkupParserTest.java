@@ -23,11 +23,13 @@ import org.apache.wiki.LinkCollector;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.AttachmentProvider;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.BasicAttachmentProvider;
 import org.apache.wiki.render.RenderingManager;
@@ -100,7 +102,7 @@ public class JSPWikiMarkupParserTest
             NoRequiredPropertyException,
             ServletException
     {
-        return translate( new WikiPage(testEngine, PAGE_NAME), src );
+        return translate( Wiki.contents().page(testEngine, PAGE_NAME), src );
     }
 
     private String translate( final WikiEngine e, final String src )
@@ -108,11 +110,11 @@ public class JSPWikiMarkupParserTest
                NoRequiredPropertyException,
                ServletException
     {
-        return translate( e, new WikiPage(testEngine, PAGE_NAME), src );
+        return translate( e, Wiki.contents().page(testEngine, PAGE_NAME), src );
     }
 
 
-    private String translate( final WikiPage p, final String src )
+    private String translate( final Page p, final String src )
         throws IOException,
                NoRequiredPropertyException,
                ServletException
@@ -120,7 +122,7 @@ public class JSPWikiMarkupParserTest
         return translate( testEngine, p, src );
     }
 
-    private String translate( final WikiEngine e, final WikiPage p, final String src )
+    private String translate( final Engine e, final Page p, final String src )
         throws IOException,
                NoRequiredPropertyException,
                ServletException
@@ -146,7 +148,7 @@ public class JSPWikiMarkupParserTest
         final TestEngine testEngine2 = new TestEngine( props );
 
         final WikiContext context = new WikiContext( testEngine2,
-                                               new WikiPage(testEngine2, PAGE_NAME) );
+                                               Wiki.contents().page(testEngine2, PAGE_NAME) );
         final JSPWikiMarkupParser r = new JSPWikiMarkupParser( context,
                                                          new BufferedReader( new StringReader(src)) );
 
@@ -734,7 +736,7 @@ public class JSPWikiMarkupParserTest
     {
         newPage("Test");
 
-        final Attachment att = new Attachment( testEngine, "Test", "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( testEngine, "Test", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         testEngine.getManager( AttachmentManager.class ).storeAttachment( att, testEngine.makeAttachmentFile() );
 
@@ -757,10 +759,10 @@ public class JSPWikiMarkupParserTest
         testEngine2.saveText( "Test", "foo ");
         created.addElement( "Test" );
 
-        final Attachment att = new Attachment( testEngine2, "Test", "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( testEngine2, "Test", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
 
-        testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
+        testEngine2.getManager( AttachmentManager.class ).storeAttachment( att, testEngine.makeAttachmentFile() );
 
         final String src = "This should be an [attachment link|Test/TestAtt.txt]";
 
@@ -781,10 +783,10 @@ public class JSPWikiMarkupParserTest
         testEngine2.saveText( "TestPage", "foo ");
         created.addElement( "TestPage" );
 
-        final Attachment att = new Attachment( testEngine2, "TestPage", "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( testEngine2, "TestPage", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
 
-        testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
+        testEngine2.getManager( AttachmentManager.class ).storeAttachment( att, testEngine.makeAttachmentFile() );
 
         final String src = "[Test page/TestAtt.txt]";
 
@@ -802,10 +804,10 @@ public class JSPWikiMarkupParserTest
         testEngine2.saveText( "TestPage", "foo ");
         created.addElement( "TestPage" );
 
-        final Attachment att = new Attachment( testEngine2, "TestPage", "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( testEngine2, "TestPage", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
 
-        testEngine2.getAttachmentManager().storeAttachment( att, testEngine.makeAttachmentFile() );
+        testEngine2.getManager( AttachmentManager.class ).storeAttachment( att, testEngine.makeAttachmentFile() );
 
         final String src = "["+testEngine2.getManager( RenderingManager.class ).beautifyTitle("TestPage/TestAtt.txt")+"]";
 
@@ -1311,7 +1313,7 @@ public class JSPWikiMarkupParserTest
         props.setProperty( "jspwiki.translatorReader.allowHTML", "true" );
         testEngine = new TestEngine( props );
 
-        final WikiPage page = new WikiPage(testEngine,PAGE_NAME);
+        final Page page = Wiki.contents().page(testEngine,PAGE_NAME);
 
         final String out = translate( testEngine, page, src );
 
@@ -1327,7 +1329,7 @@ public class JSPWikiMarkupParserTest
         props.setProperty( "jspwiki.translatorReader.allowHTML", "true" );
         testEngine = new TestEngine( props );
 
-        final WikiPage page = new WikiPage(testEngine,PAGE_NAME);
+        final Page page = Wiki.contents().page(testEngine,PAGE_NAME);
 
         final String out = translate( testEngine, page, src );
 
@@ -2376,7 +2378,7 @@ public class JSPWikiMarkupParserTest
      {
      String src = "Foobar.[{ALLOW view JanneJalkanen}]";
 
-     WikiPage p = new WikiPage( PAGE_NAME );
+     WikiPage p = Wiki.contents().page( PAGE_NAME );
 
      String res = translate( p, src );
 
@@ -2397,7 +2399,7 @@ public class JSPWikiMarkupParserTest
      String src = "Foobar.[{ALLOW view JanneJalkanen}]\n"+
      "[{ALLOW edit JanneJalkanen, SuloVilen}]";
 
-     WikiPage p = new WikiPage( PAGE_NAME );
+     WikiPage p = Wiki.contents().page( PAGE_NAME );
 
      String res = translate( p, src );
 
@@ -2444,7 +2446,7 @@ public class JSPWikiMarkupParserTest
     {
         final String src = "Foobar.[{SET name=foo}]";
 
-        final WikiPage p = new WikiPage( testEngine, PAGE_NAME );
+        final Page p = Wiki.contents().page( testEngine, PAGE_NAME );
 
         final String res = translate( p, src );
 
@@ -2459,7 +2461,7 @@ public class JSPWikiMarkupParserTest
     {
         final String src = "Foobar.[{SET name = foo}]";
 
-        final WikiPage p = new WikiPage( testEngine, PAGE_NAME );
+        final Page p = Wiki.contents().page( testEngine, PAGE_NAME );
 
         final String res = translate( p, src );
 
@@ -2474,7 +2476,7 @@ public class JSPWikiMarkupParserTest
     {
         final String src = "Foobar.[{SET name= Janne Jalkanen}]";
 
-        final WikiPage p = new WikiPage( testEngine, PAGE_NAME );
+        final Page p = Wiki.contents().page( testEngine, PAGE_NAME );
 
         final String res = translate( p, src );
 
@@ -2489,7 +2491,7 @@ public class JSPWikiMarkupParserTest
     {
         final String src = "Foobar.[{SET name='Janne Jalkanen'}][{SET too='{$name}'}]";
 
-        final WikiPage p = new WikiPage( testEngine, PAGE_NAME );
+        final Page p = Wiki.contents().page( testEngine, PAGE_NAME );
 
         final String res = translate( p, src );
 
@@ -2505,7 +2507,7 @@ public class JSPWikiMarkupParserTest
     {
         final String src = "Foobar.[{SET name='<b>danger</b>'}] [{$name}]";
 
-        final WikiPage p = new WikiPage( testEngine, PAGE_NAME );
+        final Page p = Wiki.contents().page( testEngine, PAGE_NAME );
 
         final String res = translate( p, src );
 
@@ -2526,7 +2528,7 @@ public class JSPWikiMarkupParserTest
         final LinkCollector coll = new LinkCollector();
         final String src = "[Test]";
         final WikiContext context = new WikiContext( testEngine,
-                                               new WikiPage(testEngine,PAGE_NAME) );
+                                               Wiki.contents().page(testEngine,PAGE_NAME) );
 
         final MarkupParser p = new JSPWikiMarkupParser( context,
                                                   new BufferedReader( new StringReader(src)) );
@@ -2550,7 +2552,7 @@ public class JSPWikiMarkupParserTest
         final String src = "["+PAGE_NAME+"/Test.txt]";
 
         final WikiContext context = new WikiContext( testEngine,
-                                               new WikiPage(testEngine,PAGE_NAME) );
+                                               Wiki.contents().page(testEngine,PAGE_NAME) );
 
         final MarkupParser p = new JSPWikiMarkupParser( context,
                                                   new BufferedReader( new StringReader(src)) );
@@ -2575,7 +2577,7 @@ public class JSPWikiMarkupParserTest
         try
         {
             testEngine.saveText( PAGE_NAME, "content" );
-            final Attachment att = new Attachment( testEngine, PAGE_NAME, "TestAtt.txt" );
+            final Attachment att = Wiki.contents().attachment( testEngine, PAGE_NAME, "TestAtt.txt" );
             att.setAuthor( "FirstPost" );
             testEngine.getManager( AttachmentManager.class ).storeAttachment( att, testEngine.makeAttachmentFile() );
 
@@ -2584,7 +2586,7 @@ public class JSPWikiMarkupParserTest
 
             final String src = "[TestAtt.txt]";
             final WikiContext context = new WikiContext( testEngine,
-                                                   new WikiPage(testEngine,PAGE_NAME) );
+                                                   Wiki.contents().page(testEngine,PAGE_NAME) );
 
             final MarkupParser p = new JSPWikiMarkupParser( context,
                                                       new BufferedReader( new StringReader(src)) );

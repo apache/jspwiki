@@ -21,7 +21,6 @@ package org.apache.wiki.ajax;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
@@ -164,7 +163,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
         final Engine e = Wiki.engine().find( req.getSession().getServletContext(), null );
         boolean valid = false;
         if( container != null ) {
-            valid = e.getManager( AuthorizationManager.class ).checkPermission( WikiSession.getWikiSession( e, req ), container.permission );
+            valid = e.getManager( AuthorizationManager.class ).checkPermission( Wiki.session().find( e, req ), container.permission );
         }
         return valid;
     }

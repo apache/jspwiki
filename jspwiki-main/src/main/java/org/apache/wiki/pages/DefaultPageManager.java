@@ -21,7 +21,6 @@ package org.apache.wiki.pages;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiBackgroundThread;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Attachment;
@@ -33,6 +32,7 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.providers.WikiProvider;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
@@ -411,7 +411,7 @@ public class DefaultPageManager implements PageManager {
             if( page != null ) {
                 m_engine.getManager( ReferenceManager.class ).updateReferences( page );
             } else {
-                m_engine.getManager( ReferenceManager.class ).pageRemoved( new WikiPage( m_engine, pageName ) );
+                m_engine.getManager( ReferenceManager.class ).pageRemoved( Wiki.contents().page( m_engine, pageName ) );
             }
         }
 

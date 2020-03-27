@@ -16,18 +16,12 @@
     specific language governing permissions and limitations
     under the License.
  */
-
 package org.apache.wiki.plugin;
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Properties;
-
-import javax.servlet.ServletException;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
@@ -36,6 +30,11 @@ import org.apache.wiki.render.XHTMLRenderer;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Properties;
 
 public class CounterPluginTest
 {
@@ -49,19 +48,18 @@ public class CounterPluginTest
         testEngine = new TestEngine(props);
     }
 
-    private String translate( String src )
+    private String translate( final String src )
         throws IOException,
                NoRequiredPropertyException,
                ServletException
     {
-        WikiContext context = new WikiContext( testEngine,
-                                               new WikiPage(testEngine, "TestPage") );
+        final Context context = Wiki.context().create( testEngine, Wiki.contents().page(testEngine, "TestPage") );
 
-        MarkupParser p = new JSPWikiMarkupParser( context, new StringReader(src) );
+        final MarkupParser p = new JSPWikiMarkupParser( context, new StringReader(src) );
 
-        WikiDocument dom = p.parse();
+        final WikiDocument dom = p.parse();
 
-        WikiRenderer r = new XHTMLRenderer( context, dom );
+        final WikiRenderer r = new XHTMLRenderer( context, dom );
 
         return r.getString();
     }
@@ -70,7 +68,7 @@ public class CounterPluginTest
     public void testSimpleCount()
         throws Exception
     {
-        String src = "[{Counter}], [{Counter}]";
+        final String src = "[{Counter}], [{Counter}]";
 
         Assertions.assertEquals( "1, 2", translate(src) );
     }
@@ -79,7 +77,7 @@ public class CounterPluginTest
     public void testSimpleVar()
         throws Exception
     {
-        String src = "[{Counter}], [{Counter}], [{$counter}]";
+        final String src = "[{Counter}], [{Counter}], [{$counter}]";
 
         Assertions.assertEquals( "1, 2, 2",
                       translate(src) );
@@ -89,7 +87,7 @@ public class CounterPluginTest
     public void testTwinVar()
         throws Exception
     {
-        String src = "[{Counter}], [{Counter name=aa}], [{$counter-aa}]";
+        final String src = "[{Counter}], [{Counter name=aa}], [{$counter-aa}]";
 
         Assertions.assertEquals( "1, 1, 1",
                       translate(src) );

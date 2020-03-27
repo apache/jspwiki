@@ -21,15 +21,15 @@
  *
  */
 package org.apache.wiki.ui;
-import java.util.Properties;
-import java.util.regex.Pattern;
-
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.spi.Wiki;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Properties;
+import java.util.regex.Pattern;
 
 public class InputValidatorTest
 {
@@ -42,16 +42,16 @@ public class InputValidatorTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         testEngine = new TestEngine( props );
-        WikiContext context = new WikiContext( testEngine, new WikiPage(testEngine,"dummyPage"));
+        final WikiContext context = new WikiContext( testEngine, Wiki.contents().page(testEngine,"dummyPage"));
         val = new InputValidator( TEST, context );
     }
 
     @Test
     public void testUnsafePattern()
     {
-        Pattern unsafe = InputValidator.UNSAFE_PATTERN;
+        final Pattern unsafe = InputValidator.UNSAFE_PATTERN;
         Assertions.assertFalse( unsafe.matcher( "a b c d e f g" ).find() );
         Assertions.assertTrue( unsafe.matcher( "<a> b c d e f g" ).find() );
         Assertions.assertTrue( unsafe.matcher( "foo$" ).find() );

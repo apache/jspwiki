@@ -18,18 +18,19 @@
  */
 package org.apache.wiki.render;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.Properties;
-
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.parser.JSPWikiMarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.Properties;
 
 public class CreoleRendererTest
 {
@@ -38,21 +39,21 @@ public class CreoleRendererTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         m_testEngine = new TestEngine(props);
     }
 
-    private String render(String s) throws IOException
+    private String render( final String s) throws IOException
     {
-        WikiPage dummyPage = new WikiPage(m_testEngine,"TestPage");
-        WikiContext ctx = new WikiContext(m_testEngine,dummyPage);
+        final Page dummyPage = Wiki.contents().page(m_testEngine,"TestPage");
+        final Context ctx = Wiki.context().create(m_testEngine,dummyPage);
 
-        StringReader in = new StringReader(s);
+        final StringReader in = new StringReader(s);
 
-        JSPWikiMarkupParser p = new JSPWikiMarkupParser( ctx, in );
-        WikiDocument d = p.parse();
+        final JSPWikiMarkupParser p = new JSPWikiMarkupParser( ctx, in );
+        final WikiDocument d = p.parse();
 
-        CreoleRenderer cr = new CreoleRenderer( ctx, d );
+        final CreoleRenderer cr = new CreoleRenderer( ctx, d );
 
         return cr.getString();
     }
@@ -60,7 +61,7 @@ public class CreoleRendererTest
     @Test
     public void testItalic() throws Exception
     {
-        String src = "123 ''test'' 456";
+        final String src = "123 ''test'' 456";
 
         Assertions.assertEquals( "123 //test// 456", render(src) );
     }
@@ -68,7 +69,7 @@ public class CreoleRendererTest
     @Test
     public void testBold() throws Exception
     {
-        String src = "123 __test__ 456";
+        final String src = "123 __test__ 456";
 
         Assertions.assertEquals( "123 **test** 456", render(src) );
     }
@@ -76,7 +77,7 @@ public class CreoleRendererTest
     @Test
     public void testBoldItalic() throws Exception
     {
-        String src = "123 __''test''__ 456";
+        final String src = "123 __''test''__ 456";
 
         Assertions.assertEquals( "123 **//test//** 456", render(src) );
     }
@@ -84,7 +85,7 @@ public class CreoleRendererTest
     @Test
     public void testList() throws Exception
     {
-        String src = "*one\r\n**two\r\n**three\r\n*four";
+        final String src = "*one\r\n**two\r\n**three\r\n*four";
 
         Assertions.assertEquals( "* one\n** two\n** three\n* four", render(src) );
     }
@@ -92,7 +93,7 @@ public class CreoleRendererTest
     @Test
     public void testList2() throws Exception
     {
-        String src = "* one\r\n**        two\r\n** three\r\n* four";
+        final String src = "* one\r\n**        two\r\n** three\r\n* four";
 
         Assertions.assertEquals( "* one\n** two\n** three\n* four", render(src) );
     }
@@ -100,7 +101,7 @@ public class CreoleRendererTest
     @Test
     public void testList3() throws Exception
     {
-        String src = "*one\r\n**two\r\n**three\r\n*four";
+        final String src = "*one\r\n**two\r\n**three\r\n*four";
 
         Assertions.assertEquals( "* one\n** two\n** three\n* four", render(src) );
     }
@@ -108,7 +109,7 @@ public class CreoleRendererTest
     @Test
     public void testList4() throws Exception
     {
-        String src = "# one\r\n##        two\r\n## three\r\n#four";
+        final String src = "# one\r\n##        two\r\n## three\r\n#four";
 
         Assertions.assertEquals( "# one\n## two\n## three\n# four", render(src) );
     }
@@ -126,7 +127,7 @@ public class CreoleRendererTest
     @Test
     public void testInlineImages() throws Exception
     {
-        String src = "Testing [{Image src='http://test/image.png'}] plugin.";
+        final String src = "Testing [{Image src='http://test/image.png'}] plugin.";
 
         Assertions.assertEquals( "Testing {{http://test/image.png}} plugin.", render(src) );
     }
@@ -134,7 +135,7 @@ public class CreoleRendererTest
     @Test
     public void testPlugins() throws Exception
     {
-        String src = "[{Counter}] [{Counter}]";
+        final String src = "[{Counter}] [{Counter}]";
 
         Assertions.assertEquals( "<<Counter 1>> <<Counter 2>>", render(src) );
     }
@@ -167,7 +168,7 @@ public class CreoleRendererTest
     @Test
     public void testExternalAnchor() throws Exception
     {
-        String src = "[http://jspwiki.apache.org]";
+        final String src = "[http://jspwiki.apache.org]";
 
         Assertions.assertEquals( "[[http://jspwiki.apache.org]]", render(src) );
     }
@@ -175,7 +176,7 @@ public class CreoleRendererTest
     @Test
     public void testExternalAnchor2() throws Exception
     {
-        String src = "[JSPWiki|http://jspwiki.apache.org]";
+        final String src = "[JSPWiki|http://jspwiki.apache.org]";
 
         Assertions.assertEquals( "[[http://jspwiki.apache.org|JSPWiki]]", render(src) );
     }
@@ -183,7 +184,7 @@ public class CreoleRendererTest
     @Test
     public void testLineBreak() throws Exception
     {
-        String src = "a\nb\nc";
+        final String src = "a\nb\nc";
 
         Assertions.assertEquals("a\nb\nc", render(src));
     }
@@ -191,7 +192,7 @@ public class CreoleRendererTest
     @Test
     public void testPre() throws Exception
     {
-        String src = "{{{\n test __foo__ \n}}}";
+        final String src = "{{{\n test __foo__ \n}}}";
 
         Assertions.assertEquals("{{{\n test __foo__ \n}}}", render(src));
     }
@@ -199,7 +200,7 @@ public class CreoleRendererTest
     @Test
     public void testRule() throws Exception
     {
-        String src = "a\n----\nb";
+        final String src = "a\n----\nb";
 
         Assertions.assertEquals("a\n----\nb", render(src));
     }

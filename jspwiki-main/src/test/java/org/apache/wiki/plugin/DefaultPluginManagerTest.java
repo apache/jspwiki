@@ -22,8 +22,8 @@ package org.apache.wiki.plugin;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
@@ -43,7 +43,7 @@ public class DefaultPluginManagerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        context = new WikiContext( engine, new WikiPage(engine, "Testpage") );
+        context = new WikiContext( engine, Wiki.contents().page(engine, "Testpage") );
     }
 
     @AfterEach

@@ -21,10 +21,10 @@ package org.apache.wiki.xmlrpc;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.xmlrpc.XmlRpcException;
@@ -55,7 +55,7 @@ public class RPCHandlerTest
         m_engine = new TestEngine( m_props );
 
         m_handler = new RPCHandler();
-        final WikiContext ctx = new WikiContext( m_engine, new WikiPage(m_engine, "Dummy") );
+        final Context ctx = Wiki.context().create( m_engine, Wiki.contents().page(m_engine, "Dummy") );
         m_handler.initialize( ctx );
     }
 
@@ -104,7 +104,7 @@ public class RPCHandlerTest
         final Vector previousChanges = m_handler.getRecentChanges( time );
 
         m_engine.saveText( NAME1, "Foo" );
-        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getManager( AttachmentManager.class ).storeAttachment( att, m_engine.makeAttachmentFile() );
         final Page directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
@@ -175,7 +175,7 @@ public class RPCHandlerTest
 
         m_engine.saveText( pageName, text );
 
-        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getManager( AttachmentManager.class ).storeAttachment( att, m_engine.makeAttachmentFile() );
 

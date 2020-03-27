@@ -20,12 +20,12 @@ package org.apache.wiki.ui;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.WikiProvider;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
@@ -311,7 +311,7 @@ public final class DefaultCommandResolver implements CommandResolver {
         Page wikipage = m_engine.getManager( PageManager.class ).getPage( page, version );
         if ( wikipage == null ) {
             page = MarkupParser.cleanLink( page );
-            wikipage = new WikiPage( m_engine, page );
+            wikipage = Wiki.contents().page( m_engine, page );
         }
         return wikipage;
     }

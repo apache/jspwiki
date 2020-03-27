@@ -20,13 +20,13 @@ package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.Plugin;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
@@ -130,7 +130,7 @@ public class WeblogEntryPlugin implements Plugin {
         //  Find the first page that has no page lock.
         int idx = max + 1;
         while( idx < MAX_BLOG_ENTRIES ) {
-            final WikiPage page = new WikiPage( engine, WeblogPlugin.makeEntryPage( baseName, date, Integer.toString( idx ) ) );
+            final Page page = Wiki.contents().page( engine, WeblogPlugin.makeEntryPage( baseName, date, Integer.toString( idx ) ) );
             final PageLock lock = engine.getManager( PageManager.class ).getCurrentLock(page);
             if (lock == null) {
                 break;

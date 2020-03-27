@@ -18,11 +18,10 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.providers.AttachmentProvider;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -76,8 +75,8 @@ public class Installer {
     
     public Installer( final HttpServletRequest request, final ServletConfig config ) {
         // Get wiki session for this user
-        m_engine = WikiEngine.getInstance( config );
-        m_session = WikiSession.getWikiSession( m_engine, request );
+        m_engine = Wiki.engine().find( config );
+        m_session = Wiki.session().find( m_engine, request );
         
         // Get the file for properties
         m_propertyFile = new File(TMP_DIR, PROPFILENAME);

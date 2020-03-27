@@ -19,7 +19,6 @@
 package org.apache.wiki.providers;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -28,6 +27,7 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.api.search.QueryItem;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
@@ -417,7 +417,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
                 String pageId = unmangleName( pagesWithAttachment );
                 pageId = pageId.substring( 0, pageId.length() - DIR_EXTENSION.length() );
 
-                final Collection< Attachment > c = listAttachments( new WikiPage( m_engine, pageId ) );
+                final Collection< Attachment > c = listAttachments( Wiki.contents().page( m_engine, pageId ) );
                 for( final Attachment att : c ) {
                     if( att.getLastModified().after( timestamp ) ) {
                         list.add( att );
@@ -490,15 +490,14 @@ public class BasicAttachmentProvider implements AttachmentProvider {
         try {
             final int latest = findLatestVersion( att );
             for( int i = latest; i >= 1; i-- ) {
-                final Attachment a = getAttachmentInfo( new WikiPage( m_engine, att.getParentName() ), att.getFileName(), i );
-
+                final Attachment a = getAttachmentInfo( Wiki.contents().page( m_engine, att.getParentName() ), att.getFileName(), i );
                 if( a != null ) {
                     list.add( a );
                 }
             }
         } catch( final ProviderException e ) {
             log.error( "Getting version history failed for page: " + att, e );
-            // FIXME: SHould this fail?
+            // FIXME: Should this fail?
         }
 
         return list;

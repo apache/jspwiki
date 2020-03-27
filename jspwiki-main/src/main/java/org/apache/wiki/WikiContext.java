@@ -24,6 +24,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
@@ -189,7 +190,7 @@ public class WikiContext implements Context, Command {
 
         m_engine = engine;
         m_request = request;
-        m_session = WikiSession.getWikiSession( engine, request );
+        m_session = Wiki.session().find( engine, request );
         m_command = command;
 
         // If PageCommand, get the WikiPage
@@ -203,7 +204,7 @@ public class WikiContext implements Context, Command {
 
             // Front page does not exist?
             if( m_page == null ) {
-                m_page = new WikiPage( m_engine, m_engine.getFrontPage() );
+                m_page = ( WikiPage )Wiki.contents().page( m_engine, m_engine.getFrontPage() );
             }
         }
 

@@ -21,7 +21,9 @@ package org.apache.wiki.search;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.search.QueryItem;
+import org.apache.wiki.api.spi.Wiki;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -131,8 +133,8 @@ public class SearchMatcher {
      */
     public class SearchResultImpl implements org.apache.wiki.search.SearchResult {
     	
-        int      m_score;
-        WikiPage m_page;
+        int  m_score;
+        Page m_page;
 
         /**
          *  Create a new SearchResult with a given name and a score.
@@ -141,7 +143,7 @@ public class SearchMatcher {
          *  @param score A score from 0+
          */
         public SearchResultImpl( final String name, final int score ) {
-            m_page  = new WikiPage( m_engine, name );
+            m_page  = Wiki.contents().page( m_engine, name );
             m_score = score;
         }
 
@@ -151,7 +153,7 @@ public class SearchMatcher {
          */
         @Override
         public WikiPage getPage() {
-            return m_page;
+            return ( WikiPage )m_page;
         }
 
         /**

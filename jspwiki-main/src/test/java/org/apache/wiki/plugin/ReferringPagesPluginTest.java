@@ -21,7 +21,6 @@ package org.apache.wiki.plugin;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.spi.Wiki;
@@ -56,7 +55,7 @@ public class ReferringPagesPluginTest
         engine.saveText( "Foobar6", "Reference to [TestPage]." );
         engine.saveText( "Foobar7", "Reference to [TestPage]." );
 
-        context = new WikiContext( engine, engine.newHttpRequest(), new WikiPage(engine,"TestPage") );
+        context = new WikiContext( engine, engine.newHttpRequest(), Wiki.contents().page( engine, "TestPage" ) );
         manager = new DefaultPluginManager( engine, props );
     }
 
@@ -84,7 +83,7 @@ public class ReferringPagesPluginTest
 
     @Test
     public void testSingleReferral() throws Exception {
-        final Context context2 = Wiki.context().create( engine, new WikiPage(engine, "Foobar") );
+        final Context context2 = Wiki.context().create( engine, Wiki.contents().page(engine, "Foobar") );
 
         final String res = manager.execute( context2, "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
 
@@ -121,7 +120,7 @@ public class ReferringPagesPluginTest
 
     @Test
     public void testReferenceWidth() throws Exception {
-        final Context context2 = Wiki.context().create( engine, new WikiPage(engine, "Foobar") );
+        final Context context2 = Wiki.context().create( engine, Wiki.contents().page(engine, "Foobar") );
         final String res = manager.execute( context2, "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");
         Assertions.assertEquals( mkFullLink( "TestP...", "TestPage" )+"<br />", res );
     }

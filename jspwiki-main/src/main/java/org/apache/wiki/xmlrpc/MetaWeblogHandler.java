@@ -20,12 +20,11 @@ package org.apache.wiki.xmlrpc;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.spi.Wiki;
-import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.AuthorizationManager;
@@ -210,7 +209,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
         try {
             final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
             final String pageName = plugin.getNewEntryPage( engine, blogid );
-            final Page entryPage = new WikiPage( engine, pageName );
+            final Page entryPage = Wiki.contents().page( engine, pageName );
             entryPage.setAuthor( username );
 
             final Context context = Wiki.context().create( engine, entryPage );
@@ -260,7 +259,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
         final AttachmentManager attmgr = engine.getManager( AttachmentManager.class );
 
         try {
-            final Attachment att = new Attachment( engine, blogid, name );
+            final Attachment att = Wiki.contents().attachment( engine, blogid, name );
             att.setAuthor( username );
             attmgr.storeAttachment( att, new ByteArrayInputStream( data ) );
 

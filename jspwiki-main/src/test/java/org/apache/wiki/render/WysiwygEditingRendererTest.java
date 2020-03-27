@@ -19,7 +19,6 @@
 package org.apache.wiki.render;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.spi.Wiki;
@@ -50,7 +49,7 @@ public class WysiwygEditingRendererTest {
     }
 
     private String render( final String s ) throws IOException {
-        final Page dummyPage = new WikiPage(testEngine,"TestPage");
+        final Page dummyPage = Wiki.contents().page(testEngine,"TestPage");
         final Context ctx = Wiki.context().create(testEngine,dummyPage);
 
         final StringReader in = new StringReader(s);

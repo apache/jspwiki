@@ -19,7 +19,6 @@
 package org.apache.wiki.rpc.atom;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -123,7 +122,7 @@ public class AtomAPIServlet extends HttpServlet {
             final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
             final String pageName = plugin.getNewEntryPage( m_engine, blogid );
             final String username = author.getName();
-            final Page entryPage = new WikiPage( m_engine, pageName );
+            final Page entryPage = Wiki.contents().page( m_engine, pageName );
             entryPage.setAuthor( username );
 
             final Context context = Wiki.context().create( m_engine, request, entryPage );

@@ -23,6 +23,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageManager;
@@ -217,7 +218,7 @@ public class RPCHandler extends AbstractRPCHandler {
         final LinkCollector extCollector   = new LinkCollector();
         final LinkCollector attCollector   = new LinkCollector();
 
-        final Context context = new WikiContext( m_engine, page );
+        final Context context = Wiki.context().create( m_engine, page );
         m_engine.getManager( RenderingManager.class ).textToHTML( context, pagedata, localCollector, extCollector, attCollector );
 
         final Vector< Hashtable< String, String > > result = new Vector<>();

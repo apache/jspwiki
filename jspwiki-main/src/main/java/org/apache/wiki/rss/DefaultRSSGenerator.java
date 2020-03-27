@@ -20,14 +20,13 @@ package org.apache.wiki.rss;
 
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.providers.WikiProvider;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.diff.DifferenceManager;
@@ -127,7 +126,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
     private String getPageDescription( final Page page ) {
         final StringBuilder buf = new StringBuilder();
         final String author = getAuthor( page );
-        final WikiContext ctx = new WikiContext( m_engine, page );
+        final Context ctx = Wiki.context().create( m_engine, page );
         if( page.getVersion() > 1 ) {
             final String diff = m_engine.getManager( DifferenceManager.class ).getDiff( ctx,
                                                                 page.getVersion() - 1, // FIXME: Will fail when non-contiguous versions
@@ -162,7 +161,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
     /** {@inheritDoc} */
     @Override
     public String generate() {
-        final WikiContext context = new WikiContext( m_engine, new WikiPage( m_engine, "__DUMMY" ) );
+        final Context context = Wiki.context().create( m_engine, Wiki.contents().page( m_engine, "__DUMMY" ) );
         context.setRequestContext( WikiContext.RSS );
         final Feed feed = new RSS10Feed( context );
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + generateFullWikiRSS( context, feed );
@@ -225,7 +224,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
 
         final Set< Page > changed = m_engine.getManager( PageManager.class ).getRecentChanges();
 
-        final Session session = WikiSession.guestSession( m_engine );
+        final Session session = Wiki.session().guest( m_engine );
         int items = 0;
         for( final Iterator< Page > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
             final Page page = i.next();

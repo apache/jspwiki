@@ -529,7 +529,7 @@ public class VersioningFileProviderTest
     public void testChangeNote()
         throws Exception
     {
-        final WikiPage p = new WikiPage( engine, NAME1 );
+        final Page p = Wiki.contents().page( engine, NAME1 );
         p.setAttribute(Page.CHANGENOTE, "Test change" );
         final Context context = Wiki.context().create(engine,p);
 
@@ -544,7 +544,7 @@ public class VersioningFileProviderTest
     public void testChangeNoteOldVersion()
         throws Exception
     {
-        final Page p = new WikiPage( engine, NAME1 );
+        final Page p = Wiki.contents().page( engine, NAME1 );
 
 
         final Context context = Wiki.context().create(engine,p);
@@ -567,7 +567,7 @@ public class VersioningFileProviderTest
     @Test
     public void testChangeNoteOldVersion2() throws Exception
     {
-        final Page p = new WikiPage( engine, NAME1 );
+        final Page p = Wiki.contents().page( engine, NAME1 );
 
         final Context context = Wiki.context().create(engine,p);
 

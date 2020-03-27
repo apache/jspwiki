@@ -33,6 +33,7 @@ import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.PageProvider;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -294,7 +295,7 @@ public class DefaultRenderingManager implements RenderingManager {
     @Override
     public String getHTML( final String pagename, final int version ) {
         final Page page = m_engine.getManager( PageManager.class ).getPage( pagename, version );
-        final Context context = new WikiContext( m_engine, page );
+        final Context context = Wiki.context().create( m_engine, page );
         context.setRequestContext( WikiContext.NONE );
         return getHTML( context, page );
     }

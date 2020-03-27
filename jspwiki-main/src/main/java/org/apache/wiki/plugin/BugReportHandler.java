@@ -19,13 +19,14 @@
 package org.apache.wiki.plugin;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.RedirectException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.plugin.Plugin;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
@@ -140,7 +141,7 @@ public class BugReportHandler implements Plugin {
 
             //  Now create a new page for this bug report
             final String pageName = findNextPage( context, title, params.get( PARAM_PAGE ) );
-            final WikiPage newPage = new WikiPage( context.getEngine(), pageName );
+            final Page newPage = Wiki.contents().page( context.getEngine(), pageName );
             final Context newContext = context.clone();
             newContext.setPage( newPage );
             context.getEngine().getManager( PageManager.class ).saveText( newContext, str.toString() );

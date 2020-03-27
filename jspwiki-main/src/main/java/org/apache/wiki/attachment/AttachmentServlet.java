@@ -26,9 +26,8 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiSession;
 import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
@@ -36,6 +35,7 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.RedirectException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.WikiProvider;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -114,7 +114,7 @@ public class AttachmentServlet extends HttpServlet {
      */
     @Override
     public void init( final ServletConfig config ) throws ServletException {
-        m_engine = WikiEngine.getInstance( config );
+        m_engine = Wiki.engine().find( config );
         final Properties props = m_engine.getWikiProperties();
         final String tmpDir = m_engine.getWorkDir() + File.separator + "attach-tmp";
         final String allowed = TextUtil.getStringProperty( props, AttachmentManager.PROP_ALLOWEDEXTENSIONS, null );
@@ -185,7 +185,7 @@ public class AttachmentServlet extends HttpServlet {
     // FIXME: Messages would need to be localized somehow.
     @Override
     public void doGet( final HttpServletRequest  req, final HttpServletResponse res ) throws IOException {
-        final WikiContext context = new WikiContext( m_engine, req, WikiContext.ATTACH );
+        final Context context = Wiki.context().create( m_engine, req, WikiContext.ATTACH );
         final AttachmentManager mgr = m_engine.getManager( AttachmentManager.class );
         final AuthorizationManager authmgr = m_engine.getManager( AuthorizationManager.class );
         final String version = req.getParameter( HDR_VERSION );
@@ -316,7 +316,7 @@ public class AttachmentServlet extends HttpServlet {
      * @param fileName The name to check for.
      * @return A valid mime type, or application/binary, if not recognized
      */
-    private static String getMimeType( final WikiContext ctx, final String fileName ) {
+    private static String getMimeType( final Context ctx, final String fileName ) {
         String mimetype = null;
 
         final HttpServletRequest req = ctx.getHttpRequest();
@@ -353,7 +353,7 @@ public class AttachmentServlet extends HttpServlet {
             req.getSession().removeAttribute("msg");
             res.sendRedirect( nextPage );
         } catch( final RedirectException e ) {
-            final Session session = WikiSession.getWikiSession( m_engine, req );
+            final Session session = Wiki.session().find( m_engine, req );
             session.addMessage( e.getMessage() );
 
             req.getSession().setAttribute("msg", e.getMessage());
@@ -401,7 +401,7 @@ public class AttachmentServlet extends HttpServlet {
             final FileItemFactory factory = new DiskFileItemFactory();
 
             // Create the context _before_ Multipart operations, otherwise strict servlet containers may fail when setting encoding.
-            final WikiContext context = new WikiContext( m_engine, req, WikiContext.ATTACH );
+            final Context context = Wiki.context().create( m_engine, req, WikiContext.ATTACH );
             final UploadListener pl = new UploadListener();
 
             m_engine.getManager( ProgressManager.class ).startProgress( pl, progressId );
@@ -498,7 +498,7 @@ public class AttachmentServlet extends HttpServlet {
      * @throws IOException       If there is a problem in the upload.
      * @throws ProviderException If there is a problem in the backend.
      */
-    protected boolean executeUpload( final WikiContext context, final InputStream data,
+    protected boolean executeUpload( final Context context, final InputStream data,
                                      String filename, final String errorPage,
                                      final String parentPage, final String changenote,
                                      final long contentLength )

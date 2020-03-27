@@ -19,7 +19,8 @@
 package org.apache.wiki.pages;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.spi.Wiki;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,9 +34,9 @@ public class PageTimeComparatorTest {
 
     TestEngine engine = TestEngine.build();
     PageTimeComparator comparator = new PageTimeComparator();
-    WikiPage p1 = new WikiPage( engine, "A" );
-    WikiPage p2 = new WikiPage( engine, "B" );
-    WikiPage p3 = new WikiPage( engine, "A" );
+    Page p1 = Wiki.contents().page( engine, "A" );
+    Page p2 = Wiki.contents().page( engine, "B" );
+    Page p3 = Wiki.contents().page( engine, "A" );
 
     @Test
     void shouldCheckCompareByTimeGetsMoreRecentOnTop() {

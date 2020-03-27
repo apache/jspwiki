@@ -20,8 +20,10 @@
 package org.apache.wiki;
 
 import net.sf.ehcache.CacheManager;
+import org.apache.wiki.api.core.Attachment;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.modules.ModuleManager;
@@ -128,7 +130,7 @@ public class WikiEngineTest {
         final AttachmentManager attMgr = m_engine.getManager( AttachmentManager.class );
         m_engine.saveText( NAME1, "fooBar");
 
-        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
 
@@ -185,7 +187,7 @@ public class WikiEngineTest {
 
         // now we create the attachment
 
-        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
 
@@ -213,7 +215,7 @@ public class WikiEngineTest {
 
         m_engine.saveText( NAME1, "fooBar");
 
-        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
 
@@ -238,7 +240,7 @@ public class WikiEngineTest {
 
         m_engine.saveText( NAME1, "[TestPage2]");
 
-        final Attachment att = new Attachment( m_engine, NAME1, "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         attMgr.storeAttachment( att, m_engine.makeAttachmentFile() );
         m_engine.saveText( "TestPage2", "["+NAME1+"/TestAtt.txt]");
@@ -310,20 +312,20 @@ public class WikiEngineTest {
 
     @Test
     public void testChangeNoteOldVersion2() throws Exception {
-        final WikiPage p = new WikiPage( m_engine, NAME1 );
-        final WikiContext context = new WikiContext(m_engine,p);
-        context.getPage().setAttribute( WikiPage.CHANGENOTE, "Test change" );
+        final Page p = Wiki.contents().page( m_engine, NAME1 );
+        final Context context = Wiki.context().create( m_engine,p );
+        context.getPage().setAttribute( Page.CHANGENOTE, "Test change" );
         m_engine.getManager( PageManager.class ).saveText( context, "test" );
 
         for( int i = 0; i < 5; i++ ) {
-            final WikiPage p2 = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( NAME1 ).clone();
-            p2.removeAttribute( WikiPage.CHANGENOTE );
+            final Page p2 = m_engine.getManager( PageManager.class ).getPage( NAME1 ).clone();
+            p2.removeAttribute( Page.CHANGENOTE );
             context.setPage( p2 );
             m_engine.getManager( PageManager.class ).saveText( context, "test" + i );
         }
 
         final Page p3 = m_engine.getManager( PageManager.class ).getPage( NAME1, -1 );
-        Assertions.assertNull( p3.getAttribute( WikiPage.CHANGENOTE ) );
+        Assertions.assertNull( p3.getAttribute( Page.CHANGENOTE ) );
     }
 
     @Test

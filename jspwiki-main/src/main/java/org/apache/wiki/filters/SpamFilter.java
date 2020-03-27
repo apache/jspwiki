@@ -1010,7 +1010,7 @@ public class SpamFilter extends BasePageFilter {
      * @return A HTML string which contains input fields for the SpamFilter.
      */
     public static final String insertInputFields( final PageContext pageContext ) {
-        final WikiContext ctx = WikiContext.findContext( pageContext );
+        final Context ctx = Context.findContext( pageContext );
         final Engine engine = ctx.getEngine();
         final StringBuilder sb = new StringBuilder();
         if( engine.getContentEncoding().equals( StandardCharsets.UTF_8 ) ) {

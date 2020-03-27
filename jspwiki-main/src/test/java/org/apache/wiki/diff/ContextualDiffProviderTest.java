@@ -18,9 +18,7 @@
  */
 package org.apache.wiki.diff;
 
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.spi.Wiki;
@@ -30,8 +28,9 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.util.Properties;
 
-public class ContextualDiffProviderTest
-{
+
+public class ContextualDiffProviderTest {
+
     /**
      * Sets up some shorthand notation for writing test cases.
      * <p>
@@ -39,8 +38,7 @@ public class ContextualDiffProviderTest
      * <p>
      * Get it?
      */
-    private void specializedNotation( final ContextualDiffProvider diff)
-    {
+    private void specializedNotation( final ContextualDiffProvider diff ) {
         diff.CHANGE_END_HTML = "|";
         diff.CHANGE_START_HTML = "|";
 
@@ -62,111 +60,93 @@ public class ContextualDiffProviderTest
         diff.ALTERNATING_SPACE_HTML = "_";
     }
 
-
-
     @Test
-    public void testNoChanges() throws IOException, WikiException
-    {
-        diffTest(null, "", "", "");
-        diffTest(null, "A", "A", "A");
-        diffTest(null, "A B", "A B", "A B");
+    public void testNoChanges() throws IOException, WikiException {
+        diffTest( null, "", "", "" );
+        diffTest( null, "A", "A", "A" );
+        diffTest( null, "A B", "A B", "A B" );
 
-        diffTest(null, "      ", "      ", " _ _ _");
-        diffTest(null, "A B  C", "A B  C", "A B _C");
-        diffTest(null, "A B   C", "A B   C", "A B _ C");
+        diffTest( null, "      ", "      ", " _ _ _" );
+        diffTest( null, "A B  C", "A B  C", "A B _C" );
+        diffTest( null, "A B   C", "A B   C", "A B _ C" );
     }
 
-
-
     @Test
-    public void testSimpleInsertions() throws IOException, WikiException
-    {
+    public void testSimpleInsertions() throws IOException, WikiException {
         // Ah, the white space trailing an insertion is tacked onto the insertion, this is fair, the
         // alternative would be to greedily take the leading whitespace before the insertion as part
         // of it instead, and that doesn't make any more or less sense. just remember this behaviour
         // when writing tests.
 
         // Simple inserts...
-        diffTest(null, "A C", "A B C", "A |^B ^|C");
-        diffTest(null, "A D", "A B C D", "A |^B C ^|D");
+        diffTest( null, "A C", "A B C", "A |^B ^|C" );
+        diffTest( null, "A D", "A B C D", "A |^B C ^|D" );
 
         // Simple inserts with spaces...
-        diffTest(null, "A C", "A B  C", "A |^B _^|C");
-        diffTest(null, "A C", "A B   C", "A |^B _ ^|C");
-        diffTest(null, "A C", "A B    C", "A |^B _ _^|C");
+        diffTest( null, "A C", "A B  C", "A |^B _^|C" );
+        diffTest( null, "A C", "A B   C", "A |^B _ ^|C" );
+        diffTest( null, "A C", "A B    C", "A |^B _ _^|C" );
 
         // Just inserted spaces...
-        diffTest(null, "A B", "A  B", "A |^_^|B");
-        diffTest(null, "A B", "A   B", "A |^_ ^|B");
-        diffTest(null, "A B", "A    B", "A |^_ _^|B");
-        diffTest(null, "A B", "A     B", "A |^_ _ ^|B");
+        diffTest( null, "A B", "A  B", "A |^_^|B" );
+        diffTest( null, "A B", "A   B", "A |^_ ^|B" );
+        diffTest( null, "A B", "A    B", "A |^_ _^|B" );
+        diffTest( null, "A B", "A     B", "A |^_ _ ^|B" );
     }
 
-
-
     @Test
-    public void testSimpleDeletions() throws IOException, WikiException
-    {
+    public void testSimpleDeletions() throws IOException, WikiException {
         // Simple deletes...
-        diffTest(null, "A B C", "A C", "A |-B -|C");
-        diffTest(null, "A B C D", "A D", "A |-B C -|D");
+        diffTest( null, "A B C", "A C", "A |-B -|C" );
+        diffTest( null, "A B C D", "A D", "A |-B C -|D" );
 
         // Simple deletes with spaces...
-        diffTest(null, "A B  C", "A C", "A |-B _-|C");
-        diffTest(null, "A B   C", "A C", "A |-B _ -|C");
+        diffTest( null, "A B  C", "A C", "A |-B _-|C" );
+        diffTest( null, "A B   C", "A C", "A |-B _ -|C" );
 
         // Just deleted spaces...
-        diffTest(null, "A  B", "A B", "A |-_-|B");
-        diffTest(null, "A   B", "A B", "A |-_ -|B");
-        diffTest(null, "A    B", "A B", "A |-_ _-|B");
+        diffTest( null, "A  B", "A B", "A |-_-|B" );
+        diffTest( null, "A   B", "A B", "A |-_ -|B" );
+        diffTest( null, "A    B", "A B", "A |-_ _-|B" );
     }
 
-
-
     @Test
-    public void testContextLimits() throws IOException, WikiException
-    {
+    public void testContextLimits() throws IOException, WikiException {
         // No change
-        diffTest("1", "A B C D E F G H I", "A B C D E F G H I", "A...");
+        diffTest( "1", "A B C D E F G H I", "A B C D E F G H I", "A..." );
         //TODO Hmm, should the diff provider instead return the string, "No Changes"?
 
         // Bad property value, should default to huge context limit and return entire string.
-        diffTest("foobar", "A B C D E F G H I", "A B C D F G H I", "A B C D |-E -|F G H I");
+        diffTest( "foobar", "A B C D E F G H I", "A B C D F G H I", "A B C D |-E -|F G H I" );
 
         // One simple deletion, limit context to 2...
-        diffTest("2", "A B C D E F G H I", "A B C D F G H I", "...D |-E -|F ...");
+        diffTest( "2", "A B C D E F G H I", "A B C D F G H I", "...D |-E -|F ..." );
 
         // Deletion of first element, limit context to 2...
-        diffTest("2", "A B C D E", "B C D E", "|-A -|B ...");
+        diffTest( "2", "A B C D E", "B C D E", "|-A -|B ..." );
 
         // Deletion of last element, limit context to 2...
-        diffTest("2", "A B C D E", "A B C D ", "...D |-E-|");
+        diffTest( "2", "A B C D E", "A B C D ", "...D |-E-|" );
 
         // Two simple deletions, limit context to 2...
-        diffTest("2", "A B C D E F G H I J K L M N O P", "A B C E F G H I J K M N O P",
-            "...C |-D -|E ......K |-L -|M ...");
-
+        diffTest( "2", "A B C D E F G H I J K L M N O P", "A B C E F G H I J K M N O P", "...C |-D -|E ......K |-L -|M ..." );
     }
 
     @Test
-    public void testMultiples() throws IOException, WikiException
-    {
-        diffTest(null, "A F", "A B C D E F", "A |^B C D E ^|F");
-        diffTest(null, "A B C D E F", "A F", "A |-B C D E -|F");
-
+    public void testMultiples() throws IOException, WikiException {
+        diffTest( null, "A F", "A B C D E F", "A |^B C D E ^|F" );
+        diffTest( null, "A B C D E F", "A F", "A |-B C D E -|F" );
     }
 
     @Test
-    public void testSimpleChanges() throws IOException, WikiException
-    {
+    public void testSimpleChanges() throws IOException, WikiException {
         // *changes* are actually an insert and a delete in the output...
 
         //single change
-        diffTest(null, "A B C", "A b C", "A |^b^-B-| C");
+        diffTest( null, "A B C", "A b C", "A |^b^-B-| C" );
 
         //non-consequtive changes...
-        diffTest(null, "A B C D E", "A b C d E", "A |^b^-B-| C |^d^-D-| E");
-
+        diffTest( null, "A B C D E", "A b C d E", "A |^b^-B-| C |^d^-D-| E" );
     }
 
     // FIXME: This test Assertions.fails; must be enabled again asap.
@@ -191,26 +171,24 @@ public class ContextualDiffProviderTest
     }
      */
 
-    private void diffTest( final String contextLimit, final String oldText, final String newText, final String expectedDiff)
-        throws IOException, WikiException
-    {
+    private void diffTest( final String contextLimit, final String oldText, final String newText, final String expectedDiff )
+            throws IOException, WikiException {
         final ContextualDiffProvider diff = new ContextualDiffProvider();
 
-        specializedNotation(diff);
+        specializedNotation( diff );
 
         final Properties props = TestEngine.getTestProperties();
-        if (null != contextLimit)
-            props.put(ContextualDiffProvider.PROP_UNCHANGED_CONTEXT_LIMIT, contextLimit);
+        if( null != contextLimit ) {
+            props.put( ContextualDiffProvider.PROP_UNCHANGED_CONTEXT_LIMIT, contextLimit );
+        }
 
-        diff.initialize(null, props);
+        diff.initialize( null, props );
 
-        PropertyConfigurator.configure(props);
-        final TestEngine engine = new TestEngine(props);
+        final TestEngine engine = new TestEngine( props );
+        final Context ctx = Wiki.context().create( engine, Wiki.contents().page( engine, "Dummy" ) );
+        final String actualDiff = diff.makeDiffHtml( ctx, oldText, newText );
 
-        final Context ctx = Wiki.context().create( engine, new WikiPage(engine,"Dummy") );
-        final String actualDiff = diff.makeDiffHtml( ctx, oldText, newText);
-
-        Assertions.assertEquals(expectedDiff, actualDiff);
+        Assertions.assertEquals( expectedDiff, actualDiff );
     }
 
 }

@@ -16,10 +16,10 @@ package org.apache.wiki.attachment;
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.FileUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -89,13 +89,13 @@ public class AttachmentManagerTest {
     public void testSimpleStore()
         throws Exception
     {
-        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        final Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine, new WikiPage(m_engine, NAME1)), "test1.txt" );
+        final Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine, Wiki.contents().page(m_engine, NAME1)), "test1.txt" );
 
         Assertions.assertNotNull( att2, "attachment disappeared" );
         Assertions.assertEquals( att.getName(), att2.getName(), "name" );
@@ -119,15 +119,13 @@ public class AttachmentManagerTest {
     public void testSimpleStoreSpace()
         throws Exception
     {
-        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test file.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test file.txt" );
 
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        final Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
-                                                                       new WikiPage(m_engine, NAME1)),
-                                                       "test file.txt" );
+        final Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine, Wiki.contents().page(m_engine, NAME1)),"test file.txt" );
 
         Assertions.assertNotNull( att2, "attachment disappeared" );
         Assertions.assertEquals( att.getName(), att2.getName(), "name" );
@@ -151,13 +149,13 @@ public class AttachmentManagerTest {
     public void testSimpleStoreByVersion()
         throws Exception
     {
-        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        final Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine, new WikiPage(m_engine, NAME1)), "test1.txt", 1 );
+        final Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine, Wiki.contents().page(m_engine, NAME1)), "test1.txt", 1 );
 
         Assertions.assertNotNull( att2, "attachment disappeared" );
         Assertions.assertEquals( 1, att2.getVersion(), "version" );
@@ -182,7 +180,7 @@ public class AttachmentManagerTest {
     public void testMultipleStore()
         throws Exception
     {
-        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
@@ -191,7 +189,7 @@ public class AttachmentManagerTest {
         att.setAuthor( "FooBar" );
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        final Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine, new WikiPage(m_engine, NAME1)), "test1.txt" );
+        final Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine, Wiki.contents().page(m_engine, NAME1)), "test1.txt" );
 
         Assertions.assertNotNull( att2, "attachment disappeared" );
         Assertions.assertEquals( att.getName(), att2.getName(), "name" );
@@ -215,7 +213,7 @@ public class AttachmentManagerTest {
         // Check that first author did not disappear
         //
 
-        final Attachment att3 = m_manager.getAttachmentInfo( new WikiContext(m_engine, new WikiPage(m_engine, NAME1)), "test1.txt", 1 );
+        final Attachment att3 = m_manager.getAttachmentInfo( new WikiContext(m_engine, Wiki.contents().page(m_engine, NAME1)), "test1.txt", 1 );
         Assertions.assertEquals( 1, att3.getVersion(), "version of v1" );
         Assertions.assertEquals( "FirstPost", att3.getAuthor(), "name of v1" );
     }
@@ -224,13 +222,13 @@ public class AttachmentManagerTest {
     public void testListAttachments()
         throws Exception
     {
-        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1.txt" );
 
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
-        final List< Attachment > c = m_manager.listAttachments( new WikiPage(m_engine, NAME1) );
+        final List< Attachment > c = m_manager.listAttachments( Wiki.contents().page(m_engine, NAME1) );
 
         Assertions.assertEquals( 1, c.size(), "Length" );
 
@@ -243,14 +241,14 @@ public class AttachmentManagerTest {
     @Test
     public void testSimpleStoreWithoutExt() throws Exception
     {
-        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1" );
 
         att.setAuthor( "FirstPost" );
 
         m_manager.storeAttachment( att, makeAttachmentFile() );
 
         final Attachment att2 = m_manager.getAttachmentInfo( new WikiContext(m_engine,
-                                                                       new WikiPage(m_engine, NAME1)),
+                                                                       Wiki.contents().page(m_engine, NAME1)),
                                                        "test1" );
 
         Assertions.assertNotNull( att2, "attachment disappeared" );
@@ -276,7 +274,7 @@ public class AttachmentManagerTest {
     @Test
     public void testExists() throws Exception
     {
-        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1" );
 
         att.setAuthor( "FirstPost" );
 
@@ -288,7 +286,7 @@ public class AttachmentManagerTest {
     @Test
     public void testExists2() throws Exception
     {
-        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test1.bin" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1.bin" );
 
         att.setAuthor( "FirstPost" );
 
@@ -300,7 +298,7 @@ public class AttachmentManagerTest {
     @Test
     public void testExistsSpace() throws Exception
     {
-        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test file.bin" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test file.bin" );
 
         att.setAuthor( "FirstPost" );
 
@@ -312,7 +310,7 @@ public class AttachmentManagerTest {
     @Test
     public void testExistsUTF1() throws Exception
     {
-        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAME1, "test\u00e4.bin" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test\u00e4.bin" );
 
         att.setAuthor( "FirstPost" );
 
@@ -324,7 +322,7 @@ public class AttachmentManagerTest {
     @Test
     public void testExistsUTF2() throws Exception
     {
-        final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, NAMEU, "test\u00e4.bin" );
+        final Attachment att = Wiki.contents().attachment( m_engine, NAMEU, "test\u00e4.bin" );
 
         att.setAuthor( "FirstPost" );
 
@@ -340,7 +338,7 @@ public class AttachmentManagerTest {
         {
             m_engine.saveText( "TestPage", "xx" );
 
-            final Attachment att = new org.apache.wiki.attachment.Attachment( m_engine, "TestPages", "foo.bin" );
+            final Attachment att = Wiki.contents().attachment( m_engine, "TestPages", "foo.bin" );
 
             att.setAuthor("MonicaBellucci");
             m_manager.storeAttachment( att, makeAttachmentFile() );

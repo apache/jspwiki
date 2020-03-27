@@ -20,7 +20,6 @@ package org.apache.wiki.plugin;
 
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.spi.Wiki;
 import org.junit.jupiter.api.AfterEach;
@@ -50,7 +49,7 @@ public class ReferringUndefinedPagesPluginTest {
         testEngine.saveText("TestPage02", "Some Text for testing 02 which refers [NonExistingPageB] ");
 		testEngine.saveText("TestPage03", "Some Text for testing 03 which refers [NonExistingPageC] ");
 
-        context = Wiki.context().create( testEngine, testEngine.newHttpRequest(), new WikiPage(testEngine,"TestPage") );
+        context = Wiki.context().create( testEngine, testEngine.newHttpRequest(), Wiki.contents().page(testEngine,"TestPage") );
         manager = new DefaultPluginManager( testEngine, props );
     }
 

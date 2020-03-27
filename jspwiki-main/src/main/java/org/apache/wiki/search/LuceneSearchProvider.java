@@ -49,7 +49,6 @@ import org.apache.lucene.store.SimpleFSDirectory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiBackgroundThread;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -59,6 +58,7 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.api.search.SearchResult;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
@@ -522,7 +522,7 @@ public class LuceneSearchProvider implements SearchProvider {
                     }
                 } else {
                     log.error( "Lucene found a result page '" + pageName + "' that could not be loaded, removing from Lucene cache" );
-                    pageRemoved( new WikiPage( m_engine, pageName ) );
+                    pageRemoved( Wiki.contents().page( m_engine, pageName ) );
                 }
             }
         } catch( final IOException e ) {
@@ -589,7 +589,7 @@ public class LuceneSearchProvider implements SearchProvider {
             synchronized ( m_provider.m_updates ) {
                 while( m_provider.m_updates.size() > 0 ) {
                     final Object[] pair = m_provider.m_updates.remove(0);
-                    final WikiPage page = ( WikiPage ) pair[0];
+                    final Page page = ( Page ) pair[0];
                     final String text = ( String ) pair[1];
                     m_provider.updateLuceneIndex(page, text);
                 }

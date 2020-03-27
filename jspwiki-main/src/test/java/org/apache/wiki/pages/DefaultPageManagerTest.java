@@ -22,11 +22,11 @@ package org.apache.wiki.pages;
 import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.WikiProvider;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
@@ -74,7 +74,7 @@ public class DefaultPageManagerTest {
      */
     @Test
     public void testNonExistentPage2() throws Exception {
-        final WikiPage page = new WikiPage( engine, NAME1 );
+        final Page page = Wiki.contents().page( engine, NAME1 );
         Assertions.assertFalse( engine.getManager( PageManager.class ).wikiPageExists( page ), "Page already exists" );
     }
 
@@ -109,7 +109,7 @@ public class DefaultPageManagerTest {
     @Test
     public void testDeletePageAndAttachments() throws Exception {
         engine.saveText( NAME1, "Test" );
-        final Attachment att = new org.apache.wiki.attachment.Attachment( engine, NAME1, "TestAtt.txt" );
+        final Attachment att = Wiki.contents().attachment( engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         engine.getManager( AttachmentManager.class ).storeAttachment( att, engine.makeAttachmentFile() );
 
@@ -133,7 +133,7 @@ public class DefaultPageManagerTest {
     @Test
     public void testDeletePageAndAttachments2() throws Exception {
         engine.saveText( NAME1, "Test" );
-        Attachment att = new org.apache.wiki.attachment.Attachment( engine, NAME1, "TestAtt.txt" );
+        Attachment att = Wiki.contents().attachment( engine, NAME1, "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
         engine.getManager( AttachmentManager.class ).storeAttachment( att, engine.makeAttachmentFile() );
 
