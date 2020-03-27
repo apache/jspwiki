@@ -549,7 +549,10 @@ public final class WikiSession implements Session {
      *
      * @param engine the wiki session
      * @return the number of sessions
+     * @deprecated use {@link SessionMonitor#sessions()} instead
+     * @see SessionMonitor#sessions()
      */
+    @Deprecated
     public static int sessions( final Engine engine ) {
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.sessions();
@@ -562,7 +565,10 @@ public final class WikiSession implements Session {
      *
      * @param engine the wiki engine
      * @return an array of Principal objects, sorted by name
+     * @deprecated use {@link SessionMonitor#userPrincipals()} instead
+     * @see SessionMonitor#userPrincipals()
      */
+    @Deprecated
     public static Principal[] userPrincipals( final Engine engine ) {
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.userPrincipals();
