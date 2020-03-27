@@ -90,7 +90,7 @@ public class AuthenticationManagerTest {
         final Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine( props );
         m_auth = m_engine.getManager( AuthenticationManager.class );
-        m_groupMgr = m_engine.getGroupManager();
+        m_groupMgr = m_engine.getManager( GroupManager.class );
         m_session = WikiSessionTest.adminSession( m_engine );
     }
 
@@ -202,7 +202,7 @@ public class AuthenticationManagerTest {
         Assertions.assertTrue( session.hasPrincipal( new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
 
         // Listen for any manager group-add events
-        final GroupManager manager = m_engine.getGroupManager();
+        final GroupManager manager = m_engine.getManager( GroupManager.class );
         final SecurityEventTrap trap = new SecurityEventTrap();
         manager.addWikiEventListener( trap );
 
