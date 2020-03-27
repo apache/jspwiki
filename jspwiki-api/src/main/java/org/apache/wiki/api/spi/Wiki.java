@@ -29,10 +29,12 @@ import java.util.ServiceLoader;
 
 public class Wiki {
 
+    private static final String PROP_PROVIDER_IMPL_ACLS = "jspwiki.provider.impl.acls";
     private static final String PROP_PROVIDER_IMPL_CONTENTS = "jspwiki.provider.impl.contents";
     private static final String PROP_PROVIDER_IMPL_CONTEXT = "jspwiki.provider.impl.context";
     private static final String PROP_PROVIDER_IMPL_ENGINE = "jspwiki.provider.impl.engine";
     private static final String PROP_PROVIDER_IMPL_SESSION = "jspwiki.provider.impl.session";
+    private static final String DEFAULT_PROVIDER_IMPL_ACLS = "org.apache.wiki.spi.AclsSPIDefaultImpl";
     private static final String DEFAULT_PROVIDER_IMPL_CONTENTS = "org.apache.wiki.spi.ContentsSPIDefaultImpl";
     private static final String DEFAULT_PROVIDER_IMPL_CONTEXT = "org.apache.wiki.spi.ContextSPIDefaultImpl";
     private static final String DEFAULT_PROVIDER_IMPL_ENGINE = "org.apache.wiki.spi.EngineSPIDefaultImpl";
@@ -40,6 +42,7 @@ public class Wiki {
 
     // default values
     private static Properties properties = PropertyReader.getDefaultProperties();
+    private static AclsSPI aclsSPI = getSPI( AclsSPI.class, properties, PROP_PROVIDER_IMPL_ACLS, DEFAULT_PROVIDER_IMPL_ACLS );
     private static ContentsSPI contentsSPI = getSPI( ContentsSPI.class, properties, PROP_PROVIDER_IMPL_CONTENTS, DEFAULT_PROVIDER_IMPL_CONTENTS );
     private static ContextSPI contextSPI = getSPI( ContextSPI.class, properties, PROP_PROVIDER_IMPL_CONTEXT, DEFAULT_PROVIDER_IMPL_CONTEXT );
     private static EngineSPI engineSPI = getSPI( EngineSPI.class, properties, PROP_PROVIDER_IMPL_ENGINE, DEFAULT_PROVIDER_IMPL_ENGINE );
@@ -47,24 +50,54 @@ public class Wiki {
 
     static void init( final ServletContext context ) {
         properties = PropertyReader.loadWebAppProps( context );
+        aclsSPI = getSPI( AclsSPI.class, properties, PROP_PROVIDER_IMPL_ACLS, DEFAULT_PROVIDER_IMPL_ACLS );
         contentsSPI = getSPI( ContentsSPI.class, properties, PROP_PROVIDER_IMPL_CONTENTS, DEFAULT_PROVIDER_IMPL_CONTENTS );
         contextSPI = getSPI( ContextSPI.class, properties, PROP_PROVIDER_IMPL_CONTEXT, DEFAULT_PROVIDER_IMPL_CONTEXT );
         engineSPI = getSPI( EngineSPI.class, properties, PROP_PROVIDER_IMPL_ENGINE, DEFAULT_PROVIDER_IMPL_ENGINE );
         sessionSPI = getSPI( SessionSPI.class, properties, PROP_PROVIDER_IMPL_SESSION, DEFAULT_PROVIDER_IMPL_SESSION );
     }
 
+    /**
+     * Access to {@link AclsSPI} operations.
+     *
+     * @return {@link AclsSPI} operations.
+     */
+    public static AclsDSL acls() {
+        return new AclsDSL( aclsSPI );
+    }
+
+    /**
+     * Access to {@link ContentsSPI} operations.
+     *
+     * @return {@link ContentsSPI} operations.
+     */
     public static ContentsDSL contents() {
         return new ContentsDSL( contentsSPI );
     }
 
+    /**
+     * Access to {@link ContextSPI} operations.
+     *
+     * @return {@link ContextSPI} operations.
+     */
     public static ContextDSL context() {
         return new ContextDSL( contextSPI );
     }
 
+    /**
+     * Access to {@link EngineSPI} operations.
+     *
+     * @return {@link EngineSPI} operations.
+     */
     public static EngineDSL engine() {
         return new EngineDSL( engineSPI );
     }
 
+    /**
+     * Access to {@link SessionSPI} operations.
+     *
+     * @return {@link SessionSPI} operations.
+     */
     public static SessionDSL session() {
         return new SessionDSL( sessionSPI );
     }

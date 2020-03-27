@@ -203,7 +203,7 @@ public class WikiPage implements Page {
      * @return The access control list.  May return null, if there is no acl.
      */
     public Acl getAcl() {
-        return (org.apache.wiki.auth.acl.Acl)m_accessList;
+        return m_accessList;
     }
 
     /**

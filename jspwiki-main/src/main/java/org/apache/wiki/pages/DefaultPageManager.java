@@ -36,7 +36,6 @@ import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
-import org.apache.wiki.auth.acl.AclEntryImpl;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.diff.DifferenceManager;
@@ -746,7 +745,7 @@ public class DefaultPageManager implements PageManager {
                 final AclEntry entry = entries.nextElement();
                 if( ArrayUtils.contains( oldPrincipals, entry.getPrincipal() ) ) {
                     // Create new entry
-                    final AclEntry newEntry = new AclEntryImpl();
+                    final AclEntry newEntry = Wiki.acls().entry();
                     newEntry.setPrincipal( newPrincipal );
                     final Enumeration< Permission > permissions = entry.permissions();
                     while( permissions.hasMoreElements() ) {

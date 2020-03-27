@@ -20,7 +20,10 @@ package org.apache.wiki.auth.acl;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.api.core.Acl;
+import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Group;
@@ -45,8 +48,8 @@ public class AclImplTest {
     final TestEngine engine = TestEngine.build();
     final GroupManager m_groupMgr = engine.getManager( GroupManager.class );
 
-    private AclImpl m_acl;
-    private AclImpl m_aclGroup;
+    private Acl m_acl;
+    private Acl m_aclGroup;
     private Map< String, Group > m_groups;
 
     /**
@@ -57,8 +60,8 @@ public class AclImplTest {
     @BeforeEach
     public void setUp() throws Exception {
         final Session m_session = WikiSessionTest.adminSession( engine );
-        m_acl = new AclImpl();
-        m_aclGroup = new AclImpl();
+        m_acl = Wiki.acls().acl();
+        m_aclGroup = Wiki.acls().acl();
         m_groups = new HashMap<>();
         final Principal uAlice = new WikiPrincipal( "Alice" );
         final Principal uBob = new WikiPrincipal( "Bob" );
@@ -66,23 +69,23 @@ public class AclImplTest {
         final Principal uDave = new WikiPrincipal( "Dave" );
 
         //  Alice can view
-        final AclEntry ae = new AclEntryImpl();
+        final AclEntry ae = Wiki.acls().entry();
         ae.addPermission( PagePermission.VIEW );
         ae.setPrincipal( uAlice );
 
         //  Charlie can view
-        final AclEntry ae2 = new AclEntryImpl();
+        final AclEntry ae2 = Wiki.acls().entry();
         ae2.addPermission( PagePermission.VIEW );
         ae2.setPrincipal( uCharlie );
 
         //  Bob can view and edit (and by implication, comment)
-        final AclEntry ae3 = new AclEntryImpl();
+        final AclEntry ae3 = Wiki.acls().entry();
         ae3.addPermission( PagePermission.VIEW );
         ae3.addPermission( PagePermission.EDIT );
         ae3.setPrincipal( uBob );
 
         // Dave can view and comment
-        final AclEntry ae4 = new AclEntryImpl();
+        final AclEntry ae4 = Wiki.acls().entry();
         ae4.addPermission( PagePermission.VIEW );
         ae4.addPermission( PagePermission.COMMENT );
         ae4.setPrincipal( uDave );
@@ -98,7 +101,7 @@ public class AclImplTest {
         m_groupMgr.setGroup( m_session, foo );
         foo.add( uAlice );
         foo.add( uBob );
-        final AclEntry ag1 = new AclEntryImpl();
+        final AclEntry ag1 = Wiki.acls().entry();
         ag1.setPrincipal( foo.getPrincipal() );
         ag1.addPermission( PagePermission.EDIT );
         m_aclGroup.addEntry( ag1 );
@@ -109,7 +112,7 @@ public class AclImplTest {
         m_groupMgr.setGroup( m_session, bar );
         bar.add( uBob );
         bar.add( uCharlie );
-        final AclEntry ag2 = new AclEntryImpl();
+        final AclEntry ag2 = Wiki.acls().entry();
         ag2.setPrincipal( bar.getPrincipal() );
         ag2.addPermission( PagePermission.VIEW );
         m_aclGroup.addEntry( ag2 );

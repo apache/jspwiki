@@ -90,7 +90,7 @@ public class DefaultAclManager implements AclManager {
     public Acl parseAcl( final Page page, final String ruleLine ) throws WikiSecurityException {
         Acl acl = page.getAcl();
         if (acl == null) {
-            acl = new AclImpl();
+            acl = Wiki.acls().acl();
         }
 
         try {
@@ -108,7 +108,7 @@ public class DefaultAclManager implements AclManager {
                     oldEntry.addPermission( PermissionFactory.getPagePermission( page, actions ) );
                 } else {
                     log.debug( "Adding new acl entry for " + actions );
-                    final AclEntry entry = new AclEntryImpl();
+                    final AclEntry entry = Wiki.acls().entry();
                     entry.setPrincipal( principal );
                     entry.addPermission( PermissionFactory.getPagePermission( page, actions ) );
 
@@ -148,7 +148,7 @@ public class DefaultAclManager implements AclManager {
                 m_engine.getManager( RenderingManager.class ).getHTML(ctx, page);
 
                 if (page.getAcl() == null) {
-                    page.setAcl( new AclImpl() );
+                    page.setAcl( Wiki.acls().acl() );
                 }
                 acl = page.getAcl();
             }

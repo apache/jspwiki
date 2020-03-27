@@ -24,6 +24,7 @@ import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageManager;
@@ -169,13 +170,13 @@ public class DefaultAclManagerTest
         Assertions.assertEquals( "[{ALLOW edit Charlie,Herman}]\n", aclString );
 
         // Create an ACL from scratch
-        acl = new AclImpl();
-        AclEntry entry = new AclEntryImpl();
+        acl = Wiki.acls().acl();
+        AclEntry entry = Wiki.acls().entry();
         entry.setPrincipal( new WikiPrincipal( "Charlie" ) );
         entry.addPermission( PermissionFactory.getPagePermission( "Main:Foo", "view" ) );
         entry.addPermission( PermissionFactory.getPagePermission( "Main:Foo", "edit" ) );
         acl.addEntry( entry );
-        entry = new AclEntryImpl();
+        entry = Wiki.acls().entry();
         entry.setPrincipal( new WikiPrincipal( "Devin" ) );
         entry.addPermission( PermissionFactory.getPagePermission( "Main:Foo", "edit" ) );
         entry.addPermission( PermissionFactory.getPagePermission( "Main:Foo", "delete" ) );
