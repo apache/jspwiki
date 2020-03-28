@@ -52,29 +52,34 @@ public final class ClassUtil {
     /** The location of the classmappings.xml document. It will be searched for in the classpath.  It's value is "{@value}". */
     public  static final String MAPPINGS = "ini/classmappings.xml";
 
-    private static Map< String, String > c_classMappings = new ConcurrentHashMap<>();
+    /** The location of the classmappings-extra.xml document. It will be searched for in the classpath.  It's value is "{@value}". */
+    public  static final String MAPPINGS_EXTRA = "ini/classmappings-extra.xml";
+
+    /** Initialize the class mappings document. */
+    private static Map< String, String > c_classMappings = populateClassMappingsFrom( MAPPINGS );
+
+    /** Initialize the class mappings extra document. */
+    private static Map< String, String > c_classMappingsExtra = populateClassMappingsFrom( MAPPINGS_EXTRA ) ;
 
     private static boolean classLoaderSetup = false;
     private static ClassLoader loader = null;
 
-
-    /*
-     *  Initialize the class mappings document.
-     */
-    static {
-        final List< Element > nodes = XmlUtil.parse( MAPPINGS, "/classmappings/mapping" );
+    private static Map< String, String > populateClassMappingsFrom( final String fileLoc ) {
+        final Map< String, String > map = new ConcurrentHashMap<>();
+        final List< Element > nodes = XmlUtil.parse( fileLoc, "/classmappings/mapping" );
 
         if( nodes.size() > 0 ) {
             for( final Element f : nodes ) {
                 final String key = f.getChildText( "requestedClass" );
                 final String className = f.getChildText( "mappedClass" );
 
-                c_classMappings.put( key, className );
+                map.put( key, className );
                 log.debug( "Mapped class '" + key + "' to class '" + className + "'" );
             }
         } else {
             log.info( "Didn't find class mapping document in " + MAPPINGS );
         }
+        return map;
     }
 
     /**
@@ -342,6 +347,10 @@ public final class ClassUtil {
             log.error( e.getMessage(), e );
         }
         return false;
+    }
+
+    public static Map< String, String > getExtraClassMappings() {
+        return c_classMappingsExtra;
     }
     
 }

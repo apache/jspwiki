@@ -328,22 +328,22 @@ public class WikiEngine implements Engine {
             final Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url", urlConstructorClassName );
 
             initComponent( CommandResolver.class, this, props );
-            initComponent( urlclass.getName(), URLConstructor.class, ( Object )null );
+            initComponent( urlclass.getName(), URLConstructor.class );
             initComponent( PageManager.class, this, props );
             initComponent( PluginManager.class, this, props );
             initComponent( DifferenceManager.class, this, props );
             initComponent( AttachmentManager.class, this, props );
             initComponent( VariableManager.class, props );
             initComponent( SearchManager.class, this, props );
-            initComponent( AuthenticationManager.class, ( Object )null );
-            initComponent( AuthorizationManager.class, ( Object )null );
-            initComponent( UserManager.class, ( Object )null );
-            initComponent( GroupManager.class, ( Object )null );
+            initComponent( AuthenticationManager.class );
+            initComponent( AuthorizationManager.class );
+            initComponent( UserManager.class );
+            initComponent( GroupManager.class );
             initComponent( EditorManager.class, this );
             initComponent( ProgressManager.class, this );
-            initComponent( aclClassName, AclManager.class, ( Object )null );
-            initComponent( WorkflowManager.class, ( Object )null );
-            initComponent( TasksManager.class, ( Object )null );
+            initComponent( aclClassName, AclManager.class );
+            initComponent( WorkflowManager.class );
+            initComponent( TasksManager.class );
             initComponent( InternationalizationManager.class, this );
             initComponent( TemplateManager.class, this, props );
             initComponent( FilterManager.class, this, props );
@@ -388,10 +388,24 @@ public class WikiEngine implements Engine {
             log.error( "Unable to start RSS generator - JSPWiki will still work, but there will be no RSS feed.", e );
         }
 
+        final Map< String, String > extraComponents = ClassUtil.getExtraClassMappings();
+        initExtraComponents( extraComponents );
+
         fireEvent( WikiEngineEvent.INITIALIZED ); // initialization complete
 
         log.info( "WikiEngine configured." );
         m_isConfigured = true;
+    }
+
+    void initExtraComponents( final Map< String, String > extraComponents ) {
+        for( final Map.Entry< String, String > extraComponent : extraComponents.entrySet() ) {
+            try {
+                log.info( "Registering on WikiEngine " + extraComponent.getKey() + " as " + extraComponent.getValue() );
+                initComponent( extraComponent.getKey(), Class.forName( extraComponent.getValue() ) );
+            } catch( final Exception e ) {
+                log.error( "Unable to start " + extraComponent.getKey(), e );
+            }
+        }
     }
 
     < T > void initComponent( final Class< T > componentClass, final Object... initArgs ) throws Exception {
@@ -405,10 +419,10 @@ public class WikiEngine implements Engine {
         } else {
             component = ClassUtil.getMappedObject( componentInitClass, initArgs );
         }
+        managers.put( componentClass, component );
         if( Initializable.class.isAssignableFrom( componentClass ) ) {
             ( ( Initializable )component ).initialize( this, m_properties );
         }
-        managers.put( componentClass, component );
     }
 
     /** {@inheritDoc} */
