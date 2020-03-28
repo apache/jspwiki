@@ -18,14 +18,14 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext context = WikiContext.findContext( pageContext );
+  Context context = Context.findContext( pageContext );
   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "scripts/jspwiki-prefs.js" );
 %>
 

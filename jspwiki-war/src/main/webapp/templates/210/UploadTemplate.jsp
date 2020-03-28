@@ -19,13 +19,13 @@
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.attachment.AttachmentManager" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  Context c = Context.findContext( pageContext );
   int attCount = c.getEngine().getManager( AttachmentManager.class ).listAttachments(c.getPage()).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
@@ -54,7 +54,7 @@
 
       <wiki:TabbedSection defaultTab="attachments" >
         <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>'
-	  		     url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>"
+	  		     url="<%=c.getURL(ContextEnum.PAGE_VIEW.getRequestContext(), c.getPage().getName())%>"
 	       accesskey="v" >
         </wiki:Tab>
 
@@ -63,7 +63,7 @@
           <wiki:Include page="AttachmentTab.jsp"/>
         </wiki:Tab>
         <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
-                 url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
+                 url="<%=c.getURL(ContextEnum.PAGE_INFO.getRequestContext(), c.getPage().getName())%>"
            accesskey="i" >
         </wiki:Tab>
 

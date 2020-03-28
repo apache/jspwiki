@@ -18,7 +18,7 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.ui.progress.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -28,7 +28,7 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   int MAXATTACHNAMELENGTH = 30;
-  WikiContext c = WikiContext.findContext(pageContext);
+  Context c = Context.findContext(pageContext);
   String progressId = c.getEngine().getManager( ProgressManager.class ).getNewProgressIdentifier();
 %>
 
@@ -134,13 +134,13 @@
       <td>
           <input type="button"
                 value="<fmt:message key='attach.delete'/>"
-                  src="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' ><wiki:Param name='tab' value='attach'/></wiki:Link>"
+                  src="<wiki:Link format='url' context='<%=ContextEnum.PAGE_DELETE.getRequestContext()%>' ><wiki:Param name='tab' value='attach'/></wiki:Link>"
               onclick="$('deleteForm').setProperty('action',this.src); $('delete-all').click();" />
       </td>
       </wiki:Permission>
       <td class="changenote">
       <%
-         String changeNote = (String)att.getAttribute(WikiPage.CHANGENOTE);
+         String changeNote = (String)att.getAttribute(Page.CHANGENOTE);
          if( changeNote != null ) {
          %><%=changeNote%><%
          }

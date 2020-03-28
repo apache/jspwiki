@@ -21,7 +21,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
@@ -37,7 +37,7 @@
 %>
 
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  Context c = Context.findContext( pageContext );
 
   // Extract the group name and members
   String name = request.getParameter( "group" );
@@ -56,12 +56,12 @@
     creator = group.getCreator();
     if ( group.getCreated() != null )
     {
-      created = Preferences.renderDate(WikiContext.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME);
+      created = Preferences.renderDate(Context.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME);
     }
     modifier = group.getModifier();
     if ( group.getLastModified() != null )
     {
-      modified = Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME) ;
+      modified = Preferences.renderDate(Context.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME) ;
     }
   }
   name = TextUtil.replaceEntities(name);
@@ -162,7 +162,7 @@
 
 <wiki:Permission permission="editGroup">
   <wiki:Tab id="editgroup" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.editgroup")%>'
-           url='<%=c.getURL(WikiContext.NONE, "EditGroup.jsp", "group="+request.getParameter("group") ) %>'
+           url='<%=c.getURL(ContextEnum.PAGE_NONE.getRequestContext(), "EditGroup.jsp", "group="+request.getParameter("group") ) %>'
            accesskey="e" >
   </wiki:Tab>
 </wiki:Permission>

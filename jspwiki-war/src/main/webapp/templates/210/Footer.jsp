@@ -19,13 +19,13 @@
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.Release" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext c = WikiContext.findContext(pageContext);
+  Context c = Context.findContext(pageContext);
   String frontpage = c.getEngine().getFrontPage(); 
 %> 
 <div id="footer">

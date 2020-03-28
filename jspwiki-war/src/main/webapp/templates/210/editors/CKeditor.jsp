@@ -20,7 +20,6 @@
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.util.Properties"%>
 <%@ page import="org.apache.commons.text.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -40,16 +39,15 @@
     This provides the WYSIWYG CKeditor for JSPWiki.
 --%>
 <%
-    Context context = WikiContext.findContext( pageContext );
+    Context context = Context.findContext( pageContext );
     Engine engine = context.getEngine();
 
     /* local download of CKeditor */
     TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-           context.getURL( WikiContext.NONE, "scripts/ckeditor/ckeditor.js" ) );
+           context.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "scripts/ckeditor/ckeditor.js" ) );
 
     /*  Use CKEditor from a CDN
-    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-           "//cdn.ckeditor.com/4.5.1/standard/ckeditor.js" );
+    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "//cdn.ckeditor.com/4.5.1/standard/ckeditor.js" );
     */
 
     context.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
@@ -110,7 +108,7 @@
 
    // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
    // after the XHTML for CKeditor has been rendered.
-   context.setVariable( WikiContext.VAR_WYSIWYG_EDITOR_MODE, Boolean.FALSE );
+   context.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.FALSE );
 
    context.setVariable( VariableManager.VAR_RUNFILTERS,  null );
    wikiPage.setAttribute( MarkupParser.PROP_CAMELCASELINKS, originalCCLOption );

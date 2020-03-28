@@ -18,7 +18,8 @@
 --%>
 
 <%@ page import="java.util.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.ui.admin.*" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -39,8 +40,8 @@
 in your <code>jspwiki.properties</code> file.</div>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    WikiContext ctx = WikiContext.findContext(pageContext);
+    Engine wiki = Wiki.engine().find( getServletConfig() );
+    Context ctx = Context.findContext(pageContext);
     AdminBeanManager mgr = wiki.getManager( AdminBeanManager.class );
  %>
 

@@ -20,7 +20,6 @@
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.util.Properties"%>
 <%@ page import="org.apache.commons.text.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -39,16 +38,15 @@
     This provides the WYSIWYG TinyMCE for JSPWiki.
 --%>
 <%
-    Context context = WikiContext.findContext( pageContext );
+    Context context = Context.findContext( pageContext );
     Engine engine = context.getEngine();
 
     /* local download of TinyMCE */
     TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-           context.getURL( WikiContext.NONE, "scripts/tinymce/js/tinymce/tinymce.min.js" ) );
+           context.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "scripts/tinymce/js/tinymce/tinymce.min.js" ) );
 
     /*  Use TinyMCE from a CDN
-    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-           "//tinymce.cachefly.net/4.2/tinymce.min.js" );
+    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "//tinymce.cachefly.net/4.2/tinymce.min.js" );
     */
 
     context.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );

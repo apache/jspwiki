@@ -22,7 +22,7 @@
 <%@ page import="java.text.MessageFormat" %>
 <%@ page import="java.util.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ page import="org.apache.wiki.WikiContext" %>
+<%@ page import="org.apache.wiki.api.core.Context" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
@@ -54,11 +54,11 @@
 
       ss.append( delim );
       mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.createdon") );
-      args = new Object[]{(group.getCreated()==null) ? "" : Preferences.renderDate(WikiContext.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME), group.getCreator()};
+      args = new Object[]{(group.getCreated()==null) ? "" : Preferences.renderDate(Context.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME), group.getCreator()};
       ss.append( mf.format( args ) );
 
       mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.lastmodified") );
-      args = new Object[]{(group.getLastModified()==null) ? "" : Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME), group.getModifier()};
+      args = new Object[]{(group.getLastModified()==null) ? "" : Preferences.renderDate(Context.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME), group.getModifier()};
       ss.append( mf.format( args ) );
 
       ss.append( "\", " );
@@ -158,7 +158,7 @@
 
 <script type="text/javascript">//<![CDATA[
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  Context c = Context.findContext( pageContext );
   Principal[] roles = c.getWikiSession().getRoles();
 
   for( int i = 0; i < roles.length; i++ )

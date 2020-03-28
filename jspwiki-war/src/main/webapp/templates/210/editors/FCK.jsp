@@ -21,7 +21,6 @@
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.util.Properties"%>
 <%@ page import="org.apache.commons.text.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -39,7 +38,7 @@
 <%--
     This provides the FCK editor for JSPWiki.
 --%>
-<%  Context context = WikiContext.findContext( pageContext );
+<%  Context context = Context.findContext( pageContext );
     Engine engine = context.getEngine();
     context.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
     context.setVariable( VariableManager.VAR_RUNFILTERS,  "false" );
@@ -50,7 +49,7 @@
 
     String usertext = EditorManager.getEditedText(pageContext);
     TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-   		context.getURL( WikiContext.NONE, "scripts/fckeditor/fckeditor.js" ) ); %>
+   		context.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "scripts/fckeditor/fckeditor.js" ) ); %>
 
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>

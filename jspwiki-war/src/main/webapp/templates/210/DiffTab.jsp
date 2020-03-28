@@ -19,7 +19,7 @@
 
 <%@ page import="java.util.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.tags.InsertDiffTag" %>
 <%@ page import="org.apache.wiki.variables.VariableManager" %>
@@ -30,7 +30,7 @@
 <fmt:setBundle basename="templates.default"/>
 
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  Context c = Context.findContext( pageContext );
   List history = c.getEngine().getManager( PageManager.class ).getVersionHistory(c.getPage().getName());
   pageContext.setAttribute( "history", history );
   pageContext.setAttribute( "diffprovider", c.getEngine().getManager( VariableManager.class ).getVariable(c,"jspwiki.diffProvider"));

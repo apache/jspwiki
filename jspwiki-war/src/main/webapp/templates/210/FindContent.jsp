@@ -18,7 +18,7 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.commons.lang3.*" %>

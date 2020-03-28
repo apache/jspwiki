@@ -18,8 +18,7 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -29,7 +28,7 @@
 <fmt:setBundle basename="templates.default"/>
 <%
     String postURL = "";
-    WikiContext ctx = WikiContext.findContext( pageContext );
+    Context ctx = Context.findContext( pageContext );
     AuthenticationManager mgr = ctx.getEngine().getManager( AuthenticationManager.class );
 
     if( mgr.isContainerAuthenticated() )
@@ -40,7 +39,7 @@
     {
         String redir = (String)ctx.getVariable("redirect");
         if( redir == null ) redir = ctx.getEngine().getFrontPage();
-        postURL = ctx.getURL( WikiContext.LOGIN, redir );
+        postURL = ctx.getURL( ContextEnum.WIKI_LOGIN.getRequestContext(), redir );
     }
 
     boolean supportsCookieAuthentication = mgr.allowsCookieAuthentication();

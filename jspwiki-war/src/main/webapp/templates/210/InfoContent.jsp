@@ -20,7 +20,6 @@
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.security.Permission" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.attachment.AttachmentManager" %>
 <%@ page import="org.apache.wiki.auth.*" %>
@@ -35,7 +34,7 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  Context c = WikiContext.findContext(pageContext);
+  Context c = Context.findContext(pageContext);
   Page wikiPage = c.getPage();
   int attCount = c.getEngine().getManager( AttachmentManager.class ).listAttachments( c.getPage() ).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
@@ -91,7 +90,7 @@
   <wiki:Tab id="pagecontent"
          title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.view")%>'
      accesskey="v"
-	       url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
+	       url="<%=c.getURL(ContextEnum.PAGE_VIEW.getRequestContext(), c.getPage().getName())%>">
       <%--<wiki:Include page="PageTab.jsp"/> --%>
   </wiki:Tab>
 
@@ -156,7 +155,7 @@
   </wiki:Permission>
 
   <wiki:Permission permission="delete">
-    <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
+    <form action="<wiki:Link format='url' context='<%=ContextEnum.PAGE_DELETE.getRequestContext()%>' />"
            class="wikiform"
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />"
@@ -198,7 +197,7 @@
 
     <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9"
                        fmtkey="info.pagination"
-                         href='<%=c.getURL(WikiContext.INFO, c.getPage().getName(), "start=%s")%>' />
+                         href='<%=c.getURL(ContextEnum.PAGE_INFO.getRequestContext(), c.getPage().getName(), "start=%s")%>' />
 
     <div class="zebra-table sortable table-filter">
     <table class="wikitable" >
@@ -275,7 +274,7 @@
   <wiki:Tab id="pagecontent"
          title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.parent")%>'
      accesskey="v"
-	       url="<%=c.getURL(WikiContext.VIEW, ((Attachment)wikiPage).getParentName()) %>">
+	       url="<%=c.getURL(ContextEnum.PAGE_VIEW.getRequestContext(), ((Attachment)wikiPage).getParentName()) %>">
   </wiki:Tab>
 
   <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.attachment.tab")%>' accesskey="i" >
@@ -326,7 +325,7 @@
 
   <wiki:Permission permission="delete">
     <h3><fmt:message key="info.deleteattachment"/></h3>
-    <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
+    <form action="<wiki:Link format='url' context='<%=ContextEnum.PAGE_DELETE.getRequestContext()%>' />"
            class="wikiform"
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />"
@@ -392,7 +391,7 @@
          <td>
             <input type="button"
                    value="Restore"
-                   url="<wiki:Link format='url' context='<%=WikiContext.UPLOAD%>'/>"/>
+                   url="<wiki:Link format='url' context='<%=ContextEnum.PAGE_UPLOAD.getRequestContext()%>'/>"/>
          </td>
       </wiki:Permission>
       --%>

@@ -21,7 +21,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.util.comparators.PrincipalComparator" %>
@@ -35,7 +35,7 @@
 %>
 
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  Context c = Context.findContext( pageContext );
 
   // Extract the group name and members
   String name = request.getParameter( "group" );
@@ -55,7 +55,7 @@
 
   <wiki:Permission permission="viewGroup">
   <wiki:Tab id="viewgroup" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.viewgroup")%>'
-           url='<%=c.getURL(WikiContext.NONE, "Group.jsp", "group="+request.getParameter("group") ) %>'
+           url='<%=c.getURL(ContextEnum.PAGE_NONE.getRequestContext(), "Group.jsp", "group="+request.getParameter("group") ) %>'
            accesskey="v" >
   </wiki:Tab>
   </wiki:Permission>

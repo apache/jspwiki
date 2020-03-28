@@ -18,7 +18,8 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.providers.WikiProvider" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -26,8 +27,8 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-	WikiContext c = WikiContext.findContext( pageContext );
-   	WikiPage p = c.getPage();
+	Context c = Context.findContext( pageContext );
+   	Page p = c.getPage();
 	String pagename = p.getName();
 
 	/* check possible permalink (blogentry) pages */

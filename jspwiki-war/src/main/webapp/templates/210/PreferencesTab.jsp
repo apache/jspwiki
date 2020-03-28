@@ -18,14 +18,12 @@
 --%>
 
 <%@ page errorPage="/Error.jsp" %>
-<%@ page import="java.util.*" %>
-<%@ page import="java.lang.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="java.io.*" %>
+<%@ page import="java.util.*" %>
 <%@ page import="java.util.jar.*" %>
-
-<%@ page import="org.apache.wiki.ui.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.preferences.*" %>
+<%@ page import="org.apache.wiki.ui.*" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -36,7 +34,7 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   //FIXME: this should better move to UserPreferences.jsp but that doesn't seem to work. Ugh ?
-  WikiContext c = WikiContext.findContext( pageContext );
+  Context c = Context.findContext( pageContext );
   TemplateManager t = c.getEngine().getManager( TemplateManager.class );
   pageContext.setAttribute( "skins", t.listSkins(pageContext, c.getTemplate() ) );
   pageContext.setAttribute( "languages", t.listLanguages(pageContext) );

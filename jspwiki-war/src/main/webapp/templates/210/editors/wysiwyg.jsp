@@ -19,7 +19,6 @@
 
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -36,11 +35,11 @@
         This is a plain editor for JSPWiki.
 --%>
 <%
-   Context context = WikiContext.findContext( pageContext );
+   Context context = Context.findContext( pageContext );
    Engine engine = context.getEngine();
 
    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-   		context.getURL( WikiContext.NONE, "scripts/jspwiki-edit.js" ) );
+   		context.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "scripts/jspwiki-edit.js" ) );
 
    String usertext = EditorManager.getEditedText( pageContext );
 %>
