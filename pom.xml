@@ -100,7 +100,7 @@
     <plugin.jspc.version>3.1.0</plugin.jspc.version>
     <plugin.checksum.version>1.8</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
-    <plugin.cargo.version>1.7.10</plugin.cargo.version>
+    <plugin.cargo.version>1.7.11</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
     <plugin.cobertura.version>2.7</plugin.cobertura.version>
     <plugin.sonar.version>3.7.0.1746</plugin.sonar.version>
