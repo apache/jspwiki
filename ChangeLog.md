@@ -17,6 +17,40 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-03-29  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-16_
+
+* [JSPWIKI-303](https://issues.apache.org/jira/browse/JSPWIKI-303): JSPWiki-API library creation
+    * SPI to retrieve / create objects from the `o.a.w.api.core` package
+    * it is possible to provide custom implementations of objects from the `o.a.w.api.core` package 
+        * for a custom `Engine`, an implementation of `o.a.w.api.spi.EngineSPI`, and set the 
+        `jspwiki.provider.impl.engine` property on the `jspwiki-[custom].properties` file with the 
+        fully qualified name of the implementation 
+        * for a custom `Context`, an implementation of `o.a.w.api.spi.ContextSPI`, and set the 
+        `jspwiki.provider.impl.context` property on the `jspwiki-[custom].properties` file with the 
+        fully qualified name of the implementation 
+        * for a custom `Session`, an implementation of `o.a.w.api.spi.SessionSPI`, and set the 
+        `jspwiki.provider.impl.session` property on the `jspwiki-[custom].properties` file with the 
+        fully qualified name of the implementation 
+        * for custom `Page` or `Attachment`, an implementation of `o.a.w.api.spi.ContentsSPI`, and set the 
+        `jspwiki.provider.impl.contents` property on the `jspwiki-[custom].properties` file with the 
+        fully qualified name of the implementation 
+        * for custom `Acl` or `AclEntry`, an implementation of `o.a.w.api.spi.AclsSPI`, and set the 
+        `jspwiki.provider.impl.acls` property on the `jspwiki-[custom].properties` file with the 
+        fully qualified name of the implementation
+
+* [JSPWIKI-806](https://issues.apache.org/jira/browse/JSPWIKI-806) (EntityManager Proposal): add the 
+possibility of loading custom managers on `WikiEngine`
+    * `WikiEngine` will look on classpath for an `ini/classmappings-extra.xml` file, with the same structure as 
+    `ini/classmappings.xml`
+    * if found, will register each `requestedClass` with its correspondent `mappedClass`
+    * these custom manager must have a no-arg constructor
+    * if there's a need to perform some initialization tasks querying the `Engine`, the custom manager should
+    implement `o.a.w.api.engine.Initializable` and perform those tasks there
+    
+* `SisterSites.jsp` now honours page ACLs
+
 **2020-03-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-15_
