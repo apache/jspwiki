@@ -35,7 +35,7 @@ under the License.
 | mvn test -Dtest=JSPWikiMarkupParserTest                           | run just a single test class                                                                                              |
 | mvn test -Dtest=JSPWikiMarkupParserTest#testHeadingHyperlinks3    | run just a single test within a test class                                                                                |
 | mvn test -Dtest=TestClassName#methodName -Dmaven.surefire.debug   | debug a test in Eclipse or IDEA to see why it's failing (see http://www.jroller.com/gmazza/entry/jpa_and_junit#debugging) |
-| mvn org.codehaus.cargo:cargo-maven2-plugin:run                    | (from main war module) starts JSPWiki on a Tomcat8 instance at http://localhost:8080/JSPWiki with an attached debugger    |
+| mvn org.codehaus.cargo:cargo-maven2-plugin:run                    | (from main war module) starts JSPWiki on a Tomcat9 instance at http://localhost:8080/JSPWiki with an attached debugger    |
 |                                                                   | on port 5005                                                                                                              |
 | mvn clean deploy -Papache-release -Dgpg.passphrase=<passphrase>   | deploys generated artifact to a repository. If -Dgpg.passphrase is not given, expects a gpg-agent running                 |
 | mvn clean install -Pintegration-tests                             | performs a build, enabling functional tests execution (best run from the jspwiki-it-tests folder)                         |
