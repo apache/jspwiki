@@ -557,7 +557,7 @@ public class WikiContext implements Context, Command {
      */
     @Override
     public String getViewURL( final String page ) {
-        return getURL( VIEW, page, null );
+        return getURL( ContextEnum.PAGE_VIEW.getRequestContext(), page, null );
     }
 
     /**
