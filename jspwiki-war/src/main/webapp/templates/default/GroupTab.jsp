@@ -21,7 +21,7 @@
 <%@ page import="java.text.MessageFormat" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.WikiContext" %>
+<%@ page import="org.apache.wiki.api.core.Context" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
@@ -37,7 +37,7 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  Context c = Context.findContext( pageContext );
 
   // Extract the group name and members
   //String name = request.getParameter( "group" );

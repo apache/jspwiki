@@ -18,7 +18,6 @@
 --%>
 
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -37,7 +36,7 @@
         This is a plain editor for JSPWiki.
 --%>
 <%
-   Context context = WikiContext.findContext( pageContext );
+   Context context = Context.findContext( pageContext );
    Engine engine = context.getEngine();
 
    String usertext = EditorManager.getEditedText( pageContext );

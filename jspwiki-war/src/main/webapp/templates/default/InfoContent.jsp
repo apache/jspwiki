@@ -17,7 +17,6 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -36,7 +35,7 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  Context c = WikiContext.findContext(pageContext);
+  Context c = Context.findContext(pageContext);
   Page wikiPage = c.getPage();
   int attCount = c.getEngine().getManager( AttachmentManager.class ).listAttachments( c.getPage() ).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
@@ -136,7 +135,7 @@
   </wiki:Permission>
 
   <wiki:Permission permission="delete">
-    <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
+    <form action="<wiki:Link format='url' context='<%=ContextEnum.PAGE_DELETE.getRequestContext()%>' />"
            class="form-group"
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />" >
@@ -158,7 +157,7 @@
 
     <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9"
                        fmtkey="info.pagination"
-                         href='<%=c.getURL(WikiContext.INFO, wikiPage.getName(), "start=%s")%>' />
+                         href='<%=c.getURL(ContextEnum.PAGE_INFO.getRequestContext(), wikiPage.getName(), "start=%s")%>' />
 
     <c:set var="first" value="<%= startitem %>"/>
     <c:set var="last" value="<%= startitem + pagesize %>"/>
@@ -298,7 +297,7 @@
 </wiki:Permission>
 
 
-<form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' ><wiki:Param name='tab' value='attach' /></wiki:Link>"
+<form action="<wiki:Link format='url' context='<%=ContextEnum.PAGE_DELETE.getRequestContext()%>' ><wiki:Param name='tab' value='attach' /></wiki:Link>"
            class="form-group"
               id="deleteForm"
           method="post" accept-charset="<wiki:ContentEncoding />" >
@@ -366,7 +365,7 @@
          <td>
             <input type="button"
                    value="Restore"
-                   url="<wiki:Link format='url' context='<%=WikiContext.UPLOAD%>'/>"/>
+                   url="<wiki:Link format='url' context='<%=ContextEnum.PAGE_UPLOAD.getRequestContext()%>'/>"/>
          </td>
       </wiki:Permission>
       --%>

@@ -17,20 +17,22 @@
     under the License.  
 --%>
 
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%! 
   public void jspInit()
   {
-    wiki = WikiEngine.getInstance( getServletConfig() );
+    wiki = Wiki.engine().find( getServletConfig() );
   }
-  WikiEngine wiki;
+  Engine wiki;
 %>
 <%
   // Copied from a top-level jsp -- which would be a better place to put this 
-  WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.VIEW );
-  if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+  Context wikiContext = Wiki.context().find( wiki, request, ContextEnum.PAGE_VIEW.getRequestContext() );
+  if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
   String pagereq = wikiContext.getPage().getName();
 
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );

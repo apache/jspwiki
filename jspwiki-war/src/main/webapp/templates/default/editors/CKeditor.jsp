@@ -19,7 +19,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="java.util.Properties"%>
 <%@ page import="org.apache.commons.lang3.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -40,16 +39,15 @@
     This provides the WYSIWYG CKeditor for JSPWiki.
 --%>
 <%
-    Context context = WikiContext.findContext( pageContext );
+    Context context = Context.findContext( pageContext );
     Engine engine = context.getEngine();
 
     /* local download of CKeditor */
     TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-           context.getURL( WikiContext.NONE, "scripts/ckeditor/ckeditor.js" ) );
+           context.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "scripts/ckeditor/ckeditor.js" ) );
 
     /*  Use CKEditor from a CDN
-    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-           "//cdn.ckeditor.com/4.5.1/standard/ckeditor.js" );
+    TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "//cdn.ckeditor.com/4.5.1/standard/ckeditor.js" );
     */
 
     context.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );

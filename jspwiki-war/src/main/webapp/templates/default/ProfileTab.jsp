@@ -17,7 +17,7 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.user.*" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -29,7 +29,7 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   /* dateformatting not yet supported by wiki:UserProfile tag - diy */
-  WikiContext wikiContext = WikiContext.findContext(pageContext);
+  Context wikiContext = Context.findContext(pageContext);
   UserManager manager = wikiContext.getEngine().getManager( UserManager.class );
   UserProfile profile = manager.getUserProfile( wikiContext.getWikiSession() );
 %>

@@ -17,7 +17,8 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.providers.WikiProvider" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -38,7 +39,7 @@
 <%-- If the page is an older version, then offer a note and a possibility to restore this version as the latest one. --%>
 <wiki:CheckVersion mode="notlatest">
   <%
-    WikiContext c = WikiContext.findContext( pageContext );
+    Context c = Context.findContext( pageContext );
   %>
   <c:set var="thisVersion" value="<%= c.getPage().getVersion() %>" />
   <c:set var="latestVersion" value="<%= c.getEngine().getManager( PageManager.class ).getPage( c.getPage().getName(), WikiProvider.LATEST_VERSION ).getVersion() %>" />
@@ -74,7 +75,7 @@
 
 
 <%--
-ISWEBLOG= <%= WikiContext.findContext( pageContext ).getPage().getAttribute( /*ATTR_ISWEBLOG*/ "weblogplugin.isweblog" ) %>
+ISWEBLOG= <%= Context.findContext( pageContext ).getPage().getAttribute( /*ATTR_ISWEBLOG*/ "weblogplugin.isweblog" ) %>
 --%>
 <%--  IF BLOCOMMENT PAGE:  insert back buttons to mainblog and blogentry permalink --%>
 <c:set var="mainblogpage" value="${fn:substringBefore(param.page,'_comments_')}" />

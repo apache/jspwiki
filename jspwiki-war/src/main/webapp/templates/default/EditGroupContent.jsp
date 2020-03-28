@@ -20,7 +20,7 @@
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.util.comparators.PrincipalComparator" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -32,11 +32,11 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  Context c = Context.findContext( pageContext );
 
   // Extract the group name and members
   String name = request.getParameter( "group" );
-  Group group = (Group)pageContext.getAttribute( "Group",PageContext.REQUEST_SCOPE );
+  Group group = (Group)pageContext.getAttribute( "Group", PageContext.REQUEST_SCOPE );
   Principal[] members = null;
 
   if ( group != null )

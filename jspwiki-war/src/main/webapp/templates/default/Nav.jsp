@@ -19,7 +19,7 @@
 
 <%@ page import="java.util.StringTokenizer" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 
@@ -30,7 +30,7 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  Context c = Context.findContext( pageContext );
 
   String text = c.getEngine().getManager( PageManager.class ).getText( c.getPage() );
   StringTokenizer tokens = new StringTokenizer( text );

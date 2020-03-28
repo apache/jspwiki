@@ -20,7 +20,6 @@
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.util.Properties"%>
 <%@ page import="org.apache.commons.lang3.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -46,7 +45,7 @@
     This provides the WYSIWYG TinyMCE for JSPWiki.
 --%>
 <%
-    Context context = WikiContext.findContext( pageContext );
+    Context context = Context.findContext( pageContext );
     Engine engine = context.getEngine();
 
     context.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );

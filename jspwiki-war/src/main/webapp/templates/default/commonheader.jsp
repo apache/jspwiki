@@ -18,7 +18,7 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
@@ -95,7 +95,7 @@ String.I18N.PREFIX = "javascript.";
 <meta name="wikiPageUrl" content='<wiki:Link format="url"  page="#$%"/>' />
 <meta name="wikiEditUrl" content='<wiki:EditLink format="url" page="#$%"/>' />
 <meta name="wikiCloneUrl" content='<wiki:EditLink format="url" page="#$%"/>&clone=<wiki:Variable var="pagename" />' />
-<meta name="wikiJsonUrl" content='<%= WikiContext.findContext(pageContext).getURL( WikiContext.NONE, "ajax" ) %>' /><%--unusual pagename--%>
+<meta name="wikiJsonUrl" content='<%= Context.findContext(pageContext).getURL( ContextEnum.PAGE_NONE.getRequestContext(), "ajax" ) %>' /><%--unusual pagename--%>
 <meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>
 <meta name="wikiUserName" content='<wiki:UserName />' />
 <meta name="wikiTemplateUrl" content='<wiki:Link format="url" templatefile="" />' />

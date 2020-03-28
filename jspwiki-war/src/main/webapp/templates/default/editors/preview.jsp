@@ -19,7 +19,6 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
@@ -32,13 +31,13 @@
         This is a special editor component for JSPWiki preview storage.
 --%>
 <%
-   Context context = WikiContext.findContext( pageContext );
+   Context context = Context.findContext( pageContext );
    String usertext = (String)pageContext.getAttribute( EditorManager.ATTR_EDITEDTEXT, PageContext.REQUEST_SCOPE );
    if( usertext == null ) usertext = "";
 
    String action = "comment".equals(request.getParameter("action")) ?
-                   context.getURL(WikiContext.COMMENT,context.getName()) :
-                   context.getURL(WikiContext.EDIT,context.getName());
+                   context.getURL( ContextEnum.PAGE_COMMENT.getRequestContext(), context.getName() ) :
+                   context.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), context.getName() );
  %>
 <form action="<%=action%>"
       method="post" accept-charset="<wiki:ContentEncoding/>"

@@ -24,8 +24,8 @@
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="org.apache.commons.lang3.*" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.api.search.SearchResult" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -40,7 +40,7 @@
 <%!
   public void jspInit()
   {
-    wiki = WikiEngine.getInstance( getServletConfig() );
+    wiki = Wiki.engine().find( getServletConfig() );
   }
   Logger log = Logger.getLogger("JSPWikiSearch");
   Engine wiki;
@@ -48,8 +48,8 @@
 <%
   /* ********************* actual start ********************* */
   /* FIXME: too much hackin on this level -- should better happen in toplevel jsp's */
-  /* Create wiki context and check for authorization */
-  WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.FIND );
+
+  Context wikiContext = Wiki.context().find( wiki, request, ContextEnum.WIKI_FIND.getRequestContext() );
   if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
 
   String query = request.getParameter( "query");

@@ -17,7 +17,7 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.ui.progress.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
@@ -30,7 +30,7 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   int MAXATTACHNAMELENGTH = 30;
-  WikiContext c = WikiContext.findContext(pageContext);
+  Context c = Context.findContext(pageContext);
 %>
 <c:set var="progressId" value="<%= c.getEngine().getManager( ProgressManager.class ).getNewProgressIdentifier() %>" />
 <div class="page-content">
@@ -148,7 +148,7 @@
           <input type="button"
                 class="btn btn-danger btn-xs"
                 value="<fmt:message key='attach.delete'/>"
-                  src="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' ><wiki:Param name='tab' value='attach' /></wiki:Link>"
+                  src="<wiki:Link format='url' context='<%=ContextEnum.PAGE_DELETE.getRequestContext()%>' ><wiki:Param name='tab' value='attach' /></wiki:Link>"
               onclick="document.deleteForm.action=this.src; document.deleteForm['delete-all'].click();" />
         </wiki:Permission>
       </td>

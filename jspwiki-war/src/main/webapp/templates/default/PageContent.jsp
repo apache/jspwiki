@@ -18,14 +18,14 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  Context c = Context.findContext( pageContext );
 %>
 <%-- Main Content Section --%>
 <%-- This has been source ordered to come first in the markup (and on small devices)
@@ -36,7 +36,7 @@
 
   <wiki:PageType type="attachment">
     <div><%-- insert the actual attachement, image, etc... --%>
-      <wiki:Translate>[<%= WikiContext.findContext( pageContext ).getPage().getName() %>]</wiki:Translate>
+      <wiki:Translate>[<%= Context.findContext( pageContext ).getPage().getName() %>]</wiki:Translate>
     </div>
   </wiki:PageType>
 

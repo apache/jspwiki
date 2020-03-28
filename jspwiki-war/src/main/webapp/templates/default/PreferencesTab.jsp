@@ -22,7 +22,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.util.jar.*" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.preferences.*" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -32,7 +32,7 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
+  Context c = Context.findContext( pageContext );
   TemplateManager t = c.getEngine().getManager( TemplateManager.class );
 %>
 <c:set var="skins"       value="<%= t.listSkins(pageContext, c.getTemplate() ) %>" />
