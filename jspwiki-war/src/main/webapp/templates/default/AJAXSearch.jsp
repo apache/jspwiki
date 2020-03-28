@@ -49,7 +49,7 @@
   /* ********************* actual start ********************* */
   /* FIXME: too much hackin on this level -- should better happen in toplevel jsp's */
 
-  Context wikiContext = Wiki.context().find( wiki, request, ContextEnum.WIKI_FIND.getRequestContext() );
+  Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_FIND.getRequestContext() );
   if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
 
   String query = request.getParameter( "query");

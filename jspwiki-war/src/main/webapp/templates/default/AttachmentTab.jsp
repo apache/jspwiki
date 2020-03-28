@@ -153,7 +153,7 @@
         </wiki:Permission>
       </td>
 
-      <c:set var="changenote" value="<%= (String)att.getAttribute( WikiPage.CHANGENOTE ) %>" />
+      <c:set var="changenote" value="<%= (String)att.getAttribute( Page.CHANGENOTE ) %>" />
       <td class="changenote"><c:out value="${changenote}"/></td>
 
     </tr>
