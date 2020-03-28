@@ -18,8 +18,8 @@
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.ui.admin.*" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
@@ -34,9 +34,9 @@
 %>
 <%
     String bean = request.getParameter("bean");
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.ADMIN );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_ADMIN.getRequestContext() );
     if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
 
     //

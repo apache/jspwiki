@@ -20,8 +20,8 @@
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
@@ -29,7 +29,7 @@
 <%!
   public void jspInit()
   {
-    wiki = WikiEngine.getInstance( getServletConfig() );
+    wiki = Wiki.engine().find( getServletConfig() );
   }
   Logger log = Logger.getLogger("JSPWiki");
   Engine wiki;
@@ -38,7 +38,7 @@
 <!doctype html>
 <html lang="en" name="top">
 <%
-  WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.NONE );
+  Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_NONE.getRequestContext() );
   if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );
   verifier = new SecurityVerifier( wiki, wikiContext.getWikiSession() );
