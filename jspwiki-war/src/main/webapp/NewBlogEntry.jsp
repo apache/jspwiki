@@ -18,8 +18,8 @@
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.plugin.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -28,16 +28,14 @@
 %>
 
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
-    // Create wiki context; no need to check for authorization since the 
-    // redirect will take care of that
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.EDIT );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
+    // Create wiki context; no need to check for authorization since the redirect will take care of that
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_EDIT.getRequestContext() );
     String pagereq = wikiContext.getName();
     
     // Redirect if the request was for a 'special page'
     String specialpage = wiki.getSpecialPageReference( pagereq );
-    if( specialpage != null )
-    {
+    if( specialpage != null ) {
         // FIXME: Do Something Else
         response.sendRedirect( specialpage );
         return;
@@ -48,6 +46,6 @@
     String newEntry = p.getNewEntryPage( wiki, pagereq );
 
     // Redirect to a new page for user to edit
-    response.sendRedirect( wikiContext.getURL( WikiContext.EDIT, newEntry ) );
+    response.sendRedirect( wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), newEntry ) );
 %>
 

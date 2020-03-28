@@ -18,10 +18,11 @@
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.WikiContext" %>
-<%@ page import="org.apache.wiki.WikiEngine" %>
+<%@ page import="org.apache.wiki.api.core.Context" %>
+<%@ page import="org.apache.wiki.api.core.ContextEnum" %>
 <%@ page import="org.apache.wiki.api.core.Engine" %>
 <%@ page import="org.apache.wiki.api.core.Session" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.auth.UserManager" %>
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
@@ -43,9 +44,9 @@
 %>
 
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.PREFS );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_PREFS.getRequestContext() );
     if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     
     // Extract the user profile and action attributes
@@ -86,7 +87,7 @@
             }
             catch( DecisionRequiredException e )
             {
-                String redirect = wiki.getURL( WikiContext.VIEW, "ApprovalRequiredForUserProfiles", null );
+                String redirect = wiki.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), "ApprovalRequiredForUserProfiles", null );
                 response.sendRedirect( redirect );
                 return;
             }
@@ -132,7 +133,7 @@
     if( "clearAssertedName".equals(request.getParameter("action")) )
     {
         CookieAssertionLoginModule.clearUserCookie( response );
-        response.sendRedirect( wikiContext.getURL(WikiContext.NONE,"Logout.jsp") );
+        response.sendRedirect( wikiContext.getURL(ContextEnum.PAGE_NONE.getRequestContext(),"Logout.jsp") );
         return;
     }
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

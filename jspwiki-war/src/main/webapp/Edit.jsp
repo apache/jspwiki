@@ -19,9 +19,9 @@
 
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="java.util.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
@@ -51,9 +51,9 @@
 %>
 
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.EDIT );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_EDIT.getRequestContext() );
     if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) {
         return;
     }
@@ -137,7 +137,7 @@
             log.info("Page changed, warning user.");
 
             session.setAttribute( EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext) );
-            response.sendRedirect( wiki.getURL(WikiContext.CONFLICT, pagereq, null ) );
+            response.sendRedirect( wiki.getURL( ContextEnum.PAGE_CONFLICT.getRequestContext(), pagereq, null ) );
             return;
         }
 
@@ -192,7 +192,7 @@
                 wiki.getManager( PageManager.class ).saveText( wikiContext, text );
             }
         } catch( DecisionRequiredException ex ) {
-        	String redirect = wikiContext.getURL(WikiContext.VIEW,"ApprovalRequiredForPageChanges");
+        	String redirect = wikiContext.getURL(ContextEnum.PAGE_VIEW.getRequestContext(),"ApprovalRequiredForPageChanges");
             response.sendRedirect( redirect );
             return;
         } catch( RedirectException ex ) {
@@ -223,7 +223,7 @@
         }
 
         session.setAttribute("changenote", changenote != null ? changenote : "" );
-        response.sendRedirect( wiki.getURL( WikiContext.PREVIEW, pagereq, null ) );
+        response.sendRedirect( wiki.getURL( ContextEnum.PAGE_PREVIEW.getRequestContext(), pagereq, null ) );
         return;
     } else if( cancel != null ) {
         log.debug("Cancelled editing "+pagereq);

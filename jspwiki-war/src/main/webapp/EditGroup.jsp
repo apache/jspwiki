@@ -18,8 +18,8 @@
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
@@ -33,9 +33,9 @@
 %>
 
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.EDIT_GROUP );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.GROUP_EDIT.getRequestContext() );
     if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
     
     // Extract the current user, group name, members and action attributes

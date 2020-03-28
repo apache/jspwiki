@@ -17,15 +17,15 @@
     under the License.  
 --%>
 
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ taglib prefix="wiki" uri="http://jspwiki.apache.org/tags" %>
 
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context; authorization check not needed
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.VIEW );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_VIEW.getRequestContext() );
  
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

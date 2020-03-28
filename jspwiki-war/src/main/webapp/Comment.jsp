@@ -23,6 +23,7 @@
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
@@ -61,9 +62,9 @@
 %>
 
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.COMMENT );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_COMMENT.getRequestContext() );
     if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     if( wikiContext.getCommand().getTarget() == null ) {
         response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
@@ -97,8 +98,7 @@
     }
 
     //
-    //  Setup everything for the editors and possible preview.  We store everything in the
-    //  session.
+    //  Setup everything for the editors and possible preview.  We store everything in the session.
     //
 
     if( remember == null ) {
@@ -234,7 +234,7 @@
             wikiContext.setPage( modifiedPage );
             wiki.getManager( PageManager.class ).saveText( wikiContext, pageText.toString() );
         } catch( DecisionRequiredException e ) {
-        	String redirect = wikiContext.getURL(WikiContext.VIEW,"ApprovalRequiredForPageChanges");
+        	String redirect = wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), "ApprovalRequiredForPageChanges" );
             response.sendRedirect( redirect );
             return;
         } catch( RedirectException e ) {
@@ -247,7 +247,7 @@
     } else if( preview != null ) {
         log.debug("Previewing "+pagereq);
         session.setAttribute(EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext));
-        response.sendRedirect( TextUtil.replaceString( wiki.getURL(WikiContext.PREVIEW, pagereq, "action=comment"),"&amp;","&") );
+        response.sendRedirect( TextUtil.replaceString( wiki.getURL( ContextEnum.PAGE_PREVIEW.getRequestContext(), pagereq, "action=comment"),"&amp;","&") );
         return;
     } else if( cancel != null ) {
         log.debug("Cancelled editing "+pagereq);

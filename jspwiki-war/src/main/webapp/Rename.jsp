@@ -20,8 +20,8 @@
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.api.exceptions.WikiException" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.content.PageRenamer" %>
@@ -40,9 +40,9 @@
 %>
 
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-	WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.RENAME );
+	Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_RENAME.getRequestContext() );
 	if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     if( wikiContext.getCommand().getTarget() == null ) {
         response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
@@ -78,7 +78,7 @@
 
             log.info("Page successfully renamed to '"+renamedTo+"'");
 
-            response.sendRedirect( wikiContext.getURL( WikiContext.VIEW, renamedTo ) );
+            response.sendRedirect( wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), renamedTo ) );
             return;
         }
        wikiSession.addMessage("rename", rb.getString("rename.empty"));

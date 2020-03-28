@@ -22,9 +22,11 @@
 <%@ page import="javax.mail.*"%>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*"%>
 <%@ page import="org.apache.log4j.*"%>
-<%@ page import="org.apache.wiki.*"%>
+<%@ page import="org.apache.wiki.api.core.Context" %>
+<%@ page import="org.apache.wiki.api.core.ContextEnum" %>
 <%@ page import="org.apache.wiki.api.core.Engine"%>
 <%@ page import="org.apache.wiki.api.core.Session"%>
+<%@ page import="org.apache.wiki.api.spi.Wiki"%>
 <%@ page import="org.apache.wiki.auth.*"%>
 <%@ page import="org.apache.wiki.auth.user.*"%>
 <%@ page import="org.apache.wiki.i18n.*"%>
@@ -65,7 +67,7 @@
             // Try sending email first, as that is more likely to fail.
 
             Object[] args = { profile.getLoginName(), randomPassword, request.getScheme() + "://"+ request.getServerName() + ":" + request.getServerPort() +
-                             wiki.getManager( URLConstructor.class ).makeURL( WikiContext.NONE, "Login.jsp", "" ), wiki.getApplicationName() };
+                             wiki.getManager( URLConstructor.class ).makeURL( ContextEnum.PAGE_NONE.getRequestContext(), "Login.jsp", "" ), wiki.getApplicationName() };
 
             String mailMessage = MessageFormat.format( rb.getString( "lostpwd.newpassword.email" ), args );
 
@@ -100,16 +102,16 @@
     }
 %>
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
 
     //Create wiki context like in Login.jsp:
     //don't check for access permissions: if you have lost your password you cannot login!
-    WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+    Context wikiContext = ( Context )pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
 
     // If no context, it means we're using container auth.  So, create one anyway
     if( wikiContext == null ) {
-        wikiContext = new WikiContext( wiki, request, WikiContext.LOGIN ); /* reuse login context ! */
-        pageContext.setAttribute( WikiContext.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
+        wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_LOGIN.getRequestContext() ); /* reuse login context ! */
+        pageContext.setAttribute( Context.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
     }
 
     ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );

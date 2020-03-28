@@ -19,19 +19,19 @@
 
 <%@ page isErrorPage="true" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%! 
     Logger log = Logger.getLogger("JSPWiki"); 
 %>
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.MESSAGE );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_MESSAGE.getRequestContext() );
 
     // Stash the wiki context and message text
-    request.setAttribute( WikiContext.ATTR_CONTEXT, wikiContext );
+    request.setAttribute( Context.ATTR_CONTEXT, wikiContext );
     request.setAttribute( "message", request.getParameter( "message" ) );
 
     // Set the content type and include the response content

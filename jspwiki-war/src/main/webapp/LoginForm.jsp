@@ -18,8 +18,8 @@
 --%>
 
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -36,15 +36,15 @@
 
 %>
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Retrieve the Login page context, then go and find the login form
 
-    WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiContext.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+    Context wikiContext = ( Context )pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
     
     // If no context, it means we're using container auth.  So, create one anyway
     if( wikiContext == null ) {
-        wikiContext = new WikiContext( wiki, request, WikiContext.LOGIN );
-        pageContext.setAttribute( WikiContext.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
+        wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_LOGIN.getRequestContext() );
+        pageContext.setAttribute( Context.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
     }
     
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );

@@ -20,8 +20,8 @@
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="org.apache.wiki.auth.login.CookieAuthenticationLoginModule" %>
@@ -37,10 +37,10 @@
     Logger log = Logger.getLogger("JSPWiki");
 %>
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     AuthenticationManager mgr = wiki.getManager( AuthenticationManager.class );
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.LOGIN );
-    pageContext.setAttribute( WikiContext.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_LOGIN.getRequestContext() );
+    pageContext.setAttribute( Context.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
     Session wikiSession = wikiContext.getWikiSession();
     ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
 
@@ -71,7 +71,7 @@
                 		                            		 Preferences.getLocale( wikiContext ), 
                 		                            		 due.getMessage(), due.getArgs() ) );
             } catch( DecisionRequiredException e ) {
-                String redirect = wiki.getURL( WikiContext.VIEW, "ApprovalRequiredForUserProfiles", null );
+                String redirect = wiki.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), "ApprovalRequiredForUserProfiles", null );
                 response.sendRedirect( redirect );
                 return;
             } catch( WikiSecurityException e ) {

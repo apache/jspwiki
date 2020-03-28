@@ -20,8 +20,8 @@
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.NoSuchPrincipalException" %>
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
@@ -36,9 +36,9 @@
 %>
 
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.CREATE_GROUP );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_CREATE_GROUP.getRequestContext() );
     if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
     
     // Extract the current user, group name, members and action attributes
@@ -49,9 +49,7 @@
     {
         group = groupMgr.parseGroup( wikiContext, true );
         pageContext.setAttribute ( "Group", group, PageContext.REQUEST_SCOPE );
-    }
-    catch ( WikiSecurityException e )
-    {
+    } catch ( WikiSecurityException e ) {
         wikiSession.addMessage( GroupManager.MESSAGES_KEY, e.getMessage() );
         response.sendRedirect( "Group.jsp" );
     }

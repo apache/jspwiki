@@ -19,8 +19,8 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.AuthenticationManager" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
@@ -36,9 +36,9 @@
 %>
 
 <%
-Engine wiki = WikiEngine.getInstance( getServletConfig() );
+Engine wiki = Wiki.engine().find( getServletConfig() );
 // Create wiki context and check for authorization
-WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.INSTALL );
+Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_INSTALL.getRequestContext() );
 if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
 
 Installer installer = new Installer( request, config );

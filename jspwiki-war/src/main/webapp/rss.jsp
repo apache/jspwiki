@@ -25,8 +25,9 @@
 <%@ page import="net.sf.ehcache.Element" %>
 <%@ page import="net.sf.ehcache.CacheManager" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.WatchDog" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.plugin.WeblogPlugin" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
@@ -51,9 +52,9 @@
         m_rssCache = new Cache(cacheName, cacheCapacity, false, false, m_expiryPeriod, m_expiryPeriod);
         m_cacheManager.addCache(m_rssCache);
     }
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = new WikiContext( wiki, request, "rss" );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_RSS.getRequestContext() );
     if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     Page wikipage = wikiContext.getPage();
 

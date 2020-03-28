@@ -19,16 +19,18 @@
 
 <%@ page isErrorPage="true" %>
 <%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.Context" %>
+<%@ page import="org.apache.wiki.api.core.ContextEnum" %>
 <%@ page import="org.apache.wiki.api.core.Engine" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.util.FileUtil" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%!
     Logger log = Logger.getLogger("JSPWiki");
 %>
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.ERROR );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_ERROR.getRequestContext() );
     String pagereq = wikiContext.getName();
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
@@ -48,7 +50,6 @@
     //  Note the cast; at least Tomcat has two classes called "JspException"
     //  imported in JSP pages.
     //
-
 
     if( exception instanceof javax.servlet.jsp.JspException )
     {

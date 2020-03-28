@@ -20,8 +20,8 @@
 <%@ page import="org.apache.log4j.*" %>
 <%@ page import="org.apache.commons.httpclient.*" %>
 <%@ page import="org.apache.commons.httpclient.methods.*" %>
-<%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.*" %>
@@ -37,9 +37,9 @@
     Logger log = Logger.getLogger("JSPWiki");
 %>
 <%
-    Engine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = new WikiContext( wiki, request, WikiContext.VIEW );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_VIEW.getRequestContext() );
     if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
     String pagereq = wikiContext.getName();
     String reqPage = TextUtil.replaceEntities( request.getParameter( "page" ) );
@@ -59,7 +59,7 @@
             if( body.indexOf( "Pass" ) != -1 )
             {
                 session.setAttribute( "captcha", "ok" );
-                response.sendRedirect( wikiContext.getURL( WikiContext.EDIT, reqPage ) );
+                response.sendRedirect( wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), reqPage ) );
                 return;
             }
         }
