@@ -51,11 +51,13 @@
         if( wiki.getManager( AttachmentManager.class ).getAttachmentInfoName( wikiContext, pageName ) != null ) continue;
 
         Page wikiPage = wiki.getManager( PageManager.class ).getPage( pageName );
-        PagePermission permission = PermissionFactory.getPagePermission( wikiPage, "view" );
-        boolean allowed = wiki.getManager( AuthorizationManager.class ).checkPermission( wikiContext.getWikiSession(), permission );
-        if( allowed ) {
-            String url = wikiContext.getViewURL( pageName );
-            out.write( url + " " + pageName + "\n" );
+        if( wikiPage != null ) { // there's a possibility the wiki page may get deleted between the call to reference manager and now...
+            PagePermission permission = PermissionFactory.getPagePermission( wikiPage, "view" );
+            boolean allowed = wiki.getManager( AuthorizationManager.class ).checkPermission( wikiContext.getWikiSession(), permission );
+            if( allowed ) {
+                String url = wikiContext.getViewURL( pageName );
+                out.write( url + " " + pageName + "\n" );
+            }
         }
     }
  %>
