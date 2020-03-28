@@ -20,8 +20,8 @@ package org.apache.wiki.auth;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
@@ -69,14 +69,14 @@ public class UserManagerTest {
         // Make sure we are using the XML user database
         props.put( XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
         m_engine = new TestEngine( props );
-        m_mgr = m_engine.getUserManager();
+        m_mgr = m_engine.getManager( UserManager.class );
         m_db = m_mgr.getUserDatabase();
         m_groupName = "Group" + System.currentTimeMillis();
     }
 
     @AfterEach
     public void tearDown() throws Exception {
-        final GroupManager groupManager = m_engine.getGroupManager();
+        final GroupManager groupManager = m_engine.getManager( GroupManager.class );
         if( groupManager.findRole( m_groupName ) != null ) {
             groupManager.removeGroup( m_groupName );
         }
@@ -92,7 +92,7 @@ public class UserManagerTest {
         // Make sure we are using the XML user database
         props.put( XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
         m_engine = new TestEngine( props );
-        m_mgr = m_engine.getUserManager();
+        m_mgr = m_engine.getManager( UserManager.class );
         m_db = m_mgr.getUserDatabase();
     }
 
@@ -100,7 +100,7 @@ public class UserManagerTest {
     public void testSetRenamedUserProfile() throws Exception {
         // First, count the number of users, groups, and pages
         final int oldUserCount = m_db.getWikiNames().length;
-        final GroupManager groupManager = m_engine.getGroupManager();
+        final GroupManager groupManager = m_engine.getManager( GroupManager.class );
         final PageManager pageManager = m_engine.getManager( PageManager.class );
         final AuthorizationManager authManager = m_engine.getManager( AuthorizationManager.class );
         final int oldGroupCount = groupManager.getRoles().length;
@@ -144,12 +144,12 @@ public class UserManagerTest {
         m_engine.saveText( pageName, "Test text. [{ALLOW view " + oldName + ", " + oldLogin + ", Alice}] More text." );
 
         // 3a. Make sure the page got saved, and that ONLY our test user has permission to read it.
-        WikiPage p = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( pageName );
+        Page p = m_engine.getManager( PageManager.class ).getPage( pageName );
         Assertions.assertEquals( oldPageCount + 1, pageManager.getTotalPageCount() );
-        Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
-        Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
-        Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
-        Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newName ) ) );
+        Assertions.assertNotNull( p.getAcl().getAclEntry( new WikiPrincipal( oldLogin ) ) );
+        Assertions.assertNotNull( p.getAcl().getAclEntry( new WikiPrincipal( oldName ) ) );
+        Assertions.assertNull( p.getAcl().getAclEntry( new WikiPrincipal( newLogin ) ) );
+        Assertions.assertNull( p.getAcl().getAclEntry( new WikiPrincipal( newName ) ) );
         Assertions.assertTrue( authManager.checkPermission( session, PermissionFactory.getPagePermission( p, "view" ) ), "Test User view page" );
         final Session bobSession = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
         Assertions.assertFalse( authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ), "Bob !view page" );
@@ -179,11 +179,11 @@ public class UserManagerTest {
 
         // Test 3: our page should not contain the old wiki name OR login name
         // in the ACL any more (the full name is always used)
-        p = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( pageName );
-        Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
-        Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
-        Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
-        Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( newName ) ) );
+        p = m_engine.getManager( PageManager.class ).getPage( pageName );
+        Assertions.assertNull( p.getAcl().getAclEntry( new WikiPrincipal( oldLogin ) ) );
+        Assertions.assertNull( p.getAcl().getAclEntry( new WikiPrincipal( oldName ) ) );
+        Assertions.assertNull( p.getAcl().getAclEntry( new WikiPrincipal( newLogin ) ) );
+        Assertions.assertNotNull( p.getAcl().getAclEntry( new WikiPrincipal( newName ) ) );
         Assertions.assertTrue( authManager.checkPermission( session, PermissionFactory.getPagePermission( p, "view" ) ), "Test User view page" );
         Assertions.assertFalse( authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ), "Bob !view page" );
 
@@ -204,12 +204,12 @@ public class UserManagerTest {
         // The test user should still be able to see the page (because the login name matches...)
         pageName = "TestPage2" + now;
         m_engine.saveText( pageName, "More test text. [{ALLOW view " + oldName + ", " + oldLogin + ", Alice}] More text." );
-        p = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( pageName );
+        p = m_engine.getManager( PageManager.class ).getPage( pageName );
         Assertions.assertEquals( oldPageCount + 1, pageManager.getTotalPageCount() );
-        Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
-        Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
-        Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
-        Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newName ) ) );
+        Assertions.assertNotNull( p.getAcl().getAclEntry( new WikiPrincipal( oldLogin ) ) );
+        Assertions.assertNotNull( p.getAcl().getAclEntry( new WikiPrincipal( oldName ) ) );
+        Assertions.assertNull( p.getAcl().getAclEntry( new WikiPrincipal( newLogin ) ) );
+        Assertions.assertNull( p.getAcl().getAclEntry( new WikiPrincipal( newName ) ) );
         Assertions.assertTrue( authManager.checkPermission( session, PermissionFactory.getPagePermission( p, "view" ) ), "Test User view page" );
         Assertions.assertFalse( authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ), "Bob !view page" );
 
@@ -238,11 +238,11 @@ public class UserManagerTest {
 
         // Test 7: our page should not contain the old wiki name OR login name
         // in the ACL any more (the full name is always used)
-        p = ( WikiPage )m_engine.getManager( PageManager.class ).getPage( pageName );
-        Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( oldLogin ) ) );
-        Assertions.assertNotNull( p.getAcl().getEntry( new WikiPrincipal( oldName ) ) );
-        Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newLogin ) ) );
-        Assertions.assertNull( p.getAcl().getEntry( new WikiPrincipal( newName ) ) );
+        p = m_engine.getManager( PageManager.class ).getPage( pageName );
+        Assertions.assertNull( p.getAcl().getAclEntry( new WikiPrincipal( oldLogin ) ) );
+        Assertions.assertNotNull( p.getAcl().getAclEntry( new WikiPrincipal( oldName ) ) );
+        Assertions.assertNull( p.getAcl().getAclEntry( new WikiPrincipal( newLogin ) ) );
+        Assertions.assertNull( p.getAcl().getAclEntry( new WikiPrincipal( newName ) ) );
         Assertions.assertTrue( authManager.checkPermission( session, PermissionFactory.getPagePermission( p, "view" ) ), "Test User view page" );
         Assertions.assertFalse( authManager.checkPermission( bobSession, PermissionFactory.getPagePermission( p, "view" ) ), "Bob !view page" );
 
