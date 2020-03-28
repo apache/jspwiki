@@ -75,17 +75,47 @@ public class WikiContext implements Context, Command {
 
     private Session m_session;
 
-    /** User is administering JSPWiki (Install, SecurityConfig). */
-    public static final String INSTALL = ContextEnum.WIKI_INSTALL.getRequestContext();
+    /** User is doing administrative things. */
+    public static final String ADMIN = ContextEnum.WIKI_ADMIN.getRequestContext();
 
-    /** The VIEW context - the user just wants to view the page contents. */
-    public static final String VIEW = ContextEnum.PAGE_VIEW.getRequestContext();
+    /** User is downloading an attachment. */
+    public static final String ATTACH = ContextEnum.PAGE_ATTACH.getRequestContext();
 
-    /** User wants to view or administer workflows. */
-    public static final String WORKFLOW = ContextEnum.WIKI_WORKFLOW.getRequestContext();
+    /** User is commenting something. */
+    public static final String COMMENT = ContextEnum.PAGE_COMMENT.getRequestContext();
+
+    /** User has an internal conflict, and does quite not know what to do. Please provide some counseling. */
+    public static final String CONFLICT = ContextEnum.PAGE_CONFLICT.getRequestContext();
+
+    /** User wishes to create a new group */
+    public static final String CREATE_GROUP = ContextEnum.WIKI_CREATE_GROUP.getRequestContext();
+
+    /** User is deleting a page or an attachment. */
+    public static final String DELETE = ContextEnum.PAGE_DELETE.getRequestContext();
+
+    /** User is deleting an existing group. */
+    public static final String DELETE_GROUP = ContextEnum.GROUP_DELETE.getRequestContext();
+
+    /** User is viewing a DIFF between the two versions of the page. */
+    public static final String DIFF = ContextEnum.PAGE_DIFF.getRequestContext();
 
     /** The EDIT context - the user is editing the page. */
     public static final String EDIT = ContextEnum.PAGE_EDIT.getRequestContext();
+
+    /** User is editing an existing group. */
+    public static final String EDIT_GROUP = ContextEnum.GROUP_EDIT.getRequestContext();
+
+    /** An error has been encountered and the user needs to be informed. */
+    public static final String ERROR = ContextEnum.WIKI_ERROR.getRequestContext();
+
+    /** User is searching for content. */
+    public static final String FIND = ContextEnum.WIKI_FIND.getRequestContext();
+
+    /** User is viewing page history. */
+    public static final String INFO = ContextEnum.PAGE_INFO.getRequestContext();
+
+    /** User is administering JSPWiki (Install, SecurityConfig). */
+    public static final String INSTALL = ContextEnum.WIKI_INSTALL.getRequestContext();
 
     /** User is preparing for a login/authentication. */
     public static final String LOGIN = ContextEnum.WIKI_LOGIN.getRequestContext();
@@ -96,65 +126,35 @@ public class WikiContext implements Context, Command {
     /** JSPWiki wants to display a message. */
     public static final String MESSAGE = ContextEnum.WIKI_MESSAGE.getRequestContext();
 
-    /** User is viewing a DIFF between the two versions of the page. */
-    public static final String DIFF = ContextEnum.PAGE_DIFF.getRequestContext();
-
-    /** User is viewing page history. */
-    public static final String INFO = ContextEnum.PAGE_INFO.getRequestContext();
-
-    /** User is previewing the changes he just made. */
-    public static final String PREVIEW = ContextEnum.PAGE_PREVIEW.getRequestContext();
-
-    /** User has an internal conflict, and does quite not know what to do. Please provide some counseling. */
-    public static final String CONFLICT = ContextEnum.PAGE_CONFLICT.getRequestContext();
-
-    /** An error has been encountered and the user needs to be informed. */
-    public static final String ERROR = ContextEnum.WIKI_ERROR.getRequestContext();
-
-    /** User is uploading something. */
-    public static final String UPLOAD = ContextEnum.PAGE_UPLOAD.getRequestContext();
-
-    /** User is commenting something. */
-    public static final String COMMENT = ContextEnum.PAGE_COMMENT.getRequestContext();
-
-    /** User is searching for content. */
-    public static final String FIND = ContextEnum.WIKI_FIND.getRequestContext();
-
-    /** User wishes to create a new group */
-    public static final String CREATE_GROUP = ContextEnum.WIKI_CREATE_GROUP.getRequestContext();
-
-    /** User is deleting an existing group. */
-    public static final String DELETE_GROUP = ContextEnum.GROUP_DELETE.getRequestContext();
-
-    /** User is editing an existing group. */
-    public static final String EDIT_GROUP = ContextEnum.GROUP_EDIT.getRequestContext();
-
-    /** User is viewing an existing group */
-    public static final String VIEW_GROUP = ContextEnum.GROUP_VIEW.getRequestContext();
-
-    /** User is editing preferences */
-    public static final String PREFS = ContextEnum.WIKI_PREFS.getRequestContext();
-
-    /** User is renaming a page. */
-    public static final String RENAME = ContextEnum.PAGE_RENAME.getRequestContext();
-
-    /** User is deleting a page or an attachment. */
-    public static final String DELETE = ContextEnum.PAGE_DELETE.getRequestContext();
-
-    /** User is downloading an attachment. */
-    public static final String ATTACH = ContextEnum.PAGE_ATTACH.getRequestContext();
-
-    /** RSS feed is being generated. */
-    public static final String RSS = ContextEnum.PAGE_RSS.getRequestContext();
-
     /** This is not a JSPWiki context, use it to access static files. */
     public static final String NONE = ContextEnum.PAGE_NONE.getRequestContext();
 
     /** Same as NONE; this is just a clarification. */
     public static final String OTHER = ContextEnum.PAGE_NONE.getRequestContext();
 
-    /** User is doing administrative things. */
-    public static final String ADMIN = ContextEnum.WIKI_ADMIN.getRequestContext();
+    /** User is editing preferences */
+    public static final String PREFS = ContextEnum.WIKI_PREFS.getRequestContext();
+
+    /** User is previewing the changes he just made. */
+    public static final String PREVIEW = ContextEnum.PAGE_PREVIEW.getRequestContext();
+
+    /** User is renaming a page. */
+    public static final String RENAME = ContextEnum.PAGE_RENAME.getRequestContext();
+
+    /** RSS feed is being generated. */
+    public static final String RSS = ContextEnum.PAGE_RSS.getRequestContext();
+
+    /** User is uploading something. */
+    public static final String UPLOAD = ContextEnum.PAGE_UPLOAD.getRequestContext();
+
+    /** The VIEW context - the user just wants to view the page contents. */
+    public static final String VIEW = ContextEnum.PAGE_VIEW.getRequestContext();
+
+    /** User is viewing an existing group */
+    public static final String VIEW_GROUP = ContextEnum.GROUP_VIEW.getRequestContext();
+
+    /** User wants to view or administer workflows. */
+    public static final String WORKFLOW = ContextEnum.WIKI_WORKFLOW.getRequestContext();
 
     private static final Logger log = Logger.getLogger( WikiContext.class );
 
