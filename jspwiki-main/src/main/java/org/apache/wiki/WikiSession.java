@@ -467,6 +467,7 @@ public final class WikiSession implements Session {
         }
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         monitor.remove( request.getSession() );
+        c_guestSession.remove();
     }
 
     /**
