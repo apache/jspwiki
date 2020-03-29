@@ -211,7 +211,7 @@ public class WikiContext implements Context, Command {
         m_realPage = m_page;
 
         // Special case: retarget any empty 'view' PageCommands to the front page
-        if ( ContextEnum.PAGE_VIEW.equals( command ) && command.getTarget() == null ) {
+        if ( PageCommand.VIEW.equals( command ) && command.getTarget() == null ) {
             m_command = command.targetedCommand( m_page );
         }
 
