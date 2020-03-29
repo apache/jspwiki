@@ -209,7 +209,7 @@ public class WikiPage implements Page {
     /**
      * Sets the Acl for this page. Note that method does <em>not</em> persist the Acl itself to back-end storage or in page markup;
      * it merely sets the internal field that stores the Acl. To persist the Acl, callers should invoke
-     * {@link org.apache.wiki.auth.acl.AclManager#setPermissions(WikiPage, Acl)}.
+     * {@link org.apache.wiki.auth.acl.AclManager#setPermissions(Page, org.apache.wiki.api.core.Acl)}.
      *
      * @param acl The Acl to set
      * @deprecated use {@link #setAcl(org.apache.wiki.api.core.Acl)}
@@ -223,7 +223,7 @@ public class WikiPage implements Page {
     /**
      * Sets the Acl for this page. Note that method does <em>not</em> persist the Acl itself to back-end storage or in page markup;
      * it merely sets the internal field that stores the Acl. To persist the Acl, callers should invoke
-     * {@link org.apache.wiki.auth.acl.AclManager#setPermissions(WikiPage, Acl)}.
+     * {@link org.apache.wiki.auth.acl.AclManager#setPermissions(Page, org.apache.wiki.api.core.Acl)}.
      *
      * @param acl The Acl to set
      */
@@ -355,27 +355,16 @@ public class WikiPage implements Page {
      *  
      *  {@inheritDoc}
      */
-    // TODO: I have a suspicion that defining this method causes some problems
-    //       with page attributes and caching.  So as of 2.7.32, it's disabled.
-    /*
-    public boolean equals( Object o )
-    {
-        if( o != null && o instanceof WikiPage )
-        {
-            WikiPage oo = (WikiPage) o;
-        
-            if( oo.getName().equals( getName() ) )
-            {
-                if( oo.getVersion() == getVersion() )
-                {
-                    return true;
-                }
+    public boolean equals( final Object o ) {
+        if( o instanceof WikiPage ) {
+            final WikiPage wp = ( WikiPage )o;
+            if( wp.getName().equals( getName() ) ) {
+                return wp.getVersion() == getVersion();
             }
         }
-        
+
         return false;
     }
-    */
 
     /**
      * {@inheritDoc}
