@@ -198,7 +198,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
 
     /** {@inheritDoc} */
     @Override
-    public boolean isEnabled() {
+    public synchronized boolean isEnabled() {
         return m_enabled;
     }
 
