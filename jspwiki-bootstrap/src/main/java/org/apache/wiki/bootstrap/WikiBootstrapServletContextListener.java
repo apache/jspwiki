@@ -28,7 +28,7 @@ import javax.servlet.ServletContextListener;
 import java.util.Properties;
 
 
-public class WikiSPIServletContextListener implements ServletContextListener {
+public class WikiBootstrapServletContextListener implements ServletContextListener {
 
     /** {@inheritDoc} */
     @Override

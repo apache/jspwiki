@@ -30,7 +30,7 @@ import java.util.Properties;
 
 
 @ExtendWith( MockitoExtension.class )
-public class WikiSPIServletContextListenerTest {
+public class WikiBootstrapServletContextListenerTest {
 
     @Mock
     ServletContext sc;
@@ -38,7 +38,7 @@ public class WikiSPIServletContextListenerTest {
     @Test
     public void testWikiInit() {
         final ServletContextEvent sce = new ServletContextEvent( sc );
-        final WikiSPIServletContextListener listener = new WikiSPIServletContextListener();
+        final WikiBootstrapServletContextListener listener = new WikiBootstrapServletContextListener();
         final Properties properties = listener.initWikiSPIs( sce );
 
         Assertions.assertEquals( 5, properties.size() );
@@ -46,7 +46,7 @@ public class WikiSPIServletContextListenerTest {
 
     @Test
     public void testLoggingFrameworkInit() {
-        final WikiSPIServletContextListener listener = new WikiSPIServletContextListener();
+        final WikiBootstrapServletContextListener listener = new WikiBootstrapServletContextListener();
         final Properties properties = new Properties();
 
         Assertions.assertTrue( listener.initWikiLoggingFramework( properties ) );
@@ -57,7 +57,7 @@ public class WikiSPIServletContextListenerTest {
     @Test
     public void testServletContextListenerLifeCycle() {
         final ServletContextEvent sce = new ServletContextEvent( sc );
-        final WikiSPIServletContextListener listener = new WikiSPIServletContextListener();
+        final WikiBootstrapServletContextListener listener = new WikiBootstrapServletContextListener();
         Assertions.assertDoesNotThrow( () -> listener.contextInitialized( sce ) );
         Assertions.assertDoesNotThrow( () -> listener.contextDestroyed( sce ) );
     }
