@@ -96,7 +96,7 @@
 
    <!-- servlet context listener to configure API's SPI -->
    <listener>
-       <listener-class>org.apache.wiki.api.spi.WikiSPIServletContextListener</listener-class>
+       <listener-class>org.apache.wiki.bootstrap.WikiSPIServletContextListener</listener-class>
    </listener>
 
    <!--
