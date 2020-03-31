@@ -19,9 +19,29 @@ under the License.
 
 **2020-03-29  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
+* _2.11.0-M7-git-17_
+
+* Extracted Wiki initialization servlet context listener to its own module `jspwiki-bootstrap`
+    * This module is responsible of the startup procedures of the application, before the Engine is created:
+        * Locate and instantiate Wiki's SPIs implementations
+        * Log configuration
+
+* Begin to prepare [JSPWIKI-795](https://issues.apache.org/jira/projects/JSPWIKI/issues/JSPWIKI-795) - Update logging subsystem in JSPWiki
+    * Log4J will now be configured only if present in classpath. Right now this means always, but once 
+    the logging subsystem is updated and in order to allow backwards compatibility with existing custom
+    extensions, it will be have to be explicitly added.
+
+* Small usability improvement on login page: make tab key follow login form fields
+
+* Dependency updates
+    * Commons Lang to 3.10
+    * Introduced Mockito 3.3.3 as mock testing library
+
+**2020-03-29  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
 * _2.11.0-M7-git-16_
 
-* [JSPWIKI-303](https://issues.apache.org/jira/browse/JSPWIKI-303): JSPWiki-API library creation
+* [JSPWIKI-303](https://issues.apache.org/jira/browse/JSPWIKI-303): [JSPWiki API](https://jspwiki-wiki.apache.org/Wiki.jsp?page=JSPWikiPublicAPI) library creation
     * SPI to retrieve / create objects from the `o.a.w.api.core` package
     * it is possible to provide custom implementations of objects from the `o.a.w.api.core` package 
         * for a custom `Engine`, an implementation of `o.a.w.api.spi.EngineSPI`, and set the 
@@ -40,8 +60,7 @@ under the License.
         `jspwiki.provider.impl.acls` property on the `jspwiki-[custom].properties` file with the 
         fully qualified name of the implementation
 
-* [JSPWIKI-806](https://issues.apache.org/jira/browse/JSPWIKI-806) (EntityManager Proposal): add the 
-possibility of loading custom managers on `WikiEngine`
+* [JSPWIKI-806](https://issues.apache.org/jira/browse/JSPWIKI-806) (EntityManager Proposal): add the possibility of loading custom managers on `WikiEngine`
     * `WikiEngine` will look on classpath for an `ini/classmappings-extra.xml` file, with the same structure as 
     `ini/classmappings.xml`
     * if found, will register each `requestedClass` with its correspondent `mappedClass`
@@ -59,8 +78,7 @@ possibility of loading custom managers on `WikiEngine`
     * `Page` deals with ACLs
 
 * Refactor `WikiEngine` initialization, in order to prepare for building and configuring custom 
-managers (somewhat related to [JSPWIKI-806](https://issues.apache.org/jira/browse/JSPWIKI-806) - 
-EntityManager Proposal) 
+managers (somewhat related to [JSPWIKI-806](https://issues.apache.org/jira/browse/JSPWIKI-806) - EntityManager Proposal) 
 
 * Dependency updates
     * Lucene to 8.5.0
