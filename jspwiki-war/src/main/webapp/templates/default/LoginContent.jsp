@@ -70,30 +70,30 @@
       <input class="form-control"
              value="<wiki:Variable var='uid' default='' />"
        placeholder="<fmt:message key='login.login'/>"
-              type="text" size="24" autofocus="autofocus" name="j_username" id="j_username" />
+              type="text" size="24"  tabindex="1" autofocus="autofocus" name="j_username" id="j_username" />
     </div>
 
     <div class="form-group">
       <input class="form-control"
        placeholder="<fmt:message key='login.password'/>"
-              type="password" size="24" name="j_password" id="j_password" />
+              type="password" size="24" tabindex="2" name="j_password" id="j_password" />
     </div>
 
     <div class="form-group clearfix"><%-- need clearfix ico no-cookies-auth allowed; ensure the right floated btn gets proper spacing -- ugh! --%>
     <c:if test="${allowsCookieAuthentication}">
       <label class="btn" for="j_remember">
-        <input type="checkbox" name="j_remember" id="j_remember" />
+        <input type="checkbox" tabindex="3" name="j_remember" id="j_remember" />
         <fmt:message key="login.remember"/>
       </label>
     </c:if>
 
-      <a class="btn btn-link pull-right" href="#section-lostpw"><fmt:message key="login.lostpw" /></a>
+      <a class="btn btn-link pull-right" href="#section-lostpw" tabindex="3"><fmt:message key="login.lostpw" /></a>
     </div>
 
     <div class="form-group">
       <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
       <input class="btn btn-success btn-block"
-              type="submit" name="submitlogin" value="<fmt:message key='login.submit.login'/>" />
+              type="submit" tabindex="4" name="submitlogin" value="<fmt:message key='login.submit.login'/>" />
     </div>
 
     <hr />
@@ -102,7 +102,7 @@
     <%--  <wiki:UserProfile property="canChangeLoginName">  --%>
     <p class="login-ref">
       <fmt:message key="login.nopassword"/>
-      <a class="" href="#section-register">
+      <a class="" href="#section-register" tabindex="5">
         <fmt:message key="login.registernow">
           <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
         </fmt:message>
