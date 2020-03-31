@@ -20,7 +20,6 @@ package org.apache.wiki;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -98,10 +97,6 @@ public class WikiEngine implements Engine {
     private static final String ATTR_WIKIENGINE = "org.apache.wiki.WikiEngine";
     private static final Logger log = Logger.getLogger( WikiEngine.class );
 
-    /** True, if log4j has been configured. */
-    // FIXME: If you run multiple applications, the first application to run defines where the log goes.  Not what we want.
-    private static boolean c_configured = false;
-
     /** Stores properties. */
     private Properties m_properties;
 
@@ -149,7 +144,6 @@ public class WikiEngine implements Engine {
      *  @return A WikiEngine instance.
      *  @throws InternalWikiException in case something fails. This is a RuntimeException, so be prepared for it.
      */
-    // FIXME: It seems that this does not work too well, jspInit() does not react to RuntimeExceptions, or something...
     public static synchronized WikiEngine getInstance( final ServletConfig config ) throws InternalWikiException {
         return getInstance( config.getServletContext(), null );
     }
@@ -179,7 +173,7 @@ public class WikiEngine implements Engine {
     public static synchronized WikiEngine getInstance( final ServletContext context, Properties props ) throws InternalWikiException {
         WikiEngine engine = ( WikiEngine )context.getAttribute( ATTR_WIKIENGINE );
         if( engine == null ) {
-            final String appid = Integer.toString(context.hashCode()); //FIXME: Kludge, use real type.
+            final String appid = Integer.toString( context.hashCode() );
             context.log(" Assigning new engine to "+appid);
             try {
                 if( props == null ) {
@@ -189,9 +183,9 @@ public class WikiEngine implements Engine {
                 engine = new WikiEngine( context, appid, props );
                 context.setAttribute( ATTR_WIKIENGINE, engine );
             } catch( final Exception e ) {
-                context.log( "ERROR: Failed to create a Wiki engine: "+e.getMessage() );
-                log.error( "ERROR: Failed to create a Wiki engine, stacktrace follows " , e);
-                throw new InternalWikiException( "No wiki engine, check logs." , e);
+                context.log( "ERROR: Failed to create a Wiki engine: " + e.getMessage() );
+                log.error( "ERROR: Failed to create a Wiki engine, stacktrace follows ", e );
+                throw new InternalWikiException( "No wiki engine, check logs.", e );
             }
         }
         return engine;
@@ -245,19 +239,6 @@ public class WikiEngine implements Engine {
     private void initialize( final Properties props ) throws WikiException {
         m_startTime  = new Date();
         m_properties = props;
-
-        //
-        //  Initialize log4j.  However, make sure that we don't initialize it multiple times. By default we load the log4j config
-        //  statements from jspwiki.properties, unless the property jspwiki.use.external.logconfig=true, in that case we let log4j
-        //  figure out the logging configuration.
-        //
-        if( !c_configured ) {
-            final String useExternalLogConfig = TextUtil.getStringProperty( props,"jspwiki.use.external.logconfig","false" );
-            if( useExternalLogConfig == null || useExternalLogConfig.equals( "false" ) ) {
-                PropertyConfigurator.configure( props );
-            }
-            c_configured = true;
-        }
 
         log.info( "*******************************************" );
         log.info( Release.APPNAME + " " + Release.getVersionString() + " starting. Whee!" );
