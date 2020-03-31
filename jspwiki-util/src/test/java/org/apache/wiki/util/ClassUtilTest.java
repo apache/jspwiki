@@ -19,10 +19,10 @@
 
 package org.apache.wiki.util;
 
-import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 
 public class ClassUtilTest
@@ -32,33 +32,30 @@ public class ClassUtilTest
      * tests various kinds of searches on classpath items
      */
     @Test
-    public void testClasspathSearch() throws Exception
-    {
-        List< String > jarSearch = ClassUtil.classpathEntriesUnder( "META-INF" );
+    public void testClasspathSearch() {
+        final List< String > jarSearch = ClassUtil.classpathEntriesUnder( "META-INF" );
         Assertions.assertNotNull( jarSearch );
         Assertions.assertTrue( jarSearch.size() > 0 );
 
-        List< String > fileSearch = ClassUtil.classpathEntriesUnder( "templates" );
+        final List< String > fileSearch = ClassUtil.classpathEntriesUnder( "templates" );
         Assertions.assertNotNull( fileSearch );
         Assertions.assertTrue( fileSearch.size() > 0 );
 
-        List< String > nullSearch = ClassUtil.classpathEntriesUnder( "blurb" );
+        final List< String > nullSearch = ClassUtil.classpathEntriesUnder( "blurb" );
         Assertions.assertNotNull( nullSearch );
-        Assertions.assertTrue( nullSearch.size() == 0 );
+        Assertions.assertEquals( 0, nullSearch.size() );
 
-        List< String > nullInputSearch = ClassUtil.classpathEntriesUnder( null );
+        final List< String > nullInputSearch = ClassUtil.classpathEntriesUnder( null );
         Assertions.assertNotNull( nullInputSearch );
-        Assertions.assertTrue( nullSearch.size() == 0 );
+        Assertions.assertEquals( 0, nullSearch.size() );
     }
 
     /**
      *  Tries to find an existing class.
      */
     @Test
-    public void testFindClass()
-        throws Exception
-    {
-        Class< ? > foo = ClassUtil.findClass( "java.util", "List" );
+    public void testFindClass() throws Exception {
+        final Class< ? > foo = ClassUtil.findClass( "java.util", "List" );
 
         Assertions.assertEquals( foo.getName(), "java.util.List" );
     }
@@ -67,18 +64,8 @@ public class ClassUtilTest
      *  Non-existant classes should throw ClassNotFoundEx.
      */
     @Test
-    public void testFindClassNoClass()
-        throws Exception
-    {
-        try
-        {
-            Class< ? > foo = ClassUtil.findClass( "org.apache.wiki", "MubbleBubble" );
-            Assertions.fail( "Found class:" + foo );
-        }
-        catch( ClassNotFoundException e )
-        {
-            // Expected
-        }
+    public void testFindClassNoClass() {
+        Assertions.assertThrows( ClassNotFoundException.class, () ->  ClassUtil.findClass( "org.apache.wiki", "MubbleBubble" ) );
     }
 
     @Test
@@ -88,6 +75,12 @@ public class ClassUtilTest
         Assertions.assertFalse( ClassUtil.assignable( null, "java.util.ArrayList" ) );
         Assertions.assertFalse( ClassUtil.assignable( "java.util.List", null ) );
         Assertions.assertFalse( ClassUtil.assignable( "java.util.List", "java.util.HashMap" ) );
+    }
+
+    @Test
+    public void testExists() {
+        Assertions.assertTrue( ClassUtil.exists( "java.util.List" ) );
+        Assertions.assertFalse( ClassUtil.exists( "org.apache.wiski.FrisFrus" ) );
     }
 
 }

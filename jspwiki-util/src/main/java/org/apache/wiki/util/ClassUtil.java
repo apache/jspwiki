@@ -349,6 +349,21 @@ public final class ClassUtil {
         return false;
     }
 
+    /**
+     * Checks if a given class exists in classpath.
+     *
+     * @param className the class to check for existence.
+     * @return {@code true} if it exists, {@code false} otherwise.
+     */
+    public static boolean exists( final String className ) {
+        try {
+            Class.forName( className, false, ClassUtil.class.getClassLoader() );
+            return true;
+        } catch( final ClassNotFoundException e ) {
+            return false;
+        }
+    }
+
     public static Map< String, String > getExtraClassMappings() {
         return c_classMappingsExtra;
     }
