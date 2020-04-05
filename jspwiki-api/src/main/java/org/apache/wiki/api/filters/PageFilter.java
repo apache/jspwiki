@@ -54,7 +54,7 @@ public interface PageFilter {
      *  @param properties The properties ripped from filters.xml.
      *  @throws FilterException If the filter could not be initialized. If this is thrown, the filter is not added to the internal queues.
      */
-    void initialize( final Engine engine, final Properties properties ) throws FilterException;
+    void initialize( Engine engine, Properties properties ) throws FilterException;
 
     /**
      *  This method is called whenever a page has been loaded from the provider, but not yet been sent through the markup-translation
