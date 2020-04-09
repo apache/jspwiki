@@ -24,6 +24,9 @@ under the License.
 * [JSPWIKI-303](https://issues.apache.org/jira/browse/JSPWIKI-303): [JSPWiki API](https://jspwiki-wiki.apache.org/Wiki.jsp?page=JSPWikiPublicAPI) library creation
     * Promote `RenderingManager#textToHtml( Context, String )` to the public API
 
+* Dependency updates
+    * Tomcat to 9.0.34
+
 **2020-03-29  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-17_
