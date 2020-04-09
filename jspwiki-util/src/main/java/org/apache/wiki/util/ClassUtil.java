@@ -68,7 +68,7 @@ public final class ClassUtil {
         final Map< String, String > map = new ConcurrentHashMap<>();
         final List< Element > nodes = XmlUtil.parse( fileLoc, "/classmappings/mapping" );
 
-        if( nodes.size() > 0 ) {
+        if( !nodes.isEmpty() ) {
             for( final Element f : nodes ) {
                 final String key = f.getChildText( "requestedClass" );
                 final String className = f.getChildText( "mappedClass" );
