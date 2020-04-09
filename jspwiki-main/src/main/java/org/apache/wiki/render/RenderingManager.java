@@ -23,6 +23,7 @@ import org.apache.wiki.StringTransmutator;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.engine.Initializable;
+import org.apache.wiki.api.engine.RenderApi;
 import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.modules.InternalModule;
@@ -42,7 +43,7 @@ import java.io.IOException;
  *
  *  @since  2.4
  */
-public interface RenderingManager extends WikiEventListener, InternalModule, Initializable {
+public interface RenderingManager extends RenderApi, WikiEventListener, InternalModule, Initializable {
 
     /** markup parser property. */
     String PROP_PARSER = "jspwiki.renderingManager.markupParser";
@@ -177,15 +178,6 @@ public interface RenderingManager extends WikiEventListener, InternalModule, Ini
     default String getHTML( final String page ) {
         return getHTML( page, PageProvider.LATEST_VERSION );
     }
-
-    /**
-     *  Converts raw page data to HTML.
-     *
-     *  @param pagedata Raw page data to convert to HTML
-     *  @param context  The WikiContext in which the page is to be rendered
-     *  @return Rendered page text
-     */
-    String textToHTML( Context context, String pagedata );
 
     /**
      *  Helper method for doing the HTML translation.

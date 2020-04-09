@@ -410,7 +410,10 @@ public class WikiEngine implements Engine {
     @Override
     @SuppressWarnings( "unchecked" )
     public < T > T getManager( final Class< T > manager ) {
-        return ( T )managers.get( manager );
+        return ( T )managers.entrySet().stream()
+                                       .filter( e -> manager.isAssignableFrom( e.getKey() ) )
+                                       .map( Map.Entry::getValue )
+                                       .findFirst().orElse( null );
     }
 
     /** {@inheritDoc} */

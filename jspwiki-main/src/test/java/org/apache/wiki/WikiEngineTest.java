@@ -23,6 +23,7 @@ import net.sf.ehcache.CacheManager;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.engine.RenderApi;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.content.PageRenamer;
@@ -330,10 +331,13 @@ public class WikiEngineTest {
 
     @Test
     public void testGetManagers() {
+        Assertions.assertNull( m_engine.getManager( String.class ) );
+        Assertions.assertNotNull( m_engine.getManager( RenderApi.class ) );
         Assertions.assertNotNull( m_engine.getManager( PageManager.class ) );
-        Assertions.assertNull( m_engine.getManager( ModuleManager.class ) );
+        Assertions.assertNotNull( m_engine.getManager( ModuleManager.class ) );
 
         Assertions.assertEquals( 0, m_engine.getManagers( String.class ).size() );
+        Assertions.assertEquals( 1, m_engine.getManagers( RenderApi.class ).size() );
         Assertions.assertEquals( 1, m_engine.getManagers( PageManager.class ).size() );
         Assertions.assertEquals( 4, m_engine.getManagers( ModuleManager.class ).size() );
     }
