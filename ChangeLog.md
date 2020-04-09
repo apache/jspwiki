@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-04-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-18_
+
+* [JSPWIKI-303](https://issues.apache.org/jira/browse/JSPWIKI-303): [JSPWiki API](https://jspwiki-wiki.apache.org/Wiki.jsp?page=JSPWikiPublicAPI) library creation
+    * Promote `RenderingManager#textToHtml( Context, String )` to the public API
+
 **2020-03-29  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-17_
