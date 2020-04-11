@@ -24,6 +24,7 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
+import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WorkflowEvent;
 
 import java.security.Principal;
@@ -59,6 +60,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
         m_workflows = ConcurrentHashMap.newKeySet();
         m_approvers = new ConcurrentHashMap<>();
         m_completed = new CopyOnWriteArrayList<>();
+        WikiEventManager.addWikiEventListener( WorkflowEventEmitter.get(), this );
     }
 
     /**
@@ -67,7 +69,6 @@ public class DefaultWorkflowManager implements WorkflowManager {
     @Override
     public void start( final Workflow workflow ) throws WikiException {
         m_workflows.add( workflow );
-        workflow.setWorkflowManager( this );
         workflow.setId( nextId() );
         workflow.start();
     }
@@ -170,16 +171,15 @@ public class DefaultWorkflowManager implements WorkflowManager {
      *
      * @return the decision queue
      */
-    @Override public DecisionQueue getDecisionQueue()
-    {
+    @Override
+    public DecisionQueue getDecisionQueue() {
         return m_queue;
     }
 
     private volatile int m_next;
 
     /**
-     * Returns the next available unique identifier, which is subsequently
-     * incremented.
+     * Returns the next available unique identifier, which is subsequently incremented.
      *
      * @return the id
      */
@@ -211,25 +211,35 @@ public class DefaultWorkflowManager implements WorkflowManager {
     }
 
     /**
-     * Listens for {@link WorkflowEvent} objects emitted by Workflows. In particular, this
-     * method listens for {@link WorkflowEvent#CREATED},
-     * {@link WorkflowEvent#ABORTED} and {@link WorkflowEvent#COMPLETED}
-     * events. If a workflow is created, it is automatically added to the cache. If one is aborted or completed, it 
-     * is automatically removed.
+     * Listens for {@link WorkflowEvent} objects emitted by Workflows. In particular, this method listens for {@link WorkflowEvent#CREATED},
+     * {@link WorkflowEvent#ABORTED}, {@link WorkflowEvent#COMPLETED} and {@link WorkflowEvent#DQ_REMOVAL} events. If a workflow is created,
+     * it is automatically added to the cache. If one is aborted or completed, it is automatically removed. If a removal from decision queue
+     * is issued, the current step from workflow, which is assumed to be a {@link Decision}, is removed from the {@link DecisionQueue}.
      * 
      * @param event the event passed to this listener
      */
     @Override
     public void actionPerformed( final WikiEvent event ) {
         if( event instanceof WorkflowEvent ) {
-            final Workflow workflow = event.getSrc();
-            switch ( event.getType() ) {
-                 // Remove from manager
-                 case WorkflowEvent.ABORTED   :
-                 case WorkflowEvent.COMPLETED : remove( workflow ); break;
+            if( event.getSrc() instanceof Workflow ) {
+                final Workflow workflow = event.getSrc();
+                switch( event.getType() ) {
+                // Remove from manager
+                case WorkflowEvent.ABORTED   :
+                case WorkflowEvent.COMPLETED : remove( workflow ); break;
                 // Add to manager
-                case WorkflowEvent.CREATED    : add( workflow ); break;
+                case WorkflowEvent.CREATED   : add( workflow ); break;
                 default: break;
+                }
+            } else if( event.getSrc() instanceof Decision ) {
+                final Decision decision = event.getSrc();
+                switch( event.getType() ) {
+                // Add to DecisionQueue
+                case WorkflowEvent.DQ_ADDITION : addToDecisionQueue( decision ); break;
+                // Remove from DecisionQueue
+                case WorkflowEvent.DQ_REMOVAL  : removeFromDecisionQueue( decision ); break;
+                default: break;
+                }
             }
         }
     }
@@ -241,9 +251,6 @@ public class DefaultWorkflowManager implements WorkflowManager {
      * @param workflow the workflow to add
      */
     protected void add( final Workflow workflow ) {
-        if ( workflow.getWorkflowManager() == null ) {
-            workflow.setWorkflowManager( this );
-        }
         if ( workflow.getId() == Workflow.ID_NOT_SET ) {
             workflow.setId( nextId() );
         }
@@ -261,6 +268,14 @@ public class DefaultWorkflowManager implements WorkflowManager {
             m_workflows.remove( workflow );
             m_completed.add( workflow );
         }
+    }
+
+    protected void removeFromDecisionQueue( final Decision decision ) {
+        getDecisionQueue().remove( decision );
+    }
+
+    protected void addToDecisionQueue( final Decision decision ) {
+        getDecisionQueue().add( decision );
     }
 
 }
