@@ -19,7 +19,6 @@
 package org.apache.wiki.content;
 
 import org.apache.log4j.Logger;
-import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -110,7 +109,7 @@ public class DefaultPageRenamer implements PageRenamer {
         //  Add a comment to the page notifying what changed.  This adds a new revision to the repo with no actual change.
         toPage = engine.getManager( PageManager.class ).getPage( renameToClean );
         if( toPage == null ) {
-            throw new InternalWikiException( "Rename seems to have failed for some strange reason - please check logs!" );
+            throw new ProviderException( "Rename seems to have failed for some strange reason - please check logs!" );
         }
         toPage.setAttribute( Page.CHANGENOTE, fromPage.getName() + " ==> " + toPage.getName() );
         toPage.setAuthor( context.getCurrentUser().getName() );
