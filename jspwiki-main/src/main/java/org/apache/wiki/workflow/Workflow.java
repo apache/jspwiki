@@ -19,8 +19,6 @@
 package org.apache.wiki.workflow;
 
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.event.WikiEventListener;
-import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WorkflowEvent;
 
 import java.io.Serializable;
@@ -28,10 +26,11 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * <p>
@@ -186,7 +185,7 @@ public class Workflow implements Serializable {
     /** State value: Workflow instantiated, but not started. */
     public static final int CREATED = -2;
 
-    /** Lazily-initialized attribute map. */
+    /** attribute map. */
     private Map< String, Object > m_attributes;
 
     /** The initial Step for this Workflow. */
@@ -209,8 +208,6 @@ public class Workflow implements Serializable {
 
     private Step m_currentStep;
 
-    private WorkflowManager m_manager;
-
     /**
      * Constructs a new Workflow object with a supplied message key, owner Principal, and undefined unique identifier {@link #ID_NOT_SET}.
      * Once instantiated the Workflow is considered to be in the {@link #CREATED} state; a caller must explicitly invoke the
@@ -220,12 +217,11 @@ public class Workflow implements Serializable {
      * @param owner the Principal who owns the Workflow. Typically, this is the user who created and submitted it
      */
     public Workflow( final String messageKey, final Principal owner ) {
-        m_attributes = null;
+        m_attributes = new ConcurrentHashMap<>();
         m_currentStep = null;
         m_history = new LinkedList<>();
         m_id = ID_NOT_SET;
         m_key = messageKey;
-        m_manager = null;
         m_messageArgs = new ArrayList<>();
         m_owner = owner;
         m_started = false;
@@ -249,15 +245,14 @@ public class Workflow implements Serializable {
         }
 
         if( m_currentStep != null ) {
-            if( m_manager != null && m_currentStep instanceof Decision ) {
-                final Decision d = ( Decision )m_currentStep;
-                m_manager.getDecisionQueue().remove( d );
+            if( m_currentStep instanceof Decision ) {
+                WorkflowEventEmitter.fireEvent( ( Decision )m_currentStep, WorkflowEvent.DQ_REMOVAL );
             }
             m_currentStep.setOutcome( Outcome.STEP_ABORT );
             m_history.addLast( m_currentStep );
         }
         m_state = ABORTED;
-        fireEvent( WorkflowEvent.ABORTED );
+        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.ABORTED );
         cleanup();
     }
 
@@ -316,10 +311,7 @@ public class Workflow implements Serializable {
      * @param attr the name of the attribute
      * @return the value
      */
-    public final synchronized Object getAttribute( final String attr ) {
-        if( m_attributes == null ) {
-            return null;
-        }
+    public final Object getAttribute( final String attr ) {
         return m_attributes.get( attr );
     }
 
@@ -409,16 +401,6 @@ public class Workflow implements Serializable {
     }
 
     /**
-     * Returns the WorkflowManager that contains this Workflow.
-     *
-     * @return the workflow manager
-     */
-    public final synchronized WorkflowManager getWorkflowManager()
-    {
-        return m_manager;
-    }
-
-    /**
      * Returns a Step history for this Workflow as a List, chronologically, from the first Step to the currently executing one. The first
      * step is the first item in the array. If the Workflow has not started, this method returns a zero-length array.
      *
@@ -483,7 +465,7 @@ public class Workflow implements Serializable {
             throw new IllegalStateException( "Workflow is not paused; cannot restart." );
         }
         m_state = RUNNING;
-        fireEvent( WorkflowEvent.RUNNING );
+        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.RUNNING );
 
         // Process current step
         try {
@@ -502,10 +484,7 @@ public class Workflow implements Serializable {
      * @param attr the attribute name
      * @param obj  the value
      */
-    public final synchronized void setAttribute( final String attr, final Object obj ) {
-        if( m_attributes == null ) {
-            m_attributes = new HashMap<>();
-        }
+    public final void setAttribute( final String attr, final Object obj ) {
         m_attributes.put( attr, obj );
     }
 
@@ -533,16 +512,6 @@ public class Workflow implements Serializable {
     }
 
     /**
-     * Sets the WorkflowManager that contains this Workflow.
-     *
-     * @param manager the workflow manager
-     */
-    public final synchronized void setWorkflowManager( final WorkflowManager manager ) {
-        m_manager = manager;
-        addWikiEventListener( manager );
-    }
-
-    /**
      * Starts the Workflow and sets the state to {@link #RUNNING}. If the Workflow has already been started (or previously aborted), this
      * method returns an {@linkplain IllegalStateException}. If any of the Steps in this Workflow throw a WikiException, the Workflow will
      * abort and propagate the exception to callers.
@@ -558,7 +527,7 @@ public class Workflow implements Serializable {
         }
         m_started = true;
         m_state = RUNNING;
-        fireEvent( WorkflowEvent.RUNNING );
+        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.RUNNING );
 
         // Mark the first step as the current one & add to history
         m_currentStep = m_firstStep;
@@ -582,15 +551,13 @@ public class Workflow implements Serializable {
             throw new IllegalStateException( "Workflow is not running; cannot pause." );
         }
         m_state = WAITING;
-        fireEvent( WorkflowEvent.WAITING );
+        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.WAITING );
     }
 
     /**
-     * Clears the attribute map and sets the current step field to
-     * <code>null</code>.
+     * Clears the attribute map and sets the current step field to <code>null</code>.
      */
-    protected void cleanup()
-    {
+    protected void cleanup() {
         m_currentStep = null;
         m_attributes = null;
     }
@@ -602,7 +569,7 @@ public class Workflow implements Serializable {
     protected final synchronized void complete() {
         if( !isCompleted() ) {
             m_state = COMPLETED;
-            fireEvent( WorkflowEvent.COMPLETED );
+            WorkflowEventEmitter.fireEvent( this, WorkflowEvent.COMPLETED );
             cleanup();
         }
     }
@@ -659,38 +626,6 @@ public class Workflow implements Serializable {
             m_currentStep = nextStep;
         }
 
-    }
-
-    // events processing .......................................................
-
-    /**
-     * Registers a WikiEventListener with this instance. This is a convenience method.
-     *
-     * @param listener the event listener
-     */
-    public final synchronized void addWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.addWikiEventListener( this, listener );
-    }
-
-    /**
-     * Un-registers a WikiEventListener with this instance. This is a convenience method.
-     *
-     * @param listener the event listener
-     */
-    public final synchronized void removeWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.removeWikiEventListener( this, listener );
-    }
-
-    /**
-     * Fires a WorkflowEvent of the provided type to all registered listeners.
-     *
-     * @see org.apache.wiki.event.WorkflowEvent
-     * @param type the event type to be fired
-     */
-    protected final void fireEvent( final int type ) {
-        if ( WikiEventManager.isListening( this ) ) {
-            WikiEventManager.fireEvent( this, new WorkflowEvent( this, type ) );
-        }
     }
 
 }
