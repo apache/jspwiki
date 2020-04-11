@@ -58,6 +58,12 @@ public final class WorkflowEvent extends WikiEvent {
     /** If a Step has elected to abort the Workflow. */
     public static final int ABORTED = 50;
 
+    /** When the workflow wishes to add a Decision to the DecisionQueue */
+    public static final int DQ_ADDITION = 60;
+
+    /** When the workflow wishes to remove a Decision from the DecisionQueue */
+    public static final int DQ_REMOVAL = 70;
+
     /**
      * Constructs a new instance of this event type, which signals a security event has occurred. 
      * The <code>source</code> parameter is required, and may not be <code>null</code>. When the 
@@ -96,13 +102,14 @@ public final class WorkflowEvent extends WikiEvent {
      */
     public String eventName( final int type ) {
         switch( type ) {
-            case CREATED:   return "CREATED";
-            case ABORTED:   return "ABORTED";
-            case COMPLETED: return "COMPLETED";
-            case RUNNING:   return "RUNNING";
-            case STARTED:   return "STARTED";
-            case WAITING:   return "WAITING";
-            default:        return super.eventName();
+            case CREATED:    return "CREATED";
+            case ABORTED:    return "ABORTED";
+            case COMPLETED:  return "COMPLETED";
+            case RUNNING:    return "RUNNING";
+            case STARTED:    return "STARTED";
+            case WAITING:    return "WAITING";
+            case DQ_REMOVAL: return "DQ_REMOVAL";
+            default:         return super.eventName();
         }
     }
 
