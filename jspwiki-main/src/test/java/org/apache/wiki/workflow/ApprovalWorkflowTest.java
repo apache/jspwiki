@@ -75,7 +75,6 @@ public class ApprovalWorkflowTest {
         final Workflow w = m_builder.buildApprovalWorkflow(submitter, workflowApproverKey,
                                                    prepTask, decisionKey, facts,
                                                    completionTask, rejectedMessageKey);
-        w.setWorkflowManager( m_engine.getManager( WorkflowManager.class ) );
 
         // Check to see if the workflow built correctly
         Assertions.assertFalse( w.isStarted() || w.isCompleted() || w.isAborted() );
@@ -83,7 +82,6 @@ public class ApprovalWorkflowTest {
         Assertions.assertEquals( "workflow.approvalWorkflow", w.getMessageKey() );
         Assertions.assertEquals( Workflow.CREATED, w.getCurrentState() );
         Assertions.assertEquals( new WikiPrincipal("Submitter"), w.getOwner() );
-        Assertions.assertEquals( m_engine.getManager( WorkflowManager.class ), w.getWorkflowManager() );
         Assertions.assertEquals( 0, w.getHistory().size() );
 
         // Our dummy "task complete" attributes should still be null
@@ -146,10 +144,9 @@ public class ApprovalWorkflowTest {
         final Task completionTask = new TestPrepTask( "task.saveWikiPage" );
         final String rejectedMessageKey = "notification.saveWikiPage.reject";
 
-        final Workflow w = m_builder.buildApprovalWorkflow(submitter, workflowApproverKey,
-                                                   prepTask, decisionKey, facts,
-                                                   completionTask, rejectedMessageKey);
-        w.setWorkflowManager( m_engine.getManager( WorkflowManager.class ) );
+        final Workflow w = m_builder.buildApprovalWorkflow( submitter, workflowApproverKey,
+                                                            prepTask, decisionKey, facts,
+                                                            completionTask, rejectedMessageKey );
 
         // Start the workflow
         w.start();

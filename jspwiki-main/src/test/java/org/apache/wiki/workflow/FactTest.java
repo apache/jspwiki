@@ -18,27 +18,25 @@
  */
 package org.apache.wiki.workflow;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import org.junit.jupiter.api.Assertions;
 
-public class FactTest
-{
+public class FactTest {
 
     @Test
-    public void testCreate()
-    {
-        Fact f1 = new Fact("fact1",new Integer(1));
-        Fact f2 = new Fact("fact2","A factual String");
-        Fact f3 = new Fact("fact3",Outcome.DECISION_ACKNOWLEDGE);
+    public void testCreate() {
+        final Fact f1 = new Fact( "fact1", 1 );
+        final Fact f2 = new Fact( "fact2", "A factual String" );
+        final Fact f3 = new Fact( "fact3", Outcome.DECISION_ACKNOWLEDGE );
 
-        Assertions.assertEquals("fact1", f1.getMessageKey());
-        Assertions.assertEquals("fact2", f2.getMessageKey());
-        Assertions.assertEquals("fact3", f3.getMessageKey());
+        Assertions.assertEquals( "fact1", f1.getMessageKey() );
+        Assertions.assertEquals( "fact2", f2.getMessageKey() );
+        Assertions.assertEquals( "fact3", f3.getMessageKey() );
 
-        Assertions.assertEquals(new Integer(1), f1.getValue());
-        Assertions.assertEquals("A factual String", f2.getValue());
-        Assertions.assertEquals(Outcome.DECISION_ACKNOWLEDGE, f3.getValue());
+        Assertions.assertEquals( 1, f1.getValue() );
+        Assertions.assertEquals( "A factual String", f2.getValue() );
+        Assertions.assertEquals( Outcome.DECISION_ACKNOWLEDGE, f3.getValue() );
     }
 
 }
