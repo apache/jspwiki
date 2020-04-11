@@ -33,15 +33,9 @@ public enum WorkflowEventEmitter {
         return INSTANCE;
     }
 
-    public static void fireEvent( final Decision decision, final int type ) {
+    public static void fireEvent( final Object src, final int type ) {
         if ( WikiEventManager.isListening( get() ) ) {
-            WikiEventManager.fireEvent( get(), new WorkflowEvent( decision, type ) );
-        }
-    }
-
-    public static void fireEvent( final Workflow workflow, final int type ) {
-        if ( WikiEventManager.isListening( get() ) ) {
-            WikiEventManager.fireEvent( get(), new WorkflowEvent( workflow, type ) );
+            WikiEventManager.fireEvent( get(), new WorkflowEvent( src, type ) );
         }
     }
 
