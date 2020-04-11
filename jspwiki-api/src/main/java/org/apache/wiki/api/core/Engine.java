@@ -45,8 +45,8 @@ import java.util.Properties;
  *  This is the main interface through which everything should go.
  *
  *  <p>
- *  There's basically only a single Engine for each web application, and you should always get it using the {@code Engine.getInstance(..)}
- *  method.
+ *  There's basically only a single Engine for each web application, and you should always get it using either the
+ *  {@code Context#getEngine()} method or through {@code Wiki.engine().find(..)} DSL methods.
  */
 public interface Engine {
 
