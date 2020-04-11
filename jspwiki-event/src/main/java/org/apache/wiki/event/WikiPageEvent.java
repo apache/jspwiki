@@ -197,7 +197,8 @@ public class WikiPageEvent extends WikiEvent {
      *
      * @return a String representation of the type
      */
-    @Override public String eventName() {
+    @Override
+    public String eventName() {
         switch ( getType() ) {
             case PAGE_LOCK:            return "PAGE_LOCK";
             case PAGE_UNLOCK:          return "PAGE_UNLOCK";
@@ -233,7 +234,8 @@ public class WikiPageEvent extends WikiEvent {
      *
      * @return a String description of the type
      */
-    @Override public String getTypeDescription() {
+    @Override
+    public String getTypeDescription() {
         switch ( getType() ) {
             case PAGE_LOCK:            return "page lock event";
             case PAGE_UNLOCK:          return "page unlock event";
