@@ -29,6 +29,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -230,16 +231,17 @@ public final class WikiEventManager {
     }
 
     /**
-     *  Un-registers a WikiEventListener from any WikiEventDelegate client managed by this WikiEventManager. Since this is a one-to-one
-     *  relation, the first match will be returned upon removal; a true return value indicates the WikiEventListener was found and removed.
+     * Un-registers a WikiEventListener from any WikiEventDelegate client managed by this WikiEventManager. A true return value indicates
+     * the WikiEventListener was found and removed.
      *
      * @param listener the event listener
      * @return true if the listener was found and removed.
      */
     public static boolean removeWikiEventListener( final WikiEventListener listener ) {
+        boolean removed = false;
         // get the Map.entry object for the entire Map, then check match on entry (listener)
         final WikiEventManager mgr = getInstance();
-        final Map< Object, WikiEventDelegate > sources = mgr.getDelegates();
+        final Map< Object, WikiEventDelegate > sources =  Collections.synchronizedMap( mgr.getDelegates() );
         synchronized( sources ) {
             // get an iterator over the Map.Enty objects in the map
             for( final Map.Entry< Object, WikiEventDelegate > entry : sources.entrySet() ) {
@@ -248,11 +250,11 @@ public final class WikiEventManager {
 
                 // now see if we can remove the listener from the delegate (delegate may be null because this is a weak reference)
                 if( delegate != null && delegate.removeWikiEventListener( listener ) ) {
-                    return true; // was removed
+                    removed = true; // was removed
                 }
             }
         }
-        return false;
+        return removed;
     }
 
     /**
@@ -387,13 +389,19 @@ public final class WikiEventManager {
         /**
          *  Adds <tt>listener</tt> as a listener for events fired by the WikiEventDelegate.
          *
-         * @param listener   the WikiEventListener to be added
+         * @param listener the WikiEventListener to be added
          * @return true if the listener was added (i.e., it was not already in the list and was added)
          */
         public boolean addWikiEventListener( final WikiEventListener listener ) {
             synchronized( m_listenerList ) {
-                return m_listenerList.add( new WeakReference<>(listener) );
+                final boolean listenerAlreadyContained = m_listenerList.stream()
+                                                                       .map( WeakReference::get )
+                                                                       .anyMatch( ref -> Objects.equals( ref, listener ) );
+                if( !listenerAlreadyContained ) {
+                    return m_listenerList.add( new WeakReference<>( listener ) );
+                }
             }
+            return false;
         }
 
         /**
