@@ -160,6 +160,9 @@ public class WikiPageEvent extends WikiEvent {
      * @since 2.4.65 */
     public static final int PAGE_DELETED         = 27;
 
+    /** Indicates a wiki page reindex event (a page was changed when requested to a provided) */
+    public static final int PAGE_REINDEX         = 28;
+
     private String m_pagename;
 
     // ............

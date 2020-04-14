@@ -74,7 +74,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
      */
     public DefaultSearchManager( final Engine engine, final Properties properties ) throws FilterException {
         initialize( engine, properties );
-        WikiEventManager.getInstance().addWikiEventListener( m_engine.getManager( PageManager.class ), this );
+        WikiEventManager.addWikiEventListener( m_engine.getManager( PageManager.class ), this );
 
         // TODO: Replace with custom annotations. See JSPWIKI-566
         WikiAjaxDispatcherServlet.registerServlet( JSON_SEARCH, new JSONSearch() );
@@ -261,12 +261,19 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
     /** {@inheritDoc} */
     @Override
     public void actionPerformed( final WikiEvent event ) {
-        if( event instanceof WikiPageEvent && event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST ) {
+        if( event instanceof WikiPageEvent ) {
             final String pageName = ( ( WikiPageEvent ) event ).getPageName();
-
-            final Page p = m_engine.getManager( PageManager.class ).getPage( pageName );
-            if( p != null ) {
-                pageRemoved( p );
+            if( event.getType() == WikiPageEvent.PAGE_DELETE_REQUEST ) {
+                final Page p = m_engine.getManager( PageManager.class ).getPage( pageName );
+                if( p != null ) {
+                    pageRemoved( p );
+                }
+            }
+            if( event.getType() == WikiPageEvent.PAGE_REINDEX ) {
+                final Page p = m_engine.getManager( PageManager.class ).getPage( pageName );
+                if( p != null ) {
+                    reindexPage( p );
+                }
             }
         }
     }

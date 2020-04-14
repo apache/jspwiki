@@ -45,7 +45,6 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.providers.RepositoryModifiedException;
 import org.apache.wiki.references.ReferenceManager;
-import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.tasks.TasksManager;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.util.ClassUtil;
@@ -188,7 +187,7 @@ public class DefaultPageManager implements PageManager {
             final Page p = m_provider.getPageInfo( pageName, version );
 
             m_engine.getManager( ReferenceManager.class ).updateReferences( p );
-            m_engine.getManager( SearchManager.class ).reindexPage( p );
+            fireEvent( WikiPageEvent.PAGE_REINDEX, p.getName() );
             text = m_provider.getPageText( pageName, version );
         }
 
