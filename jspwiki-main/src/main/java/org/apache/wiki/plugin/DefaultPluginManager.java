@@ -178,7 +178,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
      */
     public DefaultPluginManager( final Engine engine, final Properties props ) {
         super( engine );
-        final String packageNames = props.getProperty( PROP_SEARCHPATH );
+        final String packageNames = props.getProperty( Engine.PROP_SEARCHPATH );
         if ( packageNames != null ) {
             final StringTokenizer tok = new StringTokenizer( packageNames, "," );
             while( tok.hasMoreTokens() ) {
@@ -226,12 +226,6 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
     public Pattern getPluginPattern() {
 		return m_pluginPattern;
 	}
-
-    /** {@inheritDoc} */
-    @Override
-    public String getPluginSearchPath() {
-    	return TextUtil.getStringProperty( m_engine.getWikiProperties(), PROP_SEARCHPATH, null );
-    }
 
 	/**
      *  Attempts to locate a plugin class from the class path set in the property file.

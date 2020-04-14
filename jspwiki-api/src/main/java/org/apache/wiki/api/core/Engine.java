@@ -21,6 +21,7 @@ package org.apache.wiki.api.core;
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.event.WikiEventListener;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.ServletContext;
 import java.io.File;
@@ -64,6 +65,9 @@ public interface Engine {
 
     /** Property start for any interwiki reference. */
     String PROP_INTERWIKIREF = "jspwiki.interWikiRef.";
+
+    /** The property name defining which packages will be searched for plugin classes. */
+    String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
 
     /** If true, then the user name will be stored with the page data.*/
     String PROP_STOREUSERNAME= "jspwiki.storeUserName";
@@ -160,6 +164,15 @@ public interface Engine {
      *  @return The template directory as initialized by the engine.
      */
     String getTemplateDir();
+
+    /**
+     * Returns plugins' search path.
+     *
+     * @return plugins' search path.
+     */
+    default String getPluginSearchPath() {
+        return TextUtil.getStringProperty( getWikiProperties(), PROP_SEARCHPATH, null );
+    }
 
     /**
      *  Returns the moment when this engine was started.

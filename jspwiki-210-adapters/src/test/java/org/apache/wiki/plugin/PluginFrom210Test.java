@@ -22,6 +22,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +34,7 @@ public class PluginFrom210Test {
     @Test
     public void testPluginNotUsingPublicApiStillWorks() throws Exception {
         final Properties props = TestEngine.getTestProperties();
-        props.setProperty( PluginManager.PROP_SEARCHPATH, "com.example.plugins" );
+        props.setProperty( Engine.PROP_SEARCHPATH, "com.example.plugins" );
         final WikiEngine engine = TestEngine.build( props );
         final PluginManager pm = engine.getManager( PluginManager.class );
         final WikiContext context = new WikiContext( engine, new WikiPage( engine, "Testpage" ) );

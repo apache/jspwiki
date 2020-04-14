@@ -22,6 +22,7 @@ package org.apache.wiki.plugin;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
@@ -66,7 +67,7 @@ public class DefaultPluginManagerTest {
 
     @Test
     public void testSimpleInsertNoPackage2() throws Exception {
-        props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo" );
+        props.setProperty( Engine.PROP_SEARCHPATH, "com.foo" );
         final DefaultPluginManager m = new DefaultPluginManager( engine, props );
         final String res = m.execute( context,"{INSERT SamplePlugin2 WHERE text=foobar}" );
         Assertions.assertEquals( "foobar", res );
@@ -74,7 +75,7 @@ public class DefaultPluginManagerTest {
 
     @Test
     public void testSimpleInsertNoPackage3() throws Exception {
-        props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo" );
+        props.setProperty( Engine.PROP_SEARCHPATH, "com.foo" );
         final DefaultPluginManager m = new DefaultPluginManager( engine, props );
         final String res = m.execute( context,"{INSERT SamplePlugin3 WHERE text=foobar}" );
         Assertions.assertEquals( "foobar", res );
@@ -83,7 +84,7 @@ public class DefaultPluginManagerTest {
     /** Check that in all cases org.apache.wiki.plugin is searched. */
     @Test
     public void testSimpleInsertNoPackage4() throws Exception {
-        props.setProperty( DefaultPluginManager.PROP_SEARCHPATH, "com.foo,blat.blaa" );
+        props.setProperty( Engine.PROP_SEARCHPATH, "com.foo,blat.blaa" );
         final DefaultPluginManager m = new DefaultPluginManager( engine, props );
         final String res = m.execute( context,"{INSERT SamplePlugin WHERE text=foobar}" );
         Assertions.assertEquals( "foobar", res );

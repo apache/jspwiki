@@ -31,9 +31,6 @@ import java.util.ResourceBundle;
 
 public interface PluginManager extends ModuleManager {
 
-    /** The property name defining which packages will be searched for plugin classes. */
-    String PROP_SEARCHPATH = "jspwiki.plugin.searchPath";
-
     /** The property name defining which external jars will be added to the classpath when searching for plugin classes. */
     String PROP_EXTERNALJARS = "jspwiki.plugin.externalJars";
 
@@ -76,13 +73,6 @@ public interface PluginManager extends ModuleManager {
      * @return plugin insert pattern.
      */
     Pattern getPluginPattern();
-    
-    /**
-     * Returns plugins' search path.
-     * 
-     * @return plugins' search path.
-     */
-    String getPluginSearchPath();
 
     /**
      * Executes a plugin class in the given context.
