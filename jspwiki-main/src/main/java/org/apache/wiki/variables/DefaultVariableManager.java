@@ -31,7 +31,6 @@ import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.preferences.Preferences;
 
 import javax.servlet.http.HttpServletRequest;
@@ -350,7 +349,7 @@ public class DefaultVariableManager implements VariableManager {
         }
 
         public String getPluginpath() {
-            final String s = m_context.getEngine().getManager( PluginManager.class ).getPluginSearchPath();
+            final String s = m_context.getEngine().getPluginSearchPath();
 
             return ( s == null ) ? "-" : s;
         }
