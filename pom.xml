@@ -66,7 +66,7 @@
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.6.2</junit.version>
     <log4j.version>1.2.17</log4j.version>
-    <lucene.version>8.5.0</lucene.version>
+    <lucene.version>8.5.1</lucene.version>
     <mockito.version>3.3.3</mockito.version>
     <nekohtml.version>1.9.22</nekohtml.version>
     <oro.version>2.0.8</oro.version>
@@ -79,7 +79,7 @@
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
-    <plugin.antrun.version>1.8</plugin.antrun.version>
+    <plugin.antrun.version>3.0.0</plugin.antrun.version>
     <plugin.assembly.version>3.2.0</plugin.assembly.version>
     <plugin.clean.version>3.1.0</plugin.clean.version>
     <plugin.compiler.version>3.8.1</plugin.compiler.version>
