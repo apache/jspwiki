@@ -77,8 +77,8 @@ public class WorkflowTest {
         Assertions.assertEquals( Workflow.ID_NOT_SET, w.getId() );
         Assertions.assertEquals( new WikiPrincipal( "Owner1" ), w.getOwner() );
         Assertions.assertEquals( Workflow.CREATED, w.getCurrentState() );
-        Assertions.assertEquals( Workflow.TIME_NOT_SET, w.getStartTime() );
-        Assertions.assertEquals( Workflow.TIME_NOT_SET, w.getEndTime() );
+        Assertions.assertEquals( Step.TIME_NOT_SET, w.getStartTime() );
+        Assertions.assertEquals( Step.TIME_NOT_SET, w.getEndTime() );
     }
 
     @Test
@@ -118,7 +118,7 @@ public class WorkflowTest {
     public void testGetMessageArgObjects() {
         // Try passing some valid object types: Date, Number
         w.addMessageArgument( new Date() );
-        w.addMessageArgument( Integer.valueOf( 1 ) );
+        w.addMessageArgument( 1 );
         w.addMessageArgument( 2d );
         w.addMessageArgument( new BigDecimal( "3.14" ) );
 
@@ -303,23 +303,23 @@ public class WorkflowTest {
     @Test
     public void testGetStartTime() throws WikiException {
         // Start time should be not be set until we start the workflow
-        Assertions.assertEquals( Workflow.TIME_NOT_SET, w.getStartTime() );
+        Assertions.assertEquals( Step.TIME_NOT_SET, w.getStartTime() );
         w.start();
-        Assertions.assertNotSame( Workflow.TIME_NOT_SET, w.getStartTime() );
+        Assertions.assertNotSame( Step.TIME_NOT_SET, w.getStartTime() );
         final Decision d = ( Decision )w.getCurrentStep();
         d.decide( Outcome.DECISION_APPROVE );
-        Assertions.assertNotSame( Workflow.TIME_NOT_SET, w.getStartTime() );
+        Assertions.assertNotSame( Step.TIME_NOT_SET, w.getStartTime() );
     }
 
     @Test
     public void testGetEndTime() throws WikiException {
         // End time should be not set until we finish all 3 steps
-        Assertions.assertEquals( Workflow.TIME_NOT_SET, w.getEndTime() );
+        Assertions.assertEquals( Step.TIME_NOT_SET, w.getEndTime() );
         w.start();
-        Assertions.assertEquals( Workflow.TIME_NOT_SET, w.getEndTime() );
+        Assertions.assertEquals( Step.TIME_NOT_SET, w.getEndTime() );
         final Decision d = ( Decision )w.getCurrentStep();
         d.decide( Outcome.DECISION_APPROVE );
-        Assertions.assertNotSame( Workflow.TIME_NOT_SET, w.getEndTime() );
+        Assertions.assertNotSame( Step.TIME_NOT_SET, w.getEndTime() );
     }
 
     @Test

@@ -53,6 +53,9 @@ import java.util.List;
  */
 public interface Step extends Serializable {
 
+    /** Time value: the start or end time has not been set. */
+    public static final Date TIME_NOT_SET = new Date( 0 );
+
     /**
      * Adds a successor Step to this one, which will be triggered by a supplied Outcome. Implementations should respect the order in which
      * Outcomes are added; {@link #getAvailableOutcomes()} should return them in the same order they were added.
@@ -105,7 +108,7 @@ public interface Step extends Serializable {
     Principal getActor();
 
     /**
-     * The end time for this Step. This value should be set when the step completes. Returns {@link Workflow#TIME_NOT_SET} if not completed
+     * The end time for this Step. This value should be set when the step completes. Returns {@link #TIME_NOT_SET} if not completed
      * yet.
      * 
      * @return the end time
@@ -136,7 +139,7 @@ public interface Step extends Serializable {
     Outcome getOutcome();
 
     /**
-     * The start time for this Step. Returns {@link Workflow#TIME_NOT_SET} if not started yet.
+     * The start time for this Step. Returns {@link #TIME_NOT_SET} if not started yet.
      * 
      * @return the start time
      */

@@ -119,10 +119,10 @@ public class SimpleDecisionTest {
 
     @Test
     public void testGetEndTime() throws WikiException {
-        Assertions.assertEquals( Workflow.TIME_NOT_SET, m_decision.getEndTime() );
+        Assertions.assertEquals( Step.TIME_NOT_SET, m_decision.getEndTime() );
         m_decision.start();
         m_decision.decide( Outcome.DECISION_APPROVE );
-        Assertions.assertTrue( ( Workflow.TIME_NOT_SET != m_decision.getEndTime() ) );
+        Assertions.assertTrue( ( Step.TIME_NOT_SET != m_decision.getEndTime() ) );
     }
 
     @Test
@@ -140,10 +140,10 @@ public class SimpleDecisionTest {
 
     @Test
     public void testGetStartTime() throws WikiException {
-        Assertions.assertEquals( Workflow.TIME_NOT_SET, m_decision.getStartTime() );
+        Assertions.assertEquals( Step.TIME_NOT_SET, m_decision.getStartTime() );
         m_decision.start();
         m_decision.decide( Outcome.DECISION_APPROVE );
-        Assertions.assertTrue( ( Workflow.TIME_NOT_SET != m_decision.getStartTime() ) );
+        Assertions.assertTrue( ( Step.TIME_NOT_SET != m_decision.getStartTime() ) );
     }
 
     @Test

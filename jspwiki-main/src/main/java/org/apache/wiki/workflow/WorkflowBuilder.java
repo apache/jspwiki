@@ -115,8 +115,7 @@ public final class WorkflowBuilder {
 
         // If Decision required, create a simple approval workflow
         if ( decisionRequired ) {
-            // Look up the name of the approver (user or group) listed in jspwiki.properties;
-            // approvals go to the approver's decision cue
+            // Look up the name of the approver (user or group) listed in jspwiki.properties; approvals go to the approver's decision queue
             final Principal approverPrincipal = mgr.getApprover( workflowApproverKey );
             final Decision decision = new SimpleDecision( workflow, decisionKey, approverPrincipal );
 

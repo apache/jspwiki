@@ -164,9 +164,6 @@ public class Workflow implements Serializable {
 
     private static final long serialVersionUID = 5228149040690660032L;
 
-    /** Time value: the start or end time has not been set. */
-    public static final Date TIME_NOT_SET = new Date( 0 );
-
     /** ID value: the workflow ID has not been set. */
     public static final int ID_NOT_SET = 0;
 
@@ -317,7 +314,7 @@ public class Workflow implements Serializable {
 
     /**
      * The end time for this Workflow, expressed as a system time number. This value is equal to the end-time value returned by the final
-     * Step's {@link Step#getEndTime()} method, if the workflow has completed. Otherwise, this method returns {@link #TIME_NOT_SET}.
+     * Step's {@link Step#getEndTime()} method, if the workflow has completed. Otherwise, this method returns {@link Step#TIME_NOT_SET}.
      *
      * @return the end time
      */
@@ -328,7 +325,7 @@ public class Workflow implements Serializable {
                 return last.getEndTime();
             }
         }
-        return TIME_NOT_SET;
+        return Step.TIME_NOT_SET;
     }
 
     /**
@@ -391,13 +388,13 @@ public class Workflow implements Serializable {
     /**
      * The start time for this Workflow, expressed as a system time number. This value is equal to the start-time value returned by the
      * first Step's {@link Step#getStartTime()} method, if the workflow has started already. Otherwise, this method returns
-     * {@link #TIME_NOT_SET}.
+     * {@link Step#TIME_NOT_SET}.
      *
      * @return the start time
      */
     public final Date getStartTime()
     {
-        return isStarted() ? m_firstStep.getStartTime() : TIME_NOT_SET;
+        return isStarted() ? m_firstStep.getStartTime() : Step.TIME_NOT_SET;
     }
 
     /**

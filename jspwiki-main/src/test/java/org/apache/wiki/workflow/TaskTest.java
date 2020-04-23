@@ -18,14 +18,14 @@
  */
 package org.apache.wiki.workflow;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Collection;
+import java.util.List;
 
 public class TaskTest
 {
@@ -38,7 +38,7 @@ public class TaskTest
     {
         private static final long serialVersionUID = 1L;
 
-        public NormalTask(Workflow workflow)
+        public NormalTask( final Workflow workflow)
         {
             super(workflow, "task.normal");
         }
@@ -54,7 +54,7 @@ public class TaskTest
     {
         private static final long serialVersionUID = 1L;
 
-        public ErrorTask(Workflow workflow)
+        public ErrorTask( final Workflow workflow)
         {
             super(workflow, "task.error");
         }
@@ -86,11 +86,11 @@ public class TaskTest
     public void testSuccessors()
     {
         // If task finishes normally, branch to a decision (d1)
-        Step d1 = new SimpleDecision(m_workflow, "decision1.key", new WikiPrincipal("Actor1"));
+        final Step d1 = new SimpleDecision(m_workflow, "decision1.key", new WikiPrincipal("Actor1"));
         m_task.addSuccessor(Outcome.STEP_COMPLETE, d1);
 
         // If the task aborts, branch to an alternate decision (d2)
-        Step d2 = new SimpleDecision(m_workflow, "decision2.key", new WikiPrincipal("Actor2"));
+        final Step d2 = new SimpleDecision(m_workflow, "decision2.key", new WikiPrincipal("Actor2"));
         m_task.addSuccessor(Outcome.STEP_ABORT, d2);
 
         Assertions.assertEquals(d1, m_task.getSuccessor(Outcome.STEP_COMPLETE));
@@ -110,7 +110,7 @@ public class TaskTest
         m_task.addError("Error deciding something.");
         m_task.addError("Error deciding something else.");
 
-        List< String > errors = m_task.getErrors();
+        final List< String > errors = m_task.getErrors();
         Assertions.assertEquals(2, errors.size());
         Assertions.assertEquals("Error deciding something.", errors.get(0));
         Assertions.assertEquals("Error deciding something else.", errors.get(1));
@@ -119,7 +119,7 @@ public class TaskTest
     @Test
     public void testAvailableOutcomes()
     {
-        Collection< Outcome > outcomes = m_task.getAvailableOutcomes();
+        final Collection< Outcome > outcomes = m_task.getAvailableOutcomes();
         Assertions.assertFalse(outcomes.contains(Outcome.DECISION_APPROVE));
         Assertions.assertFalse(outcomes.contains(Outcome.DECISION_DENY));
         Assertions.assertFalse(outcomes.contains(Outcome.DECISION_HOLD));
@@ -131,10 +131,10 @@ public class TaskTest
     @Test
     public void testGetEndTime() throws WikiException
     {
-        Assertions.assertEquals(Workflow.TIME_NOT_SET, m_task.getEndTime());
+        Assertions.assertEquals(Step.TIME_NOT_SET, m_task.getEndTime());
         m_task.start();
         m_task.setOutcome(m_task.execute());
-        Assertions.assertTrue((Workflow.TIME_NOT_SET  !=  m_task.getEndTime()));
+        Assertions.assertTrue((Step.TIME_NOT_SET  !=  m_task.getEndTime()));
     }
 
     @Test
@@ -162,10 +162,10 @@ public class TaskTest
     @Test
     public void testGetStartTime() throws WikiException
     {
-        Assertions.assertEquals(Workflow.TIME_NOT_SET, m_task.getStartTime());
+        Assertions.assertEquals(Step.TIME_NOT_SET, m_task.getStartTime());
         m_task.start();
         m_task.execute();
-        Assertions.assertTrue((Workflow.TIME_NOT_SET  !=  m_task.getStartTime()));
+        Assertions.assertTrue((Step.TIME_NOT_SET  !=  m_task.getStartTime()));
     }
 
     @Test
@@ -199,7 +199,7 @@ public class TaskTest
         {
             m_task.start();
         }
-        catch (IllegalStateException e)
+        catch ( final IllegalStateException e)
         {
             // Swallow
             return;

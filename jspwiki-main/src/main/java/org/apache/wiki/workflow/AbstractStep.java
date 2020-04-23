@@ -70,9 +70,9 @@ public abstract class AbstractStep implements Step {
      */
     protected AbstractStep( final String messageKey ) {
         m_started = false;
-        m_start = Workflow.TIME_NOT_SET;
+        m_start = Step.TIME_NOT_SET;
         m_completed = false;
-        m_end = Workflow.TIME_NOT_SET;
+        m_end = Step.TIME_NOT_SET;
         m_errors = new ArrayList<>();
         m_outcome = Outcome.STEP_CONTINUE;
         m_key = messageKey;
