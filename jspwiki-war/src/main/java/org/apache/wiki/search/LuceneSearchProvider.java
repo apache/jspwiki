@@ -226,6 +226,7 @@ public class LuceneSearchProvider implements SearchProvider {
                 try
                 {
                     writer = getIndexWriter( luceneDir );
+                    long pagesStart = System.currentTimeMillis();
                     Collection allPages = m_engine.getPageManager().getAllPages();
 
                     for( Iterator iterator = allPages.iterator(); iterator.hasNext(); )
@@ -243,7 +244,9 @@ public class LuceneSearchProvider implements SearchProvider {
                             log.warn( "Unable to index page " + page.getName() + ", continuing to next ", e );
                         }
                     }
+                    log.info("Indexed all pages in " + (System.currentTimeMillis() - pagesStart) + "ms");
 
+                    long attachmentStart = System.currentTimeMillis();
                     Collection allAttachments = m_engine.getAttachmentManager().getAllAttachments();
                     for( Iterator iterator = allAttachments.iterator(); iterator.hasNext(); )
                     {
@@ -259,7 +262,7 @@ public class LuceneSearchProvider implements SearchProvider {
                             log.warn( "Unable to index attachment " + att.getName() + ", continuing to next", e );
                         }
                     }
-
+                    log.info("Indexed all attchments in " + (System.currentTimeMillis() - attachmentStart) + "ms");
                 }
                 finally
                 {
