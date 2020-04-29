@@ -498,7 +498,12 @@ public class WikiEngine
         if( m_workDir == null )
         {
             m_workDir = System.getProperty("java.io.tmpdir", ".");
-            m_workDir += File.separator+Release.APPNAME+"-"+m_appid;
+			String baseDirName = new File(TextUtil.getStringProperty(props, "var.basedir", "default")).getName();
+			String baseDirSuffix = baseDirName.substring(0, Math.min(baseDirName.length(), 10)).replaceAll("\\h+", "_"); // avoid long paths
+			String appName = TextUtil.getStringProperty(props, PROP_APPNAME, m_appid).replaceAll("\\h+", "_");
+			m_workDir += File.separator+Release.APPNAME+"-"
+					+ appName
+					+"-"+baseDirSuffix;
         }
 
         try
