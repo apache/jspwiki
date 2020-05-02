@@ -29,7 +29,6 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -396,7 +395,7 @@ public final class WikiEventManager {
             synchronized( m_listenerList ) {
                 final boolean listenerAlreadyContained = m_listenerList.stream()
                                                                        .map( WeakReference::get )
-                                                                       .anyMatch( ref -> Objects.equals( ref, listener ) );
+                                                                       .anyMatch( ref -> ref == listener );
                 if( !listenerAlreadyContained ) {
                     return m_listenerList.add( new WeakReference<>( listener ) );
                 }

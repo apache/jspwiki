@@ -19,7 +19,6 @@
 
 package org.apache.wiki.event;
 
-
 /**
  * <p>
  * WorkflowEvent indicates that a state change to a Workflow: started, running, waiting, completed, aborted. 
@@ -43,8 +42,8 @@ public final class WorkflowEvent extends WikiEvent {
     public static final int STARTED = 10;
 
     /**
-     * fter the Workflow has been started (or re-started) using the
-     * {@link org.apache.wiki.workflow.Workflow#start()} method, 
+     * After the Workflow has been started (or re-started) using the
+     * {@link org.apache.wiki.workflow.Workflow#start()} method,
      * but before it has finished processing all Steps.
      */
     public static final int RUNNING = 20;

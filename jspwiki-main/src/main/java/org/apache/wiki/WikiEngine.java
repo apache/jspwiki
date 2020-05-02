@@ -657,7 +657,7 @@ public class WikiEngine implements Engine {
     }
 
     /**
-     * Returns the {@link org.apache.wiki.workflow.WorkflowManager} associated with this WikiEngine. If the WIkiEngine has not been
+     * Returns the {@link org.apache.wiki.workflow.WorkflowManager} associated with this WikiEngine. If the WikiEngine has not been
      * initialized, this method will return <code>null</code>.
      *
      * @return the task queue

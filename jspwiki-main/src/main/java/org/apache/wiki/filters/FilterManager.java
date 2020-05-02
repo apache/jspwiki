@@ -108,7 +108,7 @@ public interface FilterManager extends ModuleManager {
     List< PageFilter > getFilterList();
     
     /**
-     * Notifies PageFilters to clean up their ressources.
+     * Notifies PageFilters to clean up their resources.
      */
     void destroy();
 

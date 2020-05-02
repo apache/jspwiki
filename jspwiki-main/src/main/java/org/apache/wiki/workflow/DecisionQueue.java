@@ -36,7 +36,7 @@ public class DecisionQueue implements Serializable {
 
     private static final long serialVersionUID = -7172912793410302533L;
 
-    private LinkedList< Decision > m_queue = new LinkedList<>();
+    private final LinkedList< Decision > m_queue = new LinkedList<>();
 
     private volatile int m_next;
 
@@ -61,9 +61,8 @@ public class DecisionQueue implements Serializable {
      *
      * @return the pending decisions 
      */
-    protected Decision[] decisions()
-    {
-        return m_queue.toArray( new Decision[m_queue.size()] );
+    protected Decision[] decisions() {
+        return m_queue.toArray( new Decision[ m_queue.size() ] );
     }
 
     /**
@@ -71,8 +70,7 @@ public class DecisionQueue implements Serializable {
      *
      * @param decision the decision to remove
      */
-    protected synchronized void remove( final Decision decision )
-    {
+    protected synchronized void remove( final Decision decision ) {
         m_queue.remove( decision );
     }
 
@@ -109,8 +107,7 @@ public class DecisionQueue implements Serializable {
 
     /**
      * Attempts to complete a Decision by calling {@link Decision#decide(Outcome)}. This will cause the Step immediately following the
-     * Decision (if any) to start. If the decision completes successfully, this method also removes the completed decision from the
-     * queue.
+     * Decision (if any) to start. If the decision completes successfully, this method also removes the completed decision from the queue.
      *
      * @param decision the Decision for which the Outcome will be supplied
      * @param outcome the Outcome of the Decision

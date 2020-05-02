@@ -20,12 +20,12 @@ package org.apache.wiki.workflow;
 
 import java.security.Principal;
 
+
 /**
  * System users asociated with workflow Task steps.
- * 
  */
-public final class SystemPrincipal implements Principal
-{
+public final class SystemPrincipal implements Principal {
+
     /** The JSPWiki system user */
     public static final Principal SYSTEM_USER = new SystemPrincipal( "System User" );
 
@@ -33,18 +33,17 @@ public final class SystemPrincipal implements Principal
 
     /**
      * Private constructor to prevent direct instantiation.
+     *
      * @param name the name of the Principal
      */
-    private SystemPrincipal( String name )
-    {
+    private SystemPrincipal( final String name ) {
         m_name = name;
     }
 
     /**
      * {@inheritDoc}
      */
-    public String getName()
-    {
+    public String getName() {
         return m_name;
     }
 

@@ -78,7 +78,7 @@ public class TestEngine extends WikiEngine {
      * Creates WikiSession with the privileges of the administrative user. For testing purposes, obviously.
      *
      * @return the wiki session
-     * @throws WikiSecurityException
+     * @throws WikiSecurityException admin login operation had some trouble
      */
     public Session adminSession() throws WikiSecurityException {
         if ( m_adminWikiSession == null ) {
@@ -108,7 +108,7 @@ public class TestEngine extends WikiEngine {
      * Creates WikiSession with the privileges of the Janne. For testing purposes, obviously.
      *
      * @return the wiki session
-     * @throws WikiSecurityException
+     * @throws WikiSecurityException janne login operation had some trouble
      */
     public Session janneSession() throws WikiSecurityException {
         if ( m_janneWikiSession == null ) {
@@ -135,6 +135,7 @@ public class TestEngine extends WikiEngine {
      * @param entries additional configuration entries that may overwrite default test properties.
      * @return TestEngine using {@link #getTestProperties()} and additional configuration.
      */
+    @SafeVarargs
     public static TestEngine build( final Map.Entry< String, String >... entries ) {
         final Properties properties = getTestProperties();
         for( final Map.Entry< String, String > entry : entries ) {
@@ -266,7 +267,7 @@ public class TestEngine extends WikiEngine {
         }
     }
 
-    public static final Properties getTestProperties() {
+    public static Properties getTestProperties() {
         if (combinedProperties == null) {
             combinedProperties = PropertyReader.getCombinedProperties(PropertyReader.CUSTOM_JSPWIKI_CONFIG);
         }
@@ -277,7 +278,7 @@ public class TestEngine extends WikiEngine {
         return propCopy;
     }
 
-    public static final Properties getTestProperties( final String customPropFile) {
+    public static Properties getTestProperties( final String customPropFile) {
         return PropertyReader.getCombinedProperties(customPropFile);
     }
 /*
@@ -393,10 +394,11 @@ public class TestEngine extends WikiEngine {
     }
 
     /**
-     *  Adds an attachment to a page for testing purposes.
-     * @param pageName
-     * @param attachmentName
-     * @param data
+     * Adds an attachment to a page for testing purposes.
+     *
+     * @param pageName page name
+     * @param attachmentName attachment name
+     * @param data attachment data
      */
     public void addAttachment( final String pageName, final String attachmentName, final byte[] data ) throws ProviderException, IOException {
         final Attachment att = Wiki.contents().attachment( this,pageName,attachmentName );
@@ -404,13 +406,12 @@ public class TestEngine extends WikiEngine {
     }
 
     /**
-     * Convenience method that saves a wiki page by constructing a fake
-     * WikiContext and HttpServletRequest. We always want to do this using a
-     * WikiContext whose subject contains Role.ADMIN.
-     * Note: the WikiPage author will have the default value of "Guest".
-     * @param pageName
-     * @param content
-     * @throws WikiException
+     * Convenience method that saves a wiki page by constructing a fake WikiContext and HttpServletRequest. We always want to do this
+     * using a WikiContext whose subject contains Role.ADMIN. Note: the WikiPage author will have the default value of "Guest".
+     *
+     * @param pageName page name
+     * @param content page content
+     * @throws WikiException associated login operation or page save had some trouble
      */
     public void saveText( final String pageName, final String content ) throws WikiException {
         // Build new request and associate our admin session
