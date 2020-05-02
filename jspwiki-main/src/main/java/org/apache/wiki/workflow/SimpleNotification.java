@@ -20,6 +20,7 @@ package org.apache.wiki.workflow;
 
 import org.apache.wiki.api.exceptions.WikiException;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public final class SimpleNotification extends Decision {
      * @param messageKey the message key
      * @param actor the Principal who will acknowledge the message
      */
-    public SimpleNotification( final int workflowId, final Map< String, Object > workflowContext, final String messageKey, final Principal actor ) {
+    public SimpleNotification( final int workflowId, final Map< String, Serializable > workflowContext, final String messageKey, final Principal actor ) {
         super( workflowId, workflowContext, messageKey, actor, Outcome.DECISION_ACKNOWLEDGE );
     }
     

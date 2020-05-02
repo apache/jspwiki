@@ -95,7 +95,7 @@ public interface Context extends Cloneable, Command {
      *  @since 2.3.14
      *  @see org.apache.wiki.tags.InsertPageTag
      */
-    Page setRealPage( Page wikiPagePage );
+    Page setRealPage( Page wikiPage );
 
     /**
      *  Returns the handling engine.

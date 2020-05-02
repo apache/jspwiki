@@ -73,7 +73,6 @@ public class PreSaveWikiPageTask extends Task {
         final String saveText = m_context.getEngine().getManager( FilterManager.class ).doPreSaveFiltering(m_context, m_proposedText);
 
         // Stash the wiki context, old and new text as workflow attributes
-        getWorkflowContext().put( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT, m_context );
         getWorkflowContext().put( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT, saveText );
         return Outcome.STEP_COMPLETE;
     }

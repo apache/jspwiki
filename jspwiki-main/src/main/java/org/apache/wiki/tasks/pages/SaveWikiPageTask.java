@@ -38,11 +38,14 @@ public class SaveWikiPageTask extends Task {
 
     private static final long serialVersionUID = 3190559953484411420L;
 
+    final Context context;
+
     /**
      * Creates the Task.
      */
-    public SaveWikiPageTask() {
+    public SaveWikiPageTask( final Context context ) {
         super( TasksManager.WIKIPAGE_SAVE_TASK_MESSAGE_KEY );
+        this.context = context;
     }
 
     /**
@@ -51,7 +54,6 @@ public class SaveWikiPageTask extends Task {
     @Override
     public Outcome execute() throws WikiException {
         // Retrieve attributes
-        final Context context = ( Context )getWorkflowContext().get( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT );
         final String proposedText = ( String )getWorkflowContext().get( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT );
 
         final Engine engine = context.getEngine();

@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.workflow;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public abstract class Task extends AbstractStep {
      * @param workflowContext the parent workflow context to set
      * @param messageKey      the i18n message key
      */
-    public Task( final int workflowId, final Map< String, Object > workflowContext, final String messageKey ) {
+    public Task( final int workflowId, final Map< String, Serializable > workflowContext, final String messageKey ) {
         this( messageKey );
         setWorkflow( workflowId, workflowContext );
     }

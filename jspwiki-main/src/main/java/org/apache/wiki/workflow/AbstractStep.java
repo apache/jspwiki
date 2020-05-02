@@ -20,6 +20,7 @@ package org.apache.wiki.workflow;
 
 import org.apache.wiki.api.exceptions.WikiException;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,7 +56,7 @@ public abstract class AbstractStep implements Step {
     private int workflowId;
 
     /** attribute map. */
-    private Map< String, Object > workflowContext;
+    private Map< String, Serializable > workflowContext;
 
     private Outcome m_outcome;
 
@@ -89,7 +90,7 @@ public abstract class AbstractStep implements Step {
      * @param messageKey the Step's message key, such as {@code decision.editPageApproval}. By convention, the message prefix should
      *                   be a lower-case version of the Step's type, plus a period (<em>e.g.</em>, {@code task.} and {@code decision.}).
      */
-    public AbstractStep( final int workflowId, final Map< String, Object > workflowContext, final String messageKey ) {
+    public AbstractStep( final int workflowId, final Map< String, Serializable > workflowContext, final String messageKey ) {
         this( messageKey );
         setWorkflow( workflowId, workflowContext );
     }
@@ -216,7 +217,7 @@ public abstract class AbstractStep implements Step {
      * @param workflowId the parent workflow id to set
      * @param workflowContext the parent workflow context to set
      */
-    public final synchronized void setWorkflow( final int workflowId, final Map< String, Object > workflowContext ) {
+    public final synchronized void setWorkflow( final int workflowId, final Map< String, Serializable > workflowContext ) {
         this.workflowId = workflowId;
         this.workflowContext = workflowContext;
     }
@@ -225,7 +226,7 @@ public abstract class AbstractStep implements Step {
         return workflowId;
     }
 
-    public Map< String, Object > getWorkflowContext() {
+    public Map< String, Serializable > getWorkflowContext() {
         return workflowContext;
     }
 

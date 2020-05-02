@@ -21,6 +21,7 @@ package org.apache.wiki.workflow;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WorkflowEvent;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,7 +69,7 @@ public abstract class Decision extends AbstractStep {
      * @param actor the Principal (<em>e.g.</em>, a WikiPrincipal, Role, GroupPrincipal) who is required to select an appropriate Outcome
      * @param defaultOutcome the Outcome that the user interface will recommend as the default choice
      */
-    public Decision( final int workflowId, final Map< String, Object > workflowContext, final String messageKey, final Principal actor, final Outcome defaultOutcome ) {
+    public Decision( final int workflowId, final Map< String, Serializable > workflowContext, final String messageKey, final Principal actor, final Outcome defaultOutcome ) {
         super( workflowId, workflowContext, messageKey );
         m_actor = actor;
         m_defaultOutcome = defaultOutcome;

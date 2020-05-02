@@ -45,8 +45,8 @@ public class DefaultTasksManager implements TasksManager {
      * {@inheritDoc}
      */
     @Override
-    public Step buildSaveWikiPageTask() {
-        return new SaveWikiPageTask();
+    public Step buildSaveWikiPageTask( final Context context ) {
+        return new SaveWikiPageTask( context );
     }
     
     /**

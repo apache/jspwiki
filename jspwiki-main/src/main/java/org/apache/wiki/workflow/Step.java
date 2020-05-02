@@ -188,6 +188,6 @@ public interface Step extends Serializable {
      * @param workflowId the parent workflow id to set
      * @param workflowContext the parent workflow context to set
      */
-    void setWorkflow( final int workflowId, final Map< String, Object > workflowContext );
+    void setWorkflow( final int workflowId, final Map< String, Serializable > workflowContext );
 
 }

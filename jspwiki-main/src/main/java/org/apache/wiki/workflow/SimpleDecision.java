@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.workflow;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class SimpleDecision extends Decision {
      * @param messageKey the message key that describes the Decision, which will be presented in the UI
      * @param actor the Principal (<em>e.g.</em>, WikiPrincipal, GroupPrincipal, Role) who will decide
      */
-    public SimpleDecision( final int workflowId, final Map< String, Object > workflowContext, final String messageKey, final Principal actor ) {
+    public SimpleDecision( final int workflowId, final Map< String, Serializable > workflowContext, final String messageKey, final Principal actor ) {
         super( workflowId, workflowContext, messageKey, actor, Outcome.DECISION_APPROVE );
 
         // Add the other default outcomes

@@ -229,26 +229,18 @@ public class ApprovalWorkflowTest {
         // Create a sample test page and try to save it
         final String pageName = "SaveWikiPageWorkflow-Test" + System.currentTimeMillis();
         final String text = "This is a test!";
-        try {
-            m_engine.saveTextAsJanne(pageName, text);
-        } catch( final WikiException e ) {
-            Assertions.assertTrue( e instanceof FilterException );
-            Assertions.assertEquals( "Page save aborted.", e.getMessage() );
-            return;
-        }
-        Assertions.fail( "Page save should have thrown a FilterException, but didn't." );
+        final FilterException fe = Assertions.assertThrows( FilterException.class, () -> m_engine.saveTextAsJanne( pageName, text ) );
+        Assertions.assertEquals( "Page save aborted.", fe.getMessage() );
     }
 
     /**
-     * Sample "prep task" that sets an attribute in the workflow indicating
-     * that it ran successfully,
+     * Sample "prep task" that sets an attribute in the workflow indicating that it ran successfully,
      */
     public static class TestPrepTask extends Task {
 
         private static final long serialVersionUID = 1L;
 
-        public TestPrepTask( final String messageKey )
-        {
+        public TestPrepTask( final String messageKey ) {
             super( messageKey );
         }
 

@@ -105,7 +105,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </p>
  * <ul>
  * <li><strong>Named attributes</strong> are simple key-value pairs that Workflow participants can get or set. Keys are Strings; values
- * can be any Object. Named attributes are set with {@link #setAttribute(String, Object)} and retrieved with {@link #getAttribute(String)}.</li>
+ * can be any Object. Named attributes are set with {@link #setAttribute(String, Serializable)} and retrieved with {@link #getAttribute(String)}.</li>
  * <li><strong>Message arguments</strong> are used in combination with JSPWiki's {@link org.apache.wiki.i18n.InternationalizationManager} to
  * create language-independent user interface messages. The message argument array is retrieved via {@link #getMessageArguments()}; the
  * first two array elements will always be these: a String representing work flow owner's name, and a String representing the current
@@ -186,7 +186,7 @@ public class Workflow implements Serializable {
     public static final int CREATED = -2;
 
     /** attribute map. */
-    private Map< String, Object > m_attributes;
+    private Map< String, Serializable > m_attributes;
 
     /** The initial Step for this Workflow. */
     private Step m_firstStep;
@@ -321,7 +321,7 @@ public class Workflow implements Serializable {
      *
      * @return workflow's attributes.
      */
-    public final Map< String, Object > getAttributes() {
+    public final Map< String, Serializable > getAttributes() {
         return m_attributes;
     }
 
@@ -495,7 +495,7 @@ public class Workflow implements Serializable {
      * @param attr the attribute name
      * @param obj  the value
      */
-    public final void setAttribute( final String attr, final Object obj ) {
+    public final void setAttribute( final String attr, final Serializable obj ) {
         m_attributes.put( attr, obj );
     }
 

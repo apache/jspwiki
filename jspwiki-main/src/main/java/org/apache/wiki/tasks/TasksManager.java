@@ -52,10 +52,11 @@ public interface TasksManager {
     
     /**
      * Builds a save WikiPage task.
-     * 
+     *
+     * @param context associated wiki context.
      * @return a save WikiPage task.
      */
-    Step buildSaveWikiPageTask();
+    Step buildSaveWikiPageTask( Context context );
     
     /**
      * Builds a save user profile task.

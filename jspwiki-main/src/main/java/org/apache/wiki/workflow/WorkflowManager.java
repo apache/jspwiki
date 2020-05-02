@@ -36,8 +36,6 @@ import java.util.Set;
  */
 public interface WorkflowManager extends WikiEventListener, Initializable {
 
-    /** The workflow attribute which stores the wikiContext. */
-    String WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT = "wikiContext";
     /** The name of the key from jspwiki.properties which defines who shall approve the workflow of storing a wikipage.  Value is <tt>{@value}</tt> */
     String WF_WP_SAVE_APPROVER = "workflow.saveWikiPage";
     /** The message key for storing the Decision text for saving a page.  Value is {@value}. */
