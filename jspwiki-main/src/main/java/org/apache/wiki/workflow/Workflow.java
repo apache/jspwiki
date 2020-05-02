@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -164,6 +165,8 @@ public class Workflow implements Serializable {
 
     private static final long serialVersionUID = 5228149040690660032L;
 
+    private static final AtomicInteger idsCounter = new AtomicInteger( 1 );
+
     /** ID value: the workflow ID has not been set. */
     public static final int ID_NOT_SET = 0;
 
@@ -217,12 +220,13 @@ public class Workflow implements Serializable {
         m_attributes = new ConcurrentHashMap<>();
         m_currentStep = null;
         m_history = new LinkedList<>();
-        m_id = ID_NOT_SET;
+        m_id = idsCounter.getAndIncrement();
         m_key = messageKey;
         m_messageArgs = new ArrayList<>();
         m_owner = owner;
         m_started = false;
         m_state = CREATED;
+        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.CREATED );
     }
 
     /**
@@ -243,7 +247,7 @@ public class Workflow implements Serializable {
 
         if( m_currentStep != null ) {
             if( m_currentStep instanceof Decision ) {
-                WorkflowEventEmitter.fireEvent( ( Decision )m_currentStep, WorkflowEvent.DQ_REMOVAL );
+                WorkflowEventEmitter.fireEvent( m_currentStep, WorkflowEvent.DQ_REMOVAL );
             }
             m_currentStep.setOutcome( Outcome.STEP_ABORT );
             m_history.addLast( m_currentStep );
@@ -310,6 +314,15 @@ public class Workflow implements Serializable {
      */
     public final Object getAttribute( final String attr ) {
         return m_attributes.get( attr );
+    }
+
+    /**
+     * Retrieves workflow's attributes.
+     *
+     * @return workflow's attributes.
+     */
+    public final Map< String, Object > getAttributes() {
+        return m_attributes;
     }
 
     /**
@@ -461,6 +474,7 @@ public class Workflow implements Serializable {
         if( m_state != WAITING ) {
             throw new IllegalStateException( "Workflow is not paused; cannot restart." );
         }
+        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.STARTED );
         m_state = RUNNING;
         WorkflowEventEmitter.fireEvent( this, WorkflowEvent.RUNNING );
 
@@ -522,10 +536,11 @@ public class Workflow implements Serializable {
         if( m_started ) {
             throw new IllegalStateException( "Workflow has already started." );
         }
+        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.STARTED );
         m_started = true;
         m_state = RUNNING;
-        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.RUNNING );
 
+        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.RUNNING );
         // Mark the first step as the current one & add to history
         m_currentStep = m_firstStep;
         m_history.add( m_currentStep );

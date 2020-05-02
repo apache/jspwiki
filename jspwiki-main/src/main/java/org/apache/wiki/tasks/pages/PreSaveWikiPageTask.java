@@ -19,14 +19,12 @@
 package org.apache.wiki.tasks.pages;
 
 import org.apache.wiki.api.core.Context;
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.tasks.TasksManager;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
-import org.apache.wiki.workflow.Workflow;
 import org.apache.wiki.workflow.WorkflowManager;
 
 import java.security.Principal;
@@ -60,10 +58,6 @@ public class PreSaveWikiPageTask extends Task {
      */
     @Override
     public Outcome execute() throws WikiException {
-        // Retrieve attributes
-        final Engine engine = m_context.getEngine();
-        final Workflow workflow = getWorkflow();
-
         // Get the wiki page
         final Page page = m_context.getPage();
 
@@ -76,11 +70,11 @@ public class PreSaveWikiPageTask extends Task {
         }
 
         // Run the pre-save filters. If any exceptions, add error to list, abort, and redirect
-        final String saveText = engine.getManager( FilterManager.class ).doPreSaveFiltering(m_context, m_proposedText);
+        final String saveText = m_context.getEngine().getManager( FilterManager.class ).doPreSaveFiltering(m_context, m_proposedText);
 
         // Stash the wiki context, old and new text as workflow attributes
-        workflow.setAttribute( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT, m_context );
-        workflow.setAttribute( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT, saveText );
+        getWorkflowContext().put( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT, m_context );
+        getWorkflowContext().put( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT, saveText );
         return Outcome.STEP_COMPLETE;
     }
 

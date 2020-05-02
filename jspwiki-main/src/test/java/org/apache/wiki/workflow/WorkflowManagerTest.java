@@ -41,7 +41,7 @@ public class WorkflowManagerTest {
         w = new Workflow( "workflow.key", new WikiPrincipal( "Owner1" ) );
         final Step startTask = new TaskTest.NormalTask( w );
         final Step endTask = new TaskTest.NormalTask( w );
-        final Decision decision = new SimpleDecision( w, "decision.editWikiApproval", new WikiPrincipal( "Actor1" ) );
+        final Decision decision = new SimpleDecision( w.getId(), w.getAttributes(), "decision.editWikiApproval", new WikiPrincipal( "Actor1" ) );
         startTask.addSuccessor( Outcome.STEP_COMPLETE, decision );
         decision.addSuccessor( Outcome.DECISION_APPROVE, endTask );
         w.setFirstStep( startTask );
@@ -52,9 +52,7 @@ public class WorkflowManagerTest {
 
     @Test
     public void testStart() throws WikiException {
-        // Once we start the workflow, it should show that it's started
-        // and the WM should have assigned it an ID
-        Assertions.assertEquals( Workflow.ID_NOT_SET, w.getId() );
+        // Once we start the workflow, it should show that it's started and the WM should have assigned it an ID
         Assertions.assertFalse( w.isStarted() );
         wm.start( w );
         Assertions.assertNotEquals( Workflow.ID_NOT_SET, w.getId() );
@@ -63,17 +61,16 @@ public class WorkflowManagerTest {
 
     @Test
     public void testWorkflows() throws WikiException {
-        // There should be no workflows in the cache, and none in completed list
-        Assertions.assertEquals( 0, wm.getWorkflows().size() );
+        // After Workflow being created, it gets added to the workflows cache, there should be none in the completed list
+        Assertions.assertEquals( 1, wm.getWorkflows().size() );
         Assertions.assertEquals( 0, wm.getCompletedWorkflows().size() );
 
-        // After starting, there should be 1 in the cache, with ID=1
+        // After starting, there should be 1 in the cache
         wm.start( w );
         Assertions.assertEquals( 1, wm.getWorkflows().size() );
         Assertions.assertEquals( 0, wm.getCompletedWorkflows().size() );
         final Workflow workflow = wm.getWorkflows().iterator().next();
         Assertions.assertEquals( w, workflow );
-        Assertions.assertEquals( 1, workflow.getId() );
 
         // After forcing a decision on step 2, the workflow should complete and vanish from the cache
         final Decision d = ( Decision )w.getCurrentStep();

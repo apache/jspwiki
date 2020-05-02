@@ -51,8 +51,8 @@ public class SaveWikiPageTask extends Task {
     @Override
     public Outcome execute() throws WikiException {
         // Retrieve attributes
-        final Context context = ( Context ) getWorkflow().getAttribute( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT );
-        final String proposedText = (String) getWorkflow().getAttribute( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT );
+        final Context context = ( Context )getWorkflowContext().get( WorkflowManager.WF_WP_SAVE_ATTR_PRESAVE_WIKI_CONTEXT );
+        final String proposedText = ( String )getWorkflowContext().get( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT );
 
         final Engine engine = context.getEngine();
         final Page page = context.getPage();

@@ -18,8 +18,11 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WorkflowEvent;
+
+import java.util.Set;
 
 
 /**
@@ -37,6 +40,16 @@ public enum WorkflowEventEmitter {
         if ( WikiEventManager.isListening( get() ) ) {
             WikiEventManager.fireEvent( get(), new WorkflowEvent( src, type ) );
         }
+    }
+
+    public static void registerListener( final WikiEventListener listener ) {
+        if ( WikiEventManager.isListening( get() ) ) {
+            final Set< WikiEventListener > attachedListeners = WikiEventManager.getWikiEventListeners( get() );
+            attachedListeners.stream()
+                             .filter( l -> listener.getClass().isAssignableFrom( l.getClass() ) )
+                             .forEach( WikiEventManager::removeWikiEventListener );
+        }
+        WikiEventManager.addWikiEventListener( WorkflowEventEmitter.get(), listener );
     }
 
 }

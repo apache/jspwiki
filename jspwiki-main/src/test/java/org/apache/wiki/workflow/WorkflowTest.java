@@ -32,6 +32,8 @@ import java.util.Date;
 
 public class WorkflowTest {
 
+    WorkflowManager workflowsEventListener;
+
     Workflow w;
 
     Task initTask;
@@ -44,6 +46,9 @@ public class WorkflowTest {
 
     @BeforeEach
     public void setUp() throws Exception {
+        // listen to workflow events
+        workflowsEventListener = new DefaultWorkflowManager();
+
         // Create workflow; owner is test user
         w = new Workflow( "workflow.myworkflow", new WikiPrincipal( "Owner1" ) );
 
@@ -55,7 +60,7 @@ public class WorkflowTest {
 
         // Create an intermetidate decision step
         final Principal actor = new GroupPrincipal( "Admin" );
-        decision = new SimpleDecision( w, "decision.AdminDecision", actor );
+        decision = new SimpleDecision( w.getId(), w.getAttributes(), "decision.AdminDecision", actor );
 
         // Hook the steps together
         initTask.addSuccessor( Outcome.STEP_COMPLETE, decision );
@@ -74,7 +79,6 @@ public class WorkflowTest {
         Assertions.assertNull( w.getCurrentStep() );
         Assertions.assertNull( w.getCurrentActor() );
         Assertions.assertEquals( 0, w.getHistory().size() );
-        Assertions.assertEquals( Workflow.ID_NOT_SET, w.getId() );
         Assertions.assertEquals( new WikiPrincipal( "Owner1" ), w.getOwner() );
         Assertions.assertEquals( Workflow.CREATED, w.getCurrentState() );
         Assertions.assertEquals( Step.TIME_NOT_SET, w.getStartTime() );
@@ -355,7 +359,6 @@ public class WorkflowTest {
 
     @Test
     public void testSetId() {
-        Assertions.assertEquals( Workflow.ID_NOT_SET, w.getId() );
         w.setId( 1001 );
         Assertions.assertEquals( 1001, w.getId() );
     }

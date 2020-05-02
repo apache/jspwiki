@@ -18,19 +18,20 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
-import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WorkflowEvent;
 
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -45,6 +46,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class DefaultWorkflowManager implements WorkflowManager {
 
+    private static final Logger LOG = Logger.getLogger( DefaultWorkflowManager.class );
+
     private final DecisionQueue m_queue = new DecisionQueue();
     private final Set< Workflow > m_workflows;
     private final Map< String, Principal > m_approvers;
@@ -52,15 +55,13 @@ public class DefaultWorkflowManager implements WorkflowManager {
     private Engine m_engine = null;
 
     /**
-     * Constructs a new WorkflowManager, with an empty workflow cache. New Workflows are automatically assigned unique identifiers,
-     * starting with 1.
+     * Constructs a new WorkflowManager, with an empty workflow cache.
      */
     public DefaultWorkflowManager() {
-        m_next = 1;
         m_workflows = ConcurrentHashMap.newKeySet();
         m_approvers = new ConcurrentHashMap<>();
         m_completed = new CopyOnWriteArrayList<>();
-        WikiEventManager.addWikiEventListener( WorkflowEventEmitter.get(), this );
+        WorkflowEventEmitter.registerListener( this );
     }
 
     /**
@@ -68,8 +69,6 @@ public class DefaultWorkflowManager implements WorkflowManager {
      */
     @Override
     public void start( final Workflow workflow ) throws WikiException {
-        m_workflows.add( workflow );
-        workflow.setId( nextId() );
         workflow.start();
     }
 
@@ -176,19 +175,6 @@ public class DefaultWorkflowManager implements WorkflowManager {
         return m_queue;
     }
 
-    private volatile int m_next;
-
-    /**
-     * Returns the next available unique identifier, which is subsequently incremented.
-     *
-     * @return the id
-     */
-    private synchronized int nextId() {
-        final int current = m_next;
-        m_next++;
-        return current;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -251,9 +237,6 @@ public class DefaultWorkflowManager implements WorkflowManager {
      * @param workflow the workflow to add
      */
     protected void add( final Workflow workflow ) {
-        if ( workflow.getId() == Workflow.ID_NOT_SET ) {
-            workflow.setId( nextId() );
-        }
         m_workflows.add( workflow );
     }
 
@@ -271,7 +254,21 @@ public class DefaultWorkflowManager implements WorkflowManager {
     }
 
     protected void removeFromDecisionQueue( final Decision decision ) {
-        getDecisionQueue().remove( decision );
+        // If current workflow is waiting for input, restart it and remove Decision from DecisionQueue
+        final int workflowId = decision.getWorkflowId();
+        final Optional< Workflow > optw = m_workflows.stream().filter( w -> w.getId() == workflowId ).findAny();
+        if( optw.isPresent() ) {
+            final Workflow w = optw.get();
+            if( w.getCurrentState() == Workflow.WAITING && decision.equals( w.getCurrentStep() ) ) {
+                getDecisionQueue().remove( decision );
+                // Restart workflow
+                try {
+                    w.restart();
+                } catch( final WikiException e ) {
+                    LOG.error( "restarting workflow #" + w.getId() + " caused " + e.getMessage(), e );
+                }
+            }
+        }
     }
 
     protected void addToDecisionQueue( final Decision decision ) {

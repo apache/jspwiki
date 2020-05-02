@@ -25,6 +25,8 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+
 
 /**
  * <p>
@@ -124,14 +126,6 @@ public interface Step extends Serializable {
     String getMessageKey();
 
     /**
-     * Returns the message arguments for this Step, typically by delegating to the parent Workflow's {@link Workflow#getMessageArguments()}
-     * method.
-     * 
-     * @return the message arguments.
-     */
-    Serializable[] getMessageArguments();
-
-    /**
      * Returns the Outcome of this Step's processing; by default, {@link Outcome#STEP_CONTINUE}.
      * 
      * @return the outcome
@@ -181,13 +175,6 @@ public interface Step extends Serializable {
     void setOutcome( Outcome outcome );
 
     /**
-     * Convenience method that returns the owner of the Workflow by delegating to {@link Workflow#getOwner()}.
-     * 
-     * @return the owner of the Workflow
-     */
-    Principal getOwner();
-
-    /**
      * Identifies the next Step for a particular Outcome; if there is no next Step for this Outcome, this method returns <code>null</code>.
      * 
      * @param outcome the outcome
@@ -196,17 +183,11 @@ public interface Step extends Serializable {
     Step getSuccessor( Outcome outcome );
 
     /**
-     * Gets the Workflow that is the parent of this Step.
-     *
-     * @return the workflow
-     */
-    Workflow getWorkflow();
-
-    /**
      * Sets the parent Workflow post-construction. Should be called after building a {@link Step}.
      *
-     * @param workflow the parent workflow to set
+     * @param workflowId the parent workflow id to set
+     * @param workflowContext the parent workflow context to set
      */
-    void setWorkflow( Workflow workflow );
+    void setWorkflow( final int workflowId, final Map< String, Object > workflowContext );
 
 }

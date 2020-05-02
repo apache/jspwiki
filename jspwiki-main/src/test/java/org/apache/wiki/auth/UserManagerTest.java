@@ -326,7 +326,7 @@ public class UserManagerTest {
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_EMAIL, profile.getEmail() ), facts.get( 3 ) );
-        Assertions.assertEquals( profile, d.getWorkflow().getAttribute( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE ) );
+        Assertions.assertEquals( profile, d.getWorkflowContext().get( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE ) );
 
         // Approve the profile
         d.decide( Outcome.DECISION_APPROVE );
@@ -377,7 +377,7 @@ public class UserManagerTest {
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_EMAIL, profile.getEmail() ), facts.get( 3 ) );
-        Assertions.assertEquals( profile, d.getWorkflow().getAttribute( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE ) );
+        Assertions.assertEquals( profile, d.getWorkflowContext().get( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE ) );
 
         // Approve the profile
         d.decide( Outcome.DECISION_DENY );

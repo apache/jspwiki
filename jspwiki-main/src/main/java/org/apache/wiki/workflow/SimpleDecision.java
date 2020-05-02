@@ -19,30 +19,27 @@
 package org.apache.wiki.workflow;
 
 import java.security.Principal;
+import java.util.Map;
+
 
 /**
- * Decision subclass that includes two available Outcomes:
- * {@link Outcome#DECISION_APPROVE} or {@link Outcome#DECISION_DENY}.
- * The Decision is reassignable, and the default Outcome is 
- * {@link Outcome#DECISION_APPROVE}.
- * 
+ * Decision subclass that includes two available Outcomes: {@link Outcome#DECISION_APPROVE} or {@link Outcome#DECISION_DENY}.
+ * The Decision is reassignable, and the default Outcome is {@link Outcome#DECISION_APPROVE}.
  */
-public class SimpleDecision extends Decision
-{
+public class SimpleDecision extends Decision {
 
     private static final long serialVersionUID = 8192213077644617341L;
 
     /**
      * Constructs a new SimpleDecision assigned to a specified actor.
-     * @param workflow the parent Workflow
-     * @param messageKey the message key that describes the Decision, which
-     * will be presented in the UI
-     * @param actor the Principal (<em>e.g.</em>, WikiPrincipal,
-     * GroupPrincipal, Role) who will decide
+     *
+     * @param workflowId the parent workflow id to set
+     * @param workflowContext the parent workflow context to set
+     * @param messageKey the message key that describes the Decision, which will be presented in the UI
+     * @param actor the Principal (<em>e.g.</em>, WikiPrincipal, GroupPrincipal, Role) who will decide
      */
-    public SimpleDecision( Workflow workflow, String messageKey, Principal actor )
-    {
-        super( workflow, messageKey, actor, Outcome.DECISION_APPROVE );
+    public SimpleDecision( final int workflowId, final Map< String, Object > workflowContext, final String messageKey, final Principal actor ) {
+        super( workflowId, workflowContext, messageKey, actor, Outcome.DECISION_APPROVE );
 
         // Add the other default outcomes
         super.addSuccessor( Outcome.DECISION_DENY, null );

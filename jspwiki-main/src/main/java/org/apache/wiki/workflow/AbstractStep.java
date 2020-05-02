@@ -20,7 +20,6 @@ package org.apache.wiki.workflow;
 
 import org.apache.wiki.api.exceptions.WikiException;
 
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -53,7 +52,10 @@ public abstract class AbstractStep implements Step {
 
     private final Map< Outcome, Step > m_successors;
 
-    private Workflow m_workflow;
+    private int workflowId;
+
+    /** attribute map. */
+    private Map< String, Object > workflowContext;
 
     private Outcome m_outcome;
 
@@ -63,7 +65,7 @@ public abstract class AbstractStep implements Step {
 
     /**
      * Protected constructor that creates a new Step with a specified message key. After construction, the method
-     * {@link #setWorkflow(Workflow)} should be called.
+     * {@link #setWorkflow(int, Map)} should be called.
      *
      * @param messageKey the Step's message key, such as {@code decision.editPageApproval}. By convention, the message prefix should
      *                   be a lower-case version of the Step's type, plus a period (<em>e.g.</em>, {@code task.} and {@code decision.}).
@@ -82,13 +84,14 @@ public abstract class AbstractStep implements Step {
     /**
      * Constructs a new Step belonging to a specified Workflow and having a specified message key.
      *
-     * @param workflow the workflow the Step belongs to
+     * @param workflowId the parent workflow id to set
+     * @param workflowContext the parent workflow context to set
      * @param messageKey the Step's message key, such as {@code decision.editPageApproval}. By convention, the message prefix should
      *                   be a lower-case version of the Step's type, plus a period (<em>e.g.</em>, {@code task.} and {@code decision.}).
      */
-    public AbstractStep( final Workflow workflow, final String messageKey ) {
+    public AbstractStep( final int workflowId, final Map< String, Object > workflowContext, final String messageKey ) {
         this( messageKey );
-        setWorkflow( workflow );
+        setWorkflow( workflowId, workflowContext );
     }
 
     /**
@@ -133,16 +136,6 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
-    public final Serializable[] getMessageArguments() {
-        if( m_workflow == null ) {
-            return new Serializable[ 0 ];
-        }
-        return m_workflow.getMessageArguments();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public final String getMessageKey() {
         return m_key;
     }
@@ -157,25 +150,8 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
-    public Principal getOwner() {
-        if( m_workflow == null ) {
-            return null;
-        }
-        return m_workflow.getOwner();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public final Date getStartTime() {
         return m_start;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public final synchronized Workflow getWorkflow() {
-        return m_workflow;
     }
 
     /**
@@ -235,12 +211,22 @@ public abstract class AbstractStep implements Step {
     // --------------------------Helper methods--------------------------
 
     /**
-     * method that sets the parent Workflow post-construction.
+     * method that sets the parent Workflow id and context post-construction.
      *
-     * @param workflow the parent workflow to set
+     * @param workflowId the parent workflow id to set
+     * @param workflowContext the parent workflow context to set
      */
-    public final synchronized void setWorkflow( final Workflow workflow ) {
-        m_workflow = workflow;
+    public final synchronized void setWorkflow( final int workflowId, final Map< String, Object > workflowContext ) {
+        this.workflowId = workflowId;
+        this.workflowContext = workflowContext;
+    }
+
+    public int getWorkflowId() {
+        return workflowId;
+    }
+
+    public Map< String, Object > getWorkflowContext() {
+        return workflowContext;
     }
 
     /**

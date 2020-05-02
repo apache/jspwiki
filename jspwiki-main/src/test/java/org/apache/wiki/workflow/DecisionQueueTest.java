@@ -54,12 +54,12 @@ public class DecisionQueueTest {
         adminSession = m_engine.adminSession();
         janneSession = m_engine.janneSession();
         w = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
-        d1 = new SimpleDecision(w, "decision1.key", new GroupPrincipal("Admin"));
-        d2 = new SimpleDecision(w, "decision2.key", new WikiPrincipal("Owner2"));
-        d3 = new SimpleDecision(w, "decision3.key", janneSession.getUserPrincipal());
-        m_queue.add(d1);
-        m_queue.add(d2);
-        m_queue.add(d3);
+        d1 = new SimpleDecision( w.getId(), w.getAttributes(), "decision1.key", new GroupPrincipal( "Admin" ) );
+        d2 = new SimpleDecision( w.getId(), w.getAttributes(), "decision2.key", new WikiPrincipal( "Owner2" ) );
+        d3 = new SimpleDecision( w.getId(), w.getAttributes(), "decision3.key", janneSession.getUserPrincipal() );
+        m_queue.add( d1 );
+        m_queue.add( d2 );
+        m_queue.add( d3 );
     }
 
     @Test
@@ -150,38 +150,37 @@ public class DecisionQueueTest {
     }
 
     @Test
-    public void testDecisionWorkflow() throws WikiException
-    {
+    public void testDecisionWorkflow() throws WikiException {
         final Principal janne = janneSession.getUserPrincipal();
 
         // Clean out the queue first
-        m_queue.remove(d1);
-        m_queue.remove(d2);
-        m_queue.remove(d3);
+        m_queue.remove( d1 );
+        m_queue.remove( d2 );
+        m_queue.remove( d3 );
 
         // Create a workflow with 3 steps, with a Decision for Janne in the middle
-        w = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
-        final Step startTask = new TaskTest.NormalTask(w);
-        final Step endTask = new TaskTest.NormalTask(w);
-        final Decision decision = new SimpleDecision(w, "decision.Actor1Decision", janne);
-        startTask.addSuccessor(Outcome.STEP_COMPLETE, decision);
-        decision.addSuccessor(Outcome.DECISION_APPROVE, endTask);
-        w.setFirstStep(startTask);
+        w = new Workflow( "workflow.key", new WikiPrincipal( "Owner1" ) );
+        final Step startTask = new TaskTest.NormalTask( w );
+        final Step endTask = new TaskTest.NormalTask( w );
+        final Decision decision = new SimpleDecision( w.getId(), w.getAttributes(), "decision.Actor1Decision", janne );
+        startTask.addSuccessor( Outcome.STEP_COMPLETE, decision );
+        decision.addSuccessor( Outcome.DECISION_APPROVE, endTask );
+        w.setFirstStep( startTask );
 
         // Start the workflow, and verify that the Decision is the current Step
         w.start();
-        Assertions.assertEquals(decision, w.getCurrentStep());
+        Assertions.assertEquals( decision, w.getCurrentStep() );
 
         // Verify that it's also in Janne's DecisionQueue
-        Collection< Decision > decisions = m_queue.getActorDecisions(janneSession);
-        Assertions.assertEquals(1, decisions.size());
-        final Decision d = (Decision)decisions.iterator().next();
-        Assertions.assertEquals(decision, d);
+        Collection< Decision > decisions = m_queue.getActorDecisions( janneSession );
+        Assertions.assertEquals( 1, decisions.size() );
+        final Decision d = ( Decision )decisions.iterator().next();
+        Assertions.assertEquals( decision, d );
 
         // Make Decision, and verify that it's gone from the queue
-        m_queue.decide(decision, Outcome.DECISION_APPROVE);
-        decisions = m_queue.getActorDecisions(janneSession);
-        Assertions.assertEquals(0, decisions.size());
+        m_queue.decide( decision, Outcome.DECISION_APPROVE );
+        decisions = m_queue.getActorDecisions( janneSession );
+        Assertions.assertEquals( 0, decisions.size() );
     }
 
 }

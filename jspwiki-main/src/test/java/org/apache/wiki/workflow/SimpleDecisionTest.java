@@ -36,7 +36,7 @@ public class SimpleDecisionTest {
     @BeforeEach
     public void setUp() throws Exception {
         m_workflow = new Workflow( "workflow.key", new WikiPrincipal( "Owner1" ) );
-        m_decision = new SimpleDecision( m_workflow, "decision.key", new WikiPrincipal( "Actor1" ) );
+        m_decision = new SimpleDecision( m_workflow.getId(), m_workflow.getAttributes(), "decision.key", new WikiPrincipal( "Actor1" ) );
     }
 
     @Test
@@ -79,11 +79,11 @@ public class SimpleDecisionTest {
     @Test
     public void testSuccessors() {
         // If the decision is approved, branch to another decision (d2)
-        final Step d2 = new SimpleDecision( m_workflow, "decision2.key", new WikiPrincipal( "Actor1" ) );
+        final Step d2 = new SimpleDecision( m_workflow.getId(), m_workflow.getAttributes(), "decision2.key", new WikiPrincipal( "Actor1" ) );
         m_decision.addSuccessor( Outcome.DECISION_APPROVE, d2 );
 
         // If the decision is denied, branch to another decision (d3)
-        final Step d3 = new SimpleDecision( m_workflow, "decision3.key", new WikiPrincipal( "Actor1" ) );
+        final Step d3 = new SimpleDecision( m_workflow.getId(), m_workflow.getAttributes(), "decision3.key", new WikiPrincipal( "Actor1" ) );
         m_decision.addSuccessor( Outcome.DECISION_DENY, d3 );
 
         Assertions.assertEquals( d2, m_decision.getSuccessor( Outcome.DECISION_APPROVE ) );
@@ -148,7 +148,7 @@ public class SimpleDecisionTest {
 
     @Test
     public void testGetWorkflow() {
-        Assertions.assertEquals( m_workflow, m_decision.getWorkflow() );
+        Assertions.assertEquals( m_workflow.getId(), m_decision.getWorkflowId() );
     }
 
     @Test

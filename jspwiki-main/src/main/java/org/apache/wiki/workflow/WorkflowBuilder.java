@@ -117,7 +117,7 @@ public final class WorkflowBuilder {
         if ( decisionRequired ) {
             // Look up the name of the approver (user or group) listed in jspwiki.properties; approvals go to the approver's decision queue
             final Principal approverPrincipal = mgr.getApprover( workflowApproverKey );
-            final Decision decision = new SimpleDecision( workflow, decisionKey, approverPrincipal );
+            final Decision decision = new SimpleDecision( workflow.getId(), workflow.getAttributes(), decisionKey, approverPrincipal );
 
             // Add facts to the Decision, if any were supplied
             if( facts != null ) {
@@ -132,7 +132,7 @@ public final class WorkflowBuilder {
 
             // If rejected, sent a notification
             if ( rejectedMessageKey != null ) {
-                final SimpleNotification rejectNotification = new SimpleNotification( workflow, rejectedMessageKey, submitter );
+                final SimpleNotification rejectNotification = new SimpleNotification( workflow.getId(), workflow.getAttributes(), rejectedMessageKey, submitter );
                 decision.addSuccessor( Outcome.DECISION_DENY, rejectNotification );
             }
 
@@ -158,9 +158,9 @@ public final class WorkflowBuilder {
 
         // Make sure our tasks have this workflow as the parent, then return
         if( prepTask != null ) {
-            prepTask.setWorkflow( workflow );
+            prepTask.setWorkflow( workflow.getId(), workflow.getAttributes() );
         }
-        completionTask.setWorkflow( workflow );
+        completionTask.setWorkflow( workflow.getId(), workflow.getAttributes() );
         return workflow;
     }
 

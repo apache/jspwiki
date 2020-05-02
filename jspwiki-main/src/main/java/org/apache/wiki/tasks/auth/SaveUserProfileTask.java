@@ -48,7 +48,7 @@ public class SaveUserProfileTask extends Task {
     @Override
     public Outcome execute() throws WikiException {
         // Retrieve user profile
-        final UserProfile profile = ( UserProfile )getWorkflow().getAttribute( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE );
+        final UserProfile profile = ( UserProfile )getWorkflowContext().get( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE );
 
         // Save the profile (userdatabase will take care of timestamps for us)
         m_engine.getManager( UserManager.class ).getUserDatabase().save( profile );

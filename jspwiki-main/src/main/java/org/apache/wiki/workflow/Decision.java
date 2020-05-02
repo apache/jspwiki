@@ -25,6 +25,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -61,13 +62,14 @@ public abstract class Decision extends AbstractStep {
     /**
      * Constructs a new Decision for a required "actor" Principal, having a default Outcome.
      *
-     * @param workflow the parent Workflow object
+     * @param workflowId the parent workflow id to set
+     * @param workflowContext the parent workflow context to set
      * @param messageKey the i18n message key that represents the message the actor will see
      * @param actor the Principal (<em>e.g.</em>, a WikiPrincipal, Role, GroupPrincipal) who is required to select an appropriate Outcome
      * @param defaultOutcome the Outcome that the user interface will recommend as the default choice
      */
-    public Decision( final Workflow workflow, final String messageKey, final Principal actor, final Outcome defaultOutcome ) {
-        super( workflow, messageKey );
+    public Decision( final int workflowId, final Map< String, Object > workflowContext, final String messageKey, final Principal actor, final Outcome defaultOutcome ) {
+        super( workflowId, workflowContext, messageKey );
         m_actor = actor;
         m_defaultOutcome = defaultOutcome;
         m_facts = new ArrayList<>();
@@ -104,14 +106,7 @@ public abstract class Decision extends AbstractStep {
      */
     public void decide( final Outcome outcome ) throws WikiException {
         super.setOutcome( outcome );
-
-        // If current workflow is waiting for input, restart it and remove Decision from DecisionQueue
-        final Workflow w = getWorkflow();
-        if( w.getCurrentState() == Workflow.WAITING && this.equals( w.getCurrentStep() ) ) {
-            WorkflowEventEmitter.fireEvent( this, WorkflowEvent.DQ_REMOVAL );
-            // Restart workflow
-            w.restart();
-        }
+        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.DQ_REMOVAL );
     }
 
     /**

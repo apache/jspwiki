@@ -40,7 +40,7 @@ public class TaskTest
 
         public NormalTask( final Workflow workflow)
         {
-            super(workflow, "task.normal");
+            super(workflow.getId(), workflow.getAttributes(), "task.normal");
         }
         public Outcome execute() throws WikiException
         {
@@ -56,7 +56,7 @@ public class TaskTest
 
         public ErrorTask( final Workflow workflow)
         {
-            super(workflow, "task.error");
+            super(workflow.getId(), workflow.getAttributes(), "task.error");
         }
         public Outcome execute() throws WikiException
         {
@@ -86,11 +86,11 @@ public class TaskTest
     public void testSuccessors()
     {
         // If task finishes normally, branch to a decision (d1)
-        final Step d1 = new SimpleDecision(m_workflow, "decision1.key", new WikiPrincipal("Actor1"));
+        final Step d1 = new SimpleDecision(m_workflow.getId(), m_workflow.getAttributes(), "decision1.key", new WikiPrincipal("Actor1"));
         m_task.addSuccessor(Outcome.STEP_COMPLETE, d1);
 
         // If the task aborts, branch to an alternate decision (d2)
-        final Step d2 = new SimpleDecision(m_workflow, "decision2.key", new WikiPrincipal("Actor2"));
+        final Step d2 = new SimpleDecision(m_workflow.getId(), m_workflow.getAttributes(), "decision2.key", new WikiPrincipal("Actor2"));
         m_task.addSuccessor(Outcome.STEP_ABORT, d2);
 
         Assertions.assertEquals(d1, m_task.getSuccessor(Outcome.STEP_COMPLETE));
@@ -171,7 +171,7 @@ public class TaskTest
     @Test
     public void testGetWorkflow()
     {
-        Assertions.assertEquals(m_workflow, m_task.getWorkflow());
+        Assertions.assertEquals(m_workflow.getId(), m_task.getWorkflowId() );
     }
 
     @Test
