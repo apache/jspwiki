@@ -63,6 +63,12 @@ public final class WorkflowEvent extends WikiEvent {
     /** When the workflow wishes to remove a Decision from the DecisionQueue */
     public static final int DQ_REMOVAL = 70;
 
+    /** When the workflow wishes to remove a Decision from the DecisionQueue */
+    public static final int DQ_DECIDE = 80;
+
+    /** When the workflow wishes to remove a Decision from the DecisionQueue */
+    public static final int DQ_REASSIGN = 90;
+
     /**
      * Constructs a new instance of this event type, which signals a security event has occurred. 
      * The <code>source</code> parameter is required, and may not be <code>null</code>. When the 

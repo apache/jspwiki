@@ -20,6 +20,8 @@ package org.apache.wiki.workflow;
 
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.event.WikiEventEmitter;
+import org.apache.wiki.event.WorkflowEvent;
 
 import java.io.Serializable;
 import java.security.Principal;
@@ -119,7 +121,7 @@ public class DecisionQueue implements Serializable {
             remove( decision );
         }
 
-        // TODO: We should fire an event indicating the Outcome, and whether the Decision completed successfully
+        WikiEventEmitter.fireWorkflowEvent( decision, WorkflowEvent.DQ_DECIDE );
     }
 
     /**
@@ -133,7 +135,7 @@ public class DecisionQueue implements Serializable {
         if( decision.isReassignable() ) {
             decision.reassign( owner );
 
-            // TODO: We should fire an event indicating the reassignment
+            WikiEventEmitter.fireWorkflowEvent( decision, WorkflowEvent.DQ_REASSIGN );
             return;
         }
         throw new IllegalStateException( "Reassignments not allowed for this decision." );
