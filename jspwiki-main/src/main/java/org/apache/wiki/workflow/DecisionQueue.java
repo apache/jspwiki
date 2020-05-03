@@ -28,6 +28,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 /**
  * Keeps a queue of pending Decisions that need to be acted on by named Principals.
@@ -40,11 +42,10 @@ public class DecisionQueue implements Serializable {
 
     private final LinkedList< Decision > m_queue = new LinkedList<>();
 
-    private volatile int m_next;
+    private final AtomicInteger next = new AtomicInteger( 1_000 );
 
     /** Constructs a new DecisionQueue. */
     public DecisionQueue() {
-        m_next = 1000;
     }
 
     /**
@@ -54,7 +55,7 @@ public class DecisionQueue implements Serializable {
      */
     protected synchronized void add( final Decision decision ) {
         m_queue.addLast( decision );
-        decision.setId( nextId() );
+        decision.setId( next.getAndIncrement() );
     }
 
     /**
@@ -139,17 +140,6 @@ public class DecisionQueue implements Serializable {
             return;
         }
         throw new IllegalStateException( "Reassignments not allowed for this decision." );
-    }
-
-    /**
-     * Returns the next available unique identifier, which is subsequently incremented.
-     *
-     * @return the id
-     */
-    private synchronized int nextId() {
-        final int current = m_next;
-        m_next++;
-        return current;
     }
 
 }
