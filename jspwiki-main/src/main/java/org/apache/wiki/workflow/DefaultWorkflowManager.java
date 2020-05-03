@@ -69,14 +69,6 @@ public class DefaultWorkflowManager implements WorkflowManager {
      * {@inheritDoc}
      */
     @Override
-    public void start( final Workflow workflow ) throws WikiException {
-        workflow.start();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Set< Workflow > getWorkflows() {
         final Set< Workflow > workflows = ConcurrentHashMap.newKeySet();
         workflows.addAll( m_workflows );

@@ -72,15 +72,6 @@ public interface WorkflowManager extends WikiEventListener, Initializable {
     String PROPERTY_APPROVER_PREFIX = "jspwiki.approver.";
 
     /**
-     * Adds a new workflow to the set of workflows and starts it. The new workflow is automatically assigned a unique ID. If another
-     * workflow with the same ID already exists, this method throws a WikIException.
-     *
-     * @param workflow the workflow to start
-     * @throws WikiException if a workflow the automatically assigned ID already exist; this should not happen normally
-     */
-    void start( Workflow workflow ) throws WikiException;
-
-    /**
      * Returns a collection of the currently active workflows.
      *
      * @return the current workflows

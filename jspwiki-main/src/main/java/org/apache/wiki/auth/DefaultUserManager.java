@@ -273,7 +273,7 @@ public class DefaultUserManager implements UserManager {
                                                                  null );
 
         workflow.setAttribute( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE, profile );
-        m_engine.getManager( WorkflowManager.class ).start( workflow );
+        workflow.start();
 
         final boolean approvalRequired = workflow.getCurrentStep() instanceof Decision;
 

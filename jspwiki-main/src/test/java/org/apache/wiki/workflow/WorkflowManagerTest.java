@@ -54,7 +54,7 @@ public class WorkflowManagerTest {
     public void testStart() throws WikiException {
         // Once we start the workflow, it should show that it's started and the WM should have assigned it an ID
         Assertions.assertFalse( w.isStarted() );
-        wm.start( w );
+        w.start();
         Assertions.assertNotEquals( Workflow.ID_NOT_SET, w.getId() );
         Assertions.assertTrue( w.isStarted() );
     }
@@ -66,7 +66,7 @@ public class WorkflowManagerTest {
         Assertions.assertEquals( 0, wm.getCompletedWorkflows().size() );
 
         // After starting, there should be 1 in the cache
-        wm.start( w );
+        w.start();
         Assertions.assertEquals( 1, wm.getWorkflows().size() );
         Assertions.assertEquals( 0, wm.getCompletedWorkflows().size() );
         final Workflow workflow = wm.getWorkflows().iterator().next();

@@ -264,7 +264,7 @@ public class DefaultPageManager implements PageManager {
                                                                  facts,
                                                                  completionTask,
                                                                  rejectKey );
-        m_engine.getManager( WorkflowManager.class ).start( workflow );
+        workflow.start();
 
         // Let callers know if the page-save requires approval
         if ( workflow.getCurrentStep() instanceof Decision ) {
