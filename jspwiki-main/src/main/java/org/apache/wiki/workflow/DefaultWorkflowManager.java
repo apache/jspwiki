@@ -25,6 +25,7 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
+import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
 
 import java.security.Principal;
@@ -61,7 +62,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
         m_workflows = ConcurrentHashMap.newKeySet();
         m_approvers = new ConcurrentHashMap<>();
         m_completed = new CopyOnWriteArrayList<>();
-        WorkflowEventEmitter.registerListener( this );
+        WikiEventEmitter.attach( this );
     }
 
     /**

@@ -19,6 +19,7 @@
 package org.apache.wiki.workflow;
 
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
 
 import java.io.Serializable;
@@ -226,7 +227,7 @@ public class Workflow implements Serializable {
         m_owner = owner;
         m_started = false;
         m_state = CREATED;
-        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.CREATED );
+        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.CREATED );
     }
 
     /**
@@ -247,13 +248,13 @@ public class Workflow implements Serializable {
 
         if( m_currentStep != null ) {
             if( m_currentStep instanceof Decision ) {
-                WorkflowEventEmitter.fireEvent( m_currentStep, WorkflowEvent.DQ_REMOVAL );
+                WikiEventEmitter.fireWorkflowEvent( m_currentStep, WorkflowEvent.DQ_REMOVAL );
             }
             m_currentStep.setOutcome( Outcome.STEP_ABORT );
             m_history.addLast( m_currentStep );
         }
         m_state = ABORTED;
-        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.ABORTED );
+        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.ABORTED );
         cleanup();
     }
 
@@ -474,9 +475,9 @@ public class Workflow implements Serializable {
         if( m_state != WAITING ) {
             throw new IllegalStateException( "Workflow is not paused; cannot restart." );
         }
-        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.STARTED );
+        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.STARTED );
         m_state = RUNNING;
-        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.RUNNING );
+        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.RUNNING );
 
         // Process current step
         try {
@@ -536,11 +537,11 @@ public class Workflow implements Serializable {
         if( m_started ) {
             throw new IllegalStateException( "Workflow has already started." );
         }
-        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.STARTED );
+        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.STARTED );
         m_started = true;
         m_state = RUNNING;
 
-        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.RUNNING );
+        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.RUNNING );
         // Mark the first step as the current one & add to history
         m_currentStep = m_firstStep;
         m_history.add( m_currentStep );
@@ -563,7 +564,7 @@ public class Workflow implements Serializable {
             throw new IllegalStateException( "Workflow is not running; cannot pause." );
         }
         m_state = WAITING;
-        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.WAITING );
+        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.WAITING );
     }
 
     /**
@@ -581,7 +582,7 @@ public class Workflow implements Serializable {
     protected final synchronized void complete() {
         if( !isCompleted() ) {
             m_state = COMPLETED;
-            WorkflowEventEmitter.fireEvent( this, WorkflowEvent.COMPLETED );
+            WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.COMPLETED );
             cleanup();
         }
     }

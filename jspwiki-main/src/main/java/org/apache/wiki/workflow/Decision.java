@@ -19,6 +19,7 @@
 package org.apache.wiki.workflow;
 
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
 
 import java.io.Serializable;
@@ -107,7 +108,7 @@ public abstract class Decision extends AbstractStep {
      */
     public void decide( final Outcome outcome ) throws WikiException {
         super.setOutcome( outcome );
-        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.DQ_REMOVAL );
+        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.DQ_REMOVAL );
     }
 
     /**
@@ -124,7 +125,7 @@ public abstract class Decision extends AbstractStep {
         }
 
         // Put decision in the DecisionQueue
-        WorkflowEventEmitter.fireEvent( this, WorkflowEvent.DQ_ADDITION );
+        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.DQ_ADDITION );
 
         // Indicate we are waiting for user input
         return Outcome.STEP_CONTINUE;
