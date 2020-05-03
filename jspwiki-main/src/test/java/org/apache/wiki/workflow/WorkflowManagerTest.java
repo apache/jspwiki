@@ -94,14 +94,7 @@ public class WorkflowManagerTest {
         Assertions.assertEquals( new GroupPrincipal( "Admin" ), wm.getApprover( "workflow.bar" ) );
 
         // 'saveWikiPage' workflow doesn't require approval, so we will need to catch an Exception
-        try {
-            Assertions.assertEquals( new GroupPrincipal( "Admin" ), wm.getApprover( "workflow.saveWikiPage" ) );
-        } catch( final WikiException e ) {
-            // Swallow
-            return;
-        }
-        // We should never get here
-        Assertions.fail( "Workflow.bar doesn't need approval!" );
+        Assertions.assertThrows( WikiException.class, () -> wm.getApprover( "workflow.saveWikiPage" ) );
     }
 
 }
