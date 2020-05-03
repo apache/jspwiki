@@ -239,7 +239,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
         sw.stop();
         log.info( "Cross reference scan done in "+sw );
 
-        WikiEventManager.getInstance().addWikiEventListener( m_engine.getManager( PageManager.class ), this );
+        WikiEventManager.addWikiEventListener( m_engine.getManager( PageManager.class ), this );
     }
 
     /**
