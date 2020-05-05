@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -32,7 +33,10 @@ import java.util.Date;
 
 public class WorkflowTest {
 
-    WorkflowManager workflowsEventListener;
+    TestEngine engine = TestEngine.build();
+
+    // listen to workflow events
+    WorkflowManager workflowsEventListener = new DefaultWorkflowManager();
 
     Workflow w;
 
@@ -46,8 +50,7 @@ public class WorkflowTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        // listen to workflow events
-        workflowsEventListener = new DefaultWorkflowManager();
+        workflowsEventListener.initialize( engine, TestEngine.getTestProperties() );
 
         // Create workflow; owner is test user
         w = new Workflow( "workflow.myworkflow", new WikiPrincipal( "Owner1" ) );
