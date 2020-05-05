@@ -19,6 +19,19 @@ under the License.
 
 **2020-04-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
+* _2.11.0-M7-git-19_
+
+* [JSPWIKI-304](https://issues.apache.org/jira/browse/JSPWIKI-304): Workflows are not Serializable
+
+* Dependency updates
+    * Flexmark to 0.61.26
+    * JUnit to 5.6.2
+    * Lucene to 8.5.1
+    * Selenide to 5.11.1
+    * Tika to 1.24
+
+**2020-04-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
 * _2.11.0-M7-git-18_
 
 * [JSPWIKI-303](https://issues.apache.org/jira/browse/JSPWIKI-303): [JSPWiki API](https://jspwiki-wiki.apache.org/Wiki.jsp?page=JSPWikiPublicAPI) library creation
