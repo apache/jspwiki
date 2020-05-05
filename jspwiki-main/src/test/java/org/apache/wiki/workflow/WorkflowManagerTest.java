@@ -23,20 +23,22 @@ import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.event.WorkflowEvent;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+
 
 public class WorkflowManagerTest {
 
-    protected Workflow w;
-    protected WorkflowManager wm;
     protected WikiEngine m_engine = TestEngine.build();
+    protected WorkflowManager wm = m_engine.getManager( WorkflowManager.class );
+    protected Workflow w;
 
     @BeforeEach
     public void setUp() throws Exception {
-        wm = m_engine.getManager( WorkflowManager.class );
         // Create a workflow with 3 steps, with a Decision in the middle
         w = new Workflow( "workflow.key", new WikiPrincipal( "Owner1" ) );
         final Step startTask = new TaskTest.NormalTask( w );
@@ -95,6 +97,32 @@ public class WorkflowManagerTest {
 
         // 'saveWikiPage' workflow doesn't require approval, so we will need to catch an Exception
         Assertions.assertThrows( WikiException.class, () -> wm.getApprover( "workflow.saveWikiPage" ) );
+    }
+
+    @Test
+    public void testSerializeUnserialize() throws WikiException {
+        final DefaultWorkflowManager dwm = new DefaultWorkflowManager();
+        dwm.initialize( m_engine, TestEngine.getTestProperties() );
+
+        dwm.unserializeFromDisk( new File( "./target/test-classes", DefaultWorkflowManager.SERIALIZATION_FILE ) );
+        Assertions.assertEquals( 1, dwm.m_workflows.size() );
+        Assertions.assertEquals( 1, dwm.m_queue.decisions().length );
+        Assertions.assertEquals( 0, dwm.m_completed.size() );
+
+        final Workflow workflow = dwm.m_workflows.iterator().next();
+        final Decision d = ( Decision )workflow.getCurrentStep();
+        d.decide( Outcome.DECISION_APPROVE );
+        dwm.actionPerformed( new WorkflowEvent( workflow, WorkflowEvent.COMPLETED ) );
+        dwm.actionPerformed( new WorkflowEvent( d, WorkflowEvent.DQ_REMOVAL ) );
+        Assertions.assertEquals( 0, dwm.getWorkflows().size() );
+        Assertions.assertEquals( 0, dwm.m_queue.decisions().length );
+        Assertions.assertEquals( 1, dwm.getCompletedWorkflows().size() );
+        dwm.serializeToDisk( new File( "./target/test-classes", DefaultWorkflowManager.SERIALIZATION_FILE ) );
+
+        dwm.unserializeFromDisk( new File( "./target/test-classes", DefaultWorkflowManager.SERIALIZATION_FILE ) );
+        Assertions.assertEquals( 0, dwm.m_workflows.size() );
+        Assertions.assertEquals( 0, dwm.m_queue.decisions().length );
+        Assertions.assertEquals( 1, dwm.m_completed.size() );
     }
 
 }

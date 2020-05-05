@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
@@ -28,6 +29,14 @@ import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +57,15 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DefaultWorkflowManager implements WorkflowManager {
 
     private static final Logger LOG = Logger.getLogger( DefaultWorkflowManager.class );
+    static final String SERIALIZATION_FILE = "wkflmgr.ser";
 
-    private final DecisionQueue m_queue = new DecisionQueue();
-    private final Set< Workflow > m_workflows;
-    private final Map< String, Principal > m_approvers;
-    private final List< Workflow > m_completed;
+    /** We use this also a generic serialization id */
+    private static final long serialVersionUID = 6L;
+
+    DecisionQueue m_queue = new DecisionQueue();
+    Set< Workflow > m_workflows;
+    final Map< String, Principal > m_approvers;
+    List< Workflow > m_completed;
     private Engine m_engine = null;
 
     /**
@@ -110,6 +123,59 @@ public class DefaultWorkflowManager implements WorkflowManager {
                     }
                 }
             }
+        }
+
+        unserializeFromDisk( new File( m_engine.getWorkDir(), SERIALIZATION_FILE ) );
+    }
+
+    /**
+     *  Reads the serialized data from the disk back to memory.
+     *
+     * @return the date when the data was last written on disk or {@code 0} if there has been problems reading from disk.
+     */
+    @SuppressWarnings( "unchecked" )
+    synchronized long unserializeFromDisk( final File f ) {
+        long saved = 0L;
+        final StopWatch sw = new StopWatch();
+        sw.start();
+        try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( new FileInputStream( f ) ) ) ) {
+            final long ver = in.readLong();
+            if( ver != serialVersionUID ) {
+                LOG.warn( "File format has changed; Unable to recover workflows and decision queue from disk." );
+            } else {
+                saved        = in.readLong();
+                m_workflows  = ( Set< Workflow > )in.readObject();
+                m_queue      = ( DecisionQueue )in.readObject();
+                m_completed  = ( List< Workflow > )in.readObject();
+                LOG.debug( "Read serialized data successfully in " + sw );
+            }
+        } catch( final IOException | ClassNotFoundException e ) {
+            LOG.error( "unable to recover from disk workflows and decision queue: " + e.getMessage(), e );
+        }
+        sw.stop();
+
+        return saved;
+    }
+
+    /**
+     *  Serializes workflows and decisionqueue to disk.  The format is private, don't touch it.
+     */
+    synchronized void serializeToDisk( final File f ) {
+        try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( new FileOutputStream( f ) ) ) ) {
+            final StopWatch sw = new StopWatch();
+            sw.start();
+
+            out.writeLong( serialVersionUID );
+            out.writeLong( System.currentTimeMillis() ); // Timestamp
+            out.writeObject( m_workflows );
+            out.writeObject( m_queue );
+            out.writeObject( m_completed );
+
+            sw.stop();
+
+            LOG.debug( "serialization done - took " + sw );
+        } catch( final IOException ioe ) {
+            LOG.error( "Unable to serialize!", ioe );
         }
     }
 
@@ -220,6 +286,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
                 default: break;
                 }
             }
+            serializeToDisk( new File( m_engine.getWorkDir(), SERIALIZATION_FILE ) );
         }
     }
 
