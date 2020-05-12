@@ -126,7 +126,7 @@ public final class PropertyReader {
                 //  Use the custom property file at the default location
                 propertyStream =  locateClassPathResource(context, CUSTOM_JSPWIKI_CONFIG);
             } else {
-                LOG.info(PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file.");
+                LOG.trace(PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file.");
                 propertyStream = new FileInputStream( new File(propertyFile) );
             }
 
