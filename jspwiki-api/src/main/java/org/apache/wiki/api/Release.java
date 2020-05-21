@@ -69,7 +69,7 @@ public final class Release {
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "git-19";
+    public static final String     BUILD         = "git-20";
 
     /**
      *  This is the generic version string you should use when printing out the version.  It is of

@@ -17,6 +17,14 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-05-21  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M7-git-20_
+
+* Dependency updates
+    * Flexmark to 0.61.32
+    * Tomcat to 9.0.35
+
 **2020-04-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-19_
