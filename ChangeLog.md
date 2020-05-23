@@ -23,7 +23,6 @@ under the License.
 
 * Dependency updates
     * Flexmark to 0.61.32
-	* Selenide to 5.12.0
     * Tomcat to 9.0.35
 
 **2020-04-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
