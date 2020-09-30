@@ -107,14 +107,14 @@ public class WorkflowTest {
         Assertions.assertEquals( "MyPage", args[ 2 ] );
 
         // After start (at Decision), arg1=Owner1, arg2=Admin, arg3=MyPage
-        w.start();
+        w.start( null );
         args = w.getMessageArguments();
         Assertions.assertEquals( "Owner1", args[ 0 ] );
         Assertions.assertEquals( "Admin", args[ 1 ] );
         Assertions.assertEquals( "MyPage", args[ 2 ] );
 
         // After end, arg1=Owner1, arg2=-, arg3=MyPage
-        decision.decide( Outcome.DECISION_APPROVE );
+        decision.decide( Outcome.DECISION_APPROVE, null );
         args = w.getMessageArguments();
         Assertions.assertEquals( "Owner1", args[ 0 ] );
         Assertions.assertEquals( "-", args[ 1 ] );
@@ -153,13 +153,13 @@ public class WorkflowTest {
     @Test
     public void testStart() throws WikiException {
         Assertions.assertFalse( w.isStarted() );
-        w.start();
+        w.start( null );
         Assertions.assertTrue( w.isStarted() );
     }
 
     @Test
     public void testWaitstate() throws WikiException {
-        w.start();
+        w.start( null );
 
         // Default workflow should have hit the Decision step and put itself
         // into WAITING
@@ -168,12 +168,12 @@ public class WorkflowTest {
 
     @Test
     public void testRestart() throws WikiException {
-        w.start();
+        w.start( null );
 
         // Default workflow should have hit the Decision step and put itself
         // into WAITING
         Assertions.assertEquals( Workflow.WAITING, w.getCurrentState() );
-        w.restart();
+        w.restart( null );
         Assertions.assertEquals( Workflow.WAITING, w.getCurrentState() );
     }
 
@@ -181,12 +181,12 @@ public class WorkflowTest {
     public void testAbortBeforeStart() throws WikiException {
         // Workflow hasn't been started yet
         Assertions.assertFalse( w.isAborted() );
-        w.abort();
+        w.abort( null );
         Assertions.assertTrue( w.isAborted() );
 
         // Try to start anyway
         try {
-            w.start();
+            w.start( null );
         } catch( final IllegalStateException e ) {
             // Swallow
             return;
@@ -199,13 +199,13 @@ public class WorkflowTest {
     public void testAbortDuringWait() throws WikiException {
         // Start workflow, then abort while in WAITING state
         Assertions.assertFalse( w.isAborted() );
-        w.start();
-        w.abort();
+        w.start( null );
+        w.abort( null );
         Assertions.assertTrue( w.isAborted() );
 
         // Try to restart anyway
         try {
-            w.restart();
+            w.restart( null );
         } catch( final IllegalStateException e ) {
             // Swallow
             return;
@@ -218,13 +218,13 @@ public class WorkflowTest {
     public void testAbortAfterCompletion() throws WikiException {
         // Start workflow, then abort after completion
         Assertions.assertFalse( w.isAborted() );
-        w.start();
+        w.start( null );
         final Decision d = ( Decision )w.getCurrentStep();
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, null );
 
         // Try to abort anyway
         try {
-            w.abort();
+            w.abort( null );
             Assertions.assertTrue( w.isAborted() );
         } catch( final IllegalStateException e ) {
             // Swallow
@@ -237,25 +237,24 @@ public class WorkflowTest {
     @Test
     public void testCurrentState() throws WikiException {
         Assertions.assertEquals( Workflow.CREATED, w.getCurrentState() );
-        w.start();
+        w.start( null );
         Assertions.assertEquals( Workflow.WAITING, w.getCurrentState() );
         final Decision d = ( Decision )w.getCurrentStep();
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertEquals( Workflow.COMPLETED, w.getCurrentState() );
     }
 
     @Test
     public void testCurrentStep() throws WikiException {
         Assertions.assertNull( w.getCurrentStep() );
-        w.start();
+        w.start( null );
 
         // Workflow stops at the decision step
         Assertions.assertEquals( decision, w.getCurrentStep() );
         final Decision d = ( Decision )w.getCurrentStep();
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, null );
 
-        // After we decide, it blows through step 3 and leaves us with a null
-        // step (done)
+        // After we decide, it blows through step 3 and leaves us with a null step (done)
         Assertions.assertNull( w.getCurrentStep() );
     }
 
@@ -267,16 +266,15 @@ public class WorkflowTest {
         Assertions.assertNull( w.previousStep( decision ) );
         Assertions.assertNull( w.previousStep( finishTask ) );
 
-        // Once we start, initTask and decisions' predecessors are known, but
-        // finish task is indeterminate
-        w.start();
+        // Once we start, initTask and decisions' predecessors are known, but finish task is indeterminate
+        w.start( null );
         Assertions.assertNull( w.previousStep( initTask ) );
         Assertions.assertEquals( initTask, w.previousStep( decision ) );
         Assertions.assertNull( w.previousStep( finishTask ) );
 
         // Once we decide, the finish task returns the correct predecessor
         final Decision d = ( Decision )w.getCurrentStep();
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertNull( w.previousStep( initTask ) );
         Assertions.assertEquals( initTask, w.previousStep( decision ) );
         Assertions.assertEquals( decision, w.previousStep( finishTask ) );
@@ -288,22 +286,22 @@ public class WorkflowTest {
         Assertions.assertNull( w.getCurrentActor() );
 
         // After starting, actor should be GroupPrincipal Admin
-        w.start();
+        w.start( null );
         Assertions.assertEquals( new GroupPrincipal( "Admin" ), w.getCurrentActor() );
 
         // After decision, actor should be null again
         final Decision d = ( Decision )w.getCurrentStep();
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertNull( w.getCurrentActor() );
     }
 
     @Test
     public void testHistory() throws WikiException {
         Assertions.assertEquals( 0, w.getHistory().size() );
-        w.start();
+        w.start( null );
         Assertions.assertEquals( 2, w.getHistory().size() );
         final Decision d = ( Decision )w.getCurrentStep();
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertEquals( 3, w.getHistory().size() );
     }
 
@@ -311,10 +309,10 @@ public class WorkflowTest {
     public void testGetStartTime() throws WikiException {
         // Start time should be not be set until we start the workflow
         Assertions.assertEquals( Step.TIME_NOT_SET, w.getStartTime() );
-        w.start();
+        w.start( null );
         Assertions.assertNotSame( Step.TIME_NOT_SET, w.getStartTime() );
         final Decision d = ( Decision )w.getCurrentStep();
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertNotSame( Step.TIME_NOT_SET, w.getStartTime() );
     }
 
@@ -322,10 +320,10 @@ public class WorkflowTest {
     public void testGetEndTime() throws WikiException {
         // End time should be not set until we finish all 3 steps
         Assertions.assertEquals( Step.TIME_NOT_SET, w.getEndTime() );
-        w.start();
+        w.start( null );
         Assertions.assertEquals( Step.TIME_NOT_SET, w.getEndTime() );
         final Decision d = ( Decision )w.getCurrentStep();
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertNotSame( Step.TIME_NOT_SET, w.getEndTime() );
     }
 
@@ -333,31 +331,24 @@ public class WorkflowTest {
     public void testIsCompleted() throws WikiException {
         // Workflow isn't completed until we finish all 3 steps
         Assertions.assertFalse( w.isCompleted() );
-        w.start();
+        w.start( null );
         Assertions.assertFalse( w.isCompleted() );
         final Decision d = ( Decision )w.getCurrentStep();
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertTrue( w.isCompleted() );
     }
 
     @Test
     public void testIsStarted() throws WikiException {
         Assertions.assertFalse( w.isStarted() );
-        w.start();
+        w.start( null );
         Assertions.assertTrue( w.isStarted() );
     }
 
     @Test
     public void testStartTwice() throws WikiException {
-        w.start();
-        try {
-            w.start();
-        } catch( final IllegalStateException e ) {
-            // Swallow
-            return;
-        }
-        // We should never get here
-        Assertions.fail( "Workflow allowed itself to be started twice!" );
+        w.start( null );
+        Assertions.assertThrows( IllegalStateException.class, () -> w.start( null ) );
     }
 
     @Test

@@ -60,7 +60,7 @@ public class CreoleFilter extends BasePageFilter {
     public String preSave( final Context wikiContext, final String content ) {
         try {
             final String username = wikiContext.getCurrentUser().getName();
-            final Properties prop = wikiContext.getEngine().getWikiProperties();
+            final Properties prop = m_engine.getWikiProperties();
             return new CreoleToJSPWikiTranslator().translateSignature(prop, content,username);
         } catch( final Exception e ) {
             log.error( e.getMessage(), e );
@@ -74,7 +74,7 @@ public class CreoleFilter extends BasePageFilter {
     @Override
     public String preTranslate( final Context wikiContext, final String content ) {
         try {
-            final Properties prop = wikiContext.getEngine().getWikiProperties();
+            final Properties prop = m_engine.getWikiProperties();
             return new CreoleToJSPWikiTranslator().translate(prop ,content);
         } catch( final Exception e ) {
             log.error( e.getMessage(), e );

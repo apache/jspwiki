@@ -18,18 +18,12 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Abstract superclass that provides a complete implementation of most Step methods; subclasses need only implement {@link #execute()} and
@@ -120,7 +114,7 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
-    public abstract Outcome execute() throws WikiException;
+    public abstract Outcome execute( Context ctx ) throws WikiException;
 
     /**
      * {@inheritDoc}

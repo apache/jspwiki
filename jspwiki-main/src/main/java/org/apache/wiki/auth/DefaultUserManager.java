@@ -179,7 +179,8 @@ public class DefaultUserManager implements UserManager {
 
     /** {@inheritDoc} */
     @Override
-    public void setUserProfile( final Session session, final UserProfile profile ) throws DuplicateUserException, WikiException {
+    public void setUserProfile( final Context context, final UserProfile profile ) throws DuplicateUserException, WikiException {
+        final Session session = context.getWikiSession();
         // Verify user is allowed to save profile!
         final Permission p = new WikiPermission( m_engine.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
         if ( !m_engine.getManager( AuthorizationManager.class ).checkPermission( session, p ) ) {
@@ -212,7 +213,7 @@ public class DefaultUserManager implements UserManager {
 
         // For new accounts, create approval workflow for user profile save.
         if( newProfile && oldProfile != null && oldProfile.isNew() ) {
-            startUserProfileCreationWorkflow( session, profile );
+            startUserProfileCreationWorkflow( context, profile );
 
             // If the profile doesn't need approval, then just log the user in
 
@@ -250,10 +251,10 @@ public class DefaultUserManager implements UserManager {
 
     /** {@inheritDoc} */
     @Override
-    public void startUserProfileCreationWorkflow( final Session session, final UserProfile profile ) throws WikiException {
+    public void startUserProfileCreationWorkflow( final Context context, final UserProfile profile ) throws WikiException {
         final WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
-        final Principal submitter = session.getUserPrincipal();
-        final Step completionTask = m_engine.getManager( TasksManager.class ).buildSaveUserProfileTask( m_engine, session.getLocale() );
+        final Principal submitter = context.getWikiSession().getUserPrincipal();
+        final Step completionTask = m_engine.getManager( TasksManager.class ).buildSaveUserProfileTask( context.getWikiSession().getLocale() );
 
         // Add user profile attribute as Facts for the approver (if required)
         final boolean hasEmail = profile.getEmail() != null;
@@ -273,7 +274,7 @@ public class DefaultUserManager implements UserManager {
                                                                  null );
 
         workflow.setAttribute( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE, profile );
-        workflow.start();
+        workflow.start( context );
 
         final boolean approvalRequired = workflow.getCurrentStep() instanceof Decision;
 

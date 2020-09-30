@@ -18,8 +18,6 @@
  */
 package org.apache.wiki.tasks;
 
-import org.apache.wiki.api.core.Context;
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.workflow.Step;
 
 import java.security.Principal;
@@ -44,27 +42,24 @@ public interface TasksManager {
     /**
      * Builds a pre-save WikiPage task.
      * 
-     * @param context associated wiki context.
      * @param proposedText text proposed to be saved on the wiki page.
      * @return a pre-save WikiPage task.
      */
-    Step buildPreSaveWikiPageTask( Context context, String proposedText );
+    Step buildPreSaveWikiPageTask( String proposedText );
     
     /**
      * Builds a save WikiPage task.
      *
-     * @param context associated wiki context.
      * @return a save WikiPage task.
      */
-    Step buildSaveWikiPageTask( Context context );
+    Step buildSaveWikiPageTask();
     
     /**
      * Builds a save user profile task.
      * 
-     * @param engine associated wiki context.
      * @param loc text proposed to be saved on the wiki page.
      * @return a save user profile task.
      */
-    Step buildSaveUserProfileTask( Engine engine, Locale loc );
+    Step buildSaveUserProfileTask( Locale loc );
     
 }

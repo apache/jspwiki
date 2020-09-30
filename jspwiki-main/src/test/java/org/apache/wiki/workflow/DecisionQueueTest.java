@@ -99,14 +99,14 @@ public class DecisionQueueTest {
         Assertions.assertEquals(3, m_queue.decisions().length);
 
         // Execute the competion for decision 1 (approve/deny)
-        m_queue.decide(d1, Outcome.DECISION_APPROVE);
+        m_queue.decide(d1, Outcome.DECISION_APPROVE, null);
 
         // Decision should be marked completed, and removed from queue
         Assertions.assertTrue(d1.isCompleted());
         Assertions.assertEquals(2, m_queue.decisions().length);
 
         // Execute the competion for decision 2 (approve/deny/hold)
-        m_queue.decide(d2, Outcome.DECISION_DENY);
+        m_queue.decide(d2, Outcome.DECISION_DENY, null);
 
         // Decision should be marked completed, and removed from queue
         Assertions.assertTrue(d2.isCompleted());
@@ -168,17 +168,17 @@ public class DecisionQueueTest {
         w.setFirstStep( startTask );
 
         // Start the workflow, and verify that the Decision is the current Step
-        w.start();
+        w.start( null );
         Assertions.assertEquals( decision, w.getCurrentStep() );
 
         // Verify that it's also in Janne's DecisionQueue
         Collection< Decision > decisions = m_queue.getActorDecisions( janneSession );
         Assertions.assertEquals( 1, decisions.size() );
-        final Decision d = ( Decision )decisions.iterator().next();
+        final Decision d = decisions.iterator().next();
         Assertions.assertEquals( decision, d );
 
         // Make Decision, and verify that it's gone from the queue
-        m_queue.decide( decision, Outcome.DECISION_APPROVE );
+        m_queue.decide( decision, Outcome.DECISION_APPROVE, null );
         decisions = m_queue.getActorDecisions( janneSession );
         Assertions.assertEquals( 0, decisions.size() );
     }

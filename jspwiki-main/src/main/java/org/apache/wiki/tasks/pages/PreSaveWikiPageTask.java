@@ -27,29 +27,24 @@ import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
 import org.apache.wiki.workflow.WorkflowManager;
 
-import java.security.Principal;
-
 
 /**
  * Handles the page pre-save actions. If the proposed page text is the same as the current version, 
- * the {@link #execute()} method returns {@link org.apache.wiki.workflow.Outcome#STEP_ABORT}. Any
+ * the {@link #execute( Context )} method returns {@link org.apache.wiki.workflow.Outcome#STEP_ABORT}. Any
  * WikiExceptions thrown by page filters will be re-thrown, and the workflow will abort.
  */
 public class PreSaveWikiPageTask extends Task {
 
     private static final long serialVersionUID = 6304715570092804615L;
-    private final Context m_context;
     private final String m_proposedText;
 
     /**
      * Creates the task.
      *
-     * @param context The WikiContext
      * @param proposedText The text that was just saved.
      */
-    public PreSaveWikiPageTask( final Context context, final String proposedText ) {
+    public PreSaveWikiPageTask( final String proposedText ) {
         super( TasksManager.WIKIPAGE_PRESAVE_TASK_MESSAGE_KEY );
-        m_context = context;
         m_proposedText = proposedText;
     }
 
@@ -57,20 +52,16 @@ public class PreSaveWikiPageTask extends Task {
      * {@inheritDoc}
      */
     @Override
-    public Outcome execute() throws WikiException {
+    public Outcome execute( final Context context ) throws WikiException {
         // Get the wiki page
-        final Page page = m_context.getPage();
-
+        final Page page = context.getPage();
         // Figure out who the author was. Prefer the author set programmatically; otherwise get from the current logged in user
-        if( page.getAuthor() == null ) {
-            final Principal wup = m_context.getCurrentUser();
-            if( wup != null ) {
-                page.setAuthor( wup.getName() );
-            }
+        if( context.getPage().getAuthor() == null && context.getCurrentUser() != null ) {
+            page.setAuthor( context.getCurrentUser().getName() );
         }
 
         // Run the pre-save filters. If any exceptions, add error to list, abort, and redirect
-        final String saveText = m_context.getEngine().getManager( FilterManager.class ).doPreSaveFiltering(m_context, m_proposedText);
+        final String saveText = context.getEngine().getManager( FilterManager.class ).doPreSaveFiltering( context, m_proposedText );
 
         // Stash the wiki context, old and new text as workflow attributes
         getWorkflowContext().put( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT, saveText );

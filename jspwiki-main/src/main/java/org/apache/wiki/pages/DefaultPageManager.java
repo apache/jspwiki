@@ -246,8 +246,8 @@ public class DefaultPageManager implements PageManager {
         // messages will appear in his/her workflow inbox.
         final WorkflowBuilder builder = WorkflowBuilder.getBuilder( m_engine );
         final Principal submitter = context.getCurrentUser();
-        final Step prepTask = m_engine.getManager( TasksManager.class ).buildPreSaveWikiPageTask( context, proposedText );
-        final Step completionTask = m_engine.getManager( TasksManager.class ).buildSaveWikiPageTask( context );
+        final Step prepTask = m_engine.getManager( TasksManager.class ).buildPreSaveWikiPageTask( proposedText );
+        final Step completionTask = m_engine.getManager( TasksManager.class ).buildSaveWikiPageTask();
         final String diffText = m_engine.getManager( DifferenceManager.class ).makeDiff( context, oldText, proposedText );
         final boolean isAuthenticated = context.getWikiSession().isAuthenticated();
         final Fact[] facts = new Fact[ 5 ];
@@ -264,7 +264,7 @@ public class DefaultPageManager implements PageManager {
                                                                  facts,
                                                                  completionTask,
                                                                  rejectKey );
-        workflow.start();
+        workflow.start( context );
 
         // Let callers know if the page-save requires approval
         if ( workflow.getCurrentStep() instanceof Decision ) {

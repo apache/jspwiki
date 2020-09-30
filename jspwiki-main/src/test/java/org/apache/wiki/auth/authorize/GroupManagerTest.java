@@ -54,7 +54,7 @@ public class GroupManagerTest
         final Properties props = TestEngine.getTestProperties();
 
         m_engine = new TestEngine( props );
-        m_groupMgr = m_engine.getGroupManager();
+        m_groupMgr = m_engine.getManager( GroupManager.class );
         m_session = WikiSessionTest.adminSession( m_engine );
 
         // Flush any pre-existing groups (left over from previous Assertions.failures, perhaps)

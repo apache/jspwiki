@@ -18,18 +18,14 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,13 +39,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * A Workflow's state (obtained by {@link #getCurrentState()}) will be one of the following:
  * </p>
  * <ul>
- * <li><strong>{@link #CREATED}</strong>: after the Workflow has been instantiated, but before it has been started using the {@link #start()}
+ * <li><strong>{@link #CREATED}</strong>: after the Workflow has been instantiated, but before it has been started using the {@link #start(Context)}
  * method.</li>
- * <li><strong>{@link #RUNNING}</strong>: after the Workflow has been started using the {@link #start()} method, but before it has
+ * <li><strong>{@link #RUNNING}</strong>: after the Workflow has been started using the {@link #start(Context)} method, but before it has
  * finished processing all Steps. Note that a Workflow can only be started once; attempting to start it again results in an
  * IllegalStateException. Callers can place the Workflow into the WAITING state by calling {@link #waitstate()}.</li>
  * <li><strong>{@link #WAITING}</strong>: when the Workflow has temporarily paused, for example because of a pending Decision. Once the
- * responsible actor decides what to do, the caller can change the Workflow back to the RUNNING state by calling the {@link #restart()}
+ * responsible actor decides what to do, the caller can change the Workflow back to the RUNNING state by calling the {@link #restart(Context)}
  * method (this is done automatically by the Decision class, for instance, when the {@link Decision#decide(Outcome)} method is invoked)</li>
  * <li><strong>{@link #COMPLETED}</strong>: after the Workflow has finished processing all Steps, without errors.</li>
  * <li><strong>{@link #ABORTED}</strong>: if a Step has elected to abort the Workflow.</li>
@@ -60,7 +56,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * do not. See the {@link Step} class for more details.
  * </p>
  * <p>
- * After instantiating a new Workflow (but before telling it to {@link #start()}), calling classes should specify the first Step by
+ * After instantiating a new Workflow (but before telling it to {@link #start(Context)}), calling classes should specify the first Step by
  * executing the {@link #setFirstStep(Step)} method. Additional Steps can be chained by invoking the first step's
  * {@link Step#addSuccessor(Outcome, Step)} method.
  * </p>
@@ -70,7 +66,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </p>
  * <ul>
  * <li>The Step's {@link Step#start()} method executes, which sets the start time.</li>
- * <li>The Step's {@link Step#execute()} method is called to begin processing, which will return an Outcome to indicate completion,
+ * <li>The Step's {@link Step#execute(Context)} method is called to begin processing, which will return an Outcome to indicate completion,
  * continuation or errors:</li>
  * <ul>
  * <li>{@link Outcome#STEP_COMPLETE} indicates that the execution method ran without errors, and that the Step should be considered
@@ -79,7 +75,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * be put into the WAITING state.</li>
  * <li>{@link Outcome#STEP_ABORT} indicates that the execution method encountered errors, and should abort the Step <em>and</em> the
  * Workflow as a whole. When this happens, the Workflow will set the current Step's Outcome to {@link Outcome#STEP_ABORT} and invoke the
- * Workflow's {@link #abort()} method. The Step's processing errors, if any, can be retrieved by {@link Step#getErrors()}.</li>
+ * Workflow's {@link #abort(Context)} method. The Step's processing errors, if any, can be retrieved by {@link Step#getErrors()}.</li>
  * </ul>
  * <li>The Outcome of the <code>execute</code> method also affects what happens next. Depending on the result (and assuming the Step did
  * not abort), the Workflow will either move on to the next Step or put the Workflow into the {@link Workflow#WAITING} state:</li>
@@ -212,7 +208,7 @@ public class Workflow implements Serializable {
     /**
      * Constructs a new Workflow object with a supplied message key, owner Principal, and undefined unique identifier {@link #ID_NOT_SET}.
      * Once instantiated the Workflow is considered to be in the {@link #CREATED} state; a caller must explicitly invoke the
-     * {@link #start()} method to begin processing.
+     * {@link #start(Context)} method to begin processing.
      *
      * @param messageKey the message key used to construct a localized workflow name, such as <code>workflow.saveWikiPage</code>
      * @param owner the Principal who owns the Workflow. Typically, this is the user who created and submitted it
@@ -237,7 +233,7 @@ public class Workflow implements Serializable {
      * to completion, but it cannot be called twice. It finishes by calling the {@link #cleanup()} method to flush retained objects.
      * If the Workflow had been previously aborted, this method throws an IllegalStateException.
      */
-    public final synchronized void abort() {
+    public final synchronized void abort( final Context context ) {
         // Check corner cases: previous abort or completion
         if( m_state == ABORTED ) {
             throw new IllegalStateException( "The workflow has already been aborted." );
@@ -248,7 +244,7 @@ public class Workflow implements Serializable {
 
         if( m_currentStep != null ) {
             if( m_currentStep instanceof Decision ) {
-                WikiEventEmitter.fireWorkflowEvent( m_currentStep, WorkflowEvent.DQ_REMOVAL );
+                WikiEventEmitter.fireWorkflowEvent( m_currentStep, WorkflowEvent.DQ_REMOVAL, context );
             }
             m_currentStep.setOutcome( Outcome.STEP_ABORT );
             m_history.addLast( m_currentStep );
@@ -444,7 +440,7 @@ public class Workflow implements Serializable {
     }
 
     /**
-     * Determines whether this Workflow has started; that is, its {@link #start()} method has been executed.
+     * Determines whether this Workflow has started; that is, its {@link #start(Context)} method has been executed.
      *
      * @return <code>true</code> if the workflow has been started; <code>false</code> if not.
      */
@@ -469,9 +465,10 @@ public class Workflow implements Serializable {
      * previously been paused, this method throws an IllegalStateException. If any of the Steps in this Workflow throw a WikiException,
      * the Workflow will abort and propagate the exception to callers.
      *
-     * @throws WikiException if the current task's {@link Task#execute()} method throws an exception
+     * @param context current wiki context
+     * @throws WikiException if the current task's {@link Task#execute( Context )} method throws an exception
      */
-    public final synchronized void restart() throws WikiException {
+    public final synchronized void restart( final Context context ) throws WikiException {
         if( m_state != WAITING ) {
             throw new IllegalStateException( "Workflow is not paused; cannot restart." );
         }
@@ -481,9 +478,9 @@ public class Workflow implements Serializable {
 
         // Process current step
         try {
-            processCurrentStep();
+            processCurrentStep( context );
         } catch( final WikiException e ) {
-            abort();
+            abort( context );
             throw e;
         }
     }
@@ -502,9 +499,9 @@ public class Workflow implements Serializable {
 
     /**
      * Sets the first Step for this Workflow, which will be executed immediately
-     * after the {@link #start()} method executes. Note than the Step is not
+     * after the {@link #start( Context )} method executes. Note than the Step is not
      * marked as the "current" step or added to the Workflow history until the
-     * {@link #start()} method is called.
+     * {@link #start( Context )} method is called.
      *
      * @param step the first step for the workflow
      */
@@ -528,9 +525,10 @@ public class Workflow implements Serializable {
      * method returns an {@linkplain IllegalStateException}. If any of the Steps in this Workflow throw a WikiException, the Workflow will
      * abort and propagate the exception to callers.
      *
+     * @param context current wiki context.
      * @throws WikiException if the current Step's {@link Step#start()} method throws an exception of any kind
      */
-    public final synchronized void start() throws WikiException {
+    public final synchronized void start( final Context context ) throws WikiException {
         if( m_state == ABORTED ) {
             throw new IllegalStateException( "Workflow cannot be started; it has already been aborted." );
         }
@@ -548,16 +546,16 @@ public class Workflow implements Serializable {
 
         // Process current step
         try {
-            processCurrentStep();
+            processCurrentStep( context );
         } catch( final WikiException e ) {
-            abort();
+            abort( context );
             throw e;
         }
     }
 
     /**
      * Sets the Workflow in the {@link #WAITING} state. If the Workflow is not running or has already been paused, this method throws an
-     * IllegalStateException. Once paused, the Workflow can be un-paused by executing the {@link #restart()} method.
+     * IllegalStateException. Once paused, the Workflow can be un-paused by executing the {@link #restart(Context)} method.
      */
     public final synchronized void waitstate() {
         if ( m_state != RUNNING ) {
@@ -599,20 +597,20 @@ public class Workflow implements Serializable {
     }
 
     /**
-     * Protected method that processes the current Step by calling {@link Step#execute()}. If the <code>execute</code> throws an
+     * Protected method that processes the current Step by calling {@link Step#execute( Context )}. If the <code>execute</code> throws an
      * exception, this method will propagate the exception immediately to callers without aborting.
      *
      * @throws WikiException if the current Step's {@link Step#start()} method throws an exception of any kind
      */
-    protected final void processCurrentStep() throws WikiException {
+    protected final void processCurrentStep( final Context context ) throws WikiException {
         while ( m_currentStep != null ) {
             // Start and execute the current step
             if( !m_currentStep.isStarted() ) {
                 m_currentStep.start();
             }
-            final Outcome result = m_currentStep.execute();
+            final Outcome result = m_currentStep.execute( context );
             if( Outcome.STEP_ABORT.equals( result ) ) {
-                abort();
+                abort( context );
                 break;
             }
 

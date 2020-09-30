@@ -1,8 +1,8 @@
 package org.apache.wiki.tasks.auth;
 
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
-import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.user.UserProfile;
@@ -25,17 +25,13 @@ public class SaveUserProfileTask extends Task {
 
     private static final long serialVersionUID = 6994297086560480285L;
     private static final Logger LOG = Logger.getLogger( SaveUserProfileTask.class );
-    private final Engine m_engine;
     private final Locale m_loc;
 
     /**
      * Constructs a new Task for saving a user profile.
-     *
-     * @param engine the wiki engine
      */
-    public SaveUserProfileTask( final Engine engine, final Locale loc ) {
+    public SaveUserProfileTask( final Locale loc ) {
         super( TasksManager.USER_PROFILE_SAVE_TASK_MESSAGE_KEY );
-        m_engine = engine;
         m_loc = loc;
     }
 
@@ -46,29 +42,30 @@ public class SaveUserProfileTask extends Task {
      * @throws WikiException if the save did not complete for some reason
      */
     @Override
-    public Outcome execute() throws WikiException {
+    public Outcome execute( final Context context ) throws WikiException {
         // Retrieve user profile
         final UserProfile profile = ( UserProfile )getWorkflowContext().get( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE );
 
         // Save the profile (userdatabase will take care of timestamps for us)
-        m_engine.getManager( UserManager.class ).getUserDatabase().save( profile );
+        context.getEngine().getManager( UserManager.class ).getUserDatabase().save( profile );
 
         // Send e-mail if user supplied an e-mail address
         if ( profile != null && profile.getEmail() != null ) {
             try {
-                final InternationalizationManager i18n = m_engine.getManager( InternationalizationManager.class );
-                final String app = m_engine.getApplicationName();
+                final InternationalizationManager i18n = context.getEngine().getManager( InternationalizationManager.class );
+                final String app = context.getEngine().getApplicationName();
                 final String to = profile.getEmail();
                 final String subject = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc,
                                                  "notification.createUserProfile.accept.subject", app );
 
+                final String loginUrl = context.getEngine().getURL( ContextEnum.WIKI_LOGIN.getRequestContext(), null, null );
                 final String content = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc,
                                                  "notification.createUserProfile.accept.content", app,
                                                  profile.getLoginName(),
                                                  profile.getFullname(),
                                                  profile.getEmail(),
-                                                 m_engine.getURL( ContextEnum.WIKI_LOGIN.getRequestContext(), null, null ) );
-                MailUtil.sendMessage( m_engine.getWikiProperties(), to, subject, content );
+                                                 loginUrl );
+                MailUtil.sendMessage( context.getEngine().getWikiProperties(), to, subject, content );
             } catch ( final AddressException e) {
                 LOG.debug( e.getMessage(), e );
             } catch ( final MessagingException me ) {

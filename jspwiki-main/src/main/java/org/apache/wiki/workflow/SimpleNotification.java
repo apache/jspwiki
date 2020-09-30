@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
 
 import java.io.Serializable;
@@ -49,12 +50,12 @@ public final class SimpleNotification extends Decision {
     }
     
     /**
-     * Convenience method that simply calls {@link #decide(Outcome)} with the value {@link Outcome#DECISION_ACKNOWLEDGE}.
+     * Convenience method that simply calls {@link #decide(Outcome, Context)} with the value {@link Outcome#DECISION_ACKNOWLEDGE}.
      *
      * @throws WikiException never
      */
-    public void acknowledge() throws WikiException {
-        this.decide( Outcome.DECISION_ACKNOWLEDGE  );
+    public void acknowledge( final Context context ) throws WikiException {
+        this.decide( Outcome.DECISION_ACKNOWLEDGE, context  );
     }
 
     /**

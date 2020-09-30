@@ -121,7 +121,7 @@ public class SimpleDecisionTest {
     public void testGetEndTime() throws WikiException {
         Assertions.assertEquals( Step.TIME_NOT_SET, m_decision.getEndTime() );
         m_decision.start();
-        m_decision.decide( Outcome.DECISION_APPROVE );
+        m_decision.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertTrue( ( Step.TIME_NOT_SET != m_decision.getEndTime() ) );
     }
 
@@ -134,7 +134,7 @@ public class SimpleDecisionTest {
     public void testGetOutcome() throws WikiException {
         Assertions.assertEquals( Outcome.STEP_CONTINUE, m_decision.getOutcome() );
         m_decision.start();
-        m_decision.decide( Outcome.DECISION_APPROVE );
+        m_decision.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertEquals( Outcome.DECISION_APPROVE, m_decision.getOutcome() );
     }
 
@@ -142,7 +142,7 @@ public class SimpleDecisionTest {
     public void testGetStartTime() throws WikiException {
         Assertions.assertEquals( Step.TIME_NOT_SET, m_decision.getStartTime() );
         m_decision.start();
-        m_decision.decide( Outcome.DECISION_APPROVE );
+        m_decision.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertTrue( ( Step.TIME_NOT_SET != m_decision.getStartTime() ) );
     }
 
@@ -155,7 +155,7 @@ public class SimpleDecisionTest {
     public void testIsCompleted() throws WikiException {
         Assertions.assertFalse( m_decision.isCompleted() );
         m_decision.start();
-        m_decision.decide( Outcome.DECISION_APPROVE );
+        m_decision.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertTrue( m_decision.isCompleted() );
     }
 

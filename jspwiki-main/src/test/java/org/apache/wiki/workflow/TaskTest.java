@@ -19,6 +19,7 @@
 package org.apache.wiki.workflow;
 
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.junit.jupiter.api.Assertions;
@@ -46,7 +47,7 @@ public class TaskTest {
             super( workflow.getId(), workflow.getAttributes(), "task.normal" );
         }
 
-        public Outcome execute() throws WikiException {
+        public Outcome execute( final Context context ) {
             return Outcome.STEP_COMPLETE;
         }
 
@@ -61,7 +62,7 @@ public class TaskTest {
             super( workflow.getId(), workflow.getAttributes(), "task.error" );
         }
 
-        public Outcome execute() throws WikiException {
+        public Outcome execute( final Context context ) {
             addError( "Found an error." );
             addError( "Found a second one!" );
             return Outcome.STEP_ABORT;
@@ -131,7 +132,7 @@ public class TaskTest {
     public void testGetEndTime() throws WikiException {
         Assertions.assertEquals( Step.TIME_NOT_SET, m_task.getEndTime() );
         m_task.start();
-        m_task.setOutcome( m_task.execute() );
+        m_task.setOutcome( m_task.execute( null ) );
         Assertions.assertTrue( ( Step.TIME_NOT_SET != m_task.getEndTime() ) );
     }
 
@@ -144,14 +145,14 @@ public class TaskTest {
     public void testGetOutcome() throws WikiException {
         Assertions.assertEquals( Outcome.STEP_CONTINUE, m_task.getOutcome() );
         m_task.start();
-        m_task.setOutcome( m_task.execute() );
+        m_task.setOutcome( m_task.execute( null ) );
         Assertions.assertEquals( Outcome.STEP_COMPLETE, m_task.getOutcome() );
 
         // Test the "error task"
         m_task = new ErrorTask( m_workflow );
         Assertions.assertEquals( Outcome.STEP_CONTINUE, m_task.getOutcome() );
         m_task.start();
-        m_task.setOutcome( m_task.execute() );
+        m_task.setOutcome( m_task.execute( null ) );
         Assertions.assertEquals( Outcome.STEP_ABORT, m_task.getOutcome() );
     }
 
@@ -159,7 +160,7 @@ public class TaskTest {
     public void testGetStartTime() throws WikiException {
         Assertions.assertEquals( Step.TIME_NOT_SET, m_task.getStartTime() );
         m_task.start();
-        m_task.execute();
+        m_task.execute( null );
         Assertions.assertTrue( ( Step.TIME_NOT_SET != m_task.getStartTime() ) );
     }
 
@@ -172,7 +173,7 @@ public class TaskTest {
     public void testIsCompleted() throws WikiException {
         Assertions.assertFalse( m_task.isCompleted() );
         m_task.start();
-        m_task.setOutcome( m_task.execute() );
+        m_task.setOutcome( m_task.execute( null ) );
         Assertions.assertTrue( m_task.isCompleted() );
     }
 

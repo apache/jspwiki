@@ -56,7 +56,7 @@ public class WorkflowManagerTest {
     public void testStart() throws WikiException {
         // Once we start the workflow, it should show that it's started and the WM should have assigned it an ID
         Assertions.assertFalse( w.isStarted() );
-        w.start();
+        w.start( null );
         Assertions.assertNotEquals( Workflow.ID_NOT_SET, w.getId() );
         Assertions.assertTrue( w.isStarted() );
     }
@@ -68,7 +68,7 @@ public class WorkflowManagerTest {
         Assertions.assertEquals( 0, wm.getCompletedWorkflows().size() );
 
         // After starting, there should be 1 in the cache
-        w.start();
+        w.start( null );
         Assertions.assertEquals( 1, wm.getWorkflows().size() );
         Assertions.assertEquals( 0, wm.getCompletedWorkflows().size() );
         final Workflow workflow = wm.getWorkflows().iterator().next();
@@ -76,7 +76,7 @@ public class WorkflowManagerTest {
 
         // After forcing a decision on step 2, the workflow should complete and vanish from the cache
         final Decision d = ( Decision )w.getCurrentStep();
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertEquals( 0, wm.getWorkflows().size() );
         Assertions.assertEquals( 1, wm.getCompletedWorkflows().size() );
     }
@@ -111,7 +111,7 @@ public class WorkflowManagerTest {
 
         final Workflow workflow = dwm.m_workflows.iterator().next();
         final Decision d = ( Decision )workflow.getCurrentStep();
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, null );
         dwm.actionPerformed( new WorkflowEvent( workflow, WorkflowEvent.COMPLETED ) );
         dwm.actionPerformed( new WorkflowEvent( d, WorkflowEvent.DQ_REMOVAL ) );
         Assertions.assertEquals( 0, dwm.getWorkflows().size() );

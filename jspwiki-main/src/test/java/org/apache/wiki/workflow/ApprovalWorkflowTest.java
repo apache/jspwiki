@@ -23,6 +23,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.filters.BasePageFilter;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.filters.FilterManager;
@@ -75,7 +76,7 @@ public class ApprovalWorkflowTest {
         Assertions.assertNull( w.getAttribute( "task.saveWikiPage") );
 
         // Start the workflow
-        w.start();
+        w.start( null );
 
         // Presave complete attribute should be set now, and current step should be Decision
         final Step decision = w.getCurrentStep();
@@ -108,7 +109,7 @@ public class ApprovalWorkflowTest {
         Assertions.assertTrue( notification instanceof SimpleNotification );
 
         // Now, approve the Decision and everything should complete
-        ((Decision)decision).decide( Outcome.DECISION_APPROVE );
+        ((Decision)decision).decide( Outcome.DECISION_APPROVE, null );
         Assertions.assertTrue( w.isCompleted() );
         Assertions.assertNull( w.getCurrentStep() );
         Assertions.assertEquals( 3, w.getHistory().size() );
@@ -135,13 +136,13 @@ public class ApprovalWorkflowTest {
                                                             completionTask, rejectedMessageKey );
 
         // Start the workflow
-        w.start();
+        w.start( null );
 
         // Now, deny the Decision and the submitter should see a notification
         Step step = w.getCurrentStep();
         Assertions.assertTrue( step instanceof Decision );
         final Decision decision = (Decision)step;
-        decision.decide( Outcome.DECISION_DENY );
+        decision.decide( Outcome.DECISION_DENY, null );
         Assertions.assertFalse( w.isCompleted() );
 
         // Check that the notification is ok, then acknowledge it
@@ -149,7 +150,7 @@ public class ApprovalWorkflowTest {
         Assertions.assertTrue( step instanceof SimpleNotification );
         Assertions.assertEquals( rejectedMessageKey, step.getMessageKey() );
         final SimpleNotification notification = (SimpleNotification)step;
-        notification.acknowledge();
+        notification.acknowledge( null );
 
         // Workflow should be complete now
         Assertions.assertTrue( w.isCompleted() );
@@ -175,8 +176,9 @@ public class ApprovalWorkflowTest {
         Assertions.assertEquals( 1, decisions.size() );
 
         // Now, approve the decision and it should go away, and page should appear.
+        final Context context = Wiki.context().create( m_engine, Wiki.contents().page( m_engine, pageName ) );
         final Decision decision = decisions.iterator().next();
-        decision.decide( Outcome.DECISION_APPROVE );
+        decision.decide( Outcome.DECISION_APPROVE, context );
         Assertions.assertTrue( m_engine.getManager( PageManager.class ).wikiPageExists( pageName ) );
         decisions = m_dq.getActorDecisions( m_engine.adminSession() );
         Assertions.assertEquals( 0, decisions.size() );
@@ -205,7 +207,7 @@ public class ApprovalWorkflowTest {
 
         // Now, DENY the decision and the page should still not exist...
         Decision decision = decisions.iterator().next();
-        decision.decide( Outcome.DECISION_DENY );
+        decision.decide( Outcome.DECISION_DENY, null );
         Assertions.assertFalse( m_engine.getManager( PageManager.class ).wikiPageExists( pageName ) );
 
         // ...but there should also be a notification decision in Janne's queue
@@ -215,7 +217,7 @@ public class ApprovalWorkflowTest {
         Assertions.assertEquals( WorkflowManager.WF_WP_SAVE_REJECT_MESSAGE_KEY, decision.getMessageKey() );
 
         // Once Janne disposes of the notification, his queue should be empty
-        decision.decide( Outcome.DECISION_ACKNOWLEDGE );
+        decision.decide( Outcome.DECISION_ACKNOWLEDGE, null );
         decisions = m_dq.getActorDecisions( m_engine.janneSession() );
         Assertions.assertEquals( 0, decisions.size() );
     }
@@ -245,7 +247,7 @@ public class ApprovalWorkflowTest {
         }
 
         @Override
-        public Outcome execute() {
+        public Outcome execute( final Context context ) {
             getWorkflowContext().put( getMessageKey(), "Completed" );
             setOutcome( Outcome.STEP_COMPLETE );
             return Outcome.STEP_COMPLETE;

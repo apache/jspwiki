@@ -21,8 +21,10 @@ package org.apache.wiki.auth;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
@@ -107,7 +109,8 @@ public class UserManagerTest {
         final int oldPageCount = pageManager.getTotalPageCount();
 
         // Setup Step 1: create a new user with random name
-        final Session session = m_engine.guestSession();
+        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
+        final Session session = context.getWikiSession();
         final long now = System.currentTimeMillis();
         final String oldLogin = "TestLogin" + now;
         final String oldName = "Test User " + now;
@@ -118,7 +121,7 @@ public class UserManagerTest {
         profile.setLoginName( oldLogin );
         profile.setFullname( oldName );
         profile.setPassword( "password" );
-        m_mgr.setUserProfile( session, profile );
+        m_mgr.setUserProfile( context, profile );
 
         // 1a. Make sure the profile saved successfully and that we're logged in
         profile = m_mgr.getUserProfile( session );
@@ -160,7 +163,7 @@ public class UserManagerTest {
         profile.setLoginName( oldLogin );
         profile.setFullname( newName );
         profile.setPassword( "password" );
-        m_mgr.setUserProfile( session, profile );
+        m_mgr.setUserProfile( context, profile );
 
         // Test 1: the wiki session should have the new wiki name in Subject
         Principal[] principals = session.getPrincipals();
@@ -219,7 +222,7 @@ public class UserManagerTest {
         profile.setLoginName( newLogin );
         profile.setFullname( oldName );
         profile.setPassword( "password" );
-        m_mgr.setUserProfile( session, profile );
+        m_mgr.setUserProfile( context, profile );
 
         // Test 5: the wiki session should have the new login name in Subject
         principals = session.getPrincipals();
@@ -269,17 +272,17 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Session session = m_engine.guestSession();
+        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
         profile.setFullname( "FullName" + loginName );
         profile.setPassword( "password" );
-        m_mgr.setUserProfile( session, profile );
+        m_mgr.setUserProfile( context, profile );
 
         // Make sure the profile saved successfully
-        profile = m_mgr.getUserProfile( session );
+        profile = m_mgr.getUserProfile( context.getWikiSession() );
         Assertions.assertEquals( loginName, profile.getLoginName() );
         Assertions.assertEquals( oldUserCount + 1, m_db.getWikiNames().length );
 
@@ -296,7 +299,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Session session = m_engine.guestSession();
+        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
@@ -306,7 +309,7 @@ public class UserManagerTest {
 
         // Because user profile saves require approvals, we will catch a Redirect
         try {
-            m_mgr.setUserProfile( session, profile );
+            m_mgr.setUserProfile( context, profile );
             Assertions.fail( "We should have caught a DecisionRequiredException caused by approval!" );
         } catch( final DecisionRequiredException e ) {
         }
@@ -324,12 +327,12 @@ public class UserManagerTest {
         final List< Fact > facts = d.getFacts();
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_FULL_NAME, profile.getFullname() ), facts.get( 0 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
-        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );
+        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_SUBMITTER, context.getWikiSession().getUserPrincipal().getName() ), facts.get( 2 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_EMAIL, profile.getEmail() ), facts.get( 3 ) );
         Assertions.assertEquals( profile, d.getWorkflowContext().get( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE ) );
 
         // Approve the profile
-        d.decide( Outcome.DECISION_APPROVE );
+        d.decide( Outcome.DECISION_APPROVE, context );
 
         // Make sure the profile saved successfully
         Assertions.assertEquals( oldUserCount + 1, m_db.getWikiNames().length );
@@ -347,7 +350,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Session session = m_engine.guestSession();
+        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
@@ -357,7 +360,7 @@ public class UserManagerTest {
 
         // Because user profile saves require approvals, we will catch a Redirect
         try {
-            m_mgr.setUserProfile( session, profile );
+            m_mgr.setUserProfile( context, profile );
             Assertions.fail( "We should have caught a DecisionRequiredException caused by approval!" );
         } catch( final DecisionRequiredException e ) {
         }
@@ -375,12 +378,12 @@ public class UserManagerTest {
         final List< Fact > facts = d.getFacts();
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_FULL_NAME, profile.getFullname() ), facts.get( 0 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_LOGIN_NAME, profile.getLoginName() ), facts.get( 1 ) );
-        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_SUBMITTER, session.getUserPrincipal().getName() ), facts.get( 2 ) );
+        Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_SUBMITTER, context.getWikiSession().getUserPrincipal().getName() ), facts.get( 2 ) );
         Assertions.assertEquals( new Fact( WorkflowManager.WF_UP_CREATE_SAVE_FACT_PREFS_EMAIL, profile.getEmail() ), facts.get( 3 ) );
         Assertions.assertEquals( profile, d.getWorkflowContext().get( WorkflowManager.WF_UP_CREATE_SAVE_ATTR_SAVED_PROFILE ) );
 
         // Approve the profile
-        d.decide( Outcome.DECISION_DENY );
+        d.decide( Outcome.DECISION_DENY, context );
 
         // Make sure the profile did NOT save
         Assertions.assertEquals( oldUserCount, m_db.getWikiNames().length );
@@ -392,7 +395,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Session session = m_engine.guestSession();
+        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
@@ -403,7 +406,7 @@ public class UserManagerTest {
         // Set the login name to collide with Janne's: should prohibit saving
         profile.setLoginName( "janne" );
         try {
-            m_mgr.setUserProfile( session, profile );
+            m_mgr.setUserProfile( context, profile );
             Assertions.fail( "UserManager allowed saving of user with login name 'janne', but it shouldn't have." );
         } catch( final DuplicateUserException e ) {
             // Good! That's what we expected; reset for next test
@@ -413,7 +416,7 @@ public class UserManagerTest {
         // Set the login name to collide with Janne's: should prohibit saving
         profile.setFullname( "Janne Jalkanen" );
         try {
-            m_mgr.setUserProfile( session, profile );
+            m_mgr.setUserProfile( context, profile );
             Assertions.fail( "UserManager allowed saving of user with login name 'janne', but it shouldn't have." );
         } catch( final DuplicateUserException e ) {
             // Good! That's what we expected

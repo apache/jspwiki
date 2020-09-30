@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
@@ -33,7 +34,7 @@ import java.util.Map;
 /**
  * <p>
  * AbstractStep subclass that asks an actor Principal to choose an Outcome on behalf of an owner (also a Principal). The actor
- * "makes the decision" by calling the {@link #decide(Outcome)} method. When this method is called, it will set the Decision's Outcome to
+ * "makes the decision" by calling the {@link #decide(Outcome, Context)} method. When this method is called, it will set the Decision's Outcome to
  * the one supplied. If the parent Workflow is in the {@link Workflow#WAITING} state, it will be re-started. Any checked WikiExceptions
  * thrown by the workflow after re-start will be re-thrown to callers.
  * </p>
@@ -104,22 +105,23 @@ public abstract class Decision extends AbstractStep {
      * </p>
      * 
      * @param outcome the Outcome of the Decision
+     * @param context wiki context of the Decision
      * @throws WikiException if the act of restarting the Workflow throws an exception
      */
-    public void decide( final Outcome outcome ) throws WikiException {
+    public void decide( final Outcome outcome, final Context context ) throws WikiException {
         super.setOutcome( outcome );
-        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.DQ_REMOVAL );
+        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.DQ_REMOVAL, context );
     }
 
     /**
      * Default implementation that always returns {@link Outcome#STEP_CONTINUE} if the current Outcome isn't a completion (which will be
-     * true if the {@link #decide(Outcome)} method hasn't been executed yet. This method will also add the Decision to the associated
+     * true if the {@link #decide(Outcome, Context)} method hasn't been executed yet. This method will also add the Decision to the associated
      * DecisionQueue.
      * 
      * @return the Outcome of the execution
      * @throws WikiException never
      */
-    public Outcome execute() throws WikiException {
+    public Outcome execute( final Context context ) throws WikiException {
         if( getOutcome().isCompletion() ) {
             return getOutcome();
         }

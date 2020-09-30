@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventEmitter;
@@ -109,15 +110,15 @@ public class DecisionQueue implements Serializable {
     }
 
     /**
-     * Attempts to complete a Decision by calling {@link Decision#decide(Outcome)}. This will cause the Step immediately following the
+     * Attempts to complete a Decision by calling {@link Decision#decide(Outcome, Context)}. This will cause the Step immediately following the
      * Decision (if any) to start. If the decision completes successfully, this method also removes the completed decision from the queue.
      *
      * @param decision the Decision for which the Outcome will be supplied
      * @param outcome the Outcome of the Decision
      * @throws WikiException if the succeeding Step cannot start for any reason
      */
-    public void decide( final Decision decision, final Outcome outcome ) throws WikiException {
-        decision.decide( outcome );
+    public void decide( final Decision decision, final Outcome outcome, final Context context ) throws WikiException {
+        decision.decide( outcome, context );
         if ( decision.isCompleted() ) {
             remove( decision );
         }

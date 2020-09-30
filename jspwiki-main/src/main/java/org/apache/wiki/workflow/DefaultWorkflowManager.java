@@ -20,6 +20,7 @@ package org.apache.wiki.workflow;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -29,21 +30,9 @@ import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -282,7 +271,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
                 // Add to DecisionQueue
                 case WorkflowEvent.DQ_ADDITION : addToDecisionQueue( decision ); break;
                 // Remove from DecisionQueue
-                case WorkflowEvent.DQ_REMOVAL  : removeFromDecisionQueue( decision ); break;
+                case WorkflowEvent.DQ_REMOVAL  : removeFromDecisionQueue( decision, event.getArg( 0, Context.class ) ); break;
                 default: break;
                 }
             }
@@ -313,7 +302,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
         }
     }
 
-    protected void removeFromDecisionQueue( final Decision decision ) {
+    protected void removeFromDecisionQueue( final Decision decision, final Context context ) {
         // If current workflow is waiting for input, restart it and remove Decision from DecisionQueue
         final int workflowId = decision.getWorkflowId();
         final Optional< Workflow > optw = m_workflows.stream().filter( w -> w.getId() == workflowId ).findAny();
@@ -323,7 +312,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
                 getDecisionQueue().remove( decision );
                 // Restart workflow
                 try {
-                    w.restart();
+                    w.restart( context );
                 } catch( final WikiException e ) {
                     LOG.error( "restarting workflow #" + w.getId() + " caused " + e.getMessage(), e );
                 }

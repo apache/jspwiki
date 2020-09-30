@@ -49,7 +49,7 @@ public class SessionMonitor implements HttpSessionListener {
     private static final Logger log = Logger.getLogger( SessionMonitor.class );
 
     /** Map with Engines as keys, and SessionMonitors as values. */
-    private static ConcurrentHashMap< Engine, SessionMonitor > c_monitors = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap< Engine, SessionMonitor > c_monitors = new ConcurrentHashMap<>();
 
     /** Weak hashmap with HttpSessions as keys, and WikiSessions as values. */
     private final Map< String, Session > m_sessions = new WeakHashMap<>();
@@ -94,8 +94,21 @@ public class SessionMonitor implements HttpSessionListener {
      *  @return the WikiSession, if found
      */
     private Session findSession( final HttpSession session ) {
-        Session wikiSession = null;
         final String sid = ( session == null ) ? "(null)" : session.getId();
+        return findSession( sid );
+    }
+
+    /**
+     *  Just looks for a WikiSession; does not create a new one.
+     * This method may return <code>null</code>, <em>and
+     * callers should check for this value</em>.
+     *
+     *  @param sessionId the user's HTTP session id
+     *  @return the WikiSession, if found
+     */
+    private Session findSession( final String sessionId ) {
+        Session wikiSession = null;
+        final String sid = ( sessionId == null ) ? "(null)" : sessionId;
         final Session storedSession = m_sessions.get( sid );
 
         // If the weak reference returns a wiki session, return it
@@ -108,6 +121,7 @@ public class SessionMonitor implements HttpSessionListener {
 
         return wikiSession;
     }
+
     /**
      * <p>Looks up the wiki session associated with a user's Http session and adds it to the session cache. This method will return the
      * "guest session" as constructed by {@link org.apache.wiki.api.spi.SessionSPI#guest(Engine)} if the HttpSession is not currently
@@ -119,20 +133,48 @@ public class SessionMonitor implements HttpSessionListener {
      * @return the wiki session
      */
     public final Session find( final HttpSession session ) {
-        Session wikiSession = findSession( session );
+        final Session wikiSession = findSession( session );
         final String sid = ( session == null ) ? "(null)" : session.getId();
-
-        // Otherwise, create a new guest session and stash it.
         if( wikiSession == null ) {
-            if( log.isDebugEnabled() ) {
-                log.debug( "Looking up WikiSession for session ID=" + sid + "... not found. Creating guestSession()" );
-            }
-            wikiSession = Wiki.session().guest( m_engine );
-            synchronized( m_sessions ) {
-                m_sessions.put( sid, wikiSession );
-            }
+            return createGuestSessionFor( sid );
         }
 
+        return wikiSession;
+    }
+
+    /**
+     * <p>Looks up the wiki session associated with a user's Http session and adds it to the session cache. This method will return the
+     * "guest session" as constructed by {@link org.apache.wiki.api.spi.SessionSPI#guest(Engine)} if the HttpSession is not currently
+     * associated with a WikiSession. This method is guaranteed to return a non-<code>null</code> WikiSession.</p>
+     * <p>Internally, the session is stored in a HashMap; keys are the HttpSession objects, while the values are
+     * {@link java.lang.ref.WeakReference}-wrapped WikiSessions.</p>
+     *
+     * @param sessionId the HTTP session
+     * @return the wiki session
+     */
+    public final Session find( final String sessionId ) {
+        final Session wikiSession = findSession( sessionId );
+        if( wikiSession == null ) {
+            return createGuestSessionFor( sessionId );
+        }
+
+        return wikiSession;
+    }
+
+    /**
+     * Creates a new session and stashes it
+     *
+     * @param sessionId id looked for before creating the guest session
+     * @return a new guest session
+     */
+    private Session createGuestSessionFor( final String sessionId ) {
+        if( log.isDebugEnabled() ) {
+            log.debug( "Session for session ID=" + sessionId + "... not found. Creating guestSession()" );
+        }
+        final Session wikiSession = Wiki.session().guest( m_engine );
+        synchronized( m_sessions ) {
+            m_sessions.put( sessionId, wikiSession );
+        }
         return wikiSession;
     }
 

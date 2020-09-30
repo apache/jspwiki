@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
 
 import java.io.Serializable;
@@ -96,11 +97,12 @@ public interface Step extends Serializable {
      * Note that successful execution of this methods does not necessarily mean that the Step is considered "complete"; rather, it just
      * means that it has executed. Therefore, it is possible that <code>execute</code> could run multiple times.
      * </p>
-     * 
+     *
+     * @param ctx executing wiki context.
      * @return the result of the Step, expressed as an Outcome
      * @throws WikiException if the step encounters errors while executing
      */
-    Outcome execute() throws WikiException;
+    Outcome execute( Context ctx ) throws WikiException;
 
     /**
      * The Principal responsible for completing this Step, such as a system user or actor assigned to a Decision.

@@ -90,7 +90,7 @@ public interface UserManager extends Initializable {
      * correct Principals to be reloaded into the current Session's Subject.
      * </p>
      *
-     * @param session the wiki session, which may not be <code>null</code>
+     * @param context the wiki context, which may not be <code>null</code>
      * @param profile the user profile, which may not be <code>null</code>
      * @throws DuplicateUserException if the proposed profile's login name or full name collides with another
      * @throws WikiException if the save fails for some reason. If the current user does not have
@@ -99,9 +99,9 @@ public interface UserManager extends Initializable {
      * {@link org.apache.wiki.workflow.DecisionRequiredException}. All other WikiException
      * indicate a condition that is not normal is probably due to mis-configuration
      */
-    void setUserProfile( Session session, UserProfile profile ) throws DuplicateUserException, WikiException;
+    void setUserProfile( Context context, UserProfile profile ) throws DuplicateUserException, WikiException;
 
-    void startUserProfileCreationWorkflow( Session session, UserProfile profile ) throws WikiException;
+    void startUserProfileCreationWorkflow( Context context, UserProfile profile ) throws WikiException;
 
     /**
      * <p> Extracts user profile parameters from the HTTP request and populates a UserProfile with them. The UserProfile will either be a
