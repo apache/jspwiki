@@ -62,22 +62,16 @@
           Outcome outcome = Outcome.forName( outcomeKey );
           // Iterate through our actor decisions and see if we can find an ID match
           Collection< Decision > decisions = dq.getActorDecisions(wikiSession);
-          for (Iterator< Decision > it = decisions.iterator(); it.hasNext();)
-          {
+          for (Iterator< Decision > it = decisions.iterator(); it.hasNext();) {
             Decision d = it.next();
-            if (d.getId() == id)
-            {
+            if( d.getId() == id ) {
               // Cool, we found it. Now make the decision.
-              dq.decide(d, outcome);
+              dq.decide( d, outcome, wikiContext );
             }
           }
-        }
-        catch ( NumberFormatException e )
-        {
+        } catch ( NumberFormatException e ) {
            log.warn("Could not parse integer from parameter 'decision'. Somebody is being naughty.");
-        }
-        catch ( NoSuchOutcomeException e )
-        {
+        } catch ( NoSuchOutcomeException e ) {
            log.warn("Could not look up Outcome from parameter 'outcome'. Somebody is being naughty.");
         }
     }
@@ -95,7 +89,7 @@
             if (w.getId() == id)
             {
               // Cool, we found it. Now kill the workflow.
-              w.abort();
+              w.abort( wikiContext );
             }
           }
         }

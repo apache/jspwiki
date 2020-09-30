@@ -74,7 +74,7 @@
         {
             try
             {
-                userMgr.setUserProfile( wikiSession, profile );
+                userMgr.setUserProfile( wikiContext, profile );
                 CookieAssertionLoginModule.setUserCookie( response, profile.getFullname() );
             }
             catch( DuplicateUserException due )

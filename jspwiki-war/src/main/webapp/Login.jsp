@@ -62,7 +62,7 @@
         // If no errors, save the profile now & refresh the principal set!
         if ( wikiSession.getMessages( "profile" ).length == 0 ) {
             try {
-                userMgr.setUserProfile( wikiSession, profile );
+                userMgr.setUserProfile( wikiContext, profile );
                 CookieAssertionLoginModule.setUserCookie( response, profile.getFullname() );
             } catch( DuplicateUserException due ) {
                 // User collision! (full name or wiki name already taken)
