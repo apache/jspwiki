@@ -17,6 +17,25 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M8-git-01_
+
+* [JSPWIKI-1131](https://issues.apache.org/jira/browse/JSPWIKI-1131): Lucene Index not updated on edits/new page
+
+* Dependency updates
+    * Awaitility to 4.0.3
+    * Commons IO to 2.8.0
+    * Commons Lang to 3.11
+    * Commons Text to 1.9
+    * Flexmark to 0.62.2
+    * Hsqldb to 2.5.1
+    * JUnit to 5.7.0
+    * Lucene to 8.6.2
+    * Mockito 3.5.13
+    * Selenide 5.15.0
+    * Tomcat to 9.0.38
+
 **2020-05-21  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M7-git-20_
