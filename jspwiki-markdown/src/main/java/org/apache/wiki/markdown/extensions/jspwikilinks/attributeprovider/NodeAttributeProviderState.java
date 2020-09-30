@@ -19,7 +19,7 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.html.Attributes;
+import com.vladsch.flexmark.util.html.MutableAttributes;
 
 
 /**
@@ -33,6 +33,6 @@ public interface NodeAttributeProviderState < T extends Node > {
      * @param attributes node attributes.
      * @param node the specific node in which the attributes are going to be set.
      */
-    void setAttributes( Attributes attributes, T node );
+    void setAttributes( MutableAttributes attributes, T node );
 
 }

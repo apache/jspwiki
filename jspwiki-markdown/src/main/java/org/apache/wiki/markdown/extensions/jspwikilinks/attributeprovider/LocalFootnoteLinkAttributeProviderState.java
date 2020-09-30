@@ -19,7 +19,7 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.html.Attributes;
+import com.vladsch.flexmark.util.html.MutableAttributes;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
@@ -39,10 +39,10 @@ public class LocalFootnoteLinkAttributeProviderState implements NodeAttributePro
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, Node)
+     * @see NodeAttributeProviderState#setAttributes(MutableAttributes, Node)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
+    public void setAttributes( final MutableAttributes attributes, final JSPWikiLink link ) {
         attributes.replaceValue( "class", MarkupParser.CLASS_FOOTNOTE );
         attributes.replaceValue( "href", link.getUrl().toString() );
     }

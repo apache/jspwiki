@@ -21,7 +21,7 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 import com.vladsch.flexmark.html.AttributeProvider;
 import com.vladsch.flexmark.html.renderer.AttributablePart;
 import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.html.Attributes;
+import com.vladsch.flexmark.util.html.MutableAttributes;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.api.core.Context;
@@ -56,10 +56,10 @@ public class JSPWikiLinkAttributeProvider implements AttributeProvider {
     /**
      * {@inheritDoc}
      *
-     * @see AttributeProvider#setAttributes(Node, AttributablePart, Attributes)
+     * @see AttributeProvider#setAttributes(Node, AttributablePart, MutableAttributes)
      */
     @Override
-    public void setAttributes( final Node node, final AttributablePart part, final Attributes attributes ) {
+    public void setAttributes( final Node node, final AttributablePart part, final MutableAttributes attributes ) {
         if( node instanceof JSPWikiLink ) {
             final JSPWikiLink link = ( JSPWikiLink )node;
             final NodeAttributeProviderState< JSPWikiLink > linkState;

@@ -19,7 +19,7 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
 import com.vladsch.flexmark.util.ast.Node;
-import com.vladsch.flexmark.util.html.Attributes;
+import com.vladsch.flexmark.util.html.MutableAttributes;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
@@ -46,10 +46,10 @@ public class LocalEditLinkAttributeProviderState implements NodeAttributeProvide
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, Node)
+     * @see NodeAttributeProviderState#setAttributes(MutableAttributes, Node)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
+    public void setAttributes( final MutableAttributes attributes, final JSPWikiLink link ) {
         final ResourceBundle rb = Preferences.getBundle( wikiContext, InternationalizationManager.CORE_BUNDLE );
         attributes.replaceValue( "title", MessageFormat.format( rb.getString( "markupparser.link.create" ), url ) );
         attributes.replaceValue( "class", MarkupParser.CLASS_EDITPAGE );
