@@ -43,6 +43,17 @@ public enum WikiEventEmitter {
         return fireEvent( new WorkflowEvent( src, type ) );
     }
 
+    /**
+     * Fires a Workflow Event from provided source and workflow type.
+     *
+     * @param src the source of the event, which can be any object: a wiki page, group or authentication/authentication/group manager.
+     * @param type the type of event
+     * @return fired {@link WorkflowEvent} or {@code null} if the {@link WikiEventEmitter} instance hasn't listeners attached.
+     */
+    public static WorkflowEvent fireWorkflowEvent( final Object src, final int type, final Object... args ) {
+        return fireEvent( new WorkflowEvent( src, type, args ) );
+    }
+
     static < T extends WikiEvent > T fireEvent( final T event ) {
         if( WikiEventManager.isListening( WikiEventEmitter.get() ) ) {
             WikiEventManager.fireEvent( WikiEventEmitter.get(), event );

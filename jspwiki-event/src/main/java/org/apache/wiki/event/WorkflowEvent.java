@@ -70,18 +70,27 @@ public final class WorkflowEvent extends WikiEvent {
     public static final int DQ_REASSIGN = 90;
 
     /**
-     * Constructs a new instance of this event type, which signals a security event has occurred. 
-     * The <code>source</code> parameter is required, and may not be <code>null</code>. When the 
+     * Constructs a new instance of this event type, which signals a security event has occurred.
+     * The <code>source</code> parameter is required, and may not be <code>null</code>. When the
      * WikiSecurityEvent is constructed, the security logger {@link WikiSecurityEvent#log} is notified.
-     * 
+     *
      * @param src the source of the event, which can be any object: a wiki page, group or authentication/authentication/group manager.
      * @param type the type of event
      */
     public WorkflowEvent( final Object src, final int type ) {
         super( src, type );
-        if( src == null ) {
-            throw new IllegalArgumentException( "Argument(s) cannot be null." );
-        }
+    }
+
+    /**
+     * Constructs a new instance of this event type, which signals a security event has occurred.
+     * The <code>source</code> parameter is required, and may not be <code>null</code>. When the
+     * WikiSecurityEvent is constructed, the security logger {@link WikiSecurityEvent#log} is notified.
+     *
+     * @param src the source of the event, which can be any object: a wiki page, group or authentication/authentication/group manager.
+     * @param type the type of event
+     */
+    public WorkflowEvent( final Object src, final int type, final Object... args ) {
+        super( src, type, args );
     }
 
     /**

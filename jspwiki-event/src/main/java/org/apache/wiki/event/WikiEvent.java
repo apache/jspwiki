@@ -40,6 +40,9 @@ public abstract class WikiEvent extends EventObject {
 
     private final long m_when;
 
+    /** objects associated to src which only make sense in the context of a given WikiEvent */
+    private Object[] args;
+
     // ............
 
     /**
@@ -51,7 +54,19 @@ public abstract class WikiEvent extends EventObject {
     public WikiEvent( final Object src, final int type ) {
         super( src );
         m_when = System.currentTimeMillis();
+        args = new Object[]{};
         setType( type );
+    }
+
+    /**
+     * Constructs an instance of this event.
+     *
+     * @param src the Object that is the source of the event.
+     * @param type the event type.
+     */
+    public WikiEvent( final Object src, final int type, final Object... args ) {
+        this( src, type );
+        this.args = args != null ? args : new Object[]{};
     }
     
     /**
@@ -90,6 +105,27 @@ public abstract class WikiEvent extends EventObject {
      */
     public int getType() {
         return m_type;
+    }
+
+    /**
+     * Returns the args associated to src, if any.
+     *
+     * @return args associated to src, if any.
+     */
+    public Object[] getArgs() {
+        return args;
+    }
+
+    /**
+     * Returns the requested arg, if any.
+     *
+     * @return requested arg  or null.
+     */
+    public < T > T getArg( int index, Class< T > cls ) {
+        if( index >= args.length ) {
+            return null;
+        }
+        return ( T )args[ index ];
     }
 
     /**
