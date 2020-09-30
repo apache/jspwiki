@@ -33,12 +33,14 @@ import java.io.File;
 
 public class WorkflowManagerTest {
 
-    protected WikiEngine m_engine = TestEngine.build();
-    protected WorkflowManager wm = m_engine.getManager( WorkflowManager.class );
+    protected WikiEngine m_engine;
+    protected WorkflowManager wm;
     protected Workflow w;
 
     @BeforeEach
     public void setUp() throws Exception {
+        m_engine = TestEngine.build();
+        wm = m_engine.getManager( WorkflowManager.class );
         // Create a workflow with 3 steps, with a Decision in the middle
         w = new Workflow( "workflow.key", new WikiPrincipal( "Owner1" ) );
         final Step startTask = new TaskTest.NormalTask( w );

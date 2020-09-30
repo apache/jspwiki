@@ -32,7 +32,7 @@ import java.util.Collection;
 
 public class DecisionQueueTest {
 
-    TestEngine m_engine = TestEngine.build();
+    TestEngine m_engine;
 
     DecisionQueue m_queue;
 
@@ -50,6 +50,7 @@ public class DecisionQueueTest {
 
     @BeforeEach
     public void setUp() throws Exception {
+        m_engine = TestEngine.build();
         m_queue = m_engine.getManager( WorkflowManager.class ).getDecisionQueue();
         adminSession = m_engine.adminSession();
         janneSession = m_engine.janneSession();
