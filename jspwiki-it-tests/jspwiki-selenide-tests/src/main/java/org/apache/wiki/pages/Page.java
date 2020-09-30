@@ -18,19 +18,19 @@
  */
 package org.apache.wiki.pages;
 
-import java.io.File;
-import java.io.IOException;
-
-import org.apache.wiki.its.environment.Env;
-
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.WebDriverRunner;
+import org.apache.wiki.its.environment.Env;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 
 /**
  * Common operations for Page Objects.
  * 
- * @see https://selenide.gitbooks.io/user-guide/content/en/pageobjects.html
+ * @see <a href="https://selenide.gitbooks.io/user-guide/content/en/pageobjects.html">Page Objects</a>
  */
 public interface Page {
 
@@ -53,7 +53,7 @@ public interface Page {
         return Env.TESTS_BASE_URL;
     }
     
-    static File download( String url ) throws IOException {
+    static File download( final String url ) throws IOException, URISyntaxException {
         return Selenide.download( url );
     }
 

@@ -18,10 +18,9 @@
  */
 package org.apache.wiki.pages;
 
-import org.apache.wiki.its.environment.Env;
-
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
+import org.apache.wiki.its.environment.Env;
 
 
 /**
@@ -40,7 +39,7 @@ public class PageBuilder {
     /**
      * Sets up Selenide and opens the requested URL, allowing chaining additional operations over the given {@link Page} instance.
      *
-     * @param cls {@link Page} instance, in order to allow chaining operations.
+     * @param page {@link Page} instance, in order to allow chaining operations.
      * @return {@link Page} instance given on the {@link PageBuilder} constructor.
      */
     public < T extends Page > T openAs( final T page ) {

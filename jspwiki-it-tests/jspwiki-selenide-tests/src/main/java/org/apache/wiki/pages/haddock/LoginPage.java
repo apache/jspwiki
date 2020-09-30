@@ -18,10 +18,9 @@
  */
 package org.apache.wiki.pages.haddock;
 
+import com.codeborne.selenide.Selenide;
 import org.apache.wiki.its.environment.Env;
 import org.openqa.selenium.By;
-
-import com.codeborne.selenide.Selenide;
 
 public class LoginPage implements HaddockPage {
     
@@ -29,7 +28,7 @@ public class LoginPage implements HaddockPage {
         return performLogin( Env.LOGIN_JANNE_USERNAME, Env.LOGIN_JANNE_PASSWORD );
     }
     
-    public ReadWikiPage performLogin( String login, String password ) {
+    public ReadWikiPage performLogin( final String login, final String password ) {
         Selenide.$( By.id( "j_username" ) ).val( login );
         Selenide.$( By.id( "j_password" ) ).val( password );
         Selenide.$( By.name( "submitlogin" ) ).click();
