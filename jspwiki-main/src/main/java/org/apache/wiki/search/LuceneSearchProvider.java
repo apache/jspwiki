@@ -45,7 +45,7 @@ import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleHTMLEncoder;
 import org.apache.lucene.search.highlight.SimpleHTMLFormatter;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.SimpleFSDirectory;
+import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiBackgroundThread;
@@ -67,19 +67,9 @@ import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -205,7 +195,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
                 log.info("Starting Lucene reindexing, this can take a couple of minutes...");
 
-                final Directory luceneDir = new SimpleFSDirectory( dir.toPath() );
+                final Directory luceneDir = new NIOFSDirectory( dir.toPath() );
                 try( final IndexWriter writer = getIndexWriter( luceneDir ) ) {
                     final Collection< Page > allPages = m_engine.getManager( PageManager.class ).getAllPages();
                     for( final Page page : allPages ) {
@@ -312,7 +302,7 @@ public class LuceneSearchProvider implements SearchProvider {
         pageRemoved( page );
 
         // Now add back the new version.
-        try( final Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
+        try( final Directory luceneDir = new NIOFSDirectory( new File( m_luceneDirectory ).toPath() );
              final IndexWriter writer = getIndexWriter( luceneDir ) ) {
             luceneIndexPage( page, text, writer );
         } catch( final IOException e ) {
@@ -400,7 +390,9 @@ public class LuceneSearchProvider implements SearchProvider {
             field = new Field( LUCENE_PAGE_KEYWORDS, page.getAttribute( "keywords" ).toString(), TextField.TYPE_STORED );
             doc.add( field );
         }
-        writer.addDocument(doc);
+        synchronized( writer ) {
+            writer.addDocument(doc);
+        }
 
         return doc;
     }
@@ -409,8 +401,8 @@ public class LuceneSearchProvider implements SearchProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void pageRemoved( final Page page ) {
-        try( final Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
+    public synchronized void pageRemoved( final Page page ) {
+        try( final Directory luceneDir = new NIOFSDirectory( new File( m_luceneDirectory ).toPath() );
              final IndexWriter writer = getIndexWriter( luceneDir ) ) {
             final Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
             writer.deleteDocuments( query );
@@ -479,7 +471,7 @@ public class LuceneSearchProvider implements SearchProvider {
         ArrayList<SearchResult> list = null;
         Highlighter highlighter = null;
 
-        try( final Directory luceneDir = new SimpleFSDirectory( new File( m_luceneDirectory ).toPath() );
+        try( final Directory luceneDir = new NIOFSDirectory( new File( m_luceneDirectory ).toPath() );
              final IndexReader reader = DirectoryReader.open( luceneDir ) ) {
             final String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS, LUCENE_PAGE_KEYWORDS };
             final QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
