@@ -17,7 +17,15 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-**2020-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)**
+**2020-10-14  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M8-git-02_
+
+* [JSPWIKI-1114](https://issues.apache.org/jira/browse/JSPWIKI-1131): Show only part of Weblog entry on the overview page.
+    * Preview parameter cutting now only at newlines, patch suggested by Ulf Dittmer - thanks!
+
+* LuceneSearchProvider using now NIOFSDirectory instead of (deprecated) SimpleFSDirectory. Also, all Lucene's index
+  writes are synchronized, whereas reads are not. This should help with issues noted at [JSPWIKI-1131](https://issues.apache.org/jira/browse/JSPWIKI-1131).
 
 * _2.11.0-M8-git-01_
 
