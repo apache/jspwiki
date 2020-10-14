@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Context;
@@ -29,6 +30,7 @@ import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.*;
 import java.security.Principal;
@@ -54,8 +56,9 @@ public class DefaultWorkflowManager implements WorkflowManager {
     DecisionQueue m_queue = new DecisionQueue();
     Set< Workflow > m_workflows;
     final Map< String, Principal > m_approvers;
-    List< Workflow > m_completed;
+    Queue< Workflow > m_completed;
     private Engine m_engine = null;
+    private int retainCompleted;
 
     /**
      * Constructs a new WorkflowManager, with an empty workflow cache.
@@ -63,7 +66,6 @@ public class DefaultWorkflowManager implements WorkflowManager {
     public DefaultWorkflowManager() {
         m_workflows = ConcurrentHashMap.newKeySet();
         m_approvers = new ConcurrentHashMap<>();
-        m_completed = new CopyOnWriteArrayList<>();
         WikiEventEmitter.attach( this );
     }
 
@@ -97,6 +99,8 @@ public class DefaultWorkflowManager implements WorkflowManager {
     @Override
     public void initialize( final Engine engine, final Properties props ) {
         m_engine = engine;
+        retainCompleted = TextUtil.getIntegerProperty( engine.getWikiProperties(), "jspwiki.workflow.completed.retain", 2048 );
+        m_completed = new CircularFifoQueue<>( retainCompleted );
 
         // Identify the workflows requiring approvals
         for( final Object o : props.keySet() ) {
@@ -135,11 +139,12 @@ public class DefaultWorkflowManager implements WorkflowManager {
                 saved        = in.readLong();
                 m_workflows  = ( Set< Workflow > )in.readObject();
                 m_queue      = ( DecisionQueue )in.readObject();
-                m_completed  = ( List< Workflow > )in.readObject();
+                m_completed = new CircularFifoQueue<>( retainCompleted );
+                m_completed.addAll( ( Collection< Workflow > )in.readObject() );
                 LOG.debug( "Read serialized data successfully in " + sw );
             }
         } catch( final IOException | ClassNotFoundException e ) {
-            LOG.error( "unable to recover from disk workflows and decision queue: " + e.getMessage(), e );
+            LOG.warn( "unable to recover from disk workflows and decision queue: " + e.getMessage() );
         }
         sw.stop();
 
