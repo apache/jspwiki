@@ -311,7 +311,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
         if (preview > 0) {
             //
             // We start with the first 'preview' number of characters from the text,
-            // and then add characters to it until we get to a linebreak or a period.
+            // and then add characters to it until we get to a linebreak.
             // The idea is that cutting off at a linebreak is less likely
             // to disturb the HTML and leave us with garbled output.
             //
@@ -319,11 +319,6 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
             int cutoff = Math.min(preview, html.length());
             while (cutoff < html.length()) {
                 if (html.charAt(cutoff) == '\r' || html.charAt(cutoff) == '\n') {
-                    hasBeenCutOff = true;
-                    break;
-                } else if (html.charAt(cutoff) == '.') {
-                    // we do want the period
-                    cutoff++;
                     hasBeenCutOff = true;
                     break;
                 }
@@ -353,7 +348,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
             author = "AnonymousCoward";
         }
 
-        buffer.append( MessageFormat.format( rb.getString("weblogentryplugin.postedby"), author));
+        buffer.append( MessageFormat.format( rb.getString( "weblogentryplugin.postedby" ), author ) );
         buffer.append( "<a href=\"" + entryCtx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), entry.getName() ) + "\">" + rb.getString("weblogentryplugin.permalink") + "</a>" );
         final String commentPageName = TextUtil.replaceString( entry.getName(), "blogentry", "comments" );
 
