@@ -64,7 +64,7 @@ public class SaveWikiPageTask extends Task {
         context.getEngine().getManager( FilterManager.class ).doPostSaveFiltering( context, proposedText );
 
         // Reindex saved page
-        context.getEngine().getManager(SearchManager.class ).reindexPage( page );
+        context.getEngine().getManager( SearchManager.class ).reindexPage( page );
 
         return Outcome.STEP_COMPLETE;
     }
