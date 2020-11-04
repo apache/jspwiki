@@ -189,12 +189,12 @@
 
   <%-- more menu --%>
   <li id="more">
-    <a href="#">
+    <a href="#"  data-click-parent="#more">
         <span class="icon-ellipsis-v"></span>
         <span><fmt:message key="actions.more"/></span>
         <span class="caret"></span>
     </a>
-    <ul class="dropdown-menu pull-right" data-hover-parent="li">
+    <ul class="dropdown-menu pull-right">
       <wiki:PageExists>
       <wiki:CheckRequestContext context='view|info|diff|upload|preview' >
 
