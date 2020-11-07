@@ -118,7 +118,7 @@ public class LuceneSearchProvider implements SearchProvider {
     /** The maximum number of hits to return from searches. */
     public static final int MAX_SEARCH_HITS = 99_999;
     
-    private static String c_punctuationSpaces = StringUtils.repeat(" ", TextUtil.PUNCTUATION_CHARS_ALLOWED.length() );
+    private static final String PUNCTUATION_TO_SPACES = StringUtils.repeat(" ", TextUtil.PUNCTUATION_CHARS_ALLOWED.length() );
 
     /**
      *  {@inheritDoc}
@@ -134,8 +134,7 @@ public class LuceneSearchProvider implements SearchProvider {
         final int indexDelay   = TextUtil.getIntegerProperty( props, PROP_LUCENE_INDEXDELAY, LuceneUpdater.INDEX_DELAY );
 
         m_analyzerClass = TextUtil.getStringProperty( props, PROP_LUCENE_ANALYZER, m_analyzerClass );
-        // FIXME: Just to be simple for now, we will do full reindex
-        // only if no files are in lucene directory.
+        // FIXME: Just to be simple for now, we will do full reindex only if no files are in lucene directory.
 
         final File dir = new File(m_luceneDirectory);
         log.info("Lucene enabled, cache will be in: "+dir.getAbsolutePath());
@@ -359,7 +358,7 @@ public class LuceneSearchProvider implements SearchProvider {
         doc.add( field );
 
         // Allow searching by page name. Both beautified and raw
-        final String unTokenizedTitle = StringUtils.replaceChars( page.getName(), TextUtil.PUNCTUATION_CHARS_ALLOWED, c_punctuationSpaces );
+        final String unTokenizedTitle = StringUtils.replaceChars( page.getName(), TextUtil.PUNCTUATION_CHARS_ALLOWED, PUNCTUATION_TO_SPACES );
         field = new Field( LUCENE_PAGE_NAME, TextUtil.beautifyString( page.getName() ) + " " + unTokenizedTitle, TextField.TYPE_STORED );
         doc.add( field );
 
@@ -372,12 +371,12 @@ public class LuceneSearchProvider implements SearchProvider {
         // Now add the names of the attachments of this page
         try {
             final List< Attachment > attachments = m_engine.getManager( AttachmentManager.class ).listAttachments( page );
-            String attachmentNames = "";
+            final StringBuilder attachmentNames = new StringBuilder();
 
             for( final Attachment att : attachments ) {
-                attachmentNames += att.getName() + ";";
+                attachmentNames.append( att.getName() ).append( ";" );
             }
-            field = new Field( LUCENE_ATTACHMENTS, attachmentNames, TextField.TYPE_STORED );
+            field = new Field( LUCENE_ATTACHMENTS, attachmentNames.toString(), TextField.TYPE_STORED );
             doc.add( field );
 
         } catch( final ProviderException e ) {
