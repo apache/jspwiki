@@ -18,49 +18,128 @@
  */
 package org.apache.wiki.pages.haddock;
 
+import org.apache.wiki.pages.Page;
 import org.openqa.selenium.By;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
+/**
+ * Actions available on the View page.
+ */
 public class ReadWikiPage implements HaddockPage {
-    
+
+    /**
+     * Open a given page for view.
+     *
+     * @param pageName Wiki page name to View.
+     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     */
+    public static ReadWikiPage open( final String pageName ) {
+        return Page.withUrl( Page.baseUrl() + "/Wiki.jsp?page=" + pageName ).openAs( new ReadWikiPage() );
+    }
+
+    /**
+     * Returns the authenticated user text.
+     *
+     * @return the authenticated user text.
+     */
     public String authenticatedText() {
         return Selenide.$( By.className( "wikipage" ) ).text().trim();
     }
-    
+
+    /**
+     * Clicks on the login button.
+     *
+     * @return {@link LoginPage} instance, to allow chaining of actions.
+     */
     public LoginPage clickOnLogin() {
         Selenide.$( By.className( "icon-signin" ) ).click(); 
         return new LoginPage();
     }
-    
+
+    /**
+     * Clicks on the show reader view link.
+     *
+     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     */
     public ReadWikiPage clickOnShowReaderView() {
         Selenide.$( By.linkText( "Show Reader View" ) ).click();
-        return new ReadWikiPage();
+        return this;
     }
 
+    /**
+     * Hover's the user's icon, so the login area gets visible.
+     *
+     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     */
     public ReadWikiPage hoverLoginArea() {
         Selenide.$( By.className( "icon-user" ) ).hover();
         return this;
     }
-    
+
+    /**
+     * Hover's the More tab, making its associated pane visible.
+     *
+     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     */
     public ReadWikiPage hoverMoreArea() {
         Selenide.$( By.id( "more" ) ).hover();
         return this;
     }
-    
+
+    /**
+     * Clicks the edit link.
+     *
+     * @return {@link EditWikiPage} instance, to allow chaining of actions.
+     */
+    public EditWikiPage editPage() {
+        Selenide.$( By.cssSelector( "li#edit a" ) ).waitUntil( Condition.visible, 1_000L ).click();
+        return new EditWikiPage();
+    }
+
+    /**
+     * Searches for a given text.
+     *
+     * @param text text to search for.
+     * @return {@link SearchResultsPage} instance, to allow chaining of actions.
+     */
+    public SearchResultsPage searchFor( final String text ) {
+        Selenide.$( By.id( "searchForm" ) ).hover();
+        Selenide.$( By.id( "query" ) ).click();
+        Selenide.$( By.id( "query" ) ).val( text );
+        Selenide.$( By.id( "searchSubmit" ) ).click();
+        return new SearchResultsPage();
+    }
+
+    /**
+     * Logs the user out.
+     *
+     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     */
     public ReadWikiPage logout() {
         Selenide.$( By.linkText( "Log out" ) ).click();
         Selenide.$( By.className( "btn-success" ) ).waitUntil( Condition.visible, 1_000L ).click();
         return this;
     }
-    
-    public ReadWikiPage navigateTo( String wikiPageName ) {
+
+    /**
+     * Navigates to a given view page.
+     *
+     * @param wikiPageName wikipage name to navigate to.
+     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     */
+    public ReadWikiPage navigateTo( final String wikiPageName ) {
         Selenide.$( By.linkText( wikiPageName ) ).click(); 
-        return new ReadWikiPage();
+        return this;
     }
-    
+
+    /**
+     * Returns the sidebar element.
+     *
+     * @return the sidebar element.
+     */
     public SelenideElement sidebar() {
         return Selenide.$( By.className( "sidebar" ) );
     }
