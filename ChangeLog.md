@@ -17,6 +17,26 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-11-07  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M8-git-03_
+
+* Added functional tests for page edits and page searches.
+
+* Simplified generation of portable build native binaries, a simple `mvn clean install -Dgenerate-native-launchers=true`
+  is all that is needed to generate the binaries. As this takes some more time, is only needed when upgrading tomcat and
+  needs to download artifacts not present on Maven's central repo, it is not enabled by default.
+
+* Jenkinsfile uses JDK 11 to perform the build, as this is now the minimum [required by SonarQube](https://sonarcloud.io/documentation/appendices/end-of-support/). 
+  The build itself still requires at least JDK 1.8.
+
+* Dependency updates
+    * Cargo plugin to 1.8.2
+    * Lucene to 8.7.0
+    * Mockito 3.6.0
+    * Selenide 5.15.1
+    * Tomcat to 9.0.39
+
 **2020-10-14  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M8-git-02_
