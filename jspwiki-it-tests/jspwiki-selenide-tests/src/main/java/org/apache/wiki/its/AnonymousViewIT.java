@@ -39,30 +39,31 @@ public class AnonymousViewIT {
     
     @Test
     void anonymousView() {
-        ReadWikiPage main = Page.withUrl( Page.baseUrl() + "/Wiki.jsp?page=Main" ).openAs( new ReadWikiPage() );
+        final ReadWikiPage main = ReadWikiPage.open( "Main" );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
         Assertions.assertEquals( "Main", main.wikiTitle() );
         
         Assertions.assertTrue( main.wikiPageContent().contains( "You have successfully installed" ) );
-        ReadWikiPage about = main.navigateTo( "JSPWiki" );
+        final ReadWikiPage about = main.navigateTo( "JSPWiki" );
         Assertions.assertTrue( about.wikiPageContent().contains( "This Wiki is done using" ) );
     }
     
     @Test
     void anonymousViewImage() throws Exception {
-        File file = Page.download( Page.baseUrl() + "/images/jspwiki_logo_s.png" );
+        final File file = Page.download( Page.baseUrl() + "/images/jspwiki_logo_s.png" );
         Assertions.assertTrue( file.exists() );
     }
     
     @Test
     void anonymousReaderView() {
-        ReadWikiPage main = Page.withUrl( Page.baseUrl() + "/Wiki.jsp?page=Main" ).openAs( new ReadWikiPage() );
+        final ReadWikiPage main = ReadWikiPage.open( "Main" );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
         Assertions.assertEquals( "Main", main.wikiTitle() );
         main.sidebar().should( exist );
         
-        main.hoverMoreArea().clickOnShowReaderView();
-        main.sidebar().should( not( exist ) );
+        main.hoverMoreArea()
+            .clickOnShowReaderView()
+            .sidebar().should( not( exist ) );
     }
 
 }

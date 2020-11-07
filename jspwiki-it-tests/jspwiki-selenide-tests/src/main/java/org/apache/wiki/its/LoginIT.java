@@ -18,14 +18,12 @@
  */
 package org.apache.wiki.its;
 
-import org.apache.wiki.pages.Page;
+import com.codeborne.selenide.junit5.ScreenShooterExtension;
 import org.apache.wiki.pages.haddock.LoginPage;
 import org.apache.wiki.pages.haddock.ReadWikiPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import com.codeborne.selenide.junit5.ScreenShooterExtension;
 
 
 /**
@@ -36,7 +34,7 @@ public class LoginIT {
     
     @Test
     void loginAndLogout() {
-        ReadWikiPage main = Page.withUrl( Page.baseUrl() + "/Wiki.jsp?page=Main" ).openAs( new ReadWikiPage() );
+        ReadWikiPage main = ReadWikiPage.open( "Main" );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
         Assertions.assertEquals( "Main", main.wikiTitle() );
         Assertions.assertEquals( "G’day (anonymous guest)", main.hoverLoginArea().authenticatedText() );
@@ -55,7 +53,7 @@ public class LoginIT {
     
     @Test
     void loginKO() {
-        ReadWikiPage main = Page.withUrl( Page.baseUrl() + "/Wiki.jsp?page=Main" ).openAs( new ReadWikiPage() );
+        ReadWikiPage main = ReadWikiPage.open( "Main" );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
         Assertions.assertEquals( "Main", main.wikiTitle() );
         Assertions.assertEquals( "G’day (anonymous guest)", main.hoverLoginArea().authenticatedText() );
