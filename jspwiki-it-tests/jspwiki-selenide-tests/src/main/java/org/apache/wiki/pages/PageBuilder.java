@@ -44,8 +44,10 @@ public class PageBuilder {
      */
     public < T extends Page > T openAs( final T page ) {
         Configuration.headless = Env.TESTS_CONFIG_HEADLESS;
+        Configuration.fastSetValue = true; // default value seems to not send `[` or `{` characters to input controls. weird.
         Configuration.reportsFolder = Env.TESTS_CONFIG_REPORTS_FOLDER;
         Configuration.startMaximized = Env.TESTS_CONFIG_START_MAXIMIZED;
+        Configuration.downloadsFolder = Env.TESTS_CONFIG_DOWNLOADS_FOLDER;
         System.setProperty( "wdm.targetPath", Env.TESTS_CONFIG_WDM_TARGET_PATH );
         
         Selenide.open( url );

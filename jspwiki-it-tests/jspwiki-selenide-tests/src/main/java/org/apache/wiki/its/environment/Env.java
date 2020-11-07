@@ -26,15 +26,21 @@ public class Env {
     
     /** Base url on which the functional tests are run. Default value is {@code https://jspwiki-wiki.apache.org}. */
     public static String TESTS_BASE_URL = System.getProperty( "it-jspwiki.base.url", "https://jspwiki-wiki.apache.org" );
+
+    /** Selenide tests download's folder. Default value is {@code ./target/downloads}. */
+    public static String TESTS_CONFIG_DOWNLOADS_FOLDER = System.getProperty( "it-jspwiki.config.download-folder", "./target/downloads" );
     
     /** Should the browser start on headless mode? Only for Firefox / Chrome. Default value is {@code false}. */
-    public static boolean TESTS_CONFIG_HEADLESS = Boolean.valueOf( System.getProperty( "it-jspwiki.config.headless", "false" ) );
+    public static boolean TESTS_CONFIG_HEADLESS = Boolean.parseBoolean( System.getProperty( "it-jspwiki.config.headless", "false" ) );
 
     /** Selenide tests reports' folder. Default value is {@code ./target/selenide}. */
-    public static String TESTS_CONFIG_REPORTS_FOLDER = System.getProperty( "it-jspwiki.config.headless", "./target/selenide" );
+    public static String TESTS_CONFIG_REPORTS_FOLDER = System.getProperty( "it-jspwiki.config.reports", "./target/selenide" );
+
+    /** Amount of time, in milliseconds, to wait for the search index tasks to complete. Default value is {@code 1200}. */
+    public static long TESTS_CONFIG_SEARCH_INDEX_WAIT = Long.parseLong( System.getProperty( "it-jspwiki.config.search-index-wait", "1200" ) );
 
     /** Should the browser start maximized?. Default value is {@code true}. */
-    public static boolean TESTS_CONFIG_START_MAXIMIZED = Boolean.valueOf( System.getProperty( "it-jspwiki.config.start-maximized", "true" ) );
+    public static boolean TESTS_CONFIG_START_MAXIMIZED = Boolean.parseBoolean( System.getProperty( "it-jspwiki.config.start-maximized", "true" ) );
 
     /** Folder where the WebDriver will be downloaded. Default value is {@code ./target/wdm}. */
     public static String TESTS_CONFIG_WDM_TARGET_PATH = System.getProperty( "it-jspwiki.config.wdm.target-path", "./target/wdm" );
