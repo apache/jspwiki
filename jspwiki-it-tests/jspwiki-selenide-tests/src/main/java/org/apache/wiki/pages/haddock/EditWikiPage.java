@@ -43,20 +43,20 @@ public class EditWikiPage implements HaddockPage {
     /**
      * Press the cancel button and disacrd page Edit.
      *
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ReadWikiPage cancel() {
+    public ViewWikiPage cancel() {
         Selenide.$( By.name( "cancel" ) ).click();
-        return new ReadWikiPage();
+        return new ViewWikiPage();
     }
 
     /**
      * Edits the page with the given text. Ensures edition is complete by ensuring the preview pane shows the edited text.
      *
      * @param text text to edit.
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ReadWikiPage saveText(final String text ) {
+    public ViewWikiPage saveText(final String text ) {
         return saveText( text, text );
     }
 
@@ -65,14 +65,14 @@ public class EditWikiPage implements HaddockPage {
      *
      * @param text text text to edit.
      * @param preview expected text to hsow up on the preview pane (i.e., page directives on edit pane shouldn't show up here).
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ReadWikiPage saveText(final String text, final String preview ) {
+    public ViewWikiPage saveText(final String text, final String preview ) {
         Selenide.$( By.cssSelector( EDIT_TEXTAREA ) ).clear();
         Selenide.$( By.cssSelector( EDIT_TEXTAREA ) ).val( text );
         Selenide.$( By.className( "ajaxpreview" ) ).waitUntil( Condition.text( preview ), 1_000L );
         Selenide.$( By.name( "ok" ) ).click();
-        return new ReadWikiPage();
+        return new ViewWikiPage();
     }
 
 }

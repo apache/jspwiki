@@ -20,7 +20,7 @@ package org.apache.wiki.its;
 
 import com.codeborne.selenide.junit5.ScreenShooterExtension;
 import org.apache.wiki.its.environment.Env;
-import org.apache.wiki.pages.haddock.ReadWikiPage;
+import org.apache.wiki.pages.haddock.ViewWikiPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,7 +37,7 @@ public class SearchIT {
 
         // first, search for a term indexed on startup (wait a bit to allow the initial search indexing to complete first)
         Thread.sleep( Env.TESTS_CONFIG_SEARCH_INDEX_WAIT );
-        final ReadWikiPage main = ReadWikiPage.open( "Main" )
+        final ViewWikiPage main = ViewWikiPage.open( "Main" )
                                               .searchFor( "Congratulations" ).shouldContain( "Main" )
                                               .navigateTo( "Main" );
 

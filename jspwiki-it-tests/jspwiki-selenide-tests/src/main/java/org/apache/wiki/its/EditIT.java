@@ -20,7 +20,7 @@ package org.apache.wiki.its;
 
 import com.codeborne.selenide.junit5.ScreenShooterExtension;
 import org.apache.wiki.pages.haddock.EditWikiPage;
-import org.apache.wiki.pages.haddock.ReadWikiPage;
+import org.apache.wiki.pages.haddock.ViewWikiPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,12 +35,12 @@ public class EditIT {
     void createPageAndTestEditPermissions() {
         final String pageName = "RandomPage" + System.currentTimeMillis();
 
-        final ReadWikiPage randomPage = EditWikiPage.open( pageName )
+        final ViewWikiPage randomPage = EditWikiPage.open( pageName )
                                                     .saveText( "random page [{ALLOW edit janne}] [{ALLOW view All}]", "random page" );
         Assertions.assertEquals( pageName, randomPage.wikiTitle() );
         Assertions.assertEquals( "random page", randomPage.wikiPageContent() );
 
-        final ReadWikiPage requiresJannesAccess = randomPage.hoverLoginArea().clickOnLogin().performLogin();
+        final ViewWikiPage requiresJannesAccess = randomPage.hoverLoginArea().clickOnLogin().performLogin();
         requiresJannesAccess.editPage().saveText( "random page [{ALLOW edit janne}]", "random page" );
         Assertions.assertEquals( pageName, requiresJannesAccess.wikiTitle() );
         Assertions.assertEquals( "random page", requiresJannesAccess.wikiPageContent() );

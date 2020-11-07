@@ -37,7 +37,7 @@ public class SearchResultsPage implements HaddockPage {
      * Open the search results page with a given query text to search for.
      *
      * @param pageName Wiki page name to View.
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
     public static SearchResultsPage open( final String pageName ) {
         return Page.withUrl( Page.baseUrl() + "/Search.jsp?query=" + pageName ).openAs( new SearchResultsPage() );
@@ -71,11 +71,11 @@ public class SearchResultsPage implements HaddockPage {
      * Navigates to a view page from the search results.
      *
      * @param result wikipage name to navigate to.
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ReadWikiPage navigateTo( final String result ) {
+    public ViewWikiPage navigateTo(final String result ) {
         Selenide.$( By.cssSelector( ".wikitable.table-striped" ) ).find( By.linkText( result ) ).click();
-        return new ReadWikiPage();
+        return new ViewWikiPage();
     }
 
 }

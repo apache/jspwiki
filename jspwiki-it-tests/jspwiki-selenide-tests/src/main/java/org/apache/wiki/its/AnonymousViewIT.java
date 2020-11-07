@@ -20,7 +20,7 @@ package org.apache.wiki.its;
 
 import com.codeborne.selenide.junit5.ScreenShooterExtension;
 import org.apache.wiki.pages.Page;
-import org.apache.wiki.pages.haddock.ReadWikiPage;
+import org.apache.wiki.pages.haddock.ViewWikiPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,12 +39,12 @@ public class AnonymousViewIT {
     
     @Test
     void anonymousView() {
-        final ReadWikiPage main = ReadWikiPage.open( "Main" );
+        final ViewWikiPage main = ViewWikiPage.open( "Main" );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
         Assertions.assertEquals( "Main", main.wikiTitle() );
         
         Assertions.assertTrue( main.wikiPageContent().contains( "You have successfully installed" ) );
-        final ReadWikiPage about = main.navigateTo( "JSPWiki" );
+        final ViewWikiPage about = main.navigateTo( "JSPWiki" );
         Assertions.assertTrue( about.wikiPageContent().contains( "This Wiki is done using" ) );
     }
     
@@ -56,7 +56,7 @@ public class AnonymousViewIT {
     
     @Test
     void anonymousReaderView() {
-        final ReadWikiPage main = ReadWikiPage.open( "Main" );
+        final ViewWikiPage main = ViewWikiPage.open( "Main" );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
         Assertions.assertEquals( "Main", main.wikiTitle() );
         main.sidebar().should( exist );

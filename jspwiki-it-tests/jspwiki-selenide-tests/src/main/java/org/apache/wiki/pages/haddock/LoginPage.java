@@ -30,9 +30,9 @@ public class LoginPage implements HaddockPage {
     /**
      * Logs in using Janne username and password.
      *
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ReadWikiPage performLogin() {
+    public ViewWikiPage performLogin() {
         return performLogin( Env.LOGIN_JANNE_USERNAME, Env.LOGIN_JANNE_PASSWORD );
     }
 
@@ -41,14 +41,14 @@ public class LoginPage implements HaddockPage {
      *
      * @param login user login.
      * @param password user password.
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ReadWikiPage performLogin( final String login, final String password ) {
+    public ViewWikiPage performLogin(final String login, final String password ) {
         Selenide.$( By.id( "j_username" ) ).val( login );
         Selenide.$( By.id( "j_password" ) ).val( password );
         Selenide.$( By.name( "submitlogin" ) ).click();
         
-        return new ReadWikiPage();
+        return new ViewWikiPage();
     }
 
 }

@@ -28,16 +28,16 @@ import com.codeborne.selenide.SelenideElement;
 /**
  * Actions available on the View page.
  */
-public class ReadWikiPage implements HaddockPage {
+public class ViewWikiPage implements HaddockPage {
 
     /**
      * Open a given page for view.
      *
      * @param pageName Wiki page name to View.
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public static ReadWikiPage open( final String pageName ) {
-        return Page.withUrl( Page.baseUrl() + "/Wiki.jsp?page=" + pageName ).openAs( new ReadWikiPage() );
+    public static ViewWikiPage open(final String pageName ) {
+        return Page.withUrl( Page.baseUrl() + "/Wiki.jsp?page=" + pageName ).openAs( new ViewWikiPage() );
     }
 
     /**
@@ -62,9 +62,9 @@ public class ReadWikiPage implements HaddockPage {
     /**
      * Clicks on the show reader view link.
      *
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ReadWikiPage clickOnShowReaderView() {
+    public ViewWikiPage clickOnShowReaderView() {
         Selenide.$( By.linkText( "Show Reader View" ) ).click();
         return this;
     }
@@ -72,9 +72,9 @@ public class ReadWikiPage implements HaddockPage {
     /**
      * Hover's the user's icon, so the login area gets visible.
      *
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ReadWikiPage hoverLoginArea() {
+    public ViewWikiPage hoverLoginArea() {
         Selenide.$( By.className( "icon-user" ) ).hover();
         return this;
     }
@@ -82,9 +82,9 @@ public class ReadWikiPage implements HaddockPage {
     /**
      * Hover's the More tab, making its associated pane visible.
      *
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ReadWikiPage hoverMoreArea() {
+    public ViewWikiPage hoverMoreArea() {
         Selenide.$( By.id( "more" ) ).hover();
         return this;
     }
@@ -116,9 +116,9 @@ public class ReadWikiPage implements HaddockPage {
     /**
      * Logs the user out.
      *
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ReadWikiPage logout() {
+    public ViewWikiPage logout() {
         Selenide.$( By.linkText( "Log out" ) ).click();
         Selenide.$( By.className( "btn-success" ) ).waitUntil( Condition.visible, 1_000L ).click();
         return this;
@@ -128,9 +128,9 @@ public class ReadWikiPage implements HaddockPage {
      * Navigates to a given view page.
      *
      * @param wikiPageName wikipage name to navigate to.
-     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ReadWikiPage navigateTo( final String wikiPageName ) {
+    public ViewWikiPage navigateTo(final String wikiPageName ) {
         Selenide.$( By.linkText( wikiPageName ) ).click(); 
         return this;
     }
