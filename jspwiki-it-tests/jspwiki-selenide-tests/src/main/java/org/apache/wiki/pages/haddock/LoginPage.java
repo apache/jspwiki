@@ -22,12 +22,27 @@ import com.codeborne.selenide.Selenide;
 import org.apache.wiki.its.environment.Env;
 import org.openqa.selenium.By;
 
+/**
+ * Actions available on the Login page.
+ */
 public class LoginPage implements HaddockPage {
-    
+
+    /**
+     * Logs in using Janne username and password.
+     *
+     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     */
     public ReadWikiPage performLogin() {
         return performLogin( Env.LOGIN_JANNE_USERNAME, Env.LOGIN_JANNE_PASSWORD );
     }
-    
+
+    /**
+     * Logs in using the supplied username and password.
+     *
+     * @param login user login.
+     * @param password user password.
+     * @return {@link ReadWikiPage} instance, to allow chaining of actions.
+     */
     public ReadWikiPage performLogin( final String login, final String password ) {
         Selenide.$( By.id( "j_username" ) ).val( login );
         Selenide.$( By.id( "j_password" ) ).val( password );
