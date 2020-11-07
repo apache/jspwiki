@@ -27,7 +27,7 @@
   
   <artifactId>jspwiki-it-test-custom-absolute-urls</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <description>selenium tests execution for jspwiki-it-test-custom-absolute-urls (custom auth, absolute URLs)</description>
+  <description>functional tests execution for jspwiki-it-test-custom-absolute-urls (custom auth, absolute URLs)</description>
   <packaging>war</packaging> <!-- tests reuse [2/3]: builds a war on top of jspwiki-war -->
   
   <properties> <!-- tests reuse [3/3]: values injected at ../jspwiki-selenide-tests/.../jspwiki-custom.properties end up on generated war -->

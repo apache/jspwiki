@@ -28,7 +28,7 @@
   <!-- Container Managed Authentication using JDBC instead of XML files for user and group info -->
   <artifactId>jspwiki-it-test-cma-jdbc</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <description>selenium tests execution for jspwiki-it-test-container-jdbc (container auth, relative URLs, JDBC database)</description>
+  <description>functional tests execution for jspwiki-it-test-container-jdbc (container auth, relative URLs, JDBC database)</description>
   <packaging>war</packaging> <!-- tests reuse [2/3]: builds a war on top of jspwiki-war -->
   
   <properties> <!-- tests reuse [3/3]: values injected at ../jspwiki-selenide-tests/.../jspwiki-custom.properties end up on generated war -->

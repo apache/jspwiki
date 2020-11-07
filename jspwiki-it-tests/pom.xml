@@ -106,6 +106,7 @@
                 </dependenciesToScan>
                 <systemPropertyVariables>
                   <it-jspwiki.base.url>http://localhost:8080/${it-jspwiki.context}</it-jspwiki.base.url>
+                  <it-jspwiki.config.download-folder>./target/downloads</it-jspwiki.config.download-folder>
                   <it-jspwiki.config.headless>false</it-jspwiki.config.headless>
                   <it-jspwiki.config.reports-folder>${project.basedir}/target/selenide</it-jspwiki.config.reports-folder>
                   <it-jspwiki.config.start-maximized>true</it-jspwiki.config.start-maximized>
