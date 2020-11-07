@@ -25,7 +25,7 @@ try {
     def asfsite = 'asf-site'
     def build = 'build'
     def buildJdk = 'jdk_11_latest'
-    def buildMvn = 'Maven 3 (latest)'
+    def buildMvn = 'maven_3_latest'
     def jbake = 'jbake'
     def pom
 
