@@ -24,6 +24,8 @@ try {
 
     def asfsite = 'asf-site'
     def build = 'build'
+    def buildJdk = 'jdk_11_latest'
+    def buildMvn = 'Maven 3 (latest)'
     def jbake = 'jbake'
     def pom
 
@@ -35,7 +37,7 @@ try {
         stage( 'build source' ) {
             dir( build ) {
                 git url: buildRepo, poll: true
-                withMaven(jdk: 'JDK 1.8 (latest)', maven: 'Maven 3 (latest)' ) {
+                withMaven( jdk: buildJdk, maven: buildMvn ) {
                     withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
                         def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
                         echo 'Will use SonarQube instance at https://sonarcloud.io'
@@ -51,7 +53,7 @@ try {
         }
 
         stage( 'build website' ) {
-            withMaven(jdk: 'JDK 1.8 (latest)', maven: 'Maven 3 (latest)' ) {
+            withMaven( jdk: buildJdk, maven: buildMvn ) {
                 dir( jbake ) {
                     git branch: jbake, url: siteRepo, credentialsId: creds, poll: false
                     sh "cp ../$build/ChangeLog.md ./src/main/config/changelog.md"
