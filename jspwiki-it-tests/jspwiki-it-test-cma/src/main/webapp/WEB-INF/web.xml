@@ -208,7 +208,8 @@
 
        In particular, the restrictions below allow all users to
        read documents, but only Authenticated users can comment
-       on or edit them (i.e., access the Edit.jsp page).
+       on them. Anonymous edits (i.e., access the Edit.jsp page) are
+       allowed, as there is a test which does precisely that.
        Users with the role Admin are the only persons who can
        delete pages.
 
@@ -255,7 +256,7 @@
    <security-constraint>
        <web-resource-collection>
            <web-resource-name>Authenticated area</web-resource-name>
-           <url-pattern>/Edit.jsp</url-pattern>
+           <!-- <url-pattern>/Edit.jsp</url-pattern> -->
            <url-pattern>/Comment.jsp</url-pattern>
            <url-pattern>/Login.jsp</url-pattern>
            <url-pattern>/NewGroup.jsp</url-pattern>
