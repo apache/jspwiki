@@ -53,7 +53,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
     /** We use this also a generic serialization id */
     private static final long serialVersionUID = 6L;
 
-    DecisionQueue m_queue = new DecisionQueue();
+    DecisionQueue m_queue;
     Set< Workflow > m_workflows;
     final Map< String, Principal > m_approvers;
     Queue< Workflow > m_completed;
@@ -66,6 +66,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
     public DefaultWorkflowManager() {
         m_workflows = ConcurrentHashMap.newKeySet();
         m_approvers = new ConcurrentHashMap<>();
+        m_queue = new DecisionQueue();
         WikiEventEmitter.attach( this );
     }
 
