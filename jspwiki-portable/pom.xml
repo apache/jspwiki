@@ -31,6 +31,10 @@
 
   <properties>
     <jspwiki.woas.language>en</jspwiki.woas.language>
+    <jspwiki.native-launchers.macos.download>woas:download-appbundler-for-mac</jspwiki.native-launchers.macos.download>
+    <jspwiki.native-launchers.macos.generate>woas:mac-app-oracle-jdk</jspwiki.native-launchers.macos.generate>
+    <jspwiki.native-launchers.windows.download>woas:download-launch4j-for-mac</jspwiki.native-launchers.windows.download>
+    <jspwiki.native-launchers.windows.generate>woas:create-windows-app</jspwiki.native-launchers.windows.generate>
   </properties>
 
   <build>
@@ -239,4 +243,103 @@
       <version>${tomcat.version}</version>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>generate-launchers</id>
+      <!-- Native launchers generation need a previous build to be run, so the ant script is able to locate all      -->
+      <!-- needed files. In order to do that, we launch another module build, as early as possible, and generate the -->
+      <!-- launchers over it. That way, the main build will be able to pick up the launchers in one run, without     -->
+      <!-- needing to manually issue another build again. As generating the native launchers takes some time, this   -->
+      <!-- feature must be explicitly activated.                                                                     -->
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>generate-native-launchers</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <configuration>
+              <logDirectory>${project.build.directory}</logDirectory>
+              <pom>./pom.xml</pom>
+              <properties><build-native-launchers>true</build-native-launchers></properties>
+              <streamLogs>true</streamLogs>
+            </configuration>
+            <executions>
+              <execution>
+                <id>woas:generate-native-launchers</id>
+                <phase>validate</phase>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>build-native-launchers</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>build-native-launchers</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>woas:build-native-launchers</id>
+                <phase>package</phase>
+                <configuration>
+                  <target>
+                    <!-- <property name="jspwiki.woas.version" value="${project.version}" /> -->
+                    <property name="jspwiki.tomcat.version" value="${tomcat.version}" />
+                    <ant antfile="${basedir}/build.xml" target="woas:info" />
+                    <ant antfile="${basedir}/build.xml" target="${jspwiki.native-launchers.macos.download}" />
+                    <ant antfile="${basedir}/build.xml" target="${jspwiki.native-launchers.macos.generate}" />
+                    <ant antfile="${basedir}/build.xml" target="${jspwiki.native-launchers.windows.download}" />
+                    <ant antfile="${basedir}/build.xml" target="${jspwiki.native-launchers.windows.generate}" />
+                    <ant antfile="${basedir}/build.xml" target="woas:update-tomcat-launchers" />
+                  </target>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+            </executions>
+            <dependencies>
+              <dependency><!-- enable support with JDK >= 9, see https://sourceforge.net/p/launch4j/bugs/172/ and https://sourceforge.net/p/launch4j/bugs/206/ -->
+                <groupId>com.thoughtworks.xstream</groupId>
+                <artifactId>xstream</artifactId>
+                <version>1.4.13</version>
+              </dependency>
+            </dependencies>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>native-launchers-on-windows-build</id>
+      <activation>
+        <os><family>windows</family></os>
+      </activation>
+      <properties>
+        <jspwiki.native-launchers.macos.download>woas:download-appbundler-for-mac-on-windows</jspwiki.native-launchers.macos.download>
+        <jspwiki.native-launchers.macos.generate>woas:create-mac-app</jspwiki.native-launchers.macos.generate>
+        <jspwiki.native-launchers.windows.download>woas:download-launch4j-for-win</jspwiki.native-launchers.windows.download>
+        <jspwiki.native-launchers.windows.generate>woas:create-windows-app</jspwiki.native-launchers.windows.generate>
+      </properties>
+    </profile>
+  </profiles>
 </project>

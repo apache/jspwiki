@@ -42,6 +42,7 @@ under the License.
 | mvn wro4j:run -Dminimize=true                                     | merge & compress js & css files                                                                                           |
 | mvn wro4j:run -Dminimize=false                                    | only merge the js & css files  (no compression)                                                                           |
 | mvn clean install -Dmaven.test.skip -Dminimize=false              | performs a build, skipping the tests and skip compression                                                                 |
+| mvn clean install -Dgenerate-native-launchers=true                | performs a build, regenerating the native executables on the portable build                                               |
 
 
 # 3. Reports Specific
