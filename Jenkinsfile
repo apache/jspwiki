@@ -41,7 +41,7 @@ try {
                     withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
                         def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
                         echo 'Will use SonarQube instance at https://sonarcloud.io'
-                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report -Pattach-additional-artifacts sonar:sonar -up $sonarOptions"
+                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report -Pattach-additional-artifacts sonar:sonar -up $sonarOptions -Djdk.javadoc.doclet.version=2.0.12"
                     }
                     pom = readMavenPom file: 'pom.xml'
                     writeFile file: 'target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'

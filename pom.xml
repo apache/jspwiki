@@ -515,6 +515,7 @@
             <author>${project.organization.name}</author>
             <bottom>Copyright © {inceptionYear}-{currentYear} ${project.organization.name}. All rights reserved.</bottom>
             <breakiterator>true</breakiterator>
+            <detectJavaApiLink>false</detectJavaApiLink>
             <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
             <docletArtifact>
               <groupId>nl.talsmasoftware</groupId>
