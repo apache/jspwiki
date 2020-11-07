@@ -40,12 +40,12 @@ public class EditIT {
         Assertions.assertEquals( pageName, randomPage.wikiTitle() );
         Assertions.assertEquals( "random page", randomPage.wikiPageContent() );
 
-        final ViewWikiPage requiresJannesAccess = randomPage.hoverLoginArea().clickOnLogin().performLogin();
+        final ViewWikiPage requiresJannesAccess = randomPage.clickOnLogin().performLogin();
         requiresJannesAccess.editPage().saveText( "random page [{ALLOW edit janne}]", "random page" );
         Assertions.assertEquals( pageName, requiresJannesAccess.wikiTitle() );
         Assertions.assertEquals( "random page", requiresJannesAccess.wikiPageContent() );
 
-        requiresJannesAccess.hoverLoginArea().logout();
+        requiresJannesAccess.clickOnLogout();
         Assertions.assertEquals( "Main", requiresJannesAccess.wikiTitle() ); // no access for anonymous user, so redirected to main
         Assertions.assertNotEquals( "random page", randomPage.wikiPageContent() );
     }

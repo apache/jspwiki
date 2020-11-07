@@ -39,7 +39,7 @@ public class LoginIT {
         Assertions.assertEquals( "Main", main.wikiTitle() );
         Assertions.assertEquals( "G’day (anonymous guest)", main.hoverLoginArea().authenticatedText() );
         
-        final LoginPage login = main.hoverLoginArea().clickOnLogin();
+        final LoginPage login = main.clickOnLogin();
         Assertions.assertEquals( "JSPWiki: Login", login.title() );
         Assertions.assertEquals( "Login", login.wikiTitle() );
         
@@ -47,7 +47,7 @@ public class LoginIT {
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
         Assertions.assertEquals( "G’day, Janne Jalkanen (authenticated)", main.hoverLoginArea().authenticatedText() );
         
-        main.hoverLoginArea().logout();
+        main.clickOnLogout();
         Assertions.assertEquals( "G’day (anonymous guest)", main.hoverLoginArea().authenticatedText() );
     }
     
@@ -58,7 +58,7 @@ public class LoginIT {
         Assertions.assertEquals( "Main", main.wikiTitle() );
         Assertions.assertEquals( "G’day (anonymous guest)", main.hoverLoginArea().authenticatedText() );
         
-        final LoginPage login = main.hoverLoginArea().clickOnLogin();
+        final LoginPage login = main.clickOnLogin();
         Assertions.assertEquals( "JSPWiki: Login", login.title() );
         Assertions.assertEquals( "Login", login.wikiTitle() );
         

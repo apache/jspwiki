@@ -55,6 +55,7 @@ public class ViewWikiPage implements HaddockPage {
      * @return {@link LoginPage} instance, to allow chaining of actions.
      */
     public LoginPage clickOnLogin() {
+        hoverLoginArea();
         Selenide.$( By.className( "icon-signin" ) ).click(); 
         return new LoginPage();
     }
@@ -118,7 +119,8 @@ public class ViewWikiPage implements HaddockPage {
      *
      * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
-    public ViewWikiPage logout() {
+    public ViewWikiPage clickOnLogout() {
+        hoverLoginArea();
         Selenide.$( By.linkText( "Log out" ) ).click();
         Selenide.$( By.className( "btn-success" ) ).waitUntil( Condition.visible, 1_000L ).click();
         return this;
