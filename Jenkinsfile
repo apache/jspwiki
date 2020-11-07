@@ -53,7 +53,7 @@ try {
         }
 
         stage( 'build website' ) {
-            withMaven( jdk: buildJdk, maven: buildMvn ) {
+            withMaven( jdk: 'jdk_1.8_latest', maven: buildMvn ) {
                 dir( jbake ) {
                     git branch: jbake, url: siteRepo, credentialsId: creds, poll: false
                     sh "cp ../$build/ChangeLog.md ./src/main/config/changelog.md"
