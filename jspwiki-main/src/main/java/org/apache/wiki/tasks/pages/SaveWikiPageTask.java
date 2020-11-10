@@ -21,6 +21,7 @@ package org.apache.wiki.tasks.pages;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
@@ -64,6 +65,7 @@ public class SaveWikiPageTask extends Task {
         context.getEngine().getManager( FilterManager.class ).doPostSaveFiltering( context, proposedText );
 
         // Reindex saved page
+        page.setVersion( PageProvider.LATEST_VERSION );
         context.getEngine().getManager( SearchManager.class ).reindexPage( page );
 
         return Outcome.STEP_COMPLETE;
