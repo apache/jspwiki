@@ -17,6 +17,15 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-11-10  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M8-git-04_
+
+* [JSPWIKI-1131](https://issues.apache.org/jira/browse/JSPWIKI-1131): Lucene Index not updated on edits/new page
+    * Ensure latest version of page gets indexed, so changes using `VersioningFileProvider` get returned by searches.
+
+* Removed unused publishers from `Jenkinsfile` in order to speed up the CI build.
+
 **2020-11-07  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M8-git-03_
