@@ -26,7 +26,7 @@ import java.security.Principal;
 import java.util.*;
 
 /**
- * Abstract superclass that provides a complete implementation of most Step methods; subclasses need only implement {@link #execute()} and
+ * Abstract superclass that provides a complete implementation of most Step methods; subclasses need only implement {@link #execute(Context)} and
  * {@link #getActor()}.
  *
  * @since 2.5
