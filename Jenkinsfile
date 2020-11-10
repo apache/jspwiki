@@ -37,7 +37,7 @@ try {
         stage( 'build source' ) {
             dir( build ) {
                 git url: buildRepo, poll: true
-                withMaven( jdk: buildJdk, maven: buildMvn ) {
+                withMaven( jdk: buildJdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [ jacocoPublisher(), junitPublisher() ] ) {
                     withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
                         def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
                         echo 'Will use SonarQube instance at https://sonarcloud.io'
@@ -53,7 +53,7 @@ try {
         }
 
         stage( 'build website' ) {
-            withMaven( jdk: 'jdk_1.8_latest', maven: buildMvn ) {
+            withMaven( jdk: 'jdk_1.8_latest', maven: buildMvn, publisherStrategy: 'EXPLICIT' ) {
                 dir( jbake ) {
                     git branch: jbake, url: siteRepo, credentialsId: creds, poll: false
                     sh "cp ../$build/ChangeLog.md ./src/main/config/changelog.md"
