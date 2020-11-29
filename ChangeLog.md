@@ -17,6 +17,23 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-11-29  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M8-git-05_
+
+* [JSPWIKI-1134](https://issues.apache.org/jira/browse/JSPWIKI-1134): german translation improved
+    * Patch provided by Dietrich Schmidt - thanks!
+
+* Extracted hidden input fields expected by the SpamFilter into its own custom tag and applied it to editor-related JSPs.
+
+* Ensure IndexPlugin works with non-blank page references.
+
+* Use ConcurrentHashMap inside DefaultReferenceManager, to avoid possible thread safety issues.
+
+* Dependency updates
+    * Selenide 5.16.2
+    * Tomcat to 9.0.40
+
 **2020-11-10  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M8-git-04_
