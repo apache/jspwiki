@@ -92,8 +92,7 @@
   <p id="submitbuttons">
   <input name="page" type="hidden" value="<wiki:Variable var='pagename' />" />
   <input name="action" type="hidden" value="save" />
-  <%=SpamFilter.insertInputFields( pageContext )%>
-  <input name="<%=SpamFilter.getHashFieldName(request)%>" type="hidden" value="<c:out value='${lastchange}' />" />
+  <wiki:SpamFilterInputs/>
   <input type="submit" name="ok" value="<fmt:message key='editor.plain.save.submit'/>"
     accesskey="s"
         title="<fmt:message key='editor.plain.save.title'/>" />

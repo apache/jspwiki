@@ -54,7 +54,7 @@
 
     <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
     <input type="hidden" name="action" value="save" />
-    <input type="hidden" name="<%=SpamFilter.getHashFieldName(request)%>"value="${lastchange}" />
+    <wiki:SpamFilterInputs/>
   
   <textarea class="hidden" readonly="readonly"
               id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>"

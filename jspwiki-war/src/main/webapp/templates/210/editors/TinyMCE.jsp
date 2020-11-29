@@ -127,13 +127,9 @@
      enctype="application/x-www-form-urlencoded" >
 
     <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
-  <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
-  <input type="hidden" name="action" value="save" />
-  <%=SpamFilter.insertInputFields( pageContext )%>
-  <input type="hidden" name="<%=SpamFilter.getHashFieldName(request)%>" value="${lastchange}" />
-  <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.
-       Normal user should never see this field, nor type anything in it. --%>
-  <div style="display:none;">Authentication code: <input type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value="" /></div>
+    <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
+    <input type="hidden" name="action" value="save" />
+    <wiki:SpamFilterInputs/>
 
     <p>
       <input name='ok' type='submit' value='<fmt:message key="editor.plain.save.submit"/>' />

@@ -55,7 +55,7 @@
 
     <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
     <input type="hidden" name="action" value="save" />
-    <input name="<%=SpamFilter.getHashFieldName(request)%>" type="hidden" value="${lastchange}" />
+    <wiki:SpamFilterInputs/>
   </p>
   <div>
   <textarea style="display:none;" readonly="readonly"

@@ -708,6 +708,13 @@
   </tag>
 
   <tag>
+      <description>Includes input fields used by the Spam Filter</description>
+      <name>SpamFilterInputs</name>
+      <tag-class>org.apache.wiki.tags.SpamFilterInputsTag</tag-class>
+      <body-content>empty</body-content>
+  </tag>
+
+  <tag>
     <description>A BodyTag for tabbed sections</description>
     <name>TabbedSection</name>
     <tag-class>org.apache.wiki.tags.TabbedSectionTag</tag-class>
