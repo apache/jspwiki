@@ -181,16 +181,16 @@ public class SpamFilter extends BasePageFilter {
     private String          m_errorPage          = "RejectedMessage";
     private String          m_blacklist          = "SpamFilterWordList/blacklist.txt";
 
-    private PatternMatcher  m_matcher = new Perl5Matcher();
-    private PatternCompiler m_compiler = new Perl5Compiler();
+    private final PatternMatcher  m_matcher = new Perl5Matcher();
+    private final PatternCompiler m_compiler = new Perl5Compiler();
 
     private Collection<Pattern> m_spamPatterns = null;
     private Collection<Pattern> m_IPPatterns = null;
 
-    private Date            m_lastRebuild = new Date( 0L );
+    private Date m_lastRebuild = new Date( 0L );
 
-    private static  Logger  c_spamlog = Logger.getLogger( "SpamLog" );
-    private static  Logger  log = Logger.getLogger( SpamFilter.class );
+    private static final Logger c_spamlog = Logger.getLogger( "SpamLog" );
+    private static final Logger log = Logger.getLogger( SpamFilter.class );
 
     private Vector<Host>    m_temporaryBanList = new Vector<>();
 
@@ -277,23 +277,17 @@ public class SpamFilter extends BasePageFilter {
         message = TextUtil.replaceString( message, "\"", "\\\"" );
 
         final String uid = getUniqueID();
-
         final String page   = ctx.getPage().getName();
-        String reason = "UNKNOWN";
         final String addr   = ctx.getHttpRequest() != null ? HttpUtil.getRemoteAddress( ctx.getHttpRequest() ) : "-";
-
+        final String reason;
         switch( type ) {
-            case REJECT:
-                reason = "REJECTED";
+            case REJECT: reason = "REJECTED";
                 break;
-            case ACCEPT:
-                reason = "ACCEPTED";
+            case ACCEPT: reason = "ACCEPTED";
                 break;
-            case NOTE:
-                reason = "NOTE";
+            case NOTE: reason = "NOTE";
                 break;
-            default:
-                throw new InternalWikiException( "Illegal type " + type );
+            default: throw new InternalWikiException( "Illegal type " + type );
         }
         c_spamlog.info( reason + " " + source + " " + uid + " " + addr + " \"" + page + "\" " + message );
 
@@ -318,7 +312,7 @@ public class SpamFilter extends BasePageFilter {
         if( !m_stopAtFirstMatch ) {
             final Integer score = context.getVariable( ATTR_SPAMFILTER_SCORE );
 
-            if( score != null && score.intValue() >= m_scoreLimit ) {
+            if( score != null && score >= m_scoreLimit ) {
                 throw new RedirectException( "Herb says you got too many points", getRedirectPage( context ) );
             }
         }
@@ -327,10 +321,10 @@ public class SpamFilter extends BasePageFilter {
         return content;
     }
 
-    private void checkPageName( final Context context, final String content, final Change change) throws RedirectException {
+    private void checkPageName( final Context context, final String content, final Change change ) throws RedirectException {
         final Page page = context.getPage();
         final String pageName = page.getName();
-        final int maxlength = Integer.valueOf(m_pageNameMaxLength);
+        final int maxlength = Integer.parseInt(m_pageNameMaxLength);
         if ( pageName.length() > maxlength) {
             //
             //  Spam filter has a match.
@@ -360,11 +354,10 @@ public class SpamFilter extends BasePageFilter {
     }
     
     /**
-     *  Parses a list of patterns and returns a Collection of compiled Pattern
-     *  objects.
+     *  Parses a list of patterns and returns a Collection of compiled Pattern objects.
      *
-     * @param source
-     * @param list
+     * @param source page containing the list of patterns.
+     * @param list list of patterns.
      * @return A Collection of the Patterns that were found from the lists.
      */
     private Collection< Pattern > parseWordList( final Page source, final String list ) {
@@ -391,7 +384,7 @@ public class SpamFilter extends BasePageFilter {
     /**
      *  Takes a MT-Blacklist -formatted blacklist and returns a list of compiled Pattern objects.
      *
-     *  @param list
+     *  @param list list of patterns.
      *  @return The parsed blacklist patterns.
      */
     private Collection< Pattern > parseBlacklist( final String list ) {
@@ -425,12 +418,12 @@ public class SpamFilter extends BasePageFilter {
     }
 
     /**
-     *  Takes a single page change and performs a load of tests on the content change.
-     *  An admin can modify anything.
+     * Takes a single page change and performs a load of tests on the content change. An admin can modify anything.
      *
-     *  @param context
-     *  @param content
-     *  @throws RedirectException
+     * @param context page Context
+     * @param content page content
+     * @param change page change
+     * @throws RedirectException spam filter rejects the page change.
      */
     private synchronized void checkSinglePageChange( final Context context, final String content, final Change change )
     		throws RedirectException {
@@ -520,9 +513,8 @@ public class SpamFilter extends BasePageFilter {
     /**
      *  Checks against the akismet system.
      *
-     * @param context
-     * @param change
-     * @throws RedirectException
+     * @param context page Context
+     * @throws RedirectException spam filter rejects the page change.
      */
     private void checkAkismet( final Context context, final Change change ) throws RedirectException {
         if( m_akismetAPIKey != null ) {
@@ -597,9 +589,9 @@ public class SpamFilter extends BasePageFilter {
     /**
      * This checks whether an invisible field is available in the request, and whether it's contents are suspected spam.
      *
-     * @param context
-     * @param change
-     * @throws RedirectException
+     * @param context page Context
+     * @param change page change
+     * @throws RedirectException spam filter rejects the page change.
      */
     private void checkBotTrap( final Context context, final Change change ) throws RedirectException {
         final HttpServletRequest request = context.getHttpRequest();
@@ -643,8 +635,8 @@ public class SpamFilter extends BasePageFilter {
     /**
      *  Checks the ban list if the IP address of the changer is already on it.
      *
-     *  @param context
-     *  @throws RedirectException
+     *  @param context page context
+     *  @throws RedirectException spam filter rejects the page change.
      */
     private void checkBanList( final Context context, final Change change ) throws RedirectException {
         final HttpServletRequest req = context.getHttpRequest();
@@ -723,12 +715,12 @@ public class SpamFilter extends BasePageFilter {
     }
 
     /**
-     *  Does a check against a known pattern list.
+     * Does a check against a known pattern list.
      *
-     *  @param context
-     *  @param content
-     *  @param change
-     *  @throws RedirectException
+     * @param context page Context
+     * @param content page content
+     * @param change page change
+     * @throws RedirectException spam filter rejects the page change.
      */
     private void checkPatternList( final Context context, final String content, final Change change ) throws RedirectException {
         // If we have no spam patterns defined, or we're trying to save the page containing the patterns, just return.
@@ -758,8 +750,8 @@ public class SpamFilter extends BasePageFilter {
     /**
      *  Does a check against a pattern list of IPs.
      *
-     *  @param context
-     *  @throws RedirectException
+     *  @param context page context
+     *  @throws RedirectException spam filter rejects the page change.
      */
     private void checkIPList( final Context context ) throws RedirectException {
         //  If we have no IP patterns defined, or we're trying to save the page containing the IP patterns, just return.
@@ -794,8 +786,8 @@ public class SpamFilter extends BasePageFilter {
     /**
      *  Creates a simple text string describing the added content.
      *
-     *  @param context
-     *  @param newText
+     *  @param context page context
+     *  @param newText added content
      *  @return Empty string, if there is no change.
      */
     private static Change getChange( final Context context, final String newText ) {
@@ -852,9 +844,9 @@ public class SpamFilter extends BasePageFilter {
     }
 
     /**
-     *  Returns true, if this user should be ignored.  For example, admin users.
+     * Returns true, if this user should be ignored.  For example, admin users.
      *
-     * @param context
+     * @param context page context
      * @return True, if this users should be ignored.
      */
     private boolean ignoreThisUser( final Context context ) {
@@ -866,11 +858,7 @@ public class SpamFilter extends BasePageFilter {
             return true;
         }
 
-        if( context.getVariable( "captcha" ) != null ) {
-            return true;
-        }
-
-        return false;
+        return context.getVariable("captcha") != null;
     }
 
     /**
@@ -932,7 +920,7 @@ public class SpamFilter extends BasePageFilter {
      *  @since 2.6
      *  @return A hash value for this page and session
      */
-    public static final String getSpamHash( final Page page, final HttpServletRequest request ) {
+    public static String getSpamHash( final Page page, final HttpServletRequest request ) {
         long lastModified = 0;
 
         if( page.getLastModified() != null ) {
@@ -951,7 +939,7 @@ public class SpamFilter extends BasePageFilter {
      *  @return The name to be used in the hash field
      *  @since  2.6
      */
-    public static final String getHashFieldName( final HttpServletRequest request ) {
+    public static String getHashFieldName( final HttpServletRequest request ) {
         String hash = null;
 
         if( request.getSession() != null ) {
@@ -986,7 +974,7 @@ public class SpamFilter extends BasePageFilter {
      *  @throws IOException If redirection fails
      *  @since 2.6
      */
-    public static final boolean checkHash( final Context context, final PageContext pageContext ) throws IOException {
+    public static boolean checkHash( final Context context, final PageContext pageContext ) throws IOException {
         final String hashName = getHashFieldName( (HttpServletRequest)pageContext.getRequest() );
         if( pageContext.getRequest().getParameter(hashName) == null ) {
             if( pageContext.getAttribute( hashName ) == null ) {
@@ -1009,7 +997,7 @@ public class SpamFilter extends BasePageFilter {
      * @param pageContext The PageContext
      * @return A HTML string which contains input fields for the SpamFilter.
      */
-    public static final String insertInputFields( final PageContext pageContext ) {
+    public static String insertInputFields( final PageContext pageContext ) {
         final Context ctx = Context.findContext( pageContext );
         final Engine engine = ctx.getEngine();
         final StringBuilder sb = new StringBuilder();
@@ -1022,15 +1010,13 @@ public class SpamFilter extends BasePageFilter {
     
     /**
      *  A local class for storing host information.
-     *
-     *  @since
      */
     private class Host {
 
-        private long m_addedTime = System.currentTimeMillis();
-        private long m_releaseTime;
-        private String m_address;
-        private Change m_change;
+        private final long m_addedTime = System.currentTimeMillis();
+        private final long m_releaseTime;
+        private final String m_address;
+        private final Change m_change;
 
         public String getAddress() {
             return m_address;
@@ -1062,18 +1048,21 @@ public class SpamFilter extends BasePageFilter {
         public int    m_adds;
         public int    m_removals;
 
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return m_change;
         }
 
-        @Override public boolean equals( final Object o ) {
+        @Override
+        public boolean equals( final Object o ) {
             if( o instanceof Change ) {
                 return m_change.equals( ( ( Change )o ).m_change );
             }
             return false;
         }
 
-        @Override public int hashCode() {
+        @Override
+        public int hashCode() {
             return m_change.hashCode() + 17;
         }
         
