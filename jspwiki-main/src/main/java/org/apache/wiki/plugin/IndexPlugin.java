@@ -19,6 +19,7 @@
 
 package org.apache.wiki.plugin;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -77,8 +78,8 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
             context.getEngine().getManager( PageManager.class ).getPageSorter().sort(pages);
             char initialChar = ' ';
             Element currentDiv = new Element("div",xmlns_XHTML);            
-            for ( final String name : pages ) {
-                if ( name.charAt(0) != initialChar ) {
+            for( final String name : pages ) {
+                if( StringUtils.isNotBlank( name ) &&  name.charAt(0) != initialChar ) {
                     if ( initialChar != ' ' ) {
                         indexDiv.addContent(" - ");
                     }                    
