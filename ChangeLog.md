@@ -22,7 +22,7 @@ under the License.
 * _2.11.0-M8-git-05_
 
 * [JSPWIKI-1134](https://issues.apache.org/jira/browse/JSPWIKI-1134): german translation improved
-    * Patch provided by Dietrich Schmidt - thanks!
+    * Patches provided by Dietrich Schmidt - thanks!
 
 * Extracted hidden input fields expected by the SpamFilter into its own custom tag and applied it to editor-related JSPs.
 
