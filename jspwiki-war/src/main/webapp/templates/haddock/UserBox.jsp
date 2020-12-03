@@ -30,7 +30,18 @@
 <c:set var="redirect"><%= c.getEngine().encodeName(c.getName()) %></c:set>
 <c:set var="username"><wiki:UserName /></c:set>
 <c:set var="loginstatus"><wiki:Variable var='loginstatus'/></c:set>
-
+<%!
+  String capitalize(String text) {
+    return text.substring(0, 1).toUpperCase() + text.substring(1).toLowerCase();
+  }
+%>
+<%
+  String cleanedUserName = c.getCurrentUser().getName();
+  int i = cleanedUserName.indexOf(".");
+  if (i > 0) {
+    cleanedUserName = capitalize(cleanedUserName.substring(0, i)) + " " + capitalize(cleanedUserName.substring(i + 1));
+  }
+%>
 <div class="cage pull-right userbox user-${loginstatus}">
 
   <div data-click-parent=".userbox" class="btn"><span class="icon-user"></span></div>
@@ -45,13 +56,13 @@
         </wiki:LinkTo>
       </wiki:UserCheck>
       <wiki:UserCheck status="known"><%-- asserted or authenticated --%>
-        <wiki:LinkTo page="${username}">
+        <wiki:LinkTo page="<%=cleanedUserName%>">
           <span class="icon-user" ></span>
           <wiki:UserCheck status="asserted">
-            <fmt:message key="fav.greet.asserted"><fmt:param>${username}</fmt:param></fmt:message>
+            <fmt:message key="fav.greet.asserted"><fmt:param><%=cleanedUserName%></fmt:param></fmt:message>
           </wiki:UserCheck>
           <wiki:UserCheck status="authenticated">
-            <fmt:message key="fav.greet.authenticated"><fmt:param>${username}</fmt:param></fmt:message>
+            <fmt:message key="fav.greet.authenticated"><fmt:param><%=cleanedUserName%></fmt:param></fmt:message>
           </wiki:UserCheck>
         </wiki:LinkTo>
       </wiki:UserCheck>
