@@ -17,6 +17,15 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-12-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-M8-git-06_
+
+* Completed french translation - thanks to Ainara González Pérez!
+
+* Dependency updates
+    * Tika to 1.25
+
 **2020-11-29  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M8-git-05_
