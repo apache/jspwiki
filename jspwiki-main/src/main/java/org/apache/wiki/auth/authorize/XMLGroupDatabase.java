@@ -102,13 +102,13 @@ public class XMLGroupDatabase implements GroupDatabase {
 
     private Document              m_dom            = null;
 
-    private DateFormat            m_defaultFormat  = DateFormat.getDateTimeInstance();
+    private final DateFormat            m_defaultFormat  = DateFormat.getDateTimeInstance();
 
     private File                  m_file           = null;
 
     private Engine                m_engine         = null;
 
-    private Map<String, Group>    m_groups         = new ConcurrentHashMap<>();
+    private final Map<String, Group>    m_groups         = new ConcurrentHashMap<>();
 
     /**
       * Looks up and deletes a {@link Group} from the group database. If the

@@ -192,11 +192,11 @@ public class SpamFilter extends BasePageFilter {
     private static final Logger c_spamlog = Logger.getLogger( "SpamLog" );
     private static final Logger log = Logger.getLogger( SpamFilter.class );
 
-    private Vector<Host>    m_temporaryBanList = new Vector<>();
+    private final Vector<Host>    m_temporaryBanList = new Vector<>();
 
     private int             m_banTime = 60; // minutes
 
-    private Vector<Host>    m_lastModifications = new Vector<>();
+    private final Vector<Host>    m_lastModifications = new Vector<>();
 
     /** How many times a single IP address can change a page per minute? */
     private int             m_limitSinglePageChanges = 5;
@@ -215,7 +215,7 @@ public class SpamFilter extends BasePageFilter {
     private boolean         m_useCaptcha = false;
 
     /** The limit at which we consider something to be spam. */
-    private int             m_scoreLimit = 1;
+    private final int             m_scoreLimit = 1;
 
     /** If set to true, will ignore anyone who is in Authenticated role. */
     private boolean         m_ignoreAuthenticated = false;

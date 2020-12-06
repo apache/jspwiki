@@ -59,7 +59,7 @@ public class RPCServlet extends HttpServlet {
     public static final String XMLRPC_PREFIX = "wiki";
 
     private Engine m_engine;
-    private XmlRpcServer m_xmlrpcServer = new XmlRpcServer();
+    private final XmlRpcServer m_xmlrpcServer = new XmlRpcServer();
 
     private static final Logger log = Logger.getLogger( RPCServlet.class );
 
@@ -154,7 +154,7 @@ public class RPCServlet extends HttpServlet {
     }
 
     private static class LocalHandler implements ContextXmlRpcHandler {
-        private Class< ? > m_clazz;
+        private final Class< ? > m_clazz;
 
         public LocalHandler( final Class< ? > clazz )
         {
@@ -173,8 +173,8 @@ public class RPCServlet extends HttpServlet {
 
     private static class WikiXmlRpcContext implements XmlRpcContext {
 
-        private XmlRpcHandlerMapping m_mapping;
-        private Context m_context;
+        private final XmlRpcHandlerMapping m_mapping;
+        private final Context m_context;
 
         public WikiXmlRpcContext( final XmlRpcHandlerMapping map, final Context ctx ) {
             m_mapping = map;

@@ -202,8 +202,8 @@ public class CalendarTag extends WikiTagBase {
 
             final String calendarDate = m_dateFormat.format( day.getTime() );
             String url = m_wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), pageName,"calendar.date="+calendarDate );
-
-            if( queryString != null && queryString.length() > 0 ) {
+            final int queryStringLlength = queryString.length();
+            if(queryStringLlength > 0) {
                 //
                 // Ensure that the 'calendar.date=ddMMyy' has been removed from the queryString
                 //
@@ -218,13 +218,13 @@ public class CalendarTag extends WikiTagBase {
                     // FIXME: Will this fail when we use & instead of &amp?
                     // FIXME: should use some parsing routine
                     final int pos2 = queryString.indexOf("&", pos1 ) + 1;
-                    if ( ( pos2 > 0 ) && ( pos2 < queryString.length() ) ) {
+                    if ( ( pos2 > 0 ) && ( pos2 < queryStringLlength ) ) {
                         tmp = tmp + queryString.substring(pos2);
                     }
                     queryString = tmp;
                 }
 
-                if( queryString.length() > 0 ) {
+                if( queryStringLlength > 0 ) {
                     url = url + "&amp;" + queryString;
                 }
             }

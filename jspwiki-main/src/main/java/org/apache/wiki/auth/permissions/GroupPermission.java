@@ -168,14 +168,15 @@ public final class GroupPermission extends Permission implements Serializable
         m_group = groupName;
 
         // Parse actions
-        String[] groupActions = actions.toLowerCase().split( ACTION_SEPARATOR );
+        final String[] groupActions = actions.toLowerCase().split( ACTION_SEPARATOR );
         Arrays.sort( groupActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
         StringBuilder buffer = new StringBuilder();
-        for( int i = 0; i < groupActions.length; i++ )
+        final int groupActionsLength = groupActions.length;
+        for( int i = 0; i < groupActionsLength; i++ )
         {
             buffer.append( groupActions[i] );
-            if ( i < ( groupActions.length - 1 ) )
+            if ( i < ( groupActionsLength - 1 ) )
             {
                 buffer.append( ACTION_SEPARATOR );
             }
@@ -345,7 +346,7 @@ public final class GroupPermission extends Permission implements Serializable
      * @param actions the actions for this permission, separated by commas
      * @return the binary actions mask
      */
-    protected static int createMask( String actions )
+    protected static int createMask( final String actions )
     {
         if ( actions == null || actions.length() == 0 )
         {

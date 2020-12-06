@@ -57,7 +57,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
 
     private AttachmentProvider m_provider;
 
-    private CacheManager m_cacheManager = CacheManager.getInstance();
+    private final CacheManager m_cacheManager = CacheManager.getInstance();
 
     /** Default cache capacity for now. */
     public static final int m_capacity = 1000;
@@ -76,8 +76,8 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      */
     private Cache m_attCache;
 
-    private long m_cacheMisses = 0;
-    private long m_cacheHits = 0;
+    private final long m_cacheMisses = 0;
+    private final long m_cacheHits = 0;
 
     /** The extension to append to directory names to denote an attachment directory. */
     public static final String DIR_EXTENSION   = "-att";

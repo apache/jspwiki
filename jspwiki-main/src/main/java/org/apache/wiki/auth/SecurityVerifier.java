@@ -61,13 +61,13 @@ import java.util.Set;
  */
 public final class SecurityVerifier {
 
-    private Engine                m_engine;
+    private final Engine                m_engine;
 
     private boolean               m_isSecurityPolicyConfigured = false;
 
     private Principal[]           m_policyPrincipals           = new Principal[0];
 
-    private Session               m_session;
+    private final Session               m_session;
 
     /** Message prefix for errors. */
     public static final String    ERROR                        = "Error.";
@@ -199,10 +199,13 @@ public final class SecurityVerifier {
         final String[] groupActions = new String[]
         { "view", "edit", null, null, "delete" };
 
+
+        final int rolesLength = roles.length;
+        final int pageActionsLength = pageActions.length;
         // Calculate column widths
         final String colWidth;
-        if( pageActions.length > 0 && roles.length > 0 ) {
-            colWidth = ( 67f / ( pageActions.length * roles.length ) ) + "%";
+        if( pageActionsLength > 0 && rolesLength > 0 ) {
+            colWidth = ( 67f / ( pageActionsLength * rolesLength ) ) + "%";
         } else {
             colWidth = "67%";
         }
@@ -212,20 +215,20 @@ public final class SecurityVerifier {
         // Write the table header
         s.append( "<table class=\"wikitable\" border=\"1\">\n" );
         s.append( "  <colgroup span=\"1\" width=\"33%\"/>\n" );
-        s.append( "  <colgroup span=\"" + pageActions.length * roles.length + "\" width=\"" + colWidth
+        s.append( "  <colgroup span=\"" + pageActionsLength * rolesLength + "\" width=\"" + colWidth
                 + "\" align=\"center\"/>\n" );
         s.append( "  <tr>\n" );
         s.append( "    <th rowspan=\"2\" valign=\"bottom\">Permission</th>\n" );
-        for( int i = 0; i < roles.length; i++ )
+        for( int i = 0; i < rolesLength; i++ )
         {
-            s.append( "    <th colspan=\"" + pageActions.length + "\" title=\"" + roles[i].getClass().getName() + "\">"
+            s.append( "    <th colspan=\"" + pageActionsLength + "\" title=\"" + roles[i].getClass().getName() + "\">"
                     + roles[i].getName() + "</th>\n" );
         }
         s.append( "  </tr>\n" );
 
         // Print a column for each role
         s.append( "  <tr>\n" );
-        for( int i = 0; i < roles.length; i++ )
+        for( int i = 0; i < rolesLength; i++ )
         {
             for( final String pageAction : pageActions )
             {
@@ -272,7 +275,7 @@ public final class SecurityVerifier {
             s.append( "    <td>WikiPermission \"" + wiki + "\",\"" + wikiPerm + "\"</td>\n" );
             for( final Principal role : roles ) {
                 final Permission permission = new WikiPermission( wiki, wikiPerm );
-                s.append( printPermissionTest( permission, role, pageActions.length ) );
+                s.append( printPermissionTest( permission, role, pageActionsLength ) );
             }
             s.append( "  </tr>\n" );
         }
@@ -283,7 +286,7 @@ public final class SecurityVerifier {
         for( final Principal role : roles )
         {
             final Permission permission = new AllPermission( wiki );
-            s.append( printPermissionTest( permission, role, pageActions.length ) );
+            s.append( printPermissionTest( permission, role, pageActionsLength ) );
         }
         s.append( "  </tr>\n" );
 

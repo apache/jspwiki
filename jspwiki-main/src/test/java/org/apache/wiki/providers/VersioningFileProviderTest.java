@@ -55,7 +55,7 @@ public class VersioningFileProviderTest
                 + "#Wed Jan 01 12:27:57 GMT 2012" + "\n"
                 + "author=" + OLD_AUTHOR + "\n";
 
-    private Properties PROPS = TestEngine.getTestProperties( "/jspwiki-vers-custom.properties" );
+    private final Properties PROPS = TestEngine.getTestProperties( "/jspwiki-vers-custom.properties" );
     private TestEngine engine = TestEngine.build( PROPS );
 
     // this is the testing page directory

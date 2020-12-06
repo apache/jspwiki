@@ -46,14 +46,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class WatchDog {
 
-    private Watchable m_watchable;
+    private final Watchable m_watchable;
     private final Stack< State > m_stateStack = new Stack<>();
     private boolean m_enabled = true;
-    private Engine m_engine;
+    private final Engine m_engine;
 
     private static final Logger log = Logger.getLogger( WatchDog.class );
 
-    private static Map< Integer, WeakReference< WatchDog > > c_kennel = new ConcurrentHashMap<>();
+    private static final Map< Integer, WeakReference< WatchDog > > c_kennel = new ConcurrentHashMap<>();
     private static WikiBackgroundThread c_watcherThread;
 
     /**
@@ -399,7 +399,7 @@ public final class WatchDog {
      *  This class wraps a Thread so that it can become Watchable.
      */
     private static class ThreadWrapper implements Watchable {
-        private Thread m_thread;
+        private final Thread m_thread;
 
         public ThreadWrapper( final Thread thread ) {
             m_thread = thread;

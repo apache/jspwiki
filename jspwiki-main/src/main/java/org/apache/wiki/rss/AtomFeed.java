@@ -46,7 +46,7 @@ import java.util.List;
  */
 public class AtomFeed extends Feed {
 
-    private Namespace m_atomNameSpace = Namespace.getNamespace("http://www.w3.org/2005/Atom");
+    private final Namespace m_atomNameSpace = Namespace.getNamespace("http://www.w3.org/2005/Atom");
 
     /** Defines a SimpleDateFormat string for RFC3339-formatted dates. */
     public static final String RFC3339FORMAT = "yyyy-MM-dd'T'HH:mm:ssZZ";

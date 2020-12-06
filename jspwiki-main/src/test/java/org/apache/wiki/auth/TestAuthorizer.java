@@ -35,7 +35,7 @@ import java.util.Properties;
  */
 public class TestAuthorizer implements WebAuthorizer {
 
-    private Role[] m_roles = new Role[]{ 
+    private final Role[] m_roles = new Role[]{
             new Role( "Admin" ), 
             Role.AUTHENTICATED,
             new Role( "IT" ),

@@ -46,15 +46,15 @@ public class XHtmlElementToWikiTranslator
 {
     private static final String UTF8 = "UTF-8";
 
-    private XHtmlToWikiConfig m_config;
+    private final XHtmlToWikiConfig m_config;
 
-    private WhitespaceTrimWriter m_outTimmer;
+    private final WhitespaceTrimWriter m_outTimmer;
 
-    private PrintWriter m_out;
+    private final PrintWriter m_out;
 
-    private LiStack m_liStack = new LiStack();
+    private final LiStack m_liStack = new LiStack();
 
-    private PreStack m_preStack = new PreStack();
+    private final PreStack m_preStack = new PreStack();
 
     /**
      *  Create a new translator using the default config.

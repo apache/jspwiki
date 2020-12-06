@@ -120,7 +120,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
     private Map< String, Set< String > > m_referredBy;
     private Map< String, Set< String > > m_unmutableReferredBy;
 
-    private boolean m_matchEnglishPlurals;
+    private final boolean m_matchEnglishPlurals;
 
     private static final Logger log = Logger.getLogger( DefaultReferenceManager.class);
     private static final String SERIALIZATION_FILE = "refmgr.ser";

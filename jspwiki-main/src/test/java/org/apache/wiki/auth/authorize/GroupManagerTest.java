@@ -44,7 +44,7 @@ public class GroupManagerTest
 
     private GroupManager      m_groupMgr;
 
-    private SecurityEventTrap m_trap = new SecurityEventTrap();
+    private final SecurityEventTrap m_trap = new SecurityEventTrap();
 
     private Session m_session;
 

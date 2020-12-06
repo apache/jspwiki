@@ -81,7 +81,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
     private Authorizer m_authorizer = null;
 
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
-    private Map< Principal, ProtectionDomain > m_cachedPds = new WeakHashMap<>();
+    private final Map< Principal, ProtectionDomain > m_cachedPds = new WeakHashMap<>();
 
     private Engine m_engine = null;
 

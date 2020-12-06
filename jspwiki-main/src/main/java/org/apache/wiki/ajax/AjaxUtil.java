@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServlet;
  */
 public class AjaxUtil extends HttpServlet {
 	private static final long serialVersionUID = 3170439306358345408L;
-	private static Gson gson = new Gson();
+	private static final Gson gson = new Gson();
 
 	/**
 	 * Uses Google Gson (https://code.google.com/p/google-gson/) to convert to JSON
@@ -65,15 +65,16 @@ public class AjaxUtil extends HttpServlet {
 		if( !lastPart.endsWith( "/" ) ) {
 			lastPart += "/";
 		}
+		final int lastPartLength =  lastPart.length();
 		int index = path.indexOf( lastPart );
 		if( index < 0 ) {
-			lastPart = lastPart.substring( 0, lastPart.length() - 1 );
+			lastPart = lastPart.substring( 0, lastPartLength - 1 );
 			index = path.indexOf( lastPart );
 			if( index < 0 ) {
 				throw new ServletException( "Invalid path provided " + path + " does not contain '" + lastPart + "'" );
 			}
 		}
-		path = path.substring( index + lastPart.length() );
+		path = path.substring( index + lastPartLength );
 		index = path.indexOf( "/" );
 		if( index == -1 ) {
 			index = path.indexOf( "#" );

@@ -45,7 +45,7 @@ import java.util.Properties;
 public class AuthenticationManagerTest {
 
     public static class DummyAuthorizer implements WebAuthorizer {
-        private static Principal[] m_roles = new Principal[] { new Role( "ContainerRole" ), new Role( "AuthorizerRole" ),
+        private static final Principal[] m_roles = new Principal[] { new Role( "ContainerRole" ), new Role( "AuthorizerRole" ),
                                                               new Role( "DummyRole" ) };
 
         @Override public Principal findRole( final String role ) {

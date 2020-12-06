@@ -122,9 +122,9 @@ public class TraditionalDiffProvider implements DiffProvider {
 
     private static final class RevisionPrint implements RevisionVisitor {
 
-        private StringBuffer m_result;
-        private Context  m_context;
-        private ResourceBundle m_rb;
+        private final StringBuffer m_result;
+        private final Context  m_context;
+        private final ResourceBundle m_rb;
         
         private RevisionPrint( final Context ctx, final StringBuffer sb ) {
             m_result = sb;

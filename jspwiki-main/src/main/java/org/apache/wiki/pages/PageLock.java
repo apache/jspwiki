@@ -33,10 +33,10 @@ public class PageLock implements Serializable {
 
     private static final long serialVersionUID = 0L;
 
-    private String m_page;
-    private String m_locker;
-    private Date m_lockAcquired;
-    private Date m_lockExpiry;
+    private final String m_page;
+    private final String m_locker;
+    private final Date m_lockAcquired;
+    private final Date m_lockExpiry;
 
     /**
      * Creates a new PageLock.  The lock is not attached to any objects at this point.

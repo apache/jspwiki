@@ -205,10 +205,10 @@ public class ContextualDiffProvider implements DiffProvider {
      * all necessary variables.
      */
     private final class ChangeMerger implements RevisionVisitor {
-        private StringBuffer m_sb;
+        private final StringBuffer m_sb;
 
         /** Keeping score of the original lines to process */
-        private int m_max;
+        private final int m_max;
 
         private int m_index = 0;
 
@@ -227,7 +227,7 @@ public class ContextualDiffProvider implements DiffProvider {
         private StringBuffer m_newBuf;
 
         /** Reference to the source string array */
-        private String[] m_origStrings;
+        private final String[] m_origStrings;
 
         private ChangeMerger( final StringBuffer sb, final String[] origStrings, final int max ) {
             m_sb = sb;

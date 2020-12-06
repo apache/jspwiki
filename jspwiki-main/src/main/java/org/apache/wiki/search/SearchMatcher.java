@@ -39,8 +39,8 @@ import java.io.StringReader;
  */
 public class SearchMatcher {
 	
-    private QueryItem[] m_queries;
-    private Engine m_engine;
+    private final QueryItem[] m_queries;
+    private final Engine m_engine;
 
     /**
      *  Creates a new SearchMatcher.

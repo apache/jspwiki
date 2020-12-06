@@ -190,11 +190,12 @@ public final class PagePermission extends Permission implements Serializable
         final String[] pageActions = StringUtils.split( actions.toLowerCase(), ACTION_SEPARATOR );
         Arrays.sort( pageActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
+        final  int pageActionsLength = pageActions.length;
         final StringBuilder buffer = new StringBuilder();
-        for( int i = 0; i < pageActions.length; i++ )
+        for( int i = 0; i < pageActionsLength; i++ )
         {
             buffer.append( pageActions[i] );
-            if ( i < ( pageActions.length - 1 ) )
+            if ( i < ( pageActionsLength - 1 ) )
             {
                 buffer.append( ACTION_SEPARATOR );
             }

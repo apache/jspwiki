@@ -109,9 +109,10 @@ public final class Release {
         	return true;
         }
         final String[] versionComponents = StringUtils.split( version, VERSION_SEPARATORS );
-        final int reqVersion       = versionComponents.length > 0 ? Integer.parseInt( versionComponents[0] ) : Release.VERSION;
-        final int reqRevision      = versionComponents.length > 1 ? Integer.parseInt( versionComponents[1] ) : Release.REVISION;
-        final int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt( versionComponents[2] ) : Release.MINORREVISION;
+        final int versionCompoLength = versionComponents.length;
+        final int reqVersion       = versionCompoLength > 0 ? Integer.parseInt( versionComponents[0] ) : Release.VERSION;
+        final int reqRevision      = versionCompoLength > 1 ? Integer.parseInt( versionComponents[1] ) : Release.REVISION;
+        final int reqMinorRevision = versionCompoLength > 2 ? Integer.parseInt( versionComponents[2] ) : Release.MINORREVISION;
 
         if( VERSION == reqVersion ) {
             if( REVISION == reqRevision ) {
@@ -139,9 +140,10 @@ public final class Release {
         }
 
         final String[] versionComponents = StringUtils.split( version, VERSION_SEPARATORS );
-        final int reqVersion       = versionComponents.length > 0 ? Integer.parseInt( versionComponents[0] ) : Release.VERSION;
-        final int reqRevision      = versionComponents.length > 1 ? Integer.parseInt( versionComponents[1] ) : Release.REVISION;
-        final int reqMinorRevision = versionComponents.length > 2 ? Integer.parseInt( versionComponents[2] ) : Release.MINORREVISION;
+        final int versionCompoLength = versionComponents.length;
+        final int reqVersion       = versionCompoLength > 0 ? Integer.parseInt( versionComponents[0] ) : Release.VERSION;
+        final int reqRevision      = versionCompoLength > 1 ? Integer.parseInt( versionComponents[1] ) : Release.REVISION;
+        final int reqMinorRevision = versionCompoLength > 2 ? Integer.parseInt( versionComponents[2] ) : Release.MINORREVISION;
 
         if( VERSION == reqVersion ) {
             if( REVISION == reqRevision ) {

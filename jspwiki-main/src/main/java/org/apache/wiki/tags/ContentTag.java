@@ -41,7 +41,7 @@ public class ContentTag extends WikiTagBase {
     private static final long serialVersionUID = 0L;
     private static final Logger log = Logger.getLogger( ContentTag.class );
     
-    private Map<String, String> m_mappings = new HashMap<>();
+    private final Map<String, String> m_mappings = new HashMap<>();
 
     /**
      *  Set the template for the VIEW context.

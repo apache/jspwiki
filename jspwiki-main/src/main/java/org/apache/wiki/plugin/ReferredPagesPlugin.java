@@ -60,9 +60,9 @@ public class ReferredPagesPlugin implements Plugin {
     private static final Logger log = Logger.getLogger( ReferredPagesPlugin.class );
     private Engine         m_engine;
     private int            m_depth;
-    private HashSet<String> m_exists  = new HashSet<>();
-    private StringBuffer   m_result  = new StringBuffer(1024);
-    private PatternMatcher m_matcher = new Perl5Matcher();
+    private final HashSet<String> m_exists  = new HashSet<>();
+    private final StringBuffer   m_result  = new StringBuffer(1024);
+    private final PatternMatcher m_matcher = new Perl5Matcher();
     private Pattern        m_includePattern;
     private Pattern        m_excludePattern;
     private boolean m_formatCompact  = true;

@@ -61,8 +61,8 @@ public class DefaultAttachmentManager implements AttachmentManager {
 
     private static final Logger log = Logger.getLogger( DefaultAttachmentManager.class );
     private AttachmentProvider m_provider;
-    private Engine m_engine;
-    private CacheManager m_cacheManager = CacheManager.getInstance();
+    private final Engine m_engine;
+    private final CacheManager m_cacheManager = CacheManager.getInstance();
     private Cache m_dynamicAttachments;
 
     /**

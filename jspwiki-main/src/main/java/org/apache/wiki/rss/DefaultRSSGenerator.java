@@ -52,10 +52,10 @@ import java.util.Set;
 public class DefaultRSSGenerator implements RSSGenerator {
 
     private static final Logger log = Logger.getLogger( DefaultRSSGenerator.class );
-    private Engine m_engine;
+    private final Engine m_engine;
 
     /** The RSS file to generate. */
-    private String m_rssFile;
+    private final String m_rssFile;
     private String m_channelDescription = "";
     private String m_channelLanguage = "en-us";
     private boolean m_enabled = true;

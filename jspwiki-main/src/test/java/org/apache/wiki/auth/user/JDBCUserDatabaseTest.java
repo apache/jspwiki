@@ -47,7 +47,7 @@ import org.junit.jupiter.api.Test;
  */
 public class JDBCUserDatabaseTest
 {
-    private HsqlDbUtils      m_hu   = new HsqlDbUtils();
+    private final HsqlDbUtils      m_hu   = new HsqlDbUtils();
 
     private JDBCUserDatabase m_db   = null;
 

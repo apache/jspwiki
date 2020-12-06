@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
  */
 public class JDBCGroupDatabaseTest
 {
-    private HsqlDbUtils       m_hu   = new HsqlDbUtils();
+    private final HsqlDbUtils       m_hu   = new HsqlDbUtils();
 
     private Connection        m_conn = null;
 

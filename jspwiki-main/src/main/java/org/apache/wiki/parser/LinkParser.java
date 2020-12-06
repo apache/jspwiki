@@ -152,7 +152,7 @@ import org.jdom2.Attribute;
  */
 public class LinkParser
 {
-    private static Logger log = Logger.getLogger(LinkParser.class);
+    private static final Logger log = Logger.getLogger(LinkParser.class);
 
     /** Permitted attributes on links.  Keep this sorted. */
     private static final String[] PERMITTED_ATTRIBUTES = new String[] {

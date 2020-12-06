@@ -36,7 +36,7 @@ public class WikiDocument extends Document {
 
     private static final long serialVersionUID = 1L;
     
-    private Page m_page;
+    private final Page m_page;
     private String m_wikiText;
     private WeakReference< Context > m_context;
     

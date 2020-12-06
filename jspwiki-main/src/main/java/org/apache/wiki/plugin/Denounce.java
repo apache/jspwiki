@@ -69,9 +69,9 @@ public class Denounce implements Plugin {
 
     private static final String PROP_DENOUNCETEXT   = "denounce.denouncetext";
 
-    private static ArrayList<Pattern> c_refererPatterns = new ArrayList<>();
-    private static ArrayList<Pattern> c_agentPatterns   = new ArrayList<>();
-    private static ArrayList<Pattern> c_hostPatterns    = new ArrayList<>();
+    private static final ArrayList<Pattern> c_refererPatterns = new ArrayList<>();
+    private static final ArrayList<Pattern> c_agentPatterns   = new ArrayList<>();
+    private static final ArrayList<Pattern> c_hostPatterns    = new ArrayList<>();
 
     private static String    c_denounceText    = "";
 

@@ -62,7 +62,7 @@ public class ExternalDiffProvider implements DiffProvider {
     //the external program generates a format suitible for the colorization code of the
     //TraditionalDiffProvider, currently set to true for legacy compatibility.
     //I don't think this 'feature' ever worked right, did it?...
-    private boolean m_traditionalColorization = true;
+    private final boolean m_traditionalColorization = true;
 
     /**
      *  Creates a new ExternalDiffProvider.

@@ -32,7 +32,7 @@ public class PersistentMapDecorator extends Properties
 {
     private static final long serialVersionUID = 0L;
     
-    private Map< Object, Object > m_delegate;
+    private final Map< Object, Object > m_delegate;
 
     /**
      *  Creates a new decorator for a given map.

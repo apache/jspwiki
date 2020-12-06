@@ -199,13 +199,14 @@ public class Preferences extends HashMap< String,String > {
             String variant  = "";
 
             final String[] res = StringUtils.split( langSetting, "-_" );
-            if( res.length > 2 ) {
+            final int resLength = res.length;
+            if( resLength > 2 ) {
                 variant = res[ 2 ];
             }
-            if( res.length > 1 ) {
+            if( resLength > 1 ) {
                 country = res[ 1 ];
             }
-            if( res.length > 0 ) {
+            if( resLength > 0 ) {
                 language = res[ 0 ];
                 loc = new Locale( language, country, variant );
             }

@@ -60,7 +60,7 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
 
     private static final Logger log = Logger.getLogger(IndexPlugin.class);
 
-    private Namespace xmlns_XHTML = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
+    private final Namespace xmlns_XHTML = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
     
     /**
      * {@inheritDoc}

@@ -38,7 +38,7 @@ public final class DefaultUserProfile implements UserProfile {
     private static final String EMPTY_STRING = "";
     private static final String WHITESPACE = "\\s";
 
-    private Map< String, Serializable > attributes = new HashMap<>();
+    private final Map< String, Serializable > attributes = new HashMap<>();
     private Date created = null;
     private String email = null;
     private String fullname = null;

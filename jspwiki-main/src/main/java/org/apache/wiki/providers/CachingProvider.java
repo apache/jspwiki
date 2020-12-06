@@ -64,7 +64,7 @@ public class CachingProvider implements PageProvider {
 
     private static final Logger log = Logger.getLogger( CachingProvider.class );
 
-    private CacheManager m_cacheManager = CacheManager.getInstance();
+    private final CacheManager m_cacheManager = CacheManager.getInstance();
 
     private PageProvider m_provider;
     // FIXME: Find another way to the search engine to use instead of from Engine?

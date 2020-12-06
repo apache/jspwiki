@@ -430,7 +430,7 @@ public class DefaultUserManager implements UserManager {
      */
     public static final class JSONUserModule implements WikiAjaxServlet {
 
-		private volatile DefaultUserManager m_manager;
+		private final DefaultUserManager m_manager;
 
         /**
          *  Create a new JSONUserModule.

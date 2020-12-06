@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 public class WhitespaceTrimWriter extends Writer
 {
 
-    private StringBuffer m_result = new StringBuffer();
+    private final StringBuffer m_result = new StringBuffer();
 
     private StringBuffer m_buffer = new StringBuffer();
 
