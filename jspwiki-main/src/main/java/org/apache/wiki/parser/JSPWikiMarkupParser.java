@@ -103,17 +103,17 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private boolean        m_isPreBlock   = false;
 
     /** Contains style information, in multiple forms. */
-    private Stack<Boolean> m_styleStack   = new Stack<>();
+    private final Stack<Boolean> m_styleStack   = new Stack<>();
 
      // general list handling
     private int            m_genlistlevel = 0;
-    private StringBuilder  m_genlistBulletBuffer = new StringBuilder(10);  // stores the # and * pattern
-    private boolean        m_allowPHPWikiStyleLists = true;
+    private final StringBuilder  m_genlistBulletBuffer = new StringBuilder(10);  // stores the # and * pattern
+    private final boolean        m_allowPHPWikiStyleLists = true;
 
     private boolean        m_isOpenParagraph = false;
 
     /** Parser for extended link functionality. */
-    private LinkParser     m_linkParser = new LinkParser();
+    private final LinkParser     m_linkParser = new LinkParser();
 
     /** Keeps track of any plain text that gets put in the Text nodes */
     private StringBuilder  m_plainTextBuf = new StringBuilder(20);
@@ -121,7 +121,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private Element        m_currentElement;
 
     /** Keep track of duplicate header names.  */
-    private Map<String, Integer>   m_titleSectionCounter = new HashMap<>();
+    private final Map<String, Integer>   m_titleSectionCounter = new HashMap<>();
 
     /** If true, then considers CamelCase links as well. */
     private boolean                m_camelCaseLinks      = false;
@@ -143,11 +143,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     private boolean                m_useRelNofollow      = false;
 
-    private PatternCompiler        m_compiler = new Perl5Compiler();
+    private final PatternCompiler        m_compiler = new Perl5Compiler();
 
     static final String WIKIWORD_REGEX = "(^|[[:^alnum:]]+)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;~%]+))";
 
-    private PatternMatcher         m_camelCaseMatcher = new Perl5Matcher();
+    private final PatternMatcher         m_camelCaseMatcher = new Perl5Matcher();
     private Pattern                m_camelCasePattern;
 
     private int                    m_rowNum              = 1;

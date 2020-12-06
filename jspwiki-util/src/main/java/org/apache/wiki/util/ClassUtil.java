@@ -56,10 +56,10 @@ public final class ClassUtil {
     public  static final String MAPPINGS_EXTRA = "ini/classmappings-extra.xml";
 
     /** Initialize the class mappings document. */
-    private static Map< String, String > c_classMappings = populateClassMappingsFrom( MAPPINGS );
+    private static final Map< String, String > c_classMappings = populateClassMappingsFrom( MAPPINGS );
 
     /** Initialize the class mappings extra document. */
-    private static Map< String, String > c_classMappingsExtra = populateClassMappingsFrom( MAPPINGS_EXTRA ) ;
+    private static final Map< String, String > c_classMappingsExtra = populateClassMappingsFrom( MAPPINGS_EXTRA ) ;
 
     private static boolean classLoaderSetup = false;
     private static ClassLoader loader = null;

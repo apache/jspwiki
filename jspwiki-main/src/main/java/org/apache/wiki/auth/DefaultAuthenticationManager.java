@@ -100,7 +100,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     private boolean m_storeIPAddress = true;
 
     /** Keeps a list of the usernames who have attempted a login recently. */
-    private TimedCounterList< String > m_lastLoginAttempts = new TimedCounterList<>();
+    private final TimedCounterList< String > m_lastLoginAttempts = new TimedCounterList<>();
 
     /**
      * {@inheritDoc}

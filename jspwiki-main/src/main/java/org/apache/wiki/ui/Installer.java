@@ -70,7 +70,7 @@ public class Installer {
     private final File m_propertyFile;
     private final Properties m_props;
     private final Engine m_engine;
-    private HttpServletRequest m_request;
+    private final HttpServletRequest m_request;
     private boolean m_validated;
     
     public Installer( final HttpServletRequest request, final ServletConfig config ) {

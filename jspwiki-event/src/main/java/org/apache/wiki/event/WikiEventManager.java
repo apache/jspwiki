@@ -126,7 +126,7 @@ public final class WikiEventManager {
     private static final Logger log = Logger.getLogger(WikiEventManager.class);
 
     /* If true, permits a WikiEventMonitor to be set. */
-    private static boolean c_permitMonitor = false;
+    private static final boolean c_permitMonitor = false;
 
     /* Optional listener to be used as all-event monitor. */
     private static WikiEventListener c_monitor = null;

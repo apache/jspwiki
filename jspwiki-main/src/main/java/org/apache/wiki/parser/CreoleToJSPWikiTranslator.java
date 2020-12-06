@@ -162,7 +162,7 @@ public class CreoleToJSPWikiTranslator
 
     private static final String ESCAPE_PROTECTED = "~(\\*\\*|~|//|-|#|\\{\\{|}}|\\\\|~\\[~~[|]]|----|=|\\|)";
 
-    private static Map<String, String> c_protectionMap = new HashMap<String, String>();
+    private static final Map<String, String> c_protectionMap = new HashMap<String, String>();
 
     private        ArrayList<String> m_hashList = new ArrayList<String>();
 

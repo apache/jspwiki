@@ -37,7 +37,7 @@ public class VariableContent extends Text {
 
     private static final long serialVersionUID = 1L;
 
-    private String m_varName;
+    private final String m_varName;
     
     /**
      *  Create a VariableContent for the given variable.

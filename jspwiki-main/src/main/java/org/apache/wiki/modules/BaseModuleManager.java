@@ -34,7 +34,7 @@ public abstract class BaseModuleManager implements ModuleManager {
 
     protected Engine m_engine;
 
-    private boolean m_loadIncompatibleModules = false;
+    private final boolean m_loadIncompatibleModules = false;
 
     /**
      *  Constructs the ModuleManager.

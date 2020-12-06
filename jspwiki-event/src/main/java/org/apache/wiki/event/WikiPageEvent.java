@@ -163,7 +163,7 @@ public class WikiPageEvent extends WikiEvent {
     /** Indicates a wiki page reindex event (a page was changed when requested to a provided) */
     public static final int PAGE_REINDEX         = 28;
 
-    private String m_pagename;
+    private final String m_pagename;
 
     // ............
 

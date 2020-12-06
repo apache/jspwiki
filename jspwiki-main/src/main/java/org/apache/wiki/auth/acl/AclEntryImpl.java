@@ -35,7 +35,7 @@ import java.util.Vector;
 public class AclEntryImpl implements AclEntry, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private Vector< Permission > m_permissions = new Vector<>();
+    private final Vector< Permission > m_permissions = new Vector<>();
     private Principal m_principal;
 
     /**

@@ -33,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class PriorityList<E>
     extends AbstractList<E>
 {
-    private CopyOnWriteArrayList<Item<E>> m_elements = new CopyOnWriteArrayList<Item<E>>();
+    private final CopyOnWriteArrayList<Item<E>> m_elements = new CopyOnWriteArrayList<Item<E>>();
 
     /**
      *  This is the default priority, which is used if no priority

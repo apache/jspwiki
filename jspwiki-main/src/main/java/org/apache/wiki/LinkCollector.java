@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class LinkCollector implements StringTransmutator {
 	
-    private List< String > m_items = new ArrayList<>();
+    private final List< String > m_items = new ArrayList<>();
 
     /**
      * Returns a List of Strings representing links.

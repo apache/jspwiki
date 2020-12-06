@@ -66,8 +66,8 @@ public class PluginContent extends Text implements PluginElement {
     private static final long serialVersionUID = 1L;
     private static final Logger log = Logger.getLogger(PluginContent.class);
 
-    private String m_pluginName;
-    private Map< String, String > m_params;
+    private final String m_pluginName;
+    private final Map< String, String > m_params;
 
     /**
      * Creates a new DOM element with the given plugin name and a map of parameters.

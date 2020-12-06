@@ -79,7 +79,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractReferralPlugin implements Plugin {
 
-    private static Logger log = Logger.getLogger( AbstractReferralPlugin.class );
+    private static final Logger log = Logger.getLogger( AbstractReferralPlugin.class );
 
     /** Magic value for rendering all items. */
     public static final int    ALL_ITEMS              = -1;
@@ -415,7 +415,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
      */
     private static class CutMutator implements StringTransmutator {
 
-        private int m_length;
+        private final int m_length;
 
         public CutMutator( final int length ) {
             m_length = length;

@@ -29,7 +29,7 @@ import org.apache.wiki.api.core.Engine;
 public class Attachment extends WikiPage implements org.apache.wiki.api.core.Attachment {
 
     private String m_fileName;
-    private String m_parentName;
+    private final String m_parentName;
     private boolean m_cacheable = true;
 
     /**

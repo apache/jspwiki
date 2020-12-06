@@ -86,9 +86,9 @@ import java.util.Properties;
  */
 public class DefaultFilterManager extends BaseModuleManager implements FilterManager {
 
-    private PriorityList< PageFilter > m_pageFilters = new PriorityList<>();
+    private final PriorityList< PageFilter > m_pageFilters = new PriorityList<>();
 
-    private Map< String, PageFilterInfo > m_filterClassMap = new HashMap<>();
+    private final Map< String, PageFilterInfo > m_filterClassMap = new HashMap<>();
 
     private static final Logger log = Logger.getLogger(DefaultFilterManager.class);
 

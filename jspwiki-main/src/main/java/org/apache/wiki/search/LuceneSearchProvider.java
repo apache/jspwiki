@@ -545,7 +545,7 @@ public class LuceneSearchProvider implements SearchProvider {
         protected static final int INITIAL_DELAY = 60;
         private final LuceneSearchProvider m_provider;
 
-        private int m_initialDelay;
+        private final int m_initialDelay;
 
         private WatchDog m_watchdog;
 
@@ -594,9 +594,9 @@ public class LuceneSearchProvider implements SearchProvider {
     // FIXME: This class is dumb; needs to have a better implementation
     private static class SearchResultImpl implements SearchResult {
 
-        private Page m_page;
-        private int      m_score;
-        private String[] m_contexts;
+        private final Page m_page;
+        private final int      m_score;
+        private final String[] m_contexts;
 
         public SearchResultImpl( final Page page, final int score, final String[] contexts ) {
             m_page = page;

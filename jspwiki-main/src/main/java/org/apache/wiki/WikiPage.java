@@ -39,8 +39,8 @@ import java.util.Map;
 //        need to figure out the metadata lifecycle.
 public class WikiPage implements Page {
 
-    private       String     m_name;
-    private       Engine     m_engine;
+    private final String     m_name;
+    private final Engine     m_engine;
     private       String     m_wiki;
     private Date             m_lastModified;
     private long             m_fileSize = -1;

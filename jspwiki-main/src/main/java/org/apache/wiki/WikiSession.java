@@ -63,7 +63,7 @@ public final class WikiSession implements Session {
 
     private static final String ALL                   = "*";
 
-    private static ThreadLocal< Session > c_guestSession = new ThreadLocal<>();
+    private static final ThreadLocal< Session > c_guestSession = new ThreadLocal<>();
 
     private final Subject       m_subject             = new Subject();
 

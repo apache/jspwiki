@@ -208,10 +208,10 @@ public class WikiJSPFilter extends WikiServletFilter {
     private static class JSPWikiServletResponseWrapper extends HttpServletResponseWrapper {
 
         ByteArrayOutputStream m_output;
-        private ByteArrayServletOutputStream m_servletOut;
-        private PrintWriter m_writer;
-        private HttpServletResponse m_response;
-        private boolean useEncoding;
+        private final ByteArrayServletOutputStream m_servletOut;
+        private final PrintWriter m_writer;
+        private final HttpServletResponse m_response;
+        private final boolean useEncoding;
 
         /** How large the initial buffer should be.  This should be tuned to achieve a balance in speed and memory consumption. */
         private static final int INIT_BUFFER_SIZE = 0x8000;

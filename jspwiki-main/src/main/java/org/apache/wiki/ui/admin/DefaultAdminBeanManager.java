@@ -54,9 +54,9 @@ import java.util.List;
  */
 public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanManager {
 
-    private Engine m_engine;
+    private final Engine m_engine;
     private ArrayList< AdminBean > m_allBeans;
-    private MBeanServer m_mbeanServer;
+    private final MBeanServer m_mbeanServer;
 
     private static final Logger log = Logger.getLogger( DefaultAdminBeanManager.class );
 

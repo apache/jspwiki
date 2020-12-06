@@ -162,13 +162,13 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
     private static final Logger log = Logger.getLogger( DefaultPluginManager.class );
     private static final String DEFAULT_FORMS_PACKAGE = "org.apache.wiki.forms";
 
-    private ArrayList< String > m_searchPath = new ArrayList<>();
-    private ArrayList< String > m_externalJars = new ArrayList<>();
-    private Pattern m_pluginPattern;
+    private final ArrayList< String > m_searchPath = new ArrayList<>();
+    private final ArrayList< String > m_externalJars = new ArrayList<>();
+    private final Pattern m_pluginPattern;
     private boolean m_pluginsEnabled = true;
 
     /** Keeps a list of all known plugin classes. */
-    private Map< String, WikiPluginInfo > m_pluginClassMap = new HashMap<>();
+    private final Map< String, WikiPluginInfo > m_pluginClassMap = new HashMap<>();
 
     /**
      *  Create a new PluginManager.

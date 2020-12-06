@@ -71,7 +71,7 @@ public class TestContainer
     public static final String INITIAL_CONTEXT_FACTORY_JETTY = "org.eclipse.jetty.jndi.InitialContextFactory";
     public static final String JNDI_ENV_ROOT = "java:comp/env";
 
-    private static HsqlDbUtils m_hu   = new HsqlDbUtils();
+    private static final HsqlDbUtils m_hu   = new HsqlDbUtils();
 
     private static final Logger log = Logger.getLogger( TestContainer.class );
 
@@ -79,7 +79,7 @@ public class TestContainer
     private static Resource userDB = null;        
     private static Resource groupDB = null;        
 
-    private static ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
+    private static final ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
     
     /**
      * Starts up a test server for a particular web application on the specified

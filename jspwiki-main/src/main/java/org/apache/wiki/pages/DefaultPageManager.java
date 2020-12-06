@@ -87,17 +87,17 @@ public class DefaultPageManager implements PageManager {
 
     private static final Logger LOG = Logger.getLogger( DefaultPageManager.class );
 
-    private PageProvider m_provider;
+    private final PageProvider m_provider;
 
-    private Engine m_engine;
+    private final Engine m_engine;
 
     protected ConcurrentHashMap< String, PageLock > m_pageLocks = new ConcurrentHashMap<>();
 
-    private int m_expiryTime;
+    private final int m_expiryTime;
 
     private LockReaper m_reaper = null;
 
-    private PageSorter pageSorter = new PageSorter();
+    private final PageSorter pageSorter = new PageSorter();
 
     /**
      * Creates a new PageManager.

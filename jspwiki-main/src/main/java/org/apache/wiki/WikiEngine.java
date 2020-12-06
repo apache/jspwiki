@@ -131,7 +131,7 @@ public class WikiEngine implements Engine {
     private boolean          m_isConfigured = false;
 
     /** Stores wikiengine attributes. */
-    private Map< String, Object > m_attributes = new ConcurrentHashMap<>();
+    private final Map< String, Object > m_attributes = new ConcurrentHashMap<>();
 
     /** Stores WikiEngine's associated managers. */
     protected Map< Class< ? >, Object > managers = new ConcurrentHashMap<>();
