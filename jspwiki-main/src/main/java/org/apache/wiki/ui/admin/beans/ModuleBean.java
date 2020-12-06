@@ -89,7 +89,7 @@ public abstract class ModuleBean extends SimpleAdminBean {
     }
 
     /**
-     * Obtains the collection of modules which is going to be inspected at {@link #doGet(WikiContext)}.
+     * Obtains the collection of modules which is going to be inspected at {@link #doGet(Context)}.
      *
      * @return a collection of {@link WikiModuleInfo}
      */
