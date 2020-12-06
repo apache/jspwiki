@@ -228,7 +228,6 @@ public class SetPaginationTag
      *
      * @param sb  : stringbuilder to write output to
      * @param page : start of page block
-     * @param onclick : link text
      *
      **/
     private void appendLink(final StringBuilder sb, final int page, final String fmttextkey )

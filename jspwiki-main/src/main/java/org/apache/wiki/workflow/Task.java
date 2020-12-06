@@ -25,7 +25,7 @@ import java.util.Map;
 
 /**
  * AbstractStep subclass that executes instructions, uninterrupted, and results in an Outcome. Concrete classes only need to implement
- * {@link Task#execute()}. When the execution step completes, <code>execute</code> must return {@link Outcome#STEP_COMPLETE},
+ * {@link Task#execute(org.apache.wiki.api.core.Context)}. When the execution step completes, <code>execute</code> must return {@link Outcome#STEP_COMPLETE},
  * {@link Outcome#STEP_CONTINUE} or {@link Outcome#STEP_ABORT}. Subclasses can add any errors by calling the helper method
  * {@link AbstractStep#addError(String)}. The execute method should <em>generally</em> capture and add errors to the error list instead of
  * throwing a WikiException.

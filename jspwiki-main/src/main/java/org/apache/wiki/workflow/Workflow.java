@@ -46,7 +46,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * IllegalStateException. Callers can place the Workflow into the WAITING state by calling {@link #waitstate()}.</li>
  * <li><strong>{@link #WAITING}</strong>: when the Workflow has temporarily paused, for example because of a pending Decision. Once the
  * responsible actor decides what to do, the caller can change the Workflow back to the RUNNING state by calling the {@link #restart(Context)}
- * method (this is done automatically by the Decision class, for instance, when the {@link Decision#decide(Outcome)} method is invoked)</li>
+ * method (this is done automatically by the Decision class, for instance, when the {@link Decision#decide(Outcome, Context)} method is invoked)</li>
  * <li><strong>{@link #COMPLETED}</strong>: after the Workflow has finished processing all Steps, without errors.</li>
  * <li><strong>{@link #ABORTED}</strong>: if a Step has elected to abort the Workflow.</li>
  * </ul>

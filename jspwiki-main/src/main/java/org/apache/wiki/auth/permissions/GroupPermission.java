@@ -454,7 +454,7 @@ public final class GroupPermission extends Permission implements Serializable
      * </table>
      * <p>
      * Note that JSPWiki&#8217;s access control checks are made inside of
-     * {@link org.apache.wiki.auth.AuthorizationManager#checkPermission(org.apache.wiki.WikiSession, Permission)},
+     * {@link org.apache.wiki.auth.AuthorizationManager#checkPermission(org.apache.wiki.api.core.Session, Permission)},
      * which performs a <code>Subject.doAs()</code> call. Thus, this
      * Permission functions exactly the way it should during normal
      * operations.

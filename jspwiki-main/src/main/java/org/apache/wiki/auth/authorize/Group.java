@@ -81,7 +81,7 @@ public class Group {
      * Protected constructor to prevent direct instantiation except by other
      * package members. Callers should use
      * {@link GroupManager#parseGroup(String, String, boolean)} or
-     * {@link GroupManager#parseGroup(org.apache.wiki.WikiContext, boolean)}.
+     * {@link GroupManager#parseGroup(org.apache.wiki.api.core.Context, boolean)}.
      * instead.
      * @param name the name of the group
      * @param wiki the wiki the group belongs to
