@@ -21,11 +21,12 @@ package org.apache.wiki.auth;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.auth.authorize.Group;
@@ -86,7 +87,7 @@ public class AuthorizationManagerTest
         // Initialize the test engine
         m_engine = new TestEngine( props );
         m_auth = m_engine.getManager( AuthorizationManager.class );
-        m_groupMgr = m_engine.getGroupManager();
+        m_groupMgr = m_engine.getManager( GroupManager.class );
         m_session = WikiSessionTest.adminSession( m_engine );
     }
 
@@ -94,7 +95,8 @@ public class AuthorizationManagerTest
      * Tests the default policy. Anonymous users can read, Authenticated can
      * edit, etc. Uses the default tests/etc/jspwiki.policy file installed by
      * the JRE at startup.
-     * @throws Exception
+     *
+     * @throws Exception test failed
      */
     @Test
     public void testDefaultPermissions() throws Exception
@@ -264,7 +266,7 @@ public class AuthorizationManagerTest
         m_engine.saveText( "Test", src );
 
         final File f = m_engine.makeAttachmentFile();
-        final Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, "Test", "test1.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getManager( AttachmentManager.class ).storeAttachment( att, f );
 
@@ -295,7 +297,7 @@ public class AuthorizationManagerTest
         m_engine.saveText( "Test", src );
 
         final File f = m_engine.makeAttachmentFile();
-        final Attachment att = new Attachment( m_engine, "Test", "test1.txt" );
+        final Attachment att = Wiki.contents().attachment( m_engine, "Test", "test1.txt" );
         att.setAuthor( "FirstPost" );
         m_engine.getManager( AttachmentManager.class ).storeAttachment( att, f );
 
@@ -482,7 +484,7 @@ public class AuthorizationManagerTest
 
         // This should not resolve because there's no built-in role Admin
         principal = new WikiPrincipal( "Admin" );
-        Assertions.assertFalse( principal.equals( m_auth.resolvePrincipal( "Admin" ) ) );
+        Assertions.assertNotEquals( m_auth.resolvePrincipal( "Admin" ), principal );
     }
 
     @Test
@@ -670,7 +672,7 @@ public class AuthorizationManagerTest
         // Initialize the test engine
         m_engine = new TestEngine( props );
         m_auth = m_engine.getManager( AuthorizationManager.class );
-        m_groupMgr = m_engine.getGroupManager();
+        m_groupMgr = m_engine.getManager( GroupManager.class );
         m_session = WikiSessionTest.adminSession( m_engine );
 
         Session s = WikiSessionTest.anonymousSession( m_engine );
