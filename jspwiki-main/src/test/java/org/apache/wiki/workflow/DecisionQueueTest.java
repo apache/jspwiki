@@ -32,9 +32,9 @@ import java.util.Collection;
 
 public class DecisionQueueTest {
 
-    TestEngine m_engine;
+    TestEngine m_engine = TestEngine.build();
 
-    DecisionQueue m_queue;
+    DecisionQueue m_queue = m_engine.getManager( WorkflowManager.class ).getDecisionQueue();
 
     Workflow w;
 
@@ -50,14 +50,15 @@ public class DecisionQueueTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        m_engine = TestEngine.build();
-        m_queue = m_engine.getManager( WorkflowManager.class ).getDecisionQueue();
         adminSession = m_engine.adminSession();
         janneSession = m_engine.janneSession();
         w = new Workflow("workflow.key", new WikiPrincipal("Owner1"));
         d1 = new SimpleDecision( w.getId(), w.getAttributes(), "decision1.key", new GroupPrincipal( "Admin" ) );
         d2 = new SimpleDecision( w.getId(), w.getAttributes(), "decision2.key", new WikiPrincipal( "Owner2" ) );
         d3 = new SimpleDecision( w.getId(), w.getAttributes(), "decision3.key", janneSession.getUserPrincipal() );
+        while( m_queue.decisions().length != 0 ) {
+            m_queue.remove( m_queue.decisions()[0] );
+        }
         m_queue.add( d1 );
         m_queue.add( d2 );
         m_queue.add( d3 );

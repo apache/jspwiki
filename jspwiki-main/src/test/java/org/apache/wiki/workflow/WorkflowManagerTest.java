@@ -106,7 +106,7 @@ public class WorkflowManagerTest {
         final DefaultWorkflowManager dwm = new DefaultWorkflowManager();
         dwm.initialize( m_engine, TestEngine.getTestProperties() );
 
-        dwm.unserializeFromDisk( new File( "./target/test-classes", DefaultWorkflowManager.SERIALIZATION_FILE ) );
+        dwm.unserializeFromDisk( new File( "./src/test/resources", DefaultWorkflowManager.SERIALIZATION_FILE ) );
         Assertions.assertEquals( 1, dwm.m_workflows.size() );
         Assertions.assertEquals( 1, dwm.m_queue.decisions().length );
         Assertions.assertEquals( 0, dwm.m_completed.size() );
