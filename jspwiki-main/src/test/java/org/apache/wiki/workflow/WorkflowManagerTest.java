@@ -30,6 +30,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
+import static org.apache.wiki.TestEngine.with;
+
 
 public class WorkflowManagerTest {
 
@@ -39,7 +41,7 @@ public class WorkflowManagerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        m_engine = TestEngine.build();
+        m_engine = TestEngine.build( with( "jspwiki.workDir", "./target/test-classes/WorkflowManagerTests/" + System.currentTimeMillis() ) );
         wm = m_engine.getManager( WorkflowManager.class );
         // Create a workflow with 3 steps, with a Decision in the middle
         w = new Workflow( "workflow.key", new WikiPrincipal( "Owner1" ) );
