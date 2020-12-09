@@ -30,19 +30,17 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 
-import static org.apache.wiki.TestEngine.with;
-
 
 public class WorkflowManagerTest {
 
-    protected WikiEngine m_engine;
-    protected WorkflowManager wm;
+    protected WikiEngine m_engine= TestEngine.build();
+    protected DefaultWorkflowManager wm;
     protected Workflow w;
 
     @BeforeEach
     public void setUp() throws Exception {
-        m_engine = TestEngine.build( with( "jspwiki.workDir", "./target/test-classes/WorkflowManagerTests/" + System.currentTimeMillis() ) );
-        wm = m_engine.getManager( WorkflowManager.class );
+        wm = new DefaultWorkflowManager();
+        wm.initialize( m_engine, TestEngine.getTestProperties() );
         // Create a workflow with 3 steps, with a Decision in the middle
         w = new Workflow( "workflow.key", new WikiPrincipal( "Owner1" ) );
         final Step startTask = new TaskTest.NormalTask( w );
@@ -105,28 +103,25 @@ public class WorkflowManagerTest {
 
     @Test
     public void testSerializeUnserialize() throws WikiException {
-        final DefaultWorkflowManager dwm = new DefaultWorkflowManager();
-        dwm.initialize( m_engine, TestEngine.getTestProperties() );
+        wm.unserializeFromDisk( new File( "./src/test/resources", DefaultWorkflowManager.SERIALIZATION_FILE ) );
+        Assertions.assertEquals( 1, wm.m_workflows.size() );
+        Assertions.assertEquals( 1, wm.m_queue.decisions().length );
+        Assertions.assertEquals( 0, wm.m_completed.size() );
 
-        dwm.unserializeFromDisk( new File( "./src/test/resources", DefaultWorkflowManager.SERIALIZATION_FILE ) );
-        Assertions.assertEquals( 1, dwm.m_workflows.size() );
-        Assertions.assertEquals( 1, dwm.m_queue.decisions().length );
-        Assertions.assertEquals( 0, dwm.m_completed.size() );
-
-        final Workflow workflow = dwm.m_workflows.iterator().next();
+        final Workflow workflow = wm.m_workflows.iterator().next();
         final Decision d = ( Decision )workflow.getCurrentStep();
         d.decide( Outcome.DECISION_APPROVE, null );
-        dwm.actionPerformed( new WorkflowEvent( workflow, WorkflowEvent.COMPLETED ) );
-        dwm.actionPerformed( new WorkflowEvent( d, WorkflowEvent.DQ_REMOVAL ) );
-        Assertions.assertEquals( 0, dwm.getWorkflows().size() );
-        Assertions.assertEquals( 0, dwm.m_queue.decisions().length );
-        Assertions.assertEquals( 1, dwm.getCompletedWorkflows().size() );
-        dwm.serializeToDisk( new File( "./target/test-classes", DefaultWorkflowManager.SERIALIZATION_FILE ) );
+        wm.actionPerformed( new WorkflowEvent( workflow, WorkflowEvent.COMPLETED ) );
+        wm.actionPerformed( new WorkflowEvent( d, WorkflowEvent.DQ_REMOVAL ) );
+        Assertions.assertEquals( 0, wm.getWorkflows().size() );
+        Assertions.assertEquals( 0, wm.m_queue.decisions().length );
+        Assertions.assertEquals( 1, wm.getCompletedWorkflows().size() );
+        wm.serializeToDisk( new File( "./target/test-classes", DefaultWorkflowManager.SERIALIZATION_FILE ) );
 
-        dwm.unserializeFromDisk( new File( "./target/test-classes", DefaultWorkflowManager.SERIALIZATION_FILE ) );
-        Assertions.assertEquals( 0, dwm.m_workflows.size() );
-        Assertions.assertEquals( 0, dwm.m_queue.decisions().length );
-        Assertions.assertEquals( 1, dwm.m_completed.size() );
+        wm.unserializeFromDisk( new File( "./target/test-classes", DefaultWorkflowManager.SERIALIZATION_FILE ) );
+        Assertions.assertEquals( 0, wm.m_workflows.size() );
+        Assertions.assertEquals( 0, wm.m_queue.decisions().length );
+        Assertions.assertEquals( 1, wm.m_completed.size() );
     }
 
 }
