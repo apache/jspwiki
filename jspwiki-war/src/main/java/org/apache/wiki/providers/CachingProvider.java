@@ -95,7 +95,7 @@ public class CachingProvider implements WikiPageProvider {
 
     // The default settings of the caches, if you want something else, provide an "ehcache.xml" file
     // Please note that JSPWiki ships with a default "ehcache.xml" in the classpath
-    public static final int   DEFAULT_CACHECAPACITY   = 1000; // Good most wikis
+    public static final int   DEFAULT_CACHECAPACITY   = 50000; // Good for most wikis
     public static final int   DEFAULT_CACHETIMETOLIVESECONDS = 24*3600;
     public static final int   DEFAULT_CACHETIMETOIDLESECONDS = 24*3600;
 
