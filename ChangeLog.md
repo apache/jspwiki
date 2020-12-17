@@ -17,6 +17,17 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2020-12-17  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-01_
+
+* [JSPWIKI-1136](https://issues.apache.org/jira/browse/JSPWIKI-1136 ) - Refine Class member fields 
+    * Merged [PR #16](https://github.com/apache/jspwiki/pull/16), contributed by Arturo Bernal, thanks!
+
+* Dependency updates
+    * Gson to 2.8.6
+    * Tomcat to 9.0.41
+
 **2020-12-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-M8-git-06_
@@ -76,7 +87,7 @@ under the License.
 
 * _2.11.0-M8-git-02_
 
-* [JSPWIKI-1114](https://issues.apache.org/jira/browse/JSPWIKI-1131): Show only part of Weblog entry on the overview page.
+* [JSPWIKI-1114](https://issues.apache.org/jira/browse/JSPWIKI-1114): Show only part of Weblog entry on the overview page.
     * Preview parameter cutting now only at newlines, patch suggested by Ulf Dittmer - thanks!
 
 * LuceneSearchProvider using now NIOFSDirectory instead of (deprecated) SimpleFSDirectory. Also, all Lucene's index
