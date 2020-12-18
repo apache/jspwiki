@@ -72,7 +72,7 @@ public class RequestResourceTag extends WikiTagBase
      *  
      *  @param r Resource identifier.
      */
-    public void setResource(String r)
+    public void setResource(final String r)
     {
         m_resource = r;
     }
@@ -97,7 +97,7 @@ public class RequestResourceTag extends WikiTagBase
      *  @param type The type to be set.
      */
 
-    public void setType(String type)
+    public void setType(final String type)
     {
         m_type = type;
     }

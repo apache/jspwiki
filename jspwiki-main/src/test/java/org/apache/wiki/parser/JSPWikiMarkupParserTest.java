@@ -46,6 +46,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
@@ -751,7 +752,7 @@ public class JSPWikiMarkupParserTest
     public void testAttachmentLink2()
     throws Exception
     {
-        props.setProperty( "jspwiki.encoding", "ISO-8859-1" );
+        props.setProperty( "jspwiki.encoding", StandardCharsets.ISO_8859_1.name() );
 
         //TODO
         final TestEngine testEngine2 = new TestEngine( props );

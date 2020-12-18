@@ -188,7 +188,7 @@ public class LinkParser
      * @return a Link object containing the link text, reference, and any valid Attributes
      * @throws ParseException if the parameter is null
      */
-    public Link parse( String linktext ) throws ParseException
+    public Link parse(final String linktext ) throws ParseException
     {
         if( linktext == null )
         {
@@ -200,14 +200,14 @@ public class LinkParser
         try
         {
             // establish link text and link ref
-            int cut1   = linktext.indexOf('|');
+            final int cut1   = linktext.indexOf('|');
             if( cut1 == -1 )
             {
                 //  link form 1:  [Acme]
                 return new Link( linktext );
             }
 
-            int cut2 = cut1+1 < linktext.length()
+            final int cut2 = cut1+1 < linktext.length()
                     ? linktext.indexOf('|', cut1+1 )
                     : -1 ;
 
@@ -215,17 +215,17 @@ public class LinkParser
             {
                 // link form 2:  [Acme | http://www.acme.com/]
                 // text = Acme
-                String text = linktext.substring( 0, cut1 ).trim();
+                final String text = linktext.substring( 0, cut1 ).trim();
                 // ref = http://www.acme.com/
-                String ref  = linktext.substring( cut1+1 ).trim();
+                final String ref  = linktext.substring( cut1+1 ).trim();
                 return new Link( text, ref );
             }
 
             // link form 3:  [Acme | http://www.acme.com/ | id='foo' rel='Next']
-            String text    = linktext.substring( 0, cut1 ).trim();
-            String ref     = linktext.substring( cut1+1, cut2 ).trim();
+            final String text    = linktext.substring( 0, cut1 ).trim();
+            final String ref     = linktext.substring( cut1+1, cut2 ).trim();
             // attribs = id='foo' rel='Next'
-            String attribs = linktext.substring( cut2+1 ).trim();
+            final String attribs = linktext.substring( cut2+1 ).trim();
 
             link = new Link( text, ref );
 
@@ -235,7 +235,7 @@ public class LinkParser
             {
                 try
                 {
-                    StringTokenizer tok = new StringTokenizer(attribs,DELIMS,true);
+                    final StringTokenizer tok = new StringTokenizer(attribs,DELIMS,true);
                     while ( tok.hasMoreTokens() )
                     {
                         // get attribute name token
@@ -251,7 +251,7 @@ public class LinkParser
                         // eat opening delim
                         require( tok, SQUO );
                         // using existing delim
-                        String value = tok.nextToken(SQUO);
+                        final String value = tok.nextToken(SQUO);
                         // eat closing delim
                         require( tok, SQUO );
 
@@ -263,12 +263,12 @@ public class LinkParser
                                 if( !token.equals(TARGET)
                                         || Arrays.binarySearch( PERMITTED_TARGET_VALUES, value ) >= 0 )
                                 {
-                                    Attribute a = new Attribute(token,value);
+                                    final Attribute a = new Attribute(token,value);
                                     link.addAttribute(a);
 
                                     if( token.equals(TARGET) )
                                     {
-                                        Attribute rel = new Attribute(REL,NOREFERRER);
+                                        final Attribute rel = new Attribute(REL,NOREFERRER);
                                         link.addAttribute(rel);
                                    }
 
@@ -293,18 +293,18 @@ public class LinkParser
                         }
                     }
                 }
-                catch( ParseException pe )
+                catch( final ParseException pe )
                 {
                     log.warn("syntax error parsing link attributes '"+attribs+"': " + pe.getMessage());
                 }
-                catch( NoSuchElementException nse )
+                catch( final NoSuchElementException nse )
                 {
                     log.warn("expected more tokens while parsing link attributes '" + attribs + "'");
                 }
             }
 
         }
-        catch( Exception e )
+        catch( final Exception e )
         {
             log.warn( e.getClass().getName() + " thrown by link parser: " + e.getMessage() );
         }
@@ -313,10 +313,10 @@ public class LinkParser
     }
 
 
-    private String require( StringTokenizer tok, String required )
+    private String require(final StringTokenizer tok, final String required )
             throws ParseException, NoSuchElementException
     {
-        String s = tok.nextToken(required);
+        final String s = tok.nextToken(required);
         if( !s.equals(required) )
         {
             throw new ParseException("expected '"+required+"' not '"+s+"'");
@@ -332,7 +332,7 @@ public class LinkParser
      *  @param s The string to check
      *  @return True, if "s" is all XML whitespace.
      */
-    public static final boolean isSpace( String s )
+    public static final boolean isSpace(final String s )
     {
         for( int i = 0 ; i < s.length() ; i++ )
         {
@@ -349,7 +349,7 @@ public class LinkParser
      *  @param c Character to check.
      *  @return True, if the character is an XML space.
      */
-    public static final boolean isSpace( char c )
+    public static final boolean isSpace(final char c )
     {
         // 0x20 = SPACE, 0x0A = LF, 0x0D = CR, 0x09 = TAB, 0x85 = NEL, 0x2028 = Line separator
         return
@@ -381,7 +381,7 @@ public class LinkParser
          *  @param text The link text.
          *  @throws ParseException If the link text is illegal.
          */
-        protected Link( String text ) throws ParseException
+        protected Link(final String text ) throws ParseException
         {
             setText(text);
         }
@@ -393,7 +393,7 @@ public class LinkParser
          *  @param ref  The hypertext reference.
          *  @throws ParseException If the link text or reference are illegal.
          */
-        protected Link( String text, String ref ) throws ParseException
+        protected Link(final String text, final String ref ) throws ParseException
         {
             setText(text);
             setReference(ref);
@@ -405,7 +405,7 @@ public class LinkParser
          *  @param text The link text.
          *  @throws ParseException If the text is illegal (e.g. null).
          */
-        protected void setText( String text ) throws ParseException
+        protected void setText(final String text ) throws ParseException
         {
             if( text == null )
             {
@@ -431,7 +431,7 @@ public class LinkParser
          *  @param ref The reference.
          *  @throws ParseException If the reference is illegal.
          */
-        protected void setReference( String ref ) throws ParseException
+        protected void setReference(final String ref ) throws ParseException
         {
             if( ref == null )
             {
@@ -469,7 +469,7 @@ public class LinkParser
          */
         public boolean isInterwikiLink()
         {
-            LinkParsingOperations lpo = new LinkParsingOperations( null );
+            final LinkParsingOperations lpo = new LinkParsingOperations( null );
             if( !hasReference() ) m_ref = m_text;
             m_interwikiPoint = lpo.interWikiLinkAt( m_ref );
             return lpo.isInterWikiLink( m_ref );
@@ -530,7 +530,7 @@ public class LinkParser
          *
          *  @param attr A JDOM Attribute.
          */
-        public void addAttribute( Attribute attr )
+        public void addAttribute(final Attribute attr )
         {
             if( m_attribs == null )
             {
@@ -558,7 +558,7 @@ public class LinkParser
         @Override
         public String toString()
         {
-            StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder();
             sb.append( '[' );
             sb.append( m_text );
 
@@ -574,10 +574,10 @@ public class LinkParser
             {
                 sb.append( ' ' );
                 sb.append( '|' );
-                Iterator< Attribute > it = getAttributes();
+                final Iterator< Attribute > it = getAttributes();
                 while ( it.hasNext() )
                 {
-                    Attribute a = it.next();
+                    final Attribute a = it.next();
                     sb.append( ' ' );
                     sb.append( a.getName() );
                     sb.append( '=' );

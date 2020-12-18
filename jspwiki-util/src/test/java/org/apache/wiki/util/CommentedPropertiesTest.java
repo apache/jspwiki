@@ -44,7 +44,7 @@ public class CommentedPropertiesTest
     @BeforeEach
     public void setUp() throws IOException
     {
-        InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test.properties" );
+        final InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test.properties" );
         m_props.load( in );
         // CommentedProperties always internally uses \n as EOL, as opposed to a File which uses, well, the given EOL of the File.  
         // Thus, executing this test when test.properties has another EOL (like f.ex when git cloning having core.autocrlf=true on
@@ -124,7 +124,7 @@ public class CommentedPropertiesTest
         out.close();
 
         // Load the file into new props object; should return identical strings
-        Properties props2 = new CommentedProperties();
+        final Properties props2 = new CommentedProperties();
         InputStream in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test2.properties" );
         props2.load( in );
         in.close();
@@ -140,7 +140,7 @@ public class CommentedPropertiesTest
         out.close();
 
         // Load the new file; should not have props1/2/3 & is shorter
-        Properties props3 = new CommentedProperties();
+        final Properties props3 = new CommentedProperties();
         in = CommentedPropertiesTest.class.getClassLoader().getResourceAsStream( "test3.properties" );
         props3.load( in );
         in.close();
@@ -164,25 +164,25 @@ public class CommentedPropertiesTest
         }
     }
 
-    private File createFile( String file ) throws URISyntaxException
+    private File createFile(final String file ) throws URISyntaxException
     {
         // Get the test.properties file
-        URL url = CommentedPropertiesTest.class.getClassLoader().getResource( "test.properties" );
+        final URL url = CommentedPropertiesTest.class.getClassLoader().getResource( "test.properties" );
         if ( url == null )
         {
             throw new IllegalStateException( "Very odd. We can't find test.properties!" );
         }
 
         // Construct new file in same directory
-        File testFile = new File( new URI(url.toString()) );
-        File dir = testFile.getParentFile();
+        final File testFile = new File( new URI(url.toString()) );
+        final File dir = testFile.getParentFile();
         return new File( dir, file );
     }
 
-    private File getFile( String name )
+    private File getFile(final String name )
     {
         // Get the test.properties file
-        URL url = CommentedPropertiesTest.class.getClassLoader().getResource( name );
+        final URL url = CommentedPropertiesTest.class.getClassLoader().getResource( name );
         if ( url == null )
         {
             throw new IllegalStateException( "Very odd. We can't find test.properties!" );
@@ -194,7 +194,7 @@ public class CommentedPropertiesTest
         {
             file = new File( new URI(url.toString()) );
         }
-        catch (URISyntaxException e)
+        catch (final URISyntaxException e)
         {
             // TODO Auto-generated catch block
             e.printStackTrace();

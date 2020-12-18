@@ -58,18 +58,18 @@ public abstract class SimpleMBean implements DynamicMBean {
 	private static final Logger LOG = Logger.getLogger( SimpleMBean.class );
     protected MBeanInfo m_beanInfo;
 
-    private static Method findGetterSetter( Class<?> clazz, String name, Class<?> parm )
+    private static Method findGetterSetter(final Class<?> clazz, final String name, final Class<?> parm )
     {
         try
         { 
-            Class<?>[] params = { parm };
-            Class<?>[] emptyparms = {};
+            final Class<?>[] params = { parm };
+            final Class<?>[] emptyparms = {};
 
-            Method m = clazz.getDeclaredMethod( name, parm != null ? params : emptyparms );
+            final Method m = clazz.getDeclaredMethod( name, parm != null ? params : emptyparms );
 
             return m;
         }
-        catch( Exception e )
+        catch( final Exception e )
         {
             // There's nothing to do, really - we just return a null.
         }
@@ -87,7 +87,7 @@ public abstract class SimpleMBean implements DynamicMBean {
         //
         //  Create attributes
         //
-        String[] attlist = getAttributeNames();
+        final String[] attlist = getAttributeNames();
         MBeanAttributeInfo[] attributes = null;
 
         if( attlist != null )
@@ -112,7 +112,7 @@ public abstract class SimpleMBean implements DynamicMBean {
                 //
                 //  Check, if there's a description available
                 //
-                Method descriptor = findGetterSetter( getClass(), "get"+name+"Description", null );
+                final Method descriptor = findGetterSetter( getClass(), "get"+name+"Description", null );
                 String description = "";
 
                 if( descriptor != null )
@@ -121,18 +121,18 @@ public abstract class SimpleMBean implements DynamicMBean {
                     {
                         description = (String) descriptor.invoke( this, (Object[])null );
                     }
-                    catch( Exception e )
+                    catch( final Exception e )
                     {
                         description="Exception: "+e.getMessage();
                     }
                 }
 
-                MBeanAttributeInfo info;
+                final MBeanAttributeInfo info;
                 try
                 {
                     info = new MBeanAttributeInfo( attlist[i], description, getter, setter );
                 }
-                catch (IntrospectionException e)
+                catch (final IntrospectionException e)
                 {
                     throw new NotCompliantMBeanException( e.getMessage() );
                 }
@@ -144,10 +144,10 @@ public abstract class SimpleMBean implements DynamicMBean {
         //
         //  Create operations.
         //
-        String[] oplist = getMethodNames();
-        MBeanOperationInfo[] operations = new MBeanOperationInfo[oplist.length];
+        final String[] oplist = getMethodNames();
+        final MBeanOperationInfo[] operations = new MBeanOperationInfo[oplist.length];
 
-        Method[] methods = getClass().getMethods();
+        final Method[] methods = getClass().getMethods();
 
         for( int i = 0; i < oplist.length; i++ )
         {
@@ -166,7 +166,7 @@ public abstract class SimpleMBean implements DynamicMBean {
                 throw new NotCompliantMBeanException("Class declares method "+oplist[i]+", yet does not implement it!");
             }
 
-            MBeanOperationInfo info = new MBeanOperationInfo( method.getName(), method );
+            final MBeanOperationInfo info = new MBeanOperationInfo( method.getName(), method );
 
             operations[i] = info;
         }
@@ -174,8 +174,8 @@ public abstract class SimpleMBean implements DynamicMBean {
         //
         //  Create the actual BeanInfo instance.
         //
-        MBeanConstructorInfo[] constructors = null;
-        MBeanNotificationInfo[] notifications = null;
+        final MBeanConstructorInfo[] constructors = null;
+        final MBeanNotificationInfo[] notifications = null;
 
         m_beanInfo = new MBeanInfo( getClass().getName(),
                                     getDescription(),
@@ -206,18 +206,18 @@ public abstract class SimpleMBean implements DynamicMBean {
      *  @throws ReflectionException
      */
     @Override
-    public Object getAttribute(String name)
+    public Object getAttribute(final String name)
         throws AttributeNotFoundException, MBeanException, ReflectionException
     {
-        Method m;
+        final Method m;
         Object res = null;
         try {
-            String mname = "get"+StringUtils.capitalize( name );
+            final String mname = "get"+StringUtils.capitalize( name );
             m = findGetterSetter( getClass(), mname, null );
 
             if( m == null ) throw new AttributeNotFoundException( name );
             res = m.invoke( this, (Object[])null );
-        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
+        } catch (final SecurityException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
         	LOG.error( e.getMessage(), e );
         }
 
@@ -231,13 +231,13 @@ public abstract class SimpleMBean implements DynamicMBean {
      *  @return A list of attributes
      */
     @Override
-    public AttributeList getAttributes(String[] arg0) {
-        AttributeList list = new AttributeList();
+    public AttributeList getAttributes(final String[] arg0) {
+        final AttributeList list = new AttributeList();
 
         for( int i = 0; i < arg0.length; i++ ) {
             try {
                 list.add( new Attribute(arg0[i], getAttribute(arg0[i])) );
-            } catch (AttributeNotFoundException | MBeanException | ReflectionException e) {
+            } catch (final AttributeNotFoundException | MBeanException | ReflectionException e) {
                 LOG.error( e.getMessage(), e );
             }
         }
@@ -263,10 +263,10 @@ public abstract class SimpleMBean implements DynamicMBean {
      *  @param arg1 A list of arguments for the invocation
      */
     @Override
-    public Object invoke(String arg0, Object[] arg1, String[] arg2)
+    public Object invoke(final String arg0, final Object[] arg1, final String[] arg2)
         throws MBeanException, ReflectionException
     {
-        Method[] methods = getClass().getMethods();
+        final Method[] methods = getClass().getMethods();
 
         for( int i = 0; i < methods.length; i++ )
         {
@@ -276,15 +276,15 @@ public abstract class SimpleMBean implements DynamicMBean {
                 {
                     return methods[i].invoke( this, arg1 );
                 }
-                catch (IllegalArgumentException e)
+                catch (final IllegalArgumentException e)
                 {
                     throw new ReflectionException( e, "Wrong arguments" );
                 }
-                catch (IllegalAccessException e)
+                catch (final IllegalAccessException e)
                 {
                     throw new ReflectionException( e, "No access" );
                 }
-                catch (InvocationTargetException e)
+                catch (final InvocationTargetException e)
                 {
                     throw new ReflectionException( e, "Wrong target" );
                 }
@@ -295,46 +295,46 @@ public abstract class SimpleMBean implements DynamicMBean {
     }
 
     @Override
-    public void setAttribute(Attribute attr)
+    public void setAttribute(final Attribute attr)
         throws AttributeNotFoundException,
                InvalidAttributeValueException,
                MBeanException,
                ReflectionException
     {
-        Method m;
+        final Method m;
 
-        String mname = "set"+StringUtils.capitalize( attr.getName() );
+        final String mname = "set"+StringUtils.capitalize( attr.getName() );
         m = findGetterSetter( getClass(), mname, attr.getValue().getClass() );
 
         if( m == null ) throw new AttributeNotFoundException( attr.getName() );
 
-        Object[] args = { attr.getValue() };
+        final Object[] args = { attr.getValue() };
 
         try
         {
             m.invoke( this, args );
         }
-        catch (IllegalArgumentException e)
+        catch (final IllegalArgumentException e)
         {
             throw new InvalidAttributeValueException( "Faulty argument: "+e.getMessage() );
         }
-        catch (IllegalAccessException e)
+        catch (final IllegalAccessException e)
         {
             throw new ReflectionException( e, "Cannot access attribute "+e.getMessage() );
         }
-        catch (InvocationTargetException e)
+        catch (final InvocationTargetException e)
         {
             throw new ReflectionException( e, "Cannot invoke attribute "+e.getMessage() );
         }
     }
 
     @Override
-    public AttributeList setAttributes(AttributeList arg0)
+    public AttributeList setAttributes(final AttributeList arg0)
     {
-        AttributeList result = new AttributeList();
-        for( Iterator< Object > i = arg0.iterator(); i.hasNext(); )
+        final AttributeList result = new AttributeList();
+        for(final Iterator< Object > i = arg0.iterator(); i.hasNext(); )
         {
-            Attribute attr = (Attribute)i.next();
+            final Attribute attr = (Attribute)i.next();
 
             //
             //  Attempt to set the attribute.  If it succeeds (no exception),
@@ -343,7 +343,7 @@ public abstract class SimpleMBean implements DynamicMBean {
             try {
                 setAttribute( attr );
                 result.add( attr );
-            } catch (AttributeNotFoundException | InvalidAttributeValueException | MBeanException | ReflectionException e ) {
+            } catch (final AttributeNotFoundException | InvalidAttributeValueException | MBeanException | ReflectionException e ) {
                 LOG.error( e.getMessage(), e );
             }
         }

@@ -42,9 +42,9 @@ public class FileUtilTest
      */
     @Test
     public void testJDKString() {
-        String src = "abc\u00e4\u00e5\u00a6";
+        final String src = "abc\u00e4\u00e5\u00a6";
 
-        String res = new String( src.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1 );
+        final String res = new String( src.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1 );
 
         Assertions.assertEquals( src, res );
     }
@@ -53,9 +53,9 @@ public class FileUtilTest
     public void testReadContentsLatin1()
         throws Exception
     {
-        String src = "abc\u00e4\u00e5\u00a6";
+        final String src = "abc\u00e4\u00e5\u00a6";
 
-        String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes(StandardCharsets.ISO_8859_1) ),
+        final String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes(StandardCharsets.ISO_8859_1) ),
                                             StandardCharsets.ISO_8859_1.name() );
 
         Assertions.assertEquals( src, res );
@@ -68,9 +68,9 @@ public class FileUtilTest
     public void testReadContentsLatin1_2()
         throws Exception
     {
-        String src = "abc\u00e4\u00e5\u00a6def";
+        final String src = "abc\u00e4\u00e5\u00a6def";
 
-        String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes(StandardCharsets.ISO_8859_1) ),
+        final String res = FileUtil.readContents( new ByteArrayInputStream( src.getBytes(StandardCharsets.ISO_8859_1) ),
                                             StandardCharsets.UTF_8.name() );
 
         Assertions.assertEquals( src, res );
@@ -91,11 +91,11 @@ public class FileUtilTest
 
         src += "\u00e4\u00e5\u00a6";
 
-        File f = FileUtil.newTmpFile( src, StandardCharsets.ISO_8859_1 );
+        final File f = FileUtil.newTmpFile( src, StandardCharsets.ISO_8859_1 );
 
-        String[] envp = {};
-        Process process = Runtime.getRuntime().exec( "cat "+f.getAbsolutePath(), envp, f.getParentFile() );
-        String result = FileUtil.readContents( process.getInputStream(), StandardCharsets.UTF_8.name() );
+        final String[] envp = {};
+        final Process process = Runtime.getRuntime().exec( "cat "+f.getAbsolutePath(), envp, f.getParentFile() );
+        final String result = FileUtil.readContents( process.getInputStream(), StandardCharsets.UTF_8.name() );
         f.delete();
         Assertions.assertEquals( src, result );
     }
@@ -104,9 +104,9 @@ public class FileUtilTest
     public void testReadContentsReader()
         throws IOException
     {
-        String data = "ABCDEF";
+        final String data = "ABCDEF";
 
-        String result = FileUtil.readContents( new StringReader( data ) );
+        final String result = FileUtil.readContents( new StringReader( data ) );
 
         Assertions.assertEquals( data, result );
     }

@@ -121,7 +121,7 @@ public abstract class WikiEvent extends EventObject {
      *
      * @return requested arg  or null.
      */
-    public < T > T getArg( int index, Class< T > cls ) {
+    public < T > T getArg(final int index, final Class< T > cls ) {
         if( index >= args.length ) {
             return null;
         }

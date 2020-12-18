@@ -39,7 +39,7 @@ public class LocaleComparator extends CollatorComparator
     /**
      * use a specific locale's collator.
      */
-    public LocaleComparator( Locale locale )
+    public LocaleComparator(final Locale locale )
     {
         m_collator = Collator.getInstance( locale );
     }
@@ -49,7 +49,7 @@ public class LocaleComparator extends CollatorComparator
      * 
      * @param locale the locale for future comparisons
      */
-    public void setLocale( Locale locale)
+    public void setLocale(final Locale locale)
     {
         m_collator = Collator.getInstance(locale);
     }

@@ -43,7 +43,7 @@ public class TimedCounterList<T> extends AbstractList<T>
      *  {@inheritDoc}
      */
     @Override
-    public T set( int index, T element )
+    public T set(final int index, final T element )
     {
         m_lock.writeLock().lock();
         
@@ -65,7 +65,7 @@ public class TimedCounterList<T> extends AbstractList<T>
      *  {@inheritDoc}
      */
     @Override
-    public T get( int index )
+    public T get(final int index )
     {
         m_lock.readLock().lock();
         
@@ -108,7 +108,7 @@ public class TimedCounterList<T> extends AbstractList<T>
      *  {@inheritDoc}
      */
     @Override
-    public void add( int index, T element )
+    public void add(final int index, final T element )
     {
         m_lock.writeLock().lock();
         
@@ -126,7 +126,7 @@ public class TimedCounterList<T> extends AbstractList<T>
      *  {@inheritDoc}
      */
     @Override
-    public T remove( int index )
+    public T remove(final int index )
     {
         m_lock.writeLock().lock();
         T t;
@@ -150,14 +150,14 @@ public class TimedCounterList<T> extends AbstractList<T>
      *  @param obj The object to count.
      *  @return The count of the objects.
      */
-    public int count( T obj )
+    public int count(final T obj )
     {
         int c = 0;
         m_lock.readLock().lock();
         
         try
         {
-            for( CounterItem< T > i : m_list )
+            for( final CounterItem< T > i : m_list )
             {
                 if( i.m_obj.equals( obj ) )
                 {
@@ -178,19 +178,19 @@ public class TimedCounterList<T> extends AbstractList<T>
      *  
      *  @param maxage The maximum age in milliseconds after an item is removed.
      */
-    public void cleanup( long maxage )
+    public void cleanup(final long maxage )
     {
         m_lock.writeLock().lock();
         
         try
         {
-            long now = System.currentTimeMillis();
+            final long now = System.currentTimeMillis();
         
-            for( Iterator<CounterItem<T>> i = m_list.iterator(); i.hasNext(); )
+            for(final Iterator<CounterItem<T>> i = m_list.iterator(); i.hasNext(); )
             {
-                CounterItem<T> ci = i.next();
+                final CounterItem<T> ci = i.next();
             
-                long age = now - ci.m_addTime;
+                final long age = now - ci.m_addTime;
             
                 if( age > maxage )
                 {
@@ -210,7 +210,7 @@ public class TimedCounterList<T> extends AbstractList<T>
      *  @param index The index of the object.
      *  @return The addition time in milliseconds (@see System.currentTimeMillis()).
      */
-    public long getAddTime( int index )
+    public long getAddTime(final int index )
     {
         m_lock.readLock().lock();
         long res = 0;
@@ -232,7 +232,7 @@ public class TimedCounterList<T> extends AbstractList<T>
         private final E      m_obj;
         private final long   m_addTime;
         
-        public CounterItem(E o)
+        public CounterItem(final E o)
         {
             m_addTime = System.currentTimeMillis();
             m_obj = o;

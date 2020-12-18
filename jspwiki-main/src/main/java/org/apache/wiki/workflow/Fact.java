@@ -45,7 +45,7 @@ public final class Fact implements Serializable
      * @param value
      *            the object to associate with the name
      */
-    public Fact(String messageKey, Serializable value)
+    public Fact(final String messageKey, final Serializable value)
     {
         if ( messageKey == null || value == null )
         {
@@ -78,14 +78,14 @@ public final class Fact implements Serializable
      * @param obj the object to test
      * @return <code>true</code> if logically equal, <code>false</code> if not
      */
-    public boolean equals( Object obj )
+    public boolean equals(final Object obj )
     {
         if ( !( obj instanceof Fact ) ) 
         {
             return false;
         }
         
-        Fact f = (Fact)obj;
+        final Fact f = (Fact)obj;
         return m_key.equals( f.m_key) && m_obj.equals( f.m_obj );
     }
     

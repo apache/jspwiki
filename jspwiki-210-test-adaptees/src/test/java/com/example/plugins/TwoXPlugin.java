@@ -30,7 +30,7 @@ import java.util.Map;
 public class TwoXPlugin implements WikiPlugin {
 	
     @Override
-	public String execute(WikiContext wikiContext, Map<String, String> params) throws PluginException {
+	public String execute(final WikiContext wikiContext, final Map<String, String> params) throws PluginException {
 		return "hakuna matata";
 	}
 

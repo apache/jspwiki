@@ -38,10 +38,10 @@ public class GroupPermissionTest
     @Test
     public final void testEqualsObject()
     {
-        GroupPermission p1 = new GroupPermission( "mywiki:Test", "view,edit,delete" );
-        GroupPermission p2 = new GroupPermission( "mywiki:Test", "view,edit,delete" );
-        GroupPermission p3 = new GroupPermission( "mywiki:Test", "delete,view,edit" );
-        GroupPermission p4 = new GroupPermission( "mywiki:Test*", "delete,view,edit" );
+        final GroupPermission p1 = new GroupPermission( "mywiki:Test", "view,edit,delete" );
+        final GroupPermission p2 = new GroupPermission( "mywiki:Test", "view,edit,delete" );
+        final GroupPermission p3 = new GroupPermission( "mywiki:Test", "delete,view,edit" );
+        final GroupPermission p4 = new GroupPermission( "mywiki:Test*", "delete,view,edit" );
         Assertions.assertEquals( p1, p2 );
         Assertions.assertEquals( p1, p3 );
         Assertions.assertFalse( p3.equals( p4 ) );
@@ -300,7 +300,7 @@ public class GroupPermissionTest
     @Test
     public final void testGetActions()
     {
-        GroupPermission p = new GroupPermission( "Test", "VIEW,edit,delete" );
+        final GroupPermission p = new GroupPermission( "Test", "VIEW,edit,delete" );
         Assertions.assertEquals( "delete,edit,view", p.getActions() );
     }
 
@@ -314,14 +314,14 @@ public class GroupPermissionTest
      */
     protected final boolean subjectImplies( final Subject subject, final GroupPermission p1, final Permission p2 ) {
         try {
-            Boolean result = Subject.doAsPrivileged( subject, new PrivilegedAction< Boolean >() {
+            final Boolean result = Subject.doAsPrivileged( subject, new PrivilegedAction< Boolean >() {
                 @Override
                 public Boolean run() {
                     return p1.impliesMember( p2 );
                 }
             }, null );
             return result.booleanValue();
-        } catch( AccessControlException e ) {
+        } catch( final AccessControlException e ) {
             return false;
         }
     }

@@ -45,17 +45,16 @@ public final class PropertiesUtils {
      * @param properties the properties object
      * @return String the properties, nicely formatted 
      */
-    public static String toSortedString( Properties properties )
+    public static String toSortedString(final Properties properties )
     {
-        @SuppressWarnings( { "unchecked", "rawtypes" } )
-		TreeMap< String, String > treemap = new TreeMap( properties );
+        @SuppressWarnings( { "unchecked", "rawtypes" } ) final TreeMap< String, String > treemap = new TreeMap( properties );
         String string = "";
-        Iterator< Map.Entry< String, String > > iterator = treemap.entrySet().iterator();
+        final Iterator< Map.Entry< String, String > > iterator = treemap.entrySet().iterator();
         while( iterator.hasNext() )
         {
-            Map.Entry< String, String > entry = iterator.next();
-            String key = entry.getKey();
-            String value = entry.getValue() == null ? "null" : entry.getValue();
+            final Map.Entry< String, String > entry = iterator.next();
+            final String key = entry.getKey();
+            final String value = entry.getValue() == null ? "null" : entry.getValue();
             string += toLine( key, value ) + '\n';
         }
         return string;
@@ -67,7 +66,7 @@ public final class PropertiesUtils {
      * @param value the property's value
      * @return the converted string
      */
-    public static String toLine( String key, String value )
+    public static String toLine(final String key, final String value )
     {
         return saveConvert( key, true ) + '=' + saveConvert( value, false );
     }
@@ -78,13 +77,13 @@ public final class PropertiesUtils {
      * @param encodeWhiteSpace <code>true</code> if whitespace should be encoded also
      * @return the converted string
      */
-    public static String saveConvert( String string, boolean encodeWhiteSpace )
+    public static String saveConvert(final String string, final boolean encodeWhiteSpace )
     {
-        int i = string.length();
-        StringBuilder stringbuffer = new StringBuilder( i * 2 );
+        final int i = string.length();
+        final StringBuilder stringbuffer = new StringBuilder( i * 2 );
         for( int i3 = 0; i3 < i; i3++ )
         {
-            char c = string.charAt( i3 );
+            final char c = string.charAt( i3 );
             switch( c )
             {
                 case ' ':
@@ -137,7 +136,7 @@ public final class PropertiesUtils {
         return stringbuffer.toString();
     }
 
-    private static char toHex( int i )
+    private static char toHex(final int i )
     {
         return HEXDIGIT[i & 0xf];
     }

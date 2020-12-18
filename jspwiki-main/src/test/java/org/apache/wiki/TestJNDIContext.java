@@ -70,12 +70,12 @@ public class TestJNDIContext implements Context
         private static Context ctx = null;
 
         @Override
-        public Context getInitialContext( Hashtable<?,?> environment ) throws NamingException
+        public Context getInitialContext(final Hashtable<?,?> environment ) throws NamingException
         {
             return ctx;
         }
 
-        protected static void setContext( Context context )
+        protected static void setContext(final Context context )
         {
             if ( ctx == null )
             {
@@ -114,7 +114,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#addToEnvironment(java.lang.String, java.lang.Object)
      */
     @Override
-    public Object addToEnvironment( String propName, Object propVal ) throws NamingException
+    public Object addToEnvironment(final String propName, final Object propVal ) throws NamingException
     {
         return null;
     }
@@ -124,7 +124,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#bind(javax.naming.Name, java.lang.Object)
      */
     @Override
-    public void bind( Name name, Object obj ) throws NamingException
+    public void bind(final Name name, final Object obj ) throws NamingException
     {
     }
 
@@ -142,7 +142,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#composeName(javax.naming.Name, javax.naming.Name)
      */
     @Override
-    public Name composeName( Name name, Name prefix ) throws NamingException
+    public Name composeName(final Name name, final Name prefix ) throws NamingException
     {
         return null;
     }
@@ -152,7 +152,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#composeName(java.lang.String, java.lang.String)
      */
     @Override
-    public String composeName( String name, String prefix ) throws NamingException
+    public String composeName(final String name, final String prefix ) throws NamingException
     {
         return null;
     }
@@ -162,7 +162,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#createSubcontext(javax.naming.Name)
      */
     @Override
-    public Context createSubcontext( Name name ) throws NamingException
+    public Context createSubcontext(final Name name ) throws NamingException
     {
         return null;
     }
@@ -172,7 +172,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#createSubcontext(java.lang.String)
      */
     @Override
-    public Context createSubcontext( String name ) throws NamingException
+    public Context createSubcontext(final String name ) throws NamingException
     {
         return null;
     }
@@ -182,7 +182,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#destroySubcontext(javax.naming.Name)
      */
     @Override
-    public void destroySubcontext( Name name ) throws NamingException
+    public void destroySubcontext(final Name name ) throws NamingException
     {
     }
 
@@ -191,7 +191,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#destroySubcontext(java.lang.String)
      */
     @Override
-    public void destroySubcontext( String name ) throws NamingException
+    public void destroySubcontext(final String name ) throws NamingException
     {
     }
 
@@ -220,7 +220,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#getNameParser(javax.naming.Name)
      */
     @Override
-    public NameParser getNameParser( Name name ) throws NamingException
+    public NameParser getNameParser(final Name name ) throws NamingException
     {
         return null;
     }
@@ -230,7 +230,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#getNameParser(java.lang.String)
      */
     @Override
-    public NameParser getNameParser( String name ) throws NamingException
+    public NameParser getNameParser(final String name ) throws NamingException
     {
         return null;
     }
@@ -240,7 +240,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#list(javax.naming.Name)
      */
     @Override
-    public NamingEnumeration<NameClassPair> list( Name name ) throws NamingException
+    public NamingEnumeration<NameClassPair> list(final Name name ) throws NamingException
     {
         return null;
     }
@@ -250,7 +250,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#list(java.lang.String)
      */
     @Override
-    public NamingEnumeration<NameClassPair> list( String name ) throws NamingException
+    public NamingEnumeration<NameClassPair> list(final String name ) throws NamingException
     {
         return null;
     }
@@ -260,7 +260,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#listBindings(javax.naming.Name)
      */
     @Override
-    public NamingEnumeration<Binding> listBindings( Name name ) throws NamingException
+    public NamingEnumeration<Binding> listBindings(final Name name ) throws NamingException
     {
         return null;
     }
@@ -270,7 +270,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#listBindings(java.lang.String)
      */
     @Override
-    public NamingEnumeration<Binding> listBindings( String name ) throws NamingException
+    public NamingEnumeration<Binding> listBindings(final String name ) throws NamingException
     {
         return null;
     }
@@ -280,7 +280,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#lookup(javax.naming.Name)
      */
     @Override
-    public Object lookup( Name name ) throws NamingException
+    public Object lookup(final Name name ) throws NamingException
     {
         return null;
     }
@@ -290,7 +290,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.InitialContext#bind(java.lang.String, java.lang.Object)
      */
     @Override
-    public void bind( String name, Object obj ) throws NamingException
+    public void bind(final String name, final Object obj ) throws NamingException
     {
         m_bindings.put( name, obj );
     }
@@ -301,9 +301,9 @@ public class TestJNDIContext implements Context
      * @see javax.naming.InitialContext#lookup(java.lang.String)
      */
     @Override
-    public Object lookup( String name ) throws NamingException
+    public Object lookup(final String name ) throws NamingException
     {
-        Object obj = m_bindings.get( name );
+        final Object obj = m_bindings.get( name );
         if( obj == null )
         {
             throw new NamingException( "Object named '" + name + "' not found in JNDI context." );
@@ -316,7 +316,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#lookupLink(javax.naming.Name)
      */
     @Override
-    public Object lookupLink( Name name ) throws NamingException
+    public Object lookupLink(final Name name ) throws NamingException
     {
         return null;
     }
@@ -326,7 +326,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#lookupLink(java.lang.String)
      */
     @Override
-    public Object lookupLink( String name ) throws NamingException
+    public Object lookupLink(final String name ) throws NamingException
     {
         return null;
     }
@@ -336,7 +336,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#rebind(javax.naming.Name, java.lang.Object)
      */
     @Override
-    public void rebind( Name name, Object obj ) throws NamingException
+    public void rebind(final Name name, final Object obj ) throws NamingException
     {
     }
 
@@ -345,7 +345,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#rebind(java.lang.String, java.lang.Object)
      */
     @Override
-    public void rebind( String name, Object obj ) throws NamingException
+    public void rebind(final String name, final Object obj ) throws NamingException
     {
     }
 
@@ -354,7 +354,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#removeFromEnvironment(java.lang.String)
      */
     @Override
-    public Object removeFromEnvironment( String propName ) throws NamingException
+    public Object removeFromEnvironment(final String propName ) throws NamingException
     {
         return null;
     }
@@ -364,7 +364,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#rename(javax.naming.Name, javax.naming.Name)
      */
     @Override
-    public void rename( Name oldName, Name newName ) throws NamingException
+    public void rename(final Name oldName, final Name newName ) throws NamingException
     {
     }
 
@@ -373,7 +373,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#rename(java.lang.String, java.lang.String)
      */
     @Override
-    public void rename( String oldName, String newName ) throws NamingException
+    public void rename(final String oldName, final String newName ) throws NamingException
     {
     }
 
@@ -382,7 +382,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#unbind(javax.naming.Name)
      */
     @Override
-    public void unbind( Name name ) throws NamingException
+    public void unbind(final Name name ) throws NamingException
     {
     }
 
@@ -391,7 +391,7 @@ public class TestJNDIContext implements Context
      * @see javax.naming.Context#unbind(java.lang.String)
      */
     @Override
-    public void unbind( String name ) throws NamingException
+    public void unbind(final String name ) throws NamingException
     {
     }
 }

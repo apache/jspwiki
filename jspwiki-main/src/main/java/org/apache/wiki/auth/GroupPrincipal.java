@@ -41,7 +41,7 @@ public final class GroupPrincipal implements Principal
      *
      * @param group the wiki group; cannot be <code>null</code>
      */
-    public GroupPrincipal( String group )
+    public GroupPrincipal(final String group )
     {
         if ( group == null )
         {
@@ -66,13 +66,13 @@ public final class GroupPrincipal implements Principal
      * @return the result of the equality test
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals( Object obj )
+    public boolean equals(final Object obj )
     {
         if ( !( obj instanceof GroupPrincipal ) )
         {
             return false;
         }
-        GroupPrincipal p = (GroupPrincipal)obj;
+        final GroupPrincipal p = (GroupPrincipal)obj;
         return p.m_name.equals( m_name );
     }
 

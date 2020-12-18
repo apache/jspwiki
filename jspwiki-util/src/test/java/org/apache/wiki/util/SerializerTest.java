@@ -31,12 +31,12 @@ public class SerializerTest {
     @Test
     public void testSerializeMap() throws Exception
     {
-        Map<String, Serializable> map = new HashMap<String, Serializable>();
+        final Map<String, Serializable> map = new HashMap<String, Serializable>();
         map.put( "attribute1", "some random value" );
         map.put( "attribute2", "another value" );
-        String serializedForm = Serializer.serializeToBase64( map );
+        final String serializedForm = Serializer.serializeToBase64( map );
 
-        Map<String, ? extends Serializable> newMap = Serializer.deserializeFromBase64( serializedForm );
+        final Map<String, ? extends Serializable> newMap = Serializer.deserializeFromBase64( serializedForm );
         Assertions.assertEquals( 2, newMap.size() );
         Assertions.assertTrue( newMap.containsKey( "attribute1" ) );
         Assertions.assertTrue( newMap.containsKey( "attribute2" ) );

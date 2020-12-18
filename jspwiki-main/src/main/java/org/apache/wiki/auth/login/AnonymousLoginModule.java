@@ -73,32 +73,32 @@ public class AnonymousLoginModule extends AbstractLoginModule
     public boolean login() throws LoginException
     {
         // Let's go and make a Principal based on the IP address
-        HttpRequestCallback hcb = new HttpRequestCallback();
-        Callback[] callbacks = new Callback[]
+        final HttpRequestCallback hcb = new HttpRequestCallback();
+        final Callback[] callbacks = new Callback[]
         { hcb };
         try
         {
             m_handler.handle( callbacks );
-            HttpServletRequest request = hcb.getRequest();
-            WikiPrincipal ipAddr = new WikiPrincipal( HttpUtil.getRemoteAddress(request) );
+            final HttpServletRequest request = hcb.getRequest();
+            final WikiPrincipal ipAddr = new WikiPrincipal( HttpUtil.getRemoteAddress(request) );
             if ( log.isDebugEnabled() )
             {
-                HttpSession session = request.getSession( false );
-                String sid = (session == null) ? NULL : session.getId();
+                final HttpSession session = request.getSession( false );
+                final String sid = (session == null) ? NULL : session.getId();
                 log.debug("Logged in session ID=" + sid + "; IP=" + ipAddr);
             }
             // If login succeeds, commit these principals/roles
             m_principals.add( ipAddr );
             return true;
         }
-        catch( IOException e )
+        catch( final IOException e )
         {
             log.error("IOException: " + e.getMessage());
             return false;
         }
-        catch( UnsupportedCallbackException e )
+        catch( final UnsupportedCallbackException e )
         {
-            String message = "Unable to handle callback, disallowing login.";
+            final String message = "Unable to handle callback, disallowing login.";
             log.error( message, e );
             throw new LoginException( message );
         }

@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.ArrayList;
@@ -407,7 +408,7 @@ public class AttachmentServlet extends HttpServlet {
             m_engine.getManager( ProgressManager.class ).startProgress( pl, progressId );
 
             final ServletFileUpload upload = new ServletFileUpload( factory );
-            upload.setHeaderEncoding( "UTF-8" );
+            upload.setHeaderEncoding( StandardCharsets.UTF_8.name() );
             if( !context.hasAdminPermissions() ) {
                 upload.setFileSizeMax( m_maxSize );
             }
@@ -424,20 +425,20 @@ public class AttachmentServlet extends HttpServlet {
                     switch( item.getFieldName() ) {
                     case "page":
                         // FIXME: Kludge alert.  We must end up with the parent page name, if this is an upload of a new revision
-                        wikipage = item.getString( "UTF-8" );
+                        wikipage = item.getString( StandardCharsets.UTF_8.name() );
                         final int x = wikipage.indexOf( "/" );
                         if( x != -1 ) {
                             wikipage = wikipage.substring( 0, x );
                         }
                         break;
                     case "changenote":
-                        changeNote = item.getString( "UTF-8" );
+                        changeNote = item.getString( StandardCharsets.UTF_8.name() );
                         if( changeNote != null ) {
                             changeNote = TextUtil.replaceEntities( changeNote );
                         }
                         break;
                     case "nextpage":
-                        nextPage = validateNextPage( item.getString( "UTF-8" ), errorPage );
+                        nextPage = validateNextPage( item.getString( StandardCharsets.UTF_8.name() ), errorPage );
                         break;
                     }
                 } else {

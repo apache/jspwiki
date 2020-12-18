@@ -48,13 +48,13 @@ public class PriorityList<E>
      *  @param o Object to add.
      *  @param priority Priority.
      */
-    public void add( E o, int priority )
+    public void add(final E o, final int priority )
     {
         int i = 0;
 
         for( ; i < m_elements.size(); i++ )
         {
-            Item< E > item = m_elements.get(i);
+            final Item< E > item = m_elements.get(i);
 
             if( item.m_priority < priority )
             {
@@ -62,7 +62,7 @@ public class PriorityList<E>
             }
         }
 
-        Item<E> newItem = new Item<E>();
+        final Item<E> newItem = new Item<E>();
         newItem.m_priority = priority;
         newItem.m_object   = o;
 
@@ -75,7 +75,7 @@ public class PriorityList<E>
      *  @param o Object to add.
      *  @return true, as per the general Collections.add contract.
      */
-    public boolean add( E o )
+    public boolean add(final E o )
     {
         add( o, DEFAULT_PRIORITY );
 
@@ -88,7 +88,7 @@ public class PriorityList<E>
      *  @param index The index.
      *  @return The object at the list at the position "index".
      */
-    public E get( int index )
+    public E get(final int index )
     {
         return m_elements.get( index ).m_object;
     }

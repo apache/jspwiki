@@ -47,7 +47,7 @@ public class UserDatabaseCallback implements Callback
      * Sets the user database. CallbackHandler objects call this method..
      * @param database the user database
      */
-    public void setUserDatabase( UserDatabase database )
+    public void setUserDatabase(final UserDatabase database )
     {
         this.m_database = database;
     }

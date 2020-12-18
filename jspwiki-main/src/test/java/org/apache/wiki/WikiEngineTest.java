@@ -38,6 +38,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
@@ -116,7 +117,7 @@ public class WikiEngineTest {
     @Test
     public void testEncodeNameUTF8() throws Exception {
         final String name = "\u0041\u2262\u0391\u002E";
-        props.setProperty( WikiEngine.PROP_ENCODING, "UTF-8" );
+        props.setProperty( WikiEngine.PROP_ENCODING, StandardCharsets.UTF_8.name() );
         final WikiEngine engine = new TestEngine( props );
 
         Assertions.assertEquals( "A%E2%89%A2%CE%91.", engine.encodeName(name) );

@@ -32,10 +32,10 @@ public class PagePermissionTest
     @Test
     public final void testEqualsObject()
     {
-        PagePermission p1 = new PagePermission( "mywiki:Main", "view,edit,delete" );
-        PagePermission p2 = new PagePermission( "mywiki:Main", "view,edit,delete" );
-        PagePermission p3 = new PagePermission( "mywiki:Main", "delete,view,edit" );
-        PagePermission p4 = new PagePermission( "mywiki:Main*", "delete,view,edit" );
+        final PagePermission p1 = new PagePermission( "mywiki:Main", "view,edit,delete" );
+        final PagePermission p2 = new PagePermission( "mywiki:Main", "view,edit,delete" );
+        final PagePermission p3 = new PagePermission( "mywiki:Main", "delete,view,edit" );
+        final PagePermission p4 = new PagePermission( "mywiki:Main*", "delete,view,edit" );
         Assertions.assertEquals( p1, p2 );
         Assertions.assertEquals( p1, p3 );
         Assertions.assertFalse( p3.equals( p4 ) );
@@ -95,8 +95,8 @@ public class PagePermissionTest
     @Test
     public final void testImpliesAttachments()
     {
-        PagePermission p1;
-        PagePermission p2;
+        final PagePermission p1;
+        final PagePermission p2;
 
         // A page should imply its attachment and vice-versa
         p1 = new PagePermission( "mywiki:Main", "view" );
@@ -365,7 +365,7 @@ public class PagePermissionTest
     @Test
     public final void testGetActions()
     {
-        PagePermission p = new PagePermission( "Main", "VIEW,edit,delete" );
+        final PagePermission p = new PagePermission( "Main", "VIEW,edit,delete" );
         Assertions.assertEquals( "delete,edit,view", p.getActions() );
     }
 

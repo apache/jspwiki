@@ -32,13 +32,13 @@ public class SearchResultsTag extends WikiTagBase {
     private static final long serialVersionUID = 0L;
     
     public final int doWikiStartTag() throws IOException {
-        Collection< ? > list = ( Collection< ? > )pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
+        final Collection< ? > list = ( Collection< ? > )pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
         
         if( list != null ) {
             return EVAL_BODY_INCLUDE;
         }
 
-        String message = (String)pageContext.getAttribute( "err", PageContext.REQUEST_SCOPE );
+        final String message = (String)pageContext.getAttribute( "err", PageContext.REQUEST_SCOPE );
             
         if( message != null ) {
             pageContext.getOut().print("<div class='error'>");

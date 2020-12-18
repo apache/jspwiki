@@ -69,14 +69,14 @@ public class TabbedSectionTag extends BodyTagSupport
      *  
      *  @param anDefaultTabId ID attribute of the default tab.
      */
-    public void setDefaultTab(String anDefaultTabId)
+    public void setDefaultTab(final String anDefaultTabId)
     {
         m_defaultTabId = anDefaultTabId;
     }
 
     // FIXME: I don't really understand what this does - so Dirk, please
     //        add some documentation.
-    public boolean validateDefaultTab( String aTabId )
+    public boolean validateDefaultTab(final String aTabId )
     {
         if( m_firstTabId == null ) m_firstTabId = aTabId;
         if( aTabId.equals( m_defaultTabId ) ) m_defaultTabFound = true;
@@ -187,7 +187,7 @@ public class TabbedSectionTag extends BodyTagSupport
                 getPreviousOut().write( m_buffer.toString() );
             }
         }
-        catch(java.io.IOException e)
+        catch(final java.io.IOException e)
         {
             throw new JspTagException( "IO Error: " + e.getMessage() );
         }

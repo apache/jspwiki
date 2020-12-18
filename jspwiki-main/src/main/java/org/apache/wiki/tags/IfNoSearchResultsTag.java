@@ -32,7 +32,7 @@ public class IfNoSearchResultsTag extends WikiTagBase {
     private static final long serialVersionUID = 0L;
     
     public final int doWikiStartTag() throws IOException {
-        Collection< ? > list = (Collection< ? >)pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
+        final Collection< ? > list = (Collection< ? >)pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
         if( list == null || list.size() == 0 ) {
             return EVAL_BODY_INCLUDE;
         }

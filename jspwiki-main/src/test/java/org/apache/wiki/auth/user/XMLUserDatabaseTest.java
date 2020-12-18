@@ -45,9 +45,9 @@ public class XMLUserDatabaseTest {
      */
     @BeforeEach
     public void setUp() throws Exception {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         props.put( XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
-        WikiEngine engine = new TestEngine( props );
+        final WikiEngine engine = new TestEngine( props );
         m_db = new XMLUserDatabase();
         m_db.initialize( engine, props );
     }
@@ -55,10 +55,10 @@ public class XMLUserDatabaseTest {
     @Test
     public void testDeleteByLoginName() throws WikiSecurityException {
         // First, count the number of users in the db now.
-        int oldUserCount = m_db.getWikiNames().length;
+        final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
@@ -112,21 +112,21 @@ public class XMLUserDatabaseTest {
     @Test
     public void testFindByEmail() {
         try {
-            UserProfile profile = m_db.findByEmail( "janne@ecyrd.com" );
+            final UserProfile profile = m_db.findByEmail( "janne@ecyrd.com" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
             Assertions.assertEquals( "JanneJalkanen", profile.getWikiName() );
             Assertions.assertEquals( "{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword() );
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( false );
         }
         try {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
             Assertions.assertTrue( false );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
     }
@@ -134,7 +134,7 @@ public class XMLUserDatabaseTest {
     @Test
     public void testFindByFullName() {
         try {
-            UserProfile profile = m_db.findByFullName( "Janne Jalkanen" );
+            final UserProfile profile = m_db.findByFullName( "Janne Jalkanen" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
@@ -143,14 +143,14 @@ public class XMLUserDatabaseTest {
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNotNull( profile.getLastModified() );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( false );
         }
         try {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
             Assertions.assertTrue( false );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
     }
@@ -158,7 +158,7 @@ public class XMLUserDatabaseTest {
     @Test
     public void testFindByUid() {
         try {
-            UserProfile profile = m_db.findByUid( "-7739839977499061014" );
+            final UserProfile profile = m_db.findByUid( "-7739839977499061014" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
@@ -167,14 +167,14 @@ public class XMLUserDatabaseTest {
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNotNull( profile.getLastModified() );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( false );
         }
         try {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
             Assertions.assertTrue( false );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
     }
@@ -182,21 +182,21 @@ public class XMLUserDatabaseTest {
     @Test
     public void testFindByWikiName() {
         try {
-            UserProfile profile = m_db.findByWikiName( "JanneJalkanen" );
+            final UserProfile profile = m_db.findByWikiName( "JanneJalkanen" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
             Assertions.assertEquals( "JanneJalkanen", profile.getWikiName() );
             Assertions.assertEquals( "{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword() );
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( false );
         }
         try {
             m_db.findByEmail( "foo" );
             // We should never get here
             Assertions.assertTrue( false );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
     }
@@ -204,21 +204,21 @@ public class XMLUserDatabaseTest {
     @Test
     public void testFindByLoginName() {
         try {
-            UserProfile profile = m_db.findByLoginName( "janne" );
+            final UserProfile profile = m_db.findByLoginName( "janne" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
             Assertions.assertEquals( "JanneJalkanen", profile.getWikiName() );
             Assertions.assertEquals( "{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword() );
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( false );
         }
         try {
             m_db.findByEmail( "FooBar" );
             // We should never get here
             Assertions.assertTrue( false );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
     }
@@ -226,7 +226,7 @@ public class XMLUserDatabaseTest {
     @Test
     public void testGetWikiNames() throws WikiSecurityException {
         // There are 8 test users in the database
-        Principal[] p = m_db.getWikiNames();
+        final Principal[] p = m_db.getWikiNames();
         Assertions.assertEquals( 8, p.length );
         Assertions.assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
         Assertions.assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "", WikiPrincipal.WIKI_NAME ) ) );
@@ -244,7 +244,7 @@ public class XMLUserDatabaseTest {
         try {
             m_db.rename( "nonexistentname", "renameduser" );
             Assertions.fail( "Should not have allowed rename..." );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             // Cool; that's what we expect
         }
 
@@ -262,7 +262,7 @@ public class XMLUserDatabaseTest {
         try {
             m_db.rename( "olduser", "janne" );
             Assertions.fail( "Should not have allowed rename..." );
-        } catch( DuplicateUserException e ) {
+        } catch( final DuplicateUserException e ) {
             // Cool; that's what we expect
         }
 
@@ -273,7 +273,7 @@ public class XMLUserDatabaseTest {
         try {
             profile = m_db.findByLoginName( "olduser" );
             Assertions.fail( "Old user was found, but it shouldn't have been." );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             // Cool, it's gone
         }
 
@@ -301,11 +301,11 @@ public class XMLUserDatabaseTest {
             Assertions.assertTrue( CryptoUtil.verifySaltedPassword( "password".getBytes(), profile.getPassword() ) );
 
             // Make sure we can find it by uid
-            String uid = profile.getUid();
+            final String uid = profile.getUid();
             Assertions.assertNotNull( m_db.findByUid( uid ) );
-        } catch( NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( false );
-        } catch( WikiSecurityException e ) {
+        } catch( final WikiSecurityException e ) {
             Assertions.assertTrue( false );
         }
     }

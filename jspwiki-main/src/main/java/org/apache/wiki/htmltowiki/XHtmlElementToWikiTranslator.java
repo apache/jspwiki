@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -44,7 +45,6 @@ import java.util.Map;
  */
 public class XHtmlElementToWikiTranslator
 {
-    private static final String UTF8 = "UTF-8";
 
     private final XHtmlToWikiConfig m_config;
 
@@ -63,7 +63,7 @@ public class XHtmlElementToWikiTranslator
      *  @throws IOException If reading of the DOM tree fails.
      *  @throws JDOMException If the DOM tree is faulty.
      */
-    public XHtmlElementToWikiTranslator( Element base ) throws IOException, JDOMException
+    public XHtmlElementToWikiTranslator(final Element base ) throws IOException, JDOMException
     {
         this( base, new XHtmlToWikiConfig() );
     }
@@ -76,7 +76,7 @@ public class XHtmlElementToWikiTranslator
      *  @throws IOException If reading of the DOM tree fails.
      *  @throws JDOMException If the DOM tree is faulty.
      */
-    public XHtmlElementToWikiTranslator( Element base, XHtmlToWikiConfig config ) throws IOException, JDOMException
+    public XHtmlElementToWikiTranslator(final Element base, final XHtmlToWikiConfig config ) throws IOException, JDOMException
     {
         this.m_config = config;
         m_outTimmer = new WhitespaceTrimWriter();
@@ -100,11 +100,11 @@ public class XHtmlElementToWikiTranslator
         m_out.print( s );
     }
 
-    private void print( Object element ) throws IOException, JDOMException
+    private void print(final Object element ) throws IOException, JDOMException
     {
         if( element instanceof Text )
         {
-            Text t = (Text)element;
+            final Text t = (Text)element;
             String s = t.getText();
             if( m_preStack.isPreMode() )
             {
@@ -119,7 +119,7 @@ public class XHtmlElementToWikiTranslator
         }
         else if( element instanceof Element )
         {
-            Element base = (Element)element;
+            final Element base = (Element)element;
             String n = base.getName().toLowerCase();
             if( "imageplugin".equals( base.getAttributeValue( "class" ) ) )
             {
@@ -136,10 +136,10 @@ public class XHtmlElementToWikiTranslator
                 boolean italic = false;
                 boolean monospace = false;
                 String cssSpecial = null;
-                String cssClass = base.getAttributeValue( "class" );
+                final String cssClass = base.getAttributeValue( "class" );
 
                 // accomodate a FCKeditor bug with Firefox: when a link is removed, it becomes <span class="wikipage">text</span>.
-                boolean ignoredCssClass = cssClass != null && cssClass.matches( "wikipage|createpage|external|interwiki|attachment|inline-code" );
+                final boolean ignoredCssClass = cssClass != null && cssClass.matches( "wikipage|createpage|external|interwiki|attachment|inline-code" );
 
                 Map< Object, Object > styleProps = null;
 
@@ -150,15 +150,15 @@ public class XHtmlElementToWikiTranslator
                     styleProps = getStylePropertiesLowerCase( base );
                 }
 
-                if( cssClass != null && "inline-code".equals(cssClass) )
+                if("inline-code".equals(cssClass))
                 {
                     monospace = true;
                 }
 
                 if( styleProps != null )
                 {
-                    String weight = (String)styleProps.remove( "font-weight" );
-                    String style = (String)styleProps.remove( "font-style" );
+                    final String weight = (String)styleProps.remove( "font-weight" );
+                    final String style = (String)styleProps.remove( "font-style" );
 
                     if( n.equals( "p" ) )
                     {
@@ -248,15 +248,15 @@ public class XHtmlElementToWikiTranslator
         }
     }
 
-    private void printChildren( Element base ) throws IOException, JDOMException
+    private void printChildren(final Element base ) throws IOException, JDOMException
     {
-        for( Iterator< Content > i = base.getContent().iterator(); i.hasNext(); )
+        for(final Iterator< Content > i = base.getContent().iterator(); i.hasNext(); )
         {
-            Content c = i.next();
+            final Content c = i.next();
             if( c instanceof Element )
             {
-                Element e = (Element)c;
-                String n = e.getName().toLowerCase();
+                final Element e = (Element)c;
+                final String n = e.getName().toLowerCase();
                 if( n.equals( "h1" ) )
                 {
                     m_out.print( "\n!!! " );
@@ -298,7 +298,7 @@ public class XHtmlElementToWikiTranslator
                     }
                     else
                     {
-                        String parentElementName = base.getName().toLowerCase();
+                        final String parentElementName = base.getName().toLowerCase();
 
                         //
                         // To beautify the generated wiki markup, we print a newline character after a linebreak.
@@ -388,10 +388,10 @@ public class XHtmlElementToWikiTranslator
                                     if( ref.startsWith( "#" ) ) // This is a link to a footnote.
                                     {
                                         // convert "#ref-PageName-1" to just "1"
-                                        String href = ref.replaceFirst( "#ref-.+-(\\d+)", "$1" );
+                                        final String href = ref.replaceFirst( "#ref-.+-(\\d+)", "$1" );
 
                                         // remove the brackets around "[1]"
-                                        String textValue = e.getValue().substring( 1, (e.getValue().length() - 1) );
+                                        final String textValue = e.getValue().substring( 1, (e.getValue().length() - 1) );
 
                                         if( href.equals( textValue ) ){ // handles the simplest case. Example: [1]
                                             print( e );
@@ -402,7 +402,7 @@ public class XHtmlElementToWikiTranslator
                                     }
                                     else
                                     {
-                                        Map<String, String> augmentedWikiLinkAttributes = getAugmentedWikiLinkAttributes( e );
+                                        final Map<String, String> augmentedWikiLinkAttributes = getAugmentedWikiLinkAttributes( e );
 
                                         m_out.print( "[" );
                                         print( e );
@@ -415,7 +415,7 @@ public class XHtmlElementToWikiTranslator
                                             {
                                                 m_out.print( "|" );
 
-                                                String augmentedWikiLink = augmentedWikiLinkMapToString( augmentedWikiLinkAttributes );
+                                                final String augmentedWikiLink = augmentedWikiLinkMapToString( augmentedWikiLinkAttributes );
                                                 m_out.print( augmentedWikiLink );
                                             }
                                         }
@@ -424,7 +424,7 @@ public class XHtmlElementToWikiTranslator
                                             // If the ref has the same value as the text and also if there
                                             // are attributes, then just print: [ref|ref|attributes] .
                                             m_out.print( "|" + ref + "|" );
-                                            String augmentedWikiLink = augmentedWikiLinkMapToString( augmentedWikiLinkAttributes );
+                                            final String augmentedWikiLink = augmentedWikiLinkMapToString( augmentedWikiLinkAttributes );
                                             m_out.print( augmentedWikiLink );
                                         }
 
@@ -513,8 +513,8 @@ public class XHtmlElementToWikiTranslator
 
                     // The following line assumes that the XHTML has been "pretty-printed"
                     // (newlines separate child elements from their parents).
-                    boolean lastListItem = base.indexOf( e ) == ( base.getContentSize() - 2 );
-                    boolean sublistItem = m_liStack.toString().length() > 1;
+                    final boolean lastListItem = base.indexOf( e ) == ( base.getContentSize() - 2 );
+                    final boolean sublistItem = m_liStack.toString().length() > 1;
 
                     // only print a newline if this <li> element is not the last item within a sublist.
                     if( !sublistItem || !lastListItem )
@@ -555,13 +555,13 @@ public class XHtmlElementToWikiTranslator
                 else if( n.equals( "form" ) )
                 {
                     // remove the hidden input where name="formname" since a new one will be generated again when the xhtml is rendered.
-                    Element formName = getXPathElement( e, "INPUT[@name='formname']" );
+                    final Element formName = getXPathElement( e, "INPUT[@name='formname']" );
                     if( formName != null )
                     {
                         formName.detach();
                     }
 
-                    String name = e.getAttributeValue( "name" );
+                    final String name = e.getAttributeValue( "name" );
 
                     m_out.print( "\n[{FormOpen" );
 
@@ -577,10 +577,10 @@ public class XHtmlElementToWikiTranslator
                 }
                 else if( n.equals( "input" ) )
                 {
-                    String type = e.getAttributeValue( "type" );
+                    final String type = e.getAttributeValue( "type" );
                     String name = e.getAttributeValue( "name" );
-                    String value = e.getAttributeValue( "value" );
-                    String checked = e.getAttributeValue( "checked" );
+                    final String value = e.getAttributeValue( "value" );
+                    final String checked = e.getAttributeValue( "checked" );
 
                     m_out.print( "[{FormInput" );
 
@@ -613,8 +613,8 @@ public class XHtmlElementToWikiTranslator
                 else if( n.equals( "textarea" ) )
                 {
                     String name = e.getAttributeValue( "name" );
-                    String rows = e.getAttributeValue( "rows" );
-                    String cols = e.getAttributeValue( "cols" );
+                    final String rows = e.getAttributeValue( "rows" );
+                    final String cols = e.getAttributeValue( "cols" );
 
                     m_out.print( "[{FormTextarea" );
 
@@ -667,13 +667,13 @@ public class XHtmlElementToWikiTranslator
                         m_out.print( ";" );
                     }
 
-                    Attribute selected = e.getAttribute( "selected" );
+                    final Attribute selected = e.getAttribute( "selected" );
                     if( selected !=  null )
                     {
                         m_out.print( "*" );
                     }
 
-                    String value = e.getAttributeValue( "value" );
+                    final String value = e.getAttributeValue( "value" );
                     if( value != null )
                     {
                         m_out.print( value );
@@ -695,16 +695,16 @@ public class XHtmlElementToWikiTranslator
         }
     }
 
-    private void printImage( Element base )
+    private void printImage(final Element base )
     {
         Element child = getXPathElement( base, "TBODY/TR/TD/*" );
         if( child == null )
         {
             child = base;
         }
-        Element img;
-        String href;
-        Map<Object,Object> map = new ForgetNullValuesLinkedHashMap<>();
+        final Element img;
+        final String href;
+        final Map<Object,Object> map = new ForgetNullValuesLinkedHashMap<>();
         if( child.getName().equals( "A" ) )
         {
             img = child.getChild( "IMG" );
@@ -719,7 +719,7 @@ public class XHtmlElementToWikiTranslator
         {
             return;
         }
-        String src = trimLink( img.getAttributeValue( "src" ) );
+        final String src = trimLink( img.getAttributeValue( "src" ) );
         if( src == null )
         {
             return;
@@ -735,9 +735,9 @@ public class XHtmlElementToWikiTranslator
         if( map.size() > 0 )
         {
             m_out.print( "[{Image src='" + src + "'" );
-            for( Iterator i = map.entrySet().iterator(); i.hasNext(); )
+            for(final Iterator i = map.entrySet().iterator(); i.hasNext(); )
             {
-                Map.Entry entry = (Map.Entry)i.next();
+                final Map.Entry entry = (Map.Entry)i.next();
                 if( !entry.getValue().equals( "" ) )
                 {
                     m_out.print( " " + entry.getKey() + "='" + entry.getValue() + "'" );
@@ -769,9 +769,9 @@ public class XHtmlElementToWikiTranslator
     }
 
     private String propsToStyleString( final Map< Object, Object >  styleProps ) {
-    	StringBuilder style = new StringBuilder();
-        for( Iterator< Map.Entry< Object, Object > > i = styleProps.entrySet().iterator(); i.hasNext(); ) {
-            Map.Entry< Object, Object > entry = i.next();
+    	final StringBuilder style = new StringBuilder();
+        for(final Iterator< Map.Entry< Object, Object > > i = styleProps.entrySet().iterator(); i.hasNext(); ) {
+            final Map.Entry< Object, Object > entry = i.next();
             style.append( " " ).append( entry.getKey() ).append( ": " ).append( entry.getValue() ).append( ";" );
         }
         return style.toString();
@@ -787,9 +787,9 @@ public class XHtmlElementToWikiTranslator
     /**
      * Checks if the link points to an undefined page.
      */
-    private boolean isUndefinedPageLink( Element a)
+    private boolean isUndefinedPageLink(final Element a)
     {
-        String classVal = a.getAttributeValue( "class" );
+        final String classVal = a.getAttributeValue( "class" );
 
         return "createpage".equals( classVal );
     }
@@ -797,90 +797,90 @@ public class XHtmlElementToWikiTranslator
     /**
      *  Returns a Map containing the valid augmented wiki link attributes.
      */
-    private Map<String,String> getAugmentedWikiLinkAttributes( Element a )
+    private Map<String,String> getAugmentedWikiLinkAttributes(final Element a )
     {
-        Map<String,String> attributesMap = new HashMap<>();
+        final Map<String,String> attributesMap = new HashMap<>();
 
-        String id = a.getAttributeValue( "id" );
+        final String id = a.getAttributeValue( "id" );
         if( id != null && !id.equals( "" ) )
         {
             attributesMap.put( "id", id.replaceAll( "'", "\"" ) );
         }
 
-        String cssClass = a.getAttributeValue( "class" );
+        final String cssClass = a.getAttributeValue( "class" );
         if( cssClass != null && !cssClass.equals( "" )
             && !cssClass.matches( "wikipage|createpage|external|interwiki|attachment" ) )
         {
             attributesMap.put( "class", cssClass.replaceAll( "'", "\"" ) );
         }
 
-        String style = a.getAttributeValue( "style" );
+        final String style = a.getAttributeValue( "style" );
         if( style != null && !style.equals( "" ) )
         {
             attributesMap.put( "style", style.replaceAll( "'", "\"" ) );
         }
 
-        String title = a.getAttributeValue( "title" );
+        final String title = a.getAttributeValue( "title" );
         if( title != null && !title.equals( "" ) )
         {
             attributesMap.put( "title", title.replaceAll( "'", "\"" ) );
         }
 
-        String lang = a.getAttributeValue( "lang" );
+        final String lang = a.getAttributeValue( "lang" );
         if( lang != null && !lang.equals( "" ) )
         {
             attributesMap.put( "lang", lang.replaceAll( "'", "\"" ) );
         }
 
-        String dir = a.getAttributeValue( "dir" );
+        final String dir = a.getAttributeValue( "dir" );
         if( dir != null && !dir.equals( "" ) )
         {
             attributesMap.put( "dir", dir.replaceAll( "'", "\"" ) );
         }
 
-        String charset = a.getAttributeValue( "charset" );
+        final String charset = a.getAttributeValue( "charset" );
         if( charset != null && !charset.equals("") )
         {
             attributesMap.put( "charset", charset.replaceAll( "'", "\"" ) );
         }
 
-        String type = a.getAttributeValue( "type" );
+        final String type = a.getAttributeValue( "type" );
         if( type != null && !type.equals( "" ) )
         {
             attributesMap.put( "type", type.replaceAll( "'", "\"" ) );
         }
 
-        String hreflang = a.getAttributeValue( "hreflang" );
+        final String hreflang = a.getAttributeValue( "hreflang" );
         if( hreflang != null && !hreflang.equals( "" ) )
         {
             attributesMap.put( "hreflang", hreflang.replaceAll( "'", "\"" ) );
         }
 
-        String rel = a.getAttributeValue( "rel" );
+        final String rel = a.getAttributeValue( "rel" );
         if( rel != null && !rel.equals( "" ) )
         {
             attributesMap.put( "rel", rel.replaceAll( "'", "\"" ) );
         }
 
-        String rev = a.getAttributeValue( "rev" );
+        final String rev = a.getAttributeValue( "rev" );
         if( rev != null && !rev.equals( "" ) )
         {
             attributesMap.put( "rev", rev.replaceAll( "'", "\"" ) );
         }
 
-        String accesskey = a.getAttributeValue( "accesskey" );
+        final String accesskey = a.getAttributeValue( "accesskey" );
         if( accesskey != null && !accesskey.equals( "" ) )
         {
             attributesMap.put( "accesskey", accesskey.replaceAll( "'", "\"" ) );
         }
 
-        String tabindex = a.getAttributeValue( "tabindex" );
+        final String tabindex = a.getAttributeValue( "tabindex" );
         if( tabindex != null && !tabindex.equals( "" ) )
         {
             attributesMap.put( "tabindex", tabindex.replaceAll( "'", "\"" ) );
         }
 
-        String target = a.getAttributeValue( "target" );
+        final String target = a.getAttributeValue( "target" );
         if( target != null && !target.equals( "" ) )
         {
             attributesMap.put( "target", target.replaceAll( "'", "\"" ) );
@@ -892,15 +892,15 @@ public class XHtmlElementToWikiTranslator
     /**
      * Converts the entries in the map to a string for use in a wiki link.
      */
-    private String augmentedWikiLinkMapToString( Map attributesMap )
+    private String augmentedWikiLinkMapToString(final Map attributesMap )
     {
-    	StringBuilder sb = new StringBuilder();
+    	final StringBuilder sb = new StringBuilder();
 
-        for ( Iterator itr = attributesMap.entrySet().iterator(); itr.hasNext(); )
+        for (final Iterator itr = attributesMap.entrySet().iterator(); itr.hasNext(); )
         {
-            Map.Entry entry = (Map.Entry)itr.next();
-            String attributeName = (String)entry.getKey();
-            String attributeValue = (String)entry.getValue();
+            final Map.Entry entry = (Map.Entry)itr.next();
+            final String attributeName = (String)entry.getKey();
+            final String attributeValue = (String)entry.getValue();
 
             sb.append( " " + attributeName + "='" + attributeValue + "'" );
         }
@@ -908,9 +908,9 @@ public class XHtmlElementToWikiTranslator
         return sb.toString().trim();
     }
 
-    private Map< Object, Object > getStylePropertiesLowerCase( Element base ) throws IOException
+    private Map< Object, Object > getStylePropertiesLowerCase(final Element base ) throws IOException
     {
-        String n = base.getName().toLowerCase();
+        final String n = base.getName().toLowerCase();
 
         //"font-weight: bold; font-style: italic;"
         String style = base.getAttributeValue( "style" );
@@ -921,7 +921,7 @@ public class XHtmlElementToWikiTranslator
 
         if( n.equals( "p" ) || n.equals( "div" ) )
         {
-            String align = base.getAttributeValue( "align" );
+            final String align = base.getAttributeValue( "align" );
             if( align != null )
             {
                 // only add the value of the align attribute if the text-align style didn't already exist.
@@ -936,9 +936,9 @@ public class XHtmlElementToWikiTranslator
 
         if( n.equals( "font" ) )
         {
-            String color = base.getAttributeValue( "color" );
-            String face = base.getAttributeValue( "face" );
-            String size = base.getAttributeValue( "size" );
+            final String color = base.getAttributeValue( "color" );
+            final String face = base.getAttributeValue( "face" );
+            final String size = base.getAttributeValue( "size" );
             if( color != null )
             {
                 style = style + "color:" + color + ";";
@@ -986,7 +986,7 @@ public class XHtmlElementToWikiTranslator
         }
 
         style = style.replace( ';', '\n' ).toLowerCase();
-        LinkedHashMap< Object, Object > m = new LinkedHashMap<>();
+        final LinkedHashMap< Object, Object > m = new LinkedHashMap<>();
         new PersistentMapDecorator( m ).load( new ByteArrayInputStream( style.getBytes() ) );
         return m;
     }
@@ -999,7 +999,7 @@ public class XHtmlElementToWikiTranslator
         }
         try
         {
-            ref = URLDecoder.decode( ref, UTF8 );
+            ref = URLDecoder.decode( ref, StandardCharsets.UTF_8.name() );
             ref = ref.trim();
             if( ref.startsWith( m_config.getAttachPage() ) )
             {
@@ -1026,7 +1026,7 @@ public class XHtmlElementToWikiTranslator
                 }
             }
         }
-        catch ( UnsupportedEncodingException e )
+        catch ( final UnsupportedEncodingException e )
         {
             // Shouldn't happen...
         }
@@ -1040,7 +1040,7 @@ public class XHtmlElementToWikiTranslator
 
         private StringBuffer m_li = new StringBuffer();
 
-        public void push( String c )
+        public void push(final String c )
         {
             m_li.append( c );
         }

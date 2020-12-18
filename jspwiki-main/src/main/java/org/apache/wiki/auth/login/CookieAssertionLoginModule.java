@@ -74,16 +74,16 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
     public boolean login() throws LoginException
     {
         // Otherwise, let's go and look for the cookie!
-        HttpRequestCallback hcb = new HttpRequestCallback();
-        Callback[] callbacks = new Callback[]
+        final HttpRequestCallback hcb = new HttpRequestCallback();
+        final Callback[] callbacks = new Callback[]
         { hcb };
         try
         {
             m_handler.handle( callbacks );
-            HttpServletRequest request = hcb.getRequest();
-            HttpSession session = ( request == null ) ? null : request.getSession( false );
-            String sid = ( session == null ) ? NULL : session.getId();
-            String name = (request != null) ? getUserCookie( request ) : null;
+            final HttpServletRequest request = hcb.getRequest();
+            final HttpSession session = ( request == null ) ? null : request.getSession( false );
+            final String sid = ( session == null ) ? NULL : session.getId();
+            final String name = (request != null) ? getUserCookie( request ) : null;
             if ( name == null )
             {
                 if ( log.isDebugEnabled() )
@@ -101,14 +101,14 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
             m_principals.add( new WikiPrincipal( name, WikiPrincipal.FULL_NAME ) );
             return true;
         }
-        catch( IOException e )
+        catch( final IOException e )
         {
             log.error( "IOException: " + e.getMessage() );
             return false;
         }
-        catch( UnsupportedCallbackException e )
+        catch( final UnsupportedCallbackException e )
         {
-            String message = "Unable to handle callback, disallowing login.";
+            final String message = "Unable to handle callback, disallowing login.";
             log.error( message, e );
             throw new LoginException( message );
         }
@@ -121,9 +121,9 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
      *  @param request The Servlet request, as usual.
      *  @return the username, as retrieved from the cookie
      */
-    public static String getUserCookie( HttpServletRequest request )
+    public static String getUserCookie(final HttpServletRequest request )
     {
-        String cookie = HttpUtil.retrieveCookieValue( request, PREFS_COOKIE_NAME );
+        final String cookie = HttpUtil.retrieveCookieValue( request, PREFS_COOKIE_NAME );
 
         return TextUtil.urlDecodeUTF8(cookie);
     }
@@ -134,10 +134,10 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
      *  @param response The Servlet response
      *  @param name     The name to write into the cookie.
      */
-    public static void setUserCookie( HttpServletResponse response, String name )
+    public static void setUserCookie(final HttpServletResponse response, String name )
     {
         name = TextUtil.urlEncodeUTF8(name);
-        Cookie userId = new Cookie( PREFS_COOKIE_NAME, name );
+        final Cookie userId = new Cookie( PREFS_COOKIE_NAME, name );
         userId.setMaxAge( 1001 * 24 * 60 * 60 ); // 1001 days is default.
         response.addCookie( userId );
     }
@@ -148,9 +148,9 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
      *
      *  @param response The servlet response.
      */
-    public static void clearUserCookie( HttpServletResponse response )
+    public static void clearUserCookie(final HttpServletResponse response )
     {
-        Cookie userId = new Cookie( PREFS_COOKIE_NAME, "" );
+        final Cookie userId = new Cookie( PREFS_COOKIE_NAME, "" );
         userId.setMaxAge( 0 );
         response.addCookie( userId );
     }

@@ -87,25 +87,25 @@ public class JDBCUserDatabaseTest
         m_hu.setUp();
         // Set up the mock JNDI initial context
         TestJNDIContext.initialize();
-        Context initCtx = new InitialContext();
+        final Context initCtx = new InitialContext();
         try
         {
             initCtx.bind( "java:comp/env", new TestJNDIContext() );
         }
-        catch( NameAlreadyBoundException e )
+        catch( final NameAlreadyBoundException e )
         {
             // ignore
         }
-        Context ctx = (Context) initCtx.lookup( "java:comp/env" );
-        DataSource ds = new TestJDBCDataSource( new File( "target/test-classes/jspwiki-custom.properties" ) );
+        final Context ctx = (Context) initCtx.lookup( "java:comp/env" );
+        final DataSource ds = new TestJDBCDataSource( new File( "target/test-classes/jspwiki-custom.properties" ) );
         ctx.bind( JDBCUserDatabase.DEFAULT_DB_JNDI_NAME, ds );
 
         // Get the JDBC connection and init tables
         try
         {
-            Connection conn = ds.getConnection();
-            Statement stmt = conn.createStatement();
-            String sql;
+            final Connection conn = ds.getConnection();
+            final Statement stmt = conn.createStatement();
+            final String sql;
 
             sql = "DELETE FROM " + JDBCUserDatabase.DEFAULT_DB_TABLE + ";";
             stmt.executeUpdate( sql );
@@ -123,7 +123,7 @@ public class JDBCUserDatabaseTest
             m_db = new JDBCUserDatabase();
             m_db.initialize( null, new Properties() );
         }
-        catch( SQLException e )
+        catch( final SQLException e )
         {
             Assertions.fail("Looks like your database could not be connected to - "+
                   "please make sure that you have started your database, exception: " + e.getMessage());
@@ -140,10 +140,10 @@ public class JDBCUserDatabaseTest
     public void testDeleteByLoginName() throws WikiSecurityException
     {
         // First, count the number of users in the db now.
-        int oldUserCount = m_db.getWikiNames().length;
+        final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         UserProfile profile = m_db.newProfile();
         profile.setEmail("jspwiki.tests@mailinator.com");
         profile.setLoginName( loginName );
@@ -200,7 +200,7 @@ public class JDBCUserDatabaseTest
     {
         try
         {
-            UserProfile profile = m_db.findByEmail( "janne@ecyrd.com" );
+            final UserProfile profile = m_db.findByEmail( "janne@ecyrd.com" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
@@ -210,7 +210,7 @@ public class JDBCUserDatabaseTest
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNull( profile.getLastModified() );
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             Assertions.assertTrue( false );
         }
@@ -220,7 +220,7 @@ public class JDBCUserDatabaseTest
             // We should never get here
             Assertions.assertTrue( false );
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             Assertions.assertTrue( true );
         }
@@ -231,7 +231,7 @@ public class JDBCUserDatabaseTest
     {
         try
         {
-            UserProfile profile = m_db.findByFullName( "Janne Jalkanen" );
+            final UserProfile profile = m_db.findByFullName( "Janne Jalkanen" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
@@ -241,7 +241,7 @@ public class JDBCUserDatabaseTest
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNull( profile.getLastModified() );
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             Assertions.assertTrue( false );
         }
@@ -251,7 +251,7 @@ public class JDBCUserDatabaseTest
             // We should never get here
             Assertions.assertTrue( false );
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             Assertions.assertTrue( true );
         }
@@ -262,7 +262,7 @@ public class JDBCUserDatabaseTest
     {
         try
         {
-            UserProfile profile = m_db.findByUid( "-7739839977499061014" );
+            final UserProfile profile = m_db.findByUid( "-7739839977499061014" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
@@ -272,7 +272,7 @@ public class JDBCUserDatabaseTest
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNull( profile.getLastModified() );
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             Assertions.assertTrue( false );
         }
@@ -282,7 +282,7 @@ public class JDBCUserDatabaseTest
             // We should never get here
             Assertions.assertTrue( false );
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             Assertions.assertTrue( true );
         }
@@ -293,7 +293,7 @@ public class JDBCUserDatabaseTest
     {
         try
         {
-            UserProfile profile = m_db.findByWikiName( "JanneJalkanen" );
+            final UserProfile profile = m_db.findByWikiName( "JanneJalkanen" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
@@ -303,7 +303,7 @@ public class JDBCUserDatabaseTest
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNull( profile.getLastModified() );
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             Assertions.assertTrue( false );
         }
@@ -313,7 +313,7 @@ public class JDBCUserDatabaseTest
             // We should never get here
             Assertions.assertTrue( false );
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             Assertions.assertTrue( true );
         }
@@ -324,7 +324,7 @@ public class JDBCUserDatabaseTest
     {
         try
         {
-            UserProfile profile = m_db.findByLoginName( "janne" );
+            final UserProfile profile = m_db.findByLoginName( "janne" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
@@ -334,7 +334,7 @@ public class JDBCUserDatabaseTest
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNull( profile.getLastModified() );
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             Assertions.assertTrue( false );
         }
@@ -344,7 +344,7 @@ public class JDBCUserDatabaseTest
             // We should never get here
             Assertions.assertTrue( false );
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             Assertions.assertTrue( true );
         }
@@ -353,7 +353,7 @@ public class JDBCUserDatabaseTest
     @Test
     public void testGetWikiName() throws WikiSecurityException
     {
-        Principal[] principals = m_db.getWikiNames();
+        final Principal[] principals = m_db.getWikiNames();
         Assertions.assertEquals( 1, principals.length );
     }
 
@@ -366,7 +366,7 @@ public class JDBCUserDatabaseTest
             m_db.rename( "nonexistentname", "renameduser" );
             Assertions.fail( "Should not have allowed rename..." );
         }
-        catch ( NoSuchPrincipalException e )
+        catch ( final NoSuchPrincipalException e )
         {
             // Cool; that's what we expect
         }
@@ -387,7 +387,7 @@ public class JDBCUserDatabaseTest
             m_db.rename( "olduser", "janne" );
             Assertions.fail( "Should not have allowed rename..." );
         }
-        catch ( DuplicateUserException e )
+        catch ( final DuplicateUserException e )
         {
             // Cool; that's what we expect
         }
@@ -401,7 +401,7 @@ public class JDBCUserDatabaseTest
             profile = m_db.findByLoginName( "olduser" );
             Assertions.fail( "Old user was found, but it shouldn't have been." );
         }
-        catch ( NoSuchPrincipalException e )
+        catch ( final NoSuchPrincipalException e )
         {
             // Cool, it's gone
         }
@@ -457,15 +457,15 @@ public class JDBCUserDatabaseTest
             Assertions.assertEquals( profile.getCreated(), profile.getLastModified() );
 
             // Make sure we can find it by uid
-            String uid = profile.getUid();
+            final String uid = profile.getUid();
             Assertions.assertNotNull( m_db.findByUid( uid ) );
 
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             Assertions.assertTrue( false );
         }
-        catch( WikiSecurityException e )
+        catch( final WikiSecurityException e )
         {
             Assertions.assertTrue( false );
         }

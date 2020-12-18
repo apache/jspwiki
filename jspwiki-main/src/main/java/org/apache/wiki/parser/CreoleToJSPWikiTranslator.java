@@ -19,6 +19,7 @@
 package org.apache.wiki.parser;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -174,7 +175,7 @@ public class CreoleToJSPWikiTranslator
      * @param username The username in the signature?
      * @return Probably some translated content.
      */
-    public String translateSignature(Properties wikiProps, final String content, String username)
+    public String translateSignature(final Properties wikiProps, final String content, final String username)
     {
 
         String dateFormat = wikiProps.getProperty("creole.dateFormat");
@@ -189,7 +190,7 @@ public class CreoleToJSPWikiTranslator
         {
             df = new SimpleDateFormat(dateFormat);
         }
-        catch (Exception e)
+        catch (final Exception e)
         {
             e.printStackTrace();
             df = new SimpleDateFormat(DEFAULT_DATEFORMAT);
@@ -199,7 +200,7 @@ public class CreoleToJSPWikiTranslator
         result = protectMarkup(result, PREFORMATTED_PROTECTED, "", "");
         result = protectMarkup(result, URL_PROTECTED, "", "");
 
-        Calendar cal = Calendar.getInstance();
+        final Calendar cal = Calendar.getInstance();
         result = translateElement(result, SIGNATURE_AND_DATE, "-- [[" + username + "]], " + df.format(cal.getTime()));
         result = translateElement(result, SIGNATURE, "-- [[" + username + "]]");
         result = unprotectMarkup(result, false);
@@ -213,9 +214,9 @@ public class CreoleToJSPWikiTranslator
      *  @param content Creole markup
      *  @return Wiki markup
      */
-    public String translate(Properties wikiProps, final String content)
+    public String translate(final Properties wikiProps, final String content)
     {
-        boolean blogLineBreaks = false;
+        final boolean blogLineBreaks = false;
         /*
         // BROKEN, breaks on different platforms.
         String tmp = wikiProps.getProperty("creole.blogLineBreaks");
@@ -225,7 +226,7 @@ public class CreoleToJSPWikiTranslator
                 blogLineBreaks = true;
         }
         */
-        String imagePlugin = wikiProps.getProperty("creole.imagePlugin.name");
+        final String imagePlugin = wikiProps.getProperty("creole.imagePlugin.name");
 
         String result = content;
         //
@@ -275,10 +276,10 @@ public class CreoleToJSPWikiTranslator
     }
 
     /** Translates lists. */
-    private static String translateLists(String content, String sourceSymbol, String targetSymbol, String sourceSymbol2)
+    private static String translateLists(final String content, final String sourceSymbol, final String targetSymbol, final String sourceSymbol2)
     {
-        String[] lines = content.split("\n");
-        StringBuilder result = new StringBuilder();
+        final String[] lines = content.split("\n");
+        final StringBuilder result = new StringBuilder();
         int counter = 0;
         int inList = -1;
         for (int i = 0; i < lines.length; i++)
@@ -332,11 +333,11 @@ public class CreoleToJSPWikiTranslator
         return result.toString();
     }
 
-    private String translateVariables(String result, boolean blogLineBreaks)
+    private String translateVariables(String result, final boolean blogLineBreaks)
     {
         result = result.replace("[{$creolepagefilter.version}]", VAR_VERSION);
         result = result.replace("[{$creolepagefilter.creoleversion}]", VAR_CREOLE_VERSION);
-        String linebreaks = blogLineBreaks ? VAR_LINEBREAK_BLOGLIKE : VAR_LINEBREAK_C2LIKE;
+        final String linebreaks = blogLineBreaks ? VAR_LINEBREAK_BLOGLIKE : VAR_LINEBREAK_C2LIKE;
         result = result.replace("[{$creolepagefilter.linebreak}]", linebreaks);
         return result;
     }
@@ -347,14 +348,14 @@ public class CreoleToJSPWikiTranslator
      *
      * @see #protectMarkup(String)
      */
-    private String unprotectMarkup(String content,boolean replacePlugins)
+    private String unprotectMarkup(String content, final boolean replacePlugins)
     {
-        Object[] it = this.m_hashList.toArray();
+        final Object[] it = this.m_hashList.toArray();
 
         for (int i = it.length - 1; i >= 0; i--)
         {
-            String hash = (String) it[i];
-            String protectedMarkup = c_protectionMap.get(hash);
+            final String hash = (String) it[i];
+            final String protectedMarkup = c_protectionMap.get(hash);
             content = content.replace(hash, protectedMarkup);
             if ((protectedMarkup.length() < 3 || (protectedMarkup.length() > 2 &&
                 !protectedMarkup.substring(0, 3).equals("{{{")))&&replacePlugins)
@@ -393,19 +394,19 @@ public class CreoleToJSPWikiTranslator
         return content;
     }
 
-    private ArrayList< String[] > readPlaceholderProperties(Properties wikiProps)
+    private ArrayList< String[] > readPlaceholderProperties(final Properties wikiProps)
     {
-        Set< Object > keySet = wikiProps.keySet();
-        Object[] keys = keySet.toArray();
-        ArrayList<String[]> result = new ArrayList<String[]>();
+        final Set< Object > keySet = wikiProps.keySet();
+        final Object[] keys = keySet.toArray();
+        final ArrayList<String[]> result = new ArrayList<String[]>();
 
         for( int i = 0; i < keys.length; i++ )
         {
-            String key = keys[i] + "";
-            String value = wikiProps.getProperty( keys[i] + "" );
+            final String key = keys[i] + "";
+            final String value = wikiProps.getProperty( keys[i] + "" );
             if( key.indexOf( "creole.imagePlugin.para.%" ) > -1 )
             {
-                String[] pair = new String[2];
+                final String[] pair = new String[2];
                 pair[0] = key.replaceAll( "creole.imagePlugin.para.%", "" );
                 pair[1] = value;
                 result.add( pair );
@@ -414,34 +415,34 @@ public class CreoleToJSPWikiTranslator
         return result;
     }
 
-    private String replaceImageArea(Properties wikiProps, String content, String markupRegex, String replaceContent, int groupPos,
-                                    String imagePlugin)
+    private String replaceImageArea(final Properties wikiProps, final String content, final String markupRegex, final String replaceContent, final int groupPos,
+                                    final String imagePlugin)
     {
-        Matcher matcher = Pattern.compile(markupRegex, Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
+        final Matcher matcher = Pattern.compile(markupRegex, Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
         String contentCopy = content;
 
-        ArrayList< String[] > plProperties = readPlaceholderProperties(wikiProps);
+        final ArrayList< String[] > plProperties = readPlaceholderProperties(wikiProps);
 
         while (matcher.find())
         {
             String protectedMarkup = matcher.group(0);
-            String paramsField = matcher.group(groupPos);
+            final String paramsField = matcher.group(groupPos);
             String paramsString = "";
 
             if (paramsField != null)
             {
-                String[] params = paramsField.split(",");
+                final String[] params = paramsField.split(",");
 
                 for (int i = 0; i < params.length; i++)
                 {
-                    String param = params[i].replaceAll("\\||\\s", "").toUpperCase();
+                    final String param = params[i].replaceAll("\\||\\s", "").toUpperCase();
 
                     // Replace placeholder params
                     for (int j = 0; j < plProperties.size(); j++)
                     {
-                        String[] pair = plProperties.get(j);
-                        String key = pair[0];
-                        String value = pair[1];
+                        final String[] pair = plProperties.get(j);
+                        final String key = pair[0];
+                        final String value = pair[1];
                         String code = param.replaceAll("(?i)([0-9]+)" + key, value + "<check>" + "$1" + "</check>");
                         code = code.replaceAll("(.*?)%(.*?)<check>(.*?)</check>", "$1$3$2");
                         if (!code.equals(param)) {
@@ -455,7 +456,7 @@ public class CreoleToJSPWikiTranslator
                         Integer.parseInt(param);
                         paramsString += " width='" + param + "px'";
                     }
-                    catch (Exception e)
+                    catch (final Exception e)
                     {
 
                         if (wikiProps.getProperty("creole.imagePlugin.para." + param) != null)
@@ -465,7 +466,7 @@ public class CreoleToJSPWikiTranslator
                     }
                 }
             }
-            String temp = protectedMarkup;
+            final String temp = protectedMarkup;
 
             protectedMarkup = translateElement(protectedMarkup, markupRegex, replaceContent);
             protectedMarkup = protectedMarkup.replaceAll("\u2015", paramsString);
@@ -473,24 +474,24 @@ public class CreoleToJSPWikiTranslator
             protectedMarkup = protectedMarkup.replaceAll("caption=''", "");
             protectedMarkup = protectedMarkup.replaceAll("\\s+", " ");
 
-            int pos = contentCopy.indexOf(temp);
+            final int pos = contentCopy.indexOf(temp);
             contentCopy = contentCopy.substring(0, pos) + protectedMarkup
                           + contentCopy.substring(pos + temp.length(), contentCopy.length());
         }
         return contentCopy;
     }
 
-    private String replaceArea(String content, String markupRegex, String replaceSource, String replaceTarget)
+    private String replaceArea(final String content, final String markupRegex, final String replaceSource, final String replaceTarget)
     {
-        Matcher matcher = Pattern.compile(markupRegex, Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
+        final Matcher matcher = Pattern.compile(markupRegex, Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
         String contentCopy = content;
 
         while (matcher.find())
         {
             String protectedMarkup = matcher.group(0);
-            String temp = protectedMarkup;
+            final String temp = protectedMarkup;
             protectedMarkup = protectedMarkup.replaceAll(replaceSource, replaceTarget);
-            int pos = contentCopy.indexOf(temp);
+            final int pos = contentCopy.indexOf(temp);
             contentCopy = contentCopy.substring(0, pos) + protectedMarkup
                           + contentCopy.substring(pos + temp.length(), contentCopy.length());
         }
@@ -502,30 +503,30 @@ public class CreoleToJSPWikiTranslator
      *
      * @see #protectMarkup(String)
      */
-    private String protectMarkup(String content, String markupRegex, String replaceSource, String replaceTarget)
+    private String protectMarkup(final String content, final String markupRegex, final String replaceSource, final String replaceTarget)
     {
-        Matcher matcher = Pattern.compile(markupRegex, Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
-        StringBuffer result = new StringBuffer();
+        final Matcher matcher = Pattern.compile(markupRegex, Pattern.MULTILINE | Pattern.DOTALL).matcher(content);
+        final StringBuffer result = new StringBuffer();
         while (matcher.find())
         {
             String protectedMarkup = matcher.group();
             protectedMarkup = protectedMarkup.replaceAll(replaceSource, replaceTarget);
             try
             {
-                MessageDigest digest = MessageDigest.getInstance("MD5");
+                final MessageDigest digest = MessageDigest.getInstance("MD5");
                 digest.reset();
-                digest.update(protectedMarkup.getBytes("UTF-8"));
-                String hash = bytesToHash(digest.digest());
+                digest.update(protectedMarkup.getBytes(StandardCharsets.UTF_8.name()));
+                final String hash = bytesToHash(digest.digest());
                 matcher.appendReplacement(result, hash);
                 c_protectionMap.put(hash, protectedMarkup);
                 m_hashList.add(hash);
             }
-            catch (NoSuchAlgorithmException e)
+            catch (final NoSuchAlgorithmException e)
             {
                 // FIXME: Should log properly
                 e.printStackTrace();
             }
-            catch (UnsupportedEncodingException e)
+            catch (final UnsupportedEncodingException e)
             {
                 // FIXME: Auto-generated catch block
                 e.printStackTrace();
@@ -535,7 +536,7 @@ public class CreoleToJSPWikiTranslator
         return result.toString();
     }
 
-    private String bytesToHash(byte[] b)
+    private String bytesToHash(final byte[] b)
     {
         String hash = "";
         for (int i = 0; i < b.length; i++)
@@ -545,10 +546,10 @@ public class CreoleToJSPWikiTranslator
         return hash;
     }
 
-    private String translateElement(String content, String fromMarkup, String toMarkup)
+    private String translateElement(final String content, final String fromMarkup, final String toMarkup)
     {
-        Matcher matcher = Pattern.compile(fromMarkup, Pattern.MULTILINE).matcher(content);
-        StringBuffer result = new StringBuffer();
+        final Matcher matcher = Pattern.compile(fromMarkup, Pattern.MULTILINE).matcher(content);
+        final StringBuffer result = new StringBuffer();
 
         while (matcher.find())
         {

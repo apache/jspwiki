@@ -40,7 +40,7 @@ public class IncludeResourcesTag extends WikiTagBase
         m_type = null;
     }
     
-    public void setType( String type )
+    public void setType(final String type )
     {
         m_type = type;
     }
@@ -49,7 +49,7 @@ public class IncludeResourcesTag extends WikiTagBase
     {
         //String marker = m_wikiContext.getEngine().getTemplateManager().getMarker(m_wikiContext, m_type);
         //String marker = TemplateManager.getMarker(pageContext, m_type);
-        String marker = TemplateManager.getMarker(m_wikiContext, m_type);
+        final String marker = TemplateManager.getMarker(m_wikiContext, m_type);
 
         pageContext.getOut().println( marker );
         

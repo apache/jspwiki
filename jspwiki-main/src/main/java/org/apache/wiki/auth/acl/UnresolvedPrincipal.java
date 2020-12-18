@@ -42,7 +42,7 @@ public final class UnresolvedPrincipal implements Principal, Serializable
      * Constructs a new UnresolvedPrincipal instance.
      * @param name the name of the Principal
      */
-    public UnresolvedPrincipal( String name )
+    public UnresolvedPrincipal(final String name )
     {
         m_name = name;
     }
@@ -73,7 +73,7 @@ public final class UnresolvedPrincipal implements Principal, Serializable
      * @return the result of the equality test
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals( Object obj )
+    public boolean equals(final Object obj )
     {
         if ( obj instanceof UnresolvedPrincipal )
         {

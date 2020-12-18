@@ -37,7 +37,7 @@ public class AuthorizerCallback implements Callback
      * Sets the authorizer object. CallbackHandler objects call this method.
      * @param authorizer the authorizer
      */
-    public void setAuthorizer( Authorizer authorizer )
+    public void setAuthorizer(final Authorizer authorizer )
     {
         m_authorizer = authorizer;
     }

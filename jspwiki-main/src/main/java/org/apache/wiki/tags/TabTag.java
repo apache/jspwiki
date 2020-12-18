@@ -69,7 +69,7 @@ public class TabTag extends WikiTagBase
      * Sets the tab title.
      * @param aTabTitle the tab title
      */
-    public void setTitle(String aTabTitle)
+    public void setTitle(final String aTabTitle)
     {
         m_tabTitle = TextUtil.replaceEntities( aTabTitle );
     }
@@ -78,7 +78,7 @@ public class TabTag extends WikiTagBase
      * Sets the tab access key.
      * @param anAccesskey the access key
      */
-    public void setAccesskey(String anAccesskey)
+    public void setAccesskey(final String anAccesskey)
     {
         m_accesskey = TextUtil.replaceEntities( anAccesskey ); //take only the first char
     }
@@ -87,7 +87,7 @@ public class TabTag extends WikiTagBase
      * Sets the tab URL.
      * @param url the URL
      */
-    public void setUrl( String url )
+    public void setUrl(final String url )
     {
         m_url = TextUtil.replaceEntities( url );
     }
@@ -97,7 +97,7 @@ public class TabTag extends WikiTagBase
     {
         if( (m_tabTitle == null) || (m_accesskey == null) ) return false;
 
-        int pos = m_tabTitle.toLowerCase().indexOf( m_accesskey.toLowerCase() );
+        final int pos = m_tabTitle.toLowerCase().indexOf( m_accesskey.toLowerCase() );
         if( pos > -1 )
         {
             m_tabTitle = m_tabTitle.substring( 0, pos ) + "<span class='accesskey'>"
@@ -111,7 +111,7 @@ public class TabTag extends WikiTagBase
      */
     public int doWikiStartTag() throws JspTagException
     {
-        TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
+        final TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
 
         //
         //  Sanity checks
@@ -131,7 +131,7 @@ public class TabTag extends WikiTagBase
 
         if( !parent.isStateGenerateTabBody() ) return SKIP_BODY;
 
-        StringBuilder sb = new StringBuilder(32);
+        final StringBuilder sb = new StringBuilder(32);
 
         sb.append( "<div id=\""+ getId() + "\"" );
 
@@ -145,7 +145,7 @@ public class TabTag extends WikiTagBase
         {
             pageContext.getOut().write( sb.toString() );
         }
-        catch( java.io.IOException e )
+        catch( final java.io.IOException e )
         {
             throw new JspTagException( "IO Error: " + e.getMessage() );
         }
@@ -158,9 +158,9 @@ public class TabTag extends WikiTagBase
      */
     public int doEndTag() throws JspTagException
     {
-        TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
+        final TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
 
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
 
         if( parent.isStateFindDefaultTab() )
         {
@@ -201,7 +201,7 @@ public class TabTag extends WikiTagBase
         {
             pageContext.getOut().write( sb.toString() );
         }
-        catch( IOException e )
+        catch( final IOException e )
         {
             throw new JspTagException( "IO Error: " + e.getMessage() );
         }

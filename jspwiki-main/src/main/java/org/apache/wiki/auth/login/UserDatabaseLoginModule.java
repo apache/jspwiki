@@ -66,25 +66,25 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
      */
     public boolean login() throws LoginException
     {
-        UserDatabaseCallback ucb = new UserDatabaseCallback();
-        NameCallback ncb = new NameCallback( "User name" );
-        PasswordCallback pcb = new PasswordCallback( "Password", false );
-        Callback[] callbacks = new Callback[]
+        final UserDatabaseCallback ucb = new UserDatabaseCallback();
+        final NameCallback ncb = new NameCallback( "User name" );
+        final PasswordCallback pcb = new PasswordCallback( "Password", false );
+        final Callback[] callbacks = new Callback[]
         { ucb, ncb, pcb };
         try
         {
             m_handler.handle( callbacks );
-            UserDatabase db = ucb.getUserDatabase();
-            String username = ncb.getName();
-            String password = new String( pcb.getPassword() );
+            final UserDatabase db = ucb.getUserDatabase();
+            final String username = ncb.getName();
+            final String password = new String( pcb.getPassword() );
 
             // Look up the user and compare the password hash
             if ( db == null )
             {
                 throw new FailedLoginException( "No user database: check the callback handler code!" );
             }
-            UserProfile profile = db.findByLoginName( username );
-            String storedPassword = profile.getPassword();
+            final UserProfile profile = db.findByLoginName( username );
+            final String storedPassword = profile.getPassword();
             if ( storedPassword != null && db.validatePassword( username, password ) )
             {
                 if ( log.isDebugEnabled() )
@@ -99,19 +99,19 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
             }
             throw new FailedLoginException( "The username or password is incorrect." );
         }
-        catch( IOException e )
+        catch( final IOException e )
         {
-            String message = "IO exception; disallowing login.";
+            final String message = "IO exception; disallowing login.";
             log.error( message, e );
             throw new LoginException( message );
         }
-        catch( UnsupportedCallbackException e )
+        catch( final UnsupportedCallbackException e )
         {
-            String message = "Unable to handle callback; disallowing login.";
+            final String message = "Unable to handle callback; disallowing login.";
             log.error( message, e );
             throw new LoginException( message );
         }
-        catch( NoSuchPrincipalException e )
+        catch( final NoSuchPrincipalException e )
         {
             throw new FailedLoginException( "The username or password is incorrect." );
         }

@@ -37,7 +37,7 @@ public class DecisionRequiredException extends WikiException
      * Constructs a new exception.
      * @param message the message
      */
-    public DecisionRequiredException( String message )
+    public DecisionRequiredException(final String message )
     {
         super( message );
     }

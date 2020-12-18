@@ -73,8 +73,8 @@ public class WebContainerLoginModule extends AbstractLoginModule
      */
     public boolean login() throws LoginException
     {
-        HttpRequestCallback rcb = new HttpRequestCallback();
-        Callback[] callbacks = new Callback[] { rcb };
+        final HttpRequestCallback rcb = new HttpRequestCallback();
+        final Callback[] callbacks = new Callback[] { rcb };
         String userId = null;
 
         try
@@ -82,13 +82,13 @@ public class WebContainerLoginModule extends AbstractLoginModule
             // First, try to extract a Principal object out of the request
             // directly. If we find one, we're done.
             m_handler.handle( callbacks );
-            HttpServletRequest request = rcb.getRequest();
+            final HttpServletRequest request = rcb.getRequest();
             if ( request == null )
             {
                 throw new LoginException( "No Http request supplied." );
             }
-            HttpSession session = request.getSession(false);
-            String sid = (session == null) ? NULL : session.getId();
+            final HttpSession session = request.getSession(false);
+            final String sid = (session == null) ? NULL : session.getId();
             Principal principal = request.getUserPrincipal();
             if ( principal == null )
             {
@@ -116,12 +116,12 @@ public class WebContainerLoginModule extends AbstractLoginModule
 
             return true;
         }
-        catch( IOException e )
+        catch( final IOException e )
         {
             log.error( "IOException: " + e.getMessage() );
             return false;
         }
-        catch( UnsupportedCallbackException e )
+        catch( final UnsupportedCallbackException e )
         {
             log.error( "UnsupportedCallbackException: " + e.getMessage() );
             return false;

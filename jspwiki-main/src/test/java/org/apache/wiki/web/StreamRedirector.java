@@ -28,18 +28,18 @@ import java.io.PrintStream;
  */
 public class StreamRedirector
 {
-    public static void main( String[] args ) throws Exception
+    public static void main(final String[] args ) throws Exception
     {
-        String mainClass = args[0];
-        String logFile = args[1];
+        final String mainClass = args[0];
+        final String logFile = args[1];
 
         // redirect the streams
-        PrintStream outfile = new PrintStream( new FileOutputStream( logFile ) );
+        final PrintStream outfile = new PrintStream( new FileOutputStream( logFile ) );
         System.setErr( outfile );
         System.setOut( outfile );
 
         // call the TestContainer after stripping of the first two args and redirecting the output.
-        String[] strippedArgs = new String[args.length - 2];
+        final String[] strippedArgs = new String[args.length - 2];
         System.arraycopy( args, 2, strippedArgs, 0, strippedArgs.length );
         Class.forName( mainClass ).getMethod( "main", String[].class ).invoke( null, (Object) strippedArgs );
     }

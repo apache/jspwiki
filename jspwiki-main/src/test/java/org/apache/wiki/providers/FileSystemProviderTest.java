@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import static org.apache.wiki.TestEngine.with;
@@ -55,7 +56,7 @@ public class FileSystemProviderTest {
         m_provider = new FileSystemProvider();
         m_provider.initialize( m_engine, props );
 
-        props.setProperty( Engine.PROP_ENCODING, "UTF-8" );
+        props.setProperty( Engine.PROP_ENCODING, StandardCharsets.UTF_8.name() );
         m_providerUTF8 = new FileSystemProvider();
         m_providerUTF8.initialize( m_engine, props );
     }
@@ -75,7 +76,7 @@ public class FileSystemProviderTest {
 
         Assertions.assertTrue( resultfile.exists(), "No such file" );
 
-        final String contents = FileUtil.readContents( new FileInputStream(resultfile), "ISO-8859-1" );
+        final String contents = FileUtil.readContents( new FileInputStream(resultfile), StandardCharsets.ISO_8859_1.name() );
 
         Assertions.assertEquals( contents, "test", "Wrong contents" );
     }
@@ -91,7 +92,7 @@ public class FileSystemProviderTest {
         Assertions.assertTrue( resultfile.exists(), "No such file" );
 
         final String contents = FileUtil.readContents( new FileInputStream(resultfile),
-                                                 "UTF-8" );
+                                                 StandardCharsets.UTF_8.name() );
 
         Assertions.assertEquals( contents, "test\u00d6", "Wrong contents" );
     }
@@ -113,7 +114,7 @@ public class FileSystemProviderTest {
         Assertions.assertTrue( resultfile.exists(), "No such file" );
 
         final String contents = FileUtil.readContents( new FileInputStream(resultfile),
-                                                 "UTF-8" );
+                                                 StandardCharsets.UTF_8.name() );
 
         Assertions.assertEquals( contents, "test", "Wrong contents" );
     }
@@ -131,7 +132,7 @@ public class FileSystemProviderTest {
         Assertions.assertTrue( resultfile.exists(), "No such file" );
 
         final String contents = FileUtil.readContents( new FileInputStream(resultfile),
-                                                 "ISO-8859-1" );
+                                                 StandardCharsets.ISO_8859_1.name() );
 
         Assertions.assertEquals( contents, "test", "Wrong contents" );
     }
@@ -148,7 +149,7 @@ public class FileSystemProviderTest {
 
         Assertions.assertTrue( resultfile.exists(), "No such file" );
 
-        final String contents = FileUtil.readContents( new FileInputStream(resultfile), "ISO-8859-1" );
+        final String contents = FileUtil.readContents( new FileInputStream(resultfile), StandardCharsets.ISO_8859_1.name() );
 
         Assertions.assertEquals( contents, "test", "Wrong contents" );
     }

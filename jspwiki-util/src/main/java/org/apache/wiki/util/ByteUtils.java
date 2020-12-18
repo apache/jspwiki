@@ -33,11 +33,11 @@ public class ByteUtils
      *  byte[] array to hex conversion. Note that this provides
      *  no delimiters; the bytes are simply concatenated.
      */
-    public static String bytes2hex( byte[] bytes )
+    public static String bytes2hex(final byte[] bytes )
     {
-        char[] ca = new char[bytes.length * 2];
+        final char[] ca = new char[bytes.length * 2];
         for ( int i = 0; i < bytes.length; i++ ) {
-            int v = bytes[i] & 0xff;
+            final int v = bytes[i] & 0xff;
             ca[i * 2] = hexArray[v >>> 4];
             ca[i * 2 + 1] = hexArray[v & 0x0f];
         }
@@ -48,7 +48,7 @@ public class ByteUtils
     /**
      *  byte to hex conversion.
      */
-    public static String byte2hex( byte b )
+    public static String byte2hex(final byte b )
     {
         return Integer.toHexString(b & 0xff);
     }
@@ -57,17 +57,17 @@ public class ByteUtils
     /**
      *  Parses a hexadecimal string into its corresponding bytes.
      */
-    public static byte[] parseHexBinary( String hex )
+    public static byte[] parseHexBinary(final String hex )
     {
         final int len = hex.length();
         // e.g., "111" is not a valid hex encoding.
         if( len%2 != 0 ) {
             throw new IllegalArgumentException("hexBinary needs to be even-length: "+hex);
         }
-        byte[] out = new byte[len/2];
+        final byte[] out = new byte[len/2];
         for( int i = 0; i < len; i+=2 ) {
-            int h = hexToBin(hex.charAt(i));
-            int l = hexToBin(hex.charAt(i+1));
+            final int h = hexToBin(hex.charAt(i));
+            final int l = hexToBin(hex.charAt(i+1));
             if ( h==-1 || l==-1 ) {
                 throw new IllegalArgumentException("contains illegal character for hexBinary: "+hex);
             }
@@ -80,7 +80,7 @@ public class ByteUtils
     /**
      *  Converts a single hex character into its integer equivalent.
      */
-    public static int hexToBin( char c )
+    public static int hexToBin(final char c )
     {
         if ( '0'<=c && c<='9' ) return c-'0';
         if ( 'A'<=c && c<='F' ) return c-'A'+10;

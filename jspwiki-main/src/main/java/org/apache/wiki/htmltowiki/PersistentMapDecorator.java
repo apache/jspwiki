@@ -39,7 +39,7 @@ public class PersistentMapDecorator extends Properties
      *  
      *  @param delegate The map to create a decorator for.
      */
-    public PersistentMapDecorator( Map< Object, Object > delegate )
+    public PersistentMapDecorator(final Map< Object, Object > delegate )
     {
         m_delegate = delegate;
     }
@@ -57,7 +57,7 @@ public class PersistentMapDecorator extends Properties
      *  {@inheritDoc}
      */
     @Override
-    public boolean containsKey( Object key )
+    public boolean containsKey(final Object key )
     {
         return m_delegate.containsKey( key );
     }
@@ -66,7 +66,7 @@ public class PersistentMapDecorator extends Properties
      *  {@inheritDoc}
      */
     @Override
-    public boolean containsValue( Object value )
+    public boolean containsValue(final Object value )
     {
         return m_delegate.containsValue( value );
     }
@@ -84,7 +84,7 @@ public class PersistentMapDecorator extends Properties
      *  {@inheritDoc}
      */
     @Override
-    public boolean equals( Object obj )
+    public boolean equals(final Object obj )
     {
         return m_delegate.equals( obj );
     }
@@ -93,7 +93,7 @@ public class PersistentMapDecorator extends Properties
      *  {@inheritDoc}
      */
     @Override
-    public Object get( Object key )
+    public Object get(final Object key )
     {
         return m_delegate.get( key );
     }
@@ -129,7 +129,7 @@ public class PersistentMapDecorator extends Properties
      *  {@inheritDoc}
      */
     @Override
-    public Object put( Object arg0, Object arg1 )
+    public Object put(final Object arg0, final Object arg1 )
     {
         return m_delegate.put( arg0, arg1 );
     }
@@ -138,7 +138,7 @@ public class PersistentMapDecorator extends Properties
      *  {@inheritDoc}
      */
     @Override
-    public void putAll( Map< ?, ? > arg0 )
+    public void putAll(final Map< ?, ? > arg0 )
     {
         m_delegate.putAll( arg0 );
     }
@@ -147,7 +147,7 @@ public class PersistentMapDecorator extends Properties
      *  {@inheritDoc}
      */
     @Override
-    public Object remove( Object key )
+    public Object remove(final Object key )
     {
         return m_delegate.remove( key );
     }

@@ -31,7 +31,7 @@ public final class NoSuchPrincipalException
      * Constructs a new exception object with a supplied message.
      * @param msg the message
      */
-    public NoSuchPrincipalException( String msg )
+    public NoSuchPrincipalException(final String msg )
     {
         super(msg);
     }

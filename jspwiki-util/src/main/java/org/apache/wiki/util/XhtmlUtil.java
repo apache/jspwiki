@@ -64,7 +64,7 @@ public final class XhtmlUtil {
      * @param element  the element to serialize.
      * @return the serialized Element.
      */
-    public static String serialize( Element element ) {
+    public static String serialize(final Element element ) {
         return serialize( element, false );
     }
 
@@ -76,7 +76,7 @@ public final class XhtmlUtil {
      * @param pretty   if true, use a pretty whitespace format.
      * @return the serialized Element.
      */
-    public static String serialize( Element element, boolean pretty ) {
+    public static String serialize(final Element element, final boolean pretty ) {
         return serialize( element,pretty ? Format.getPrettyFormat() : Format.getCompactFormat() );
     }
 
@@ -87,8 +87,8 @@ public final class XhtmlUtil {
      * @param format   custom <tt>format</tt> used to serialize the Element.
      * @return the serialized Element.
      */
-    public static String serialize( Element element, Format format ) {
-        XMLOutputter out = new XMLOutputter( format );
+    public static String serialize(final Element element, final Format format ) {
+        final XMLOutputter out = new XMLOutputter( format );
         return out.outputString( element );
     }
 
@@ -98,7 +98,7 @@ public final class XhtmlUtil {
      * @param element  the XHTML element type.
      * @return a JDOM2 Element.
      */
-    public static Element element( XHTML element ) {
+    public static Element element(final XHTML element ) {
         return element( element, null );
     }
 
@@ -110,8 +110,8 @@ public final class XhtmlUtil {
      * @param content  the optional PCDATA content.
      * @return a JDOM2 Element.
      */
-    public static Element element( XHTML element, String content ) {
-        Element elt = new Element( element.name() );
+    public static Element element(final XHTML element, final String content ) {
+        final Element elt = new Element( element.name() );
         if( content != null ) {
             elt.addContent( content );
         }
@@ -125,7 +125,7 @@ public final class XhtmlUtil {
      * @param content  the optional link (PCDATA) content.
      * @return a JDOM2 Element.
      */
-    public static Element link( String href, String content ) {
+    public static Element link(final String href, final String content ) {
         if( href == null ) {
             throw new IllegalArgumentException("missing 'href' attribute value.");
         }
@@ -138,7 +138,7 @@ public final class XhtmlUtil {
      * @param id    the required 'id' link target value.
      * @return a JDOM2 Element.
      */
-    public static Element target( String id, String content ) {
+    public static Element target(final String id, final String content ) {
         if( id == null ) {
             throw new IllegalArgumentException( "missing 'id' attribute value." );
         }
@@ -154,8 +154,8 @@ public final class XhtmlUtil {
      * @param id       the optional 'id' link target value.
      * @return a JDOM2 Element.
      */
-    private static Element fLink( String href, String content, String id ) {
-        Element a = element( XHTML.a );
+    private static Element fLink(final String href, final String content, final String id ) {
+        final Element a = element( XHTML.a );
         if( href != null ) {
             a.setAttribute( XHTML.ATTR_href, href );
         }
@@ -176,8 +176,8 @@ public final class XhtmlUtil {
      * @param alt      the optional 'alt' alternative text value.
      * @return a JDOM2 Element.
      */
-    public static Element img( String src, String alt ) {
-        Element img = element( XHTML.img );
+    public static Element img(final String src, final String alt ) {
+        final Element img = element( XHTML.img );
         if( src == null ) {
             throw new IllegalArgumentException( "missing 'src' attribute value." );
         }
@@ -196,8 +196,8 @@ public final class XhtmlUtil {
      * @param value  the optional 'value' value.
      * @return a JDOM2 Element.
      */
-    public static Element input( String type, String name, String value ) {
-        Element input = element( XHTML.input );
+    public static Element input(final String type, final String name, final String value ) {
+        final Element input = element( XHTML.input );
         if( type != null ) {
             input.setAttribute( XHTML.ATTR_type, type );
         }
@@ -210,7 +210,7 @@ public final class XhtmlUtil {
         return input;
     }
 
-    public static void setClass( Element element, String classValue ) {
+    public static void setClass(final Element element, final String classValue ) {
         if( classValue == null ) {
             throw new IllegalArgumentException( "missing 'class' attribute value." );
         }

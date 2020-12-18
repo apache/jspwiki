@@ -66,7 +66,7 @@ public class HsqlDbUtils
         {
             start();
         }
-        catch( Exception e )
+        catch( final Exception e )
         {
             LOG.error( e.getMessage(), e );
         }
@@ -89,7 +89,7 @@ public class HsqlDbUtils
     {
         
         // start Hypersonic server
-        Properties hProps = loadPropertiesFrom( "target/test-classes/jspwiki-custom.properties" );
+        final Properties hProps = loadPropertiesFrom( "target/test-classes/jspwiki-custom.properties" );
         
         hsqlServer = new Server();
         hsqlServer.setSilent(true);   // be quiet during junit tests
@@ -112,17 +112,17 @@ public class HsqlDbUtils
      * 
      * @param file script to execute.
      */
-    public void exec( String file ) 
+    public void exec(final String file )
     {
         Connection conn = null;
         try
         {
             conn = getConnection();
-            SqlFile userDbSetup = new SqlFile( new File( file ) );
+            final SqlFile userDbSetup = new SqlFile( new File( file ) );
             userDbSetup.setConnection(conn);
             userDbSetup.execute();
         }
-        catch( Exception e ) 
+        catch( final Exception e )
         {
             LOG.error( e.getMessage(), e );
         }
@@ -147,7 +147,7 @@ public class HsqlDbUtils
                 conn.setAutoCommit( true );
                 conn.prepareStatement( "SHUTDOWN" ).execute();
             }
-            catch( Exception e )
+            catch( final Exception e )
             {
                 LOG.error( e.getMessage(), e );
             }
@@ -169,8 +169,8 @@ public class HsqlDbUtils
      */
     Connection getConnection() throws IOException, SQLException
     {
-        Connection conn;
-        Properties jProps = loadPropertiesFrom( "target/test-classes/jspwiki-custom.properties" );
+        final Connection conn;
+        final Properties jProps = loadPropertiesFrom( "target/test-classes/jspwiki-custom.properties" );
         conn = DriverManager.getConnection( jProps.getProperty( "jdbc.driver.url" ), 
                                             jProps.getProperty( "jdbc.admin.id" ),
                                             jProps.getProperty( "jdbc.admin.password" ) );
@@ -190,7 +190,7 @@ public class HsqlDbUtils
             {
                 conn.close();
             }
-            catch( SQLException e )
+            catch( final SQLException e )
             {
                 conn = null;
             }
@@ -204,10 +204,10 @@ public class HsqlDbUtils
      * @return {@link Properties} holding {@code fileLocation} properties.
      * @throws IOException if {@code fileLocation} cannot be readed.
      */
-    Properties loadPropertiesFrom( String fileLocation ) throws IOException 
+    Properties loadPropertiesFrom(final String fileLocation ) throws IOException
     {
-        Properties p = new Properties();
-        InputStream inStream = new BufferedInputStream( new FileInputStream( fileLocation ) );
+        final Properties p = new Properties();
+        final InputStream inStream = new BufferedInputStream( new FileInputStream( fileLocation ) );
         p.load( inStream );
         inStream.close();
         return p;

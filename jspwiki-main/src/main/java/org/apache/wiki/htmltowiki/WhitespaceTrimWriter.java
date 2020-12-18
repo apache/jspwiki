@@ -66,13 +66,13 @@ public class WhitespaceTrimWriter extends Writer
 
     private String replacePluginNewlineBackslashes( String s )
     {
-        Pattern p = Pattern.compile( "\\{\\{\\{(.*?)\\}\\}\\}|\\{\\{(.*?)\\}\\}|\\[\\{(.*?)\\}\\]", Pattern.DOTALL
+        final Pattern p = Pattern.compile( "\\{\\{\\{(.*?)\\}\\}\\}|\\{\\{(.*?)\\}\\}|\\[\\{(.*?)\\}\\]", Pattern.DOTALL
                                                                                                     + Pattern.MULTILINE );
-        Matcher m = p.matcher( s );
-        StringBuffer sb = new StringBuffer();
+        final Matcher m = p.matcher( s );
+        final StringBuffer sb = new StringBuffer();
         while( m.find() )
         {
-            String groupEscaped = m.group().replaceAll( "\\\\|\\$", "\\\\$0" );
+            final String groupEscaped = m.group().replaceAll( "\\\\|\\$", "\\\\$0" );
             if( m.group( 3 ) != null )
             {
                 m.appendReplacement( sb, groupEscaped.replaceAll( "\\\\\\\\\\\\\\\\", "\n" ) );
@@ -102,7 +102,7 @@ public class WhitespaceTrimWriter extends Writer
      *  
      *  @param trimMode True, if you want trimming to be turned on.  False otherwise.
      */
-    public void setWhitespaceTrimMode( boolean trimMode )
+    public void setWhitespaceTrimMode(final boolean trimMode )
     {
         if( m_trimMode != trimMode )
         {
@@ -115,7 +115,7 @@ public class WhitespaceTrimWriter extends Writer
      *  {@inheritDoc}
      */
     @Override
-    public void write( char[] arg0, int arg1, int arg2 ) throws IOException
+    public void write(final char[] arg0, final int arg1, final int arg2 ) throws IOException
     {
         m_buffer.append( arg0, arg1, arg2 );
         m_currentlyOnLineBegin = ONLINE_PATTERN.matcher( m_buffer ).matches();

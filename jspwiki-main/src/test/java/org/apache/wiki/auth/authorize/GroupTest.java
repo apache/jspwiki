@@ -35,8 +35,8 @@ public class GroupTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
-        WikiEngine engine  = new TestEngine( props );
+        final Properties props = TestEngine.getTestProperties();
+        final WikiEngine engine  = new TestEngine( props );
         m_wiki = engine.getApplicationName();
 
         m_group = new Group( "TestGroup", m_wiki );
@@ -45,7 +45,7 @@ public class GroupTest
     @Test
     public void testAdd1()
     {
-        Principal u1 = new WikiPrincipal( "Alice" );
+        final Principal u1 = new WikiPrincipal( "Alice" );
         m_group.add( u1 );
         Assertions.assertTrue( m_group.isMember( u1 ) );
     }
@@ -53,8 +53,8 @@ public class GroupTest
     @Test
     public void testAdd2()
     {
-        Principal u1 = new WikiPrincipal( "Alice" );
-        Principal u2 = new WikiPrincipal( "Bob" );
+        final Principal u1 = new WikiPrincipal( "Alice" );
+        final Principal u2 = new WikiPrincipal( "Bob" );
 
         Assertions.assertTrue( m_group.add( u1 ), "adding alice" );
 
@@ -70,9 +70,9 @@ public class GroupTest
     @Test
     public void testAdd3()
     {
-        Principal u1 = new WikiPrincipal( "Alice" );
-        Principal u2 = new WikiPrincipal( "Bob" );
-        Principal u3 = new WikiPrincipal( "Bob" );
+        final Principal u1 = new WikiPrincipal( "Alice" );
+        final Principal u2 = new WikiPrincipal( "Bob" );
+        final Principal u3 = new WikiPrincipal( "Bob" );
 
         Assertions.assertTrue( m_group.add( u1 ), "adding alice" );
         Assertions.assertTrue( m_group.add( u2 ), "adding bob" );
@@ -84,9 +84,9 @@ public class GroupTest
     @Test
     public void testRemove()
     {
-        Principal u1 = new WikiPrincipal( "Alice" );
-        Principal u2 = new WikiPrincipal( "Bob" );
-        Principal u3 = new WikiPrincipal( "Bob" );
+        final Principal u1 = new WikiPrincipal( "Alice" );
+        final Principal u2 = new WikiPrincipal( "Bob" );
+        final Principal u3 = new WikiPrincipal( "Bob" );
 
         m_group.add( u1 );
         m_group.add( u2 );
@@ -101,15 +101,15 @@ public class GroupTest
     @Test
     public void testEquals1()
     {
-        Principal u1 = new WikiPrincipal( "Alice" );
-        Principal u2 = new WikiPrincipal( "Bob" );
+        final Principal u1 = new WikiPrincipal( "Alice" );
+        final Principal u2 = new WikiPrincipal( "Bob" );
 
         m_group.add( u1 );
         m_group.add( u2 );
 
-        Group group2 = new Group( "TestGroup", m_wiki );
-        Principal u3 = new WikiPrincipal( "Alice" );
-        Principal u4 = new WikiPrincipal( "Bob" );
+        final Group group2 = new Group( "TestGroup", m_wiki );
+        final Principal u3 = new WikiPrincipal( "Alice" );
+        final Principal u4 = new WikiPrincipal( "Bob" );
 
         group2.add( u3 );
         group2.add( u4 );
@@ -120,15 +120,15 @@ public class GroupTest
     @Test
     public void testEquals2()
     {
-        Principal u1 = new WikiPrincipal( "Alice" );
-        Principal u2 = new WikiPrincipal( "Bob" );
+        final Principal u1 = new WikiPrincipal( "Alice" );
+        final Principal u2 = new WikiPrincipal( "Bob" );
 
         m_group.add( u1 );
         m_group.add( u2 );
 
-        Group group2 = new Group( "Group2", m_wiki );
-        Principal u3 = new WikiPrincipal( "Alice" );
-        Principal u4 = new WikiPrincipal( "Charlie" );
+        final Group group2 = new Group( "Group2", m_wiki );
+        final Principal u3 = new WikiPrincipal( "Alice" );
+        final Principal u4 = new WikiPrincipal( "Charlie" );
 
         group2.add( u3 );
         group2.add( u4 );
@@ -139,15 +139,15 @@ public class GroupTest
     @Test
     public void testEquals3()
     {
-        Group group1 = new Group( "Blib", m_wiki );
-        Principal u1 = new WikiPrincipal( "Alice" );
-        Principal u2 = new WikiPrincipal( "Bob" );
+        final Group group1 = new Group( "Blib", m_wiki );
+        final Principal u1 = new WikiPrincipal( "Alice" );
+        final Principal u2 = new WikiPrincipal( "Bob" );
         group1.add( u1 );
         group1.add( u2 );
 
-        Group group2 = new Group( "Blib", m_wiki );
-        Principal u3 = new WikiPrincipal( "Alice" );
-        Principal u4 = new WikiPrincipal( "Bob" );
+        final Group group2 = new Group( "Blib", m_wiki );
+        final Principal u3 = new WikiPrincipal( "Alice" );
+        final Principal u4 = new WikiPrincipal( "Bob" );
         group2.add( u3 );
         group2.add( u4 );
 
@@ -157,15 +157,15 @@ public class GroupTest
     @Test
     public void testEquals4()
     {
-        Group group1 = new Group( "BlibBlab", m_wiki );
-        Principal u1 = new WikiPrincipal( "Alice" );
-        Principal u2 = new WikiPrincipal( "Bob" );
+        final Group group1 = new Group( "BlibBlab", m_wiki );
+        final Principal u1 = new WikiPrincipal( "Alice" );
+        final Principal u2 = new WikiPrincipal( "Bob" );
         group1.add( u1 );
         group1.add( u2 );
 
-        Group group2 = new Group( "Blib", m_wiki );
-        Principal u3 = new WikiPrincipal( "Alice" );
-        Principal u4 = new WikiPrincipal( "Bob" );
+        final Group group2 = new Group( "Blib", m_wiki );
+        final Principal u3 = new WikiPrincipal( "Alice" );
+        final Principal u4 = new WikiPrincipal( "Bob" );
         group2.add( u3 );
         group2.add( u4 );
 

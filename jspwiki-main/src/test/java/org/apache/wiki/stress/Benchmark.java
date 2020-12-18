@@ -25,9 +25,9 @@ public class Benchmark extends StopWatch
     /**
      *  How many operations/second?
      */
-    public String toString( int operations )
+    public String toString(final int operations )
     {
-        double totalTime = getTime();
+        final double totalTime = getTime();
 
         return Double.toString( (operations/totalTime) * 1000.0 );
     }

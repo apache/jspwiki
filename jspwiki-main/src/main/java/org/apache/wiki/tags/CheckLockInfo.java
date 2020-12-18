@@ -31,8 +31,8 @@ public class CheckLockInfo extends TagExtraInfo {
      *  {@inheritDoc}
      */
     @Override
-    public VariableInfo[] getVariableInfo(TagData data) {
-        VariableInfo[] var = { new VariableInfo( data.getAttributeString( "id" ),
+    public VariableInfo[] getVariableInfo(final TagData data) {
+        final VariableInfo[] var = { new VariableInfo( data.getAttributeString( "id" ),
                                                  "org.apache.wiki.pages.PageLock",
                                                  true,
                                                  VariableInfo.NESTED )
