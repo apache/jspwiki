@@ -69,7 +69,7 @@ public class HumanComparator implements Comparator< String > {
      * 
      * @param sortOrder see setSortOrder
      */
-    public HumanComparator( CharType[] sortOrder )
+    public HumanComparator(final CharType[] sortOrder )
     {
         setSortOrder( sortOrder );
     }
@@ -78,7 +78,7 @@ public class HumanComparator implements Comparator< String > {
      * (non-Javadoc)
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    public int compare( String str1, String str2 )
+    public int compare(final String str1, final String str2 )
     {
         // Some quick and easy checks
         if( StringUtils.equals( str1, str2 ) ) {
@@ -92,10 +92,10 @@ public class HumanComparator implements Comparator< String > {
             return 1;
         }
 
-        char[] s1 = str1.toCharArray();
-        char[] s2 = str2.toCharArray();
-        int len1 = s1.length;
-        int len2 = s2.length;
+        final char[] s1 = str1.toCharArray();
+        final char[] s2 = str2.toCharArray();
+        final int len1 = s1.length;
+        final int len2 = s2.length;
         int idx = 0;
         // caseComparison used to defer a case sensitive comparison
         int caseComparison = 0;
@@ -106,8 +106,8 @@ public class HumanComparator implements Comparator< String > {
             char c2 = s2[idx++];
 
             // Convert to lower case
-            char lc1 = Character.toLowerCase( c1 );
-            char lc2 = Character.toLowerCase( c2 );
+            final char lc1 = Character.toLowerCase( c1 );
+            final char lc2 = Character.toLowerCase( c2 );
 
             // If case makes a difference, note the difference the first time
             // it's encountered
@@ -126,8 +126,8 @@ public class HumanComparator implements Comparator< String > {
             if( c1 != c2 || c1 == '0' )
             {
                 // They might be different, now we can do a comparison
-                CharType type1 = mapCharTypes( c1 );
-                CharType type2 = mapCharTypes( c2 );
+                final CharType type1 = mapCharTypes( c1 );
+                final CharType type2 = mapCharTypes( c2 );
 
                 // Do the character class check
                 int result = compareCharTypes( type1, type2 );
@@ -140,8 +140,8 @@ public class HumanComparator implements Comparator< String > {
                 // If they're not digits, use character to character comparison
                 if( type1 != CharType.TYPE_DIGIT )
                 {
-                    Character ch1 = Character.valueOf( c1 );
-                    Character ch2 = Character.valueOf( c2 );
+                    final Character ch1 = Character.valueOf( c1 );
+                    final Character ch2 = Character.valueOf( c2 );
                     return ch1.compareTo( ch2 );
                 }
 
@@ -179,7 +179,7 @@ public class HumanComparator implements Comparator< String > {
      * @param type2 second CharType
      * @return -1 if type1 < type2, 0 if type1 == type2, 1 if type1 > type2
      */
-    private int compareCharTypes( CharType type1, CharType type2 )
+    private int compareCharTypes(final CharType type1, final CharType type2 )
     {
         if( type1 == type2 )
         {
@@ -218,23 +218,23 @@ public class HumanComparator implements Comparator< String > {
      * @return negative, zero or positive depending on the numeric comparison of
      *         left and right.
      */
-    private int compareDigits( char[] left, char[] right, int offset )
+    private int compareDigits(final char[] left, final char[] right, final int offset )
     {
         // Calculate the integer value of the left hand side
         int idx = offset;
         while ( idx < left.length && Character.isDigit( left[idx] ) ) {
         	idx++;
         }
-        int leftLen = idx - offset;
-        int leftValue = Integer.valueOf( new String( left, offset, leftLen ) );
+        final int leftLen = idx - offset;
+        final int leftValue = Integer.valueOf( new String( left, offset, leftLen ) );
 
         // Calculate the integer value of the right hand side
         idx = offset;
         while ( idx < right.length && Character.isDigit( right[idx] ) ) {
         	idx++;
         }
-        int rightLen = idx - offset;
-        int rightValue = Integer.valueOf( new String( right, offset, rightLen ) );
+        final int rightLen = idx - offset;
+        final int rightValue = Integer.valueOf( new String( right, offset, rightLen ) );
 
         if( leftValue == rightValue ) {
             return leftLen - rightLen; // Same value so use the lengths
@@ -254,7 +254,7 @@ public class HumanComparator implements Comparator< String > {
      * @return <code>IS_DIGIT</code> if it's a digit, <code>IS_LETTER</code> if
      *         it's a letter, <code>IS_PUNC</code> otherwise.
      */
-    private CharType mapCharTypes( char c ) {
+    private CharType mapCharTypes(final char c ) {
         if( Character.isDigit( c ) ) {
             return CharType.TYPE_DIGIT;
         } else if( Character.isLetter( c ) ) {
@@ -277,7 +277,7 @@ public class HumanComparator implements Comparator< String > {
      *             <code>sortOrder</code> is not exactly 3 different
      *             <code>CharType</code>.
      */
-    public void setSortOrder( CharType[] sortOrder ) {
+    public void setSortOrder(final CharType[] sortOrder ) {
         if( this == DEFAULT_HUMAN_COMPARATOR ) {
         	throw new IllegalArgumentException( "Can't call setters on default " + HumanComparator.class.getName() );
         }

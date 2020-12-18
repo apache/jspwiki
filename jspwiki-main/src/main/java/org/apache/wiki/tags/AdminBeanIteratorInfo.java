@@ -33,9 +33,9 @@ public class AdminBeanIteratorInfo extends TagExtraInfo
      *  {@inheritDoc}
      */
     @Override
-    public VariableInfo[] getVariableInfo(TagData data)
+    public VariableInfo[] getVariableInfo(final TagData data)
     {
-        VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
+        final VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
                                                  "org.apache.wiki.ui.admin.AdminBean",
                                                  true,
                                                  VariableInfo.NESTED )

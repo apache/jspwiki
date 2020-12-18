@@ -31,7 +31,7 @@ public class WikiPermissionTest
     @Test
     public void testWikiPermission()
     {
-      WikiPermission p = new WikiPermission("*", "createPages");
+      final WikiPermission p = new WikiPermission("*", "createPages");
       Assertions.assertEquals("*", p.getName());
       Assertions.assertEquals("*", p.getWiki());
       Assertions.assertEquals("createpages", p.getActions());
@@ -43,15 +43,15 @@ public class WikiPermissionTest
     @Test
     public void testEqualsObject()
     {
-      WikiPermission p1 = new WikiPermission("*", "createPages");
-      WikiPermission p2 = new WikiPermission("*", "createPages");
-      WikiPermission p3 = new WikiPermission("*", "createGroups");
+      final WikiPermission p1 = new WikiPermission("*", "createPages");
+      final WikiPermission p2 = new WikiPermission("*", "createPages");
+      final WikiPermission p3 = new WikiPermission("*", "createGroups");
       Assertions.assertTrue(p1.equals(p2));
       Assertions.assertTrue(p2.equals(p1));
       Assertions.assertFalse(p1.equals(p3));
       Assertions.assertFalse(p3.equals(p1));
-      WikiPermission p4 = new WikiPermission("*", "createPages,createGroups");
-      WikiPermission p5 = new WikiPermission("*", "createGroups,createPages");
+      final WikiPermission p4 = new WikiPermission("*", "createPages,createGroups");
+      final WikiPermission p5 = new WikiPermission("*", "createGroups,createPages");
       Assertions.assertTrue(p4.equals(p5));
     }
 
@@ -61,15 +61,15 @@ public class WikiPermissionTest
     @Test
     public void testEqualsObjectNSi()
     {
-      WikiPermission p1 = new WikiPermission("mywiki", "createPages");
-      WikiPermission p2 = new WikiPermission("*",      "createPages");
-      WikiPermission p3 = new WikiPermission("mywiki", "createGroups");
+      final WikiPermission p1 = new WikiPermission("mywiki", "createPages");
+      final WikiPermission p2 = new WikiPermission("*",      "createPages");
+      final WikiPermission p3 = new WikiPermission("mywiki", "createGroups");
       Assertions.assertFalse(p1.equals(p2));
       Assertions.assertFalse(p2.equals(p1));
       Assertions.assertFalse(p1.equals(p3));
       Assertions.assertFalse(p3.equals(p1));
-      WikiPermission p4 = new WikiPermission("mywiki", "createPages,createGroups");
-      WikiPermission p5 = new WikiPermission("*",      "createGroups,createPages");
+      final WikiPermission p4 = new WikiPermission("mywiki", "createPages,createGroups");
+      final WikiPermission p5 = new WikiPermission("*",      "createGroups,createPages");
       Assertions.assertFalse(p4.equals(p5));
     }
 
@@ -79,9 +79,9 @@ public class WikiPermissionTest
     @Test
     public void testGetActions()
     {
-      WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,editProfile");
+      final WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,editProfile");
       Assertions.assertEquals("creategroups,createpages,editprofile", p1.getActions());
-      WikiPermission p2 = new WikiPermission("*", "createGroups,editProfile,createPages");
+      final WikiPermission p2 = new WikiPermission("*", "createGroups,editProfile,createPages");
       Assertions.assertEquals("creategroups,createpages,editprofile", p2.getActions());
     }
 
@@ -92,11 +92,11 @@ public class WikiPermissionTest
     public void testImpliesPermission()
     {
       // Superset of actions implies all individual actions
-      WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,editProfile");
-      WikiPermission p2 = new WikiPermission("*", "createPages");
-      WikiPermission p3 = new WikiPermission("*", "createGroups");
-      WikiPermission p5 = new WikiPermission("*", "editPreferences");
-      WikiPermission p6 = new WikiPermission("*", "editProfile");
+      final WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,editProfile");
+      final WikiPermission p2 = new WikiPermission("*", "createPages");
+      final WikiPermission p3 = new WikiPermission("*", "createGroups");
+      final WikiPermission p5 = new WikiPermission("*", "editPreferences");
+      final WikiPermission p6 = new WikiPermission("*", "editProfile");
       Assertions.assertTrue(p1.implies(p2));
       Assertions.assertFalse(p2.implies(p1));
       Assertions.assertTrue(p1.implies(p3));
@@ -122,11 +122,11 @@ public class WikiPermissionTest
     public void testImpliesPermissionNS()
     {
       // Superset of actions implies all individual actions
-      WikiPermission p1 = new WikiPermission("*",      "createPages,createGroups,editProfile");
-      WikiPermission p2 = new WikiPermission("mywiki", "createPages");
-      WikiPermission p3 = new WikiPermission("mywiki", "createGroups");
-      WikiPermission p4 = new WikiPermission("urwiki", "editProfile");
-      WikiPermission p5 = new WikiPermission("*",      "editPreferences");
+      final WikiPermission p1 = new WikiPermission("*",      "createPages,createGroups,editProfile");
+      final WikiPermission p2 = new WikiPermission("mywiki", "createPages");
+      final WikiPermission p3 = new WikiPermission("mywiki", "createGroups");
+      final WikiPermission p4 = new WikiPermission("urwiki", "editProfile");
+      final WikiPermission p5 = new WikiPermission("*",      "editPreferences");
       Assertions.assertTrue(p1.implies(p2));
       Assertions.assertFalse(p2.implies(p1));
       Assertions.assertTrue(p1.implies(p3));
@@ -149,8 +149,8 @@ public class WikiPermissionTest
     @Test
     public void testToString()
     {
-      WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,editProfile");
-      String result = "(\"org.apache.wiki.auth.permissions.WikiPermission\",\"*\",\"creategroups,createpages,editprofile\")";
+      final WikiPermission p1 = new WikiPermission("*", "createPages,createGroups,editProfile");
+      final String result = "(\"org.apache.wiki.auth.permissions.WikiPermission\",\"*\",\"creategroups,createpages,editprofile\")";
       Assertions.assertEquals(result, p1.toString());
     }
 

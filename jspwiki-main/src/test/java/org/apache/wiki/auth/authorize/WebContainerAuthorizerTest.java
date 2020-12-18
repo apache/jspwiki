@@ -37,7 +37,7 @@ public class WebContainerAuthorizerTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         m_engine = new TestEngine( props );
         m_authorizer = new WebContainerAuthorizer();
         m_authorizer.initialize( m_engine, props );
@@ -60,7 +60,7 @@ public class WebContainerAuthorizerTest
     public void testGetRoles()
     {
         // We should find 2 roles: AUTHENTICATED plus custom role "Admin"
-        Principal[] roles = m_authorizer.getRoles();
+        final Principal[] roles = m_authorizer.getRoles();
         Assertions.assertEquals( 2, roles.length );
         Assertions.assertTrue( ArrayUtils.contains( roles, Role.AUTHENTICATED ) );
         Assertions.assertTrue( ArrayUtils.contains( roles, new Role( "Admin" ) ) );
@@ -69,7 +69,7 @@ public class WebContainerAuthorizerTest
     @Test
     public void testRoles() throws Exception
     {
-        Role[] roles = m_authorizer.getRoles( m_webxml );
+        final Role[] roles = m_authorizer.getRoles( m_webxml );
         boolean found = false;
         for ( int i = 0; i < roles.length; i++ )
         {

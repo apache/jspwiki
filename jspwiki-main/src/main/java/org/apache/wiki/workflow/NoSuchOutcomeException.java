@@ -32,7 +32,7 @@ public class NoSuchOutcomeException extends WikiException
      * Constructs a new exception.
      * @param message the message
      */
-    public NoSuchOutcomeException( String message )
+    public NoSuchOutcomeException(final String message )
     {
         super( message );
     }

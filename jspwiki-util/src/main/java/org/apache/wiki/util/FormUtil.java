@@ -53,15 +53,15 @@ public final class FormUtil
      * @param key the key to look up
      * @return the List of keys
      */
-    public static List< ? > getValues( Map< ? , ? > params, String key )
+    public static List< ? > getValues(final Map< ? , ? > params, final String key )
     {
         if( params == null || key == null )
             return new ArrayList<>(0);
 
-        Object entry = params.get( key );
+        final Object entry = params.get( key );
         if( entry != null )
         {
-            ArrayList<Object> rval = new ArrayList<>(1);
+            final ArrayList<Object> rval = new ArrayList<>(1);
             rval.add( entry );
             return rval;
         }
@@ -88,9 +88,9 @@ public final class FormUtil
      * @return ArrayList, containing the values corresponding to the
      *          keyPrefix, in order.
      */
-    public static List< ? > getNumberedValues( Map< ?, ? > params, String keyPrefix )
+    public static List< ? > getNumberedValues(final Map< ?, ? > params, final String keyPrefix )
     {
-        ArrayList<Object> rval = new ArrayList<>();
+        final ArrayList<Object> rval = new ArrayList<>();
         if( params == null || 
             params.size() == 0 || 
             keyPrefix == null || 
@@ -137,21 +137,21 @@ public final class FormUtil
      * @param filterPrefix the prefix
      * @return the Map containing parsed key/value pairs
      */
-    public static Map< String, String > requestToMap( HttpServletRequest req, String filterPrefix )
+    public static Map< String, String > requestToMap(final HttpServletRequest req, String filterPrefix )
     {
-        HashMap<String,String> params = new HashMap<>();
+        final HashMap<String,String> params = new HashMap<>();
         
         if( filterPrefix == null ) filterPrefix = "";
         
-        Enumeration< String > en = req.getParameterNames();
+        final Enumeration< String > en = req.getParameterNames();
         while( en.hasMoreElements() )
         {
-            String param = en.nextElement();
+            final String param = en.nextElement();
             
             if( param.startsWith( filterPrefix ) )
             {
-                String realName = param.substring( filterPrefix.length() );
-                String[] values = req.getParameterValues( param );
+                final String realName = param.substring( filterPrefix.length() );
+                final String[] values = req.getParameterValues( param );
                 if( values != null )
                 {
                     if( values.length == 1 )

@@ -81,38 +81,38 @@ public class SetPaginationTag
         m_onclick = null;
     }
 
-    public void setStart(int arg)
+    public void setStart(final int arg)
     {
         m_start = arg;
     }
 
-    public void setTotal(int arg)
+    public void setTotal(final int arg)
     {
         m_total = arg;
     }
 
-    public void setPagesize(int arg)
+    public void setPagesize(final int arg)
     {
         m_pagesize = arg;
     }
 
-    public void setMaxlinks(int arg)
+    public void setMaxlinks(final int arg)
     {
         m_maxlinks = arg;
         if( m_maxlinks % 2 == 0 ) m_maxlinks--; /* must be odd */
     }
 
-    public void setFmtkey(String arg)
+    public void setFmtkey(final String arg)
     {
         m_fmtkey = arg;
     }
 
-    public void setHref(String arg)
+    public void setHref(final String arg)
     {
         m_href = arg;
     }
 
-    public void setOnclick(String arg)
+    public void setOnclick(final String arg)
     {
         m_onclick = arg;
     }
@@ -127,13 +127,13 @@ public class SetPaginationTag
     {
         if( m_total <= m_pagesize ) return SKIP_BODY;
 
-        StringBuilder pagination = new StringBuilder();
+        final StringBuilder pagination = new StringBuilder();
 
         if( m_start > m_total ) m_start = m_total;
         if( m_start < ALLITEMS ) m_start = 0;
 
-        int maxs = m_pagesize * m_maxlinks;
-        int mids = m_pagesize * ( m_maxlinks / 2 );
+        final int maxs = m_pagesize * m_maxlinks;
+        final int mids = m_pagesize * ( m_maxlinks / 2 );
 
         pagination.append( "<div class='pagination'>");
 
@@ -210,7 +210,7 @@ public class SetPaginationTag
 
         /* +++ processing done +++ */
 
-        String p = pagination.toString();
+        final String p = pagination.toString();
 
         pageContext.getOut().println( p );
 
@@ -231,15 +231,15 @@ public class SetPaginationTag
      * @param onclick : link text
      *
      **/
-    private void appendLink( StringBuilder sb, int page, String fmttextkey )
+    private void appendLink(final StringBuilder sb, final int page, final String fmttextkey )
     {
         appendLink2( sb, page, LocaleSupport.getLocalizedMessage( pageContext, fmttextkey ) );
     }
-    private void appendLink( StringBuilder sb, int page, int paginationblock )
+    private void appendLink(final StringBuilder sb, final int page, final int paginationblock )
     {
         appendLink2( sb, page, Integer.toString( paginationblock ) );
     }
-    private void appendLink2( StringBuilder sb, int page, String text )
+    private void appendLink2(final StringBuilder sb, final int page, final String text )
     {
         sb.append( "<a title=\"" );
         if( page == ALLITEMS )

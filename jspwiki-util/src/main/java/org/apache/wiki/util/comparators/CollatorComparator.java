@@ -52,7 +52,7 @@ public class CollatorComparator implements Comparator<String>
      * 
      * @param collator the collator to be used for comparisons
      */
-    public CollatorComparator( Collator collator )
+    public CollatorComparator(final Collator collator )
     {
         m_collator = collator;
     }
@@ -61,7 +61,7 @@ public class CollatorComparator implements Comparator<String>
      * (non-Javadoc)
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    public int compare( String str1, String str2 )
+    public int compare(final String str1, final String str2 )
     {
         if( StringUtils.equals( str1, str2 ) ) {
         	return 0; // the same object
@@ -80,7 +80,7 @@ public class CollatorComparator implements Comparator<String>
      * 
      * @param collator the collator to be used from now on
      */
-    public void setCollator( Collator collator )
+    public void setCollator(final Collator collator )
     {
         m_collator = collator;
     }

@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -117,7 +118,7 @@ public class CookieTag
      *  
      *  @param s The name.
      */
-    public void setName( String s )
+    public void setName(final String s )
     {
         m_name = s;
     }
@@ -127,7 +128,7 @@ public class CookieTag
      *  
      *  @param s The item.
      */
-    public void setItem( String s )
+    public void setItem(final String s )
     {
         m_item = s;
     }
@@ -137,7 +138,7 @@ public class CookieTag
      *  
      *  @param s The value.
      */
-    public void setValue( String s )
+    public void setValue(final String s )
     {
         m_value = s;
     }
@@ -147,7 +148,7 @@ public class CookieTag
      *  
      *  @param s The parameter.
      */
-    public void setVar( String s )
+    public void setVar(final String s )
     {
         m_scope = s;
     }
@@ -157,7 +158,7 @@ public class CookieTag
      *  
      *  @param s The parameter.
      */
-    public void setClear( String s )
+    public void setClear(final String s )
     {
         m_clear = s;
     }
@@ -167,7 +168,7 @@ public class CookieTag
      *  
      *  @param s The scope.
      */
-    public void setScope( String s )
+    public void setScope(final String s )
     {
         m_scope = s;
     }
@@ -187,7 +188,7 @@ public class CookieTag
      * Possible values are "page", "session", "application", and "request",
      * which is the default return value.
      */
-    private int getScope( String s )
+    private int getScope(final String s )
     {
         if( s == null )
         {
@@ -215,7 +216,7 @@ public class CookieTag
     public int doEndTag()
     {
         String out = null;
-        Cookie cookie = findCookie( m_name );
+        final Cookie cookie = findCookie( m_name );
         boolean changed = false;
 
         if( m_value != null )
@@ -246,7 +247,7 @@ public class CookieTag
         {
             if( m_var != null )
             {
-                int scope = getScope( m_scope );
+                final int scope = getScope( m_scope );
                 pageContext.setAttribute( m_var, out,  scope );
             }
             else
@@ -255,7 +256,7 @@ public class CookieTag
                 {
                     pageContext.getOut().print( out );
                 }
-                catch( IOException ioe )
+                catch( final IOException ioe )
                 {
                     log.warn( "Failed to write to JSP page: " + ioe.getMessage(), ioe );
                 }
@@ -276,7 +277,7 @@ public class CookieTag
             }
         }
 
-        HttpServletResponse res = (HttpServletResponse)pageContext.getResponse();
+        final HttpServletResponse res = (HttpServletResponse)pageContext.getResponse();
         if( changed )
         {
             res.addCookie( cookie );
@@ -292,29 +293,29 @@ public class CookieTag
     /**
      * Sets a single name-value pair in the given cookie.
      */
-    private void setItemValue( Cookie c, String item, String value )
+    private void setItemValue(final Cookie c, final String item, final String value )
     {
         if( c == null )
         {
             return;
         }
-        String in = c.getValue();
-        Map<String, String> values = parseCookieValues( in );
+        final String in = c.getValue();
+        final Map<String, String> values = parseCookieValues( in );
         values.put( item, value );
-        String cv = encodeValues( values );
+        final String cv = encodeValues( values );
         c.setValue( cv );
     }
 
     /**
      * Returns the value of the given item in the cookie.
      */
-    private String getItemValue( Cookie c, String item )
+    private String getItemValue(final Cookie c, final String item )
     {
         if( c == null || item == null ) {
             return null;
         }
-        String in = c.getValue();
-        Map< String, String > values = parseCookieValues( in );
+        final String in = c.getValue();
+        final Map< String, String > values = parseCookieValues( in );
         return values.get( item );
     }
 
@@ -323,19 +324,19 @@ public class CookieTag
      * Parses a cookie value, of format name1%3Fvalue1&name2%3Fvalue2...,
      * into a Map<String,String>.
      */
-    private Map<String, String> parseCookieValues( String s )
+    private Map<String, String> parseCookieValues(final String s )
     {
-        Map< String, String > rval = new HashMap< String, String >();
+        final Map< String, String > rval = new HashMap< String, String >();
         if( s == null ) {
             return rval;
         }
-        String[] nvps = s.split( "&" );
+        final String[] nvps = s.split( "&" );
         if( nvps.length == 0 ) {
             return rval;
         }
         for( int i = 0; i < nvps.length; i++ ) {
-            String nvp = decode( nvps[i] );
-            String[] nv = nvp.split( "=" );
+            final String nvp = decode( nvps[i] );
+            final String[] nv = nvp.split( "=" );
             if( nv[0] != null && nv[0].trim().length() > 0 )
             {
                 rval.put( nv[0], nv[1] );
@@ -349,20 +350,20 @@ public class CookieTag
      * Encodes name-value pairs in the map into a single string, in a format
      * understood by this class and JavaScript decodeURIComponent().
      */
-    private String encodeValues( Map<String, String> values )
+    private String encodeValues(final Map<String, String> values )
     {
-        StringBuilder rval = new StringBuilder();
+        final StringBuilder rval = new StringBuilder();
         if( values == null || values.size() == 0 ) {
             return rval.toString();
         }
 
-        Iterator< Map.Entry< String, String > > it = values.entrySet().iterator();
+        final Iterator< Map.Entry< String, String > > it = values.entrySet().iterator();
         while( it.hasNext() ) {
-            Map.Entry< String, String > e = it.next();
-            String n = e.getKey();
-            String v = e.getValue();
+            final Map.Entry< String, String > e = it.next();
+            final String n = e.getKey();
+            final String v = e.getValue();
             if( v != null ) {
-                String nv = n + "=" + v;
+                final String nv = n + "=" + v;
                 rval.append( encode( nv ) );
             }
         }
@@ -374,14 +375,14 @@ public class CookieTag
      * Converts a String to an encoding understood by JavaScript
      * decodeURIComponent.
      */
-    private String encode( String nvp )
+    private String encode(final String nvp )
     {
         String coded = "";
         try
         {
-            coded = URLEncoder.encode( nvp, "UTF-8" );
+            coded = URLEncoder.encode( nvp, StandardCharsets.UTF_8.name() );
         }
-        catch( UnsupportedEncodingException e )
+        catch( final UnsupportedEncodingException e )
         {
             /* never happens */
             log.info( "Failed to encode UTF-8", e );
@@ -393,15 +394,15 @@ public class CookieTag
      * Converts a cookie value (set by this class, or by a JavaScript
      * encodeURIComponent call) into a plain string.
      */
-    private String decode( String envp )
+    private String decode(final String envp )
     {
-        String rval;
+        final String rval;
         try
         {
-            rval = URLDecoder.decode( envp , "UTF-8" );
+            rval = URLDecoder.decode( envp , StandardCharsets.UTF_8.name() );
             return rval;
         }
-        catch( UnsupportedEncodingException e )
+        catch( final UnsupportedEncodingException e )
         {
             log.error( "Failed to decode cookie", e );
             return envp;
@@ -412,12 +413,12 @@ public class CookieTag
      * Locates the named cookie in the request, or creates a new one if it
      * doesn't exist.
      */
-    private Cookie findCookie( String cname )
+    private Cookie findCookie(final String cname )
     {
-        HttpServletRequest req = (HttpServletRequest)pageContext.getRequest();
+        final HttpServletRequest req = (HttpServletRequest)pageContext.getRequest();
         if( req != null )
         {
-            Cookie[] cookies = req.getCookies();
+            final Cookie[] cookies = req.getCookies();
             if( cookies != null )
             {
                 for( int i = 0; i < cookies.length; i++ )

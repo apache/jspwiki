@@ -193,7 +193,7 @@ public final class TextUtil {
      */
     public static String urlDecode( final String data, final String encoding ) throws IllegalArgumentException {
         // Presumably, the same caveats apply as in FileSystemProvider. Don't see why it would be horribly kludgy, though.
-        if( "UTF-8".equals( encoding ) ) {
+        if( StandardCharsets.UTF_8.name().equals( encoding ) ) {
             return urlDecodeUTF8( data );
         }
 

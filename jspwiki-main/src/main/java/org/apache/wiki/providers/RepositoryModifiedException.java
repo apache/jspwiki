@@ -44,7 +44,7 @@ public class RepositoryModifiedException
      * @param msg The message
      * @param pageName  The name of the page which was modified
      */
-    public RepositoryModifiedException( String msg, String pageName )
+    public RepositoryModifiedException(final String msg, final String pageName )
     {
         super( msg );
 

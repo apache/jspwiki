@@ -33,14 +33,14 @@ public class ByteUtilsTest {
     @Test
     public void testByteUtilsConvertBytes()
     {
-        String hex = ByteUtils.bytes2hex(bytes);
+        final String hex = ByteUtils.bytes2hex(bytes);
         Assertions.assertEquals(EXPECTED_HEX_STRING, hex);
     }
 
     @Test
     public void testConvertHexToBytes()
     {
-        byte[] reconstructedBytes = ByteUtils.parseHexBinary(EXPECTED_HEX_STRING);
+        final byte[] reconstructedBytes = ByteUtils.parseHexBinary(EXPECTED_HEX_STRING);
         Assertions.assertEquals(bytes.length,reconstructedBytes.length);
         Assertions.assertTrue(Arrays.equals(bytes,reconstructedBytes));
     }

@@ -93,13 +93,13 @@ public final class WikiPermission extends Permission implements Serializable
      * @param actions the actions for this permission
      * @param wiki The name of the wiki the permission belongs to.
      */
-    public WikiPermission( String wiki, String actions )
+    public WikiPermission(final String wiki, final String actions )
     {
         super( wiki );
-        String[] pageActions = actions.toLowerCase().split( "," );
+        final String[] pageActions = actions.toLowerCase().split( "," );
         Arrays.sort( pageActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
-        StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder();
         for( int i = 0; i < pageActions.length; i++ )
         {
             buffer.append( pageActions[i] );
@@ -119,13 +119,13 @@ public final class WikiPermission extends Permission implements Serializable
      * @return the result
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals( Object obj )
+    public boolean equals(final Object obj )
     {
         if ( !( obj instanceof WikiPermission ) )
         {
             return false;
         }
-        WikiPermission p = (WikiPermission) obj;
+        final WikiPermission p = (WikiPermission) obj;
         return  p.m_mask == m_mask && p.m_wiki != null && p.m_wiki.equals( m_wiki );
     }
 
@@ -172,20 +172,20 @@ public final class WikiPermission extends Permission implements Serializable
      * <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
-    public boolean implies( Permission permission )
+    public boolean implies(final Permission permission )
     {
         // Permission must be a WikiPermission
         if ( !( permission instanceof WikiPermission ) )
         {
             return false;
         }
-        WikiPermission p = (WikiPermission) permission;
+        final WikiPermission p = (WikiPermission) permission;
 
         // See if the wiki is implied
-        boolean impliedWiki = PagePermission.isSubset( m_wiki, p.m_wiki );
+        final boolean impliedWiki = PagePermission.isSubset( m_wiki, p.m_wiki );
 
         // Build up an "implied mask" for actions
-        int impliedMask = impliedMask( m_mask );
+        final int impliedMask = impliedMask( m_mask );
 
         // If actions aren't a proper subset, return false
         return impliedWiki && ( impliedMask & p.m_mask ) == p.m_mask;
@@ -230,17 +230,17 @@ public final class WikiPermission extends Permission implements Serializable
      * @param actions the permission actions, separated by commas
      * @return binary mask representing the permissions
      */
-    protected static int createMask( String actions )
+    protected static int createMask(final String actions )
     {
         if ( actions == null || actions.length() == 0 )
         {
             throw new IllegalArgumentException( "Actions cannot be blank or null" );
         }
         int mask = 0;
-        String[] actionList = actions.split( "," );
+        final String[] actionList = actions.split( "," );
         for( int i = 0; i < actionList.length; i++ )
         {
-            String action = actionList[i];
+            final String action = actionList[i];
             if ( action.equalsIgnoreCase( CREATE_GROUPS_ACTION ) )
             {
                 mask |= CREATE_GROUPS_MASK;

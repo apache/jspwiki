@@ -34,7 +34,7 @@ public class SearchResultsSizeTag
     private static final long serialVersionUID = 0L;
     
     public final int doWikiStartTag() throws IOException {
-        Collection< ? > list = ( Collection< ? > )pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
+        final Collection< ? > list = ( Collection< ? > )pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
         if( list != null ) {
             pageContext.getOut().print( list.size() );
         }

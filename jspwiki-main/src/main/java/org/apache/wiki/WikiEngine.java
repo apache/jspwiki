@@ -609,9 +609,9 @@ public class WikiEngine implements Engine {
     @Override
     public String encodeName( final String pagename ) {
         try {
-            return URLEncoder.encode( pagename, m_useUTF8 ? "UTF-8" : "ISO-8859-1" );
+            return URLEncoder.encode( pagename, m_useUTF8 ? StandardCharsets.UTF_8.name() : StandardCharsets.ISO_8859_1.name() );
         } catch( final UnsupportedEncodingException e ) {
-            throw new InternalWikiException( "ISO-8859-1 not a supported encoding!?!  Your platform is borked." , e);
+                throw new InternalWikiException( "ISO-8859-1 not a supported encoding!?!  Your platform is borked." , e);
         }
     }
 
@@ -619,7 +619,7 @@ public class WikiEngine implements Engine {
     @Override
     public String decodeName( final String pagerequest ) {
         try {
-            return URLDecoder.decode( pagerequest, m_useUTF8 ? "UTF-8" : "ISO-8859-1" );
+            return URLDecoder.decode( pagerequest, m_useUTF8 ? StandardCharsets.UTF_8.name() : StandardCharsets.ISO_8859_1.name() );
         } catch( final UnsupportedEncodingException e ) {
             throw new InternalWikiException("ISO-8859-1 not a supported encoding!?!  Your platform is borked.", e);
         }

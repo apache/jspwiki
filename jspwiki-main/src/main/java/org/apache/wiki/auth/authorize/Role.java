@@ -58,7 +58,7 @@ public final class Role implements Principal, Serializable
      * Constructs a new Role with a given name.
      * @param name the name of the Role
      */
-    public Role( String name )
+    public Role(final String name )
     {
         m_name = name;
     }
@@ -70,7 +70,7 @@ public final class Role implements Principal, Serializable
      * @param role the role to check
      * @return the result of the check
      */
-    public static boolean isBuiltInRole(Role role)
+    public static boolean isBuiltInRole(final Role role)
     {
         return  role.equals( ALL ) || role.equals( ANONYMOUS ) ||
                 role.equals( ASSERTED ) || role.equals( AUTHENTICATED );
@@ -86,7 +86,7 @@ public final class Role implements Principal, Serializable
      * @return <code>true</code> if the name is reserved; <code>false</code>
      *         if not
      */
-    public static boolean isReservedName(String name)
+    public static boolean isReservedName(final String name)
     {
         return  name.equals( ALL.m_name ) ||
                 name.equals( ANONYMOUS.m_name ) || name.equals( ASSERTED.m_name ) ||
@@ -108,7 +108,7 @@ public final class Role implements Principal, Serializable
      * @return <code>true</code> if both objects are of type Role and have identical names
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals( Object obj )
+    public boolean equals(final Object obj )
     {
         if ( obj == null || !( obj instanceof Role ) ) return false;
         return m_name.equals( ( (Role) obj ).getName() );

@@ -31,14 +31,14 @@ public class HumanComparatorTest
     @Test
     public void testCharOrder()
     {
-        HumanComparator comparator = new HumanComparator();
+        final HumanComparator comparator = new HumanComparator();
 
         // Default order first
         Assertions.assertTrue( comparator.compare( "a c", "a1c" ) < 0 );
         Assertions.assertTrue( comparator.compare( "a1c", "abc" ) < 0 );
 
         // Now letters then numbers then other
-        HumanComparator.CharType sortOrder[] = { HumanComparator.CharType.TYPE_LETTER, HumanComparator.CharType.TYPE_DIGIT,
+        final HumanComparator.CharType[] sortOrder = { HumanComparator.CharType.TYPE_LETTER, HumanComparator.CharType.TYPE_DIGIT,
                                                 HumanComparator.CharType.TYPE_OTHER };
         comparator.setSortOrder( sortOrder );
         Assertions.assertTrue( comparator.compare( "a c", "a1c" ) > 0 );
@@ -61,7 +61,7 @@ public class HumanComparatorTest
             comparator.setSortOrder( sortOrder );
             Assertions.fail( "Expected IllegalArgumentException" );
         }
-        catch( IllegalArgumentException e )
+        catch( final IllegalArgumentException e )
         {
             // All worked
         }
@@ -70,7 +70,7 @@ public class HumanComparatorTest
     @Test
     public void testCompare()
     {
-        Comparator<String> comparator = new HumanComparator();
+        final Comparator<String> comparator = new HumanComparator();
 
         Assertions.assertTrue( comparator.compare( "abcd001", "ABCD001" ) > 0 );
         Assertions.assertTrue( comparator.compare( "abcd001a", "ABCD001z" ) < 0 );

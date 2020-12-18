@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 
@@ -38,25 +39,25 @@ public class TextUtilTest {
     @Test
     public void testEncodeName_1() {
         final String name = "Hello/World";
-        Assertions.assertEquals( "Hello/World", TextUtil.urlEncode(name,"ISO-8859-1") );
+        Assertions.assertEquals( "Hello/World", TextUtil.urlEncode(name, StandardCharsets.ISO_8859_1.name()) );
     }
 
     @Test
     public void testEncodeName_2() {
         final String name = "Hello~World";
-        Assertions.assertEquals( "Hello%7EWorld", TextUtil.urlEncode(name,"ISO-8859-1") );
+        Assertions.assertEquals( "Hello%7EWorld", TextUtil.urlEncode(name,StandardCharsets.ISO_8859_1.name()) );
     }
 
     @Test
     public void testEncodeName_3() {
         final String name = "Hello/World ~";
-        Assertions.assertEquals( "Hello/World+%7E", TextUtil.urlEncode(name,"ISO-8859-1") );
+        Assertions.assertEquals( "Hello/World+%7E", TextUtil.urlEncode(name,StandardCharsets.ISO_8859_1.name()) );
     }
 
     @Test
     public void testDecodeName_1() {
         final String name = "Hello/World+%7E+%2F";
-        Assertions.assertEquals( "Hello/World ~ /", TextUtil.urlDecode(name,"ISO-8859-1") );
+        Assertions.assertEquals( "Hello/World ~ /", TextUtil.urlDecode(name,StandardCharsets.ISO_8859_1.name()) );
     }
 
     @Test

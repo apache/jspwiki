@@ -134,7 +134,7 @@ public final class GroupPermission extends Permission implements Serializable
      * all wikis and groups (*:*) and set of actions.
      * @param actions
      */
-    private GroupPermission( String actions )
+    private GroupPermission(final String actions )
     {
         this( WILDCARD + WIKI_SEPARATOR + WILDCARD, actions );
     }
@@ -147,14 +147,14 @@ public final class GroupPermission extends Permission implements Serializable
      * @param group the wiki group
      * @param actions the allowed actions for this group
      */
-    public GroupPermission( String group, String actions )
+    public GroupPermission(final String group, final String actions )
     {
         super( group );
 
         // Parse wiki and group (which may include wiki name and group)
         // Strip out attachment separator; it is irrelevant.
-        String[] pathParams = group.split( WIKI_SEPARATOR );
-        String groupName;
+        final String[] pathParams = group.split( WIKI_SEPARATOR );
+        final String groupName;
         if ( pathParams.length >= 2 )
         {
             m_wiki = pathParams[0].length() > 0 ? pathParams[0] : null;
@@ -171,7 +171,7 @@ public final class GroupPermission extends Permission implements Serializable
         final String[] groupActions = actions.toLowerCase().split( ACTION_SEPARATOR );
         Arrays.sort( groupActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
-        StringBuilder buffer = new StringBuilder();
+        final StringBuilder buffer = new StringBuilder();
         final int groupActionsLength = groupActions.length;
         for( int i = 0; i < groupActionsLength; i++ )
         {
@@ -191,13 +191,13 @@ public final class GroupPermission extends Permission implements Serializable
      * @return the result of the comparison
      * @see java.lang.Object#equals(java.lang.Object)
      */
-    public boolean equals( Object obj )
+    public boolean equals(final Object obj )
     {
         if ( !( obj instanceof GroupPermission ) )
         {
             return false;
         }
-        GroupPermission p = (GroupPermission) obj;
+        final GroupPermission p = (GroupPermission) obj;
         return  p.m_mask == m_mask && p.m_group.equals( m_group ) && p.m_wiki != null && p.m_wiki.equals( m_wiki );
     }
 
@@ -242,7 +242,7 @@ public final class GroupPermission extends Permission implements Serializable
         // If the wiki has not been set, uses a dummy value for the hashcode
         // calculation. This may occur if the page given does not refer
         // to any particular wiki
-        String wiki =  m_wiki != null ? m_wiki : "dummy_value";
+        final String wiki =  m_wiki != null ? m_wiki : "dummy_value";
         return m_mask + ( ( 13 * m_actionString.hashCode() ) * 23 * wiki.hashCode() );
     }
 
@@ -269,7 +269,7 @@ public final class GroupPermission extends Permission implements Serializable
      * supplied Permission; <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
-    public boolean implies( Permission permission )
+    public boolean implies(final Permission permission )
     {
         // Permission must be a GroupPermission
         if ( !( permission instanceof GroupPermission ) )
@@ -278,8 +278,8 @@ public final class GroupPermission extends Permission implements Serializable
         }
 
         // Build up an "implied mask"
-        GroupPermission p = (GroupPermission) permission;
-        int impliedMask = impliedMask( m_mask );
+        final GroupPermission p = (GroupPermission) permission;
+        final int impliedMask = impliedMask( m_mask );
 
         // If actions aren't a proper subset, return false
         if ( ( impliedMask & p.m_mask ) != p.m_mask )
@@ -288,11 +288,11 @@ public final class GroupPermission extends Permission implements Serializable
         }
 
         // See if the tested permission's wiki is implied
-        boolean impliedWiki = PagePermission.isSubset( m_wiki, p.m_wiki );
+        final boolean impliedWiki = PagePermission.isSubset( m_wiki, p.m_wiki );
 
         // If this page is "*", the tested permission's
         // group is implied, unless implied permission has <groupmember> token
-        boolean impliedGroup;
+        final boolean impliedGroup;
         if ( MEMBER_TOKEN.equals( p.m_group ) )
         {
             impliedGroup = MEMBER_TOKEN.equals( m_group );
@@ -304,7 +304,7 @@ public final class GroupPermission extends Permission implements Serializable
 
         // See if this permission is <groupmember> and Subject possesses
         // GroupPrincipal matching the implied GroupPermission's group
-        boolean impliedMember = impliesMember( p );
+        final boolean impliedMember = impliesMember( p );
 
         return  impliedWiki && ( impliedGroup || impliedMember );
     }
@@ -316,7 +316,7 @@ public final class GroupPermission extends Permission implements Serializable
      */
     public String toString()
     {
-        String wiki = ( m_wiki == null ) ? "" : m_wiki;
+        final String wiki = ( m_wiki == null ) ? "" : m_wiki;
         return "(\"" + this.getClass().getName() + "\",\"" + wiki + WIKI_SEPARATOR + m_group + "\",\"" + getActions()
                 + "\")";
     }
@@ -353,8 +353,8 @@ public final class GroupPermission extends Permission implements Serializable
             throw new IllegalArgumentException( "Actions cannot be blank or null" );
         }
         int mask = 0;
-        String[] actionList = actions.split( ACTION_SEPARATOR );
-        for( String action : actionList )
+        final String[] actionList = actions.split( ACTION_SEPARATOR );
+        for( final String action : actionList )
         {
             if ( action.equalsIgnoreCase( VIEW_ACTION ) )
             {
@@ -464,13 +464,13 @@ public final class GroupPermission extends Permission implements Serializable
      *         GroupPrincipal matching the implied GroupPermission&#8217;s group;
      *         <code>false</code> otherwise
      */
-    protected boolean impliesMember( Permission permission )
+    protected boolean impliesMember(final Permission permission )
     {
         if ( !( permission instanceof GroupPermission ) )
         {
             return false;
         }
-        GroupPermission gp = (GroupPermission) permission;
+        final GroupPermission gp = (GroupPermission) permission;
         if ( !MEMBER_TOKEN.equals( m_group ) )
         {
             return false;
@@ -478,15 +478,15 @@ public final class GroupPermission extends Permission implements Serializable
 
         // For the current thread, retrieve the SubjectDomainCombiner
         // (if one was used to create current AccessControlContext )
-        AccessControlContext acc = AccessController.getContext();
-        DomainCombiner dc = acc.getDomainCombiner();
+        final AccessControlContext acc = AccessController.getContext();
+        final DomainCombiner dc = acc.getDomainCombiner();
         if ( dc != null && dc instanceof SubjectDomainCombiner )
         {
             // <member> implies permission if subject possesses
             // GroupPrincipal with same name as target
-            Subject subject = ( (SubjectDomainCombiner) dc ).getSubject();
-            Set<GroupPrincipal> principals = subject.getPrincipals( GroupPrincipal.class );
-            for( Principal principal : principals )
+            final Subject subject = ( (SubjectDomainCombiner) dc ).getSubject();
+            final Set<GroupPrincipal> principals = subject.getPrincipals( GroupPrincipal.class );
+            for( final Principal principal : principals )
             {
                 if ( principal.getName().equals( gp.m_group ) )
                 {

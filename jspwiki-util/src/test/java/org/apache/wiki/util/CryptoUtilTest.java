@@ -21,6 +21,7 @@ package org.apache.wiki.util;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import org.junit.jupiter.api.Assertions;
@@ -33,13 +34,13 @@ public class CryptoUtilTest
     public void testCommandLineHash() throws Exception
     {
         // Save old printstream
-        PrintStream oldOut = System.out;
+        final PrintStream oldOut = System.out;
 
         // Swallow System out and get command output
-        OutputStream out = new ByteArrayOutputStream();
+        final OutputStream out = new ByteArrayOutputStream();
         System.setOut( new PrintStream( out ) );
         CryptoUtil.main( new String[] { "--hash", "password" } );
-        String output = new String( out.toString() );
+        final String output = new String( out.toString() );
 
         // Restore old printstream
         System.setOut( oldOut );
@@ -52,14 +53,14 @@ public class CryptoUtilTest
     public void testCommandLineNoVerify() throws Exception
     {
         // Save old printstream
-        PrintStream oldOut = System.out;
+        final PrintStream oldOut = System.out;
 
         // Swallow System out and get command output
-        OutputStream out = new ByteArrayOutputStream();
+        final OutputStream out = new ByteArrayOutputStream();
         System.setOut( new PrintStream( out ) );
         // Supply a bogus password
         CryptoUtil.main( new String[] { "--verify", "password", "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" } );
-        String output = new String( out.toString() );
+        final String output = new String( out.toString() );
 
         // Restore old printstream
         System.setOut( oldOut );
@@ -75,7 +76,7 @@ public class CryptoUtilTest
         try {
             CryptoUtil.main( new String[] { "--verify", "password", "yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" } );
         }
-        catch (IllegalArgumentException e)
+        catch (final IllegalArgumentException e)
         {
             // Excellent; we expected an error
         }
@@ -85,13 +86,13 @@ public class CryptoUtilTest
     public void testCommandLineVerify() throws Exception
     {
         // Save old printstream
-        PrintStream oldOut = System.out;
+        final PrintStream oldOut = System.out;
 
         // Swallow System out and get command output
-        OutputStream out = new ByteArrayOutputStream();
+        final OutputStream out = new ByteArrayOutputStream();
         System.setOut( new PrintStream( out ) );
         CryptoUtil.main( new String[] { "--verify", "testing123", "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" } );
-        String output = new String( out.toString() );
+        final String output = new String( out.toString() );
 
         // Restore old printstream
         System.setOut( oldOut );
@@ -133,9 +134,9 @@ public class CryptoUtilTest
     @Test
     public void testMultipleHashes() throws Exception
     {
-        String p1 = CryptoUtil.getSaltedPassword( "password".getBytes() );
-        String p2 = CryptoUtil.getSaltedPassword( "password".getBytes() );
-        String p3 = CryptoUtil.getSaltedPassword( "password".getBytes() );
+        final String p1 = CryptoUtil.getSaltedPassword( "password".getBytes() );
+        final String p2 = CryptoUtil.getSaltedPassword( "password".getBytes() );
+        final String p3 = CryptoUtil.getSaltedPassword( "password".getBytes() );
         Assertions.assertNotSame( p1, p2 );
         Assertions.assertNotSame( p2, p3 );
         Assertions.assertNotSame( p1, p3 );
@@ -145,8 +146,8 @@ public class CryptoUtilTest
     public void testSaltedPasswordLength() throws Exception
     {
         // Generate a hash with a known password and salt
-        byte[] password = "mySooperRandomPassword".getBytes();
-        String hash = CryptoUtil.getSaltedPassword( password, "salt".getBytes() );
+        final byte[] password = "mySooperRandomPassword".getBytes();
+        final String hash = CryptoUtil.getSaltedPassword( password, "salt".getBytes() );
 
         // slappasswd says that a 4-byte salt should give us 6 chars for prefix
         // + 20 chars for the hash + 12 for salt (38 total)
@@ -158,7 +159,7 @@ public class CryptoUtilTest
         byte[] password;
 
         // Verify with a known digest
-        password = "testing123".getBytes("UTF-8");
+        password = "testing123".getBytes(StandardCharsets.UTF_8.name());
         Assertions.assertTrue( CryptoUtil.verifySaltedPassword( password, "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" ) );
 
         // Verify with two more known digests

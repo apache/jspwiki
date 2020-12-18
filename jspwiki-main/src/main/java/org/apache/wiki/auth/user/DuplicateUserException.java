@@ -30,12 +30,12 @@ public final class DuplicateUserException extends WikiI18nException
 {
     private static final long serialVersionUID = 3258125851953674032L;
 
-    public DuplicateUserException( String message )
+    public DuplicateUserException(final String message )
     {
         super( message, ( Object[] )null );
     }
 
-    public DuplicateUserException( String message, Object... args )
+    public DuplicateUserException(final String message, final Object... args )
     {
         super( message, args );
     }

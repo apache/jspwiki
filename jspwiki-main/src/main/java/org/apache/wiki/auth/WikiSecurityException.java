@@ -35,7 +35,7 @@ public class WikiSecurityException
      *  Constructs an exception.
      *  @param msg the message to supply to the exception
      */
-    public WikiSecurityException( String msg )
+    public WikiSecurityException(final String msg )
     {
         super( msg );
     }
@@ -45,7 +45,7 @@ public class WikiSecurityException
      *  @param msg the message to supply to the exception
      *  @param cause the cause
      */
-    public WikiSecurityException( String msg, Throwable cause )
+    public WikiSecurityException(final String msg, final Throwable cause )
     {
         super( msg, cause );
     }

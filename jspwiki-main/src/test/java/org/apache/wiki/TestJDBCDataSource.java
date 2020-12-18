@@ -70,7 +70,7 @@ public class TestJDBCDataSource implements DataSource
      * @param file the properties file containing JDBC properties
      * @throws Exception
      */
-    public TestJDBCDataSource( File file ) throws Exception
+    public TestJDBCDataSource(final File file ) throws Exception
     {
         super();
         initializeJDBC( file );
@@ -94,12 +94,12 @@ public class TestJDBCDataSource implements DataSource
      * java.lang.String)
      */
     @Override
-    public Connection getConnection( String username, String password ) throws SQLException
+    public Connection getConnection(final String username, final String password ) throws SQLException
     {
-        Properties connProperties = new Properties();
+        final Properties connProperties = new Properties();
         connProperties.put( "user", m_jdbcUser );
         connProperties.put( "password", m_jdbcPassword );
-        Connection connection = m_driver.connect( m_jdbcURL, connProperties );
+        final Connection connection = m_driver.connect( m_jdbcURL, connProperties );
         return connection;
     }
 
@@ -131,7 +131,7 @@ public class TestJDBCDataSource implements DataSource
      * @see javax.sql.DataSource#setLoginTimeout(int)
      */
     @Override
-    public void setLoginTimeout( int seconds ) throws SQLException
+    public void setLoginTimeout(final int seconds ) throws SQLException
     {
         this.m_timeout = seconds;
     }
@@ -142,7 +142,7 @@ public class TestJDBCDataSource implements DataSource
      * @see javax.sql.DataSource#setLogWriter(java.io.PrintWriter)
      */
     @Override
-    public void setLogWriter( PrintWriter out ) throws SQLException
+    public void setLogWriter(final PrintWriter out ) throws SQLException
     {
         this.m_writer = out;
     }
@@ -164,12 +164,12 @@ public class TestJDBCDataSource implements DataSource
      * @param file the file containing the JDBC properties
      * @throws SQLException
      */
-    protected void initializeJDBC( File file ) throws Exception
+    protected void initializeJDBC(final File file ) throws Exception
     {
         // Load the properties JDBC properties file
-        Properties properties;
+        final Properties properties;
         properties = new Properties();
-        FileInputStream is = new FileInputStream( file );
+        final FileInputStream is = new FileInputStream( file );
         properties.load( is );
         is.close();
         m_jdbcURL = properties.getProperty( PROPERTY_DRIVER_URL );
@@ -177,35 +177,35 @@ public class TestJDBCDataSource implements DataSource
         m_jdbcPassword = properties.getProperty( PROPERTY_USER_PASSWORD );
 
         // Identifiy the class and JAR we need to load
-        String clazz = properties.getProperty( PROPERTY_DRIVER_CLASS );
-        String driverFile = properties.getProperty( PROPERTY_DRIVER_JAR );
+        final String clazz = properties.getProperty( PROPERTY_DRIVER_CLASS );
+        final String driverFile = properties.getProperty( PROPERTY_DRIVER_JAR );
 
         // Construct an URL for loading the file
         final URL driverURL = new URL( "file:" + driverFile );
 
         // Load the driver using the sytem class loader
         final ClassLoader parent = ClassLoader.getSystemClassLoader();
-        URLClassLoader loader = AccessController.doPrivileged( new PrivilegedAction<URLClassLoader>() {
+        final URLClassLoader loader = AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() {
             @Override
             public URLClassLoader run() {
                 return new URLClassLoader( new URL[] { driverURL }, parent );
             }
         });
-        Class< ? > driverClass = loader.loadClass( clazz );
+        final Class< ? > driverClass = loader.loadClass( clazz );
 
         // Cache the driver
         m_driver = (Driver) driverClass.newInstance();
     }
 
     @Override
-    public boolean isWrapperFor( Class<?> arg0 ) throws SQLException
+    public boolean isWrapperFor(final Class<?> arg0 ) throws SQLException
     {
         // unused interface methods required for JDK 6
         return false;
     }
 
     @Override
-    public <T> T unwrap( Class<T> arg0 ) throws SQLException
+    public <T> T unwrap(final Class<T> arg0 ) throws SQLException
     {
         // unused interface methods required for JDK 6
         return null;

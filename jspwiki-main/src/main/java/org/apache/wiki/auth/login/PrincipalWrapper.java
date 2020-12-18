@@ -34,7 +34,7 @@ public final class PrincipalWrapper implements Principal
      * the supplied principal.
      * @param principal The principal to wrap
      */
-    public PrincipalWrapper( Principal principal )
+    public PrincipalWrapper(final Principal principal )
     {
         m_principal = principal;
     }
@@ -66,7 +66,7 @@ public final class PrincipalWrapper implements Principal
      *  @return True, if the wrapped object is also equal to our wrapped object.
      */
     @Override
-    public boolean equals( Object obj )
+    public boolean equals(final Object obj )
     {
         if ( ! ( obj instanceof PrincipalWrapper ) )
         {

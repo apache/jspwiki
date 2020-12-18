@@ -30,7 +30,7 @@ public class WikiAjaxServletTest {
 
     @Test
     public void testServlets() throws Exception {
-        String[] paths = new String[] {
+        final String[] paths = new String[] {
                 "/ajax/MyPlugin",
                 "/ajax/MyPlugin/",
                 "/ajax/MyPlugin/Friend",
@@ -42,15 +42,15 @@ public class WikiAjaxServletTest {
                 "http://localhost:8080/ajax/MyPlugin#hashCode?param=123&param=231" };
 
         Assertions.assertEquals(9,paths.length);
-        WikiAjaxDispatcherServlet wikiAjaxDispatcherServlet = new WikiAjaxDispatcherServlet();
-        for (String path : paths) {
-            String servletName = wikiAjaxDispatcherServlet.getServletName(path);
+        final WikiAjaxDispatcherServlet wikiAjaxDispatcherServlet = new WikiAjaxDispatcherServlet();
+        for (final String path : paths) {
+            final String servletName = wikiAjaxDispatcherServlet.getServletName(path);
             Assertions.assertEquals("MyPlugin", servletName);
         }
 
         // The plugin SampleAjaxPlugin
         WikiAjaxDispatcherServlet.registerServlet(new SampleAjaxPlugin());
-        WikiAjaxServlet servlet = wikiAjaxDispatcherServlet.findServletByName("SampleAjaxPlugin");
+        final WikiAjaxServlet servlet = wikiAjaxDispatcherServlet.findServletByName("SampleAjaxPlugin");
         Assertions.assertNotNull(servlet);
         Assertions.assertTrue(servlet instanceof SampleAjaxPlugin);
 
@@ -61,7 +61,7 @@ public class WikiAjaxServletTest {
         Assertions.assertTrue(servlet2 instanceof RPCServlet);
         */
 
-        WikiAjaxServlet servlet3 = wikiAjaxDispatcherServlet.findServletByName("TestWikiNonAjaxServlet");
+        final WikiAjaxServlet servlet3 = wikiAjaxDispatcherServlet.findServletByName("TestWikiNonAjaxServlet");
         Assertions.assertNull(servlet3);
     }
 

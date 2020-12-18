@@ -43,10 +43,10 @@ public class AllPermissionCollectionTest
     @Test
     public void testAddAllPermission()
     {
-        AllPermission all1 = new AllPermission( "*" );
-        AllPermission all2 = new AllPermission( "JSPWiki" );
-        AllPermission all3 = new AllPermission( "myWiki" );
-        AllPermission all4 = new AllPermission( "*" );
+        final AllPermission all1 = new AllPermission( "*" );
+        final AllPermission all2 = new AllPermission( "JSPWiki" );
+        final AllPermission all3 = new AllPermission( "myWiki" );
+        final AllPermission all4 = new AllPermission( "*" );
 
         c_all.add( all1 );
         Assertions.assertEquals( 1, count( c_all ) );
@@ -65,10 +65,10 @@ public class AllPermissionCollectionTest
     @Test
     public void testAddPagePermission()
     {
-        PagePermission p1 = new PagePermission( "JSPWiki:Main", "edit" );
-        PagePermission p2 = new PagePermission( "JSPWiki:GroupAdmin", "edit" );
-        PagePermission p3 = new PagePermission( "JSPWiki:Foobar", "delete" );
-        PagePermission p4 = new PagePermission( "JSPWiki:Main", "edit" );
+        final PagePermission p1 = new PagePermission( "JSPWiki:Main", "edit" );
+        final PagePermission p2 = new PagePermission( "JSPWiki:GroupAdmin", "edit" );
+        final PagePermission p3 = new PagePermission( "JSPWiki:Foobar", "delete" );
+        final PagePermission p4 = new PagePermission( "JSPWiki:Main", "edit" );
 
         c_all.add( p1 );
         Assertions.assertEquals( 1, count( c_all ) );
@@ -87,10 +87,10 @@ public class AllPermissionCollectionTest
     @Test
     public void testAddWikiPermission()
     {
-        WikiPermission p1 = new WikiPermission( "JSPWiki", "login" );
-        WikiPermission p2 = new WikiPermission( "JSPWiki", "createGroups" );
-        WikiPermission p3 = new WikiPermission( "JSPWiki", "editPreferences" );
-        WikiPermission p4 = new WikiPermission( "JSPWiki", "login" );
+        final WikiPermission p1 = new WikiPermission( "JSPWiki", "login" );
+        final WikiPermission p2 = new WikiPermission( "JSPWiki", "createGroups" );
+        final WikiPermission p3 = new WikiPermission( "JSPWiki", "editPreferences" );
+        final WikiPermission p4 = new WikiPermission( "JSPWiki", "login" );
 
         c_all.add( p1 );
         Assertions.assertEquals( 1, count( c_all ) );
@@ -109,8 +109,8 @@ public class AllPermissionCollectionTest
     @Test
     public void testReadOnly()
     {
-        AllPermission all1 = new AllPermission( "*" );
-        AllPermission all2 = new AllPermission( "JSPWiki" );
+        final AllPermission all1 = new AllPermission( "*" );
+        final AllPermission all2 = new AllPermission( "JSPWiki" );
 
         Assertions.assertFalse( c_all.isReadOnly() );
         c_all.add( all1 );
@@ -125,7 +125,7 @@ public class AllPermissionCollectionTest
         {
             c_all.add( all2 );
         }
-        catch( SecurityException e )
+        catch( final SecurityException e )
         {
             exception = true;
         }
@@ -140,10 +140,10 @@ public class AllPermissionCollectionTest
     @Test
     public void testImpliesAllPermission()
     {
-        AllPermission all1 = new AllPermission( "JSPWiki" );
-        AllPermission all2 = new AllPermission( "myWiki" );
-        AllPermission all3 = new AllPermission( "big*" );
-        AllPermission all4 = new AllPermission( "*" );
+        final AllPermission all1 = new AllPermission( "JSPWiki" );
+        final AllPermission all2 = new AllPermission( "myWiki" );
+        final AllPermission all3 = new AllPermission( "big*" );
+        final AllPermission all4 = new AllPermission( "*" );
 
         c_all.add( all1 );
         Assertions.assertTrue( c_all.implies( new AllPermission( "JSPWiki" ) ) );
@@ -172,8 +172,8 @@ public class AllPermissionCollectionTest
     @Test
     public void testImpliesPagePermission()
     {
-        AllPermission all1 = new AllPermission( "JSPWiki" );
-        AllPermission all2 = new AllPermission( "*" );
+        final AllPermission all1 = new AllPermission( "JSPWiki" );
+        final AllPermission all2 = new AllPermission( "*" );
 
         c_all.add( all1 );
         Assertions.assertTrue( c_all.implies( new PagePermission( "JSPWiki:Main", "edit" ) ) );
@@ -193,8 +193,8 @@ public class AllPermissionCollectionTest
     @Test
     public void testImpliesWikiPermission()
     {
-        AllPermission all1 = new AllPermission( "JSPWiki" );
-        AllPermission all2 = new AllPermission( "*" );
+        final AllPermission all1 = new AllPermission( "JSPWiki" );
+        final AllPermission all2 = new AllPermission( "*" );
 
         c_all.add( all1 );
         Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
@@ -214,10 +214,10 @@ public class AllPermissionCollectionTest
     @Test
     public void testImpliesMixedPermissions()
     {
-        Permission p1 = new AllPermission( "JSPWiki" );
-        Permission p2 = new WikiPermission( "myWiki", "editPreferences" );
-        Permission p3 = new PagePermission( "bigTimeWiki:FooBar", "modify" );
-        Permission p4 = new AllPermission( "*" );
+        final Permission p1 = new AllPermission( "JSPWiki" );
+        final Permission p2 = new WikiPermission( "myWiki", "editPreferences" );
+        final Permission p3 = new PagePermission( "bigTimeWiki:FooBar", "modify" );
+        final Permission p4 = new AllPermission( "*" );
 
         c_all.add( p1 );
         Assertions.assertTrue( c_all.implies( new WikiPermission( "JSPWiki", "login" ) ) );
@@ -260,10 +260,10 @@ public class AllPermissionCollectionTest
         Assertions.assertTrue( c_all.implies( new PagePermission( "bigTimeWiki:Bar", "delete" ) ) );
     }
 
-    private int count( AllPermissionCollection collection )
+    private int count(final AllPermissionCollection collection )
     {
         int i = 0;
-        Enumeration< Permission > perms = collection.elements();
+        final Enumeration< Permission > perms = collection.elements();
         while( perms.hasMoreElements() )
         {
             perms.nextElement();

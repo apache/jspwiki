@@ -54,7 +54,7 @@ public abstract class WikiLinkTag extends WikiTagBase {
         m_format = ANCHOR;
     }
     
-    public void setPage( String page )
+    public void setPage(final String page )
     {
         m_pageName = page;
     }
@@ -70,12 +70,12 @@ public abstract class WikiLinkTag extends WikiTagBase {
         return m_template;
     }
 
-    public void setTemplate( String arg )
+    public void setTemplate(final String arg )
     {
         m_template = arg;
     }
 
-    public void setFormat( String mode )
+    public void setFormat(final String mode )
     {
         if( "url".equalsIgnoreCase(mode) )
         {
@@ -96,7 +96,7 @@ public abstract class WikiLinkTag extends WikiTagBase {
                 pageContext.getOut().print("</a>");
             }
         }
-        catch( IOException e )
+        catch( final IOException e )
         {
             // FIXME: Should do something?
         }

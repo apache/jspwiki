@@ -64,7 +64,7 @@ public class CheckRequestContextTag
      *  
      *  @param arg One of the RequestsContexts.
      */
-    public void setContext( String arg )
+    public void setContext(final String arg )
     {
         m_context = arg;
         
@@ -81,9 +81,9 @@ public class CheckRequestContextTag
     {
         for(int i = 0; i < m_contextList.length; i++ )
         {
-            String ctx = m_wikiContext.getRequestContext();
+            final String ctx = m_wikiContext.getRequestContext();
             
-            String checkedCtx = m_contextList[i];
+            final String checkedCtx = m_contextList[i];
 
             if( checkedCtx.length() > 0 )
             {

@@ -38,7 +38,7 @@ public class HttpRequestCallback implements Callback
      * Sets the request object. CallbackHandler objects call this method..
      * @param request the servlet request
      */
-    public void setRequest( HttpServletRequest request )
+    public void setRequest(final HttpServletRequest request )
     {
         m_request = request;
     }

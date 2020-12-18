@@ -40,8 +40,8 @@ public class PageSorterTest
     public void testPageSorterBadProperty()
     {
         // Initialised with a broken property
-        PageSorter sorter = new PageSorter();
-        Properties props = new Properties();
+        final PageSorter sorter = new PageSorter();
+        final Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, "haha.this.isnt.a.class" );
         sorter.initialize( props );
         Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
@@ -51,7 +51,7 @@ public class PageSorterTest
     public void testPageSorterDefaultConstructor()
     {
         // Check uninitialised behaviour
-        PageSorter sorter = new PageSorter();
+        final PageSorter sorter = new PageSorter();
         Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }
 
@@ -59,8 +59,8 @@ public class PageSorterTest
     public void testPageSorterHumanComparator()
     {
         // Initialised with the human comparator
-        PageSorter sorter = new PageSorter();
-        Properties props = new Properties();
+        final PageSorter sorter = new PageSorter();
+        final Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, HumanComparator.class.getPackage().getName() + ".HumanComparator" );
         sorter.initialize( props );
         Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) < 0 );
@@ -73,8 +73,8 @@ public class PageSorterTest
     public void testPageSorterLocaleComparator()
     {
         // Initialised with the human comparator
-        PageSorter sorter = new PageSorter();
-        Properties props = new Properties();
+        final PageSorter sorter = new PageSorter();
+        final Properties props = new Properties();
         props.put( PageSorter.PROP_PAGE_NAME_COMPARATOR, LocaleComparator.class.getPackage().getName() + ".LocaleComparator" );
         sorter.initialize( props );
         Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
@@ -87,8 +87,8 @@ public class PageSorterTest
     public void testPageSorterNoProperty()
     {
         // Initialised without the necessary property
-        PageSorter sorter = new PageSorter();
-        Properties props = new Properties();
+        final PageSorter sorter = new PageSorter();
+        final Properties props = new Properties();
         sorter.initialize( props );
         Assertions.assertTrue( sorter.compare( "ab2", "ab10" ) > 0 );
     }

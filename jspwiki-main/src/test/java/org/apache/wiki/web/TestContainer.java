@@ -88,10 +88,10 @@ public class TestContainer
      * @param args the command-line arguments
      * @throws Exception - you know, just in case.
      */
-    public static void main( String[] args ) throws Exception
+    public static void main(final String[] args ) throws Exception
     {
         // Extract key-value pairs that represent test contexts and directories
-        Map<String, String> apps = extractApps( args );
+        final Map<String, String> apps = extractApps( args );
         if( apps.size() == 0 )
         {
             throw new IllegalArgumentException( "No apps supplied!" );
@@ -100,11 +100,11 @@ public class TestContainer
         // If we get here, then everything parsed ok...
 
         // Create a new server and load up the webapps
-        TestContainer container = new TestContainer();
-        for( Map.Entry<String, String> app : apps.entrySet() )
+        final TestContainer container = new TestContainer();
+        for( final Map.Entry<String, String> app : apps.entrySet() )
         {
-            String context = app.getKey();
-            String path = app.getValue();
+            final String context = app.getKey();
+            final String path = app.getValue();
             log.error( "Adding context " + context + " at path " + path );
             container.addWebApp( context, path );
         }
@@ -115,7 +115,7 @@ public class TestContainer
         m_hu.setUp();
 
         // Create the connection pool
-        JDBCDataSource cpds = new JDBCDataSource();
+        final JDBCDataSource cpds = new JDBCDataSource();
         cpds.setDatabase( "jdbc:hsqldb:hsql://localhost/jspwiki" );
         cpds.setLoginTimeout( 10 );
         cpds.setUser( "SA" );
@@ -136,14 +136,14 @@ public class TestContainer
         {
             log.error( "Starting up test container." );
             container.server.setHandler( handlerCollection );
-            Handler[] currentHandlers = container.server.getHandlers();
+            final Handler[] currentHandlers = container.server.getHandlers();
             log.error( "dumping current handlers" );
-            for( Handler handler : currentHandlers )
+            for( final Handler handler : currentHandlers )
             {
                 if( handler instanceof HandlerCollection )
                 {
-                    Handler[] collection = ((HandlerCollection) handler).getHandlers();
-                    for( Handler h : collection )
+                    final Handler[] collection = ((HandlerCollection) handler).getHandlers();
+                    for( final Handler h : collection )
                     {
                         log.error( "handler: " + h );
                     }
@@ -151,7 +151,7 @@ public class TestContainer
             }
             container.start();
         }
-        catch( Throwable t )
+        catch( final Throwable t )
         {
             // userDB.unbindENC();
             // groupDB.unbindENC();
@@ -161,12 +161,12 @@ public class TestContainer
         }
     }
 
-    private static Map<String, String> extractApps( String[] args )
+    private static Map<String, String> extractApps(final String[] args )
     {
-        Map<String, String> apps = new HashMap<String, String>();
+        final Map<String, String> apps = new HashMap<String, String>();
         for( int i = 0; i < args.length; i++ )
         {
-            String[] pair = args[i].split( "=" );
+            final String[] pair = args[i].split( "=" );
 
             // Right length?
             if( pair.length != 2 )
@@ -182,8 +182,8 @@ public class TestContainer
             }
 
             // Extract and verify the path
-            String path = pair[1].trim();
-            File file = new File( path );
+            final String path = pair[1].trim();
+            final File file = new File( path );
             if( !file.exists() )
             {
                 throw new IllegalArgumentException( "Path " + path + " does not exist." );
@@ -225,7 +225,7 @@ public class TestContainer
         {
             initCtx.lookup( JNDI_ENV_ROOT );
         }
-        catch ( NameNotFoundException e )
+        catch ( final NameNotFoundException e )
         {
             initCtx.bind( JNDI_ENV_ROOT, new NamingContext(new Hashtable<String, Object>(), JNDI_ENV_ROOT, null, new InitialContextFactory.DefaultParser()) );
             log.error( "No JNDI " + JNDI_ENV_ROOT + " namespace found; creating it," );
@@ -239,7 +239,7 @@ public class TestContainer
         server.setStopAtShutdown( true );
         
         // Create HTTP listener
-        SocketConnector connector = new SocketConnector();
+        final SocketConnector connector = new SocketConnector();
         connector.setHost( "localhost" );
         connector.setPort( HTTP_PORT );
         connector.setMaxIdleTime( 60000 );
@@ -248,7 +248,7 @@ public class TestContainer
         log.info( "added HTTP listener for port " + HTTP_PORT );
 
         // add the shutdown handler
-        ContextHandler shutDownContextHandler = new ContextHandler(SHUTDOWN_CMD);
+        final ContextHandler shutDownContextHandler = new ContextHandler(SHUTDOWN_CMD);
         shutDownContextHandler.setHandler( new ShutdownHandler());
         handlerCollection.addHandler( shutDownContextHandler );
      }
@@ -260,17 +260,17 @@ public class TestContainer
      * @param path the file path for the WAR file, or expanded WAR directory
      * @throws IOException
      */
-    public void addWebApp( String context, String path ) throws IOException
+    public void addWebApp(final String context, final String path ) throws IOException
     {
         // Set the default users and roles for the realm (note that realm name *must* match web.xml <realm-name>
-        HashLoginService loginService = new HashLoginService( "JSPWikiRealm" );
+        final HashLoginService loginService = new HashLoginService( "JSPWikiRealm" );
         loginService.putUser( Users.ADMIN, new Password(Users.ADMIN_PASS), new String[] {"Authenticated", "Admin"} );
         loginService.putUser( Users.JANNE, new Password(Users.JANNE_PASS), new String[] {"Authenticated"} );
 
-        WebAppContext webAppContext = new WebAppContext(path, context);
+        final WebAppContext webAppContext = new WebAppContext(path, context);
 
         // Add a security handler.
-        SecurityHandler csh = new ConstraintSecurityHandler();
+        final SecurityHandler csh = new ConstraintSecurityHandler();
         csh.setLoginService( loginService );
         webAppContext.setSecurityHandler( csh );
 
@@ -299,7 +299,7 @@ public class TestContainer
             server.stop();
             log.error("jetty server stopped");
         }
-        catch( Exception ex )
+        catch( final Exception ex )
         {
             throw new RuntimeException( ex );
         }
@@ -314,7 +314,7 @@ public class TestContainer
     public static final class ShutdownHandler extends AbstractHandler
     {
 
-        public void handle( String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response )
+        public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response )
                                                                                                                           throws IOException,
                                                                                                                               ServletException
         {

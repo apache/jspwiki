@@ -51,20 +51,20 @@ public class WebContainerLoginModuleTest
     @Test
     public final void testLogin()
     {
-        Principal principal = new WikiPrincipal( "Andrew Jaquith" );
-        MockHttpServletRequest request = m_engine.newHttpRequest();
+        final Principal principal = new WikiPrincipal( "Andrew Jaquith" );
+        final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.setUserPrincipal( principal );
         try
         {
             // Test using Principal (WebContainerLoginModule succeeds)
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
-            LoginModule module = new WebContainerLoginModule();
+            final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
+            final LoginModule module = new WebContainerLoginModule();
             module.initialize( m_subject, handler,
                               new HashMap<String, Object>(),
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set< Principal > principals = m_subject.getPrincipals();
+            final Set< Principal > principals = m_subject.getPrincipals();
             Assertions.assertEquals( 1, principals.size() );
             Assertions.assertTrue(  principals.contains( principal ) );
             Assertions.assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -72,7 +72,7 @@ public class WebContainerLoginModuleTest
             Assertions.assertFalse( principals.contains( Role.AUTHENTICATED ) );
             Assertions.assertFalse( principals.contains( Role.ALL ) );
         }
-        catch( LoginException e )
+        catch( final LoginException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );
@@ -82,19 +82,19 @@ public class WebContainerLoginModuleTest
     @Test
     public final void testLogout()
     {
-        Principal principal = new WikiPrincipal( "Andrew Jaquith" );
-        MockHttpServletRequest request = m_engine.newHttpRequest();
+        final Principal principal = new WikiPrincipal( "Andrew Jaquith" );
+        final MockHttpServletRequest request = m_engine.newHttpRequest();
         request.setUserPrincipal( principal );
         try
         {
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
-            LoginModule module = new WebContainerLoginModule();
+            final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
+            final LoginModule module = new WebContainerLoginModule();
             module.initialize( m_subject, handler,
                               new HashMap<String, Object>(),
                               new HashMap<String, Object>());
             module.login();
             module.commit();
-            Set< Principal > principals = m_subject.getPrincipals();
+            final Set< Principal > principals = m_subject.getPrincipals();
             Assertions.assertEquals( 1, principals.size() );
             Assertions.assertTrue( principals.contains( principal ) );
             Assertions.assertFalse( principals.contains( Role.AUTHENTICATED ) );
@@ -102,7 +102,7 @@ public class WebContainerLoginModuleTest
             module.logout();
             Assertions.assertEquals( 0, principals.size() );
         }
-        catch( LoginException e )
+        catch( final LoginException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );
@@ -112,7 +112,7 @@ public class WebContainerLoginModuleTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
         m_engine = new TestEngine(props);
         m_db = new XMLUserDatabase();
@@ -121,7 +121,7 @@ public class WebContainerLoginModuleTest
         {
             m_db.initialize( m_engine, props );
         }
-        catch( NoRequiredPropertyException e )
+        catch( final NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );

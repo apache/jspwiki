@@ -47,8 +47,8 @@ public class XMLGroupDatabaseTest
     @BeforeEach
     public void setUp() throws Exception {
 
-      Properties props = TestEngine.getTestProperties();
-      WikiEngine engine  = new TestEngine( props );
+      final Properties props = TestEngine.getTestProperties();
+      final WikiEngine engine  = new TestEngine( props );
       m_db = new XMLGroupDatabase();
       m_db.initialize( engine, props );
       m_wiki = engine.getApplicationName();
@@ -57,13 +57,13 @@ public class XMLGroupDatabaseTest
     @Test
     public void testDelete() throws WikiException {
       // First, count the number of groups in the db now.
-      int oldUserCount = m_db.groups().length;
+      final int oldUserCount = m_db.groups().length;
 
       // Create a new group with random name
-      String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
+      final String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
       Group group = new Group( name, m_wiki );
-      Principal al = new WikiPrincipal( "Al" );
-      Principal bob = new WikiPrincipal( "Bob" );
+      final Principal al = new WikiPrincipal( "Al" );
+      final Principal bob = new WikiPrincipal( "Bob" );
       group.add( al );
       group.add( bob );
       m_db.save(group, new WikiPrincipal( "Tester") );
@@ -81,7 +81,7 @@ public class XMLGroupDatabaseTest
     @Test
     public void testGroups() throws WikiSecurityException {
       // Test file has 4 groups in it: TV, Literature, Art, and Admin
-      Group[] groups = m_db.groups();
+      final Group[] groups = m_db.groups();
       Assertions.assertEquals( 4, groups.length );
 
       Group group;
@@ -114,7 +114,7 @@ public class XMLGroupDatabaseTest
           // We should never get here
           Assertions.assertTrue(false);
       }
-      catch (NoSuchPrincipalException e)
+      catch (final NoSuchPrincipalException e)
       {
           Assertions.assertTrue(true);
       }
@@ -123,11 +123,11 @@ public class XMLGroupDatabaseTest
     @Test
     public void testSave() throws Exception {
       // Create a new group with random name
-      String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
+      final String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
       Group group = new Group( name, m_wiki );
-      Principal al = new WikiPrincipal( "Al" );
-      Principal bob = new WikiPrincipal( "Bob" );
-      Principal cookie = new WikiPrincipal( "Cookie" );
+      final Principal al = new WikiPrincipal( "Al" );
+      final Principal bob = new WikiPrincipal( "Bob" );
+      final Principal cookie = new WikiPrincipal( "Cookie" );
       group.add( al );
       group.add( bob );
       group.add( cookie );
@@ -157,11 +157,11 @@ public class XMLGroupDatabaseTest
     @Test
     public void testResave() throws Exception {
       // Create a new group with random name & 3 members
-      String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
+      final String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
       Group group = new Group( name, m_wiki );
-      Principal al = new WikiPrincipal( "Al" );
-      Principal bob = new WikiPrincipal( "Bob" );
-      Principal cookie = new WikiPrincipal( "Cookie" );
+      final Principal al = new WikiPrincipal( "Al" );
+      final Principal bob = new WikiPrincipal( "Bob" );
+      final Principal cookie = new WikiPrincipal( "Cookie" );
       group.add( al );
       group.add( bob );
       group.add( cookie );
@@ -172,7 +172,7 @@ public class XMLGroupDatabaseTest
       Assertions.assertEquals( name, group.getName() );
 
       // Modify the members by adding the group; re-add Al while we're at it
-      Principal dave = new WikiPrincipal( "Dave" );
+      final Principal dave = new WikiPrincipal( "Dave" );
       group.add( al );
       group.add( dave );
       m_db.save(group, new WikiPrincipal( "SecondTester" ) );
@@ -202,12 +202,12 @@ public class XMLGroupDatabaseTest
       m_db.delete( group );
   }
 
-  private Group backendGroup( String name ) throws WikiSecurityException
+  private Group backendGroup(final String name ) throws WikiSecurityException
   {
-      Group[] groups = m_db.groups();
+      final Group[] groups = m_db.groups();
       for ( int i = 0; i < groups.length; i++ )
       {
-          Group group = groups[i];
+          final Group group = groups[i];
           if ( group.getName().equals( name ) )
           {
               return group;

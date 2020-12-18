@@ -32,7 +32,7 @@ public class ForgetNullValuesLinkedHashMap<K,V> extends LinkedHashMap<K,V>
      *  {@inheritDoc}
      */
     @Override
-    public V put( K key, V value )
+    public V put(final K key, final V value )
     {
         if( value != null )
         {

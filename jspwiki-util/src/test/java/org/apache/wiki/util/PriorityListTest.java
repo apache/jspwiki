@@ -27,7 +27,7 @@ public class PriorityListTest
     @Test
     public void testInsert()
     {
-        PriorityList< String > p = new PriorityList< String >();
+        final PriorityList< String > p = new PriorityList< String >();
 
         p.add( "One", 1 );
         p.add( "Two", 2 );
@@ -45,7 +45,7 @@ public class PriorityListTest
     @Test
     public void testInsertSame()
     {
-        PriorityList< String > p = new PriorityList< String >();
+        final PriorityList< String > p = new PriorityList< String >();
 
         p.add( "One", 1 );
         p.add( "Two", 1 );
@@ -59,7 +59,7 @@ public class PriorityListTest
     @Test
     public void testInsertSame2()
     {
-        PriorityList< String > p = new PriorityList< String >();
+        final PriorityList< String > p = new PriorityList< String >();
 
         p.add( "One", 1 );
         p.add( "Two", 2 );
@@ -84,7 +84,7 @@ public class PriorityListTest
     @Test
     public void testInsertSame3()
     {
-        PriorityList< String > p = new PriorityList< String >();
+        final PriorityList< String > p = new PriorityList< String >();
 
         p.add( "One", 1 );
         p.add( "Two", 2 );

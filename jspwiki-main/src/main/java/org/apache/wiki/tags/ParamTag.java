@@ -53,7 +53,7 @@ public class ParamTag
      *  
      *  @param s The name.
      */
-    public void setName( String s ) 
+    public void setName(final String s )
     {
         m_name = s;
     }
@@ -63,7 +63,7 @@ public class ParamTag
      *  
      *  @param s The value.
      */
-    public void setValue( String s ) 
+    public void setValue(final String s )
     {
         m_value = s;
     }
@@ -85,7 +85,7 @@ public class ParamTag
             String val = m_value;
             if( val == null )
             {
-                BodyContent bc = getBodyContent();
+                final BodyContent bc = getBodyContent();
                 if( bc != null ) 
                 {
                     val = bc.getString();

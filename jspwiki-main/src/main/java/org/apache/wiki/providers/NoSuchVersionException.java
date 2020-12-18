@@ -33,7 +33,7 @@ public class NoSuchVersionException
      *
      *  @param msg the exception message.
      */
-    public NoSuchVersionException( String msg )
+    public NoSuchVersionException(final String msg )
     {
         super( msg );
     }

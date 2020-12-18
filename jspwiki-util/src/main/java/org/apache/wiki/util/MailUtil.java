@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Properties;
 
@@ -267,20 +268,20 @@ public final class MailUtil {
      * @throws AddressException If the address is invalid
      * @throws MessagingException If the message cannot be sent.
      */
-    public static void sendMessage( Properties props, String to, String subject, String content)
+    public static void sendMessage(final Properties props, final String to, final String subject, final String content)
         throws AddressException, MessagingException
     {
-        Session session = getMailSession( props );
+        final Session session = getMailSession( props );
         getSenderEmailAddress(session, props);
 
         try
         {
             // Create and address the message
-            MimeMessage msg = new MimeMessage(session);
+            final MimeMessage msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(c_fromAddress));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
-            msg.setSubject(subject, "UTF-8");
-            msg.setText(content, "UTF-8");
+            msg.setSubject(subject, StandardCharsets.UTF_8.name());
+            msg.setText(content, StandardCharsets.UTF_8.name());
             msg.setSentDate(new Date());
 
             // Send and log it
@@ -291,7 +292,7 @@ public final class MailUtil {
                          + (c_useJndi ? "JNDI" : "standalone") + " mail session.");
             }
         }
-        catch (MessagingException e)
+        catch (final MessagingException e)
         {
             log.error(e);
             throw e;
@@ -307,7 +308,7 @@ public final class MailUtil {
      * @param pProperties <code>Properties</code>
      * @return <code>String</code>
      */
-    protected static String getSenderEmailAddress(Session pSession, Properties pProperties)
+    protected static String getSenderEmailAddress(final Session pSession, final Properties pProperties)
     {
         if( c_fromAddress == null )
         {
@@ -341,10 +342,10 @@ public final class MailUtil {
      * @param props a the properties that contain mail session properties
      * @return <code>Session</code>
      */
-    private static Session getMailSession(Properties props)
+    private static Session getMailSession(final Properties props)
     {
         Session result = null;
-        String jndiName = props.getProperty(PROP_MAIL_JNDI_NAME, DEFAULT_MAIL_JNDI_NAME).trim();
+        final String jndiName = props.getProperty(PROP_MAIL_JNDI_NAME, DEFAULT_MAIL_JNDI_NAME).trim();
 
         if (c_useJndi)
         {
@@ -355,7 +356,7 @@ public final class MailUtil {
             {
                 result = getJNDIMailSession(jndiName);
             }
-            catch (NamingException e)
+            catch (final NamingException e)
             {
                 // Oops! JNDI factory must not be set up
                 c_useJndi = false;
@@ -384,19 +385,19 @@ public final class MailUtil {
      * @param props the properties that contain mail session properties
      * @return the initialized JavaMail Session
      */
-    protected static Session getStandaloneMailSession( Properties props ) {
+    protected static Session getStandaloneMailSession(final Properties props ) {
         // Read the JSPWiki settings from the properties
-        String host     = props.getProperty( PROP_MAIL_HOST, DEFAULT_MAIL_HOST );
-        String port     = props.getProperty( PROP_MAIL_PORT, DEFAULT_MAIL_PORT );
-        String account  = props.getProperty( PROP_MAIL_ACCOUNT );
-        String password = props.getProperty( PROP_MAIL_PASSWORD );
-        String timeout  = props.getProperty( PROP_MAIL_TIMEOUT, DEFAULT_MAIL_TIMEOUT);
-        String conntimeout = props.getProperty( PROP_MAIL_CONNECTION_TIMEOUT, DEFAULT_MAIL_CONN_TIMEOUT );
-        boolean starttls = TextUtil.getBooleanProperty( props, PROP_MAIL_STARTTLS, true);
+        final String host     = props.getProperty( PROP_MAIL_HOST, DEFAULT_MAIL_HOST );
+        final String port     = props.getProperty( PROP_MAIL_PORT, DEFAULT_MAIL_PORT );
+        final String account  = props.getProperty( PROP_MAIL_ACCOUNT );
+        final String password = props.getProperty( PROP_MAIL_PASSWORD );
+        final String timeout  = props.getProperty( PROP_MAIL_TIMEOUT, DEFAULT_MAIL_TIMEOUT);
+        final String conntimeout = props.getProperty( PROP_MAIL_CONNECTION_TIMEOUT, DEFAULT_MAIL_CONN_TIMEOUT );
+        final boolean starttls = TextUtil.getBooleanProperty( props, PROP_MAIL_STARTTLS, true);
         
-        boolean useAuthentication = account != null && account.length() > 0;
+        final boolean useAuthentication = account != null && account.length() > 0;
 
-        Properties mailProps = new Properties();
+        final Properties mailProps = new Properties();
 
         // Set JavaMail properties
         mailProps.put( PROP_MAIL_HOST, host );
@@ -410,7 +411,7 @@ public final class MailUtil {
         if ( useAuthentication )
         {
             mailProps.put( PROP_MAIL_AUTH, TRUE );
-            SmtpAuthenticator auth = new SmtpAuthenticator( account, password );
+            final SmtpAuthenticator auth = new SmtpAuthenticator( account, password );
 
             session = Session.getInstance( mailProps, auth );
         }
@@ -421,7 +422,7 @@ public final class MailUtil {
 
         if ( log.isDebugEnabled() )
         {
-            String mailServer = host + ":" + port + ", account=" + account + ", password not displayed, timeout="
+            final String mailServer = host + ":" + port + ", account=" + account + ", password not displayed, timeout="
             + timeout + ", connectiontimeout=" + conntimeout + ", starttls.enable=" + starttls
             + ", use authentication=" + ( useAuthentication ? TRUE : FALSE );
             log.debug( "JavaMail session obtained from standalone mail factory: " + mailServer );
@@ -437,16 +438,16 @@ public final class MailUtil {
      * @return the initialized JavaMail Session
      * @throws NamingException if the Session cannot be obtained; for example, if the factory is not configured
      */
-    protected static Session getJNDIMailSession( String jndiName ) throws NamingException
+    protected static Session getJNDIMailSession(final String jndiName ) throws NamingException
     {
         Session session = null;
         try
         {
-            Context initCtx = new InitialContext();
-            Context ctx = (Context) initCtx.lookup( JAVA_COMP_ENV );
+            final Context initCtx = new InitialContext();
+            final Context ctx = (Context) initCtx.lookup( JAVA_COMP_ENV );
             session = (Session) ctx.lookup( jndiName );
         }
-        catch( NamingException e )
+        catch( final NamingException e )
         {
             log.warn( "JNDI mail session initialization error: " + e.getMessage() );
             throw e;
@@ -473,7 +474,7 @@ public final class MailUtil {
          * @param login the user name
          * @param pass the password
          */
-        public SmtpAuthenticator(String login, String pass)
+        public SmtpAuthenticator(final String login, final String pass)
         {
             super();
             m_login =   login == null ? BLANK : login;

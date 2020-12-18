@@ -82,7 +82,7 @@ public class UserDatabaseLoginModuleTest
             Assertions.assertFalse( principals.contains( Role.AUTHENTICATED ) );
             Assertions.assertFalse( principals.contains( Role.ALL ) );
         }
-        catch( LoginException e )
+        catch( final LoginException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );
@@ -94,14 +94,14 @@ public class UserDatabaseLoginModuleTest
     {
         try
         {
-            CallbackHandler handler = new WikiCallbackHandler( m_engine, null, "user", "password" );
-            LoginModule module = new UserDatabaseLoginModule();
+            final CallbackHandler handler = new WikiCallbackHandler( m_engine, null, "user", "password" );
+            final LoginModule module = new UserDatabaseLoginModule();
             module.initialize( m_subject, handler,
                               new HashMap<String, Object>(),
                               new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set< Principal > principals = m_subject.getPrincipals();
+            final Set< Principal > principals = m_subject.getPrincipals();
             Assertions.assertEquals( 1, principals.size() );
             Assertions.assertTrue( principals.contains( new WikiPrincipal( "user",  WikiPrincipal.LOGIN_NAME ) ) );
             Assertions.assertFalse( principals.contains( Role.AUTHENTICATED ) );
@@ -109,7 +109,7 @@ public class UserDatabaseLoginModuleTest
             module.logout();
             Assertions.assertEquals( 0, principals.size() );
         }
-        catch( LoginException e )
+        catch( final LoginException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );
@@ -122,7 +122,7 @@ public class UserDatabaseLoginModuleTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
         m_engine  = new TestEngine(props);
         m_db = new XMLUserDatabase();
@@ -131,7 +131,7 @@ public class UserDatabaseLoginModuleTest
         {
             m_db.initialize( m_engine, props );
         }
-        catch( NoRequiredPropertyException e )
+        catch( final NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );

@@ -139,9 +139,9 @@ public final class CryptoUtil
      *         <code>{SSHA}</code>.
      * @throws NoSuchAlgorithmException If your JVM is completely b0rked and does not have SHA.
      */
-    public static String getSaltedPassword( byte[] password ) throws NoSuchAlgorithmException
+    public static String getSaltedPassword(final byte[] password ) throws NoSuchAlgorithmException
     {
-        byte[] salt = new byte[DEFAULT_SALT_SIZE];
+        final byte[] salt = new byte[DEFAULT_SALT_SIZE];
         RANDOM.nextBytes( salt );
         return getSaltedPassword( password, salt );
     }
@@ -164,14 +164,14 @@ public final class CryptoUtil
      * @return the Base64-encoded password hash, prepended by <code>{SSHA}</code>.
      * @throws NoSuchAlgorithmException If your JVM is totally b0rked and does not have SHA1.
      */
-    protected static String getSaltedPassword( byte[] password, byte[] salt ) throws NoSuchAlgorithmException
+    protected static String getSaltedPassword(final byte[] password, final byte[] salt ) throws NoSuchAlgorithmException
     {
-        MessageDigest digest = MessageDigest.getInstance( "SHA" );
+        final MessageDigest digest = MessageDigest.getInstance( "SHA" );
         digest.update( password );
-        byte[] hash = digest.digest( salt );
+        final byte[] hash = digest.digest( salt );
 
         // Create an array with the hash plus the salt
-        byte[] all = new byte[hash.length + salt.length];
+        final byte[] all = new byte[hash.length + salt.length];
         for( int i = 0; i < hash.length; i++ )
         {
             all[i] = hash[i];
@@ -180,7 +180,7 @@ public final class CryptoUtil
         {
             all[hash.length + i] = salt[i];
         }
-        byte[] base64 = Base64.getEncoder().encode( all );
+        final byte[] base64 = Base64.getEncoder().encode( all );
         
         return SSHA + new String( base64, StandardCharsets.UTF_8 );
     }
@@ -193,23 +193,23 @@ public final class CryptoUtil
      *  @return True, if the password matches.
      *  @throws NoSuchAlgorithmException If there is no SHA available.
      */
-    public static boolean verifySaltedPassword( byte[] password, String entry ) throws NoSuchAlgorithmException
+    public static boolean verifySaltedPassword(final byte[] password, final String entry ) throws NoSuchAlgorithmException
     {
         // First, extract everything after {SSHA} and decode from Base64
         if( !entry.startsWith( SSHA ) )
         {
             throw new IllegalArgumentException( "Hash not prefixed by {SSHA}; is it really a salted hash?" );
         }
-        byte[] challenge = Base64.getDecoder().decode( entry.substring( 6 ).getBytes( StandardCharsets.UTF_8 ) );
+        final byte[] challenge = Base64.getDecoder().decode( entry.substring( 6 ).getBytes( StandardCharsets.UTF_8 ) );
 
         // Extract the password hash and salt
-        byte[] passwordHash = extractPasswordHash( challenge );
-        byte[] salt = extractSalt( challenge );
+        final byte[] passwordHash = extractPasswordHash( challenge );
+        final byte[] salt = extractSalt( challenge );
 
         // Re-create the hash using the password and the extracted salt
-        MessageDigest digest = MessageDigest.getInstance( "SHA" );
+        final MessageDigest digest = MessageDigest.getInstance( "SHA" );
         digest.update( password );
-        byte[] hash = digest.digest( salt );
+        final byte[] hash = digest.digest( salt );
 
         // See if our extracted hash matches what we just re-created
         return Arrays.equals( passwordHash, hash );
@@ -225,7 +225,7 @@ public final class CryptoUtil
      * @throws IllegalArgumentException if the length of the supplied digest is
      *             less than or equal to 20 bytes
      */
-    protected static byte[] extractPasswordHash( byte[] digest ) throws IllegalArgumentException
+    protected static byte[] extractPasswordHash(final byte[] digest ) throws IllegalArgumentException
     {
         if( digest.length < 20 )
         {
@@ -233,7 +233,7 @@ public final class CryptoUtil
         }
 
         // Extract the password hash
-        byte[] hash = new byte[20];
+        final byte[] hash = new byte[20];
         for( int i = 0; i < 20; i++ )
         {
             hash[i] = digest[i];
@@ -252,7 +252,7 @@ public final class CryptoUtil
      * @throws IllegalArgumentException if the length of the supplied digest is
      *             less than or equal to 20 bytes
      */
-    protected static byte[] extractSalt( byte[] digest ) throws IllegalArgumentException
+    protected static byte[] extractSalt(final byte[] digest ) throws IllegalArgumentException
     {
         if( digest.length <= 20 )
         {
@@ -260,7 +260,7 @@ public final class CryptoUtil
         }
 
         // Extract the salt
-        byte[] salt = new byte[digest.length - 20];
+        final byte[] salt = new byte[digest.length - 20];
         for( int i = 20; i < digest.length; i++ )
         {
             salt[i - 20] = digest[i];

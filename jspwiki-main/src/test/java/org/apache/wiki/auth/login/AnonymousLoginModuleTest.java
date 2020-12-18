@@ -52,22 +52,22 @@ public class AnonymousLoginModuleTest
     @Test
     public final void testLogin()
     {
-        HttpServletRequest request = m_engine.newHttpRequest();
+        final HttpServletRequest request = m_engine.newHttpRequest();
         try
         {
             // Test using IP address (AnonymousLoginModule succeeds)
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
-            LoginModule module = new AnonymousLoginModule();
+            final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
+            final LoginModule module = new AnonymousLoginModule();
             module.initialize( m_subject, handler, new HashMap<String, Object>(), new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set< Principal > principals = m_subject.getPrincipals();
+            final Set< Principal > principals = m_subject.getPrincipals();
             Assertions.assertEquals( 1, principals.size() );
             Assertions.assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             Assertions.assertFalse( principals.contains( Role.ANONYMOUS ) );
             Assertions.assertFalse( principals.contains( Role.ALL ) );
         }
-        catch( LoginException e )
+        catch( final LoginException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );
@@ -77,17 +77,17 @@ public class AnonymousLoginModuleTest
     @Test
     public final void testLogout()
     {
-        HttpServletRequest request = m_engine.newHttpRequest();
+        final HttpServletRequest request = m_engine.newHttpRequest();
         try
         {
-            CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
-            LoginModule module = new AnonymousLoginModule();
+            final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
+            final LoginModule module = new AnonymousLoginModule();
             module.initialize( m_subject, handler,
                               new HashMap<String, Object>(),
                               new HashMap<String, Object>() );
             module.login();
             module.commit();
-            Set< Principal > principals = m_subject.getPrincipals();
+            final Set< Principal > principals = m_subject.getPrincipals();
             Assertions.assertEquals( 1, principals.size() );
             Assertions.assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             Assertions.assertFalse( principals.contains( Role.ANONYMOUS ) );
@@ -95,7 +95,7 @@ public class AnonymousLoginModuleTest
             module.logout();
             Assertions.assertEquals( 0, principals.size() );
         }
-        catch( LoginException e )
+        catch( final LoginException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );
@@ -108,7 +108,7 @@ public class AnonymousLoginModuleTest
     @BeforeEach
     public void setUp() throws Exception
     {
-        Properties props = TestEngine.getTestProperties();
+        final Properties props = TestEngine.getTestProperties();
         props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
         m_engine = new TestEngine(props);
         m_db = new XMLUserDatabase();
@@ -117,7 +117,7 @@ public class AnonymousLoginModuleTest
         {
             m_db.initialize( m_engine, props );
         }
-        catch( NoRequiredPropertyException e )
+        catch( final NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
             Assertions.assertTrue( false );

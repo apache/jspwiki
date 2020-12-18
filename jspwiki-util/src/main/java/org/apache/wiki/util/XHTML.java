@@ -179,7 +179,7 @@ public enum XHTML
      *  the character number <tt>num</tt> for the range 160-255. Throws an 
      *  ArrayOutOfBoundsException if beyond the prescribed range.
      */
-    public static String getNamedCharacterEntity( int num )
+    public static String getNamedCharacterEntity(final int num )
     {
         return CHARACTER_ENTITIES[num-160];
     }

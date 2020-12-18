@@ -142,7 +142,7 @@ public final class FileUtil {
      *  @throws IOException If reading or writing failed.
      */
     public static void copyContents( final Reader in, final Writer out ) throws IOException {
-        char[] buf = new char[BUFFER_SIZE];
+        final char[] buf = new char[BUFFER_SIZE];
         int bytesRead;
         while( ( bytesRead = in.read( buf ) ) > 0 ) {
             out.write( buf, 0, bytesRead );
@@ -160,7 +160,7 @@ public final class FileUtil {
      *  @throws IOException In case reading or writing fails.
      */
     public static void copyContents( final InputStream in, final OutputStream out ) throws IOException {
-        byte[] buf = new byte[BUFFER_SIZE];
+        final byte[] buf = new byte[BUFFER_SIZE];
         int bytesRead;
         while( ( bytesRead = in.read( buf ) ) > 0 ) {
             out.write( buf, 0, bytesRead );
@@ -170,7 +170,7 @@ public final class FileUtil {
 
         // FileOutputStream.flush is an empty method, so in this case we grab the underlying file descriptor and force from there thw write to disk
         if( out instanceof FileOutputStream ) {
-            FileDescriptor fd = ( ( FileOutputStream )out ).getFD();
+            final FileDescriptor fd = ( ( FileOutputStream )out ).getFD();
             fd.sync();
         }
     }
@@ -187,30 +187,30 @@ public final class FileUtil {
      *  @throws IOException If the stream cannot be read or the stream cannot be
      *          decoded (even) in Latin1
      */
-    public static String readContents( InputStream input, String encoding )
+    public static String readContents(final InputStream input, final String encoding )
         throws IOException
     {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
         FileUtil.copyContents( input, out );
 
         ByteBuffer     bbuf        = ByteBuffer.wrap( out.toByteArray() );
 
-        Charset        cset        = Charset.forName( encoding );
-        CharsetDecoder csetdecoder = cset.newDecoder();
+        final Charset        cset        = Charset.forName( encoding );
+        final CharsetDecoder csetdecoder = cset.newDecoder();
 
         csetdecoder.onMalformedInput( CodingErrorAction.REPORT );
         csetdecoder.onUnmappableCharacter( CodingErrorAction.REPORT );
 
         try
         {
-            CharBuffer cbuf = csetdecoder.decode( bbuf );
+            final CharBuffer cbuf = csetdecoder.decode( bbuf );
 
             return cbuf.toString();
         }
-        catch( CharacterCodingException e )
+        catch( final CharacterCodingException e )
         {
-            Charset        latin1    = Charset.forName("ISO-8859-1");
-            CharsetDecoder l1decoder = latin1.newDecoder();
+            final Charset        latin1    = StandardCharsets.ISO_8859_1;
+            final CharsetDecoder l1decoder = latin1.newDecoder();
 
             l1decoder.onMalformedInput( CodingErrorAction.REPORT );
             l1decoder.onUnmappableCharacter( CodingErrorAction.REPORT );
@@ -219,11 +219,11 @@ public final class FileUtil {
             {
                 bbuf = ByteBuffer.wrap( out.toByteArray() );
 
-                CharBuffer cbuf = l1decoder.decode( bbuf );
+                final CharBuffer cbuf = l1decoder.decode( bbuf );
 
                 return cbuf.toString();
             }
-            catch( CharacterCodingException ex )
+            catch( final CharacterCodingException ex )
             {
                 throw (CharacterCodingException) ex.fillInStackTrace();
             }
@@ -239,7 +239,7 @@ public final class FileUtil {
      *  @throws IOException If reading fails.
      */
     public static String readContents( final Reader in ) throws IOException {
-        try( Writer out = new StringWriter() ) {
+        try(final Writer out = new StringWriter() ) {
             copyContents( in, out );
             return out.toString();
         }
@@ -253,10 +253,10 @@ public final class FileUtil {
      *  @return A human-readable string stating the class and method.  Do not rely
      *          the format to be anything fixed.
      */
-    public static String getThrowingMethod( Throwable t )
+    public static String getThrowingMethod(final Throwable t )
     {
-        StackTraceElement[] trace = t.getStackTrace();
-        StringBuilder sb = new StringBuilder();
+        final StackTraceElement[] trace = t.getStackTrace();
+        final StringBuilder sb = new StringBuilder();
 
         if( trace == null || trace.length == 0 )
         {

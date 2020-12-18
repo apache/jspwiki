@@ -57,15 +57,15 @@ public final class Serializer
      * @throws IOException if the contents cannot be parsed for any reason
      */
     @SuppressWarnings("unchecked")
-    public static Map< String, ? extends Serializable > deserializeFromBase64( String rawString ) throws IOException {
+    public static Map< String, ? extends Serializable > deserializeFromBase64(final String rawString ) throws IOException {
         // Decode from Base64-encoded String to byte array
-        byte[] decodedBytes = Base64.getDecoder().decode( rawString.getBytes( StandardCharsets.UTF_8 ) );
+        final byte[] decodedBytes = Base64.getDecoder().decode( rawString.getBytes( StandardCharsets.UTF_8 ) );
         
         // Deserialize from the input stream to the Map
-        InputStream bytesIn = new ByteArrayInputStream( decodedBytes );
-        try( ObjectInputStream in = new ObjectInputStream( bytesIn ) ) {
+        final InputStream bytesIn = new ByteArrayInputStream( decodedBytes );
+        try(final ObjectInputStream in = new ObjectInputStream( bytesIn ) ) {
             return ( HashMap< String, Serializable > )in.readObject();
-        } catch ( ClassNotFoundException e ) {
+        } catch ( final ClassNotFoundException e ) {
             throw new IOException( "Could not deserialiaze user profile attributes. Reason: " + e.getMessage() );
         }
     }
@@ -77,19 +77,19 @@ public final class Serializer
      * @return a String representing the serialized form of the Map
      * @throws IOException If serialization cannot be done
      */
-    public static String serializeToBase64( Map< String, Serializable > map ) throws IOException {
+    public static String serializeToBase64(final Map< String, Serializable > map ) throws IOException {
         // Load the Map contents into a defensive HashMap
-        Map< String, Serializable > serialMap = new HashMap<>();
+        final Map< String, Serializable > serialMap = new HashMap<>();
         serialMap.putAll( map );
         
         // Serialize the Map to an output stream
-        ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
-        ObjectOutputStream out = new ObjectOutputStream( bytesOut );
+        final ByteArrayOutputStream bytesOut = new ByteArrayOutputStream();
+        final ObjectOutputStream out = new ObjectOutputStream( bytesOut );
         out.writeObject( serialMap );
         out.close();
         
         // Transform to Base64-encoded String
-        byte[] result = Base64.getEncoder().encode( bytesOut.toByteArray() );
+        final byte[] result = Base64.getEncoder().encode( bytesOut.toByteArray() );
         return new String( result ) ;
     }
 

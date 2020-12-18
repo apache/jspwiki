@@ -32,9 +32,9 @@ public class AllPermissionTest
     @Test
     public void testEqualsObject()
     {
-        AllPermission p1 = new AllPermission( "*" );
-        AllPermission p2 = new AllPermission( "*" );
-        AllPermission p3 = new AllPermission( "myWiki" );
+        final AllPermission p1 = new AllPermission( "*" );
+        final AllPermission p2 = new AllPermission( "*" );
+        final AllPermission p3 = new AllPermission( "myWiki" );
         Assertions.assertTrue( p1.equals( p2 ) );
         Assertions.assertTrue( p2.equals( p1 ) );
         Assertions.assertFalse( p1.equals( p3 ) );
@@ -44,7 +44,7 @@ public class AllPermissionTest
     @Test
     public void testImpliesAllPermission()
     {
-        AllPermission p1 = new AllPermission( "*" );
+        final AllPermission p1 = new AllPermission( "*" );
         AllPermission p2 = new AllPermission( "*" );
         Assertions.assertTrue( p1.equals( p2 ) );
         Assertions.assertTrue( p2.equals( p1 ) );
@@ -57,7 +57,7 @@ public class AllPermissionTest
     @Test
     public void testImpliesPagePermission()
     {
-        AllPermission p1 = new AllPermission( "*" );
+        final AllPermission p1 = new AllPermission( "*" );
         PagePermission p2 = new PagePermission( "*:TestPage", "delete" );
         Assertions.assertTrue( p1.implies( p2 ) );
         Assertions.assertFalse( p2.implies( p1 ) );
@@ -78,7 +78,7 @@ public class AllPermissionTest
     @Test
     public void testImpliesWikiPermission()
     {
-        AllPermission p1 = new AllPermission( "*" );
+        final AllPermission p1 = new AllPermission( "*" );
         WikiPermission p2 = new WikiPermission( "*", "createPages" );
         Assertions.assertTrue( p1.implies( p2 ) );
         Assertions.assertFalse( p2.implies( p1 ) );
