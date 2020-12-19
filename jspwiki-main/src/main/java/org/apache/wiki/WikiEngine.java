@@ -611,7 +611,7 @@ public class WikiEngine implements Engine {
         try {
             return URLEncoder.encode( pagename, m_useUTF8 ? StandardCharsets.UTF_8.name() : StandardCharsets.ISO_8859_1.name() );
         } catch( final UnsupportedEncodingException e ) {
-                throw new InternalWikiException( "ISO-8859-1 not a supported encoding!?!  Your platform is borked." , e);
+            throw new InternalWikiException( "ISO-8859-1 not a supported encoding!?!  Your platform is borked." , e);
         }
     }
 
