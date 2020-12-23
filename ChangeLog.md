@@ -21,6 +21,9 @@ under the License.
 
 * _2.11.0-git-01_
 
+* [JSPWIKI-1135](https://issues.apache.org/jira/browse/JSPWIKI-1135) - Add dependabot config file
+    * Merged [PR #15](https://github.com/apache/jspwiki/pull/15), contributed by Arturo Bernal, thanks!
+
 * [JSPWIKI-1136](https://issues.apache.org/jira/browse/JSPWIKI-1136) - Refine Class member fields
     * Merged [PR #16](https://github.com/apache/jspwiki/pull/16), contributed by Arturo Bernal, thanks!
 
