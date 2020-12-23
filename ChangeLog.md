@@ -21,8 +21,11 @@ under the License.
 
 * _2.11.0-git-01_
 
-* [JSPWIKI-1136](https://issues.apache.org/jira/browse/JSPWIKI-1136 ) - Refine Class member fields 
+* [JSPWIKI-1136](https://issues.apache.org/jira/browse/JSPWIKI-1136) - Refine Class member fields
     * Merged [PR #16](https://github.com/apache/jspwiki/pull/16), contributed by Arturo Bernal, thanks!
+
+* [JSPWIKI-1137](https://issues.apache.org/jira/browse/JSPWIKI-1137) - Minor Improvement
+    * Merged [PR #17](https://github.com/apache/jspwiki/pull/17), contributed by Arturo Bernal, thanks!
 
 * Dependency updates
     * Gson to 2.8.6
