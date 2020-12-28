@@ -21,11 +21,16 @@ updates:
       interval: "daily"
     ignore:
       - dependency-name: javax.servlet:javax.servlet-api
-         versions: [3.2.0,)
+        versions: 
+          - ">= 3.2.0"
       - dependency-name: javax.servlet.jsp:javax.servlet.jsp-api
-         versions: [2.4.0,)
+        versions: 
+          - ">= 2.4.0"
       - dependency-name: org.apache.tomcat:*
-         versions: [10.0.0,)
+        versions: 
+          - ">= 10.0.0"
       - dependency-name: org.slf4j:*
-         versions: [1.8.0-beta1,2.0.0)
+        versions: 
+          - ">= 1.8.0-beta1"
+          - "< 2.0.0"
 
