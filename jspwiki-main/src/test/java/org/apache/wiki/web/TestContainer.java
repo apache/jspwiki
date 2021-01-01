@@ -18,19 +18,6 @@
  */
 package org.apache.wiki.web;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.log4j.Logger;
 import org.apache.wiki.HsqlDbUtils;
 import org.apache.wiki.auth.Users;
@@ -40,15 +27,24 @@ import org.eclipse.jetty.plus.jndi.Resource;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.bio.SocketConnector;
+import org.eclipse.jetty.security.UserStore;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.*;
 import org.eclipse.jetty.util.security.Password;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.hsqldb.jdbc.JDBCDataSource;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameNotFoundException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 
 /**
@@ -239,10 +235,10 @@ public class TestContainer
         server.setStopAtShutdown( true );
         
         // Create HTTP listener
-        final SocketConnector connector = new SocketConnector();
+        final NetworkTrafficServerConnector connector = new NetworkTrafficServerConnector( server );
         connector.setHost( "localhost" );
         connector.setPort( HTTP_PORT );
-        connector.setMaxIdleTime( 60000 );
+        connector.setIdleTimeout( 60_000 );
 
         server.setConnectors( new Connector[] {connector} );
         log.info( "added HTTP listener for port " + HTTP_PORT );
@@ -260,12 +256,13 @@ public class TestContainer
      * @param path the file path for the WAR file, or expanded WAR directory
      * @throws IOException
      */
-    public void addWebApp(final String context, final String path ) throws IOException
-    {
+    public void addWebApp( final String context, final String path ) {
         // Set the default users and roles for the realm (note that realm name *must* match web.xml <realm-name>
+        final UserStore userStore = new UserStore();
+        userStore.addUser( Users.ADMIN, new Password(Users.ADMIN_PASS), new String[] {"Authenticated", "Admin"} );
+        userStore.addUser( Users.JANNE, new Password(Users.JANNE_PASS), new String[] {"Authenticated"} );
         final HashLoginService loginService = new HashLoginService( "JSPWikiRealm" );
-        loginService.putUser( Users.ADMIN, new Password(Users.ADMIN_PASS), new String[] {"Authenticated", "Admin"} );
-        loginService.putUser( Users.JANNE, new Password(Users.JANNE_PASS), new String[] {"Authenticated"} );
+        loginService.setUserStore( userStore );
 
         final WebAppContext webAppContext = new WebAppContext(path, context);
 
@@ -276,7 +273,6 @@ public class TestContainer
 
         log.error( "Adding webapp " + context + " for path " + path );
         handlerCollection.addHandler( webAppContext );
-
     }
 
     /**
