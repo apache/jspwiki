@@ -321,7 +321,7 @@
               <dependency><!-- enable support with JDK >= 9, see https://sourceforge.net/p/launch4j/bugs/172/ and https://sourceforge.net/p/launch4j/bugs/206/ -->
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
-                <version>1.4.13</version>
+                <version>1.4.15</version>
               </dependency>
             </dependencies>
           </plugin>
