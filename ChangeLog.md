@@ -17,6 +17,18 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-01-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-02_
+
+* Dependency updates provided by dependabot (PRs [#18](https://github.com/apache/jspwiki/pull/18), 
+  [#19](https://github.com/apache/jspwiki/pull/19), [#20](https://github.com/apache/jspwiki/pull/20), 
+  [#21](https://github.com/apache/jspwiki/pull/21), [#22](https://github.com/apache/jspwiki/pull/22),
+  [#23](https://github.com/apache/jspwiki/pull/23), [#24](https://github.com/apache/jspwiki/pull/24),
+  [#25](https://github.com/apache/jspwiki/pull/25), [#26](https://github.com/apache/jspwiki/pull/26) and 
+  [#27](https://github.com/apache/jspwiki/pull/27)), most notably
+  * jsp-api to 2.3.3
+
 **2020-12-17  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-01_
