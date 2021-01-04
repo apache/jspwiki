@@ -668,6 +668,13 @@
             <jsDestinationFolder>${project.build.directory}/generated-sources/wro/scripts</jsDestinationFolder>
             <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
           </configuration>
+          <dependencies><!-- https://github.com/wro4j/wro4j/issues/1039#issuecomment-382474533 -->
+            <dependency>
+              <groupId>org.mockito</groupId>
+              <artifactId>mockito-core</artifactId>
+              <version>2.18.0</version>
+            </dependency>
+          </dependencies>
         </plugin>
 
         <plugin>
