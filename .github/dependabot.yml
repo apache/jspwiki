@@ -33,4 +33,6 @@ updates:
         versions: 
           - ">= 1.8.0-beta1"
           - "< 2.0.0"
-
+      - dependency-name: ro.isdc.wro4j:wro4j-maven-plugin
+        versions:
+          - ">= 1.9.0"

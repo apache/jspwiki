@@ -77,7 +77,7 @@
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>1.25</tika.version>
     <tomcat.version>9.0.41</tomcat.version>
-    <wro4j.version>1.10.1</wro4j.version>
+    <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
     <plugin.antrun.version>3.0.0</plugin.antrun.version>
