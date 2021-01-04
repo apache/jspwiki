@@ -25,9 +25,11 @@ under the License.
   [#19](https://github.com/apache/jspwiki/pull/19), [#20](https://github.com/apache/jspwiki/pull/20), 
   [#21](https://github.com/apache/jspwiki/pull/21), [#22](https://github.com/apache/jspwiki/pull/22),
   [#23](https://github.com/apache/jspwiki/pull/23), [#24](https://github.com/apache/jspwiki/pull/24),
-  [#25](https://github.com/apache/jspwiki/pull/25), [#26](https://github.com/apache/jspwiki/pull/26) and 
-  [#27](https://github.com/apache/jspwiki/pull/27)), most notably
+  [#25](https://github.com/apache/jspwiki/pull/25), [#26](https://github.com/apache/jspwiki/pull/26), 
+  [#27](https://github.com/apache/jspwiki/pull/27), [#28](https://github.com/apache/jspwiki/pull/28),
+  [#29](https://github.com/apache/jspwiki/pull/29) and [#30](https://github.com/apache/jspwiki/pull/30)), most notably
   * jsp-api to 2.3.3
+  * Selenide to 5.17.2
 
 **2020-12-17  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
