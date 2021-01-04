@@ -25,6 +25,8 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 
+import java.time.Duration;
+
 /**
  * Actions available on the View page.
  */
@@ -96,7 +98,7 @@ public class ViewWikiPage implements HaddockPage {
      * @return {@link EditWikiPage} instance, to allow chaining of actions.
      */
     public EditWikiPage editPage() {
-        Selenide.$( By.cssSelector( "li#edit a" ) ).waitUntil( Condition.visible, 1_000L ).click();
+        Selenide.$( By.cssSelector( "li#edit a" ) ).shouldBe( Condition.visible, Duration.ofSeconds( 1L ) ).click();
         return new EditWikiPage();
     }
 
@@ -122,7 +124,7 @@ public class ViewWikiPage implements HaddockPage {
     public ViewWikiPage clickOnLogout() {
         hoverLoginArea();
         Selenide.$( By.linkText( "Log out" ) ).click();
-        Selenide.$( By.className( "btn-success" ) ).waitUntil( Condition.visible, 1_000L ).click();
+        Selenide.$( By.className( "btn-success" ) ).shouldBe( Condition.visible, Duration.ofSeconds( 1L ) ).click();
         return this;
     }
 
