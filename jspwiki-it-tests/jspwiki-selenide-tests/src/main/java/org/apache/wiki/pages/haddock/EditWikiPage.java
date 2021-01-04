@@ -23,6 +23,8 @@ import com.codeborne.selenide.Selenide;
 import org.apache.wiki.pages.Page;
 import org.openqa.selenium.By;
 
+import java.time.Duration;
+
 /**
  * Actions available on the Edit page.
  */
@@ -70,7 +72,7 @@ public class EditWikiPage implements HaddockPage {
     public ViewWikiPage saveText(final String text, final String preview ) {
         Selenide.$( By.cssSelector( EDIT_TEXTAREA ) ).clear();
         Selenide.$( By.cssSelector( EDIT_TEXTAREA ) ).val( text );
-        Selenide.$( By.className( "ajaxpreview" ) ).waitUntil( Condition.text( preview ), 1_000L );
+        Selenide.$( By.className( "ajaxpreview" ) ).shouldBe( Condition.text( preview ), Duration.ofSeconds( 1L ) );
         Selenide.$( By.name( "ok" ) ).click();
         return new ViewWikiPage();
     }
