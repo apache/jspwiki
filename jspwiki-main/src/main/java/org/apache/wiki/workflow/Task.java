@@ -37,7 +37,7 @@ public abstract class Task extends AbstractStep {
 
     private static final long serialVersionUID = 4630293957752430807L;
 
-    private Step m_successor = null;
+    private Step m_successor;
 
     /**
      * Public constructor that creates a new Task with a specified message key. After construction, the protected method

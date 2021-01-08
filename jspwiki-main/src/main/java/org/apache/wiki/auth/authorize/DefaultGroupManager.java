@@ -68,7 +68,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
     protected WikiEventListener m_groupListener;
 
-    private GroupDatabase m_groupDatabase    = null;
+    private GroupDatabase m_groupDatabase;
 
     /** Map with GroupPrincipals as keys, and Groups as values */
     private final Map< Principal, Group > m_groups = new HashMap<>();

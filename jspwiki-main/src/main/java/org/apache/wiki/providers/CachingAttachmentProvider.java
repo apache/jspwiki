@@ -83,7 +83,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     public static final String DIR_EXTENSION   = "-att";
 
 
-    private boolean m_gotall = false;
+    private boolean m_gotall;
 
     /**
      * {@inheritDoc}

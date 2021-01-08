@@ -45,7 +45,7 @@ public class LinkToTag extends WikiLinkTag {
 
     private static final long serialVersionUID = 0L;
 
-    private String m_version = null;
+    private String m_version;
     public String m_title = "";
     public String m_accesskey = "";
 

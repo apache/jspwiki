@@ -63,13 +63,13 @@ public class Group {
 
     private final Vector<Principal>    m_members = new Vector<>();
 
-    private String          m_creator             = null;
+    private String          m_creator;
 
-    private Date            m_created             = null;
+    private Date            m_created;
 
-    private String          m_modifier            = null;
+    private String          m_modifier;
 
-    private Date            m_modified            = null;
+    private Date            m_modified;
 
     private final String    m_name;
 

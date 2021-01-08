@@ -58,7 +58,7 @@ public class TranslationsCheck {
 
     // Change these to your settings...
     String base = ".";
-    String suffix = null;
+    String suffix;
 
     public static void main( final String[] args ) throws IOException {
         final TranslationsCheck translations = new TranslationsCheck();
@@ -74,16 +74,14 @@ public class TranslationsCheck {
         }
 
         if( "site".equals( translations.suffix ) ) {
-            String site = "";
+            StringBuilder site = new StringBuilder();
             for( int i = 0; i < LANGS.length; i++ ) {
                 translations.suffix = LANGS[ i ];
-                site += translations.check( i );
+                site.append(translations.check(i));
             }
-            site += "</table>\n" + // close table and formatting divs
-                    "</div>\n" +
-                    "</div>\n" +
-                    "</div>";
-            Files.write( Paths.get( "./i18n-table.txt" ), site.getBytes( StandardCharsets.UTF_8 ) );
+            site.append("</table>\n" + // close table and formatting divs
+                    "</div>\n" + "</div>\n" + "</div>");
+            Files.write( Paths.get( "./i18n-table.txt" ), site.toString().getBytes( StandardCharsets.UTF_8 ) );
         } else {
             translations.check( -1 );
         }

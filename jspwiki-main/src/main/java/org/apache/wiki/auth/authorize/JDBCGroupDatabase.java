@@ -191,39 +191,39 @@ public class JDBCGroupDatabase implements GroupDatabase {
 
     protected static final Logger log = Logger.getLogger( JDBCGroupDatabase.class );
 
-    private DataSource m_ds = null;
+    private DataSource m_ds;
 
-    private String m_created = null;
+    private String m_created;
 
-    private String m_creator = null;
+    private String m_creator;
 
-    private String m_name = null;
+    private String m_name;
 
-    private String m_member = null;
+    private String m_member;
 
-    private String m_modified = null;
+    private String m_modified;
 
-    private String m_modifier = null;
+    private String m_modifier;
 
-    private String m_findAll = null;
+    private String m_findAll;
 
-    private String m_findGroup = null;
+    private String m_findGroup;
 
-    private String m_findMembers = null;
+    private String m_findMembers;
 
-    private String m_insertGroup = null;
+    private String m_insertGroup;
 
-    private String m_insertGroupMembers = null;
+    private String m_insertGroupMembers;
 
-    private String m_updateGroup = null;
+    private String m_updateGroup;
 
-    private String m_deleteGroup = null;
+    private String m_deleteGroup;
 
-    private String m_deleteGroupMembers = null;
+    private String m_deleteGroupMembers;
 
-    private boolean m_supportsCommits = false;
+    private boolean m_supportsCommits;
 
-    private Engine m_engine = null;
+    private Engine m_engine;
 
     /**
      * Looks up and deletes a {@link Group} from the group database. If the

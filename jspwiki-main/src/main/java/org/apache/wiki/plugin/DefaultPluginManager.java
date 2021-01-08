@@ -464,7 +464,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
         private String    m_ajaxAlias;
         private Class<?>  m_clazz;
 
-        private boolean m_initialized = false;
+        private boolean m_initialized;
 
         /**
          *  Creates a new plugin info object which can be used to access a plugin.

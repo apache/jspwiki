@@ -57,7 +57,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
     Set< Workflow > m_workflows;
     final Map< String, Principal > m_approvers;
     Queue< Workflow > m_completed;
-    private Engine m_engine = null;
+    private Engine m_engine;
     private int retainCompleted;
 
     /**

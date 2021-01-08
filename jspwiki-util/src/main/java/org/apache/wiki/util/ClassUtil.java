@@ -61,8 +61,8 @@ public final class ClassUtil {
     /** Initialize the class mappings extra document. */
     private static final Map< String, String > c_classMappingsExtra = populateClassMappingsFrom( MAPPINGS_EXTRA ) ;
 
-    private static boolean classLoaderSetup = false;
-    private static ClassLoader loader = null;
+    private static boolean classLoaderSetup;
+    private static ClassLoader loader;
 
     private static Map< String, String > populateClassMappingsFrom( final String fileLoc ) {
         final Map< String, String > map = new ConcurrentHashMap<>();

@@ -80,8 +80,7 @@ public class FormSet implements Plugin {
         //  invocation this might be coming from a cache; so we can't modify the original param string.
         //
         info.setName( formName );
-        final Map< String, String > hm = new HashMap<>();
-        hm.putAll( params );
+        final Map<String, String> hm = new HashMap<>(params);
         hm.remove( FormElement.PARAM_FORM );
         info.addSubmission( hm );
         

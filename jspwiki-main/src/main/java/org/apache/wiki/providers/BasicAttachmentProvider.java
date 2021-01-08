@@ -87,7 +87,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
      * Disable client cache for files with patterns
      * since 2.5.96
      */
-    private Pattern m_disableCache = null;
+    private Pattern m_disableCache;
     
     /** The property name for specifying which attachments are not cached.  Value is <tt>{@value}</tt>. */
     public static final String PROP_DISABLECACHE = "jspwiki.basicAttachmentProvider.disableCache";

@@ -82,15 +82,15 @@ public class CachingProvider implements PageProvider {
     /** Name of the page history cache. */
     public static final String HISTORYCACHE_NAME = "jspwiki.pageHistoryCache";
 
-    private long             m_cacheMisses = 0;
-    private long             m_cacheHits   = 0;
+    private long             m_cacheMisses;
+    private long             m_cacheHits;
 
-    private long             m_historyCacheMisses = 0;
-    private long             m_historyCacheHits   = 0;
+    private long             m_historyCacheMisses;
+    private long             m_historyCacheHits;
 
     // FIXME: This MUST be cached somehow.
 
-    private boolean          m_gotall = false;
+    private boolean          m_gotall;
 
     // The default settings of the caches, if you want something else, provide an "ehcache.xml" file
     // Please note that JSPWiki ships with a default "ehcache.xml" in the classpath

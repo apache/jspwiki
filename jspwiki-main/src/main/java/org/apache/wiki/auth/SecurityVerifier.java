@@ -50,6 +50,7 @@ import java.security.Permission;
 import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
+import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -63,7 +64,7 @@ public final class SecurityVerifier {
 
     private final Engine                m_engine;
 
-    private boolean               m_isSecurityPolicyConfigured = false;
+    private boolean               m_isSecurityPolicyConfigured;
 
     private Principal[]           m_policyPrincipals           = new Principal[0];
 
@@ -692,9 +693,7 @@ public final class SecurityVerifier {
             principals.add( Role.AUTHENTICATED );
             final ProtectionDomain[] domains = policy.getProtectionDomains();
             for ( final ProtectionDomain domain : domains ) {
-                for( final Principal principal : domain.getPrincipals() ) {
-                    principals.add( principal );
-                }
+                principals.addAll(Arrays.asList(domain.getPrincipals()));
             }
             m_policyPrincipals = principals.toArray( new Principal[principals.size()] );
         } catch( final IOException e ) {

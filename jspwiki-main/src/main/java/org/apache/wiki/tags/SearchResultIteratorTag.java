@@ -48,8 +48,8 @@ public class SearchResultIteratorTag extends IteratorTag {
     private static final long serialVersionUID = 0L;
     
     private   int         m_maxItems;
-    private   int         m_count = 0;
-    private   int         m_start = 0;
+    private   int         m_count;
+    private   int         m_start;
     
     private static final Logger log = Logger.getLogger(SearchResultIteratorTag.class);
 

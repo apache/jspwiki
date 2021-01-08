@@ -82,7 +82,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
     private static final Logger log = Logger.getLogger( PageViewPlugin.class );
 
     /** The page view manager. */
-    private static PageViewManager c_singleton = null;
+    private static PageViewManager c_singleton;
 
     /** Constant for the 'count' parameter / value. */
     private static final String PARAM_COUNT = "count";
@@ -173,22 +173,22 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
      */
     public final class PageViewManager implements WikiEventListener {
         /** Are we initialized? */
-        private boolean m_initialized = false;
+        private boolean m_initialized;
 
         /** The page counters. */
-        private Map<String, Counter> m_counters = null;
+        private Map<String, Counter> m_counters;
 
         /** The page counters in storage format. */
-        private Properties m_storage = null;
+        private Properties m_storage;
 
         /** Are all changes stored? */
-        private boolean m_dirty = false;
+        private boolean m_dirty;
 
         /** The page count storage background thread. */
-        private Thread m_pageCountSaveThread = null;
+        private Thread m_pageCountSaveThread;
 
         /** The work directory. */
-        private String m_workDir = null;
+        private String m_workDir;
 
         /** Comparator for descending sort on page count. */
         private final Comparator< Object > m_compareCountDescending = ( o1, o2 ) -> {
@@ -563,7 +563,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
     private static final class Counter {
 
         /** The count value. */
-        private int m_count = 0;
+        private int m_count;
 
         /**
          * Create a new counter.

@@ -88,7 +88,7 @@ public class DefaultRenderingManager implements RenderingManager {
     private final int m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
 
     /** If true, all titles will be cleaned. */
-    private boolean m_beautifyTitle = false;
+    private boolean m_beautifyTitle;
 
     /** Stores the WikiDocuments that have been cached. */
     private Cache m_documentCache;

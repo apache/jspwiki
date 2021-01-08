@@ -86,8 +86,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     private static final String USER_TAG          = "user";
     private static final String WIKI_NAME         = "wikiName";
     private static final String DATE_FORMAT       = "yyyy.MM.dd 'at' HH:mm:ss:SSS z";
-    private Document            c_dom             = null;
-    private File                c_file            = null;
+    private Document            c_dom;
+    private File                c_file;
 
     /** {@inheritDoc} */
     @Override
@@ -298,8 +298,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         }
     }
 
-    private long c_lastCheck    = 0;
-    private long c_lastModified = 0;
+    private long c_lastCheck;
+    private long c_lastModified;
 
     private void checkForRefresh() {
         final long time = System.currentTimeMillis();
@@ -524,17 +524,17 @@ public class XMLUserDatabase extends AbstractUserDatabase {
      * @return the text nodes that are immediate children of the base element, concatenated together
      */
     private String extractText( final Element element ) {
-        String text = "";
+        StringBuilder text = new StringBuilder();
         if( element.getChildNodes().getLength() > 0 ) {
             final NodeList children = element.getChildNodes();
             for( int k = 0; k < children.getLength(); k++ ) {
                 final Node child = children.item( k );
                 if( child.getNodeType() == Node.TEXT_NODE ) {
-                    text = text + ( ( Text )child ).getData();
+                    text.append(((Text) child).getData());
                 }
             }
         }
-        return text;
+        return text.toString();
     }
 
     /**

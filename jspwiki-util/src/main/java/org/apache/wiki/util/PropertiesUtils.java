@@ -48,16 +48,16 @@ public final class PropertiesUtils {
     public static String toSortedString(final Properties properties )
     {
         @SuppressWarnings( { "unchecked", "rawtypes" } ) final TreeMap< String, String > treemap = new TreeMap( properties );
-        String string = "";
+        StringBuilder string = new StringBuilder();
         final Iterator< Map.Entry< String, String > > iterator = treemap.entrySet().iterator();
         while( iterator.hasNext() )
         {
             final Map.Entry< String, String > entry = iterator.next();
             final String key = entry.getKey();
             final String value = entry.getValue() == null ? "null" : entry.getValue();
-            string += toLine( key, value ) + '\n';
+            string.append(toLine(key, value)).append('\n');
         }
-        return string;
+        return string.toString();
     }
 
     /**

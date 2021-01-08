@@ -78,14 +78,14 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
 
     private static final Logger log = Logger.getLogger( DefaultAuthorizationManager.class );
 
-    private Authorizer m_authorizer = null;
+    private Authorizer m_authorizer;
 
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
     private final Map< Principal, ProtectionDomain > m_cachedPds = new WeakHashMap<>();
 
-    private Engine m_engine = null;
+    private Engine m_engine;
 
-    private LocalPolicy m_localPolicy = null;
+    private LocalPolicy m_localPolicy;
 
     /**
      * Constructs a new DefaultAuthorizationManager instance.

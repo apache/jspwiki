@@ -74,9 +74,9 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * Lazily-initialized boolean flag indicating whether the web container
      * protects JSPWiki resources.
      */
-    protected boolean m_containerAuthorized = false;
+    protected boolean m_containerAuthorized;
 
-    private Document m_webxml = null;
+    private Document m_webxml;
 
     /**
      * Constructs a new instance of the WebContainerAuthorizer class.
@@ -120,9 +120,9 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         }
 
         if( m_containerRoles.length > 0 ) {
-            String roles = "";
+            StringBuilder roles = new StringBuilder();
             for( final Role containerRole : m_containerRoles ) {
-                roles = roles + containerRole + " ";
+                roles.append(containerRole).append(" ");
             }
             log.info( " JSPWiki determined the web container manages these roles: " + roles );
         }

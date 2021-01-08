@@ -47,7 +47,7 @@ public class ExternalDiffProvider implements DiffProvider {
      */
     public static final String PROP_DIFFCOMMAND    = "jspwiki.diffCommand";
 
-    private String m_diffCommand = null;
+    private String m_diffCommand;
     private Charset m_encoding;
 
     private static final char DIFF_ADDED_SYMBOL    = '+';

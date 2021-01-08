@@ -19,7 +19,6 @@
 package org.apache.wiki.ui.admin.beans;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;

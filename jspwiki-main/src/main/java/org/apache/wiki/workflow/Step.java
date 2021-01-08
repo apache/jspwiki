@@ -57,7 +57,7 @@ import java.util.Map;
 public interface Step extends Serializable {
 
     /** Time value: the start or end time has not been set. */
-    public static final Date TIME_NOT_SET = new Date( 0 );
+    Date TIME_NOT_SET = new Date( 0 );
 
     /**
      * Adds a successor Step to this one, which will be triggered by a supplied Outcome. Implementations should respect the order in which

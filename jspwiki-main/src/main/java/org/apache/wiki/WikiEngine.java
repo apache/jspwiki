@@ -110,7 +110,7 @@ public class WikiEngine implements Engine {
     private String m_rootPath = System.getProperty( "user.dir" );
 
     /** Store the ServletContext that we're in.  This may be null if WikiEngine is not running inside a servlet container (i.e. when testing). */
-    private ServletContext   m_servletContext = null;
+    private ServletContext   m_servletContext;
 
     /** Stores the template path.  This is relative to "templates". */
     private String           m_templateDir;
@@ -128,7 +128,7 @@ public class WikiEngine implements Engine {
     private String           m_appid = "";
 
     /** engine is up and running or not */
-    private boolean          m_isConfigured = false;
+    private boolean          m_isConfigured;
 
     /** Stores wikiengine attributes. */
     private final Map< String, Object > m_attributes = new ConcurrentHashMap<>();

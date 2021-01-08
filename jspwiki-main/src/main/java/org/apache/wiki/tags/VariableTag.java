@@ -47,8 +47,8 @@ public class VariableTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
 
-    private String m_var      = null;
-    private String m_default  = null;
+    private String m_var;
+    private String m_default;
 
     @Override public void initTag() {
         super.initTag();

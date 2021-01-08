@@ -94,23 +94,23 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     private static final Logger log = Logger.getLogger( JSPWikiMarkupParser.class );
 
-    private boolean        m_isbold       = false;
-    private boolean        m_isitalic     = false;
-    private boolean        m_istable      = false;
-    private boolean        m_isPre        = false;
-    private boolean        m_isEscaping   = false;
-    private boolean        m_isdefinition = false;
-    private boolean        m_isPreBlock   = false;
+    private boolean        m_isbold;
+    private boolean        m_isitalic;
+    private boolean        m_istable;
+    private boolean        m_isPre;
+    private boolean        m_isEscaping;
+    private boolean        m_isdefinition;
+    private boolean        m_isPreBlock;
 
     /** Contains style information, in multiple forms. */
     private final Stack<Boolean> m_styleStack   = new Stack<>();
 
      // general list handling
-    private int            m_genlistlevel = 0;
+    private int            m_genlistlevel;
     private final StringBuilder  m_genlistBulletBuffer = new StringBuilder(10);  // stores the # and * pattern
     private final boolean        m_allowPHPWikiStyleLists = true;
 
-    private boolean        m_isOpenParagraph = false;
+    private boolean        m_isOpenParagraph;
 
     /** Parser for extended link functionality. */
     private final LinkParser     m_linkParser = new LinkParser();
@@ -124,14 +124,14 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private final Map<String, Integer>   m_titleSectionCounter = new HashMap<>();
 
     /** If true, then considers CamelCase links as well. */
-    private boolean                m_camelCaseLinks      = false;
+    private boolean                m_camelCaseLinks;
 
     /** If true, then generate special output for wysiwyg editing in certain cases */
-    private boolean                m_wysiwygEditorMode     = false;
+    private boolean                m_wysiwygEditorMode;
 
     /** If true, consider URIs that have no brackets as well. */
     // FIXME: Currently reserved, but not used.
-    private boolean                m_plainUris           = false;
+    private boolean                m_plainUris;
 
     /** If true, all outward links use a small link image. */
     private boolean                m_useOutlinkImage     = true;
@@ -139,9 +139,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private boolean                m_useAttachmentImage  = true;
 
     /** If true, allows raw HTML. */
-    private boolean                m_allowHTML           = false;
+    private boolean                m_allowHTML;
 
-    private boolean                m_useRelNofollow      = false;
+    private boolean                m_useRelNofollow;
 
     private final PatternCompiler        m_compiler = new Perl5Compiler();
 
@@ -152,7 +152,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     private int                    m_rowNum              = 1;
 
-    private Heading                m_lastHeading         = null;
+    private Heading                m_lastHeading;
 
     private static final String CAMELCASE_PATTERN     = "JSPWikiMarkupParser.camelCasePattern";
 
@@ -898,7 +898,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     /** Holds the image URL for the duration of this parser */
-    private String m_outlinkImageURL = null;
+    private String m_outlinkImageURL;
 
     /**
      *  Returns an element for the external link image (out.png).  However,
@@ -1529,8 +1529,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     /** Controls whether italic is restarted after a paragraph shift */
 
-    private boolean m_restartitalic = false;
-    private boolean m_restartbold   = false;
+    private boolean m_restartitalic;
+    private boolean m_restartbold;
 
     private boolean m_newLine;
 

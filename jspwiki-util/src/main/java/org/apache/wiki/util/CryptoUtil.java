@@ -172,14 +172,8 @@ public final class CryptoUtil
 
         // Create an array with the hash plus the salt
         final byte[] all = new byte[hash.length + salt.length];
-        for( int i = 0; i < hash.length; i++ )
-        {
-            all[i] = hash[i];
-        }
-        for( int i = 0; i < salt.length; i++ )
-        {
-            all[hash.length + i] = salt[i];
-        }
+        System.arraycopy(hash, 0, all, 0, hash.length);
+        System.arraycopy(salt, 0, all, hash.length + 0, salt.length);
         final byte[] base64 = Base64.getEncoder().encode( all );
         
         return SSHA + new String( base64, StandardCharsets.UTF_8 );
@@ -234,10 +228,7 @@ public final class CryptoUtil
 
         // Extract the password hash
         final byte[] hash = new byte[20];
-        for( int i = 0; i < 20; i++ )
-        {
-            hash[i] = digest[i];
-        }
+        System.arraycopy(digest, 0, hash, 0, 20);
 
         return hash;
     }
@@ -261,10 +252,7 @@ public final class CryptoUtil
 
         // Extract the salt
         final byte[] salt = new byte[digest.length - 20];
-        for( int i = 20; i < digest.length; i++ )
-        {
-            salt[i - 20] = digest[i];
-        }
+        System.arraycopy(digest, 20, salt, 0, digest.length - 20);
 
         return salt;
     }

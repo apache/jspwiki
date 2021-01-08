@@ -210,10 +210,10 @@ public class ContextualDiffProvider implements DiffProvider {
         /** Keeping score of the original lines to process */
         private final int m_max;
 
-        private int m_index = 0;
+        private int m_index;
 
         /** Index of the next element to be copied into the output. */
-        private int m_firstElem = 0;
+        private int m_firstElem;
 
         /** Link Anchor counter */
         private int m_count = 1;

@@ -129,7 +129,7 @@ public final class WikiEventManager {
     private static final boolean c_permitMonitor = false;
 
     /* Optional listener to be used as all-event monitor. */
-    private static WikiEventListener c_monitor = null;
+    private static WikiEventListener c_monitor;
 
     /* The Map of client object to WikiEventDelegate. */
     private final Map< Object, WikiEventDelegate > m_delegates = new HashMap<>();
@@ -138,7 +138,7 @@ public final class WikiEventManager {
     private final Vector< WikiEventDelegate > m_preloadCache = new Vector<>();
 
     /* Singleton instance of the WikiEventManager. */
-    private static WikiEventManager c_instance = null;
+    private static WikiEventManager c_instance;
 
     /** Constructor for a WikiEventManager. */
     private WikiEventManager() {
@@ -345,7 +345,7 @@ public final class WikiEventManager {
 
         /* A list of event listeners for this instance. */
         private final ArrayList< WeakReference< WikiEventListener > > m_listenerList = new ArrayList<>();
-        private Class< ? >  m_class  = null;
+        private Class< ? >  m_class;
 
         /**
          *  Constructor for an WikiEventDelegateImpl, provided with the client Object it will service, or the Class

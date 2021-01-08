@@ -70,13 +70,13 @@ public class TableOfContents implements Plugin, HeadingListener {
     private static final String VAR_ALREADY_PROCESSING = "__TableOfContents.processing";
 
     StringBuffer m_buf = new StringBuffer();
-    private boolean m_usingNumberedList = false;
+    private boolean m_usingNumberedList;
     private String m_prefix = "";
-    private int m_starting = 0;
-    private int m_level1Index = 0;
-    private int m_level2Index = 0;
-    private int m_level3Index = 0;
-    private int m_lastLevel = 0;
+    private int m_starting;
+    private int m_level1Index;
+    private int m_level2Index;
+    private int m_level3Index;
+    private int m_lastLevel;
 
     /**
      *  {@inheritDoc}

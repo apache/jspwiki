@@ -46,7 +46,7 @@ public class PageDateTag extends WikiTagBase {
 
     public static final String DEFAULT_FORMAT = "dd-MMM-yyyy HH:mm:ss zzz";
 
-    private String m_format = null;
+    private String m_format;
 
     public void initTag() {
         super.initTag();

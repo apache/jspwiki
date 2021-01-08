@@ -826,12 +826,12 @@ public final class TextUtil {
      * @since 2.4
      */
     public static String generateRandomPassword() {
-        String pw = "";
+        StringBuilder pw = new StringBuilder();
         for( int i = 0; i < PASSWORD_LENGTH; i++ ) {
             final int index = ( int )( RANDOM.nextDouble() * PWD_BASE.length() );
-            pw += PWD_BASE.substring( index, index + 1 );
+            pw.append(PWD_BASE.substring(index, index + 1));
         }
-        return pw;
+        return pw.toString();
     }
 
 }

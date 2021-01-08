@@ -92,7 +92,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
      */
     private static final int DEFAULT_EXPIRY_DAYS = 14;
 
-    private static long c_lastScrubTime = 0L;
+    private static long c_lastScrubTime;
 
     /**
      * Describes how often we scrub the cookieDir directory.

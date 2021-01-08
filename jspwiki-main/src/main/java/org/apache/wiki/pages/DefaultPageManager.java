@@ -95,7 +95,7 @@ public class DefaultPageManager implements PageManager {
 
     private final int m_expiryTime;
 
-    private LockReaper m_reaper = null;
+    private LockReaper m_reaper;
 
     private final PageSorter pageSorter = new PageSorter();
 
