@@ -100,13 +100,13 @@ public class XMLGroupDatabase implements GroupDatabase {
 
     private static final String  DATE_FORMAT       = "yyyy.MM.dd 'at' HH:mm:ss:SSS z";
 
-    private Document              m_dom            = null;
+    private Document              m_dom;
 
     private final DateFormat            m_defaultFormat  = DateFormat.getDateTimeInstance();
 
-    private File                  m_file           = null;
+    private File                  m_file;
 
-    private Engine                m_engine         = null;
+    private Engine                m_engine;
 
     private final Map<String, Group>    m_groups         = new ConcurrentHashMap<>();
 
@@ -286,8 +286,8 @@ public class XMLGroupDatabase implements GroupDatabase {
         }
     }
 
-    private long m_lastCheck    = 0;
-    private long m_lastModified = 0;
+    private long m_lastCheck;
+    private long m_lastModified;
 
     private void checkForRefresh() {
         final long time = System.currentTimeMillis();

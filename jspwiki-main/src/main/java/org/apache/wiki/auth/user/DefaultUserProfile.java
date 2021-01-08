@@ -39,15 +39,15 @@ public final class DefaultUserProfile implements UserProfile {
     private static final String WHITESPACE = "\\s";
 
     private final Map< String, Serializable > attributes = new HashMap<>();
-    private Date created = null;
-    private String email = null;
-    private String fullname = null;
-    private Date lockExpiry = null;
-    private String loginName = null;
-    private Date modified = null;
-    private String password = null;
-    private String uid = null;
-    private String wikiname = null;
+    private Date created;
+    private String email;
+    private String fullname;
+    private Date lockExpiry;
+    private String loginName;
+    private Date modified;
+    private String password;
+    private String uid;
+    private String wikiname;
 
     /**
      * Package constructor to allow direct instantiation only from package related classes (i.e., AbstractUserDatabase).

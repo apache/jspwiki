@@ -48,7 +48,7 @@ public class PluginTag
     private String m_plugin;
     private String m_args;
 
-    private boolean m_evaluated = false;
+    private boolean m_evaluated;
 
     /**
      *  {@inheritDoc}

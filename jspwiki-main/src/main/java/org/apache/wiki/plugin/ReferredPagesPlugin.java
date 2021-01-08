@@ -66,7 +66,7 @@ public class ReferredPagesPlugin implements Plugin {
     private Pattern        m_includePattern;
     private Pattern        m_excludePattern;
     private boolean m_formatCompact  = true;
-    private boolean m_formatSort     = false;
+    private boolean m_formatSort;
 
     /** The parameter name for the root page to start from.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_ROOT    = "page";

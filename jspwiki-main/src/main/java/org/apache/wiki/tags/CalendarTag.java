@@ -57,9 +57,9 @@ public class CalendarTag extends WikiTagBase {
     private static final long serialVersionUID = 0L;
     private static final Logger log = Logger.getLogger( CalendarTag.class );
     
-    private SimpleDateFormat m_pageFormat = null;
-    private SimpleDateFormat m_urlFormat = null;
-    private SimpleDateFormat m_monthUrlFormat = null;
+    private SimpleDateFormat m_pageFormat;
+    private SimpleDateFormat m_urlFormat;
+    private SimpleDateFormat m_monthUrlFormat;
     private SimpleDateFormat m_dateFormat = new SimpleDateFormat( "ddMMyy" );
 
     /**

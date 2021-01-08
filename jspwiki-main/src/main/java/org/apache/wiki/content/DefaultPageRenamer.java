@@ -52,7 +52,7 @@ public class DefaultPageRenamer implements PageRenamer {
 
     private static final Logger log = Logger.getLogger( DefaultPageRenamer.class );
     
-    private boolean m_camelCase = false;
+    private boolean m_camelCase;
     
     /**
      *  Renames a page.

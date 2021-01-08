@@ -58,8 +58,8 @@ public class DefaultAclManager implements AclManager {
 
     private static final Logger log = Logger.getLogger(DefaultAclManager.class);
 
-    private AuthorizationManager m_auth = null;
-    private Engine m_engine = null;
+    private AuthorizationManager m_auth;
+    private Engine m_engine;
     private static final String PERM_REGEX = "("
                                               + PagePermission.COMMENT_ACTION + "|"
                                               + PagePermission.DELETE_ACTION  + "|"

@@ -1062,7 +1062,7 @@ public class XHtmlElementToWikiTranslator
     private class PreStack
     {
 
-        private int m_pre = 0;
+        private int m_pre;
 
         public boolean isPreMode()
         {

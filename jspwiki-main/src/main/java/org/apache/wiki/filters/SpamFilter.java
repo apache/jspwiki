@@ -184,8 +184,8 @@ public class SpamFilter extends BasePageFilter {
     private final PatternMatcher  m_matcher = new Perl5Matcher();
     private final PatternCompiler m_compiler = new Perl5Compiler();
 
-    private Collection<Pattern> m_spamPatterns = null;
-    private Collection<Pattern> m_IPPatterns = null;
+    private Collection<Pattern> m_spamPatterns;
+    private Collection<Pattern> m_IPPatterns;
 
     private Date m_lastRebuild = new Date( 0L );
 
@@ -210,15 +210,15 @@ public class SpamFilter extends BasePageFilter {
     private Pattern         m_urlPattern;
     private Akismet         m_akismet;
 
-    private String          m_akismetAPIKey = null;
+    private String          m_akismetAPIKey;
 
-    private boolean         m_useCaptcha = false;
+    private boolean         m_useCaptcha;
 
     /** The limit at which we consider something to be spam. */
     private final int             m_scoreLimit = 1;
 
     /** If set to true, will ignore anyone who is in Authenticated role. */
-    private boolean         m_ignoreAuthenticated = false;
+    private boolean         m_ignoreAuthenticated;
 
     private boolean         m_stopAtFirstMatch = true;
 

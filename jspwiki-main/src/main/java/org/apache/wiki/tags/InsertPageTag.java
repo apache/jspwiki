@@ -57,7 +57,7 @@ public class InsertPageTag extends WikiTagBase {
     public static final int HTML  = 0;
     public static final int PLAIN = 1;
 
-    protected String m_pageName = null;
+    protected String m_pageName;
     private   int    m_mode = HTML;
 
     @Override

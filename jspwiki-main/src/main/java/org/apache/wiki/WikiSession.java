@@ -70,7 +70,7 @@ public final class WikiSession implements Session {
     private final Map< String, Set< String > > m_messages  = new ConcurrentHashMap<>();
 
     /** The Engine that created this session. */
-    private Engine              m_engine              = null;
+    private Engine              m_engine;
 
     private String              m_status              = ANONYMOUS;
 

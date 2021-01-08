@@ -372,9 +372,9 @@ public class LinkParser
     public static class Link
     {
         private String            m_text;
-        private String            m_ref = null;
+        private String            m_ref;
         private int               m_interwikiPoint = -1;
-        private List<Attribute>   m_attribs = null;
+        private List<Attribute>   m_attribs;
 
         /**
          *  Create a new Link with text but no reference.

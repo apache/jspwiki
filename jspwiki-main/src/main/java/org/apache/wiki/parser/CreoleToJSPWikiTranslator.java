@@ -427,7 +427,7 @@ public class CreoleToJSPWikiTranslator
         {
             String protectedMarkup = matcher.group(0);
             final String paramsField = matcher.group(groupPos);
-            String paramsString = "";
+            StringBuilder paramsString = new StringBuilder();
 
             if (paramsField != null)
             {
@@ -446,7 +446,7 @@ public class CreoleToJSPWikiTranslator
                         String code = param.replaceAll("(?i)([0-9]+)" + key, value + "<check>" + "$1" + "</check>");
                         code = code.replaceAll("(.*?)%(.*?)<check>(.*?)</check>", "$1$3$2");
                         if (!code.equals(param)) {
-                            paramsString += code;
+                            paramsString.append(code);
                         }
                     }
 
@@ -454,22 +454,21 @@ public class CreoleToJSPWikiTranslator
                     try
                     {
                         Integer.parseInt(param);
-                        paramsString += " width='" + param + "px'";
+                        paramsString.append(" width='").append(param).append("px'");
                     }
                     catch (final Exception e)
                     {
 
                         if (wikiProps.getProperty("creole.imagePlugin.para." + param) != null)
-                            paramsString += " "
-                                            + wikiProps.getProperty("creole.imagePlugin.para." + param)
-                                                .replaceAll("^(\"|')(.*)(\"|')$", "$2");
+                            paramsString.append(" ").append(wikiProps.getProperty("creole.imagePlugin.para." + param)
+                                    .replaceAll("^(\"|')(.*)(\"|')$", "$2"));
                     }
                 }
             }
             final String temp = protectedMarkup;
 
             protectedMarkup = translateElement(protectedMarkup, markupRegex, replaceContent);
-            protectedMarkup = protectedMarkup.replaceAll("\u2015", paramsString);
+            protectedMarkup = protectedMarkup.replaceAll("\u2015", paramsString.toString());
             protectedMarkup = protectedMarkup.replaceAll("\u2016", imagePlugin);
             protectedMarkup = protectedMarkup.replaceAll("caption=''", "");
             protectedMarkup = protectedMarkup.replaceAll("\\s+", " ");
@@ -538,12 +537,12 @@ public class CreoleToJSPWikiTranslator
 
     private String bytesToHash(final byte[] b)
     {
-        String hash = "";
+        StringBuilder hash = new StringBuilder();
         for (int i = 0; i < b.length; i++)
         {
-            hash += Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1);
+            hash.append(Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1));
         }
-        return hash;
+        return hash.toString();
     }
 
     private String translateElement(final String content, final String fromMarkup, final String toMarkup)

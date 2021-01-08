@@ -246,57 +246,57 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
 
     public static final String PROP_DB_WIKI_NAME = "jspwiki.userdatabase.wikiName";
 
-    private DataSource m_ds = null;
+    private DataSource m_ds;
 
-    private String m_deleteUserByLoginName = null;
+    private String m_deleteUserByLoginName;
 
-    private String m_deleteRoleByLoginName = null;
+    private String m_deleteRoleByLoginName;
 
-    private String m_findByEmail = null;
+    private String m_findByEmail;
 
-    private String m_findByFullName = null;
+    private String m_findByFullName;
 
-    private String m_findByLoginName = null;
+    private String m_findByLoginName;
 
-    private String m_findByUid = null;
+    private String m_findByUid;
 
-    private String m_findByWikiName = null;
+    private String m_findByWikiName;
 
-    private String m_renameProfile = null;
+    private String m_renameProfile;
 
-    private String m_renameRoles = null;
+    private String m_renameRoles;
 
-    private String m_updateProfile = null;
+    private String m_updateProfile;
 
-    private String m_findAll = null;
+    private String m_findAll;
 
-    private String m_findRoles = null;
+    private String m_findRoles;
 
-    private String m_insertProfile = null;
+    private String m_insertProfile;
 
-    private String m_insertRole = null;
+    private String m_insertRole;
 
-    private String m_attributes = null;
+    private String m_attributes;
 
-    private String m_email = null;
+    private String m_email;
 
-    private String m_fullName = null;
+    private String m_fullName;
 
-    private String m_lockExpiry = null;
+    private String m_lockExpiry;
 
-    private String m_loginName = null;
+    private String m_loginName;
 
-    private String m_password = null;
+    private String m_password;
 
-    private String m_uid = null;
+    private String m_uid;
     
-    private String m_wikiName = null;
+    private String m_wikiName;
 
-    private String m_created = null;
+    private String m_created;
 
-    private String m_modified = null;
+    private String m_modified;
 
-    private boolean m_supportsCommits = false;
+    private boolean m_supportsCommits;
 
     /**
      * Looks up and deletes the first {@link UserProfile} in the user database

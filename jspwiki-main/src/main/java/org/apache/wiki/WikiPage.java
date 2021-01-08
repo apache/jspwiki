@@ -45,10 +45,10 @@ public class WikiPage implements Page {
     private Date             m_lastModified;
     private long             m_fileSize = -1;
     private int              m_version = PageProvider.LATEST_VERSION;
-    private String           m_author = null;
+    private String           m_author;
     private final Map< String, Object > m_attributes = new HashMap<>();
 
-    private Acl m_accessList = null;
+    private Acl m_accessList;
 
     /**
      * Create a new WikiPage using a given engine and name.
@@ -271,7 +271,7 @@ public class WikiPage implements Page {
         m_attributes.clear();
     }
 
-    private boolean m_hasMetadata = false;
+    private boolean m_hasMetadata;
 
     /**
      * Returns <code>true</code> if the page has valid metadata; that is, it has been parsed. Note that this method is a kludge to

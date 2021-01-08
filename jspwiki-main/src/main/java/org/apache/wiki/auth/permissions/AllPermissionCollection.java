@@ -31,9 +31,9 @@ public class AllPermissionCollection extends PermissionCollection
 
     private static final long serialVersionUID = 1L;
 
-    private boolean           m_notEmpty      = false;
+    private boolean           m_notEmpty;
 
-    private boolean           m_readOnly      = false;
+    private boolean           m_readOnly;
 
     protected final Hashtable<Permission, Permission> m_permissions    = new Hashtable<>();
 

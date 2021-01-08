@@ -53,7 +53,7 @@ import java.io.PrintWriter;
 public class WikiServletFilter implements Filter {
 
     private static final Logger log = Logger.getLogger( WikiServletFilter.class );
-    protected Engine m_engine = null;
+    protected Engine m_engine;
 
     /**
      *  Creates a Wiki Servlet Filter.

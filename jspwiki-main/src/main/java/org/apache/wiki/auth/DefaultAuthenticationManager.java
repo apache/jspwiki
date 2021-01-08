@@ -92,9 +92,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     private boolean m_throttleLogins = true;
 
     /** Static Boolean for lazily-initializing the "allows cookie authentication" flag */
-    private boolean m_allowsCookieAuthentication = false;
+    private boolean m_allowsCookieAuthentication;
 
-    private Engine m_engine = null;
+    private Engine m_engine;
 
     /** If true, logs the IP address of the editor */
     private boolean m_storeIPAddress = true;

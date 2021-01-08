@@ -236,7 +236,7 @@ public final class MailUtil {
 
     protected static final String PROP_MAIL_STARTTLS           = "mail.smtp.starttls.enable";
 
-    private static String c_fromAddress = null;
+    private static String c_fromAddress;
     
     /**
      *  Private constructor prevents instantiation.

@@ -176,11 +176,13 @@ public abstract class AbstractFileProvider implements PageProvider {
 
         if( m_windowsHackNeeded ) {
             final String pn = pagename.toLowerCase();
+            StringBuilder pagenameBuilder = new StringBuilder(pagename);
             for( final String windowsDeviceName : WINDOWS_DEVICE_NAMES ) {
                 if( windowsDeviceName.equals( pn ) ) {
-                    pagename = "$$$" + pagename;
+                    pagenameBuilder.insert(0, "$$$");
                 }
             }
+            pagename = pagenameBuilder.toString();
         }
 
         return pagename;

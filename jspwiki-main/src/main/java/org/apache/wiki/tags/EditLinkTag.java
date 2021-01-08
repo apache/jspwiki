@@ -45,7 +45,7 @@ public class EditLinkTag extends WikiLinkTag {
 
     private static final long serialVersionUID = 0L;
     
-    public String m_version = null;
+    public String m_version;
     public String m_title = "";
     public String m_accesskey = "";
     

@@ -41,9 +41,9 @@ public class MessagesTag extends WikiTagBase {
 
     private static final long   serialVersionUID = 0L;
 
-    private String              m_action         = null;
+    private String              m_action;
     private String              m_prefix         = "";
-    private String              m_topic          = null;
+    private String              m_topic;
     private String              m_div            = "information";
 
     private static final String CLEAR            = "clear";

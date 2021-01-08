@@ -51,19 +51,19 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
 	static final long serialVersionUID = 0L;
     private static final Logger log = Logger.getLogger( LinkTag.class );
 
-    private String m_version = null;
-    private String m_cssClass= null;
-    private String m_style   = null;
-    private String m_title   = null;
-    private String m_target  = null;
-    private String m_compareToVersion = null;
-    private String m_rel       = null;
-    private String m_jsp     = null;
-    private String m_ref     = null;
+    private String m_version;
+    private String m_cssClass;
+    private String m_style;
+    private String m_title;
+    private String m_target;
+    private String m_compareToVersion;
+    private String m_rel;
+    private String m_jsp;
+    private String m_ref;
     private String m_context = ContextEnum.PAGE_VIEW.getRequestContext();
-    private String m_accesskey = null;
-    private String m_tabindex = null;
-    private String m_templatefile = null;
+    private String m_accesskey;
+    private String m_tabindex;
+    private String m_templatefile;
 
     private Map<String, String> m_containedParams;
 

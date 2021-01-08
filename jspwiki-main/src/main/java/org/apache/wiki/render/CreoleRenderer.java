@@ -71,7 +71,7 @@ public class CreoleRenderer extends WikiRenderer {
        "tt", "<<{{>>", "<<}}>>"
     };
 
-    private int m_listCount = 0;
+    private int m_listCount;
     private char m_listChar = 'x';
 
     private final List< PluginContent > m_plugins = new ArrayList<>();

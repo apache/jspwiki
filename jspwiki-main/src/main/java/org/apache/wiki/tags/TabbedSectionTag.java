@@ -38,7 +38,7 @@ public class TabbedSectionTag extends BodyTagSupport
     private static final long serialVersionUID = 1702437933960026481L;
     private String       m_defaultTabId;
     private String       m_firstTabId;
-    private boolean      m_defaultTabFound = false;
+    private boolean      m_defaultTabFound;
 
     private StringBuffer m_buffer = new StringBuffer(BUFFER_SIZE);
 
