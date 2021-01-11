@@ -18,15 +18,16 @@
  */
 package org.apache.wiki;
 
+import org.apache.log4j.Logger;
+import org.hsqldb.Server;
+import org.hsqldb.cmdline.SqlFile;
+
 import java.io.*;
+import java.net.ServerSocket;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
-
-import org.apache.log4j.Logger;
-import org.hsqldb.Server;
-import org.hsqldb.cmdline.SqlFile;
 
 
 /**
@@ -56,18 +57,15 @@ public class HsqlDbUtils
     private static final Logger LOG = Logger.getLogger( HsqlDbUtils.class );
     
     Server hsqlServer = null;
+    int localPort = 0;
     
     /**
      * Convenience Hypersonic startup method for unit tests.
      */
-    public void setUp() 
-    {
-        try
-        {
-            start();
-        }
-        catch( final Exception e )
-        {
+    public void setUp() {
+        try {
+            startOnRandomPort();
+        } catch( final Exception e ) {
             LOG.error( e.getMessage(), e );
         }
         exec( "src/test/config/hsql-userdb-setup.ddl" );
@@ -76,8 +74,7 @@ public class HsqlDbUtils
     /**
      * Convenience Hypersonic shutdown method for unit tests.
      */
-    public void tearDown() 
-    {
+    public void tearDown() {
         exec( "src/test/config/hsql-userdb-teardown.ddl" );
         shutdown();
     }
@@ -85,24 +82,43 @@ public class HsqlDbUtils
     /**
      * Starts the Hypersonic server.
      */
-    public void start() throws Exception
-    {
-        
+    public void start() throws Exception {
+        final Properties hProps = loadPropertiesFrom( "target/test-classes/jspwiki-custom.properties" );
+        localPort =  Integer.parseInt( hProps.getProperty( "server.port" ) );
+        startHsqlServer();
+    }
+
+    /**
+     * Starts the Hypersonic server.
+     */
+    public void startOnRandomPort() throws Exception {
+        localPort = findFreeTcpPort();
+        startHsqlServer();
+    }
+
+    int findFreeTcpPort() throws Exception {
+        try( final ServerSocket socket = new ServerSocket( 0 ) ) {
+            socket.setReuseAddress( true );
+            return socket.getLocalPort();
+        }
+    }
+
+    void startHsqlServer() throws Exception {
         // start Hypersonic server
         final Properties hProps = loadPropertiesFrom( "target/test-classes/jspwiki-custom.properties" );
-        
+
         hsqlServer = new Server();
-        hsqlServer.setSilent(true);   // be quiet during junit tests
-        hsqlServer.setLogWriter(null);  // and even more quiet
+        hsqlServer.setSilent( true );     // be quiet during junit tests
+        hsqlServer.setLogWriter( null );  // and even more quiet
         // pre-checks
         hsqlServer.checkRunning( false ); // throws RuntimeException if running
-        
+
         // configure
-        hsqlServer.setPort( Integer.valueOf( hProps.getProperty( "server.port" ) ) );
+        hsqlServer.setPort( localPort );
         hsqlServer.setDatabaseName( 0, hProps.getProperty( "server.dbname.0" ) );
         hsqlServer.setDatabasePath( 0, hProps.getProperty( "server.database.0" ) );
         hsqlServer.start();
-        
+
         Class.forName( "org.hsqldb.jdbc.JDBCDriver" );
         hsqlServer.checkRunning( true ); // throws RuntimeException if not running
     }
@@ -114,10 +130,8 @@ public class HsqlDbUtils
      */
     public void exec(final String file )
     {
-        Connection conn = null;
-        try
+        try( final Connection conn = getConnection() )
         {
-            conn = getConnection();
             final SqlFile userDbSetup = new SqlFile( new File( file ) );
             userDbSetup.setConnection(conn);
             userDbSetup.execute();
@@ -126,34 +140,19 @@ public class HsqlDbUtils
         {
             LOG.error( e.getMessage(), e );
         }
-        finally
-        {
-            close( conn ); 
-        }
     }
 
     /**
      * Shutdown the Hypersonic server.
      */
-    public void shutdown()
-    {
+    public void shutdown() {
         LOG.info( "Shutting down Hypersonic JDBC server on localhost." );
-        if( hsqlServer != null ) 
-        {
-            Connection conn = null;
-            try
-            {
-                conn = getConnection();
+        if( hsqlServer != null ) {
+            try( final Connection conn = getConnection() ) {
                 conn.setAutoCommit( true );
                 conn.prepareStatement( "SHUTDOWN" ).execute();
-            }
-            catch( final Exception e )
-            {
+            } catch( final Exception e ) {
                 LOG.error( e.getMessage(), e );
-            }
-            finally
-            {
-                close( conn );
             }
 
             hsqlServer.shutdown();
@@ -167,34 +166,16 @@ public class HsqlDbUtils
      * @throws IOException problems occurred loading jdbc properties file.
      * @throws SQLException problems occurred obtaining the {@link Connection}.
      */
-    Connection getConnection() throws IOException, SQLException
-    {
-        final Connection conn;
+    Connection getConnection() throws IOException, SQLException {
         final Properties jProps = loadPropertiesFrom( "target/test-classes/jspwiki-custom.properties" );
-        conn = DriverManager.getConnection( jProps.getProperty( "jdbc.driver.url" ), 
+        return DriverManager.getConnection( getDriverUrl(),
                                             jProps.getProperty( "jdbc.admin.id" ),
                                             jProps.getProperty( "jdbc.admin.password" ) );
-        return conn;
     }
-    
-    /**
-     * Closes the given {@link Connection}.
-     * 
-     * @param conn given {@link Connection}.
-     */
-    void close( Connection conn ) 
-    {
-        if( conn != null ) 
-        {
-            try
-            {
-                conn.close();
-            }
-            catch( final SQLException e )
-            {
-                conn = null;
-            }
-        } 
+
+    public String getDriverUrl() throws IOException{
+        final Properties jProps = loadPropertiesFrom( "target/test-classes/jspwiki-custom.properties" );
+        return jProps.getProperty( "jdbc.driver.url" ).replace( ":9321", ":" + localPort );
     }
     
     /**
@@ -204,8 +185,7 @@ public class HsqlDbUtils
      * @return {@link Properties} holding {@code fileLocation} properties.
      * @throws IOException if {@code fileLocation} cannot be readed.
      */
-    Properties loadPropertiesFrom(final String fileLocation ) throws IOException
-    {
+    Properties loadPropertiesFrom( final String fileLocation ) throws IOException {
         final Properties p = new Properties();
         final InputStream inStream = new BufferedInputStream( new FileInputStream( fileLocation ) );
         p.load( inStream );
