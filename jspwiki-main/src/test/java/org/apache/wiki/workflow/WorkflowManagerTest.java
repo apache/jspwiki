@@ -24,6 +24,7 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.event.WorkflowEvent;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,12 +34,13 @@ import java.io.File;
 
 public class WorkflowManagerTest {
 
-    protected WikiEngine m_engine= TestEngine.build();
+    protected WikiEngine m_engine = TestEngine.build();
     protected DefaultWorkflowManager wm;
     protected Workflow w;
 
     @BeforeEach
     public void setUp() throws Exception {
+        m_engine = TestEngine.build();
         wm = new DefaultWorkflowManager();
         wm.initialize( m_engine, TestEngine.getTestProperties() );
         // Create a workflow with 3 steps, with a Decision in the middle
@@ -52,6 +54,11 @@ public class WorkflowManagerTest {
 
         // Add a message argument to the workflow with the page name
         w.addMessageArgument( "MyPage" );
+    }
+
+    @AfterEach
+    public void tearDown() {
+        m_engine.shutdown();
     }
 
     @Test
