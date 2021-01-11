@@ -17,21 +17,6 @@
     under the License.
  */
 package org.apache.wiki.auth.user;
-import java.io.File;
-import java.io.Serializable;
-import java.security.Principal;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Timestamp;
-import java.util.Map;
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameAlreadyBoundException;
-import javax.sql.DataSource;
-
 import org.apache.wiki.HsqlDbUtils;
 import org.apache.wiki.TestJDBCDataSource;
 import org.apache.wiki.TestJNDIContext;
@@ -42,6 +27,20 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.Serializable;
+import java.security.Principal;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Timestamp;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  */
@@ -97,7 +96,7 @@ public class JDBCUserDatabaseTest
             // ignore
         }
         final Context ctx = (Context) initCtx.lookup( "java:comp/env" );
-        final DataSource ds = new TestJDBCDataSource( new File( "target/test-classes/jspwiki-custom.properties" ) );
+        final DataSource ds = new TestJDBCDataSource( new File( "target/test-classes/jspwiki-custom.properties" ), m_hu.getDriverUrl() );
         ctx.bind( JDBCUserDatabase.DEFAULT_DB_JNDI_NAME, ds );
 
         // Get the JDBC connection and init tables
@@ -143,7 +142,7 @@ public class JDBCUserDatabaseTest
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        final String loginName = "TestUser" + System.currentTimeMillis();
         UserProfile profile = m_db.newProfile();
         profile.setEmail("jspwiki.tests@mailinator.com");
         profile.setLoginName( loginName );
@@ -212,13 +211,13 @@ public class JDBCUserDatabaseTest
         }
         catch( final NoSuchPrincipalException e )
         {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         try
         {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         catch( final NoSuchPrincipalException e )
         {
@@ -243,13 +242,13 @@ public class JDBCUserDatabaseTest
         }
         catch( final NoSuchPrincipalException e )
         {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         try
         {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         catch( final NoSuchPrincipalException e )
         {
@@ -274,13 +273,13 @@ public class JDBCUserDatabaseTest
         }
         catch( final NoSuchPrincipalException e )
         {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         try
         {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         catch( final NoSuchPrincipalException e )
         {
@@ -305,13 +304,13 @@ public class JDBCUserDatabaseTest
         }
         catch( final NoSuchPrincipalException e )
         {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         try
         {
             m_db.findByEmail( "foo" );
             // We should never get here
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         catch( final NoSuchPrincipalException e )
         {
@@ -336,13 +335,13 @@ public class JDBCUserDatabaseTest
         }
         catch( final NoSuchPrincipalException e )
         {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         try
         {
             m_db.findByEmail( "FooBar" );
             // We should never get here
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         catch( final NoSuchPrincipalException e )
         {
@@ -398,7 +397,7 @@ public class JDBCUserDatabaseTest
         // The old user shouldn't be found
         try
         {
-            profile = m_db.findByLoginName( "olduser" );
+            m_db.findByLoginName( "olduser" );
             Assertions.fail( "Old user was found, but it shouldn't have been." );
         }
         catch ( final NoSuchPrincipalException e )
@@ -461,13 +460,9 @@ public class JDBCUserDatabaseTest
             Assertions.assertNotNull( m_db.findByUid( uid ) );
 
         }
-        catch( final NoSuchPrincipalException e )
-        {
-            Assertions.assertTrue( false );
-        }
         catch( final WikiSecurityException e )
         {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
     }
 

@@ -17,22 +17,7 @@
     under the License.
  */
 package org.apache.wiki.auth.authorize;
-import java.io.File;
-import java.security.Principal;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Properties;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameAlreadyBoundException;
-import javax.sql.DataSource;
-
-import org.apache.wiki.HsqlDbUtils;
-import org.apache.wiki.TestEngine;
-import org.apache.wiki.TestJDBCDataSource;
-import org.apache.wiki.TestJNDIContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.*;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -41,6 +26,16 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NameAlreadyBoundException;
+import javax.sql.DataSource;
+import java.io.File;
+import java.security.Principal;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
 
 /**
  */
@@ -77,7 +72,7 @@ public class JDBCGroupDatabaseTest
             // ignore
         }
         final Context ctx = (Context) initCtx.lookup( "java:comp/env" );
-        final DataSource ds = new TestJDBCDataSource( new File( "target/test-classes/jspwiki-custom.properties" ) );
+        final DataSource ds = new TestJDBCDataSource( new File( "target/test-classes/jspwiki-custom.properties" ), m_hu.getDriverUrl() );
         ctx.bind( JDBCGroupDatabase.DEFAULT_GROUPDB_DATASOURCE, ds );
 
         // Get the JDBC connection and init tables
@@ -114,7 +109,7 @@ public class JDBCGroupDatabaseTest
         final int oldUserCount = m_db.groups().length;
 
         // Create a new group with random name
-        final String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
+        final String name = "TestGroup" + System.currentTimeMillis();
         Group group = new Group( name, m_wiki );
         final Principal al = new WikiPrincipal( "Al" );
         final Principal bob = new WikiPrincipal( "Bob" );
@@ -165,9 +160,9 @@ public class JDBCGroupDatabaseTest
         // Group Archaeology doesn't exist
         try
         {
-            group = backendGroup( "Archaeology" );
+            backendGroup( "Archaeology" );
             // We should never get here
-            Assertions.assertTrue(false);
+            Assertions.fail();
         }
         catch (final NoSuchPrincipalException e)
         {
@@ -179,7 +174,7 @@ public class JDBCGroupDatabaseTest
     public void testSave() throws Exception
     {
         // Create a new group with random name
-        final String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
+        final String name = "TestGroup" + System.currentTimeMillis();
         Group group = new Group( name, m_wiki );
         final Principal al = new WikiPrincipal( "Al" );
         final Principal bob = new WikiPrincipal( "Bob" );
@@ -214,7 +209,7 @@ public class JDBCGroupDatabaseTest
     public void testResave() throws Exception
     {
         // Create a new group with random name & 3 members
-        final String name = "TestGroup" + String.valueOf( System.currentTimeMillis() );
+        final String name = "TestGroup" + System.currentTimeMillis();
         Group group = new Group( name, m_wiki );
         final Principal al = new WikiPrincipal( "Al" );
         final Principal bob = new WikiPrincipal( "Bob" );
@@ -259,14 +254,10 @@ public class JDBCGroupDatabaseTest
         m_db.delete( group );
     }
 
-    private Group backendGroup(final String name ) throws WikiSecurityException
-    {
+    private Group backendGroup( final String name ) throws WikiSecurityException {
         final Group[] groups = m_db.groups();
-        for ( int i = 0; i < groups.length; i++ )
-        {
-            final Group group = groups[i];
-            if ( group.getName().equals( name ) )
-            {
+        for( final Group group : groups ) {
+            if( group.getName().equals( name ) ) {
                 return group;
             }
         }
