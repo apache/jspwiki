@@ -23,7 +23,6 @@ import org.apache.commons.lang3.Validate;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletContext;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -112,7 +111,7 @@ public final class PropertyReader {
         try( final InputStream propertyStream = loadCustomPropertiesFile(context, propertyFile) ) {
             final Properties props = getDefaultProperties();
             if( propertyStream == null ) {
-                LOG.info("No custom property file found, relying on JSPWiki defaults.");
+                LOG.info( "No custom property file found, relying on JSPWiki defaults." );
             } else {
                 props.load( propertyStream );
             }
@@ -128,7 +127,7 @@ public final class PropertyReader {
 
             return props;
         } catch( final Exception e ) {
-            LOG.error( "JSPWiki: Unable to load and setup properties from jspwiki.properties. " + e.getMessage() );
+            LOG.error( "JSPWiki: Unable to load and setup properties from jspwiki.properties. " + e.getMessage(), e );
         }
 
         return null;
@@ -150,7 +149,7 @@ public final class PropertyReader {
 		    propertyStream =  locateClassPathResource(context, CUSTOM_JSPWIKI_CONFIG);
 		} else {
 		    LOG.info( PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file." );
-		    propertyStream = new FileInputStream( new File(propertyFile) );
+		    propertyStream = new FileInputStream( propertyFile );
 		}
 		return propertyStream;
 	}
@@ -229,7 +228,7 @@ public final class PropertyReader {
                 break;
             }
 
-            try( final InputStream propertyStream = new FileInputStream( new File( propertyFile ) ) ) {
+            try( final InputStream propertyStream = new FileInputStream( propertyFile ) ) {
                 LOG.info( " Reading additional properties from " + propertyFile + " and merge to cascade." );
                 final Properties additionalProps = new Properties();
                 additionalProps.load( propertyStream );
