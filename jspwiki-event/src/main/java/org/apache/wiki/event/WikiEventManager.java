@@ -256,6 +256,19 @@ public final class WikiEventManager {
         return removed;
     }
 
+    private void removeDelegates() {
+        synchronized( m_delegates ) {
+            m_delegates.clear();
+        }
+        synchronized( m_preloadCache ) {
+            m_preloadCache.clear();
+        }
+    }
+
+    public static void shutdown() {
+        getInstance().removeDelegates();
+    }
+
     /**
      *  Returns true if there are one or more listeners registered with the provided client Object (undelegated event source). This locates
      *  any delegate and checks to see if it has any listeners attached.

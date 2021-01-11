@@ -643,6 +643,7 @@ public class WikiEngine implements Engine {
     public void shutdown() {
         fireEvent( WikiEngineEvent.SHUTDOWN );
         getManager( FilterManager.class ).destroy();
+        WikiEventManager.shutdown();
     }
 
     /**
