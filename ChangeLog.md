@@ -17,6 +17,23 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-01-11  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-03_
+
+* [JSPWIKI-1142](https://issues.apache.org/jira/browse/JSPWIKI-1142) - Minor performance improvements
+  * Merged [PR #32](https://github.com/apache/jspwiki/pull/32), contributed by Arturo Bernal, thanks!
+
+* `PropertyReader` logs stacktrace if unable to load the `jspwiki.properties` file
+  
+* `WikiEngine` unregisters all event delegates from `WikiEventManager` on shutdown. Under some circumstances, unit tests
+using a `TestEngine` could end up processing events using managers registered by previous `TestEngine`s.
+
+* Tests using in-memory `Hsql` servers start them on random ports, in order to allow concurrent builds.
+
+* Dependency updates
+  * Selenide to 5.17.3
+
 **2021-01-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-02_
