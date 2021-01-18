@@ -185,7 +185,7 @@ public class AtomAPIServlet extends HttpServlet {
             title = pageText.substring( 0, firstLine );
         }
 
-        if( title.trim().length() == 0 ) {
+        if( title.trim().isEmpty() ) {
             title = page.getName();
         }
 

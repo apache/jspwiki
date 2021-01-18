@@ -166,7 +166,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 principals.add( principal );
             }
         }
-        return principals.toArray( new Principal[principals.size()] );
+        return principals.toArray( new Principal[0] );
     }
 
     /** {@inheritDoc} */
@@ -476,7 +476,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
 
                 // Parse basic attributes
                 profile.setUid( user.getAttribute( UID ) );
-                if( profile.getUid() == null || profile.getUid().length() == 0 ) {
+                if( profile.getUid() == null || profile.getUid().isEmpty() ) {
                     profile.setUid( generateUid( this ) );
                 }
                 profile.setLoginName( user.getAttribute( LOGIN_NAME ) );
@@ -492,7 +492,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
 
                 // Is the profile locked?
                 final String lockExpiry = user.getAttribute( LOCK_EXPIRY );
-                if( lockExpiry == null || lockExpiry.length() == 0 ) {
+                if( lockExpiry == null || lockExpiry.isEmpty() ) {
                     profile.setLockExpiry( null );
                 } else {
                     profile.setLockExpiry( new Date( Long.parseLong( lockExpiry ) ) );
@@ -524,7 +524,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
      * @return the text nodes that are immediate children of the base element, concatenated together
      */
     private String extractText( final Element element ) {
-        StringBuilder text = new StringBuilder();
+        final StringBuilder text = new StringBuilder();
         if( element.getChildNodes().getLength() > 0 ) {
             final NodeList children = element.getChildNodes();
             for( int k = 0; k < children.getLength(); k++ ) {
@@ -574,7 +574,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
 
             // Sanitize UID (and generate a new one if one does not exist)
             String uid = user.getAttribute( UID ).trim();
-            if( uid == null || uid.length() == 0 || "-1".equals( uid ) ) {
+            if( uid == null || uid.isEmpty() || "-1".equals( uid ) ) {
                 uid = String.valueOf( generateUid( this ) );
                 user.setAttribute( UID, uid );
             }

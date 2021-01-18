@@ -143,7 +143,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
     /** {@inheritDoc} */
     @Override
     public Principal[] getRoles() {
-        return m_groups.keySet().toArray( new Principal[ m_groups.size() ] );
+        return m_groups.keySet().toArray( new Principal[0] );
     }
 
     /** {@inheritDoc} */
@@ -372,7 +372,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
                 }
             }
         }
-        return members.toArray( new String[ members.size() ] );
+        return members.toArray( new String[0] );
     }
 
     // events processing .......................................................

@@ -48,7 +48,7 @@ public final class PropertiesUtils {
     public static String toSortedString(final Properties properties )
     {
         @SuppressWarnings( { "unchecked", "rawtypes" } ) final TreeMap< String, String > treemap = new TreeMap( properties );
-        StringBuilder string = new StringBuilder();
+        final StringBuilder string = new StringBuilder();
         final Iterator< Map.Entry< String, String > > iterator = treemap.entrySet().iterator();
         while( iterator.hasNext() )
         {

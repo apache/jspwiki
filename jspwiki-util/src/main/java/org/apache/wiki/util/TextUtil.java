@@ -231,7 +231,7 @@ public final class TextUtil {
         if ( src == null || dest == null ) {
             throw new NullPointerException();
         }
-        if ( src.length() == 0 ) {
+        if ( src.isEmpty() ) {
             return orig;
         }
 
@@ -548,7 +548,7 @@ public final class TextUtil {
      *  @since 2.1.127
      */
     public static String beautifyString( final String s, final String space ) {
-        if( s == null || s.length() == 0 ) {
+        if( s == null || s.isEmpty() ) {
         	return "";
         }
 
@@ -826,7 +826,7 @@ public final class TextUtil {
      * @since 2.4
      */
     public static String generateRandomPassword() {
-        StringBuilder pw = new StringBuilder();
+        final StringBuilder pw = new StringBuilder();
         for( int i = 0; i < PASSWORD_LENGTH; i++ ) {
             final int index = ( int )( RANDOM.nextDouble() * PWD_BASE.length() );
             pw.append(PWD_BASE.substring(index, index + 1));

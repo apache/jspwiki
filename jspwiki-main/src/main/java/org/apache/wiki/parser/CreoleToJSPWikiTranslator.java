@@ -427,7 +427,7 @@ public class CreoleToJSPWikiTranslator
         {
             String protectedMarkup = matcher.group(0);
             final String paramsField = matcher.group(groupPos);
-            StringBuilder paramsString = new StringBuilder();
+            final StringBuilder paramsString = new StringBuilder();
 
             if (paramsField != null)
             {
@@ -537,7 +537,7 @@ public class CreoleToJSPWikiTranslator
 
     private String bytesToHash(final byte[] b)
     {
-        StringBuilder hash = new StringBuilder();
+        final StringBuilder hash = new StringBuilder();
         for (int i = 0; i < b.length; i++)
         {
             hash.append(Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1));

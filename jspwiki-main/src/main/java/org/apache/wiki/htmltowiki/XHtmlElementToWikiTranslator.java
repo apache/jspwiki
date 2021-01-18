@@ -765,7 +765,7 @@ public class XHtmlElementToWikiTranslator
             return null;
         }
         final String s = e.getText();
-        return s == null ? null : ( s.replaceAll( "\\s", "" ).length() == 0 ? null : s );
+        return s == null ? null : ( s.replaceAll( "\\s", "" ).isEmpty() ? null : s );
     }
 
     private String propsToStyleString( final Map< Object, Object >  styleProps ) {

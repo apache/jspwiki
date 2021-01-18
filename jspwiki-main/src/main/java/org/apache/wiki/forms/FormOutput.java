@@ -81,7 +81,7 @@ public class FormOutput extends FormElement {
         }
 
         final String handler = params.get( PARAM_HANDLER );
-        if( handler == null || handler.length() == 0 ) {
+        if( handler == null || handler.isEmpty() ) {
             // Need to print out an error here as this form is misconfigured
             return "<p class=\"error\">" + MessageFormat.format( rb.getString( "formoutput.missingargument" ), PARAM_HANDLER ) + "</p>";
         }

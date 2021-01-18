@@ -371,7 +371,7 @@ public class Workflow implements Serializable {
         final Principal actor = getCurrentActor();
         args.add( actor == null ? "-" : actor.getName() );
         args.addAll( m_messageArgs );
-        return args.toArray( new Serializable[ args.size() ] );
+        return args.toArray( new Serializable[0] );
     }
 
     /**

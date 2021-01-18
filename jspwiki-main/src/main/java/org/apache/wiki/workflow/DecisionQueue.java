@@ -66,7 +66,7 @@ public class DecisionQueue implements Serializable {
      * @return the pending decisions 
      */
     protected Decision[] decisions() {
-        return m_queue.toArray( new Decision[ m_queue.size() ] );
+        return m_queue.toArray( new Decision[0] );
     }
 
     /**

@@ -156,7 +156,7 @@ public class DefaultEditorManager extends BaseModuleManager implements EditorMan
         private String m_path;
 
         protected static WikiEditorInfo newInstance( final String name, final Element el ) {
-            if( name == null || name.length() == 0 ) {
+            if( name == null || name.isEmpty() ) {
                 return null;
             }
             final WikiEditorInfo info = new WikiEditorInfo( name );

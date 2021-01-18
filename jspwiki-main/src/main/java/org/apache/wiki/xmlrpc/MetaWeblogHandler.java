@@ -140,7 +140,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
             title = pageText.substring( 0, firstLine );
         }
 
-        if( title.trim().length() == 0 ) {
+        if( title.trim().isEmpty() ) {
             title = page.getName();
         }
 

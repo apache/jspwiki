@@ -146,7 +146,7 @@ public class DefaultVariableManager implements VariableManager {
         if( varName == null ) {
             throw new IllegalArgumentException( "Null variable name." );
         }
-        if( varName.length() == 0 ) {
+        if( varName.isEmpty() ) {
             throw new IllegalArgumentException( "Zero length variable name." );
         }
         // Faster than doing equalsIgnoreCase()

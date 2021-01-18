@@ -357,7 +357,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
                 title = pageText.substring( 0, firstLine ).trim();
             }
 
-            if( title.length() == 0 ) {
+            if( title.isEmpty() ) {
                 title = page.getName();
             }
 

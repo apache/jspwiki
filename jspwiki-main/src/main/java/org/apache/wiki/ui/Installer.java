@@ -254,7 +254,7 @@ public class Installer {
     
     private void validateNotNull( final String key, final String message ) {
         final String value = m_props.getProperty( key );
-        if ( value == null || value.length() == 0 ) {
+        if ( value == null || value.isEmpty() ) {
             m_session.addMessage( INSTALL_ERROR, message );
         }
     }

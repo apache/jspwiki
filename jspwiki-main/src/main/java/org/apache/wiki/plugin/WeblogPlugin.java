@@ -376,7 +376,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
 
     private int guessNumberOfComments( final Engine engine, final String commentpage ) {
         final String pagedata = engine.getManager( PageManager.class ).getPureText( commentpage, WikiProvider.LATEST_VERSION );
-        if( pagedata == null || pagedata.trim().length() == 0 ) {
+        if( pagedata == null || pagedata.trim().isEmpty() ) {
             return 0;
         }
 

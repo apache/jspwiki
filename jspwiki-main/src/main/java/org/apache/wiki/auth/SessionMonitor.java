@@ -229,7 +229,7 @@ public class SessionMonitor implements HttpSessionListener {
                 principals.add( session.getUserPrincipal() );
             }
         }
-        final Principal[] p = principals.toArray( new Principal[ principals.size() ] );
+        final Principal[] p = principals.toArray( new Principal[0] );
         Arrays.sort( p, m_comparator );
         return p;
     }

@@ -407,7 +407,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
             throw new WikiSecurityException( e.getMessage(), e );
         }
 
-        return principals.toArray( new Principal[principals.size()] );
+        return principals.toArray( new Principal[0] );
     }
 
     /**

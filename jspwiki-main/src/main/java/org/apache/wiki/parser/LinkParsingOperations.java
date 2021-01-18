@@ -166,7 +166,7 @@ public class LinkParsingOperations {
      * @return {@code true}, if the link name exists; otherwise it returns {@code false}.
      */
     public boolean linkExists( final String page ) {
-        if( page == null || page.length() == 0 ) {
+        if( page == null || page.isEmpty() ) {
             return false;
         }
         try {
@@ -184,7 +184,7 @@ public class LinkParsingOperations {
      * @return link name, if it exists; otherwise it returns {@code null}.
      */
     public String linkIfExists( final String page ) {
-        if( page == null || page.length() == 0 ) {
+        if( page == null || page.isEmpty() ) {
             return null;
         }
         try {

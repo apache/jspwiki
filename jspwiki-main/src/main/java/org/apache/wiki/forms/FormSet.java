@@ -64,7 +64,7 @@ public class FormSet implements Plugin {
     @Override
     public String execute( final Context ctx, final Map< String, String > params ) throws PluginException {
         final String formName = params.get( FormElement.PARAM_FORM );
-        if( formName == null || formName.trim().length() == 0 ) {
+        if( formName == null || formName.trim().isEmpty() ) {
             return "";
         }
 

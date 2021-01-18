@@ -146,7 +146,7 @@ public class AttachmentServlet extends HttpServlet {
 
     private boolean isTypeAllowed( String name )
     {
-        if( name == null || name.length() == 0 ) return false;
+        if( name == null || name.isEmpty() ) return false;
 
         name = name.toLowerCase();
 

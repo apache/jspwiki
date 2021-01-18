@@ -98,7 +98,7 @@ public class InsertDiffTag extends WikiTagBase {
             final JspWriter out = pageContext.getOut();
             final String diff = engine.getManager( DifferenceManager.class ).getDiff( ctx, vernew.intValue(), verold.intValue() );
 
-            if( diff.length() == 0 ) {
+            if( diff.isEmpty() ) {
                 return EVAL_BODY_INCLUDE;
             }
 

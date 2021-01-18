@@ -334,7 +334,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
             closeQuietly( conn, ps, rs );
         }
 
-        return groups.toArray( new Group[groups.size()] );
+        return groups.toArray( new Group[0] );
     }
 
     /**
