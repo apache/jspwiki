@@ -74,7 +74,7 @@ public class TranslationsCheck {
         }
 
         if( "site".equals( translations.suffix ) ) {
-            StringBuilder site = new StringBuilder();
+            final StringBuilder site = new StringBuilder();
             for( int i = 0; i < LANGS.length; i++ ) {
                 translations.suffix = LANGS[ i ];
                 site.append(translations.check(i));

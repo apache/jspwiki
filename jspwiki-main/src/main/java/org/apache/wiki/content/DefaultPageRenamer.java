@@ -67,10 +67,10 @@ public class DefaultPageRenamer implements PageRenamer {
     @Override
     public String renamePage( final Context context, final String renameFrom, final String renameTo, final boolean changeReferrers ) throws WikiException {
         //  Sanity checks first
-        if( renameFrom == null || renameFrom.length() == 0 ) {
+        if( renameFrom == null || renameFrom.isEmpty() ) {
             throw new WikiException( "From name may not be null or empty" );
         }
-        if( renameTo == null || renameTo.length() == 0 ) {
+        if( renameTo == null || renameTo.isEmpty() ) {
             throw new WikiException( "To name may not be null or empty" );
         }
        
@@ -278,7 +278,7 @@ public class DefaultPageRenamer implements PageRenamer {
             String link = matcher.group(4);
             final String attr = matcher.group(6);
              
-            if( link.length() == 0 ) {
+            if( link.isEmpty() ) {
                 text = replaceSingleLink( context, text, from, to );
             } else {
                 link = replaceSingleLink( context, link, from, to );

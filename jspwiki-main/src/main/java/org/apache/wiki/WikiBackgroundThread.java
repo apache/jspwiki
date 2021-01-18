@@ -33,7 +33,7 @@ import org.apache.wiki.event.WikiEventListener;
 public abstract class WikiBackgroundThread extends Thread implements WikiEventListener {
 	
     private static final Logger LOG = Logger.getLogger( WikiBackgroundThread.class );
-    private volatile boolean m_killMe = false;
+    private volatile boolean m_killMe;
     private final Engine m_engine;
     private final int m_interval;
     private static final long POLLING_INTERVAL = 1_000L;

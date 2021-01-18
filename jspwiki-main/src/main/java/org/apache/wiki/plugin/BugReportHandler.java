@@ -91,7 +91,7 @@ public class BugReportHandler implements Plugin {
         if( title == null ) {
             throw new PluginException(rb.getString("bugreporthandler.titlerequired"));
         }
-        if( title.length() == 0 ) {
+        if( title.isEmpty() ) {
             return "";
         }
 

@@ -396,7 +396,7 @@ public class SpamFilter extends BasePageFilter {
                 String line;
                 while( (line = in.readLine() ) != null ) {
                     line = line.trim();
-                    if( line.length() == 0 ) continue; // Empty line
+                    if( line.isEmpty() ) continue; // Empty line
                     if( line.startsWith("#") ) continue; // It's a comment
 
                     int ws = line.indexOf( ' ' );

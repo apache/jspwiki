@@ -94,7 +94,7 @@ public final class FormUtil
         if( params == null || 
             params.size() == 0 || 
             keyPrefix == null || 
-            keyPrefix.length() == 0 )
+            keyPrefix.isEmpty() )
             return rval;
 
         String fullPrefix = null;

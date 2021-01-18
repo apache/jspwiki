@@ -277,7 +277,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         // Make sure we make a link name that can be accepted
         // as a valid URL.
 
-        if( link.length() == 0 )
+        if( link.isEmpty() )
         {
             type = EMPTY;
         }
@@ -2342,7 +2342,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //  a <p></p> pair according to XHTML rules.
                 //
                 final String nextLine = peekAheadLine();
-                if( nextLine.length() == 0 ||
+                if( nextLine.isEmpty() ||
                     (nextLine.length() > 0 &&
                      !nextLine.startsWith("{{{") &&
                      !nextLine.startsWith("----") &&

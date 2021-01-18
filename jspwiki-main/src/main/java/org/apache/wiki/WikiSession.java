@@ -196,7 +196,7 @@ public final class WikiSession implements Session {
         if( messages == null || messages.size() == 0 ) {
             return new String[ 0 ];
         }
-        return messages.toArray( new String[ messages.size() ] );
+        return messages.toArray( new String[0] );
     }
 
     /** {@inheritDoc} */
@@ -211,7 +211,7 @@ public final class WikiSession implements Session {
             }
         }
 
-        return principals.toArray( new Principal[ principals.size() ] );
+        return principals.toArray( new Principal[0] );
     }
 
     /** {@inheritDoc} */
@@ -226,7 +226,7 @@ public final class WikiSession implements Session {
         roles.addAll( m_subject.getPrincipals( GroupPrincipal.class ) );
 
         // Return a defensive copy
-        final Principal[] roleArray = roles.toArray( new Principal[ roles.size() ] );
+        final Principal[] roleArray = roles.toArray( new Principal[0] );
         Arrays.sort( roleArray, WikiPrincipal.COMPARATOR );
         return roleArray;
     }

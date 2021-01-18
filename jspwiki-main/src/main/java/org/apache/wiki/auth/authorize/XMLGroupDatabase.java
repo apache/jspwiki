@@ -151,7 +151,7 @@ public class XMLGroupDatabase implements GroupDatabase {
     {
         buildDOM();
         final Collection<Group> groups = m_groups.values();
-        return groups.toArray( new Group[groups.size()] );
+        return groups.toArray( new Group[0] );
     }
 
     /**

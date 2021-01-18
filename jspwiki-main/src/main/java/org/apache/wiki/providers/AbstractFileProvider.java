@@ -105,7 +105,7 @@ public abstract class AbstractFileProvider implements PageProvider {
     /** The default encoding. */
     public static final String DEFAULT_ENCODING = StandardCharsets.ISO_8859_1.toString();
 
-    private boolean m_windowsHackNeeded = false;
+    private boolean m_windowsHackNeeded;
 
     /**
      *  {@inheritDoc}
@@ -176,7 +176,7 @@ public abstract class AbstractFileProvider implements PageProvider {
 
         if( m_windowsHackNeeded ) {
             final String pn = pagename.toLowerCase();
-            StringBuilder pagenameBuilder = new StringBuilder(pagename);
+            final StringBuilder pagenameBuilder = new StringBuilder(pagename);
             for( final String windowsDeviceName : WINDOWS_DEVICE_NAMES ) {
                 if( windowsDeviceName.equals( pn ) ) {
                     pagenameBuilder.insert(0, "$$$");

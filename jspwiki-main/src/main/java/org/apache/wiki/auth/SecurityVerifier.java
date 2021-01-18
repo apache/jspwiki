@@ -551,7 +551,7 @@ public final class SecurityVerifier {
     protected void verifyJaas() {
         // Verify that the specified JAAS moduie corresponds to a class we can load successfully.
         final String jaasClass = m_engine.getWikiProperties().getProperty( AuthenticationManager.PROP_LOGIN_MODULE );
-        if( jaasClass == null || jaasClass.length() == 0 ) {
+        if( jaasClass == null || jaasClass.isEmpty() ) {
             m_session.addMessage( ERROR_JAAS, "The value of the '" + AuthenticationManager.PROP_LOGIN_MODULE
                     + "' property was null or blank. This is a fatal error. This value should be set to a valid LoginModule implementation "
                     + "on the classpath." );
@@ -695,7 +695,7 @@ public final class SecurityVerifier {
             for ( final ProtectionDomain domain : domains ) {
                 principals.addAll(Arrays.asList(domain.getPrincipals()));
             }
-            m_policyPrincipals = principals.toArray( new Principal[principals.size()] );
+            m_policyPrincipals = principals.toArray( new Principal[0] );
         } catch( final IOException e ) {
             m_session.addMessage( ERROR_POLICY, e.getMessage() );
         }

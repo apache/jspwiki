@@ -232,7 +232,7 @@ public final class WikiPermission extends Permission implements Serializable
      */
     protected static int createMask(final String actions )
     {
-        if ( actions == null || actions.length() == 0 )
+        if ( actions == null || actions.isEmpty() )
         {
             throw new IllegalArgumentException( "Actions cannot be blank or null" );
         }

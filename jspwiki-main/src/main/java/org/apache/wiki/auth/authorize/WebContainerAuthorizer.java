@@ -120,7 +120,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         }
 
         if( m_containerRoles.length > 0 ) {
-            StringBuilder roles = new StringBuilder();
+            final StringBuilder roles = new StringBuilder();
             for( final Role containerRole : m_containerRoles ) {
                 roles.append(containerRole).append(" ");
             }
@@ -327,7 +327,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
             roles.add( new Role( role ) );
         }
 
-        return roles.toArray( new Role[roles.size()] );
+        return roles.toArray( new Role[0] );
     }
 
     /**

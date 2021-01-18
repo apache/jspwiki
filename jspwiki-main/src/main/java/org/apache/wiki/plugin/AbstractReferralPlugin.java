@@ -130,7 +130,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
     protected           PageSorter m_sorter;
 
     protected           String m_show = "pages";
-    protected           boolean m_lastModified=false;
+    protected           boolean m_lastModified;
     // the last modified date of the page that has been last modified:
     protected           Date m_dateLastModified = new Date(0);
     protected           SimpleDateFormat m_dateFormat;
@@ -436,7 +436,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
      */
     private void initSorter( final Context context, final Map< String, String > params ) {
         final String order = params.get( PARAM_SORTORDER );
-        if( order == null || order.length() == 0 ) {
+        if( order == null || order.isEmpty() ) {
             // Use the configured comparator
             m_sorter = context.getEngine().getManager( PageManager.class ).getPageSorter();
         } else if( order.equalsIgnoreCase( PARAM_SORTORDER_JAVA ) ) {

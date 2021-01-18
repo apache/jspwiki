@@ -172,7 +172,7 @@ public class DefaultPageManager implements PageManager {
      */
     @Override
     public String getPageText( final String pageName, final int version ) throws ProviderException {
-        if (pageName == null || pageName.length() == 0) {
+        if (pageName == null || pageName.isEmpty()) {
             throw new ProviderException( "Illegal page name" );
         }
         String text;
@@ -287,7 +287,7 @@ public class DefaultPageManager implements PageManager {
      */
     @Override
     public void putPageText( final Page page, final String content ) throws ProviderException {
-        if (page == null || page.getName() == null || page.getName().length() == 0) {
+        if (page == null || page.getName() == null || page.getName().isEmpty()) {
             throw new ProviderException("Illegal page name");
         }
 
@@ -394,7 +394,7 @@ public class DefaultPageManager implements PageManager {
      */
     @Override
     public Page getPageInfo( final String pageName, final int version) throws ProviderException {
-        if( pageName == null || pageName.length() == 0 ) {
+        if( pageName == null || pageName.isEmpty() ) {
             throw new ProviderException( "Illegal page name '" + pageName + "'" );
         }
 
@@ -496,7 +496,7 @@ public class DefaultPageManager implements PageManager {
      */
     @Override
     public boolean pageExists( final String pageName ) throws ProviderException {
-        if (pageName == null || pageName.length() == 0) {
+        if (pageName == null || pageName.isEmpty()) {
             throw new ProviderException("Illegal page name");
         }
 
@@ -509,7 +509,7 @@ public class DefaultPageManager implements PageManager {
      */
     @Override
     public boolean pageExists( final String pageName, final int version ) throws ProviderException {
-        if( pageName == null || pageName.length() == 0 ) {
+        if( pageName == null || pageName.isEmpty() ) {
             throw new ProviderException( "Illegal page name" );
         }
 

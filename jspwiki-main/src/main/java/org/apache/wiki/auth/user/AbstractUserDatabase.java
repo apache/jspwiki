@@ -145,7 +145,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
         if( profile.getWikiName() != null && profile.getWikiName().length() > 0 ) {
             principals.add( new WikiPrincipal( profile.getWikiName(), WikiPrincipal.WIKI_NAME ) );
         }
-        return principals.toArray( new Principal[ principals.size() ] );
+        return principals.toArray( new Principal[0] );
     }
 
     /**

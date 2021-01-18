@@ -476,7 +476,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
          *  @return A WikiPluginInfo object.
          */
         protected static WikiPluginInfo newInstance( final String className, final Element el, final List<String> searchPath, final List<String> externalJars ) {
-            if( className == null || className.length() == 0 ) {
+            if( className == null || className.isEmpty() ) {
                 return null;
             }
 

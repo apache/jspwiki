@@ -61,7 +61,7 @@ public class Note implements Plugin {
     @Override
     public String execute( final Context context, final Map<String, String> params) throws PluginException {
         final String commandline = params.get(DefaultPluginManager.PARAM_CMDLINE);
-        if (commandline == null || commandline.length() == 0) {
+        if (commandline == null || commandline.isEmpty()) {
             return "Unable to obtain plugin command line from parameter'" + DefaultPluginManager.PARAM_CMDLINE + "'"; // I18N
         }
 

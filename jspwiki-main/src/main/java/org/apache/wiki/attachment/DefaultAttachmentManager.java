@@ -177,7 +177,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
             attachmentname = attachmentname.substring( cutpt + 1 );
 
             // If we for some reason have an empty parent page name; this can't be an attachment
-            if( parentPage.length() == 0 ) {
+            if( parentPage.isEmpty() ) {
                 return null;
             }
 
@@ -192,7 +192,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
         }
 
         //  If the page cannot be determined, we cannot possibly find the attachments.
-        if( currentPage == null || currentPage.getName().length() == 0 ) {
+        if( currentPage == null || currentPage.getName().isEmpty() ) {
             return null;
         }
 
@@ -221,7 +221,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
     /** {@inheritDoc} */
     @Override
     public boolean forceDownload( String name ) {
-        if( name == null || name.length() == 0 ) {
+        if( name == null || name.isEmpty() ) {
             return false;
         }
 

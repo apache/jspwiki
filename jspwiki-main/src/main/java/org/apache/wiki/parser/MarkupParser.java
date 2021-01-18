@@ -63,7 +63,7 @@ public abstract class MarkupParser {
     protected boolean m_inlineImages = true;
     protected boolean m_parseAccessRules = true;
     /** Keeps image regexp Patterns */
-    protected List< Pattern > m_inlineImagePatterns = null;
+    protected List< Pattern > m_inlineImagePatterns;
     protected LinkParsingOperations m_linkParsingOperations;
 
     private static final Logger log = Logger.getLogger( MarkupParser.class );

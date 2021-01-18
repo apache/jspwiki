@@ -241,7 +241,7 @@ public class Group {
      * @return the members
      */
     public Principal[] members() {
-        return m_members.toArray( new Principal[ m_members.size() ] );
+        return m_members.toArray( new Principal[0] );
     }
 
     /**

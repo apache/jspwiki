@@ -287,7 +287,7 @@ public interface AttachmentManager {
      *  @throws WikiException If the filename is not legal (e.g. empty)
      */
     static String validateFileName( String filename ) throws WikiException {
-        if( filename == null || filename.trim().length() == 0 ) {
+        if( filename == null || filename.trim().isEmpty() ) {
             Logger.getLogger( AttachmentManager.class ).error( "Empty file name given." );
 
             // the caller should catch the exception and use the exception text as an i18n key

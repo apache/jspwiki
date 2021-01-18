@@ -74,7 +74,7 @@ public final class HttpUtil {
             for( final Cookie cookie : cookies ) {
                 if( cookie.getName().equals( cookieName ) ) {
                     String value = cookie.getValue();
-                    if( value == null || value.length() == 0 ) {
+                    if( value == null || value.isEmpty() ) {
                         return null;
                     }
                     if( value.charAt( 0 ) == '"' && value.charAt( value.length() - 1 ) == '"' ) {
