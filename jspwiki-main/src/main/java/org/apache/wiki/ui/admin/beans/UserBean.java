@@ -99,7 +99,7 @@ public class UserBean extends SimpleAdminBean {
 
         p.setEmail( email );
         p.setFullname( fullname );
-        if( password != null && password.length() > 0 ) {
+        if( password != null && !password.isEmpty() ) {
             p.setPassword( password );
         }
         p.setLoginName( loginname );

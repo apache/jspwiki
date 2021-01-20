@@ -157,7 +157,7 @@ public final class GroupPermission extends Permission implements Serializable
         final String groupName;
         if ( pathParams.length >= 2 )
         {
-            m_wiki = pathParams[0].length() > 0 ? pathParams[0] : null;
+            m_wiki = !pathParams[0].isEmpty() ? pathParams[0] : null;
             groupName = pathParams[1];
         }
         else

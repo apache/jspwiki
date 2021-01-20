@@ -233,7 +233,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                     url = makeBasicURL( m_context, reallink, parms );
                 }
             }
-        } else if( m_pageName != null && m_pageName.length() > 0 ) {
+        } else if( m_pageName != null && !m_pageName.isEmpty() ) {
             final Page p = engine.getManager( PageManager.class ).getPage( m_pageName );
 
             String parms = (m_version != null) ? "version="+getVersion() : null;

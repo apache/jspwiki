@@ -123,7 +123,7 @@ public class ShortURLConstructor extends DefaultURLConstructor {
      */
     @Override
     public String makeURL( final String context, final String name, String parameters ) {
-        if( parameters != null && parameters.length() > 0 ) {
+        if( parameters != null && !parameters.isEmpty() ) {
             if( context.equals( ContextEnum.PAGE_ATTACH.getRequestContext() ) || context.equals( ContextEnum.PAGE_VIEW.getRequestContext() ) ) {
                 parameters = "?" + parameters;
             } else if( context.equals(ContextEnum.PAGE_NONE.getRequestContext()) ) {

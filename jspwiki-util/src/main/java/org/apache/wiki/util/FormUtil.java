@@ -162,7 +162,7 @@ public final class FormUtil
                     {
                         for( int i = 0; i < values.length; i++ )
                         {
-                            if( values[i] != null && values[i].length() > 0 )
+                            if( values[i] != null && !values[i].isEmpty() )
                             {
                                 params.put( realName + "." + i, values[i] );
                             }

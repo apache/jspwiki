@@ -71,7 +71,7 @@ public class MetadataLinkNodePostProcessorState implements NodePostProcessorStat
 
             LOG.debug( "page=" + wikiContext.getRealPage().getName() + " SET name='" + name + "', value='" + val + "'" );
 
-            if( name.length() > 0 && val.length() > 0 ) {
+            if( !name.isEmpty() && !val.isEmpty() ) {
                 val = wikiContext.getEngine().getManager( VariableManager.class ).expandVariables( wikiContext, val );
                 wikiContext.getPage().setAttribute( name, val );
                 link.unlink();

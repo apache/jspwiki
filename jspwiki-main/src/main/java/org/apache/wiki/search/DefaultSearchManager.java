@@ -146,7 +146,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
             final StopWatch sw = new StopWatch();
             sw.start();
             final List< String > list = new ArrayList<>( maxLength );
-            if( wikiName.length() > 0 ) {
+            if( !wikiName.isEmpty() ) {
                 // split pagename and attachment filename
                 String filename = "";
                 final int pos = wikiName.indexOf("/");
@@ -189,7 +189,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
             sw.start();
 
             final List< Map< String, Object > > list = new ArrayList<>( maxLength );
-            if( searchString.length() > 0 ) {
+            if( !searchString.isEmpty() ) {
                 try {
                     final Collection< SearchResult > c;
                     if( m_searchProvider instanceof LuceneSearchProvider ) {

@@ -100,7 +100,7 @@ public final class PermissionFactory
         
         if( perm == null )
         {
-            if( wiki.length() > 0 ) page = wiki+":"+page;
+            if( !wiki.isEmpty() ) page = wiki+":"+page;
             perm = new PagePermission( page, actions );
             
             synchronized( c_cache )

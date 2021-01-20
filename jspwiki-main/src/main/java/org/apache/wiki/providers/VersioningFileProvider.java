@@ -522,7 +522,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 props.load( in );
 
                 final String originalAuthor = props.getProperty( Page.AUTHOR );
-                if ( originalAuthor.length() > 0 ) {
+                if ( !originalAuthor.isEmpty() ) {
                     // simulate original author as if already versioned but put non-versioned property in special cache too
                     props.setProperty( "1.author", originalAuthor );
 

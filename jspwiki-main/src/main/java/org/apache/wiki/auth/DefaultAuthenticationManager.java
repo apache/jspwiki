@@ -379,7 +379,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             if( propName.startsWith( PREFIX_LOGIN_MODULE_OPTIONS ) ) {
                 // Extract the option name and value
                 final String optionKey = propName.substring( PREFIX_LOGIN_MODULE_OPTIONS.length() ).trim();
-                if( optionKey.length() > 0 ) {
+                if( !optionKey.isEmpty() ) {
                     final String optionValue = props.getProperty( propName );
 
                     // Make sure the key is unique before stashing the key/value pair

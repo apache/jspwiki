@@ -1058,7 +1058,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
             // log.debug("SET name='"+name+"', value='"+val+"'.");
 
-            if( name.length() > 0 && val.length() > 0 ) {
+            if( !name.isEmpty() && !val.isEmpty() ) {
                 val = m_engine.getManager( VariableManager.class ).expandVariables( m_context, val );
                 m_context.getPage().setAttribute( name, val );
             }
@@ -1989,7 +1989,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             //
             final String eol = peekAheadLine();
 
-            if( eol.trim().length() > 0 )
+            if( !eol.trim().isEmpty() )
             {
                 // There is stuff after the class
 
@@ -2343,7 +2343,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //
                 final String nextLine = peekAheadLine();
                 if( nextLine.isEmpty() ||
-                    (nextLine.length() > 0 &&
+                    (!nextLine.isEmpty() &&
                      !nextLine.startsWith("{{{") &&
                      !nextLine.startsWith("----") &&
                      !nextLine.startsWith("%%") &&
@@ -2557,7 +2557,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //
                 // Make sure there are no empty <p/> tags added.
                 //
-                if( newel.getTextTrim().length() > 0 || !newel.getChildren().isEmpty() )
+                if( !newel.getTextTrim().isEmpty() || !newel.getChildren().isEmpty() )
                     rootElement.addContent(idxOfFirstContent, newel);
             }
         }

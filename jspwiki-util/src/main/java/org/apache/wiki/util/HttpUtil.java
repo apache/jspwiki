@@ -179,7 +179,7 @@ public final class HttpUtil {
     }
 
 	static boolean notBeginningWithHttpOrHttps( final String uri ) {
-		return uri.length() > 0 && !( uri.startsWith("http://" ) || uri.startsWith( "https://" ) );
+		return !uri.isEmpty() && !( uri.startsWith("http://" ) || uri.startsWith( "https://" ) );
 	}
 
     /**

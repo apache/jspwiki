@@ -92,7 +92,7 @@ public class PageSorter implements Comparator< String > {
         // Default is Java natural order
         m_comparator = JavaNaturalComparator.DEFAULT_JAVA_COMPARATOR;
         final String className = props.getProperty( PROP_PAGE_NAME_COMPARATOR );
-        if( className != null && className.length() > 0 ) {
+        if( className != null && !className.isEmpty() ) {
             try {
                 m_comparator = ( Comparator< String > )ClassUtil.findClass( "org.apache.wiki.util.comparators", className ).newInstance();
             } catch( final Exception e ) {

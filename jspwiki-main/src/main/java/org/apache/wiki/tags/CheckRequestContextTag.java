@@ -85,7 +85,7 @@ public class CheckRequestContextTag
             
             final String checkedCtx = m_contextList[i];
 
-            if( checkedCtx.length() > 0 )
+            if( !checkedCtx.isEmpty() )
             {
                 if( checkedCtx.charAt(0) == '!' )
                 {

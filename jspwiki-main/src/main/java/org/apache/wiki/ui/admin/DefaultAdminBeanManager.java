@@ -142,7 +142,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
         for( final WikiModuleInfo wikiModuleInfo : c ) {
             final String abname = wikiModuleInfo.getAdminBeanClass();
             try {
-                if( abname != null && abname.length() > 0 ) {
+                if( abname != null && !abname.isEmpty() ) {
                     final Class< ? > abclass = Class.forName( abname );
                     final AdminBean ab = ( AdminBean )abclass.newInstance();
                     registerAdminBean( ab );

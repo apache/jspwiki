@@ -214,7 +214,7 @@ public class Image implements Plugin {
         {
             return true;
         }
-        else if( s.length() > 0 ) // check [a-zA-z]
+        else if( !s.isEmpty() ) // check [a-zA-z]
         {
             final char c = s.charAt(0);
             return Character.isLowerCase(c) || Character.isUpperCase(c);
