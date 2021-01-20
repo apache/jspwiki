@@ -597,7 +597,7 @@ public class SpamFilter extends BasePageFilter {
         final HttpServletRequest request = context.getHttpRequest();
         if( request != null ) {
             final String unspam = request.getParameter( getBotFieldName() );
-            if( unspam != null && unspam.length() > 0 ) {
+            if( unspam != null && !unspam.isEmpty() ) {
                 final String uid = log( context, REJECT, REASON_BOT_TRAP, change.toString() );
 
                 log.info( "SPAM:BotTrap (" + uid + ").  Wildly behaving bot detected." );

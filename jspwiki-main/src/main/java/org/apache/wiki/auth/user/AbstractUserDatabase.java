@@ -136,13 +136,13 @@ public abstract class AbstractUserDatabase implements UserDatabase {
     public Principal[] getPrincipals( final String identifier ) throws NoSuchPrincipalException {
         final UserProfile profile = findByLoginName( identifier );
         final ArrayList< Principal > principals = new ArrayList<>();
-        if( profile.getLoginName() != null && profile.getLoginName().length() > 0 ) {
+        if( profile.getLoginName() != null && !profile.getLoginName().isEmpty() ) {
             principals.add( new WikiPrincipal( profile.getLoginName(), WikiPrincipal.LOGIN_NAME ) );
         }
-        if( profile.getFullname() != null && profile.getFullname().length() > 0 ) {
+        if( profile.getFullname() != null && !profile.getFullname().isEmpty() ) {
             principals.add( new WikiPrincipal( profile.getFullname(), WikiPrincipal.FULL_NAME ) );
         }
-        if( profile.getWikiName() != null && profile.getWikiName().length() > 0 ) {
+        if( profile.getWikiName() != null && !profile.getWikiName().isEmpty() ) {
             principals.add( new WikiPrincipal( profile.getWikiName(), WikiPrincipal.WIKI_NAME ) );
         }
         return principals.toArray( new Principal[0] );

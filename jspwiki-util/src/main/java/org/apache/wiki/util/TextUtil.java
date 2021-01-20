@@ -686,7 +686,7 @@ public final class TextUtil {
         }
 
         // The first section does not get the "----"
-        return pagedata.length() > 0 ? tags + 1 : 0;
+        return !pagedata.isEmpty() ? tags + 1 : 0;
     }
 
     /**

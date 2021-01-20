@@ -367,7 +367,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             final StringTokenizer tok = new StringTokenizer( memberLine, "\n" );
             while( tok.hasMoreTokens() ) {
                 final String uid = tok.nextToken().trim();
-                if( uid.length() > 0 ) {
+                if( !uid.isEmpty() ) {
                     members.add( uid );
                 }
             }

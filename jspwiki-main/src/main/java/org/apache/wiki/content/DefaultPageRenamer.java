@@ -267,7 +267,7 @@ public class DefaultPageRenamer implements PageRenamer {
                 charBefore = sourceText.charAt( matcher.start() - 1 );
             }
             
-            if( matcher.group(1).length() > 0 || charBefore == '~' || charBefore == '[' ) {
+            if( !matcher.group(1).isEmpty() || charBefore == '~' || charBefore == '[' ) {
                 //  Found an escape character, so I am escaping.
                 sb.append( sourceText.substring( start, matcher.end() ) );
                 start = matcher.end();
@@ -292,10 +292,10 @@ public class DefaultPageRenamer implements PageRenamer {
             //
             sb.append( sourceText.substring( start, matcher.start() ) );
             sb.append( "[" ).append( text );
-            if( link.length() > 0 ) {
+            if( !link.isEmpty() ) {
                 sb.append( "|" ).append( link );
             }
-            if( attr.length() > 0 ) {
+            if( !attr.isEmpty() ) {
                 sb.append( "|" ).append( attr );
             }
             sb.append( "]" );

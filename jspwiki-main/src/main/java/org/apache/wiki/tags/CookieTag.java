@@ -337,7 +337,7 @@ public class CookieTag
         for( int i = 0; i < nvps.length; i++ ) {
             final String nvp = decode( nvps[i] );
             final String[] nv = nvp.split( "=" );
-            if( nv[0] != null && nv[0].trim().length() > 0 )
+            if( nv[0] != null && !nv[0].trim().isEmpty() )
             {
                 rval.put( nv[0], nv[1] );
             }

@@ -129,7 +129,7 @@ public class BugReportHandler implements Plugin {
                      ) ) {
                     //  If no mapping has been defined, just ignore it.
                     final String head = mappings.getProperty( entry.getKey(), entry.getKey() );
-                    if( head.length() > 0 ) {
+                    if( !head.isEmpty() ) {
                         out.println( "|" + head + "|" + entry.getValue() );
                     }
                 }

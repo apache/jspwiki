@@ -54,7 +54,7 @@ public class AuthorTag extends WikiTagBase {
         final Page page = m_wikiContext.getPage();
         String author = page.getAuthor();
 
-        if( author != null && author.length() > 0 ) {
+        if( author != null && !author.isEmpty() ) {
             author = TextUtil.replaceEntities(author);
 
             if( engine.getManager( PageManager.class ).wikiPageExists(author) && !( "plain".equalsIgnoreCase( m_format ) ) ) {

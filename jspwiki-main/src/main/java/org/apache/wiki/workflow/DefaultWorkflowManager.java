@@ -112,7 +112,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
                 if( key.length() > 0 ) {
                     // Only use non-null/non-blank approvers
                     final String approver = props.getProperty( prop );
-                    if( approver != null && approver.length() > 0 ) {
+                    if( approver != null && !approver.isEmpty() ) {
                         m_approvers.put( key, new UnresolvedPrincipal( approver ) );
                     }
                 }

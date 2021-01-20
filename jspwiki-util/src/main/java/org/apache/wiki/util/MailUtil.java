@@ -395,7 +395,7 @@ public final class MailUtil {
         final String conntimeout = props.getProperty( PROP_MAIL_CONNECTION_TIMEOUT, DEFAULT_MAIL_CONN_TIMEOUT );
         final boolean starttls = TextUtil.getBooleanProperty( props, PROP_MAIL_STARTTLS, true);
         
-        final boolean useAuthentication = account != null && account.length() > 0;
+        final boolean useAuthentication = account != null && !account.isEmpty();
 
         final Properties mailProps = new Properties();
 

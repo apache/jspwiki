@@ -126,7 +126,7 @@ public class DefaultURLConstructor implements URLConstructor {
      */
     @Override
     public String makeURL( final String context, final String name, String parameters ) {
-        if( parameters != null && parameters.length() > 0 ) {
+        if( parameters != null && !parameters.isEmpty() ) {
             if( context.equals( ContextEnum.PAGE_ATTACH.getRequestContext() ) ) {
                 parameters = "?" + parameters;
             } else if( context.equals( ContextEnum.PAGE_NONE.getRequestContext() ) ) {

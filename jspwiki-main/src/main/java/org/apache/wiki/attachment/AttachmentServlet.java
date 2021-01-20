@@ -121,14 +121,14 @@ public class AttachmentServlet extends HttpServlet {
         final String allowed = TextUtil.getStringProperty( props, AttachmentManager.PROP_ALLOWEDEXTENSIONS, null );
         m_maxSize = TextUtil.getIntegerProperty( props, AttachmentManager.PROP_MAXSIZE, Integer.MAX_VALUE );
 
-        if( allowed != null && allowed.length() > 0 ) {
+        if( allowed != null && !allowed.isEmpty() ) {
             m_allowedPatterns = allowed.toLowerCase().split( "\\s" );
         } else {
             m_allowedPatterns = new String[ 0 ];
         }
 
         final String forbidden = TextUtil.getStringProperty( props, AttachmentManager.PROP_FORBIDDENEXTENSIONS,null );
-        if( forbidden != null && forbidden.length() > 0 ) {
+        if( forbidden != null && !forbidden.isEmpty() ) {
             m_forbiddenPatterns = forbidden.toLowerCase().split("\\s");
         } else {
             m_forbiddenPatterns = new String[0];
@@ -152,13 +152,13 @@ public class AttachmentServlet extends HttpServlet {
 
         for( int i = 0; i < m_forbiddenPatterns.length; i++ )
         {
-            if( name.endsWith(m_forbiddenPatterns[i]) && m_forbiddenPatterns[i].length() > 0 )
+            if( name.endsWith(m_forbiddenPatterns[i]) && !m_forbiddenPatterns[i].isEmpty() )
                 return false;
         }
 
         for( int i = 0; i < m_allowedPatterns.length; i++ )
         {
-            if( name.endsWith(m_allowedPatterns[i]) && m_allowedPatterns[i].length() > 0 )
+            if( name.endsWith(m_allowedPatterns[i]) && !m_allowedPatterns[i].isEmpty() )
                 return true;
         }
 
@@ -560,7 +560,7 @@ public class AttachmentServlet extends HttpServlet {
                 att.setAuthor( user.getName() );
             }
 
-            if( changenote != null && changenote.length() > 0 ) {
+            if( changenote != null && !changenote.isEmpty() ) {
                 att.setAttribute( Page.CHANGENOTE, changenote );
             }
 

@@ -164,7 +164,7 @@ public final class DefaultCommandResolver implements CommandResolver {
         if( command instanceof GroupCommand ) {
             String groupName = request.getParameter( "group" );
             groupName = TextUtil.replaceEntities( groupName );
-            if ( groupName != null && groupName.length() > 0 ) {
+            if ( groupName != null && !groupName.isEmpty() ) {
                 final GroupPrincipal group = new GroupPrincipal( groupName );
                 return command.targetedCommand( group );
             }
@@ -255,7 +255,7 @@ public final class DefaultCommandResolver implements CommandResolver {
         }
 
         // Still haven't found a matching command? Ok, see if we match against our standard list of JSPs
-        if ( jsp.length() > 0 && JSPS.containsKey( jsp ) ) {
+        if ( !jsp.isEmpty() && JSPS.containsKey( jsp ) ) {
             return JSPS.get( jsp );
         }
 

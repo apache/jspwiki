@@ -161,7 +161,7 @@ public class ExternalDiffProvider implements DiffProvider {
         while( (line = in.readLine()) != null ) {
             stop = CSS_DIFF_CLOSE;
 
-            if( line.length() > 0 ) {
+            if( !line.isEmpty() ) {
                 switch( line.charAt( 0 ) ) {
                     case DIFF_ADDED_SYMBOL:
                         start = CSS_DIFF_ADDED;

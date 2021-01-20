@@ -123,7 +123,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
         }
 
         final String forceDownload = TextUtil.getStringProperty( props, PROP_FORCEDOWNLOAD, null );
-        if( forceDownload != null && forceDownload.length() > 0 ) {
+        if( forceDownload != null && !forceDownload.isEmpty() ) {
             m_forceDownloadPatterns = forceDownload.toLowerCase().split( "\\s" );
         } else {
             m_forceDownloadPatterns = new String[ 0 ];
@@ -231,7 +231,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
         }
 
         for( final String forceDownloadPattern : m_forceDownloadPatterns ) {
-            if( name.endsWith( forceDownloadPattern ) && forceDownloadPattern.length() > 0 ) {
+            if( name.endsWith( forceDownloadPattern ) && !forceDownloadPattern.isEmpty() ) {
                 return true;
             }
         }
