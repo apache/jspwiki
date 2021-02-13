@@ -92,6 +92,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private boolean        m_isbold       = false;
     private boolean        m_isitalic     = false;
     private boolean        m_istable      = false;
+	private boolean        m_isheader     = false;
     private boolean        m_isPre        = false;
     private boolean        m_isEscaping   = false;
     private boolean        m_isdefinition = false;
@@ -2196,6 +2197,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         //  If the bar is in the first column, we will either start
         //  a new table or continue the old one.
         //
+        int ch = nextToken();
 
         if( newLine )
         {
@@ -2208,6 +2210,18 @@ public class JSPWikiMarkupParser extends MarkupParser {
             }
 
             m_rowNum++;
+            if ( m_rowNum == 1 ) {
+            	if ( ch == '|' ) {
+					el = pushElement(new Element("thead"));
+					m_isheader = true;
+				} else {
+					el = pushElement(new Element("tbody"));
+				}
+            }
+            if ( m_rowNum == 2 && m_isheader ) {
+                el = pushElement(new Element("tbody"));
+            }
+
             Element tr = ( m_rowNum % 2 != 0 )
                        ? new Element("tr").setAttribute("class", "odd")
                        : new Element("tr");
@@ -2218,8 +2232,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         //  Check out which table cell element to start;
         //  a header element (th) or a regular element (td).
         //
-        int ch = nextToken();
-
         if( ch == '|' )
         {
             if( !newLine )
@@ -2366,6 +2378,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             {
                 popElement("table");
                 m_istable = false;
+                m_isheader = false;
             }
 
             int skip = IGNORE;
