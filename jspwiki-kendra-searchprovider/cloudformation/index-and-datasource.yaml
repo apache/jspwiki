@@ -1,0 +1,123 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  index-and-datasource. Create the Kendra Index and Datasource.
+Metadata:
+
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Parameters related to the Kendra Index and DataSource
+        Parameters:
+          - IndexName
+          - DataSourceName
+          - KendraEdition
+    ParameterLabels:
+      IndexName:
+        default: "The Kendra Index's Name"
+      DataSourceName:
+        default: "The Kendra DataSource's Name"
+      KendraEdition:
+        default: "The Kendra Edition"
+
+Parameters:
+
+  IndexName:
+    Description: "The name of the Kendra Index to create"
+    Type: String
+    Default: "JSPWikiIndex"
+
+  DataSourceName:
+    Description: "The name of the Kendra DataSource to create"
+    Type: String
+    Default: "JSPWikiDataSource"
+    
+  KendraEdition: 
+    Description: "The name of the Kendra DataSource to create"
+    Type: String
+    AllowedValues: [ "DEVELOPER_EDITION", "ENTERPRISE_EDITION" ]
+    Default: "DEVELOPER_EDITION"
+  
+Resources:
+
+  KendraServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - kendra.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies: 
+        - PolicyName: AllowKendra 
+          PolicyDocument: 
+            Version: 2012-10-17
+            Statement:
+            - Effect: Allow
+              Action:
+              - cloudwatch:PutMetricData
+              Resource: "*"
+              Condition:
+                StringEquals:
+                  cloudwatch:namespace: AWS/Kendra
+            - Effect: Allow
+              Action:
+              - logs:DescribeLogGroups
+              Resource: "*"
+            - Effect: Allow
+              Action:
+              - logs:CreateLogGroup
+              Resource:
+              - Fn::Sub: arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/kendra/*
+            - Effect: Allow
+              Action:
+              - logs:DescribeLogStreams
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+              Resource:
+              - Fn::Sub: arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/kendra/*
+
+  Index:
+    Type: AWS::Kendra::Index
+    Properties: 
+      Description: "Index for JSPWiki KendraSearchProvider"
+      Edition: 
+        Ref: KendraEdition
+      Name: 
+        Ref: IndexName
+      RoleArn: 
+        Fn::GetAtt: KendraServiceRole.Arn
+      Tags: 
+        - Key: Origin
+          Value: JSPWIKI
+
+  DataSource:
+    Type: AWS::Kendra::DataSource
+    Properties: 
+      Description: "DataSource for JSPWiki KendraSearchProvider"
+      IndexId: 
+        Ref: Index
+      Name:  
+        Ref: DataSourceName
+      Tags: 
+        - Key: Origin
+          Value: JSPWIKI
+      Type: CUSTOM
+
+Outputs:
+
+  Index:
+    Description: The Index
+    Value: 
+      Ref: Index
+
+  DataSource:
+    Description: The DataSource
+    Value: 
+      Ref: DataSource
+

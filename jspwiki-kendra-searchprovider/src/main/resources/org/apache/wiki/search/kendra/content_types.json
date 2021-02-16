@@ -1,0 +1,18 @@
+{
+	"ContentTypes": {
+		"pdf": "PDF",
+		"html": "HTML",
+		"htm": "HTML",
+		"xhtml": "HTML",
+		"doc": "MS_WORD",
+		"docx": "MS_WORD",
+		"txt": "PLAIN_TEXT",
+		"xml": "PLAIN_TEXT",
+		"properties": "PLAIN_TEXT",
+		"java": "PLAIN_TEXT",
+		"js": "PLAIN_TEXT",
+		"py": "PLAIN_TEXT",
+		"md": "PLAIN_TEXT",
+		"ppt": "PPT"
+	}
+}
