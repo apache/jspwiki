@@ -137,8 +137,10 @@ public class KendraSearchProvider implements SearchProvider {
 
     // Start the Kendra update thread, which waits first for a little while
     // before starting to go through the "pages that need updating".
-    KendraUpdater updater = new KendraUpdater(engine, this, initialDelay, indexDelay);
-    updater.start();
+    if (initialDelay >= 0) {
+      KendraUpdater updater = new KendraUpdater(engine, this, initialDelay, indexDelay);
+      updater.start();
+    }
   }
 
   private Map<String, Object> getContentTypes() {
@@ -266,7 +268,11 @@ public class KendraSearchProvider implements SearchProvider {
     ListIndicesResult result = getKendra().listIndices(request);
     String nextToken = "";
     while (nextToken != null) {
-      for (IndexConfigurationSummary item : result.getIndexConfigurationSummaryItems()) {
+      List<IndexConfigurationSummary> items = result.getIndexConfigurationSummaryItems();
+      if (items == null || items.isEmpty()) {
+        return null;
+      }
+      for (IndexConfigurationSummary item : items) {
         if (StringUtils.equals(item.getName(), indexName)) {
           return item.getId();
         }
@@ -290,7 +296,12 @@ public class KendraSearchProvider implements SearchProvider {
     ListDataSourcesResult result = getKendra().listDataSources(request);
     String nextToken = "";
     while (nextToken != null) {
-      for (DataSourceSummary item : result.getSummaryItems()) {
+      List<DataSourceSummary> items = result.getSummaryItems();
+      if (items == null || items.isEmpty()) {
+        return null;
+      }
+      
+      for (DataSourceSummary item : items) {
         if (StringUtils.equals(item.getName(), dataSourceName)) {
           return item.getId();
         }
