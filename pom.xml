@@ -46,6 +46,7 @@
 
     <akismet-java.version>1.02</akismet-java.version>
     <awaitility.version>4.0.3</awaitility.version>
+    <aws-java-sdk-kendra.version>1.11.954</aws-java-sdk-kendra.version>
     <commons-collections.version>4.4</commons-collections.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
@@ -140,6 +141,12 @@
   <dependencyManagement> <!-- defines what configuration is going to be used if, and only if, the dependency is used -->
     <dependencies>       <!-- ordered alphabetically by scope:groupId:artifactId                                     -->
       <!-- compile dependencies -->
+      <dependency>
+        <groupId>com.amazonaws</groupId>
+        <artifactId>aws-java-sdk-kendra</artifactId>
+        <version>${aws-java-sdk-kendra.version}</version>
+      </dependency>
+      
       <dependency>
         <groupId>com.codeborne</groupId>
         <artifactId>selenide</artifactId>
