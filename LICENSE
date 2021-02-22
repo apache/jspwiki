@@ -249,6 +249,7 @@ tika-parsers-1.25.jar                       LICENSE
 xml-apis-1.4.01                             LICENSE
 xmlrpc-2.0.1.jar                            LICENSE
 xpp3-1.1.3.4-RC3                            ./jspwiki-war/src/main/config/doc/LICENSE.cc-cod
+aws-java-sdk-kendra-1.11.954.jar            LICENSE
 
 TEST LIBRARY                                LICENSE FILE
 =============================================================================================================

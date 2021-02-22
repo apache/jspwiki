@@ -97,7 +97,6 @@
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-kendra</artifactId>
-      <version>1.11.954</version>
     </dependency>
 
   </dependencies>
