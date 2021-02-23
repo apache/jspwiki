@@ -21,6 +21,7 @@
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="java.util.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -57,11 +58,30 @@ BOOTSTRAP, IE compatibility / http://getbootstrap.com/getting-started/#support-i
   </c:if>
 </wiki:PageExists>
 
-
 <%-- COOKIE read client preferences --%>
 <%
    Preferences.setupPreferences(pageContext);
+
+Engine wiki = Wiki.engine().find( getServletConfig() );
+// Create wiki context and check for authorization
+Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_VIEW.getRequestContext() );
+		
+		String cookiesOn = (String)request.getParameter("cookies");
+		if(cookiesOn != null)
+			wikiContext.setVariable("cookies", cookiesOn);			
+		
+// Redirect if request was for a special page
+String redirect = wikiContext.getRedirectURL( );
+if( redirect != null && cookiesOn == null)
+{
+    response.sendRedirect( redirect );
+    return;
+}
 %>
+
+
+<%-- SKINS : extra stylesheets, extra javascript --%>
+
 
 <%-- Localized JS; must come before any css, to avoid blocking immediate execution --%>
 <%-- var LocalizedStrings= { "javascript.<xx>":"...", etc. } --%>
@@ -86,6 +106,7 @@ String.I18N.PREFIX = "javascript.";
 
 <script src="<wiki:Link format='url' jsp='scripts/haddock.js'/>"></script>
 
+<script src="<wiki:Link format='url' jsp='scripts/haddock-edit.js'/>"></script>
 <wiki:IncludeResources type="script"/>
 
 
@@ -154,6 +175,78 @@ String.I18N.PREFIX = "javascript.";
      href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs.SkinName}/skin.css' />" />
 <script type="text/javascript"
          src="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs.SkinName}/skin.js' />" ></script>
+</c:if>
+
+
+
+<%-- Support for cookie acceptance --%>
+ <c:if test='${!(prefs.cookies)}'>
+<script type="text/javascript">
+document.addEventListener("DOMContentLoaded", readyForCookieTest);
+var appBaseName = document.querySelector('meta[name="wikiApplicationName"]').content;
+
+function sendAjaxCookieConfirmation(dialogElem){
+		var request = new XMLHttpRequest();
+		var appBaseUrl = "/"+appBaseName+"/";
+		var cookieAcceptParam = "?cookies=true";
+		request.open('GET', appBaseUrl+cookieAcceptParam, true);
+
+		request.onload = function() {
+		  if (this.status >= 200 && this.status < 400) {
+			// Success!
+			var resp = this.response;
+			console.log("Cookies accepted!");
+			dialogElem.toggle();
+			dialogElem.hide();
+			dialogElem.destroy();
+		  } else {
+			// We reached our target server, but it returned an error
+		  }
+	};
+
+	request.onerror = function() {
+	  // There was a connection error of some sort
+	};	
+		request.send();
+	}
+var cookiesAllow = ${prefs.cookies};
+
+function setCookie(cname, cvalue, exdays) {
+	  var d = new Date();
+	  // Cookie setting lasts for 1 day before deleted from browser.
+	  // TODO: Setup in server preference for client's preferred cookie lifetime.
+	  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+	  var expires = "expires="+ d.toUTCString();
+		document.cookie ="CookiePrefs={"+ cname + ":'" + cvalue + "'}";
+	}
+
+function readyForCookieTest(){
+if(!cookiesAllow){	
+		var cookieDialogHtml = "<div class='dialog-message'>This application uses cookies to work properly. Click OK to accept cookies. By just closing this dialog window is prompted again on next page load until accepted.</div>";
+		var cookieOkBtnHtml = "<div class='btn-row' style='padding: 5px;width: fit-content;margin-left: auto;'><button class='btn-accept-cookies btn btn-success'>I understand and accept</button></div>";
+			
+		var dialog = new Dialog({
+	        caption:self.ApplicationName || appBaseName,
+	        showNow:true,
+	        body: (cookieDialogHtml+cookieOkBtnHtml),
+	        relativeTo:$(".context-view")
+	    });
+
+	    //adopt one or more DOM elements as body of the DIALOG
+	    dialog.show();
+		
+		var cookiesOkEvent = function cookiesConfirm(){
+			setCookie("cookies", true, 1);
+			sendAjaxCookieConfirmation(dialog);					
+		}
+		
+		var cookieOkBtn = document.getElementsByClassName("btn-accept-cookies");		
+		cookieOkBtn[0].addEventListener("click", cookiesOkEvent, false);
+}else{
+	console.log("Cookie policy: accepted");
+}
+}
+</script>
 </c:if>
 
 <wiki:Include page="localheader.jsp"/>

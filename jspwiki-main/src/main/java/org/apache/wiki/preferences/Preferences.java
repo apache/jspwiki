@@ -111,6 +111,7 @@ public class Preferences extends HashMap< String,String > {
         prefs.put("livepreview", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.livepreview", "true" ) );
         prefs.put("previewcolumn", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.previewcolumn", "true" ) );
 
+        prefs.put("cookies", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.cookies", "false" ) );
 
         // FIXME: editormanager reads jspwiki.editor -- which of both properties should continue
         prefs.put("editor", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.editor", "plain" ) );
@@ -130,6 +131,21 @@ public class Preferences extends HashMap< String,String > {
         if( prefVal != null ) {
             // Convert prefVal JSON to a generic hashmap
             @SuppressWarnings( "unchecked" ) final Map< String, String > map = new Gson().fromJson( prefVal, Map.class );
+            for( String key : map.keySet() ) {
+                key = TextUtil.replaceEntities( key );
+                // Sometimes this is not a String as it comes from the Cookie set by Javascript
+                final Object value = map.get( key );
+                if( value != null ) {
+                    prefs.put( key, value.toString() );
+                }
+            }
+        }
+       // All extra cookies prefs. should be stored here, since JSPWikiUserPrefs should contain only the necessary cookies.
+       // Cookies are being parsed in its own block for convenience.
+        final String prefVal2 = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, "CookiePrefs" ) );
+        if( prefVal2 != null ) {
+            // Convert prefVal JSON to a generic hashmap
+            @SuppressWarnings( "unchecked" ) final Map< String, String > map = new Gson().fromJson( prefVal2, Map.class );
             for( String key : map.keySet() ) {
                 key = TextUtil.replaceEntities( key );
                 // Sometimes this is not a String as it comes from the Cookie set by Javascript
