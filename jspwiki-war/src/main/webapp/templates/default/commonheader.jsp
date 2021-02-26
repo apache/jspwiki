@@ -222,7 +222,7 @@ function setCookie(cname, cvalue, exdays) {
 
 function readyForCookieTest(){
 if(!cookiesAllow){	
-		var cookieDialogHtml = "<div class='dialog-message'>This application uses cookies to work properly. Click OK to accept cookies. By just closing this dialog window is prompted again on next page load until accepted.</div>";
+		var cookieDialogHtml = "<div class='dialog-message'>This application uses cookies to work properly. By using the application you understand and accept the use of necessary cookies. Click OK to proceed.</div>";
 		var cookieOkBtnHtml = "<div class='btn-row' style='padding: 5px;width: fit-content;margin-left: auto;'><button class='btn-accept-cookies btn btn-success'>I understand and accept</button></div>";
 			
 		var dialog = new Dialog({
