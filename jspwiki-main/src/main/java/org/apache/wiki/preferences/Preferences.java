@@ -144,15 +144,18 @@ public class Preferences extends HashMap< String,String > {
        // Cookies are being parsed in its own block for convenience.
         final String prefVal2 = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, "CookiePrefs" ) );
         if( prefVal2 != null ) {
+        	String key = null;
             // Convert prefVal JSON to a generic hashmap
             @SuppressWarnings( "unchecked" ) final Map< String, String > map = new Gson().fromJson( prefVal2, Map.class );
-            for( String key : map.keySet() ) {
-                key = TextUtil.replaceEntities( key );
+            for( Entry<String, String> keyVals : map.entrySet() ) {            
+                key = TextUtil.replaceEntities( keyVals.getKey() );
+                if(key != null){
                 // Sometimes this is not a String as it comes from the Cookie set by Javascript
-                final Object value = map.get( key );
+                final Object value = keyVals.getValue();
                 if( value != null ) {
                     prefs.put( key, value.toString() );
                 }
+            }
             }
         }
     }
