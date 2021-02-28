@@ -115,7 +115,14 @@ public class Preferences extends HashMap< String,String > {
 
         // FIXME: editormanager reads jspwiki.editor -- which of both properties should continue
         prefs.put("editor", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.editor", "plain" ) );
-        parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs );
+        
+        final String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( 
+        		(HttpServletRequest) pageContext.getRequest(), "JSPWikiUserPrefs" ) );
+        final String prefCookieVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( 
+        		(HttpServletRequest) pageContext.getRequest(), "CookiePrefs" ) );
+        
+        parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs, prefVal);
+        parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs, prefCookieVal);
         pageContext.getSession().setAttribute( SESSIONPREFS, prefs );
     }
 
@@ -126,27 +133,11 @@ public class Preferences extends HashMap< String,String > {
      * @param request
      * @param prefs The default hashmap of preferences
      */
-	private static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs ) {
-        final String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, "JSPWikiUserPrefs" ) );
-        if( prefVal != null ) {
-            // Convert prefVal JSON to a generic hashmap
-            @SuppressWarnings( "unchecked" ) final Map< String, String > map = new Gson().fromJson( prefVal, Map.class );
-            for( String key : map.keySet() ) {
-                key = TextUtil.replaceEntities( key );
-                // Sometimes this is not a String as it comes from the Cookie set by Javascript
-                final Object value = map.get( key );
-                if( value != null ) {
-                    prefs.put( key, value.toString() );
-                }
-            }
-        }
-       // All extra cookies prefs. should be stored here, since JSPWikiUserPrefs should contain only the necessary cookies.
-       // Cookies are being parsed in its own block for convenience.
-        final String prefVal2 = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, "CookiePrefs" ) );
-        if( prefVal2 != null ) {
+	private static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs, final String prefVal ) {       
+          if( prefVal != null ) {
         	String key = null;
             // Convert prefVal JSON to a generic hashmap
-            @SuppressWarnings( "unchecked" ) final Map< String, String > map = new Gson().fromJson( prefVal2, Map.class );
+            @SuppressWarnings( "unchecked" ) final Map< String, String > map = new Gson().fromJson( prefVal, Map.class );
             for( Entry<String, String> keyVals : map.entrySet() ) {            
                 key = TextUtil.replaceEntities( keyVals.getKey() );
                 if(key != null){
