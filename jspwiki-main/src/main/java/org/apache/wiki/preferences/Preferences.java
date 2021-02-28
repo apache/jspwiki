@@ -121,8 +121,8 @@ public class Preferences extends HashMap< String,String > {
         final String prefCookieVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( 
         		(HttpServletRequest) pageContext.getRequest(), "CookiePrefs" ) );
         
-        parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs, prefVal);
-        parseJSONPreferences( (HttpServletRequest) pageContext.getRequest(), prefs, prefCookieVal);
+        parseJSONPreferences(prefs, prefVal);
+        parseJSONPreferences(prefs, prefCookieVal);
         pageContext.getSession().setAttribute( SESSIONPREFS, prefs );
     }
 
@@ -133,7 +133,7 @@ public class Preferences extends HashMap< String,String > {
      * @param request
      * @param prefs The default hashmap of preferences
      */
-	private static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs, final String prefVal ) {       
+	private static void parseJSONPreferences( final Preferences prefs, final String prefVal ) {       
           if( prefVal != null ) {
         	String key = null;
             // Convert prefVal JSON to a generic hashmap
