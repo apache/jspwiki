@@ -40,7 +40,6 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.search.SearchManager;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -194,10 +193,10 @@ public class KendraSearchProviderTest {
   @WithPage(name = "TestPage", text = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.", attachments = {})
   @WithResult(name = "TestPage", text = "mankind", scoreConfidence = ScoreConfidence.VERY_HIGH)
   public void testSimpleSearch() throws Exception {
-    final Collection<SearchResult> res = new ArrayList<>();
-    Awaitility.await("testSimpleSearch").until(findsResultsFor(res, "mankind"));
-    Assertions.assertEquals(1, res.size(), "no pages. one was expectd");
-    Assertions.assertEquals("TestPage", res.iterator().next().getPage().getName(), "the page TestPage was expected");
+    Collection<SearchResult> searchResults = new ArrayList<>();
+    Assertions.assertTrue(findsResultsFor(searchResults, "mankind").call());
+    Assertions.assertEquals(1, searchResults.size(), "no pages. one was expectd");
+    Assertions.assertEquals("TestPage", searchResults.iterator().next().getPage().getName(), "the page TestPage was expected");
   }
 
   @Test
@@ -207,10 +206,10 @@ public class KendraSearchProviderTest {
   @WithResult(name = "TestPage", text = "mankind", scoreConfidence = ScoreConfidence.VERY_HIGH)
   @WithResult(name = "TestPage2", text = "mankind", scoreConfidence = ScoreConfidence.VERY_HIGH)
   public void testSimpleSearch2() throws Exception {
-    final Collection<SearchResult> res = new ArrayList<>();
-    Awaitility.await("testSimpleSearch2").until(findsResultsFor(res, "mankind"));
-    Assertions.assertEquals(2, res.size(), "2 pages were expectd");
-    Iterator<SearchResult> i = res.iterator();
+    Collection<SearchResult> searchResults = new ArrayList<>();
+    Assertions.assertTrue(findsResultsFor(searchResults, "mankind").call());
+    Assertions.assertEquals(2, searchResults.size(), "2 pages were expectd");
+    Iterator<SearchResult> i = searchResults.iterator();
     Assertions.assertEquals("TestPage", i.next().getPage().getName(), "the page TestPage was expected");
     Assertions.assertEquals("TestPage2", i.next().getPage().getName(), "the page TestPage2 was expected");
   }
