@@ -1,0 +1,67 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Create an IAM Role that allows that can be attached to an EC2 Instance Profile in order to access a Kendra Index
+Metadata:
+
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: Parameters related to the Kendra Index and DataSource
+        Parameters:
+          - IndexName
+          - DataSourceName
+    ParameterLabels:
+      IndexName:
+        default: "The Kendra Index's Name"
+      DataSourceName:
+        default: "The Kendra DataSource's Name"
+
+Parameters:
+
+  IndexName:
+    Description: "The name of the Kendra Index to create"
+    Type: String
+    Default: "JSPWikiIndex"
+
+  DataSourceName:
+    Description: "The name of the Kendra DataSource to create"
+    Type: String
+    Default: "JSPWikiDataSource"
+    
+Resources:
+
+  JSPWikiRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      Policies:
+        - PolicyName: AllowJSPWikiAccessToKendra
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Sid: AllowAccessToListOfIndices
+                Effect: Allow
+                Action:
+                  - kendra:ListIndices
+                Resource: "*"
+              - Sid: AllowAccessToJSPWikiIndex
+                Effect: Allow
+                Action:
+                  - kendra:Query
+                  - kendra:StopDataSourceSyncJob
+                  - kendra:BatchPutDocument
+                  - kendra:StartDataSourceSyncJob
+                  - kendra:ListDataSources
+                  - kendra:BatchDeleteDocument
+                Resource: 
+                  - Fn::Sub: "arn:${AWS::Partition}:kendra:${AWS::Region}:${AWS::AccountId}:index/${IndexName}"
+                  - Fn::Sub: "arn:${AWS::Partition}:kendra:${AWS::Region}:${AWS::AccountId}:index/${IndexName}/data-source/${DataSourceName}"
