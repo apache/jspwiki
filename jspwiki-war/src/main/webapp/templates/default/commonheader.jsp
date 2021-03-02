@@ -222,8 +222,8 @@ function setCookie(cname, cvalue, exdays) {
 
 function readyForCookieTest(){
 if(!cookiesAllow){	
-		var cookieDialogHtml = "<div class='dialog-message'>This application uses cookies to work properly. By using the application you understand and accept the use of necessary cookies. Click OK to proceed.</div>";
-		var cookieOkBtnHtml = "<div class='btn-row' style='padding: 5px;width: fit-content;margin-left: auto;'><button class='btn-accept-cookies btn btn-success'>I understand and accept</button></div>";
+		var cookieDialogHtml = "<div class='dialog-message'>"+LocalizedStrings["javascript.prefs.cookiepolicy.message"]+"</div>";
+		var cookieOkBtnHtml = "<div class='btn-row' style='padding: 5px;width: fit-content;margin-left: auto;'><button class='btn-accept-cookies btn btn-success'>"+LocalizedStrings["javascript.prefs.cookiepolicy.confirm.button"]+"</button></div>";
 			
 		var dialog = new Dialog({
 	        caption:self.ApplicationName || appBaseName,

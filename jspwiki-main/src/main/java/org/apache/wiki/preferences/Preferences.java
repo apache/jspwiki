@@ -133,7 +133,7 @@ public class Preferences extends HashMap< String,String > {
      * @param request
      * @param prefs The default hashmap of preferences
      */
-	private static void parseJSONPreferences( final Preferences prefs, final String prefVal ) {       
+	static void parseJSONPreferences( final Preferences prefs, final String prefVal ) {       
           if( prefVal != null ) {
         	String key = null;
             // Convert prefVal JSON to a generic hashmap
