@@ -55,6 +55,8 @@ public class Preferences extends HashMap< String,String > {
      */
     public static final String SESSIONPREFS = "prefs";
 
+    public static final String COOKIE_USER_PREFS_NAME = "JSPWikiUserPrefs";
+
     private static final Logger log = Logger.getLogger( Preferences.class );
 
     /**
@@ -126,7 +128,7 @@ public class Preferences extends HashMap< String,String > {
      * @param prefs The default hashmap of preferences
      */
 	private static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs ) {
-        final String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, "JSPWikiUserPrefs" ) );
+        final String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, COOKIE_USER_PREFS_NAME ) );
         if( prefVal != null ) {
             // Convert prefVal JSON to a generic hashmap
             @SuppressWarnings( "unchecked" ) final Map< String, String > map = new Gson().fromJson( prefVal, Map.class );

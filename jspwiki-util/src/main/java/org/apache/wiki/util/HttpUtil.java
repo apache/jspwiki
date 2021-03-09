@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -251,6 +252,12 @@ public final class HttpUtil {
             }
         }
         return currentOctet == 3;
+    }
+
+    public static void clearCookie( final HttpServletResponse response, final String cookieName ) {
+        final Cookie cookie = new Cookie( cookieName, "" );
+        cookie.setMaxAge( 0 );
+        response.addCookie( cookie );
     }
 
 }

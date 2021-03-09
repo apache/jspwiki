@@ -34,6 +34,7 @@
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
+<%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.variables.VariableManager" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -112,11 +113,11 @@
             return;
         }
     }
-    if( "setAssertedName".equals(request.getParameter("action")) )
+    if( "setAssertedName".equals( request.getParameter( "action" ) ) )
     {
-        Preferences.reloadPreferences(pageContext);
+        Preferences.reloadPreferences( pageContext );
         
-        String assertedName = request.getParameter("assertedName");
+        String assertedName = request.getParameter( "assertedName" );
         CookieAssertionLoginModule.setUserCookie( response, assertedName );
 
         String redirectPage = request.getParameter( "redirect" );
@@ -130,13 +131,24 @@
         response.sendRedirect( viewUrl );
         return;
     }
-    if( "clearAssertedName".equals(request.getParameter("action")) )
+    if( "clearAssertedName".equals( request.getParameter( "action" ) ) )
     {
+        HttpUtil.clearCookie( response, Preferences.COOKIE_USER_PREFS_NAME );
         CookieAssertionLoginModule.clearUserCookie( response );
-        response.sendRedirect( wikiContext.getURL(ContextEnum.PAGE_NONE.getRequestContext(),"Logout.jsp") );
+        Preferences.reloadPreferences( pageContext );
+
+        String redirectPage = request.getParameter( "redirect" );
+        if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) )
+        {
+          redirectPage = wiki.getFrontPage();
+        }
+        String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wikiContext.getViewURL( redirectPage );
+
+        log.info( "Redirecting user to " + viewUrl );
+        response.sendRedirect( viewUrl );
         return;
     }
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+    response.setContentType( "text/html; charset=" + wiki.getContentEncoding() );
     String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 

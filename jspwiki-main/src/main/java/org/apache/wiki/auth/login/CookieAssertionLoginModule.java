@@ -143,15 +143,11 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
     }
 
     /**
-     *  Removes the user cookie from the response.  This makes the user appear
-     *  again as an anonymous coward.
+     *  Removes the user cookie from the response. This makes the user appear again as an anonymous coward.
      *
      *  @param response The servlet response.
      */
-    public static void clearUserCookie(final HttpServletResponse response )
-    {
-        final Cookie userId = new Cookie( PREFS_COOKIE_NAME, "" );
-        userId.setMaxAge( 0 );
-        response.addCookie( userId );
+    public static void clearUserCookie( final HttpServletResponse response ) {
+        HttpUtil.clearCookie( response, PREFS_COOKIE_NAME );
     }
 }
