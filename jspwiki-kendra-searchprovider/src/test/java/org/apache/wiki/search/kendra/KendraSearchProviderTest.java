@@ -18,7 +18,6 @@ package org.apache.wiki.search.kendra;
 
 import com.amazonaws.services.kendra.AWSkendra;
 import com.amazonaws.services.kendra.model.*;
-import net.sf.ehcache.CacheManager;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
@@ -26,12 +25,10 @@ import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.api.spi.Wiki;
-import org.apache.wiki.search.SearchManager;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.util.StringUtils;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
@@ -50,27 +47,30 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class KendraSearchProviderTest {
 
-  TestEngine engine;
-  Properties props;
+  static final Properties props = TestEngine.getTestProperties();
+  static final TestEngine engine = TestEngine.build( props );
   KendraSearchProvider searchProvider;
 
   @Mock
   AWSkendra kendraMock;
 
   @BeforeEach
-  void setUp(TestInfo testInfo) throws Exception {
-    props = TestEngine.getTestProperties();
+  void setUp( final TestInfo testInfo ) throws Exception {
     TestEngine.emptyWorkDir(props);
-    CacheManager.getInstance().removeAllCaches();
-    engine = new TestEngine(props);
 
     // before each test I setup the Kendra Client
-    searchProvider = (KendraSearchProvider) engine.getManager(SearchManager.class).getSearchEngine();
-    Method m = testInfo.getTestMethod().get();
-    String indexName = null;
-    String dataSourceName = null;
+    searchProvider = new KendraSearchProvider() {
+      @Override
+      protected AWSkendra buildClient() {
+        return kendraMock;
+      }
+    };
+    searchProvider.initialize( engine, props );
+    final Method m = testInfo.getTestMethod().get();
+    final String indexName;
+    final String dataSourceName;
     if (m.isAnnotationPresent(WithKendra.class)) {
-      WithKendra withKendra = m.getAnnotation(WithKendra.class);
+      final WithKendra withKendra = m.getAnnotation(WithKendra.class);
       indexName = withKendra.indexName();
       dataSourceName = withKendra.dataSourceName();
       setUpKendraMock(indexName, dataSourceName);
@@ -84,30 +84,30 @@ public class KendraSearchProviderTest {
     }
     // And possibly the pages that will be present in the wiki
     if (m.isAnnotationPresent(WithPages.class)) {
-      WithPages withPages = m.getAnnotation(WithPages.class);
+      final WithPages withPages = m.getAnnotation(WithPages.class);
       addPages(withPages.value());
     }
     if (m.isAnnotationPresent(WithPage.class)) {
-      WithPage withPage = m.getAnnotation(WithPage.class);
+      final WithPage withPage = m.getAnnotation(WithPage.class);
       addPages(withPage);
     }
     // and the corresponding search results
     if (m.isAnnotationPresent(WithResults.class)) {
-      WithResults withResults = m.getAnnotation(WithResults.class);
+      final WithResults withResults = m.getAnnotation(WithResults.class);
       addResults(withResults.value());
     }
     if(m.isAnnotationPresent(WithResult.class)) {
-      WithResult withResult = m.getAnnotation(WithResult.class);
+      final WithResult withResult = m.getAnnotation(WithResult.class);
       addResults(withResult);
     }
   }
 
   @AfterEach
-  void tearDown(TestInfo testInfo) throws Exception {
-    Method m = testInfo.getTestMethod().get();
+  void tearDown( final TestInfo testInfo ) {
+    final Method m = testInfo.getTestMethod().get();
     // And possibly the pages that will be present in the wiki
     if (m.isAnnotationPresent(WithPage.class)) {
-      WithPage withPage = m.getAnnotation(WithPage.class);
+      final WithPage withPage = m.getAnnotation(WithPage.class);
       engine.deleteTestPage(withPage.name());
     }
   }
@@ -135,24 +135,20 @@ public class KendraSearchProviderTest {
     };
   }
 
-  @Test @Disabled
-  public void testInvalidIndexName() throws Exception {
+  @Test
+  public void testInvalidIndexName() {
     // IndexName is invalid...
-    Assertions.assertThrows(IllegalArgumentException.class, () -> {
-      searchProvider.initializeIndexAndDataSource();
-    });
+    Assertions.assertThrows( IllegalArgumentException.class, () -> searchProvider.initializeIndexAndDataSource() );
   }
 
-  @Test @Disabled
+  @Test
   @WithKendra(indexName = "JSPWikiIndex", dataSourceName = "")
-  public void testInvalidDataSourceName() throws Exception {
+  public void testInvalidDataSourceName() {
     // IndexName is invalid...
-    Assertions.assertThrows(IllegalArgumentException.class, () -> {
-      searchProvider.initializeIndexAndDataSource();
-    });
+    Assertions.assertThrows(IllegalArgumentException.class, () -> searchProvider.initializeIndexAndDataSource() );
   }
 
-  @Test @Disabled
+  @Test
   @WithKendra(indexName = "JSPWikiIndex", dataSourceName = "JSPWikiDataSource")
   @WithPage(name = "TestPage", text = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.", attachments = {})
   public void testSearchNoResult() throws Exception {
@@ -161,113 +157,91 @@ public class KendraSearchProviderTest {
     Assertions.assertEquals(0, res.size(), "has result. none were expected");
   }
 
-  @Test @Disabled
+  @Test
   @WithKendra(indexName = "JSPWikiIndex", dataSourceName = "JSPWikiDataSource")
   @WithPage(name = "TestPage", text = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.", attachments = {})
   @WithResult(name = "TestPage", text = "mankind", scoreConfidence = ScoreConfidence.VERY_HIGH)
   public void testSimpleSearch() throws Exception {
-    Collection<SearchResult> searchResults = new ArrayList<>();
+    final Collection<SearchResult> searchResults = new ArrayList<>();
     Assertions.assertTrue(findsResultsFor(searchResults, "mankind").call());
     Assertions.assertEquals(1, searchResults.size(), "no pages. one was expectd");
     Assertions.assertEquals("TestPage", searchResults.iterator().next().getPage().getName(), "the page TestPage was expected");
   }
 
-  @Test @Disabled
+  @Test
   @WithKendra(indexName = "JSPWikiIndex", dataSourceName = "JSPWikiDataSource")
   @WithPage(name = "TestPage", text = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.", attachments = {})
   @WithPage(name = "TestPage2", text = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.", attachments = {})
   @WithResult(name = "TestPage", text = "mankind", scoreConfidence = ScoreConfidence.VERY_HIGH)
   @WithResult(name = "TestPage2", text = "mankind", scoreConfidence = ScoreConfidence.VERY_HIGH)
   public void testSimpleSearch2() throws Exception {
-    Collection<SearchResult> searchResults = new ArrayList<>();
+    final Collection<SearchResult> searchResults = new ArrayList<>();
     Assertions.assertTrue(findsResultsFor(searchResults, "mankind").call());
     Assertions.assertEquals(2, searchResults.size(), "2 pages were expectd");
-    Iterator<SearchResult> i = searchResults.iterator();
+    final Iterator<SearchResult> i = searchResults.iterator();
     Assertions.assertEquals("TestPage", i.next().getPage().getName(), "the page TestPage was expected");
     Assertions.assertEquals("TestPage2", i.next().getPage().getName(), "the page TestPage2 was expected");
   }
 
-  private void setUpKendraMock(String indexName, String dataSourceName) throws Exception {
+  private void setUpKendraMock(final String indexName, final String dataSourceName) {
     final String indexId = UUID.randomUUID().toString();
     final String dataSourceId = UUID.randomUUID().toString();
-    when(kendraMock.listIndices(any(ListIndicesRequest.class))).then(new Answer<ListIndicesResult>() {
-      @Override
-      public ListIndicesResult answer(InvocationOnMock invocation) throws Throwable {
-        ListIndicesResult result = new ListIndicesResult();
-        if (StringUtils.isNotBlank(indexName)) {
-          result
-              .withIndexConfigurationSummaryItems(new IndexConfigurationSummary().withId(indexId).withName(indexName));
-        }
-        return result;
+    when(kendraMock.listIndices(any(ListIndicesRequest.class))).then( ( Answer< ListIndicesResult > ) invocation -> {
+      ListIndicesResult result = new ListIndicesResult();
+      if (StringUtils.isNotBlank(indexName)) {
+        result.withIndexConfigurationSummaryItems(new IndexConfigurationSummary().withId(indexId).withName(indexName));
       }
-    });
+      return result;
+    } );
     lenient().when(kendraMock.listDataSources(any(ListDataSourcesRequest.class)))
-        .then(new Answer<ListDataSourcesResult>() {
-          @Override
-          public ListDataSourcesResult answer(InvocationOnMock invocation) throws Throwable {
-            ListDataSourcesResult result = new ListDataSourcesResult();
+        .then( ( Answer< ListDataSourcesResult > ) invocation -> {
+            final ListDataSourcesResult result = new ListDataSourcesResult();
             if (StringUtils.isNotBlank(dataSourceName)) {
               result.withSummaryItems(new DataSourceSummary().withId(dataSourceId).withName(dataSourceName));
             }
             return result;
-          }
-        });
+        } );
     lenient().when(kendraMock.startDataSourceSyncJob(any(StartDataSourceSyncJobRequest.class)))
-        .then(new Answer<StartDataSourceSyncJobResult>() {
-          @Override
-          public StartDataSourceSyncJobResult answer(InvocationOnMock invocation) throws Throwable {
-            return new StartDataSourceSyncJobResult().withExecutionId("executionId");
-          }
-        });
+        .then( ( Answer< StartDataSourceSyncJobResult > ) invocation -> new StartDataSourceSyncJobResult().withExecutionId("executionId") );
     lenient().when(kendraMock.batchPutDocument(any(BatchPutDocumentRequest.class)))
-        .then(new Answer<BatchPutDocumentResult>() {
-          @Override
-          public BatchPutDocumentResult answer(InvocationOnMock invocation) throws Throwable {
-            BatchPutDocumentResult result = new BatchPutDocumentResult();
+        .then( ( Answer< BatchPutDocumentResult > ) invocation -> {
+            final BatchPutDocumentResult result = new BatchPutDocumentResult();
             result.withFailedDocuments(new ArrayList<>());
             return result;
-          }
-        });
-    lenient().when(kendraMock.query(any(QueryRequest.class))).then(new Answer<QueryResult>() {
-      @Override
-      public QueryResult answer(InvocationOnMock invocation) throws Throwable {
+        } );
+    lenient().when(kendraMock.query(any(QueryRequest.class))).then( ( Answer< QueryResult > ) invocation -> {
         QueryResult result = new QueryResult();
         result.withResultItems(new ArrayList<>());
         return result;
-      }
-    });
+    } );
   }
 
-  private void addPages(final WithPage... withPages)
-      throws WikiException, IOException, URISyntaxException {
-    for (WithPage withPage : withPages ) {
-      String name = withPage.name();
-      String text =  withPage.text();
-      String[] attachements = withPage.attachments();
-      engine.saveText(name, text);
-      ClassLoader classLoader = KendraSearchProviderTest.class.getClassLoader();
-      for (String attachement : attachements) {
-        byte[] content = Files.readAllBytes(Paths.get(classLoader.getResource(attachement).toURI()));
-        engine.addAttachment(name, attachement, content);
+  private void addPages(final WithPage... withPages) throws WikiException, IOException, URISyntaxException {
+      for(final WithPage withPage : withPages ) {
+          final String name = withPage.name();
+          final String text =  withPage.text();
+          final String[] attachements = withPage.attachments();
+          engine.saveText(name, text);
+          final ClassLoader classLoader = KendraSearchProviderTest.class.getClassLoader();
+          for (final String attachement : attachements) {
+              final byte[] content = Files.readAllBytes(Paths.get(classLoader.getResource(attachement).toURI()));
+              engine.addAttachment(name, attachement, content);
+          }
       }
-    }
   }
 
   private void addResults(final WithResult... withResults) {
-    when(kendraMock.query(any(QueryRequest.class))).then(new Answer<QueryResult>() {
-      @Override
-      public QueryResult answer(InvocationOnMock invocation) throws Throwable {
-        List<QueryResultItem> items = new ArrayList<>();
-        for (WithResult withResult : withResults) {
-          QueryResultItem item = new QueryResultItem().withType(QueryResultType.DOCUMENT);
-          item.withDocumentId(withResult.name());
-          item.withDocumentTitle(new TextWithHighlights().withText(withResult.name()));
-          item.withDocumentExcerpt(new TextWithHighlights().withText(withResult.text()));
-          item.withScoreAttributes(new ScoreAttributes().withScoreConfidence(withResult.scoreConfidence()));
-          items.add(item);
-        }
-        return new QueryResult().withResultItems(items);
+    when(kendraMock.query(any(QueryRequest.class))).then( ( Answer< QueryResult > ) invocation -> {
+      final List<QueryResultItem> items = new ArrayList<>();
+      for (final WithResult withResult : withResults) {
+        final QueryResultItem item = new QueryResultItem().withType(QueryResultType.DOCUMENT);
+        item.withDocumentId(withResult.name());
+        item.withDocumentTitle(new TextWithHighlights().withText(withResult.name()));
+        item.withDocumentExcerpt(new TextWithHighlights().withText(withResult.text()));
+        item.withScoreAttributes(new ScoreAttributes().withScoreConfidence(withResult.scoreConfidence()));
+        items.add(item);
       }
-    });
+      return new QueryResult().withResultItems(items);
+    } );
   }
 }
