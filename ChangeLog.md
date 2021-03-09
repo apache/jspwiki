@@ -17,6 +17,19 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-03-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-04_
+
+* [JSPWIKI-1146](https://issues.apache.org/jira/browse/JSPWIKI-1146) - Add [AWS Kendra as a Search Provider](https://jspwiki-wiki.apache.org/Wiki.jsp?page=KendraSearchProvider)
+    * Merged [PR #46](https://github.com/apache/jspwiki/pull/46), contributed by Julien Masnada, thanks!
+
+* [JSPWIKI-1144](https://issues.apache.org/jira/browse/JSPWIKI-1144) - Minor performance improvement
+  * Merged [PR #36](https://github.com/apache/jspwiki/pull/36), contributed by Arturo Bernal, thanks!
+
+* [JSPWIKI-1147](https://issues.apache.org/jira/browse/JSPWIKI-1147) - The button "Clear user preferences" 
+doesn't clear user preferences
+
 **2021-01-11  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-03_
@@ -32,7 +45,7 @@ using a `TestEngine` could end up processing events using managers registered by
 * Tests using in-memory `Hsql` servers start them on random ports, in order to allow concurrent builds.
 
 * Dependency updates
-  * Selenide to 5.17.3
+    * Selenide to 5.17.3
 
 **2021-01-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
