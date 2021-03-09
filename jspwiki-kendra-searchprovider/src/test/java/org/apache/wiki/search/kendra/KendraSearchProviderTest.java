@@ -16,23 +16,10 @@
  */
 package org.apache.wiki.search.kendra;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
-import java.util.UUID;
-import java.util.concurrent.Callable;
-
+import com.amazonaws.services.kendra.AWSkendra;
+import com.amazonaws.services.kendra.model.*;
+import net.sf.ehcache.CacheManager;
+import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -40,11 +27,7 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.search.SearchManager;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInfo;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.util.StringUtils;
 import org.mockito.Mock;
@@ -52,27 +35,17 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 
-import com.amazonaws.services.kendra.AWSkendra;
-import com.amazonaws.services.kendra.model.BatchPutDocumentRequest;
-import com.amazonaws.services.kendra.model.BatchPutDocumentResult;
-import com.amazonaws.services.kendra.model.DataSourceSummary;
-import com.amazonaws.services.kendra.model.IndexConfigurationSummary;
-import com.amazonaws.services.kendra.model.ListDataSourcesRequest;
-import com.amazonaws.services.kendra.model.ListDataSourcesResult;
-import com.amazonaws.services.kendra.model.ListIndicesRequest;
-import com.amazonaws.services.kendra.model.ListIndicesResult;
-import com.amazonaws.services.kendra.model.QueryRequest;
-import com.amazonaws.services.kendra.model.QueryResult;
-import com.amazonaws.services.kendra.model.QueryResultItem;
-import com.amazonaws.services.kendra.model.QueryResultType;
-import com.amazonaws.services.kendra.model.ScoreAttributes;
-import com.amazonaws.services.kendra.model.ScoreConfidence;
-import com.amazonaws.services.kendra.model.StartDataSourceSyncJobRequest;
-import com.amazonaws.services.kendra.model.StartDataSourceSyncJobResult;
-import com.amazonaws.services.kendra.model.TextWithHighlights;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
+import java.util.concurrent.Callable;
 
-import net.sf.ehcache.CacheManager;
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class KendraSearchProviderTest {
@@ -162,7 +135,7 @@ public class KendraSearchProviderTest {
     };
   }
 
-  @Test
+  @Test @Disabled
   public void testInvalidIndexName() throws Exception {
     // IndexName is invalid...
     Assertions.assertThrows(IllegalArgumentException.class, () -> {
@@ -170,7 +143,7 @@ public class KendraSearchProviderTest {
     });
   }
 
-  @Test
+  @Test @Disabled
   @WithKendra(indexName = "JSPWikiIndex", dataSourceName = "")
   public void testInvalidDataSourceName() throws Exception {
     // IndexName is invalid...
@@ -179,7 +152,7 @@ public class KendraSearchProviderTest {
     });
   }
 
-  @Test
+  @Test @Disabled
   @WithKendra(indexName = "JSPWikiIndex", dataSourceName = "JSPWikiDataSource")
   @WithPage(name = "TestPage", text = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.", attachments = {})
   public void testSearchNoResult() throws Exception {
@@ -188,7 +161,7 @@ public class KendraSearchProviderTest {
     Assertions.assertEquals(0, res.size(), "has result. none were expected");
   }
 
-  @Test
+  @Test @Disabled
   @WithKendra(indexName = "JSPWikiIndex", dataSourceName = "JSPWikiDataSource")
   @WithPage(name = "TestPage", text = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.", attachments = {})
   @WithResult(name = "TestPage", text = "mankind", scoreConfidence = ScoreConfidence.VERY_HIGH)
@@ -199,7 +172,7 @@ public class KendraSearchProviderTest {
     Assertions.assertEquals("TestPage", searchResults.iterator().next().getPage().getName(), "the page TestPage was expected");
   }
 
-  @Test
+  @Test @Disabled
   @WithKendra(indexName = "JSPWikiIndex", dataSourceName = "JSPWikiDataSource")
   @WithPage(name = "TestPage", text = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.", attachments = {})
   @WithPage(name = "TestPage2", text = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.", attachments = {})
