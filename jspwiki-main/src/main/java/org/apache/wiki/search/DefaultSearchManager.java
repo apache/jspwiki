@@ -40,6 +40,7 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -235,7 +236,8 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
 
     private void loadSearchProvider( final Properties properties ) {
         // See if we're using Lucene, and if so, ensure that its index directory is up to date.
-        final String providerClassName = properties.getProperty( PROP_SEARCHPROVIDER, DEFAULT_SEARCHPROVIDER );
+
+        final String providerClassName = TextUtil.getStringProperty( properties, PROP_SEARCHPROVIDER, DEFAULT_SEARCHPROVIDER );
 
         try {
             final Class<?> providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
