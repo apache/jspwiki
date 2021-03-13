@@ -46,11 +46,10 @@ import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Comparator;
@@ -511,7 +510,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
             if( m_counters != null && m_storage != null ) {
                 log.info( "Loading counters." );
                 synchronized( this ) {
-                    try( final InputStream fis = new FileInputStream( new File( m_workDir, COUNTER_PAGE ) ) ) {
+                    try( final InputStream fis = Files.newInputStream( new File( m_workDir, COUNTER_PAGE ).toPath() ) ) {
                         m_storage.load( fis );
                     } catch( final IOException ioe ) {
                         log.error( "Can't load page counter store: " + ioe.getMessage() + " , will create a new one!" );
@@ -535,7 +534,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                 log.info( "Storing " + m_counters.size() + " counter values." );
                 synchronized( this ) {
                     // Write out the collection of counters
-                    try( final OutputStream fos = new FileOutputStream( new File( m_workDir, COUNTER_PAGE ) ) ) {
+                    try( final OutputStream fos = Files.newOutputStream( new File( m_workDir, COUNTER_PAGE ).toPath() ) ) {
                         m_storage.store( fos, "\n# The number of times each page has been viewed.\n# Do not modify.\n" );
                         fos.flush();
 

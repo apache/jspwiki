@@ -42,6 +42,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 /**
  *  Generic utilities related to file and stream handling.
@@ -72,7 +73,7 @@ public final class FileUtil {
     public static File newTmpFile( final String content, final Charset encoding ) throws IOException {
         final File f = File.createTempFile( "jspwiki", null );
         try( final Reader in = new StringReader( content );
-             final Writer out = new OutputStreamWriter( new FileOutputStream( f ), encoding ) ) {
+            final Writer out = new OutputStreamWriter( Files.newOutputStream( f.toPath() ), encoding ) ) {
             copyContents( in, out );
         }
 

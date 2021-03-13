@@ -37,10 +37,10 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -345,7 +345,7 @@ public class XMLGroupDatabase implements GroupDatabase {
         }
 
         final File newFile = new File( m_file.getAbsolutePath() + ".new" );
-        try( final BufferedWriter io = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( newFile ), StandardCharsets.UTF_8 ) ) ) {
+        try( final BufferedWriter io = new BufferedWriter( new OutputStreamWriter( Files.newOutputStream( newFile.toPath() ), StandardCharsets.UTF_8 ) ) ) {
             // Write the file header and document root
             io.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" );
             io.write( "<groups>\n" );

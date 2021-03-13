@@ -26,13 +26,13 @@ import org.apache.wiki.util.TextUtil;
 import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -269,7 +269,7 @@ public interface Engine {
             LogManager.getLogger( Engine.class ).info( "looking for /" + name + " on classpath" );
             //  create a tmp file of the policy loaded as an InputStream and return the URL to it
             try( final InputStream is = Engine.class.getResourceAsStream( "/" + name );
-                    final OutputStream os = new FileOutputStream( tmpFile ) ) {
+                final OutputStream os = Files.newOutputStream( tmpFile.toPath() ) ) {
                 if( is == null ) {
                     throw new FileNotFoundException( name + " not found" );
                 }

@@ -24,12 +24,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContext;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.nio.file.Files;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 
 /**
@@ -171,7 +173,7 @@ public final class PropertyReader {
      * @return inputstream holding the properties file
      * @throws FileNotFoundException properties file not found
      */
-	static InputStream loadCustomPropertiesFile( final ServletContext context, final String propertyFile ) throws FileNotFoundException {
+	static InputStream loadCustomPropertiesFile( final ServletContext context, final String propertyFile ) throws IOException {
         final InputStream propertyStream;
 		if( propertyFile == null ) {
 		    LOG.debug( "No " + PARAM_CUSTOMCONFIG + " defined for this context, looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
@@ -179,7 +181,7 @@ public final class PropertyReader {
 		    propertyStream =  locateClassPathResource(context, CUSTOM_JSPWIKI_CONFIG);
 		} else {
 		    LOG.debug( PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file." );
-		    propertyStream = new FileInputStream( propertyFile );
+            propertyStream = Files.newInputStream( new File(propertyFile).toPath() );
 		}
 		return propertyStream;
 	}

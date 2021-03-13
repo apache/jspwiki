@@ -36,15 +36,14 @@ import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -248,7 +247,7 @@ public abstract class AbstractFileProvider implements PageProvider {
         final File pagedata = findPage( page );
         if( pagedata.exists() ) {
             if( pagedata.canRead() ) {
-                try( final InputStream in = new FileInputStream( pagedata ) ) {
+                try( final InputStream in = Files.newInputStream( pagedata.toPath() ) ) {
                     result = FileUtil.readContents( in, m_encoding );
                 } catch( final IOException e ) {
                     log.error( "Failed to read", e );
@@ -270,7 +269,7 @@ public abstract class AbstractFileProvider implements PageProvider {
     @Override
     public void putPageText( final Page page, final String text ) throws ProviderException {
         final File file = findPage( page.getName() );
-        try( final PrintWriter out = new PrintWriter( new OutputStreamWriter( new FileOutputStream( file ), m_encoding ) ) ) {
+        try( final PrintWriter out = new PrintWriter( new OutputStreamWriter( Files.newOutputStream( file.toPath() ), m_encoding ) ) ) {
             out.print( text );
         } catch( final IOException e ) {
             log.error( "Saving failed", e );
@@ -348,7 +347,7 @@ public abstract class AbstractFileProvider implements PageProvider {
                 final String filename = wikipage.getName();
                 final int cutpoint = filename.lastIndexOf( FILE_EXT );
                 final String wikiname = unmangleName( filename.substring( 0, cutpoint ) );
-                try( final FileInputStream input = new FileInputStream( wikipage ) ) {
+                try( final InputStream input = Files.newInputStream( wikipage.toPath() ) ) {
                     final String pagetext = FileUtil.readContents( input, m_encoding );
                     final SearchResult comparison = matcher.matchPageContent( wikiname, pagetext );
                     if( comparison != null ) {

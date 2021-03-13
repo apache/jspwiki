@@ -27,13 +27,13 @@ import org.apache.wiki.util.FileUtil;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 
 /**
@@ -88,7 +88,7 @@ public class RSSThread extends WikiBackgroundThread {
 
             // Generate RSS file, output it to default "rss.rdf".
             try( final Reader in  = new StringReader( feed );
-                 final Writer out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( m_rssFile ), StandardCharsets.UTF_8 ) ) ) {
+                final Writer out = new BufferedWriter( new OutputStreamWriter( Files.newOutputStream( m_rssFile.toPath() ), StandardCharsets.UTF_8 ) ) ) {
                 FileUtil.copyContents( in, out );
             } catch( final IOException e ) {
                 log.error( "Cannot generate RSS feed to " + m_rssFile.getAbsolutePath(), e );

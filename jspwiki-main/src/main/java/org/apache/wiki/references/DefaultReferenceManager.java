@@ -42,6 +42,7 @@ import org.apache.wiki.util.TextUtil;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -235,7 +236,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
         final long saved;
 
         final File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
-        try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( new FileInputStream( f ) ) ) ) {
+        try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
             final StopWatch sw = new StopWatch();
             sw.start();
 
@@ -264,7 +265,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      */
     private synchronized void serializeToDisk() {
         final File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
-        try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( new FileOutputStream( f ) ) ) ) {
+        try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
             final StopWatch sw = new StopWatch();
             sw.start();
 
@@ -311,7 +312,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
                 return 0L;
             }
 
-            try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( new FileInputStream( f ) ) ) ) {
+            try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
                 final StopWatch sw = new StopWatch();
                 sw.start();
                 log.debug( "Deserializing attributes for " + p.getName() );
@@ -363,7 +364,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
             //  Create a digest for the name
             f = new File( f, hashName );
 
-            try( final ObjectOutputStream out =  new ObjectOutputStream( new BufferedOutputStream( new FileOutputStream( f ) ) ) ) {
+            try( final ObjectOutputStream out =  new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
                 // new Set to avoid concurrency issues
                 final Set< Map.Entry < String, Object > > entries = new HashSet<>( p.getAttributes().entrySet() );
 

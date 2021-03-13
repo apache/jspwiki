@@ -34,13 +34,12 @@ import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -242,7 +241,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
     private void putPageProperties( final Attachment att, final Properties properties ) throws IOException, ProviderException {
         final File attDir = findAttachmentDir( att );
         final File propertyFile = new File( attDir, PROPERTY_FILE );
-        try( final OutputStream out = new FileOutputStream( propertyFile ) ) {
+        try( final OutputStream out = Files.newOutputStream( propertyFile.toPath() ) ) {
             properties.store( out, " JSPWiki page properties for " + att.getName() + ". DO NOT MODIFY!" );
         }
     }
@@ -254,7 +253,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
         final Properties props = new Properties();
         final File propertyFile = new File( findAttachmentDir(att), PROPERTY_FILE );
         if( propertyFile.exists() ) {
-            try( final InputStream in = new FileInputStream( propertyFile ) ) {
+            try( final InputStream in = Files.newInputStream( propertyFile.toPath() ) ) {
                 props.load( in );
             }
         }
@@ -276,7 +275,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
         final int versionNumber = latestVersion + 1;
 
         final File newfile = new File( attDir, versionNumber + "." + getFileExtension( att.getFileName() ) );
-        try( final OutputStream out = new FileOutputStream( newfile ) ) {
+        try( final OutputStream out = Files.newOutputStream( newfile.toPath() ) ) {
             log.info( "Uploading attachment " + att.getFileName() + " to page " + att.getParentName() );
             log.info( "Saving attachment contents to " + newfile.getAbsolutePath() );
             FileUtil.copyContents( data, out );
@@ -341,7 +340,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
         final File attDir = findAttachmentDir( att );
         try {
             final File f = findFile( attDir, att );
-            return new FileInputStream( f );
+            return Files.newInputStream( f.toPath() );
         } catch( final FileNotFoundException e ) {
             log.error( "File not found: " + e.getMessage() );
             throw new ProviderException( "No such page was found." );

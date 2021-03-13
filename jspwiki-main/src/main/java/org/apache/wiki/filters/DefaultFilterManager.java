@@ -35,9 +35,9 @@ import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Element;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -189,7 +189,7 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
 
             if( (xmlStream == null) && (xmlFile != null) ) {
                 log.debug("Attempting to load property file "+xmlFile);
-                xmlStream = new FileInputStream( new File(xmlFile) );
+                xmlStream = Files.newInputStream( new File(xmlFile).toPath() );
             }
 
             if( xmlStream == null ) {

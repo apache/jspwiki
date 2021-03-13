@@ -35,8 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -44,6 +42,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.UUID;
 
 
@@ -124,7 +123,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
 
                 if( cookieFile != null && cookieFile.exists() && cookieFile.canRead() ) {
 
-                    try( final Reader in = new BufferedReader( new InputStreamReader( new FileInputStream( cookieFile ), StandardCharsets.UTF_8 ) ) ) {
+                    try( final Reader in = new BufferedReader( new InputStreamReader(Files.newInputStream( cookieFile.toPath() ), StandardCharsets.UTF_8 ) ) ) {
                         final String username = FileUtil.readContents( in );
 
                         if( log.isDebugEnabled() ) {
@@ -225,7 +224,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
         final File cf = getCookieFile( engine, uid.toString() );
         if( cf != null ) {
             //  Write the cookie content to the cookie store file.
-            try( final Writer out = new BufferedWriter( new OutputStreamWriter( new FileOutputStream( cf ), StandardCharsets.UTF_8 ) ) ) {
+            try( final Writer out = new BufferedWriter( new OutputStreamWriter( Files.newOutputStream( cf.toPath() ), StandardCharsets.UTF_8 ) ) ) {
                 FileUtil.copyContents( new StringReader( username ), out );
 
                 if( log.isDebugEnabled() ) {
