@@ -34,6 +34,7 @@ import org.apache.wiki.event.WorkflowEvent;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -133,7 +134,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
         long saved = 0L;
         final StopWatch sw = new StopWatch();
         sw.start();
-        try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( new FileInputStream( f ) ) ) ) {
+        try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
             final long ver = in.readLong();
             if( ver != serialVersionUID ) {
                 LOG.warn( "File format has changed; Unable to recover workflows and decision queue from disk." );
@@ -157,7 +158,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
      *  Serializes workflows and decisionqueue to disk.  The format is private, don't touch it.
      */
     synchronized void serializeToDisk( final File f ) {
-        try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( new FileOutputStream( f ) ) ) ) {
+        try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
             final StopWatch sw = new StopWatch();
             sw.start();
 

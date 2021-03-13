@@ -38,9 +38,9 @@ import org.apache.wiki.util.TextUtil;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -202,7 +202,7 @@ public class Installer {
         final ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE, m_session.getLocale() );
         // Write the file back to disk
         try {
-            try( final OutputStream out = new FileOutputStream( m_propertyFile ) ) {
+            try( final OutputStream out = Files.newOutputStream( m_propertyFile.toPath() ) ) {
                 m_props.store( out, null );
             }
             m_session.addMessage( INSTALL_INFO, MessageFormat.format(rb.getString("install.installer.props.saved"), m_propertyFile) );

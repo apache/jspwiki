@@ -33,11 +33,10 @@ import org.apache.wiki.util.FileUtil;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -214,7 +213,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 return cp.m_props;
             }
 
-            try( final InputStream in = new BufferedInputStream(new FileInputStream( propertyFile ) ) ) {
+            try( final InputStream in = new BufferedInputStream( Files.newInputStream( propertyFile.toPath() ) ) ) {
                 final Properties props = new Properties();
                 props.load( in );
                 cp = new CachedProperties( page, props, lastModified );
@@ -233,7 +232,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
      */
     private void putPageProperties( final String page, final Properties properties ) throws IOException {
         final File propertyFile = new File( findOldPageDir(page), PROPERTYFILE );
-        try( final OutputStream out = new FileOutputStream( propertyFile ) ) {
+        try( final OutputStream out = Files.newOutputStream( propertyFile.toPath() ) ) {
             properties.store( out, " JSPWiki page properties for "+page+". DO NOT MODIFY!" );
         }
 
@@ -293,7 +292,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
         String result = null;
         if( pagedata.exists() ) {
             if( pagedata.canRead() ) {
-                try( final InputStream in = new FileInputStream( pagedata ) ) {
+                try( final InputStream in = Files.newInputStream( pagedata.toPath() ) ) {
                     result = FileUtil.readContents( in, m_encoding );
                 } catch( final IOException e ) {
                     log.error("Failed to read", e);
@@ -347,8 +346,8 @@ public class VersioningFileProvider extends AbstractFileProvider {
 
             if( oldFile != null && oldFile.exists() ) {
                 final File pageFile = new File( pageDir, versionNumber + FILE_EXT );
-                try( final InputStream in = new BufferedInputStream( new FileInputStream( oldFile ) );
-                     final OutputStream out = new BufferedOutputStream( new FileOutputStream( pageFile ) ) ) {
+                try( final InputStream in = new BufferedInputStream( Files.newInputStream( oldFile.toPath() ) );
+                     final OutputStream out = new BufferedOutputStream( Files.newOutputStream( pageFile.toPath() ) ) ) {
                     FileUtil.copyContents( in, out );
 
                     // We need also to set the date, since we rely on this.
@@ -518,7 +517,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 return cp.m_props;
             }
 
-            try( final InputStream in = new BufferedInputStream( new FileInputStream( propertyFile ) ) ) {
+            try( final InputStream in = new BufferedInputStream( Files.newInputStream( propertyFile.toPath() ) ) ) {
                 final Properties props = new Properties();
                 props.load( in );
 
@@ -600,8 +599,8 @@ public class VersioningFileProvider extends AbstractFileProvider {
             final File pageDir = findOldPageDir( page );
             final File previousFile = new File( pageDir, latest + FILE_EXT );
             final File pageFile = findPage(page);
-            try( final InputStream in = new BufferedInputStream( new FileInputStream( previousFile ) );
-                 final OutputStream out = new BufferedOutputStream( new FileOutputStream( pageFile ) ) ) {
+            try( final InputStream in = new BufferedInputStream( Files.newInputStream( previousFile.toPath() ) );
+                 final OutputStream out = new BufferedOutputStream( Files.newOutputStream( pageFile.toPath() ) ) ) {
                 if( previousFile.exists() ) {
                     FileUtil.copyContents( in, out );
                     // We need also to set the date, since we rely on this.

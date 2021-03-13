@@ -24,11 +24,10 @@ import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Properties;
 
 /**
@@ -84,7 +83,7 @@ public class FileSystemProvider extends AbstractFileProvider {
         getCustomProperties( page, props );
 
         final File file = new File( getPageDirectory(), mangleName( page.getName() ) + PROP_EXT );
-        try( final OutputStream out = new FileOutputStream( file ) ) {
+        try( final OutputStream out = Files.newOutputStream( file.toPath() ) ) {
             props.store( out, "JSPWiki page properties for page "+page.getName() );
         }
     }
@@ -95,7 +94,7 @@ public class FileSystemProvider extends AbstractFileProvider {
     private void getPageProperties( final Page page ) throws IOException {
         final File file = new File( getPageDirectory(), mangleName( page.getName() ) + PROP_EXT );
         if( file.exists() ) {
-            try( final InputStream in = new FileInputStream( file ) ) {
+            try( final InputStream in = Files.newInputStream( file.toPath() ) ) {
                 final Properties  props = new Properties();
                 props.load( in );
                 page.setAuthor( props.getProperty( Page.AUTHOR ) );
