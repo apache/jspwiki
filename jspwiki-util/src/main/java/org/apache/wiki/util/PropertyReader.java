@@ -23,10 +23,11 @@ import org.apache.commons.lang3.Validate;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletContext;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -141,7 +142,7 @@ public final class PropertyReader {
      * @return inputstream holding the properties file
      * @throws FileNotFoundException properties file not found
      */
-	static InputStream loadCustomPropertiesFile( final ServletContext context, final String propertyFile ) throws FileNotFoundException {
+	static InputStream loadCustomPropertiesFile( final ServletContext context, final String propertyFile ) throws IOException {
         final InputStream propertyStream;
 		if( propertyFile == null ) {
 		    LOG.info( "No " + PARAM_CUSTOMCONFIG + " defined for this context, looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
@@ -149,7 +150,7 @@ public final class PropertyReader {
 		    propertyStream =  locateClassPathResource(context, CUSTOM_JSPWIKI_CONFIG);
 		} else {
 		    LOG.info( PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file." );
-		    propertyStream = new FileInputStream( propertyFile );
+		    propertyStream = Files.newInputStream( new File(propertyFile).toPath() );
 		}
 		return propertyStream;
 	}
@@ -228,7 +229,7 @@ public final class PropertyReader {
                 break;
             }
 
-            try( final InputStream propertyStream = new FileInputStream( propertyFile ) ) {
+            try( final InputStream propertyStream = Files.newInputStream( new File(propertyFile).toPath() ) ) {
                 LOG.info( " Reading additional properties from " + propertyFile + " and merge to cascade." );
                 final Properties additionalProps = new Properties();
                 additionalProps.load( propertyStream );
