@@ -235,10 +235,7 @@ public class SearchManager extends BasicPageFilter implements InternalModule, Wi
                     for( Iterator i = c.iterator(); i.hasNext() && count < maxLength; count++ )
                     {
                         SearchResult sr = (SearchResult)i.next();
-                        HashMap<String,Object> hm = new HashMap<String,Object>();
-                        hm.put( "page", sr.getPage().getName() );
-                        hm.put( "score", sr.getScore() );
-                        list.add( hm );
+                        list.add( sr.toMap() );
                     }
                 }
                 catch(Exception e)
