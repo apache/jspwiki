@@ -60,7 +60,7 @@ Wiki.Findpages = new Class({
         self.allowClone = options.allowClone;
         self.query = element.getParent("form").query.observe( self.search );
         self.element = element; //ul.dropdown menu
-
+        self.element.Findpages = self; // add reference this class instantiation to allow overrides
         self.element.addEvent("click:relay(#cloney)", function(e){
 
             this.getParent("a").href = self.toUrl(self.getValue(), true, this.checked);
