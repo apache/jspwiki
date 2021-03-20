@@ -321,11 +321,7 @@ var Wiki = {
 		var sticky = header.querySelector('.navigation').offsetTop;
 
 		function update() {
-			if (window.pageYOffset > sticky) {
-				header.classList.add("scrolling-down");
-			} else {
-				header.classList.remove("scrolling-down");
-			}
+			header.ifClass(window.pageYOffset > sticky, "scrolling-down");
 		}
 
 		window.addEvents({scroll: update, resize: update});
