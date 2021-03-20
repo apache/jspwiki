@@ -318,43 +318,17 @@ var Wiki = {
 	*/
 	yoyo: function (header) {
 
-		var height = "offsetHeight",
-			scrollY,
-			lastScrollY = 0,
-
-			//add spacer just infront of fixed element,
-			//and adjust height == header (fixed elements do not take space in the dom)
-			spacer = document.getElementById("header-spacer"),
-			busy;
+		var sticky = header.querySelector('.navigation').offsetTop;
 
 		function update() {
-
-			scrollY = window.getScroll().y;
-
-			spacer.style.paddingTop = header[height] + "px"; //update after window resize
-
-			// Limit scroll top to counteract iOS / OSX bounce.
-			scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
-
-			if (Math.abs(lastScrollY - scrollY) > header[height] /* minimum difference */) {
-
-				header.ifClass(scrollY > lastScrollY && scrollY > header[height], "scrolling-down");
-				lastScrollY = scrollY;
-
-			}
-			busy = false;
-		}
-
-		function handleEvent() {
-			if (!busy) {
-				busy = true;
-				requestAnimationFrame(update);
+			if (window.pageYOffset > sticky) {
+				header.classList.add("scrolling-down");
+			} else {
+				header.classList.remove("scrolling-down");
 			}
 		}
 
-		window.addEvents({scroll: handleEvent, resize: handleEvent});
-		update(); //first run: set height of the spacer
-
+		window.addEvents({scroll: update, resize: update});
 	},
 
 

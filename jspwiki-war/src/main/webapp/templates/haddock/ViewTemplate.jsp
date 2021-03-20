@@ -47,7 +47,6 @@
 <body class="context-<wiki:Variable var='requestcontext' default='' />">
 
 <div class="container${prefs.Layout=='fixed' ? '' : '-fluid' } ${prefs.Orientation} fixed-header">
-	<div id="header-spacer"></div>
 	<wiki:Include page="Header.jsp"/>
 
 	<c:set var="sidebarState"><wiki:Variable var="sidebar" default="${prefs.Sidebar}"/></c:set>
