@@ -35,6 +35,8 @@ public final class CryptoUtil
 {
     private static final String SSHA = "{SSHA}";
 
+    private static final String SHA1 = "{SHA-1}";
+
     private static final String SHA256 = "{SHA-256}";
 
     private static final Random RANDOM = new SecureRandom();
@@ -169,7 +171,11 @@ public final class CryptoUtil
      */
     protected static String getSaltedPassword(final byte[] password, final byte[] salt, final String algorithm ) throws NoSuchAlgorithmException
     {
-        final MessageDigest digest = MessageDigest.getInstance( algorithm );
+        //The term SSHA is used as a password prefix for backwards compatibility, but we use SHA-1 when fetching an instance
+        //of MessageDigest, as it is the guaranteed option. We also need to remove curly braces surrounding the string for
+        //backwards compatibility.
+        String algorithmToUse = algorithm.equals(SSHA) ? SHA1 : algorithm;
+        final MessageDigest digest = MessageDigest.getInstance( algorithmToUse.substring( 1, algorithmToUse.length() -1 ) );
         digest.update( password );
         final byte[] hash = digest.digest( salt );
 
