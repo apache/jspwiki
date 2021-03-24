@@ -35,6 +35,8 @@ public final class CryptoUtil
 {
     private static final String SSHA = "{SSHA}";
 
+    private static final String SHA256 = "{SHA-256}";
+
     private static final Random RANDOM = new SecureRandom();
 
     private static final int DEFAULT_SALT_SIZE = 8;
@@ -118,8 +120,8 @@ public final class CryptoUtil
 
     /**
      * <p>
-     * Creates an RFC 2307-compliant salted, hashed password with the SHA1
-     * MessageDigest algorithm. After the password is digested, the first 20
+     * Creates an RFC 2307-compliant salted, hashed password with the SHA1 or SHA-256
+     * MessageDigest algorithm. After the password is digested, the first 20 or 32
      * bytes of the digest will be the actual password hash; the remaining bytes
      * will be a randomly generated salt of length {@link #DEFAULT_SALT_SIZE},
      * for example: <blockquote><code>{SSHA}3cGWem65NCEkF5Ew5AEk45ak8LHUWAwPVXAyyw==</code></blockquote>
@@ -136,23 +138,24 @@ public final class CryptoUtil
      * 
      * @param password the password to be digested
      * @return the Base64-encoded password hash, prepended by
-     *         <code>{SSHA}</code>.
-     * @throws NoSuchAlgorithmException If your JVM is completely b0rked and does not have SHA.
+     *         <code>{SSHA}</code> or <code>{SHA256}</code>.
+     * @throws NoSuchAlgorithmException If your JVM does not supply the necessary algorithm. Should not happen.
      */
-    public static String getSaltedPassword(final byte[] password ) throws NoSuchAlgorithmException
+    public static String getSaltedPassword(final byte[] password, final String algorithm ) throws NoSuchAlgorithmException
     {
         final byte[] salt = new byte[DEFAULT_SALT_SIZE];
         RANDOM.nextBytes( salt );
-        return getSaltedPassword( password, salt );
+
+        return getSaltedPassword( password, salt, algorithm );
     }
 
     /**
      * <p>
-     * Helper method that creates an RFC 2307-compliant salted, hashed password with the SHA1
-     * MessageDigest algorithm. After the password is digested, the first 20
+     * Helper method that creates an RFC 2307-compliant salted, hashed password with the SHA1 or SHA256
+     * MessageDigest algorithm. After the password is digested, the first 20 or 32
      * bytes of the digest will be the actual password hash; the remaining bytes
      * will be the salt. Thus, supplying a password <code>testing123</code>
-     * and a random salt <code>foo</code> produces the hash:
+     * and a random salt <code>foo</code> produces the hash when using SHA1:
      * </p>
      * <blockquote><code>{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=</code></blockquote>
      * <p>
@@ -161,12 +164,12 @@ public final class CryptoUtil
      * 
      * @param password the password to be digested
      * @param salt the random salt
-     * @return the Base64-encoded password hash, prepended by <code>{SSHA}</code>.
-     * @throws NoSuchAlgorithmException If your JVM is totally b0rked and does not have SHA1.
+     * @return the Base64-encoded password hash, prepended by <code>{SSHA}</code> or <code>{SHA256}</code>.
+     * @throws NoSuchAlgorithmException If your JVM does not supply the necessary algorithm. Should not happen.
      */
-    protected static String getSaltedPassword(final byte[] password, final byte[] salt ) throws NoSuchAlgorithmException
+    protected static String getSaltedPassword(final byte[] password, final byte[] salt, final String algorithm ) throws NoSuchAlgorithmException
     {
-        final MessageDigest digest = MessageDigest.getInstance( "SHA" );
+        final MessageDigest digest = MessageDigest.getInstance( algorithm );
         digest.update( password );
         final byte[] hash = digest.digest( salt );
 
@@ -176,7 +179,7 @@ public final class CryptoUtil
         System.arraycopy(salt, 0, all, hash.length + 0, salt.length);
         final byte[] base64 = Base64.getEncoder().encode( all );
         
-        return SSHA + new String( base64, StandardCharsets.UTF_8 );
+        return algorithm + new String( base64, StandardCharsets.UTF_8 );
     }
 
     /**
