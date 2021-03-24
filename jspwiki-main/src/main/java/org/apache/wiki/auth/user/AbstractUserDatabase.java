@@ -247,17 +247,18 @@ public abstract class AbstractUserDatabase implements UserDatabase {
     }
     
     /**
-     * Private method that calculates the salted SHA-1 hash of a given <code>String</code>. Note that as of JSPWiki 2.8, this method
+     * Private method that calculates the salted SHA-1 or SHA-256 hash of a given <code>String</code>. Note that as of JSPWiki 2.8, this method
      * calculates a <em>salted</em> hash rather than a plain hash.
      *
      * @param text the text to hash
+     * @param text the algorithm used for the hash
      * @return the result hash
      */
     protected String getHash( final String text ) {
         try {
-            return CryptoUtil.getSaltedPassword( text.getBytes(StandardCharsets.UTF_8 ) );
+            return CryptoUtil.getSaltedPassword( text.getBytes(StandardCharsets.UTF_8), SHA256_PREFIX );
         } catch( final NoSuchAlgorithmException e ) {
-            log.error( "Error creating salted SHA password hash:" + e.getMessage() );
+            log.error( String.format( "Error creating salted password hash: %s", e.getMessage() ) );
             return text;
         }
     }
@@ -267,7 +268,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      *
      * @param text the text to hash
      * @return the result hash
-     * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String)} instead
+     * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String, String)} instead
      */
     String getOldHash( final String text ) {
         try {
