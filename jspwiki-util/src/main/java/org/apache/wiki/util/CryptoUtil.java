@@ -58,13 +58,13 @@ public final class CryptoUtil
 
     /**
      * <p>
-     * Convenience method for hashing and verifying salted SHA-1 passwords from
+     * Convenience method for hashing and verifying salted SHA-1 or SHA-256 passwords from
      * the command line. This method requires <code>commons-codec-1.3.jar</code>
      * (or a newer version) to be on the classpath. Command line arguments are
      * as follows:
      * </p>
      * <ul>
-     * <li><code>--hash <var>password</var></code> - hashes <var>password</var></code>
+     * <li><code>--hash <var>password</var> SSHA</code> - hashes <var>password</var></code>
      * and prints a password digest that looks like this: <blockquote><code>{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=</code></blockquote></li>
      * <li><code>--verify <var>password</var> <var>digest</var></code> -
      * verifies <var>password</var> by extracting the salt from <var>digest</var>
@@ -86,9 +86,9 @@ public final class CryptoUtil
         if( args.length == 0 || (args.length == 1 && HELP.equals( args[0] )) )
         {
             System.out.println( "Usage: CryptoUtil [options] " );
-            System.out.println( "   --hash   password             create hash for password" );
-            System.out.println( "   --verify password digest      verify password for digest" );
-            System.exit( 0 );
+            System.out.println( "   --hash   password algorithm             create hash for password" );
+            System.out.println( "   --verify password digest algorithm      verify password for digest" );
+            System.out.println( "Valid algorithm options are {SSHA} and {SHA-256}. If no algorithm is specified or an unsupported algorithm is specified, SHA-256 is used." );
         }
 
         // User wants to hash the password
@@ -99,7 +99,9 @@ public final class CryptoUtil
                 throw new IllegalArgumentException( "Error: --hash requires a 'password' argument." );
             }
             final String password = args[1].trim();
-            System.out.println( CryptoUtil.getSaltedPassword( password.getBytes( StandardCharsets.UTF_8 ) ) );
+            final String algorithm = args.length > 2 ? args[2].trim() : SHA256;
+
+            System.out.println( CryptoUtil.getSaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), algorithm ) );
         }
 
         // User wants to verify an existing password
@@ -111,6 +113,7 @@ public final class CryptoUtil
             }
             final String password = args[1].trim();
             final String digest = args[2].trim();
+
             System.out.println( CryptoUtil.verifySaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), digest ) );
         }
 
