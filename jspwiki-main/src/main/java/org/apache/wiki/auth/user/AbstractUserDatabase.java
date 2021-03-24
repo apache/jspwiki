@@ -46,6 +46,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
     protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String SSHA_PREFIX = "{SSHA}";
+    protected static final String SHA256_PREFIX = "{SHA-256}";
 
     /**
      * Looks up and returns the first {@link UserProfile} in the user database that whose login name, full name, or wiki name matches the
@@ -187,29 +188,26 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      */
     @Override
     public boolean validatePassword( final String loginName, final String password ) {
-        final String hashedPassword;
+        String hashedPassword;
         try {
             final UserProfile profile = findByLoginName( loginName );
             String storedPassword = profile.getPassword();
+            boolean verified = false;
 
-            // Is the password stored as a salted hash (the new 2.8 format?)
-            final boolean newPasswordFormat = storedPassword.startsWith( SSHA_PREFIX );
-
-            // If new format, verify the hash
-            if( newPasswordFormat ) {
-                hashedPassword = getHash( password );
-                return CryptoUtil.verifySaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
+            // If the password is stored as SHA-256 or SSHA, verify the hash
+            if( storedPassword.startsWith( SHA256_PREFIX ) || storedPassword.startsWith( SSHA_PREFIX ) ) {
+                verified = CryptoUtil.verifySaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
             }
 
-            // If old format, verify using the old SHA verification algorithm
+            // Use older verification algorithm if password is stored as SHA
             if( storedPassword.startsWith( SHA_PREFIX ) ) {
                 storedPassword = storedPassword.substring( SHA_PREFIX.length() );
+                hashedPassword = getOldHash( password );
+                verified = hashedPassword.equals( storedPassword );
             }
-            hashedPassword = getOldHash( password );
-            final boolean verified = hashedPassword.equals( storedPassword );
 
             // If in the old format and password verified, upgrade the hash to SSHA
-            if( verified ) {
+            if( verified && !storedPassword.startsWith( SHA256_PREFIX ) ) {
                 profile.setPassword( password );
                 save( profile );
             }
