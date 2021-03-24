@@ -202,7 +202,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
             // Use older verification algorithm if password is stored as SHA
             if( storedPassword.startsWith( SHA_PREFIX ) ) {
                 storedPassword = storedPassword.substring( SHA_PREFIX.length() );
-                hashedPassword = getOldHash( password );
+                hashedPassword = getShaHash( password );
                 verified = hashedPassword.equals( storedPassword );
             }
 
@@ -270,7 +270,8 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      * @return the result hash
      * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String, String)} instead
      */
-    String getOldHash( final String text ) {
+    @Deprecated
+    String getShaHash(final String text ) {
         try {
             final MessageDigest md = MessageDigest.getInstance( "SHA" );
             md.update( text.getBytes( StandardCharsets.UTF_8 ) );
