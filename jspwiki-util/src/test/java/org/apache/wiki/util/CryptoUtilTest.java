@@ -46,7 +46,7 @@ public class CryptoUtilTest
         System.setOut( oldOut );
 
         // Run our tests
-        Assertions.assertTrue( output.startsWith( "{SSHA}" ) );
+        Assertions.assertTrue( output.startsWith( "{SHA-256}" ) );
     }
 
     @Test
@@ -74,7 +74,7 @@ public class CryptoUtilTest
     {
         // Try verifying password without the {SSHA} prefix
         try {
-            CryptoUtil.main( new String[] { "--verify", "password", "yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" } );
+            CryptoUtil.main( new String[] { "--verify", "password", "yfT8SRT/WoOuNuA6KbJeF10OznZmb28=", "{SSHA}" } );
         }
         catch (final IllegalArgumentException e)
         {
@@ -107,13 +107,13 @@ public class CryptoUtilTest
         byte[] digest;
 
         digest = Base64.getDecoder().decode( "yfT8SRT/WoOuNuA6KbJeF10OznZmb28=".getBytes() );
-        Assertions.assertEquals( "foo", new String( CryptoUtil.extractSalt( digest ) ) );
+        Assertions.assertEquals( "foo", new String( CryptoUtil.extractSalt( digest, 20 ) ) );
 
         digest = Base64.getDecoder().decode( "tAVisOOQGAeVyP8UMFQY9qi83lxsb09e".getBytes() );
-        Assertions.assertEquals( "loO^", new String( CryptoUtil.extractSalt( digest ) ) );
+        Assertions.assertEquals( "loO^", new String( CryptoUtil.extractSalt( digest, 20 ) ) );
 
         digest = Base64.getDecoder().decode( "BZaDYvB8czmNW3MjR2j7/mklODV0ZXN0eQ==".getBytes() );
-        Assertions.assertEquals( "testy", new String( CryptoUtil.extractSalt( digest ) ) );
+        Assertions.assertEquals( "testy", new String( CryptoUtil.extractSalt( digest, 20 ) ) );
     }
 
     @Test
@@ -123,20 +123,20 @@ public class CryptoUtilTest
 
         // Generate a hash with a known password and salt
         password = "testing123".getBytes();
-        Assertions.assertEquals( "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=", CryptoUtil.getSaltedPassword( password, "foo".getBytes() ) );
+        Assertions.assertEquals( "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=", CryptoUtil.getSaltedPassword( password, "foo".getBytes(), "{SSHA}" ) );
 
         // Generate two hashes with a known password and 2 different salts
         password = "password".getBytes();
-        Assertions.assertEquals( "{SSHA}tAVisOOQGAeVyP8UMFQY9qi83lxsb09e", CryptoUtil.getSaltedPassword( password, "loO^".getBytes() ) );
-        Assertions.assertEquals( "{SSHA}BZaDYvB8czmNW3MjR2j7/mklODV0ZXN0eQ==", CryptoUtil.getSaltedPassword( password, "testy".getBytes() ) );
+        Assertions.assertEquals( "{SSHA}tAVisOOQGAeVyP8UMFQY9qi83lxsb09e", CryptoUtil.getSaltedPassword( password, "loO^".getBytes(), "{SSHA}" ) );
+        Assertions.assertEquals( "{SSHA}BZaDYvB8czmNW3MjR2j7/mklODV0ZXN0eQ==", CryptoUtil.getSaltedPassword( password, "testy".getBytes(), "{SSHA}" ) );
     }
 
     @Test
     public void testMultipleHashes() throws Exception
     {
-        final String p1 = CryptoUtil.getSaltedPassword( "password".getBytes() );
-        final String p2 = CryptoUtil.getSaltedPassword( "password".getBytes() );
-        final String p3 = CryptoUtil.getSaltedPassword( "password".getBytes() );
+        final String p1 = CryptoUtil.getSaltedPassword( "password".getBytes(), "{SSHA}" );
+        final String p2 = CryptoUtil.getSaltedPassword( "password".getBytes(), "{SSHA}" );
+        final String p3 = CryptoUtil.getSaltedPassword( "password".getBytes(), "{SSHA}" );
         Assertions.assertNotSame( p1, p2 );
         Assertions.assertNotSame( p2, p3 );
         Assertions.assertNotSame( p1, p3 );
@@ -147,7 +147,7 @@ public class CryptoUtilTest
     {
         // Generate a hash with a known password and salt
         final byte[] password = "mySooperRandomPassword".getBytes();
-        final String hash = CryptoUtil.getSaltedPassword( password, "salt".getBytes() );
+        final String hash = CryptoUtil.getSaltedPassword( password, "salt".getBytes(), "{SSHA}" );
 
         // slappasswd says that a 4-byte salt should give us 6 chars for prefix
         // + 20 chars for the hash + 12 for salt (38 total)
