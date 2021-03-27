@@ -193,7 +193,7 @@ public final class CryptoUtil
 
     /**
      *  Compares a password to a given entry and returns true, if it matches.
-     *  
+     *
      *  @param password The password in bytes.
      *  @param entry The password entry, typically starting with {SSHA}.
      *  @return True, if the password matches.
@@ -201,19 +201,25 @@ public final class CryptoUtil
      */
     public static boolean verifySaltedPassword(final byte[] password, final String entry ) throws NoSuchAlgorithmException
     {
-        // First, extract everything after {SSHA} and decode from Base64
-        if( !entry.startsWith( SSHA ) )
+        if( !entry.startsWith( SSHA ) && !entry.startsWith( SHA256 ) )
         {
-            throw new IllegalArgumentException( "Hash not prefixed by {SSHA}; is it really a salted hash?" );
+            throw new IllegalArgumentException( "Hash not prefixed by expected algorithm; is it really a salted hash?" );
         }
-        final byte[] challenge = Base64.getDecoder().decode( entry.substring( 6 ).getBytes( StandardCharsets.UTF_8 ) );
+        String algorithm = entry.startsWith( SSHA ) ? SSHA : SHA256;
+
+        final byte[] challenge = Base64.getDecoder().decode( entry.substring( algorithm.length() )
+                .getBytes( StandardCharsets.UTF_8 ) );
 
         // Extract the password hash and salt
-        final byte[] passwordHash = extractPasswordHash( challenge );
-        final byte[] salt = extractSalt( challenge );
+        final byte[] passwordHash = extractPasswordHash( challenge, algorithm.equals(SSHA) ? 20 : 32 );
+        final byte[] salt = extractSalt( challenge, algorithm.equals(SSHA) ? 20 : 32  );
 
         // Re-create the hash using the password and the extracted salt
-        final MessageDigest digest = MessageDigest.getInstance( "SHA" );
+        // The term SSHA is used as a password prefix for backwards compatibility, but we use SHA-1 when fetching an instance
+        // of MessageDigest, as it is the guaranteed option. We also need to remove curly braces surrounding the string for
+        // backwards compatibility.
+        String algorithmToUse = algorithm.equals(SSHA) ? SHA1 : algorithm;
+        final MessageDigest digest = MessageDigest.getInstance( algorithmToUse.substring( 1, algorithmToUse.length() -1 ) );
         digest.update( password );
         final byte[] hash = digest.digest( salt );
 
@@ -222,8 +228,8 @@ public final class CryptoUtil
     }
 
     /**
-     * Helper method that extracts the hashed password fragment from a supplied salted SHA digest
-     * by taking all of the characters before position 20.
+     * Helper method that extracts the hashed password fragment from a supplied salted SHA-1 or SHA-256 digest
+     * by taking all of the characters before position 20 or 32 depending on algorithm.
      * 
      * @param digest the salted digest, which is assumed to have been
      *            previously decoded from Base64.
@@ -231,40 +237,40 @@ public final class CryptoUtil
      * @throws IllegalArgumentException if the length of the supplied digest is
      *             less than or equal to 20 bytes
      */
-    protected static byte[] extractPasswordHash(final byte[] digest ) throws IllegalArgumentException
+    protected static byte[] extractPasswordHash(final byte[] digest, final int hashLength ) throws IllegalArgumentException
     {
-        if( digest.length < 20 )
+        if( digest.length < hashLength )
         {
-            throw new IllegalArgumentException( "Hash was less than 20 characters; could not extract password hash!" );
+            throw new IllegalArgumentException( "Hash was shorter than expected; could not extract password hash!" );
         }
 
         // Extract the password hash
-        final byte[] hash = new byte[20];
-        System.arraycopy(digest, 0, hash, 0, 20);
+        final byte[] hash = new byte[hashLength];
+        System.arraycopy(digest, 0, hash, 0, hashLength);
 
         return hash;
     }
 
     /**
      * Helper method that extracts the salt from supplied salted digest by taking all of the
-     * characters at position 20 and higher.
+     * characters after a given index.
      * 
      * @param digest the salted digest, which is assumed to have been previously
      *            decoded from Base64.
      * @return the salt
      * @throws IllegalArgumentException if the length of the supplied digest is
-     *             less than or equal to 20 bytes
+     *             less than given length.
      */
-    protected static byte[] extractSalt(final byte[] digest ) throws IllegalArgumentException
+    protected static byte[] extractSalt(final byte[] digest, final int hashLength ) throws IllegalArgumentException
     {
-        if( digest.length <= 20 )
+        if( digest.length <= hashLength )
         {
-            throw new IllegalArgumentException( "Hash was less than 21 characters; we found no salt!" );
+            throw new IllegalArgumentException( "Hash was shorter than expected; we found no salt!" );
         }
 
         // Extract the salt
-        final byte[] salt = new byte[digest.length - 20];
-        System.arraycopy(digest, 20, salt, 0, digest.length - 20);
+        final byte[] salt = new byte[digest.length - hashLength];
+        System.arraycopy(digest, hashLength, salt, 0, digest.length - hashLength);
 
         return salt;
     }
