@@ -117,7 +117,7 @@ public class XMLUserDatabaseTest {
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
             Assertions.assertEquals( "JanneJalkanen", profile.getWikiName() );
-            Assertions.assertEquals( "{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword() );
+            Assertions.assertEquals( "{SHA-256}AeJQgAgYDAf2WZiqPJ2l6cGdGC/PgWmkjZmkjrBEV6SW/HlclZGlIg==", profile.getPassword() );
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
         } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( false );
@@ -139,7 +139,7 @@ public class XMLUserDatabaseTest {
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
             Assertions.assertEquals( "JanneJalkanen", profile.getWikiName() );
-            Assertions.assertEquals( "{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword() );
+            Assertions.assertEquals( "{SHA-256}AeJQgAgYDAf2WZiqPJ2l6cGdGC/PgWmkjZmkjrBEV6SW/HlclZGlIg==", profile.getPassword() );
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNotNull( profile.getLastModified() );
@@ -163,7 +163,7 @@ public class XMLUserDatabaseTest {
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
             Assertions.assertEquals( "JanneJalkanen", profile.getWikiName() );
-            Assertions.assertEquals( "{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword() );
+            Assertions.assertEquals( "{SHA-256}AeJQgAgYDAf2WZiqPJ2l6cGdGC/PgWmkjZmkjrBEV6SW/HlclZGlIg==", profile.getPassword() );
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNotNull( profile.getLastModified() );
@@ -187,7 +187,7 @@ public class XMLUserDatabaseTest {
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
             Assertions.assertEquals( "JanneJalkanen", profile.getWikiName() );
-            Assertions.assertEquals( "{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword() );
+            Assertions.assertEquals( "{SHA-256}AeJQgAgYDAf2WZiqPJ2l6cGdGC/PgWmkjZmkjrBEV6SW/HlclZGlIg==", profile.getPassword() );
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
         } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( false );
@@ -209,7 +209,7 @@ public class XMLUserDatabaseTest {
             Assertions.assertEquals( "janne", profile.getLoginName() );
             Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
             Assertions.assertEquals( "JanneJalkanen", profile.getWikiName() );
-            Assertions.assertEquals( "{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==", profile.getPassword() );
+            Assertions.assertEquals( "{SHA-256}AeJQgAgYDAf2WZiqPJ2l6cGdGC/PgWmkjZmkjrBEV6SW/HlclZGlIg==", profile.getPassword() );
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
         } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( false );
