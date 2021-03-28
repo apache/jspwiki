@@ -19,7 +19,7 @@
 -->
 
 <users>
-  <user uid="-7739839977499061014" email="janne@ecyrd.com" fullName="Janne Jalkanen" loginName="janne" password="{SSHA}1WFv9OV11pD5IySgVH3sFa2VlCyYjbLrcVT/qw==" wikiName="JanneJalkanen" created="2006.06.25 at 14:50:54:000 EDT" lastModified="2006.01.26 at 14:50:54:000 EST">
+  <user uid="-7739839977499061014" email="janne@ecyrd.com" fullName="Janne Jalkanen" loginName="janne" password="{SHA-256}AeJQgAgYDAf2WZiqPJ2l6cGdGC/PgWmkjZmkjrBEV6SW/HlclZGlIg==" wikiName="JanneJalkanen" created="2006.06.25 at 14:50:54:000 EDT" lastModified="2006.01.26 at 14:50:54:000 EST">
     <attributes>rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAx3CAAAABAAAAACdAAKYXR0cmlidXRlMXQAEXNvbWUgcmFuZG9tIHZhbHVldAAKYXR0cmlidXRlMnQADWFub3RoZXIgdmFsdWV4</attributes>
   </user>
   <user uid="-8629747547991531672" email="user@example.com" loginName="user" password="{SSHA}iQWmcKE8PyO965jh4+VNLYbxagaDdS0nC9GmuQ==" created="2006.06.25 at 14:50:54:000 EDT" lastModified="2006.01.26 at 14:50:54:000 EST"/>
