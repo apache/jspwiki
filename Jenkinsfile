@@ -17,16 +17,17 @@
  * under the License.
  */
 
-try {
-    def buildRepo = 'https://github.com/apache/jspwiki'
-    def siteRepo = 'https://gitbox.apache.org/repos/asf/jspwiki-site.git'
-    def creds = '9b041bd0-aea9-4498-a576-9eeb771411dd'
+buildRepo = 'https://github.com/apache/jspwiki'
+siteRepo = 'https://gitbox.apache.org/repos/asf/jspwiki-site.git'
+creds = '9b041bd0-aea9-4498-a576-9eeb771411dd'
 
-    def asfsite = 'asf-site'
-    def build = 'build'
-    def buildJdk = 'jdk_11_latest'
-    def buildMvn = 'maven_3_latest'
-    def jbake = 'jbake'
+asfsite = 'asf-site'
+build = 'build'
+buildJdk = 'jdk_11_latest'
+buildMvn = 'maven_3_latest'
+jbake = 'jbake'
+
+try {
     def pom
 
     node( 'ubuntu' ) {
