@@ -22,7 +22,7 @@ under the License.
 * _2.11.0-git-05_
 
 * [JSPWIKI-1145](https://issues.apache.org/jira/browse/JSPWIKI-1146) - Add [AWS Kendra as a Search Provider](https://jspwiki-wiki.apache.org/Wiki.jsp?page=KendraSearchProvider)
-  * Merged [PR #51](https://github.com/apache/jspwiki/pull/46), contributed by [takalat](https://github.com/takalat), [samhareem](https://github.com/samhareem), thanks!
+  * Merged [PR #51](https://github.com/apache/jspwiki/pull/51), contributed by [takalat](https://github.com/takalat), [samhareem](https://github.com/samhareem), thanks!
 
 * Dependency & plugin updates provided by dependabot (PRs [#34](https://github.com/apache/jspwiki/pull/34),
   [#35](https://github.com/apache/jspwiki/pull/35), [#39](https://github.com/apache/jspwiki/pull/39),
