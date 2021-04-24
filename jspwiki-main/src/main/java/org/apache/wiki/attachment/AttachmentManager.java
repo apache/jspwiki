@@ -29,9 +29,9 @@ import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.WikiProvider;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.List;
 
@@ -221,7 +221,7 @@ public interface AttachmentManager {
      *  @throws ProviderException If something else went wrong.
      */
     default void storeAttachment( final Attachment att, final File source ) throws IOException, ProviderException {
-        try( final FileInputStream in = new FileInputStream( source ) ) {
+        try( final InputStream in = Files.newInputStream( source.toPath() ) ) {
             storeAttachment( att, in );
         }
     }
