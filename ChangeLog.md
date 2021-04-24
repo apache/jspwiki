@@ -17,6 +17,22 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-04-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-05_
+
+* [JSPWIKI-1145](https://issues.apache.org/jira/browse/JSPWIKI-1146) - Add [AWS Kendra as a Search Provider](https://jspwiki-wiki.apache.org/Wiki.jsp?page=KendraSearchProvider)
+  * Merged [PR #51](https://github.com/apache/jspwiki/pull/46), contributed by [takalat](https://github.com/takalat), [samhareem](https://github.com/samhareem), thanks!
+
+* Dependency & plugin updates provided by dependabot (PRs [#34](https://github.com/apache/jspwiki/pull/34),
+  [#35](https://github.com/apache/jspwiki/pull/35), [#39](https://github.com/apache/jspwiki/pull/39),
+  [#52](https://github.com/apache/jspwiki/pull/52), [#55](https://github.com/apache/jspwiki/pull/55),
+  [#56](https://github.com/apache/jspwiki/pull/56) and [#57](https://github.com/apache/jspwiki/pull/57)), most notably
+    * JUnit to 5.7.1
+    * Mockito to 3.9.0
+    * Selenide to 5.20.4
+    * Tomcat to 9.0.45
+
 **2021-03-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-04_
@@ -58,8 +74,8 @@ using a `TestEngine` could end up processing events using managers registered by
   [#25](https://github.com/apache/jspwiki/pull/25), [#26](https://github.com/apache/jspwiki/pull/26), 
   [#27](https://github.com/apache/jspwiki/pull/27), [#28](https://github.com/apache/jspwiki/pull/28),
   [#29](https://github.com/apache/jspwiki/pull/29) and [#30](https://github.com/apache/jspwiki/pull/30)), most notably
-  * jsp-api to 2.3.3
-  * Selenide to 5.17.2
+    * jsp-api to 2.3.3
+    * Selenide to 5.17.2
 
 **2020-12-17  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
