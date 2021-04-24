@@ -37,17 +37,15 @@ try {
         stage( 'build source' ) {
             dir( build ) {
                 git url: buildRepo, poll: true
-                withMaven( jdk: buildJdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [ jacocoPublisher(), junitPublisher() ] ) {
-                    withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
-                        def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
-                        echo 'Will use SonarQube instance at https://sonarcloud.io'
-                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report -Pattach-additional-artifacts sonar:sonar $sonarOptions -Djdk.javadoc.doclet.version=2.0.12"
-                    }
+                if( env.BRANCH_NAME == 'master' ) {
+                    build( '-Pattach-additional-artifacts -Djdk.javadoc.doclet.version=2.0.12' )
                     pom = readMavenPom file: 'pom.xml'
                     writeFile file: 'target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
                     writeFile file: 'jspwiki-it-tests/target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
                     sh 'mvn package javadoc:aggregate-no-fork -DskipTests -pl !jspwiki-portable -Djdk.javadoc.doclet.version=2.0.12'
                     sh 'java -cp jspwiki-main/target/classes org.apache.wiki.TranslationsCheck site'
+                } else {
+                    build()
                 }
             }
         }
@@ -67,7 +65,6 @@ try {
                 }
             }
         }
-        
     }
 
     node( 'git-websites' ) {
@@ -110,6 +107,17 @@ try {
                      replyTo: 'dev@jspwiki.apache.org',
                      to: 'commits@jspwiki.apache.org',
                      subject: "[${env.JOB_NAME}] build ${env.BUILD_DISPLAY_NAME} - ${currentBuild.result}"
+        }
+    }
+}
+
+def build( buildOpts = '' ) {
+    withMaven( jdk: buildJdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [ jacocoPublisher(), junitPublisher() ] ) {
+        withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
+            def masterBranchOptions = ""
+            def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
+            echo 'Will use SonarQube instance at https://sonarcloud.io'
+            sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report sonar:sonar $sonarOptions $buildOpts"
         }
     }
 }
