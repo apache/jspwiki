@@ -32,7 +32,6 @@ try {
     node( 'ubuntu' ) {
         stage( 'clean ws' ) {
             cleanWs()
-            echo sh( script: 'env|sort', returnStdout: true )
         }
 
         stage( 'build source' ) {
@@ -42,7 +41,7 @@ try {
                     withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
                         def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
                         echo 'Will use SonarQube instance at https://sonarcloud.io'
-                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install org.jacoco:jacoco-maven-plugin:report -Pattach-additional-artifacts sonar:sonar -up $sonarOptions -Djdk.javadoc.doclet.version=2.0.12"
+                        sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report -Pattach-additional-artifacts sonar:sonar $sonarOptions -Djdk.javadoc.doclet.version=2.0.12"
                     }
                     pom = readMavenPom file: 'pom.xml'
                     writeFile file: 'target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
@@ -54,16 +53,18 @@ try {
         }
 
         stage( 'build website' ) {
-            withMaven( jdk: 'jdk_1.8_latest', maven: buildMvn, publisherStrategy: 'EXPLICIT' ) {
-                dir( jbake ) {
-                    git branch: jbake, url: siteRepo, credentialsId: creds, poll: false
-                    sh "cp ../$build/ChangeLog.md ./src/main/config/changelog.md"
-                    sh "cp ../$build/i18n-table.txt ./src/main/config/i18n-table.md"
-                    sh "cat ./src/main/config/changelog-header.txt ./src/main/config/changelog.md > ./src/main/jbake/content/development/changelog.md"
-                    sh "cat ./src/main/config/i18n-header.txt ./src/main/config/i18n-table.md > ./src/main/jbake/content/development/i18n.md"
-                    sh 'mvn clean process-resources -Dplugin.japicmp.jspwiki-new=' + pom.version
+            if( env.BRANCH_NAME == 'master' ) {
+                withMaven( jdk: 'jdk_1.8_latest', maven: buildMvn, publisherStrategy: 'EXPLICIT' ) {
+                    dir( jbake ) {
+                        git branch: jbake, url: siteRepo, credentialsId: creds, poll: false
+                        sh "cp ../$build/ChangeLog.md ./src/main/config/changelog.md"
+                        sh "cp ../$build/i18n-table.txt ./src/main/config/i18n-table.md"
+                        sh "cat ./src/main/config/changelog-header.txt ./src/main/config/changelog.md > ./src/main/jbake/content/development/changelog.md"
+                        sh "cat ./src/main/config/i18n-header.txt ./src/main/config/i18n-table.md > ./src/main/jbake/content/development/i18n.md"
+                        sh 'mvn clean process-resources -Dplugin.japicmp.jspwiki-new=' + pom.version
+                    }
+                    stash name: 'jbake-website'
                 }
-                stash name: 'jbake-website'
             }
         }
         
@@ -71,22 +72,24 @@ try {
 
     node( 'git-websites' ) {
         stage( 'publish website' ) {
-            cleanWs()
-            unstash 'jbake-website'
-            dir( asfsite ) {
-                git branch: asfsite, url: siteRepo, credentialsId: creds, poll: false
-                sh "cp -rf ../$jbake/target/content/* ./"
-            }
-            def apidocs = asfsite + '/apidocs/' + pom.version
-            dir( apidocs ) {
-                sh "cp -rf ../../../$build/target/site/apidocs/* ."
-            }
-            dir( asfsite ) {
-                timeout( 15 ) { // 15 minutes
-                    sh 'git add .'
-                    sh 'git commit -m "Automatic Site Publish by Buildbot"'
-                    echo "pushing to $siteRepo"
-                    sh 'git push origin asf-site'
+            if( env.BRANCH_NAME == 'master' ) {
+                cleanWs()
+                unstash 'jbake-website'
+                dir( asfsite ) {
+                    git branch: asfsite, url: siteRepo, credentialsId: creds, poll: false
+                    sh "cp -rf ../$jbake/target/content/* ./"
+                }
+                def apidocs = asfsite + '/apidocs/' + pom.version
+                dir( apidocs ) {
+                    sh "cp -rf ../../../$build/target/site/apidocs/* ."
+                }
+                dir( asfsite ) {
+                    timeout( 15 ) { // 15 minutes
+                        sh 'git add .'
+                        sh 'git commit -m "Automatic Site Publish by Buildbot"'
+                        echo "pushing to $siteRepo"
+                        sh 'git push origin asf-site'
+                    }
                 }
             }
         }
@@ -102,9 +105,11 @@ try {
         if( currentBuild.result == null ) {
             currentBuild.result = 'ABORTED'
         }
-        emailext body: "See ${env.BUILD_URL}",
-                 replyTo: 'dev@jspwiki.apache.org', 
-                 to: 'commits@jspwiki.apache.org',
-                 subject: "[${env.JOB_NAME}] build ${env.BUILD_DISPLAY_NAME} - ${currentBuild.result}"
+        if( env.BRANCH_NAME == 'master' ) {
+            emailext body: "See ${env.BUILD_URL}",
+                     replyTo: 'dev@jspwiki.apache.org',
+                     to: 'commits@jspwiki.apache.org',
+                     subject: "[${env.JOB_NAME}] build ${env.BUILD_DISPLAY_NAME} - ${currentBuild.result}"
+        }
     }
 }
