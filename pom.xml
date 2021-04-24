@@ -51,7 +51,7 @@
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.8.0</commons-io.version>
-    <commons-lang.version>3.11</commons-lang.version>
+    <commons-lang.version>3.12.0</commons-lang.version>
     <commons-text.version>1.9</commons-text.version>
     <ehcache.version>2.10.6</ehcache.version>
     <flexmark.version>0.62.2</flexmark.version>
