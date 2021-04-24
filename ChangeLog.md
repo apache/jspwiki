@@ -27,7 +27,9 @@ under the License.
 * Dependency & plugin updates provided by dependabot (PRs [#34](https://github.com/apache/jspwiki/pull/34),
   [#35](https://github.com/apache/jspwiki/pull/35), [#39](https://github.com/apache/jspwiki/pull/39),
   [#52](https://github.com/apache/jspwiki/pull/52), [#55](https://github.com/apache/jspwiki/pull/55),
-  [#56](https://github.com/apache/jspwiki/pull/56) and [#57](https://github.com/apache/jspwiki/pull/57)), most notably
+  [#56](https://github.com/apache/jspwiki/pull/56), [#57](https://github.com/apache/jspwiki/pull/57)
+  and [#59](https://github.com/apache/jspwiki/pull/59)), most notably
+    * HSQLDB to 2.6.0
     * JUnit to 5.7.1
     * Mockito to 3.9.0
     * Selenide to 5.20.4
@@ -41,7 +43,7 @@ under the License.
     * Merged [PR #46](https://github.com/apache/jspwiki/pull/46), contributed by Julien Masnada, thanks!
 
 * [JSPWIKI-1144](https://issues.apache.org/jira/browse/JSPWIKI-1144) - Minor performance improvement
-  * Merged [PR #36](https://github.com/apache/jspwiki/pull/36), contributed by Arturo Bernal, thanks!
+    * Merged [PR #36](https://github.com/apache/jspwiki/pull/36), contributed by Arturo Bernal, thanks!
 
 * [JSPWIKI-1147](https://issues.apache.org/jira/browse/JSPWIKI-1147) - The button "Clear user preferences" 
 doesn't clear user preferences
@@ -51,7 +53,7 @@ doesn't clear user preferences
 * _2.11.0-git-03_
 
 * [JSPWIKI-1142](https://issues.apache.org/jira/browse/JSPWIKI-1142) - Minor performance improvements
-  * Merged [PR #32](https://github.com/apache/jspwiki/pull/32), contributed by Arturo Bernal, thanks!
+    * Merged [PR #32](https://github.com/apache/jspwiki/pull/32), contributed by Arturo Bernal, thanks!
 
 * `PropertyReader` logs stacktrace if unable to load the `jspwiki.properties` file
   
