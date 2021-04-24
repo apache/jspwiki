@@ -38,14 +38,14 @@ try {
             dir( build ) {
                 git url: buildRepo, poll: true
                 if( env.BRANCH_NAME == 'master' ) {
-                    build( '-Pattach-additional-artifacts -Djdk.javadoc.doclet.version=2.0.12' )
+                    buildJSPWiki( '-Pattach-additional-artifacts -Djdk.javadoc.doclet.version=2.0.12' )
                     pom = readMavenPom file: 'pom.xml'
                     writeFile file: 'target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
                     writeFile file: 'jspwiki-it-tests/target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
                     sh 'mvn package javadoc:aggregate-no-fork -DskipTests -pl !jspwiki-portable -Djdk.javadoc.doclet.version=2.0.12'
                     sh 'java -cp jspwiki-main/target/classes org.apache.wiki.TranslationsCheck site'
                 } else {
-                    build()
+                    buildJSPWiki()
                 }
             }
         }
@@ -111,7 +111,7 @@ try {
     }
 }
 
-def build( buildOpts = '' ) {
+def buildJSPWiki( buildOpts = '' ) {
     withMaven( jdk: buildJdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [ jacocoPublisher(), junitPublisher() ] ) {
         withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
             def masterBranchOptions = ""
