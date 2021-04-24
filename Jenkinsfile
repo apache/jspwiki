@@ -32,6 +32,7 @@ try {
     node( 'ubuntu' ) {
         stage( 'clean ws' ) {
             cleanWs()
+            echo sh( script: 'env|sort', returnStdout: true )
         }
 
         stage( 'build source' ) {
