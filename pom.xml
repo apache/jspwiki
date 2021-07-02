@@ -88,6 +88,18 @@
         <groupId>commons-httpclient</groupId>
         <artifactId>commons-httpclient</artifactId>
         <version>3.1</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+
+	  <dependency>
+        <groupId>commons-codec</groupId>
+	    <artifactId>commons-codec</artifactId>
+        <version>1.14</version>
       </dependency>
 
       <dependency>
@@ -148,6 +160,12 @@
         <groupId>net.sourceforge</groupId>
         <artifactId>akismet-java</artifactId>
         <version>1.02</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
