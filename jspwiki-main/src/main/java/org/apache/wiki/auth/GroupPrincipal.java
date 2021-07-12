@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.auth;
 
+import java.io.Serializable;
 import java.security.Principal;
 
 /**
@@ -32,8 +33,9 @@ import java.security.Principal;
  * @see org.apache.wiki.auth.authorize.Group
  * @since 2.3.79
  */
-public final class GroupPrincipal implements Principal
+public final class GroupPrincipal implements Principal, Serializable
 {
+    private static final long serialVersionUID = 123123123123L;
     private final String m_name;
 
     /**
