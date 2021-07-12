@@ -19,10 +19,37 @@ under the License.
 
 **2021-04-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
+* _2.11.0-git-06_
+
+* [JSPWIKI-796](https://issues.apache.org/jira/browse/JSPWIKI-796) - Update Logging subsystem to Log4J2
+    * Log4J2 is the new logging framework used by JSPWiki. Although all Log4J calls are transparently routed to Log4J2, 
+      the configuration inside jspwiki.properties has changed, so installations with customized logging configuration will
+      need to be set up again.
+    * Existing 3rd party plugins, filters and providers will continue to work as expected, as Log4J calls will be routed
+      to Log4J2, but the use of Log4J2 should be preferred onwards.
+    * Note that Log4J calls are still used throughout JSPWiki; they'll be replaced by equivalent Log4J2 calls later on,
+      but this will be an implementation detail that should be transparent to end users.
+    * This should be the last breaking change towards 2.11.0.
+
+* Dependency updates
+    * Awaitility to 4.1.0
+    * AWS Kendra to 1.12.21 [#113](https://github.com/apache/jspwiki/pull/113)
+    * Commons Lang to 3.12.0 [#61](https://github.com/apache/jspwiki/pull/61)
+    * EhCache to 2.10.9.2 [#64](https://github.com/apache/jspwiki/pull/64)
+    * JUnit to 5.7.2
+    * Log4J replaced by Log4J2, 2.14.1
+    * Lucene to 8.9.0 [#62](https://github.com/apache/jspwiki/pull/62)
+    * Mockito to 3.11.2
+    * Selenide to 5.22.2
+    * Tika to 1.27
+    * Tomcat to 9.0.50
+
+**2021-04-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
 * _2.11.0-git-05_
 
 * [JSPWIKI-1145](https://issues.apache.org/jira/browse/JSPWIKI-1146) - Add [AWS Kendra as a Search Provider](https://jspwiki-wiki.apache.org/Wiki.jsp?page=KendraSearchProvider)
-  * Merged [PR #51](https://github.com/apache/jspwiki/pull/51), contributed by [takalat](https://github.com/takalat), [samhareem](https://github.com/samhareem), thanks!
+    * Merged [PR #51](https://github.com/apache/jspwiki/pull/51), contributed by [takalat](https://github.com/takalat), [samhareem](https://github.com/samhareem), thanks!
 
 * Dependency & plugin updates provided by dependabot (PRs [#34](https://github.com/apache/jspwiki/pull/34),
   [#35](https://github.com/apache/jspwiki/pull/35), [#39](https://github.com/apache/jspwiki/pull/39),
