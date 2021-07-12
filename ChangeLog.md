@@ -21,7 +21,7 @@ under the License.
 
 * _2.11.0-git-06_
 
-* [JSPWIKI-796](https://issues.apache.org/jira/browse/JSPWIKI-796) - Update Logging subsystem to Log4J2
+* [JSPWIKI-795](https://issues.apache.org/jira/browse/JSPWIKI-795) - Update Logging subsystem to Log4J2
     * Log4J2 is the new logging framework used by JSPWiki. Although all Log4J calls are transparently routed to Log4J2, 
       the configuration inside jspwiki.properties has changed, so installations with customized logging configuration will
       need to be set up again.
