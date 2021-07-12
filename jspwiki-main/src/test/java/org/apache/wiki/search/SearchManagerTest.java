@@ -51,7 +51,8 @@ public class SearchManagerTest {
         final String workRepo = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
 
         props.setProperty( SearchManager.PROP_SEARCHPROVIDER, "LuceneSearchProvider" );
-        props.setProperty( "jspwiki.lucene.initialdelay", "1" );
+        props.setProperty( "jspwiki.lucene.indexdelay", "0" );
+        props.setProperty( "jspwiki.lucene.initialdelay", "0" );
         props.setProperty( "jspwiki.workDir", workDir + System.currentTimeMillis() );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", workRepo + System.currentTimeMillis() );
 
