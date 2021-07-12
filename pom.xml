@@ -45,13 +45,13 @@
     <maven.version>3.5</maven.version>
 
     <akismet-java.version>1.02</akismet-java.version>
-    <awaitility.version>4.0.3</awaitility.version>
-    <aws-java-sdk-kendra.version>1.11.954</aws-java-sdk-kendra.version>
+    <awaitility.version>4.1.0</awaitility.version>
+    <aws-java-sdk-kendra.version>1.12.21</aws-java-sdk-kendra.version>
     <commons-collections.version>4.4</commons-collections.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.8.0</commons-io.version>
-    <commons-lang.version>3.11</commons-lang.version>
+    <commons-lang.version>3.12.0</commons-lang.version>
     <commons-text.version>1.9</commons-text.version>
     <ehcache.version>2.10.6</ehcache.version>
     <flexmark.version>0.62.2</flexmark.version>
@@ -66,18 +66,19 @@
     <jdom2.version>2.0.6</jdom2.version>
     <jetty.version>9.4.40.v20210413</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
-    <junit.version>5.7.1</junit.version>
+    <junit.version>5.7.2</junit.version>
     <log4j.version>1.2.17</log4j.version>
+    <log4j2.version>2.14.1</log4j2.version>
     <lucene.version>8.7.0</lucene.version>
-    <mockito.version>3.9.0</mockito.version>
+    <mockito.version>3.11.2</mockito.version>
     <nekohtml.version>1.9.22</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
-    <selenide.version>5.20.4</selenide.version>
+    <selenide.version>5.22.2</selenide.version>
     <slf4j.version>1.7.30</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
-    <tika.version>1.25</tika.version>
-    <tomcat.version>9.0.45</tomcat.version>
+    <tika.version>1.27</tika.version>
+    <tomcat.version>9.0.50</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
@@ -85,7 +86,7 @@
     <plugin.assembly.version>3.3.0</plugin.assembly.version>
     <plugin.clean.version>3.1.0</plugin.clean.version>
     <plugin.compiler.version>3.8.1</plugin.compiler.version>
-    <plugin.dependency.version>3.1.2</plugin.dependency.version>
+    <plugin.dependency.version>3.2.0</plugin.dependency.version>
     <plugin.eclipse.version>2.10</plugin.eclipse.version>
     <plugin.enforcer.version>3.0.0-M3</plugin.enforcer.version>
     <plugin.idea.version>2.2.1</plugin.idea.version>
@@ -211,6 +212,30 @@
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-text</artifactId>
         <version>${commons-text.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-api</artifactId>
+        <version>${log4j2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>${log4j2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-1.2-api</artifactId>
+        <version>${log4j2.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-slf4j-impl</artifactId>
+        <version>${log4j2.version}</version>
       </dependency>
 
       <dependency>
@@ -729,7 +754,7 @@
               <zipUrlInstaller>
                 <url>https://repo1.maven.org/maven2/org/apache/tomcat/tomcat/${tomcat.version}/tomcat-${tomcat.version}.zip</url>
               </zipUrlInstaller>
-              <output>${project.build.directory}/tomcat9x/logs/container.log</output>
+              <!-- <output>${project.build.directory}/tomcat9x/logs/container.log</output> -->
               <systemProperties>
                 <user.language>en</user.language>
                 <user.region>US</user.region>
