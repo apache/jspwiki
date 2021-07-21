@@ -121,7 +121,7 @@ public final class PropertyReader {
             //  Figure out where our properties lie.
             //
             if( propertyFile == null ) {
-                LOG.info( "No " + PARAM_CUSTOMCONFIG + " defined for this context, " +
+                LOG.trace( "No " + PARAM_CUSTOMCONFIG + " defined for this context, " +
                              "looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
                 //  Use the custom property file at the default location
                 propertyStream =  locateClassPathResource(context, CUSTOM_JSPWIKI_CONFIG);
