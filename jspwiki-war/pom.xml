@@ -72,7 +72,7 @@
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>oro</groupId>
       <artifactId>oro</artifactId>
@@ -89,9 +89,14 @@
     </dependency>
 
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+	  <groupId>ch.qos.logback</groupId>
+	  <artifactId>logback-classic</artifactId>
     </dependency>
+
+	<dependency>
+	  <groupId>ch.qos.logback</groupId>
+	  <artifactId>logback-core</artifactId>
+	</dependency>
 
     <dependency>
       <groupId>com.google.code.gson</groupId>
@@ -228,7 +233,7 @@
           <path>/${project.build.finalName}</path>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
@@ -263,7 +268,7 @@
         <configuration>
           <systemPropertyVariables>
               <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
-          </systemPropertyVariables>          
+          </systemPropertyVariables>
           <excludes>
             <!-- time-consuming tests excluded by default -->
             <exclude>**/StressTestVersioningProvider.java</exclude>
@@ -275,7 +280,7 @@
           </includes>
         </configuration>
       </plugin>
-      
+
       <plugin>
         <artifactId>maven-eclipse-plugin</artifactId>
         <configuration>
