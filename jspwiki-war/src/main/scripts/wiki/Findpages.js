@@ -110,7 +110,15 @@ Wiki.Findpages = new Class({
 
       item = result[0];
 
-      if (!item || item.page != value) {
+      var pageInResults = false;
+      for (var i = 0; i < result.length; i++) {
+        if (result[i].page === value) {
+          pageInResults = true;
+          break;
+        }
+      }
+
+      if (!item || !pageInResults) {
 
         elements.push("li.findpages", [
           "a", {href: self.toUrl(value, true), title: "sbox.create".localize(value)}, [
