@@ -27,7 +27,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiBackgroundThread;
@@ -69,7 +70,7 @@ import static java.lang.String.format;
  */
 public class KendraSearchProvider implements SearchProvider {
 
-    private static final Logger LOG = Logger.getLogger( KendraSearchProvider.class );
+    private static final Logger LOG = LogManager.getLogger( KendraSearchProvider.class );
     private Engine engine;
     private Properties properties;
     private Map< String, Object > contentTypes;
@@ -102,8 +103,7 @@ public class KendraSearchProvider implements SearchProvider {
 
         this.indexName = TextUtil.getRequiredProperty( this.properties, PROP_KENDRA_INDEX_NAME );
         this.dataSourceName = TextUtil.getRequiredProperty( this.properties, PROP_KENDRA_DATA_SOURCE_NAME );
-        final int initialDelay = TextUtil.getIntegerProperty( this.properties, PROP_KENDRA_INITIALDELAY,
-                KendraUpdater.INITIAL_DELAY );
+        final int initialDelay = TextUtil.getIntegerProperty( this.properties, PROP_KENDRA_INITIALDELAY, KendraUpdater.INITIAL_DELAY );
         final int indexDelay = TextUtil.getIntegerProperty( this.properties, PROP_KENDRA_INDEXDELAY, KendraUpdater.INDEX_DELAY );
 
         // Start the Kendra update thread, which waits first for a little while
@@ -180,7 +180,7 @@ public class KendraSearchProvider implements SearchProvider {
         final AuthorizationManager mgr = engine.getManager( AuthorizationManager.class );
 
         for ( final QueryResultItem item : items ) {
-            switch ( QueryResultType.fromValue( item.getType() ) ) {
+            switch( QueryResultType.fromValue( item.getType() ) ) {
                 case DOCUMENT:
                     final String documentId = item.getDocumentId();
                     final String documentExcerpt = item.getDocumentExcerpt().getText();
