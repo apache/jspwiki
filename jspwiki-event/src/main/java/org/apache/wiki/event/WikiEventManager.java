@@ -19,7 +19,8 @@
 
 package org.apache.wiki.event;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -123,7 +124,7 @@ import java.util.Vector;
  */
 public final class WikiEventManager {
 
-    private static final Logger log = Logger.getLogger(WikiEventManager.class);
+    private static final Logger log = LogManager.getLogger(WikiEventManager.class);
 
     /* If true, permits a WikiEventMonitor to be set. */
     private static final boolean c_permitMonitor = false;
