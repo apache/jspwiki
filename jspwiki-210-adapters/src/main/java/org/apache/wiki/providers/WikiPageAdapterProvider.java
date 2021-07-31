@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.providers;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -51,7 +52,7 @@ import java.util.stream.Collectors;
 @Deprecated
 public class WikiPageAdapterProvider implements PageProvider {
 
-    private static final Logger LOG = Logger.getLogger( WikiPageAdapterProvider.class );
+    private static final Logger LOG = LogManager.getLogger( WikiPageAdapterProvider.class );
     private static final String PROP_ADAPTER_IMPL = "jspwiki.pageProvider.adapter.impl";
 
     WikiPageProvider provider;

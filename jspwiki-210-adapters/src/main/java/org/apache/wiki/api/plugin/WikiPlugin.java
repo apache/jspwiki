@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.api.plugin;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -38,9 +38,9 @@ public interface WikiPlugin extends Plugin {
     /** {@inheritDoc} */
     @Override
     default String execute( final Context context, final Map< String, String > params ) throws PluginException {
-        Logger.getLogger( WikiPlugin.class ).warn( this.getClass().getName() + " implements deprecated org.apache.wiki.api.plugin.WikiPlugin" );
-        Logger.getLogger( WikiPlugin.class ).warn( "Please contact the plugin's author so there can be a new release of the plugin " +
-                                                   "implementing the new org.apache.wiki.api.plugin.Plugin interface" );
+        LogManager.getLogger( WikiPlugin.class ).warn( this.getClass().getName() + " implements deprecated org.apache.wiki.api.plugin.WikiPlugin" );
+        LogManager.getLogger( WikiPlugin.class ).warn( "Please contact the plugin's author so there can be a new release of the plugin " +
+                                                      "implementing the new org.apache.wiki.api.plugin.Plugin interface" );
         return execute( ( WikiContext )context, params );
     }
 
