@@ -17,7 +17,8 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
@@ -46,7 +47,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Logger log = LogManager.getLogger("JSPWiki");
 
 	String findParam( PageContext ctx, String key ) {
 	    ServletRequest req = ctx.getRequest();

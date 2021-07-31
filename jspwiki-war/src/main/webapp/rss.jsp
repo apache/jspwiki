@@ -24,7 +24,8 @@
 <%@ page import="net.sf.ehcache.Cache" %>
 <%@ page import="net.sf.ehcache.Element" %>
 <%@ page import="net.sf.ehcache.CacheManager" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="org.apache.wiki.WatchDog" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.api.spi.Wiki" %>
@@ -36,7 +37,7 @@
 <%@ page import="org.apache.wiki.util.*" %>
 
 <%!
-    private Logger log = Logger.getLogger("JSPWiki");
+    private Logger log = LogManager.getLogger("JSPWiki");
     private CacheManager m_cacheManager = CacheManager.getInstance();
     private String cacheName = "jspwiki.rssCache";
     private Cache m_rssCache;

@@ -18,7 +18,8 @@
 --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.*" %>
@@ -31,7 +32,7 @@
   {
     wiki = Wiki.engine().find( getServletConfig() );
   }
-  Logger log = Logger.getLogger("JSPWikiSearch");
+  Logger log = LogManager.getLogger("JSPWikiSearch");
   Engine wiki;
 %>
 <%
