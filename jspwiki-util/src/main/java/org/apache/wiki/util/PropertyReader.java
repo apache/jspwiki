@@ -111,7 +111,7 @@ public final class PropertyReader {
         try( final InputStream propertyStream = loadCustomPropertiesFile(context, propertyFile) ) {
             final Properties props = getDefaultProperties();
             if( propertyStream == null ) {
-                LOG.info( "No custom property file found, relying on JSPWiki defaults." );
+                LOG.debug( "No custom property file found, relying on JSPWiki defaults." );
             } else {
                 props.load( propertyStream );
             }
@@ -144,11 +144,11 @@ public final class PropertyReader {
 	static InputStream loadCustomPropertiesFile( final ServletContext context, final String propertyFile ) throws FileNotFoundException {
         final InputStream propertyStream;
 		if( propertyFile == null ) {
-		    LOG.info( "No " + PARAM_CUSTOMCONFIG + " defined for this context, looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
+		    LOG.debug( "No " + PARAM_CUSTOMCONFIG + " defined for this context, looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
 		    //  Use the custom property file at the default location
 		    propertyStream =  locateClassPathResource(context, CUSTOM_JSPWIKI_CONFIG);
 		} else {
-		    LOG.info( PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file." );
+		    LOG.debug( PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file." );
 		    propertyStream = new FileInputStream( propertyFile );
 		}
 		return propertyStream;
