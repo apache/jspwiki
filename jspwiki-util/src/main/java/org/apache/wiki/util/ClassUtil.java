@@ -20,7 +20,8 @@ package org.apache.wiki.util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
 
 import java.io.File;
@@ -47,7 +48,7 @@ import java.util.jar.JarFile;
  */
 public final class ClassUtil {
 
-    private static final Logger log = Logger.getLogger(ClassUtil.class);
+    private static final Logger log = LogManager.getLogger(ClassUtil.class);
 
     /** The location of the classmappings.xml document. It will be searched for in the classpath.  It's value is "{@value}". */
     public  static final String MAPPINGS = "ini/classmappings.xml";

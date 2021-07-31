@@ -18,24 +18,19 @@
  */
 package org.apache.wiki.util;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.Properties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
+import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
-import org.apache.log4j.Logger;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.Properties;
 
 
 /**
@@ -202,7 +197,7 @@ public final class MailUtil {
 
     private static final String PROP_MAIL_AUTH = "mail.smtp.auth";
 
-    protected static final Logger log = Logger.getLogger(MailUtil.class);
+    protected static final Logger log = LogManager.getLogger(MailUtil.class);
 
     protected static final String DEFAULT_MAIL_JNDI_NAME       = "mail/Session";
 

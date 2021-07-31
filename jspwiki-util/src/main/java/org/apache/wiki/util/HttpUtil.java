@@ -19,7 +19,8 @@
 package org.apache.wiki.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +40,7 @@ import java.util.Date;
  */
 public final class HttpUtil {
 
-    private static final Logger log = Logger.getLogger( HttpUtil.class );
+    private static final Logger log = LogManager.getLogger( HttpUtil.class );
     private static final int    ONE                   = 48;
     private static final int    NINE                  = 57;
     private static final int    DOT                   = 46;

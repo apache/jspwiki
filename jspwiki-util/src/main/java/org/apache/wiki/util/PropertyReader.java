@@ -20,7 +20,8 @@ package org.apache.wiki.util;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContext;
 import java.io.FileInputStream;
@@ -44,7 +45,7 @@ import java.util.Properties;
  */
 public final class PropertyReader {
 	
-	private static final Logger LOG = Logger.getLogger( PropertyReader.class );
+	private static final Logger LOG = LogManager.getLogger( PropertyReader.class );
 	
     /**
      * Path to the base property file, usually overridden by values provided in

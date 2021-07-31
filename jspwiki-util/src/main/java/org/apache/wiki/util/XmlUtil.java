@@ -20,7 +20,8 @@
 package org.apache.wiki.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -51,7 +52,7 @@ import java.util.Set;
 public final class XmlUtil  {
 
 	private static final String ALL_TEXT_NODES = "//text()";
-	private static final Logger LOG = Logger.getLogger( XmlUtil.class );
+	private static final Logger LOG = LogManager.getLogger( XmlUtil.class );
 	private XmlUtil() {}
 	
 	/**
