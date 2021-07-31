@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.api.core;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.util.TextUtil;
@@ -239,7 +239,7 @@ public interface Engine {
      * @return the URL to the file
      */
     default URL findConfigFile( final String name ) {
-        Logger.getLogger( Engine.class ).info( "looking for " + name + " inside WEB-INF " );
+        LogManager.getLogger( Engine.class ).info( "looking for " + name + " inside WEB-INF " );
         // Try creating an absolute path first
         File defaultFile = null;
         if( getRootPath() != null ) {
@@ -250,7 +250,7 @@ public interface Engine {
                 return defaultFile.toURI().toURL();
             } catch ( final MalformedURLException e ) {
                 // Shouldn't happen, but log it if it does
-                Logger.getLogger( Engine.class ).warn( "Malformed URL: " + e.getMessage() );
+                LogManager.getLogger( Engine.class ).warn( "Malformed URL: " + e.getMessage() );
             }
         }
 
@@ -262,11 +262,11 @@ public interface Engine {
             try {
                 tmpFile = File.createTempFile( "temp." + name, "" );
             } catch( final IOException e ) {
-                Logger.getLogger( Engine.class ).error( "unable to create a temp file to load onto the policy", e );
+                LogManager.getLogger( Engine.class ).error( "unable to create a temp file to load onto the policy", e );
                 return null;
             }
             tmpFile.deleteOnExit();
-            Logger.getLogger( Engine.class ).info( "looking for /" + name + " on classpath" );
+            LogManager.getLogger( Engine.class ).info( "looking for /" + name + " on classpath" );
             //  create a tmp file of the policy loaded as an InputStream and return the URL to it
             try( final InputStream is = Engine.class.getResourceAsStream( "/" + name );
                     final OutputStream os = new FileOutputStream( tmpFile ) ) {
@@ -287,9 +287,9 @@ public interface Engine {
                 path = tmpFile.toURI().toURL();
             } catch( final MalformedURLException e ) {
                 // This should never happen unless I screw up
-                Logger.getLogger( Engine.class ).fatal( "Your code is b0rked.  You are a bad person.", e );
+                LogManager.getLogger( Engine.class ).fatal( "Your code is b0rked.  You are a bad person.", e );
             } catch( final IOException e ) {
-                Logger.getLogger( Engine.class ).error( "failed to load security policy from file " + name + ",stacktrace follows", e );
+                LogManager.getLogger( Engine.class ).error( "failed to load security policy from file " + name + ",stacktrace follows", e );
             }
         }
         return path;

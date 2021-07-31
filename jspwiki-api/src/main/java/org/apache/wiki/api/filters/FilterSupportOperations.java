@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.api.filters;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -27,7 +28,7 @@ import java.util.function.Supplier;
 
 class FilterSupportOperations {
 
-    private static final Logger LOG = Logger.getLogger( FilterSupportOperations.class );
+    private static final Logger LOG = LogManager.getLogger( FilterSupportOperations.class );
 
     /**
      * Checks if a given object is using old, non public API for a given Filter. This check is two-fold:
