@@ -23,7 +23,7 @@ COPY . .
 
 RUN set -x \
 # fastest, minimum build
-  && mvn clean package -pl jspwiki-war,jspwiki-wikipages/en -am -DskipTests
+  && mvn clean package -pl jspwiki-war,jspwiki-wikipages/en -am -Dmaven.test.skip
 
 FROM tomcat:9.0
 
