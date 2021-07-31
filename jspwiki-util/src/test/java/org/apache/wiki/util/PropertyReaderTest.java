@@ -23,6 +23,8 @@ package org.apache.wiki.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -106,6 +108,18 @@ public class PropertyReaderTest {
         Assertions.assertEquals( "a", p.getProperty( "jspwiki.x1" ) );
         Assertions.assertEquals( "b", p.getProperty( "jspwiki.x2" ) );
         Assertions.assertEquals( "a/b", p.getProperty( "jspwiki.x3" ) );
+    }
+
+    @Test
+    public void testCollectPropertiesFrom() {
+        final Map< String, String > sut = new HashMap<>();
+        sut.put( "jspwiki_frontPage", "Main" );
+        sut.put( "secretEnv", "asdasd" );
+
+        final Map< String, String > test = PropertyReader.collectPropertiesFrom( sut );
+
+        Assertions.assertEquals( "Main", test.get( "jspwiki.frontPage" ) );
+        Assertions.assertNull( test.get( "secretEnv" ) );
     }
 
 }

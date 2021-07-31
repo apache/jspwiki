@@ -28,10 +28,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -79,12 +77,26 @@ public final class PropertyReader {
     {}
 
     /**
-     *  Loads the webapp properties based on servlet context information, 
-     *  or (if absent) based on the Java System Property PARAM_CUSTOMCONFIG .
+     *  Loads the webapp properties based on servlet context information, or
+     *  (if absent) based on the Java System Property {@value #PARAM_CUSTOMCONFIG}.
      *  Returns a Properties object containing the settings, or null if unable
-     *  to load it. (The default file is ini/jspwiki.properties, and can
-     *  be customized by setting PARAM_CUSTOMCONFIG in the server or webapp
+     *  to load it. (The default file is ini/jspwiki.properties, and can be
+     *  customized by setting {@value #PARAM_CUSTOMCONFIG} in the server or webapp
      *  configuration.)
+     *
+     *  <h3>Properties sources</h3>
+     *  The following properties sources are taken into account:
+     *  <ol>
+     *      <li>JSPWiki default properties</li>
+     *      <li>System environment</li>
+     *      <li>JSPWiki custom property files</li>
+     *      <li>JSPWiki cascading properties</li>
+     *      <li>System properties</li>
+     *  </ol>
+     *  With later sources taking precedence over the previous ones. To avoid leaking system information,
+     *  only System environment and properties beginning with {@code jspwiki} (case unsensitive) are taken into account.
+     *  Also, to ease docker integration, System env properties containing "_" are turned into ".". Thus,
+     *  {@code ENV jspwiki_fileSystemProvider_pageDir} is loaded as {@code jspwiki.fileSystemProvider.pageDir}.
      *
      *  <h3>Cascading Properties</h3>
      *  <p>
@@ -111,19 +123,29 @@ public final class PropertyReader {
         final String propertyFile = getInitParameter( context, PARAM_CUSTOMCONFIG );
         try( final InputStream propertyStream = loadCustomPropertiesFile(context, propertyFile) ) {
             final Properties props = getDefaultProperties();
+
+            // add system env properties beginning with jspwiki...
+            final Map< String, String > env = collectPropertiesFrom( System.getenv() );
+            props.putAll( env );
+
             if( propertyStream == null ) {
                 LOG.debug( "No custom property file found, relying on JSPWiki defaults." );
             } else {
                 props.load( propertyStream );
             }
 
-            //this will add additional properties to the default ones:
+            // this will add additional properties to the default ones:
             LOG.debug( "Loading cascading properties..." );
 
-            //now load the cascade (new in 2.5)
+            // now load the cascade (new in 2.5)
             loadWebAppPropsCascade( context, props );
 
-            //finally expand the variables (new in 2.5)
+            // add system properties beginning with jspwiki...
+            final Map< String, String > sysprops = collectPropertiesFrom( System.getProperties().entrySet().stream()
+                                                                                .collect( Collectors.toMap( Object::toString, Object::toString ) ) );
+            props.putAll( sysprops );
+
+            // finally, expand the variables (new in 2.5)
             expandVars( props );
 
             return props;
@@ -132,6 +154,13 @@ public final class PropertyReader {
         }
 
         return null;
+    }
+
+    static Map< String, String > collectPropertiesFrom( final Map< String, String > map ) {
+        return map.entrySet().stream()
+                  .filter( entry -> entry.getKey().toLowerCase().startsWith( "jspwiki" ) )
+                  .map( entry -> new AbstractMap.SimpleEntry<>( entry.getKey().replace( "_", "." ), entry.getValue() ) )
+                  .collect( Collectors.toMap( Map.Entry::getKey, Map.Entry::getValue ) );
     }
 
     /**
@@ -244,7 +273,7 @@ public final class PropertyReader {
      *  You define a property variable by using the prefix "var.x" as a property. In property values you can then use the "$x" identifier
      *  to use this variable.
      *
-     *  For example you could declare a base directory for all your files like this and use it in all your other property definitions with
+     *  For example, you could declare a base directory for all your files like this and use it in all your other property definitions with
      *  a "$basedir". Note that it does not matter if you define the variable before its usage.
      *  <pre>
      *  var.basedir = /p/mywiki;
