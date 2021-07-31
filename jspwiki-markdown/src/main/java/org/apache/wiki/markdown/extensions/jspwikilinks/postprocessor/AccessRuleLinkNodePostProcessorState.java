@@ -20,7 +20,8 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
@@ -35,7 +36,7 @@ import org.apache.wiki.render.RenderingManager;
  */
 public class AccessRuleLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private static final Logger LOG = Logger.getLogger( AccessRuleLinkNodePostProcessorState.class );
+    private static final Logger LOG = LogManager.getLogger( AccessRuleLinkNodePostProcessorState.class );
     private final Context wikiContext;
     private final boolean m_wysiwygEditorMode;
 

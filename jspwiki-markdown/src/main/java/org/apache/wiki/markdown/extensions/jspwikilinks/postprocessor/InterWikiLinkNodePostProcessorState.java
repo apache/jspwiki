@@ -22,7 +22,8 @@ import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -42,7 +43,7 @@ import java.util.ResourceBundle;
  */
 public class InterWikiLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private static final Logger LOG = Logger.getLogger( InterWikiLinkNodePostProcessorState.class );
+    private static final Logger LOG = LogManager.getLogger( InterWikiLinkNodePostProcessorState.class );
     private final Context wikiContext;
     private final LinkParsingOperations linkOperations;
     private final boolean isImageInlining;
