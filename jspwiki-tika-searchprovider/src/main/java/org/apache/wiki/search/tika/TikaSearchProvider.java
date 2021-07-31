@@ -30,7 +30,6 @@ import org.apache.tika.metadata.Office;
 import org.apache.tika.metadata.OfficeOpenXMLCore;
 import org.apache.tika.metadata.PDF;
 import org.apache.tika.metadata.TikaCoreProperties;
-import org.apache.tika.metadata.TikaMetadataKeys;
 import org.apache.tika.parser.AutoDetectParser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.apache.wiki.api.core.Attachment;
@@ -64,10 +63,10 @@ public class TikaSearchProvider extends LuceneSearchProvider {
         textualMetadataFields = new HashSet<>();
         textualMetadataFields.add( TikaCoreProperties.TITLE.getName() );
         textualMetadataFields.add( TikaCoreProperties.COMMENTS.getName() );
-        textualMetadataFields.add( TikaCoreProperties.KEYWORDS.getName() );
+        textualMetadataFields.add( TikaCoreProperties.SUBJECT.getName() );
         textualMetadataFields.add( TikaCoreProperties.DESCRIPTION.getName() );
         textualMetadataFields.add( TikaCoreProperties.TYPE.getName() );
-        textualMetadataFields.add( TikaMetadataKeys.RESOURCE_NAME_KEY );
+        textualMetadataFields.add( TikaCoreProperties.RESOURCE_NAME_KEY );
         textualMetadataFields.add( PDF.DOC_INFO_TITLE.getName() );
         textualMetadataFields.add( PDF.DOC_INFO_KEY_WORDS.getName() );
         textualMetadataFields.add( PDF.DOC_INFO_SUBJECT.getName() );
@@ -97,7 +96,7 @@ public class TikaSearchProvider extends LuceneSearchProvider {
 
         try( final InputStream attStream = mgr.getAttachmentStream( att ) ) {
             final Metadata metadata = new Metadata();
-            metadata.set( TikaMetadataKeys.RESOURCE_NAME_KEY, att.getFileName() );
+            metadata.set( TikaCoreProperties.RESOURCE_NAME_KEY, att.getFileName() );
 
             final ContentHandler handler = new BodyContentHandler(-1 );
             // -1 disables the character size limit; otherwise only the first 100.000 characters are indexed
