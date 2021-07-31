@@ -38,7 +38,7 @@ ENV CATALINA_OPTS -Djava.security.egd=file:/dev/./urandom
 ENV LANG en_US.UTF-8
 ENV jspwiki_basicAttachmentProvider_storageDir /var/jspwiki/pages
 ENV jspwiki_fileSystemProvider_pageDir /var/jspwiki/pages
-ENV jspwiki_jspwiki_frontPage Main
+ENV jspwiki_frontPage Main
 ENV jspwiki_pageProvider VersioningFileProvider
 ENV jspwiki_use_external_logconfig true
 ENV jspwiki_workDir /var/jspwiki/work
