@@ -17,7 +17,32 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-**2021-07-12  Juan Pablo Santos (juanpablo AT apache DOT org)**
+**2021-07-30  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-07_
+
+* [JSPWIKI-795](https://issues.apache.org/jira/browse/JSPWIKI-795) - Update Logging subsystem to Log4J2
+    * Replace all Log4J code with Log4J2.
+
+* `PropertyReader#loadWebAppProps( ServletContext )` now takes the following properties sources:
+    * 1.- Default JSPWiki properties
+    * 2.- System environment
+    * 3.- JSPWiki custom property files
+    * 4.- JSPWiki cascading properties
+    * 5.- System properties
+    * With the later ones taking precedence over the previous ones. To avoid leaking system information, only System 
+      environment and properties beginning with `jspwiki` (case unsensitive) are taken into account. 
+    * Also, to ease docker integration, System env properties containing "_" are turned into ".". F.ex.,
+      `ENV jspwiki_fileSystemProvider_pageDir` would be loaded as `jspwiki.fileSystemProvider.pageDir`.
+
+* Minor Dockerfile updates
+
+* Dependency updates
+    * Selenide to 5.23.1
+    * SLF4J to 1.7.32
+    * Tika to 2.0.0
+
+* **2021-07-12  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-06_
 
