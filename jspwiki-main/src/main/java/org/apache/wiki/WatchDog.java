@@ -18,7 +18,8 @@
  */
 package org.apache.wiki;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
 
 import java.lang.ref.WeakReference;
@@ -51,7 +52,7 @@ public final class WatchDog {
     private boolean m_enabled = true;
     private final Engine m_engine;
 
-    private static final Logger log = Logger.getLogger( WatchDog.class );
+    private static final Logger log = LogManager.getLogger( WatchDog.class );
 
     private static final Map< Integer, WeakReference< WatchDog > > c_kennel = new ConcurrentHashMap<>();
     private static WikiBackgroundThread c_watcherThread;

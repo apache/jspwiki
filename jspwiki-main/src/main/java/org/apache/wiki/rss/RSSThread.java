@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.rss;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.api.core.Engine;
@@ -41,7 +42,7 @@ import java.nio.charset.StandardCharsets;
  */
 public class RSSThread extends WikiBackgroundThread {
 
-    private static final Logger log = Logger.getLogger( RSSThread.class );
+    private static final Logger log = LogManager.getLogger( RSSThread.class );
     private final File m_rssFile;
     private final RSSGenerator m_generator;
     private WatchDog m_watchdog;

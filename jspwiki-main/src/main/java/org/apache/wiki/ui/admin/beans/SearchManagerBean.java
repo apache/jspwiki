@@ -42,7 +42,7 @@ public class SearchManagerBean extends SimpleAdminBean {
     private static final String PROGRESS_ID = "searchmanagerbean.reindexer";
     private static final String[] METHODS = { "reload" };
 
-    // private static Logger log = Logger.getLogger( SearchManagerBean.class );
+    // private static Logger log = LogManager.getLogger( SearchManagerBean.class );
 
     private WikiBackgroundThread m_updater;
 

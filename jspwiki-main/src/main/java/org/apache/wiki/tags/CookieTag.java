@@ -33,7 +33,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -98,7 +99,7 @@ public class CookieTag
 {
     private static final long serialVersionUID = 0L;
 
-    private static final Logger log = Logger.getLogger( CookieTag.class );
+    private static final Logger log = LogManager.getLogger( CookieTag.class );
 
     /** Name of the cookie value. Required. */
     private String m_name;

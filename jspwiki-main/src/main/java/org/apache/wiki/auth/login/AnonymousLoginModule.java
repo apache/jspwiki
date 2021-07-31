@@ -18,18 +18,17 @@
  */
 package org.apache.wiki.auth.login;
 
-import java.io.IOException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.util.HttpUtil;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-
-import org.apache.wiki.auth.WikiPrincipal;
-import org.apache.wiki.util.HttpUtil;
+import java.io.IOException;
 
 /**
  * <p>
@@ -58,9 +57,9 @@ public class AnonymousLoginModule extends AbstractLoginModule
     /**
      * Bogus prompt sent to the callback handler.
      */
-    public static final String PROMPT            = "User name";
+    public static final String PROMPT = "User name";
 
-    protected static final Logger log            = Logger.getLogger( AnonymousLoginModule.class );
+    protected static final Logger log = LogManager.getLogger( AnonymousLoginModule.class );
 
     /**
      * Logs in the user by calling back to the registered CallbackHandler with an

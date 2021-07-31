@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.providers;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -71,15 +72,15 @@ import java.util.Properties;
  */
 public class VersioningFileProvider extends AbstractFileProvider {
 
-    private static final Logger     log = Logger.getLogger(VersioningFileProvider.class);
+    private static final Logger log = LogManager.getLogger( VersioningFileProvider.class );
 
     /** Name of the directory where the old versions are stored. */
-    public static final String      PAGEDIR      = "OLD";
+    public static final String PAGEDIR = "OLD";
 
     /** Name of the property file which stores the metadata. */
-    public static final String      PROPERTYFILE = "page.properties";
+    public static final String PROPERTYFILE = "page.properties";
 
-    private CachedProperties        m_cachedProperties;
+    private CachedProperties m_cachedProperties;
 
     /**
      *  {@inheritDoc}
@@ -554,8 +555,8 @@ public class VersioningFileProvider extends AbstractFileProvider {
         final File dir = findOldPageDir( page );
         if( dir.exists() && dir.isDirectory() ) {
             final File[] files = dir.listFiles( new WikiFileFilter() );
-            for( int i = 0; i < files.length; i++ ) {
-                files[ i ].delete();
+            for( final File file : files ) {
+                file.delete();
             }
 
             final File propfile = new File( dir, PROPERTYFILE );

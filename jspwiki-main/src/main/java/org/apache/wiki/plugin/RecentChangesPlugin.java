@@ -19,7 +19,8 @@
 package org.apache.wiki.plugin;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -60,7 +61,7 @@ import java.util.Map;
  */
 public class RecentChangesPlugin extends AbstractReferralPlugin implements Plugin {
 	
-    private static final Logger log = Logger.getLogger( RecentChangesPlugin.class );
+    private static final Logger log = LogManager.getLogger( RecentChangesPlugin.class );
     
     /** Parameter name for the separator format.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_FORMAT      = "format";

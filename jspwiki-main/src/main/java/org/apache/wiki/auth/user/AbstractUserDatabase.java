@@ -19,7 +19,8 @@
 package org.apache.wiki.auth.user;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -43,7 +44,7 @@ import java.util.UUID;
  */
 public abstract class AbstractUserDatabase implements UserDatabase {
 
-    protected static final Logger log = Logger.getLogger( AbstractUserDatabase.class );
+    protected static final Logger log = LogManager.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String SSHA_PREFIX = "{SSHA}";
     protected static final String SHA256_PREFIX = "{SHA-256}";

@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 
@@ -49,7 +50,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
     protected Iterator< ? > m_iterator;
     protected Context m_wikiContext;
 
-    private static final Logger log = Logger.getLogger( IteratorTag.class );
+    private static final Logger log = LogManager.getLogger( IteratorTag.class );
 
     /**
      *  Sets the collection that is used to form the iteration.

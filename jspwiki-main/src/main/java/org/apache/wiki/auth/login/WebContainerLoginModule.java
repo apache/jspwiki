@@ -18,8 +18,9 @@
  */
 package org.apache.wiki.auth.login;
 
-import java.io.IOException;
-import java.security.Principal;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.wiki.auth.WikiPrincipal;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.UnsupportedCallbackException;
@@ -27,10 +28,8 @@ import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-
-import org.apache.wiki.auth.WikiPrincipal;
+import java.io.IOException;
+import java.security.Principal;
 
 /**
  * <p>
@@ -59,23 +58,22 @@ import org.apache.wiki.auth.WikiPrincipal;
  *
  * @since 2.3
  */
-public class WebContainerLoginModule extends AbstractLoginModule
-{
+public class WebContainerLoginModule extends AbstractLoginModule {
 
-    protected static final Logger log      = Logger.getLogger( WebContainerLoginModule.class );
+    protected static final Logger log = LogManager.getLogger( WebContainerLoginModule.class );
 
     /**
      * Logs in the user.
      * @see javax.security.auth.spi.LoginModule#login()
      * 
      * @return {@inheritDoc}
-     * @throws {@inheritDoc}
+     * @throws LoginException {@inheritDoc}
      */
     public boolean login() throws LoginException
     {
         final HttpRequestCallback rcb = new HttpRequestCallback();
         final Callback[] callbacks = new Callback[] { rcb };
-        String userId = null;
+        final String userId;
 
         try
         {

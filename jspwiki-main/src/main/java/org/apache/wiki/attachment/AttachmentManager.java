@@ -19,7 +19,7 @@
 package org.apache.wiki.attachment;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
@@ -153,7 +153,7 @@ public interface AttachmentManager {
         try {
             return listAttachments( wikipage ).size() > 0;
         } catch( final Exception e ) {
-            Logger.getLogger( AttachmentManager.class ).info( e.getMessage(), e );
+            LogManager.getLogger( AttachmentManager.class ).info( e.getMessage(), e );
         }
 
         return false;
@@ -288,7 +288,7 @@ public interface AttachmentManager {
      */
     static String validateFileName( String filename ) throws WikiException {
         if( filename == null || filename.trim().isEmpty() ) {
-            Logger.getLogger( AttachmentManager.class ).error( "Empty file name given." );
+            LogManager.getLogger( AttachmentManager.class ).error( "Empty file name given." );
 
             // the caller should catch the exception and use the exception text as an i18n key
             throw new WikiException(  "attach.empty.file" );
@@ -304,9 +304,9 @@ public interface AttachmentManager {
 
         // If file name ends with .jsp or .jspf, the user is being naughty!
         if( filename.toLowerCase().endsWith( ".jsp" ) || filename.toLowerCase().endsWith( ".jspf" ) ) {
-            Logger.getLogger( AttachmentManager.class )
-                  .info( "Attempt to upload a file with a .jsp/.jspf extension.  In certain cases this " +
-                         "can trigger unwanted security side effects, so we're preventing it." );
+            LogManager.getLogger( AttachmentManager.class )
+                      .info( "Attempt to upload a file with a .jsp/.jspf extension.  In certain cases this " +
+                             "can trigger unwanted security side effects, so we're preventing it." );
 
             // the caller should catch the exception and use the exception text as an i18n key
             throw new WikiException(  "attach.unwanted.file"  );

@@ -18,7 +18,8 @@
 */
 package org.apache.wiki.parser;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.oro.text.regex.MatchResult;
 import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Matcher;
@@ -64,7 +65,7 @@ public class PluginContent extends Text implements PluginElement {
     private static final String SPACE = " ";
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = Logger.getLogger(PluginContent.class);
+    private static final Logger log = LogManager.getLogger(PluginContent.class);
 
     private final String m_pluginName;
     private final Map< String, String > m_params;

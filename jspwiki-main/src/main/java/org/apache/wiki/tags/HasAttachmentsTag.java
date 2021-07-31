@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -34,7 +35,7 @@ import org.apache.wiki.pages.PageManager;
 public class HasAttachmentsTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = Logger.getLogger( HasAttachmentsTag.class );
+    private static final Logger log = LogManager.getLogger( HasAttachmentsTag.class );
     
     @Override
     public final int doWikiStartTag() {

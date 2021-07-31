@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.TextUtil;
@@ -49,7 +50,7 @@ public class BreadcrumbsTag extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
 
-    private static final Logger log = Logger.getLogger(BreadcrumbsTag.class);
+    private static final Logger log = LogManager.getLogger(BreadcrumbsTag.class);
     /** The name of the session attribute representing the breadcrumbtrail */
     public static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
     private int m_maxQueueSize = 11;

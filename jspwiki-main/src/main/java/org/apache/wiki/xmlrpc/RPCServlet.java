@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.xmlrpc;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
@@ -61,7 +62,7 @@ public class RPCServlet extends HttpServlet {
     private Engine m_engine;
     private final XmlRpcServer m_xmlrpcServer = new XmlRpcServer();
 
-    private static final Logger log = Logger.getLogger( RPCServlet.class );
+    private static final Logger log = LogManager.getLogger( RPCServlet.class );
 
     public void initHandler( final String prefix, final String handlerName ) throws ClassNotFoundException {
         /*

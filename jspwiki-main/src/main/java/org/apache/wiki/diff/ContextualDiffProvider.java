@@ -19,7 +19,8 @@
 
 package org.apache.wiki.diff;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
@@ -49,7 +50,7 @@ import java.util.StringTokenizer;
  */
 public class ContextualDiffProvider implements DiffProvider {
 
-    private static final Logger log = Logger.getLogger( ContextualDiffProvider.class );
+    private static final Logger log = LogManager.getLogger( ContextualDiffProvider.class );
 
     /**
      *  A jspwiki.properties value to define how many characters are shown around the change context.

@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
@@ -49,7 +50,7 @@ import java.util.Map;
 public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
 
 	static final long serialVersionUID = 0L;
-    private static final Logger log = Logger.getLogger( LinkTag.class );
+    private static final Logger log = LogManager.getLogger( LinkTag.class );
 
     private String m_version;
     private String m_cssClass;

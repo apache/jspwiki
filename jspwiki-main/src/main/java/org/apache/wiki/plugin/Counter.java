@@ -40,7 +40,7 @@ import java.util.Map;
  *  @since 1.9.30
  */
 public class Counter implements Plugin {
-    // private static Logger log = Logger.getLogger( Counter.class );
+    // private static Logger log = LogManager.getLogger( Counter.class );
 
     /** Parameter name for setting the name.  Value is <tt>{@value}</tt>. */
     public static final String  PARAM_NAME          = "name";

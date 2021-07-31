@@ -19,8 +19,9 @@
 package org.apache.wiki.ui;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.log4j.NDC;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Engine;
@@ -29,21 +30,11 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.WriteListener;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.Charset;
 
 
@@ -72,7 +63,7 @@ import java.nio.charset.Charset;
  */
 public class WikiJSPFilter extends WikiServletFilter {
 
-    private static final Logger log = Logger.getLogger( WikiJSPFilter.class );
+    private static final Logger log = LogManager.getLogger( WikiJSPFilter.class );
     private String m_wiki_encoding;
     private boolean useEncoding;
 
@@ -89,7 +80,7 @@ public class WikiJSPFilter extends WikiServletFilter {
     public void doFilter( final ServletRequest  request, final ServletResponse response, final FilterChain chain ) throws ServletException, IOException {
         final WatchDog w = WatchDog.getCurrentWatchDog( m_engine );
         try {
-            NDC.push( m_engine.getApplicationName()+":"+((HttpServletRequest)request).getRequestURI() );
+            ThreadContext.push( m_engine.getApplicationName() + ":" + ( ( HttpServletRequest )request ).getRequestURI() );
             w.enterState("Filtering for URL "+((HttpServletRequest)request).getRequestURI(), 90 );
             final HttpServletResponseWrapper responseWrapper = new JSPWikiServletResponseWrapper( ( HttpServletResponse )response, m_wiki_encoding, useEncoding );
 
@@ -129,8 +120,8 @@ public class WikiJSPFilter extends WikiServletFilter {
             }
         } finally {
             w.exitState();
-            NDC.pop();
-            NDC.remove();
+            ThreadContext.pop();
+            ThreadContext.remove( m_engine.getApplicationName() + ":" + ( ( HttpServletRequest )request ).getRequestURI() );
         }
     }
 

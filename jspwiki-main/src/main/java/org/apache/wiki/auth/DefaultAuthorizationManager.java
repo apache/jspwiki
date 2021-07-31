@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.auth;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Context;
@@ -76,7 +77,7 @@ import java.util.WeakHashMap;
  */
 public class DefaultAuthorizationManager implements AuthorizationManager {
 
-    private static final Logger log = Logger.getLogger( DefaultAuthorizationManager.class );
+    private static final Logger log = LogManager.getLogger( DefaultAuthorizationManager.class );
 
     private Authorizer m_authorizer;
 

@@ -19,7 +19,8 @@
 package org.apache.wiki.references;
 
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.api.core.Attachment;
@@ -122,7 +123,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
 
     private final boolean m_matchEnglishPlurals;
 
-    private static final Logger log = Logger.getLogger( DefaultReferenceManager.class);
+    private static final Logger log = LogManager.getLogger( DefaultReferenceManager.class);
     private static final String SERIALIZATION_FILE = "refmgr.ser";
     private static final String SERIALIZATION_DIR  = "refmgr-attr";
 

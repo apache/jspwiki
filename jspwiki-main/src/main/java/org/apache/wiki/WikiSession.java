@@ -19,7 +19,8 @@
 package org.apache.wiki;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -59,26 +60,26 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public final class WikiSession implements Session {
 
-    private static final Logger log                   = Logger.getLogger( WikiSession.class );
+    private static final Logger log = LogManager.getLogger( WikiSession.class );
 
-    private static final String ALL                   = "*";
+    private static final String ALL = "*";
 
     private static final ThreadLocal< Session > c_guestSession = new ThreadLocal<>();
 
-    private final Subject       m_subject             = new Subject();
+    private final Subject m_subject = new Subject();
 
     private final Map< String, Set< String > > m_messages  = new ConcurrentHashMap<>();
 
     /** The Engine that created this session. */
-    private Engine              m_engine;
+    private Engine m_engine;
 
-    private String              m_status              = ANONYMOUS;
+    private String m_status            = ANONYMOUS;
 
-    private Principal           m_userPrincipal       = WikiPrincipal.GUEST;
+    private Principal m_userPrincipal  = WikiPrincipal.GUEST;
 
-    private Principal           m_loginPrincipal      = WikiPrincipal.GUEST;
+    private Principal m_loginPrincipal = WikiPrincipal.GUEST;
 
-    private Locale              m_cachedLocale        = Locale.getDefault();
+    private Locale m_cachedLocale      = Locale.getDefault();
 
     /**
      * Returns <code>true</code> if one of this WikiSession's user Principals can be shown to belong to a particular wiki group. If

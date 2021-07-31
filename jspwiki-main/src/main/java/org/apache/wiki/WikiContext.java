@@ -18,7 +18,8 @@
  */
 package org.apache.wiki;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -156,7 +157,7 @@ public class WikiContext implements Context, Command {
     /** User wants to view or administer workflows. */
     public static final String WORKFLOW = ContextEnum.WIKI_WORKFLOW.getRequestContext();
 
-    private static final Logger log = Logger.getLogger( WikiContext.class );
+    private static final Logger log = LogManager.getLogger( WikiContext.class );
 
     private static final Permission DUMMY_PERMISSION = new PropertyPermission( "os.name", "read" );
 

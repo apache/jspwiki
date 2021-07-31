@@ -21,7 +21,8 @@ package org.apache.wiki.providers;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -53,7 +54,7 @@ import java.util.Properties;
 //        EntryRefreshPolicy for that.
 public class CachingAttachmentProvider implements AttachmentProvider {
 
-    private static final Logger log = Logger.getLogger(CachingAttachmentProvider.class);
+    private static final Logger log = LogManager.getLogger(CachingAttachmentProvider.class);
 
     private AttachmentProvider m_provider;
 

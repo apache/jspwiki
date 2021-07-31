@@ -19,7 +19,8 @@
 package org.apache.wiki.auth.authorize;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -75,7 +76,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class XMLGroupDatabase implements GroupDatabase {
 
-    private static final Logger log              = Logger.getLogger( XMLGroupDatabase.class );
+    private static final Logger log = LogManager.getLogger( XMLGroupDatabase.class );
 
     /** The jspwiki.properties property specifying the file system location of the group database. */
     public static final String    PROP_DATABASE    = "jspwiki.xmlGroupDatabaseFile";
@@ -169,26 +170,20 @@ public class XMLGroupDatabase implements GroupDatabase {
     {
         m_engine = engine;
 
-        File defaultFile = null;
-        if ( engine.getRootPath() == null )
-        {
+        final File defaultFile;
+        if ( engine.getRootPath() == null ) {
             log.warn( "Cannot identify JSPWiki root path" );
             defaultFile = new File( "WEB-INF/" + DEFAULT_DATABASE ).getAbsoluteFile();
-        }
-        else
-        {
+        } else {
             defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + DEFAULT_DATABASE );
         }
 
         // Get database file location
         final String file = TextUtil.getStringProperty(props, PROP_DATABASE , defaultFile.getAbsolutePath());
-        if ( file == null )
-        {
+        if ( file == null ) {
             log.warn( "XML group database property " + PROP_DATABASE + " not found; trying " + defaultFile );
             m_file = defaultFile;
-        }
-        else
-        {
+        } else {
             m_file = new File( file );
         }
 

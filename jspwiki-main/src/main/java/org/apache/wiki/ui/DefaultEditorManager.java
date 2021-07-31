@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
@@ -60,7 +61,7 @@ public class DefaultEditorManager extends BaseModuleManager implements EditorMan
 
     private Map< String, WikiEditorInfo > m_editors;
 
-    private static final Logger log = Logger.getLogger( DefaultEditorManager.class );
+    private static final Logger log = LogManager.getLogger( DefaultEditorManager.class );
 
     public DefaultEditorManager( final Engine engine ) {
         super( engine );

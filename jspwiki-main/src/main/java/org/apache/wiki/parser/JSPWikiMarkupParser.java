@@ -20,7 +20,8 @@ package org.apache.wiki.parser;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.MatchResult;
 import org.apache.oro.text.regex.Pattern;
@@ -92,7 +93,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     protected static final int              IMAGEWIKILINK = 9;
     protected static final int              ATTACHMENT    = 10;
 
-    private static final Logger log = Logger.getLogger( JSPWikiMarkupParser.class );
+    private static final Logger log = LogManager.getLogger( JSPWikiMarkupParser.class );
 
     private boolean        m_isbold;
     private boolean        m_isitalic;

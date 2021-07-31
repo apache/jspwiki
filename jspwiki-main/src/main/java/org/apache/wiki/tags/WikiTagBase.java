@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.util.TextUtil;
 
@@ -38,7 +39,7 @@ import javax.servlet.jsp.tagext.TryCatchFinally;
 public abstract class WikiTagBase extends TagSupport implements TryCatchFinally {
 
     private static final long serialVersionUID = -1409836349293777141L;
-    private static final Logger log = Logger.getLogger( WikiTagBase.class );
+    private static final Logger log = LogManager.getLogger( WikiTagBase.class );
 
     protected Context m_wikiContext;
 

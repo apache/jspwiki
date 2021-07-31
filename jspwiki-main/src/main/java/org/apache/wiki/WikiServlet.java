@@ -19,7 +19,8 @@
 package org.apache.wiki;
 
 import net.sf.ehcache.CacheManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.url.URLConstructor;
@@ -43,7 +44,7 @@ public class WikiServlet extends HttpServlet {
 
     private static final long serialVersionUID = 3258410651167633973L;
     private Engine m_engine;
-    private static final Logger log = Logger.getLogger( WikiServlet.class.getName() );
+    private static final Logger log = LogManager.getLogger( WikiServlet.class.getName() );
 
     /**
      * {@inheritDoc}

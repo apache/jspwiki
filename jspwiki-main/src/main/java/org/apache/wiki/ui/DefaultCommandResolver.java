@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.Engine;
@@ -63,7 +64,7 @@ public final class DefaultCommandResolver implements CommandResolver {
         }
     }
 
-    private static final Logger LOG = Logger.getLogger( DefaultCommandResolver.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultCommandResolver.class );
 
     private final Engine m_engine;
 

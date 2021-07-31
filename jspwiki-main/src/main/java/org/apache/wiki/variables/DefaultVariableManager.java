@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.variables;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
@@ -50,7 +51,7 @@ import java.util.ResourceBundle;
  */
 public class DefaultVariableManager implements VariableManager {
 
-    private static final Logger log = Logger.getLogger( DefaultVariableManager.class );
+    private static final Logger log = LogManager.getLogger( DefaultVariableManager.class );
 
     /**
      *  Contains a list of those properties that shall never be shown. Put names here in lower case.

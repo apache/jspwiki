@@ -19,7 +19,8 @@
 package org.apache.wiki;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -95,7 +96,7 @@ import java.util.stream.Collectors;
 public class WikiEngine implements Engine {
 
     private static final String ATTR_WIKIENGINE = "org.apache.wiki.WikiEngine";
-    private static final Logger log = Logger.getLogger( WikiEngine.class );
+    private static final Logger log = LogManager.getLogger( WikiEngine.class );
 
     /** Stores properties. */
     private Properties m_properties;

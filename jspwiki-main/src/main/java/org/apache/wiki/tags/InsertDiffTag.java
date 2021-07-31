@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.diff.DifferenceManager;
@@ -42,7 +43,7 @@ import java.io.IOException;
 public class InsertDiffTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = Logger.getLogger( InsertDiffTag.class );
+    private static final Logger log = LogManager.getLogger( InsertDiffTag.class );
     
     /** Attribute which is used to store the old page content to the Page Context */
     public static final String ATTR_OLDVERSION = "olddiff";

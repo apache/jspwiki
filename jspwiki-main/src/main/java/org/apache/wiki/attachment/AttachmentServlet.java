@@ -24,7 +24,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -83,7 +84,7 @@ public class AttachmentServlet extends HttpServlet {
     private static final long serialVersionUID = 3257282552187531320L;
 
     private Engine m_engine;
-    private static final Logger log = Logger.getLogger( AttachmentServlet.class );
+    private static final Logger log = LogManager.getLogger( AttachmentServlet.class );
 
     private static final String HDR_VERSION     = "version";
     // private static final String HDR_NAME        = "page";

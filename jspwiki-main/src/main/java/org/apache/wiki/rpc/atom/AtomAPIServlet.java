@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.rpc.atom;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -57,7 +58,7 @@ import java.util.Date;
 // FIXME: Rewrite using some other library
 public class AtomAPIServlet extends HttpServlet {
 
-    private static final Logger log = Logger.getLogger( AtomAPIServlet.class );
+    private static final Logger log = LogManager.getLogger( AtomAPIServlet.class );
 
     private static final long serialVersionUID = 0L;
 

@@ -21,7 +21,8 @@ package org.apache.wiki.providers;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -62,7 +63,7 @@ import java.util.TreeSet;
 // FIXME: A part of the stuff is now redundant, since we could easily use the text cache for a lot of things.  RefactorMe.
 public class CachingProvider implements PageProvider {
 
-    private static final Logger log = Logger.getLogger( CachingProvider.class );
+    private static final Logger log = LogManager.getLogger( CachingProvider.class );
 
     private final CacheManager m_cacheManager = CacheManager.getInstance();
 

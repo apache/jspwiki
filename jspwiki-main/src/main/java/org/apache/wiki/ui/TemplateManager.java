@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.ModuleManager;
@@ -346,7 +346,7 @@ public interface TemplateManager extends ModuleManager {
             resources.add( resourceString );
         }
 
-        Logger.getLogger( TemplateManager.class ).debug( "Request to add a resource: " + resourceString );
+        LogManager.getLogger( TemplateManager.class ).debug( "Request to add a resource: " + resourceString );
 
         resourcemap.put( type, resources );
         ctx.setVariable( RESOURCE_INCLUDES, resourcemap );

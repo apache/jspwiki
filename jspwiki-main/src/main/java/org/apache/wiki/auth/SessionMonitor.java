@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.auth;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.spi.Wiki;
@@ -46,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SessionMonitor implements HttpSessionListener {
 
-    private static final Logger log = Logger.getLogger( SessionMonitor.class );
+    private static final Logger log = LogManager.getLogger( SessionMonitor.class );
 
     /** Map with Engines as keys, and SessionMonitors as values. */
     private static final ConcurrentHashMap< Engine, SessionMonitor > c_monitors = new ConcurrentHashMap<>();

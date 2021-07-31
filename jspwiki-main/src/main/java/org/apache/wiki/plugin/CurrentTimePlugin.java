@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
  */
 public class CurrentTimePlugin implements Plugin {
 
-    // private static Logger log = Logger.getLogger( CurrentTimePlugin.class );
+    // private static Logger log = LogManager.getLogger( CurrentTimePlugin.class );
 
     /**
      *  {@inheritDoc}

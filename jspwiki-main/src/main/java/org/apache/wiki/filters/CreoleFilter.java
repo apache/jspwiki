@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.filters;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
@@ -43,7 +44,7 @@ import java.util.Properties;
  */
 public class CreoleFilter extends BasePageFilter {
     
-    private static final Logger log = Logger.getLogger(CreoleFilter.class);
+    private static final Logger log = LogManager.getLogger(CreoleFilter.class);
     
     /**
      *  {@inheritDoc}

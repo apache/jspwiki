@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.xmlrpc;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -56,7 +57,7 @@ import java.util.List;
 
 public class MetaWeblogHandler implements WikiRPCHandler {
 
-    private static final Logger log = Logger.getLogger( MetaWeblogHandler.class );
+    private static final Logger log = LogManager.getLogger( MetaWeblogHandler.class );
 
     private Context m_context;
 

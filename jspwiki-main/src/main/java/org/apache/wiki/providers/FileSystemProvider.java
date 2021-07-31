@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.providers;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 
@@ -40,7 +41,7 @@ import java.util.Properties;
  */
 public class FileSystemProvider extends AbstractFileProvider {
 
-    private static final Logger log = Logger.getLogger( FileSystemProvider.class );
+    private static final Logger log = LogManager.getLogger( FileSystemProvider.class );
 
     /** All metadata is stored in a file with this extension. */
     public static final String PROP_EXT = ".properties";

@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.ui.progress;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
 
@@ -42,7 +43,7 @@ public class DefaultProgressManager implements ProgressManager {
 
     private final Map< String,ProgressItem > m_progressingTasks = new ConcurrentHashMap<>();
 
-    private static final Logger log = Logger.getLogger( DefaultProgressManager.class );
+    private static final Logger log = LogManager.getLogger( DefaultProgressManager.class );
 
     /**
      *  Creates a new ProgressManager.

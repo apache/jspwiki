@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
@@ -51,7 +52,7 @@ import java.util.ResourceBundle;
  */
 public class WeblogEntryPlugin implements Plugin {
 
-    private static final Logger log = Logger.getLogger(WeblogEntryPlugin.class);
+    private static final Logger log = LogManager.getLogger(WeblogEntryPlugin.class);
     private static final int MAX_BLOG_ENTRIES = 10_000; // Just a precaution.
 
     /**

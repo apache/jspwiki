@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -51,7 +52,7 @@ public class SearchResultIteratorTag extends IteratorTag {
     private   int         m_count;
     private   int         m_start;
     
-    private static final Logger log = Logger.getLogger(SearchResultIteratorTag.class);
+    private static final Logger log = LogManager.getLogger(SearchResultIteratorTag.class);
 
     /** {@inheritDoc} */
     @Override

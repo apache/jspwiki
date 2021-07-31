@@ -19,7 +19,8 @@
 package org.apache.wiki.search;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
@@ -81,7 +82,7 @@ import java.util.concurrent.Executors;
  */
 public class LuceneSearchProvider implements SearchProvider {
 
-    protected static final Logger log = Logger.getLogger(LuceneSearchProvider.class);
+    protected static final Logger log = LogManager.getLogger(LuceneSearchProvider.class);
 
     private Engine m_engine;
     private Executor searchExecutor;

@@ -18,7 +18,8 @@
 */
 package org.apache.wiki.plugin;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
@@ -51,7 +52,7 @@ import java.util.Map;
  */
 public class Search implements Plugin {
 
-    private static final Logger log = Logger.getLogger(Search.class);
+    private static final Logger log = LogManager.getLogger(Search.class);
 
     /** Parameter name for setting the query string.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_QUERY = "query";

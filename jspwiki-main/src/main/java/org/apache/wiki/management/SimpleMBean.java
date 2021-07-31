@@ -19,25 +19,12 @@
 package org.apache.wiki.management;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.management.Attribute;
-import javax.management.AttributeList;
-import javax.management.AttributeNotFoundException;
-import javax.management.DynamicMBean;
-import javax.management.IntrospectionException;
-import javax.management.InvalidAttributeValueException;
-import javax.management.MBeanAttributeInfo;
-import javax.management.MBeanConstructorInfo;
-import javax.management.MBeanException;
-import javax.management.MBeanInfo;
-import javax.management.MBeanNotificationInfo;
-import javax.management.MBeanOperationInfo;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ReflectionException;
+import javax.management.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Iterator;
 
 /**
  *  A simple MBean which does not require an interface class unlike
@@ -55,7 +42,7 @@ import java.util.Iterator;
 // FIXME: Exception handling is not probably according to spec...
 public abstract class SimpleMBean implements DynamicMBean {
 
-	private static final Logger LOG = Logger.getLogger( SimpleMBean.class );
+	private static final Logger LOG = LogManager.getLogger( SimpleMBean.class );
     protected MBeanInfo m_beanInfo;
 
     private static Method findGetterSetter(final Class<?> clazz, final String name, final Class<?> parm )
@@ -65,9 +52,7 @@ public abstract class SimpleMBean implements DynamicMBean {
             final Class<?>[] params = { parm };
             final Class<?>[] emptyparms = {};
 
-            final Method m = clazz.getDeclaredMethod( name, parm != null ? params : emptyparms );
-
-            return m;
+            return clazz.getDeclaredMethod( name, parm != null ? params : emptyparms );
         }
         catch( final Exception e )
         {
@@ -153,11 +138,9 @@ public abstract class SimpleMBean implements DynamicMBean {
         {
             Method method = null;
 
-            for( int m = 0; m < methods.length; m++ )
-            {
-                if( methods[m].getName().equals( oplist[i] ) )
-                {
-                    method = methods[m];
+            for( final Method value : methods ) {
+                if ( value.getName().equals( oplist[ i ] ) ) {
+                    method = value;
                 }
             }
 
@@ -233,11 +216,10 @@ public abstract class SimpleMBean implements DynamicMBean {
     @Override
     public AttributeList getAttributes(final String[] arg0) {
         final AttributeList list = new AttributeList();
-
-        for( int i = 0; i < arg0.length; i++ ) {
+        for( final String s : arg0 ) {
             try {
-                list.add( new Attribute(arg0[i], getAttribute(arg0[i])) );
-            } catch (final AttributeNotFoundException | MBeanException | ReflectionException e) {
+                list.add( new Attribute( s, getAttribute( s ) ) );
+            } catch ( final AttributeNotFoundException | MBeanException | ReflectionException e ) {
                 LOG.error( e.getMessage(), e );
             }
         }
@@ -268,24 +250,15 @@ public abstract class SimpleMBean implements DynamicMBean {
     {
         final Method[] methods = getClass().getMethods();
 
-        for( int i = 0; i < methods.length; i++ )
-        {
-            if( methods[i].getName().equals(arg0) )
-            {
-                try
-                {
-                    return methods[i].invoke( this, arg1 );
-                }
-                catch (final IllegalArgumentException e)
-                {
+        for( final Method method : methods ) {
+            if( method.getName().equals( arg0 ) ) {
+                try {
+                    return method.invoke( this, arg1 );
+                } catch ( final IllegalArgumentException e ) {
                     throw new ReflectionException( e, "Wrong arguments" );
-                }
-                catch (final IllegalAccessException e)
-                {
+                } catch ( final IllegalAccessException e ) {
                     throw new ReflectionException( e, "No access" );
-                }
-                catch (final InvocationTargetException e)
-                {
+                } catch ( final InvocationTargetException e ) {
                     throw new ReflectionException( e, "Wrong target" );
                 }
             }
@@ -329,12 +302,10 @@ public abstract class SimpleMBean implements DynamicMBean {
     }
 
     @Override
-    public AttributeList setAttributes(final AttributeList arg0)
-    {
+    public AttributeList setAttributes( final AttributeList arg0 ) {
         final AttributeList result = new AttributeList();
-        for(final Iterator< Object > i = arg0.iterator(); i.hasNext(); )
-        {
-            final Attribute attr = (Attribute)i.next();
+        for( final Object o : arg0 ) {
+            final Attribute attr = ( Attribute ) o;
 
             //
             //  Attempt to set the attribute.  If it succeeds (no exception),
@@ -343,7 +314,7 @@ public abstract class SimpleMBean implements DynamicMBean {
             try {
                 setAttribute( attr );
                 result.add( attr );
-            } catch (final AttributeNotFoundException | InvalidAttributeValueException | MBeanException | ReflectionException e ) {
+            } catch ( final AttributeNotFoundException | InvalidAttributeValueException | MBeanException | ReflectionException e ) {
                 LOG.error( e.getMessage(), e );
             }
         }

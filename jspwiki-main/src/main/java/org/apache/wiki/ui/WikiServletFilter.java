@@ -18,8 +18,9 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.NDC;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -29,13 +30,7 @@ import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiSecurityException;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
@@ -52,7 +47,7 @@ import java.io.PrintWriter;
  */
 public class WikiServletFilter implements Filter {
 
-    private static final Logger log = Logger.getLogger( WikiServletFilter.class );
+    private static final Logger log = LogManager.getLogger( WikiServletFilter.class );
     protected Engine m_engine;
 
     /**
@@ -143,11 +138,11 @@ public class WikiServletFilter implements Filter {
         }
 
         try {
-            NDC.push( m_engine.getApplicationName() + ":" + httpRequest.getRequestURL() );
+            ThreadContext.push( m_engine.getApplicationName() + ":" + httpRequest.getRequestURL() );
             chain.doFilter( httpRequest, response );
         } finally {
-            NDC.pop();
-            NDC.remove();
+            ThreadContext.pop();
+            ThreadContext.remove( m_engine.getApplicationName() + ":" + httpRequest.getRequestURL() );
         }
 
     }

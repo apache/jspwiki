@@ -1,6 +1,7 @@
 package org.apache.wiki.tasks.auth;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -24,7 +25,7 @@ import java.util.Locale;
 public class SaveUserProfileTask extends Task {
 
     private static final long serialVersionUID = 6994297086560480285L;
-    private static final Logger LOG = Logger.getLogger( SaveUserProfileTask.class );
+    private static final Logger LOG = LogManager.getLogger( SaveUserProfileTask.class );
     private final Locale m_loc;
 
     /**

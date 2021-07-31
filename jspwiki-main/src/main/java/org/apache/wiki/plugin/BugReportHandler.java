@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -57,7 +58,7 @@ import java.util.StringTokenizer;
  */
 public class BugReportHandler implements Plugin {
 
-    private static final Logger log = Logger.getLogger( BugReportHandler.class );
+    private static final Logger log = LogManager.getLogger( BugReportHandler.class );
     private static final String DEFAULT_DATEFORMAT = "dd-MMM-yyyy HH:mm:ss zzz";
 
     /** Parameter name for setting the title.  Value is <tt>{@value}</tt>. */

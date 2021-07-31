@@ -20,7 +20,8 @@ package org.apache.wiki.plugin;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Pattern;
@@ -79,7 +80,7 @@ import java.util.TreeMap;
  */
 public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, InitializablePlugin {
 
-    private static final Logger log = Logger.getLogger( PageViewPlugin.class );
+    private static final Logger log = LogManager.getLogger( PageViewPlugin.class );
 
     /** The page view manager. */
     private static PageViewManager c_singleton;

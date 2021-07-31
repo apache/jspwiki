@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.ui.admin;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.event.WikiEngineEvent;
@@ -58,7 +59,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
     private ArrayList< AdminBean > m_allBeans;
     private final MBeanServer m_mbeanServer;
 
-    private static final Logger log = Logger.getLogger( DefaultAdminBeanManager.class );
+    private static final Logger log = LogManager.getLogger( DefaultAdminBeanManager.class );
 
     public DefaultAdminBeanManager( final Engine engine ) {
         log.info("Using JDK 1.5 Platform MBeanServer");

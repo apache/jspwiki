@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.filters;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
@@ -41,7 +42,7 @@ import java.util.Vector;
 // FIXME: Weblog name has been set to stone
 public class PingWeblogsComFilter extends BasePageFilter {
 
-    private static final Logger log = Logger.getLogger( PingWeblogsComFilter.class );
+    private static final Logger log = LogManager.getLogger( PingWeblogsComFilter.class );
 
     private String m_pingURL;
 

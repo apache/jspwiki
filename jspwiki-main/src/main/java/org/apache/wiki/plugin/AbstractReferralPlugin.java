@@ -19,7 +19,8 @@
 package org.apache.wiki.plugin;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.oro.text.GlobCompiler;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.Pattern;
@@ -79,7 +80,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractReferralPlugin implements Plugin {
 
-    private static final Logger log = Logger.getLogger( AbstractReferralPlugin.class );
+    private static final Logger log = LogManager.getLogger( AbstractReferralPlugin.class );
 
     /** Magic value for rendering all items. */
     public static final int    ALL_ITEMS              = -1;
