@@ -35,7 +35,7 @@ under the License.
     * Selenide to 5.24.1
     * Tika to 2.1.0
     * Tomcat to 9.0.52
-    * Some maven plugins [#58](https://github.com/apache/jspwiki/pull/58), [#114](https://github.com/apache/jspwiki/pull/114), [#119](https://github.com/apache/jspwiki/pull/119)
+    * Some maven plugins [#58](https://github.com/apache/jspwiki/pull/58), [#114](https://github.com/apache/jspwiki/pull/114), [#119](https://github.com/apache/jspwiki/pull/119), [#120](https://github.com/apache/jspwiki/pull/120)
 
 **2021-07-30  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
