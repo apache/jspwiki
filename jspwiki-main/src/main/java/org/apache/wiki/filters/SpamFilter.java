@@ -19,6 +19,7 @@
 package org.apache.wiki.filters;
 
 import net.sf.akismet.Akismet;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,9 +67,11 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.StringTokenizer;
@@ -161,6 +164,9 @@ public class SpamFilter extends BasePageFilter {
     
     /** The filter property name for specifying whether authenticated users should be ignored. Value is <tt>{@value}</tt>. */
     public static final String  PROP_IGNORE_AUTHENTICATED  = "ignoreauthenticated";
+
+    /** The filter property name for specifying groups allowed to bypass the spam filter. Value is <tt>{@value}</tt>. */
+    public static final String PROP_ALLOWED_GROUPS = "jspwiki.filters.spamfilter.allowedgroups";
     
     /** The filter property name for specifying which captcha technology should be used. Value is <tt>{@value}</tt>. */
     public static final String  PROP_CAPTCHA               = "captcha";
@@ -221,6 +227,9 @@ public class SpamFilter extends BasePageFilter {
     /** If set to true, will ignore anyone who is in Authenticated role. */
     private boolean         m_ignoreAuthenticated;
 
+    /** Groups allowed to bypass the filter */
+    private String[]         m_allowedGroups;
+
     private boolean         m_stopAtFirstMatch = true;
 
     private static String   c_hashName;
@@ -252,6 +261,7 @@ public class SpamFilter extends BasePageFilter {
         m_blacklist = properties.getProperty( PROP_BLACKLIST, m_blacklist );
 
         m_ignoreAuthenticated = TextUtil.getBooleanProperty( properties, PROP_IGNORE_AUTHENTICATED, m_ignoreAuthenticated );
+        m_allowedGroups = StringUtils.split( StringUtils.defaultString( properties.getProperty( PROP_ALLOWED_GROUPS, m_blacklist ) ), ',' );
 
         m_useCaptcha = properties.getProperty( PROP_CAPTCHA, "" ).equals("asirra");
 
@@ -848,10 +858,15 @@ public class SpamFilter extends BasePageFilter {
      * Returns true, if this user should be ignored.  For example, admin users.
      *
      * @param context page context
-     * @return True, if this users should be ignored.
+     * @return True, if this user should be ignored.
      */
     private boolean ignoreThisUser( final Context context ) {
         if( context.hasAdminPermissions() ) {
+            return true;
+        }
+
+        final List< String > groups = Arrays.asList( m_allowedGroups );
+        if( Arrays.stream( context.getWikiSession().getRoles() ).anyMatch( role -> groups.contains( role.getName() ) ) ) {
             return true;
         }
 
