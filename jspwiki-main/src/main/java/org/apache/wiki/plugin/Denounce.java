@@ -36,6 +36,7 @@ import org.apache.wiki.util.TextUtil;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -56,7 +57,7 @@ import java.util.Properties;
  */
 public class Denounce implements Plugin {
 
-    private static final Logger log = LogManager.getLogger(Denounce.class);
+    private static final Logger log = LogManager.getLogger( Denounce.class );
 
     /** Parameter name for setting the link.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LINK = "link";
@@ -70,28 +71,23 @@ public class Denounce implements Plugin {
 
     private static final String PROP_DENOUNCETEXT   = "denounce.denouncetext";
 
-    private static final ArrayList<Pattern> c_refererPatterns = new ArrayList<>();
-    private static final ArrayList<Pattern> c_agentPatterns   = new ArrayList<>();
-    private static final ArrayList<Pattern> c_hostPatterns    = new ArrayList<>();
+    private static final ArrayList< Pattern > c_refererPatterns = new ArrayList<>();
+    private static final ArrayList< Pattern > c_agentPatterns   = new ArrayList<>();
+    private static final ArrayList< Pattern > c_hostPatterns    = new ArrayList<>();
 
-    private static String    c_denounceText    = "";
+    private static String c_denounceText = "";
 
-    /**
+    /*
      *  Prepares the different patterns for later use.  Compiling is
      *  (probably) expensive, so we do it statically at class load time.
      */
-    static
-    {
-        try
-        {
+    static {
+        try {
             final PatternCompiler compiler = new GlobCompiler();
             final ClassLoader loader = Denounce.class.getClassLoader();
-
             final InputStream in = loader.getResourceAsStream( PROPERTYFILE );
-
-            if( in == null )
-            {
-                throw new IOException("No property file found! (Check the installation, it should be there.)");
+            if( in == null ) {
+                throw new IOException( "No property file found! (Check the installation, it should be there.)" );
             }
 
             final Properties props = new Properties();
@@ -99,39 +95,26 @@ public class Denounce implements Plugin {
 
             c_denounceText = props.getProperty( PROP_DENOUNCETEXT, c_denounceText );
 
-            for( final Enumeration< ? > e = props.propertyNames(); e.hasMoreElements(); )
-            {
+            for( final Enumeration< ? > e = props.propertyNames(); e.hasMoreElements(); ) {
                 final String name = (String) e.nextElement();
 
-                try
-                {
-                    if( name.startsWith( PROP_REFERERPATTERN ) )
-                    {
+                try {
+                    if( name.startsWith( PROP_REFERERPATTERN ) ) {
                         c_refererPatterns.add( compiler.compile( props.getProperty(name) ) );
-                    }
-                    else if( name.startsWith( PROP_AGENTPATTERN ) )
-                    {
+                    } else if( name.startsWith( PROP_AGENTPATTERN ) ) {
                         c_agentPatterns.add( compiler.compile( props.getProperty(name) ) );
-                    }
-                    else if( name.startsWith( PROP_HOSTPATTERN ) )
-                    {
+                    } else if( name.startsWith( PROP_HOSTPATTERN ) ) {
                         c_hostPatterns.add( compiler.compile( props.getProperty(name) ) );
                     }
-                }
-                catch( final MalformedPatternException ex )
-                {
+                } catch( final MalformedPatternException ex ) {
                     log.error( "Malformed URL pattern in "+PROPERTYFILE+": "+props.getProperty(name), ex );
                 }
             }
 
-            log.debug("Added "+c_refererPatterns.size()+c_agentPatterns.size()+c_hostPatterns.size()+" crawlers to denounce list.");
-        }
-        catch( final IOException e )
-        {
-            log.error( "Unable to load URL patterns from "+PROPERTYFILE, e );
-        }
-        catch( final Exception e )
-        {
+            log.debug( "Added " + c_refererPatterns.size() + c_agentPatterns.size() + c_hostPatterns.size() + " crawlers to denounce list." );
+        } catch( final IOException e ) {
+            log.error( "Unable to load URL patterns from " + PROPERTYFILE, e );
+        } catch( final Exception e ) {
             log.error( "Unable to initialize Denounce plugin", e );
         }
     }
@@ -145,27 +128,37 @@ public class Denounce implements Plugin {
         String text = params.get( PARAM_TEXT );
         boolean linkAllowed = true;
 
-        if( link == null )
-        {
-            throw new PluginException("Denounce: No parameter "+PARAM_LINK+" defined!");
+        if( link == null ) {
+            throw new PluginException( "Denounce: No parameter "+PARAM_LINK+" defined!" );
+        }
+        if( !isLinkValid( link ) ) {
+            throw new PluginException( "Denounce: Not a valid link " + link );
         }
 
         final HttpServletRequest request = context.getHttpRequest();
-
-        if( request != null )
-        {
+        if( request != null ) {
             linkAllowed = !matchHeaders( request );
         }
 
-        if( text == null ) text = link;
+        if( text == null ) {
+            text = link;
+        }
 
-        if( linkAllowed )
-        {
-            // FIXME: Should really call TranslatorReader
-            return "<a href=\""+link+"\">"+ TextUtil.replaceEntities(text) +"</a>";
+        if( linkAllowed ) {
+            return "<a href=\"" + link + "\">" + TextUtil.replaceEntities( text ) + "</a>";
         }
 
         return c_denounceText;
+    }
+
+    boolean isLinkValid( final String link ) {
+        try {
+            new URL( link ).toURI().parseServerAuthority();
+        } catch ( final Exception e ) {
+            log.debug( "invalid link {} - {}", link, e.getMessage() );
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -178,50 +171,32 @@ public class Denounce implements Plugin {
                 return true;
             }
         }
-
         return false;
     }
 
-    // FIXME: Should really return immediately when a match is found.
-
-    private boolean matchHeaders( final HttpServletRequest request )
-    {
-        //
+    private boolean matchHeaders( final HttpServletRequest request ) {
         //  User Agent
-        //
-
-        final String userAgent = request.getHeader("User-Agent");
-
-        if( userAgent != null && matchPattern( c_agentPatterns, userAgent ) )
-        {
-            log.debug("Matched user agent "+userAgent+" for denounce.");
+        final String userAgent = request.getHeader( "User-Agent" );
+        if( userAgent != null && matchPattern( c_agentPatterns, userAgent ) ) {
+            log.debug( "Matched user agent " + userAgent + " for denounce." );
             return true;
         }
 
-        //
         //  Referrer header
-        //
-
-        final String refererPath = request.getHeader("Referer");
-
-        if( refererPath != null && matchPattern( c_refererPatterns, refererPath ) )
-        {
-            log.debug("Matched referer "+refererPath+" for denounce.");
+        final String refererPath = request.getHeader( "Referer" );
+        if( refererPath != null && matchPattern( c_refererPatterns, refererPath ) ) {
+            log.debug( "Matched referer " + refererPath + " for denounce." );
             return true;
         }
 
-        //
         //  Host
-        //
-
         final String host = request.getRemoteHost();
-
-        if( host != null && matchPattern( c_hostPatterns, host ) )
-        {
-            log.debug("Matched host "+host+" for denounce.");
+        if( host != null && matchPattern( c_hostPatterns, host ) ) {
+            log.debug( "Matched host " + host + " for denounce." );
             return true;
         }
 
         return false;
     }
+
 }
