@@ -52,5 +52,5 @@ under the License.
 | mvn cobertura:cobertura                                           | generates a cobertura maven report. See: http://mojo.codehaus.org/cobertura-maven-plugin/usage.html                       |
 | mvn javadoc:javadoc                                               | creates javadocs; if graphviz binaries (www.graphviz.org) are found on $PATH, the javadocs will display                   |
 |                                                                   | some UML class/package level diagrams                                                                                     |
-| mvn javadoc:javadoc -Djdk.javadoc.doclet.version=2.0.12           | same as above, but with JDK >= 9                                                                                          |
+| mvn javadoc:javadoc -Djdk.javadoc.doclet.version=2.0.14           | same as above, but with JDK >= 9                                                                                          |
 | mvn sonar:sonar                                                   | generates a Sonar report. Expects a Sonar server running at http://localhost:9000/                                        |
