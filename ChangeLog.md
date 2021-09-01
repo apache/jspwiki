@@ -17,6 +17,26 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-09-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-08_
+
+* [JSPWIKI-1143](https://issues.apache.org/jira/browse/JSPWIKI-1143) - Allow SpamFilter to exclude certain users/groups from checks
+    * `jspwiki.filters.spamfilter.allowedgroups` property can be used to set a comma separated list of groups that will bypass the filter 
+
+* Denounce plugin checks for valid URLs
+
+* Dependency updates
+    * ASF parent pom to 24
+    * AWS java sdk kendra to 1.12.59
+    * EhCache to 2.10.9.2
+    * Jetty to 9.4.43.v20210629 [#117](https://github.com/apache/jspwiki/pull/117)
+    * Lucene to 8.9.0 [#115](https://github.com/apache/jspwiki/pull/115)
+    * Selenide to 5.24.1
+    * Tika to 2.1.0
+    * Tomcat to 9.0.52
+    * Some maven plugins [#58](https://github.com/apache/jspwiki/pull/58), [#114](https://github.com/apache/jspwiki/pull/114), [#119](https://github.com/apache/jspwiki/pull/119)
+
 **2021-07-30  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-07_
