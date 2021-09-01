@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>23</version>
+    <version>24</version>
   </parent>
 
   <groupId>org.apache.jspwiki</groupId>
@@ -92,17 +92,17 @@
     <plugin.idea.version>2.2.1</plugin.idea.version>
     <plugin.install.version>2.5.2</plugin.install.version>
     <plugin.jar.version>3.2.0</plugin.jar.version>
-    <plugin.javadoc.version>3.2.0</plugin.javadoc.version>
+    <plugin.javadoc.version>3.3.0</plugin.javadoc.version>
     <plugin.jxr.version>3.0.0</plugin.jxr.version>
     <plugin.project-info-reports.version>3.1.1</plugin.project-info-reports.version>
-    <plugin.release.version>3.0.0-M1</plugin.release.version>
+    <plugin.release.version>3.0.0-M4</plugin.release.version>
     <plugin.resources.version>3.2.0</plugin.resources.version>
     <plugin.source.version>3.2.1</plugin.source.version>
     <plugin.surefire.version>3.0.0-M5</plugin.surefire.version>
     <plugin.war.version>3.3.1</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>3.2.0</plugin.jspc.version>
-    <plugin.checksum.version>1.9</plugin.checksum.version>
+    <plugin.checksum.version>1.11</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
     <plugin.cargo.version>1.8.5</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
@@ -547,7 +547,7 @@
               <additionalOption>--allow-script-in-comments</additionalOption>
             </additionalOptions>
             <author>${project.organization.name}</author>
-            <bottom>Copyright © {inceptionYear}-{currentYear} ${project.organization.name}. All rights reserved.</bottom>
+            <bottom>Copyright (c) {inceptionYear}-{currentYear} ${project.organization.name}. All rights reserved.</bottom>
             <breakiterator>true</breakiterator>
             <detectJavaApiLink>false</detectJavaApiLink>
             <doclet>nl.talsmasoftware.umldoclet.UMLDoclet</doclet>
