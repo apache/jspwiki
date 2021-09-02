@@ -94,7 +94,7 @@
     <plugin.jar.version>3.2.0</plugin.jar.version>
     <plugin.javadoc.version>3.3.0</plugin.javadoc.version>
     <plugin.jxr.version>3.1.1</plugin.jxr.version>
-    <plugin.project-info-reports.version>3.1.1</plugin.project-info-reports.version>
+    <plugin.project-info-reports.version>3.1.2</plugin.project-info-reports.version>
     <plugin.release.version>3.0.0-M4</plugin.release.version>
     <plugin.resources.version>3.2.0</plugin.resources.version>
     <plugin.source.version>3.2.1</plugin.source.version>
