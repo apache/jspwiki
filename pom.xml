@@ -88,7 +88,7 @@
     <plugin.compiler.version>3.8.1</plugin.compiler.version>
     <plugin.dependency.version>3.2.0</plugin.dependency.version>
     <plugin.eclipse.version>2.10</plugin.eclipse.version>
-    <plugin.enforcer.version>3.0.0-M3</plugin.enforcer.version>
+    <plugin.enforcer.version>3.0.0</plugin.enforcer.version>
     <plugin.idea.version>2.2.1</plugin.idea.version>
     <plugin.install.version>2.5.2</plugin.install.version>
     <plugin.jar.version>3.2.0</plugin.jar.version>
