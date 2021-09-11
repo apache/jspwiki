@@ -226,7 +226,7 @@ flexmark-ext-toc-0.62.2.jar                 ./jspwiki-war/src/main/config/doc/LI
 flexmark-formatter-0.62.2.jar               ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 flexmark-util-0.62.2.jar                    ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 freshcookies-security-0.60.jar              LICENSE
-gson-2.8.6                                  LICENSE
+gson-2.8.8                                  LICENSE
 httpclient-4.5.13                           LICENSE
 httpcore-4.4.13                             LICENSE
 ion-java-1.0.2                              LICENSE

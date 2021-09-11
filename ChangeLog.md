@@ -25,6 +25,7 @@ under the License.
 
 * Dependency updates
     * Commons IO to 2.11.0 [#125](https://github.com/apache/jspwiki/pull/125)
+    * GSON to 2.8.8 [#126](https://github.com/apache/jspwiki/pull/126)
     * Mockito to 3.12.4 [#123](https://github.com/apache/jspwiki/pull/123)
     * Selenide to 5.24.2
     * Some maven plugins [#121](https://github.com/apache/jspwiki/pull/121), [#122](https://github.com/apache/jspwiki/pull/122), [#124](https://github.com/apache/jspwiki/pull/124)
