@@ -17,6 +17,18 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-09-11  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-09_
+
+* Docker images pushed to Docker Hub
+
+* Dependency updates
+    * Commons IO to 2.11.0 [#125](https://github.com/apache/jspwiki/pull/125)
+    * Mockito to 3.12.4 [#123](https://github.com/apache/jspwiki/pull/123)
+    * Selenide to 5.24.2
+    * Some maven plugins [#121](https://github.com/apache/jspwiki/pull/121), [#122](https://github.com/apache/jspwiki/pull/122), [#124](https://github.com/apache/jspwiki/pull/124)
+
 **2021-09-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-08_
