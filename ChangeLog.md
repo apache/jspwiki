@@ -75,7 +75,7 @@ under the License.
     * SLF4J to 1.7.32
     * Tika to 2.0.0
 
-* **2021-07-12  Juan Pablo Santos (juanpablo AT apache DOT org)**
+**2021-07-12  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-06_
 
