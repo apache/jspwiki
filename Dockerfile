@@ -74,7 +74,7 @@ RUN set -x \
  && cd $CATALINA_HOME/webapps/ROOT/WEB-INF \
  && mv userdatabase.xml groupdatabase.xml /var/jspwiki/etc \
 # arrange proper logging (jspwiki.use.external.logconfig = true needs to be set)
- && mv /tmp/log4j.properties $CATALINA_HOME/lib/log4j.properties
+ && mv /tmp/log4j2.properties $CATALINA_HOME/lib/log4j2.properties
 
 # make port visible in metadata
 EXPOSE 8080
