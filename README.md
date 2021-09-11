@@ -82,7 +82,6 @@ engine.  Just do the following:
 
 That's it!
 
-
 ## Advanced Installation
 
 In the `$TOMCAT_HOME/lib` folder (or equivalent based on your servlet container),
@@ -115,6 +114,29 @@ the Wiki.
 
 Check the Apache JSPWiki website and project documentation for additional
 setup and configuration suggestions.
+
+## Using the Docker image
+
+_**Docker images are not official ASF releases but provided for convenience. 
+Recommended usage is always to build the source.**_
+
+The Apache JSPWiki Docker image is available at [Docker Hub](https://registry.hub.docker.com/r/apache/jspwiki/).
+
+### Get the Image
+```
+$ docker pull apache/jspwiki
+```
+
+### Running the Container
+```
+$ docker run -d -p 8080:8080 --name jspwiki apache/jspwiki
+```
+
+Then point your browser at http://localhost:8080/, that should give you a working 
+wiki right away!
+
+See https://jspwiki-wiki.apache.org/Wiki.jsp?page=Docker for customizations and 
+advanced usage of the image.
 
 ## Upgrading from previous versions
 
