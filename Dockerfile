@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-FROM maven:3.6-jdk-8 as package
+FROM maven:3.8-jdk-8 as package
 
 WORKDIR /tmp
 
@@ -29,7 +29,7 @@ FROM tomcat:9.0
 
 COPY --from=package /tmp/jspwiki-war/target/JSPWiki.war /tmp
 COPY --from=package /tmp/jspwiki-wikipages/en/target/jspwiki-wikipages-en-*.zip /tmp
-COPY docker-files/log4j.properties /tmp
+COPY docker-files/log4j2.properties /tmp
 COPY docker-files/tomcat-users.xml $CATALINA_HOME/conf/tomcat-users.xml
 
 #
