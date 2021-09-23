@@ -574,7 +574,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
 
             // Sanitize UID (and generate a new one if one does not exist)
             String uid = user.getAttribute( UID ).trim();
-            if( uid == null || uid.isEmpty() || "-1".equals( uid ) ) {
+            if( uid.isEmpty() || "-1".equals( uid ) ) {
                 uid = String.valueOf( generateUid( this ) );
                 user.setAttribute( UID, uid );
             }

@@ -48,7 +48,7 @@ public class ExternalLinkNodePostProcessorState implements NodePostProcessorStat
         this.linkOperations = new LinkParsingOperations( wikiContext );
         this.isImageInlining = isImageInlining;
         this.inlineImagePatterns = inlineImagePatterns;
-        this.m_useOutlinkImage = wikiContext.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
+        this.m_useOutlinkImage = wikiContext.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, true);
     }
 
     /**

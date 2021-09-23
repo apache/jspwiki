@@ -225,9 +225,7 @@ public class CalendarTag extends WikiTagBase {
                     queryString = tmp;
                 }
 
-                if( queryStringLlength > 0 ) {
-                    url = url + "&amp;" + queryString;
-                }
+                url = url + "&amp;" + queryString;
             }
             result = "<td><a href=\""+url+"\">"+txt+"</a></td>";
         } else {

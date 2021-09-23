@@ -163,9 +163,9 @@ public abstract class SimpleMBean implements DynamicMBean {
         m_beanInfo = new MBeanInfo( getClass().getName(),
                                     getDescription(),
                                     attributes,
-                                    constructors,
+                                    null,
                                     operations,
-                                    notifications );
+                                    null );
     }
 
     /**

@@ -76,10 +76,10 @@ public final class Release {
      *  the form "VERSION.REVISION.MINORREVISION[-POSTFIX][-BUILD]".
      */
     public static final String     VERSTR        = VERSION + "." +
-                                                   REVISION + "." +
-                                                   MINORREVISION +
-                                                   ( POSTFIX.length() != 0 ? "-" + POSTFIX : "" ) +
-                                                   ( BUILD.length() != 0 ? "-" + BUILD : "" );
+                                                    REVISION + "." +
+                                                    MINORREVISION +
+                                                    "" +
+                                                    "-" + BUILD;
 
     /** Private constructor prevents instantiation. */
     private Release() {

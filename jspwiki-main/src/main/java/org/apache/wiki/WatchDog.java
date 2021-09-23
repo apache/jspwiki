@@ -349,9 +349,6 @@ public final class WatchDog {
          */
         @Override
         public void backgroundTask() {
-            if( c_kennel == null ) {
-            	return;
-            }
 
             for( final Map.Entry< Integer, WeakReference< WatchDog > > entry : c_kennel.entrySet() ) {
                 final WeakReference< WatchDog > wr = entry.getValue();

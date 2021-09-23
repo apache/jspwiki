@@ -125,7 +125,7 @@ public class PluginLinkNodePostProcessorState implements NodePostProcessorState<
             toc.insertAfter( divsClosing );
 
         } else {
-            NodePostProcessorStateCommonOperations.inlineLinkTextOnWysiwyg( state, link, m_wysiwygEditorMode );
+            NodePostProcessorStateCommonOperations.inlineLinkTextOnWysiwyg( state, link, true );
         }
         removeLink( state, link );
     }

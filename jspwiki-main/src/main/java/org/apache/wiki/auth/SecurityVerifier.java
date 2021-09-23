@@ -206,7 +206,7 @@ public final class SecurityVerifier {
         final int pageActionsLength = pageActions.length;
         // Calculate column widths
         final String colWidth;
-        if( pageActionsLength > 0 && rolesLength > 0 ) {
+        if( rolesLength > 0 ) {
             colWidth = ( 67f / ( pageActionsLength * rolesLength ) ) + "%";
         } else {
             colWidth = "67%";

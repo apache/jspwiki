@@ -1905,12 +1905,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                 //(1) replace '.' by spaces, allowing multiple classnames on a div or span
                 //(2) remove any invalid character
-                if( clazz != null){
 
-                    clazz = clazz.replace('.', ' ')
-                                 .replaceAll("[^\\s-_\\w\\x200-\\x377]+","");
+                clazz = clazz.replace('.', ' ')
+                             .replaceAll("[^\\s-_\\w\\x200-\\x377]+","");
 
-                }
                 ch = nextToken();
 
                 //check for %%class1.class2( style information )
@@ -2140,7 +2138,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         m_newLine = true;
         disableOutputEscaping();
 
-        while(!quitReading)
+        while(true)
         {
             final int ch = nextToken();
 
@@ -2155,10 +2153,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 if( ch == '}' )
                 {
                     if( handleClosebrace() == null ) m_plainTextBuf.append( (char) ch );
-                }
-                else if( ch == -1 )
-                {
-                    quitReading = true;
                 }
                 else if( ch == '\r' )
                 {
@@ -2343,12 +2337,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //  a <p></p> pair according to XHTML rules.
                 //
                 final String nextLine = peekAheadLine();
-                if( nextLine.isEmpty() ||
-                    (!nextLine.isEmpty() &&
-                     !nextLine.startsWith("{{{") &&
-                     !nextLine.startsWith("----") &&
-                     !nextLine.startsWith("%%") &&
-                     "*#!;".indexOf( nextLine.charAt(0) ) == -1) )
+                if(nextLine.isEmpty() || !nextLine.startsWith("{{{") &&
+                        !nextLine.startsWith("----") &&
+                        !nextLine.startsWith("%%") &&
+                        "*#!;".indexOf(nextLine.charAt(0)) == -1)
                 {
                     pushElement( new Element("p") );
                     m_isOpenParagraph = true;

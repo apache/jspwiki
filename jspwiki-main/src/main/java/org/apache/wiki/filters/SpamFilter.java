@@ -568,8 +568,8 @@ public class SpamFilter extends BasePageFilter {
                                                                permalink,
                                                                commentType,
                                                                commentAuthor,
-                                                               commentAuthorEmail,
-                                                               commentAuthorURL,
+                                                               null,
+                                                               null,
                                                                change.toString(),
                                                                null );
 
