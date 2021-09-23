@@ -42,7 +42,7 @@ public class ByteUtilsTest {
     {
         final byte[] reconstructedBytes = ByteUtils.parseHexBinary(EXPECTED_HEX_STRING);
         Assertions.assertEquals(bytes.length,reconstructedBytes.length);
-        Assertions.assertTrue(Arrays.equals(bytes,reconstructedBytes));
+        Assertions.assertArrayEquals(bytes, reconstructedBytes);
     }
 
     @Test

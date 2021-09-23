@@ -120,12 +120,12 @@ public class XMLUserDatabaseTest {
             Assertions.assertEquals( "{SHA-256}AeJQgAgYDAf2WZiqPJ2l6cGdGC/PgWmkjZmkjrBEV6SW/HlclZGlIg==", profile.getPassword() );
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
         } catch( final NoSuchPrincipalException e ) {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         try {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
-            Assertions.assertTrue( false );
+            Assertions.fail();
         } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
@@ -144,12 +144,12 @@ public class XMLUserDatabaseTest {
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNotNull( profile.getLastModified() );
         } catch( final NoSuchPrincipalException e ) {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         try {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
-            Assertions.assertTrue( false );
+            Assertions.fail();
         } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
@@ -168,12 +168,12 @@ public class XMLUserDatabaseTest {
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNotNull( profile.getLastModified() );
         } catch( final NoSuchPrincipalException e ) {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         try {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
-            Assertions.assertTrue( false );
+            Assertions.fail();
         } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
@@ -190,12 +190,12 @@ public class XMLUserDatabaseTest {
             Assertions.assertEquals( "{SHA-256}AeJQgAgYDAf2WZiqPJ2l6cGdGC/PgWmkjZmkjrBEV6SW/HlclZGlIg==", profile.getPassword() );
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
         } catch( final NoSuchPrincipalException e ) {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         try {
             m_db.findByEmail( "foo" );
             // We should never get here
-            Assertions.assertTrue( false );
+            Assertions.fail();
         } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
@@ -212,12 +212,12 @@ public class XMLUserDatabaseTest {
             Assertions.assertEquals( "{SHA-256}AeJQgAgYDAf2WZiqPJ2l6cGdGC/PgWmkjZmkjrBEV6SW/HlclZGlIg==", profile.getPassword() );
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
         } catch( final NoSuchPrincipalException e ) {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
         try {
             m_db.findByEmail( "FooBar" );
             // We should never get here
-            Assertions.assertTrue( false );
+            Assertions.fail();
         } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
@@ -304,9 +304,9 @@ public class XMLUserDatabaseTest {
             final String uid = profile.getUid();
             Assertions.assertNotNull( m_db.findByUid( uid ) );
         } catch( final NoSuchPrincipalException e ) {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         } catch( final WikiSecurityException e ) {
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
     }
 

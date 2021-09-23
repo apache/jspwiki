@@ -112,7 +112,7 @@ public class XMLGroupDatabaseTest
       {
           group = backendGroup( "Archaeology" );
           // We should never get here
-          Assertions.assertTrue(false);
+          Assertions.fail();
       }
       catch (final NoSuchPrincipalException e)
       {

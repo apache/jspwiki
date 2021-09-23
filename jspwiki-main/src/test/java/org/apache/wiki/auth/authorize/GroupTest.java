@@ -114,7 +114,7 @@ public class GroupTest
         group2.add( u3 );
         group2.add( u4 );
 
-        Assertions.assertTrue( m_group.equals( group2 ) );
+        Assertions.assertEquals(m_group, group2);
     }
 
     @Test
@@ -133,7 +133,7 @@ public class GroupTest
         group2.add( u3 );
         group2.add( u4 );
 
-        Assertions.assertFalse( m_group.equals( group2 ) );
+        Assertions.assertNotEquals( m_group, group2) ;
     }
 
     @Test
@@ -151,7 +151,7 @@ public class GroupTest
         group2.add( u3 );
         group2.add( u4 );
 
-        Assertions.assertTrue( group1.equals( group2 ) );
+        Assertions.assertEquals( group1, group2 );
     }
 
     @Test
@@ -169,7 +169,7 @@ public class GroupTest
         group2.add( u3 );
         group2.add( u4 );
 
-        Assertions.assertFalse( m_group.equals( group2 ) );
+        Assertions.assertNotEquals( m_group, group2 );
     }
 
 }

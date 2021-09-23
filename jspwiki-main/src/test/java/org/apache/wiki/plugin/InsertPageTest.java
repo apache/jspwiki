@@ -84,7 +84,7 @@ public class InsertPageTest
         testEngine.saveText("ThisPage",src);
         testEngine.saveText("ThisPage2",src2);
 
-        Assertions.assertTrue( testEngine.getManager( RenderingManager.class ).getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
+        Assertions.assertEquals( -1, testEngine.getManager(RenderingManager.class).getHTML("ThisPage").indexOf("Circular reference"), "got circ ref" );
         Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div> <div class=\"inserted-page \" >foo\n</div>\n",
                 testEngine.getManager( RenderingManager.class ).getHTML("ThisPage"), "found != 2" );
     }
@@ -97,7 +97,7 @@ public class InsertPageTest
         testEngine.saveText("ThisPage",src);
         testEngine.saveText("Test_Page",src2);
 
-        Assertions.assertTrue( testEngine.getManager( RenderingManager.class ).getHTML("ThisPage").indexOf("Circular reference") == -1, "got circ ref" );
+        Assertions.assertEquals( -1, testEngine.getManager(RenderingManager.class).getHTML("ThisPage").indexOf("Circular reference"), "got circ ref" );
         Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getManager( RenderingManager.class ).getHTML("ThisPage"), "found != 1" );
     }
 

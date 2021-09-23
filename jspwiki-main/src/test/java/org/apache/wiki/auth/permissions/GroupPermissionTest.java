@@ -44,7 +44,7 @@ public class GroupPermissionTest
         final GroupPermission p4 = new GroupPermission( "mywiki:Test*", "delete,view,edit" );
         Assertions.assertEquals( p1, p2 );
         Assertions.assertEquals( p1, p3 );
-        Assertions.assertFalse( p3.equals( p4 ) );
+        Assertions.assertNotEquals( p3, p4 );
     }
 
     @Test

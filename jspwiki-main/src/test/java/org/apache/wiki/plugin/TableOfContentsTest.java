@@ -214,8 +214,8 @@ public class TableOfContentsTest
 
         final String res = testEngine.getI18nHTML( "Test" );
 
-        Assertions.assertTrue( res.indexOf("<i>") == -1, "<i>" ); // Check that there is no HTML left
-        Assertions.assertTrue( res.indexOf("</i>") == -1, "</i>" ); // Check that there is no HTML left
+        Assertions.assertEquals( -1, res.indexOf("<i>"), "<i>" ); // Check that there is no HTML left
+        Assertions.assertEquals( -1, res.indexOf("</i>"), "</i>" ); // Check that there is no HTML left
     }
 
     @Test

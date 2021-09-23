@@ -76,7 +76,7 @@ public class CookieAssertionLoginModuleTest
         catch( final LoginException e )
         {
             System.err.println( e.getMessage() );
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
     }
 
@@ -104,7 +104,7 @@ public class CookieAssertionLoginModuleTest
         catch( final LoginException e )
         {
             System.err.println( e.getMessage() );
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
     }
 
@@ -126,7 +126,7 @@ public class CookieAssertionLoginModuleTest
         catch( final NoRequiredPropertyException e )
         {
             System.err.println( e.getMessage() );
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
     }
 
