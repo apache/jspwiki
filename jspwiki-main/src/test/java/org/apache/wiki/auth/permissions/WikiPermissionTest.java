@@ -46,13 +46,13 @@ public class WikiPermissionTest
       final WikiPermission p1 = new WikiPermission("*", "createPages");
       final WikiPermission p2 = new WikiPermission("*", "createPages");
       final WikiPermission p3 = new WikiPermission("*", "createGroups");
-      Assertions.assertTrue(p1.equals(p2));
-      Assertions.assertTrue(p2.equals(p1));
-      Assertions.assertFalse(p1.equals(p3));
-      Assertions.assertFalse(p3.equals(p1));
+        Assertions.assertEquals( p1, p2 );
+        Assertions.assertEquals( p2, p1 );
+        Assertions.assertNotEquals( p1, p3 );
+        Assertions.assertNotEquals( p3, p1 );
       final WikiPermission p4 = new WikiPermission("*", "createPages,createGroups");
       final WikiPermission p5 = new WikiPermission("*", "createGroups,createPages");
-      Assertions.assertTrue(p4.equals(p5));
+        Assertions.assertEquals( p4, p5 );
     }
 
     /*
@@ -64,13 +64,13 @@ public class WikiPermissionTest
       final WikiPermission p1 = new WikiPermission("mywiki", "createPages");
       final WikiPermission p2 = new WikiPermission("*",      "createPages");
       final WikiPermission p3 = new WikiPermission("mywiki", "createGroups");
-      Assertions.assertFalse(p1.equals(p2));
-      Assertions.assertFalse(p2.equals(p1));
-      Assertions.assertFalse(p1.equals(p3));
-      Assertions.assertFalse(p3.equals(p1));
+        Assertions.assertNotEquals(p1, p2);
+        Assertions.assertNotEquals(p2, p1);
+        Assertions.assertNotEquals(p1, p3);
+        Assertions.assertNotEquals(p3, p1);
       final WikiPermission p4 = new WikiPermission("mywiki", "createPages,createGroups");
       final WikiPermission p5 = new WikiPermission("*",      "createGroups,createPages");
-      Assertions.assertFalse(p4.equals(p5));
+        Assertions.assertNotEquals(p4, p5);
     }
 
     /*

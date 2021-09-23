@@ -35,10 +35,10 @@ public class AllPermissionTest
         final AllPermission p1 = new AllPermission( "*" );
         final AllPermission p2 = new AllPermission( "*" );
         final AllPermission p3 = new AllPermission( "myWiki" );
-        Assertions.assertTrue( p1.equals( p2 ) );
-        Assertions.assertTrue( p2.equals( p1 ) );
-        Assertions.assertFalse( p1.equals( p3 ) );
-        Assertions.assertFalse( p3.equals( p1 ) );
+        Assertions.assertEquals( p1, p2 );
+        Assertions.assertEquals( p2, p1 );
+        Assertions.assertNotEquals( p1, p3 );
+        Assertions.assertNotEquals( p3, p1 );
     }
 
     @Test
@@ -46,8 +46,8 @@ public class AllPermissionTest
     {
         final AllPermission p1 = new AllPermission( "*" );
         AllPermission p2 = new AllPermission( "*" );
-        Assertions.assertTrue( p1.equals( p2 ) );
-        Assertions.assertTrue( p2.equals( p1 ) );
+        Assertions.assertEquals( p1, p2 );
+        Assertions.assertEquals( p2, p1 );
 
         p2 = new AllPermission( "myWiki" );
         Assertions.assertTrue( p1.implies( p2 ) );

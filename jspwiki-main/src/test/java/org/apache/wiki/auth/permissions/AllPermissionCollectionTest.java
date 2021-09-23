@@ -133,7 +133,7 @@ public class AllPermissionCollectionTest
         if ( !exception )
         {
             // We should never get here
-            Assertions.assertTrue( false );
+            Assertions.fail();
         }
     }
 
