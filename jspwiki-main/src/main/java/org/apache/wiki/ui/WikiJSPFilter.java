@@ -207,7 +207,7 @@ public class WikiJSPFilter extends WikiServletFilter {
      */
     private static class JSPWikiServletResponseWrapper extends HttpServletResponseWrapper {
 
-        ByteArrayOutputStream m_output;
+        final ByteArrayOutputStream m_output;
         private final ByteArrayServletOutputStream m_servletOut;
         private final PrintWriter m_writer;
         private final HttpServletResponse m_response;
@@ -245,7 +245,7 @@ public class WikiJSPFilter extends WikiServletFilter {
 
         class ByteArrayServletOutputStream extends ServletOutputStream {
 
-            ByteArrayOutputStream m_buffer;
+            final ByteArrayOutputStream m_buffer;
 
             public ByteArrayServletOutputStream( final ByteArrayOutputStream byteArrayOutputStream ) {
                 super();

@@ -134,7 +134,7 @@ public class WikiEngine implements Engine {
     private final Map< String, Object > m_attributes = new ConcurrentHashMap<>();
 
     /** Stores WikiEngine's associated managers. */
-    protected Map< Class< ? >, Object > managers = new ConcurrentHashMap<>();
+    protected final Map< Class< ? >, Object > managers = new ConcurrentHashMap<>();
 
     /**
      *  Gets a WikiEngine related to this servlet.  Since this method is only called from JSP pages (and JspInit()) to be specific,

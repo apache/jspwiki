@@ -50,21 +50,21 @@ public abstract class MarkupParser {
     protected PushbackReader m_in;
     private int m_pos = -1; // current position in reader stream
 
-    protected Engine m_engine;
-    protected Context m_context;
+    protected final Engine m_engine;
+    protected final Context m_context;
 
     /** Optionally stores internal wikilinks */
-    protected ArrayList< StringTransmutator > m_localLinkMutatorChain = new ArrayList<>();
-    protected ArrayList< StringTransmutator > m_externalLinkMutatorChain = new ArrayList<>();
-    protected ArrayList< StringTransmutator > m_attachmentLinkMutatorChain = new ArrayList<>();
-    protected ArrayList< StringTransmutator > m_linkMutators = new ArrayList<>();
-    protected ArrayList< HeadingListener > m_headingListenerChain = new ArrayList<>();
+    protected final ArrayList< StringTransmutator > m_localLinkMutatorChain = new ArrayList<>();
+    protected final ArrayList< StringTransmutator > m_externalLinkMutatorChain = new ArrayList<>();
+    protected final ArrayList< StringTransmutator > m_attachmentLinkMutatorChain = new ArrayList<>();
+    protected final ArrayList< StringTransmutator > m_linkMutators = new ArrayList<>();
+    protected final ArrayList< HeadingListener > m_headingListenerChain = new ArrayList<>();
 
     protected boolean m_inlineImages = true;
     protected boolean m_parseAccessRules = true;
     /** Keeps image regexp Patterns */
     protected List< Pattern > m_inlineImagePatterns;
-    protected LinkParsingOperations m_linkParsingOperations;
+    protected final LinkParsingOperations m_linkParsingOperations;
 
     private static final Logger log = Logger.getLogger( MarkupParser.class );
 

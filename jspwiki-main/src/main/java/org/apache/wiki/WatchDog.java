@@ -375,9 +375,9 @@ public final class WatchDog {
      */
     private static class State {
 
-        protected String m_state;
-        protected long   m_enterTime;
-        protected long   m_expiryTime;
+        protected final String m_state;
+        protected final long   m_enterTime;
+        protected final long   m_expiryTime;
 
         protected State( final String state, final int expiry ) {
             m_state      = state;

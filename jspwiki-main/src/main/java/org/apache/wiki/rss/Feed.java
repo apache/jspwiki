@@ -32,14 +32,14 @@ import java.util.List;
  * Represents an abstract feed.
  */
 public abstract class Feed {
-    protected List<Entry> m_entries = new ArrayList<>();
+    protected final List<Entry> m_entries = new ArrayList<>();
 
     protected String m_feedURL;
     protected String m_channelTitle;
     protected String m_channelDescription;
     protected String m_channelLanguage;
 
-    protected Context m_wikiContext;
+    protected final Context m_wikiContext;
 
     protected String m_mode = RSSGenerator.MODE_WIKI;
 

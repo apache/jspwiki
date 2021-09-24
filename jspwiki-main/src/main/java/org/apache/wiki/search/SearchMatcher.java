@@ -133,8 +133,8 @@ public class SearchMatcher {
      */
     public class SearchResultImpl implements org.apache.wiki.search.SearchResult {
     	
-        int  m_score;
-        Page m_page;
+        final int  m_score;
+        final Page m_page;
 
         /**
          *  Create a new SearchResult with a given name and a score.
