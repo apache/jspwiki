@@ -257,435 +257,367 @@ public class XHtmlElementToWikiTranslator
             {
                 final Element e = (Element)c;
                 final String n = e.getName().toLowerCase();
-                if( n.equals( "h1" ) )
-                {
-                    m_out.print( "\n!!! " );
-                    print( e );
-                    m_out.println();
-                }
-                else if( n.equals( "h2" ) )
-                {
-                    m_out.print( "\n!!! " );
-                    print( e );
-                    m_out.println();
-                }
-                else if( n.equals( "h3" ) )
-                {
-                    m_out.print( "\n!! " );
-                    print( e );
-                    m_out.println();
-                }
-                else if( n.equals( "h4" ) )
-                {
-                    m_out.print( "\n! " );
-                    print( e );
-                    m_out.println();
-                }
-                else if( n.equals( "p" ) )
-                {
-                    if( e.getContentSize() != 0 ) // we don't want to print empty elements: <p></p>
-                    {
-                        m_out.println();
+                switch ( n ) {
+                    case "h1":
+                        m_out.print( "\n!!! " );
                         print( e );
                         m_out.println();
-                    }
-                }
-                else if( n.equals( "br" ) )
-                {
-                    if( m_preStack.isPreMode() )
-                    {
+                        break;
+                    case "h2":
+                        m_out.print( "\n!!! " );
+                        print( e );
                         m_out.println();
-                    }
-                    else
-                    {
-                        final String parentElementName = base.getName().toLowerCase();
+                        break;
+                    case "h3":
+                        m_out.print( "\n!! " );
+                        print( e );
+                        m_out.println();
+                        break;
+                    case "h4":
+                        m_out.print( "\n! " );
+                        print( e );
+                        m_out.println();
+                        break;
+                    case "p":
+                        if ( e.getContentSize() != 0 ) // we don't want to print empty elements: <p></p>
+                        {
+                            m_out.println();
+                            print( e );
+                            m_out.println();
+                        }
+                        break;
+                    case "br":
+                        if ( m_preStack.isPreMode() ) {
+                            m_out.println();
+                        } else {
+                            final String parentElementName = base.getName().toLowerCase();
 
-                        //
-                        // To beautify the generated wiki markup, we print a newline character after a linebreak.
-                        // It's only safe to do this when the parent element is a <p> or <div>; when the parent
-                        // element is a table cell or list item, a newline character would break the markup.
-                        // We also check that this isn't being done inside a plugin body.
-                        //
-                        if( parentElementName.matches( "p|div" )
-                            && !base.getText().matches( "(?s).*\\[\\{.*\\}\\].*" ) )
-                        {
-                            m_out.print( " \\\\\n" );
-                        }
-                        else
-                        {
-                            m_out.print( " \\\\" );
-                        }
-                    }
-                    print( e );
-                }
-                else if( n.equals( "hr" ) )
-                {
-                    m_out.println();
-                    print( "----" );
-                    print( e );
-                    m_out.println();
-                }
-                else if( n.equals( "table" ) )
-                {
-                    if( !m_outTimmer.isCurrentlyOnLineBegin() )
-                    {
-                        m_out.println();
-                    }
-                    print( e );
-                }
-                else if( n.equals( "tr" ) )
-                {
-                    print( e );
-                    m_out.println();
-                }
-                else if( n.equals( "td" ) )
-                {
-                    m_out.print( "| " );
-                    print( e );
-                    if( !m_preStack.isPreMode() )
-                    {
-                        print( " " );
-                    }
-                }
-                else if( n.equals( "th" ) )
-                {
-                    m_out.print( "|| " );
-                    print( e );
-                    if( !m_preStack.isPreMode() )
-                    {
-                        print( " " );
-                    }
-                }
-                else if( n.equals( "a" ) )
-                {
-                    if( !isIgnorableWikiMarkupLink( e ) )
-                    {
-                        if( e.getChild( "IMG" ) != null )
-                        {
-                            printImage( e );
-                        }
-                        else
-                        {
-                            String ref = e.getAttributeValue( "href" );
-                            if( ref == null )
-                            {
-                                if( isUndefinedPageLink( e ) )
-                                {
-                                    m_out.print( "[" );
-                                    print( e );
-                                    m_out.print( "]" );
-                                }
-                                else
-                                {
-                                    print( e );
-                                }
+                            //
+                            // To beautify the generated wiki markup, we print a newline character after a linebreak.
+                            // It's only safe to do this when the parent element is a <p> or <div>; when the parent
+                            // element is a table cell or list item, a newline character would break the markup.
+                            // We also check that this isn't being done inside a plugin body.
+                            //
+                            if ( parentElementName.matches( "p|div" )
+                                    && !base.getText().matches( "(?s).*\\[\\{.*\\}\\].*" ) ) {
+                                m_out.print( " \\\\\n" );
+                            } else {
+                                m_out.print( " \\\\" );
                             }
-                            else
-                            {
-                                ref = trimLink( ref );
-                                if( ref != null )
-                                {
-                                    if( ref.startsWith( "#" ) ) // This is a link to a footnote.
-                                    {
-                                        // convert "#ref-PageName-1" to just "1"
-                                        final String href = ref.replaceFirst( "#ref-.+-(\\d+)", "$1" );
-
-                                        // remove the brackets around "[1]"
-                                        final String textValue = e.getValue().substring( 1, (e.getValue().length() - 1) );
-
-                                        if( href.equals( textValue ) ){ // handles the simplest case. Example: [1]
-                                            print( e );
-                                        }
-                                        else{ // handles the case where the link text is different from the href. Example: [something|1]
-                                            m_out.print( "[" + textValue + "|" + href + "]" );
-                                        }
-                                    }
-                                    else
-                                    {
-                                        final Map<String, String> augmentedWikiLinkAttributes = getAugmentedWikiLinkAttributes( e );
-
+                        }
+                        print( e );
+                        break;
+                    case "hr":
+                        m_out.println();
+                        print( "----" );
+                        print( e );
+                        m_out.println();
+                        break;
+                    case "table":
+                        if ( !m_outTimmer.isCurrentlyOnLineBegin() ) {
+                            m_out.println();
+                        }
+                        print( e );
+                        break;
+                    case "tr":
+                        print( e );
+                        m_out.println();
+                        break;
+                    case "td":
+                        m_out.print( "| " );
+                        print( e );
+                        if ( !m_preStack.isPreMode() ) {
+                            print( " " );
+                        }
+                        break;
+                    case "th":
+                        m_out.print( "|| " );
+                        print( e );
+                        if ( !m_preStack.isPreMode() ) {
+                            print( " " );
+                        }
+                        break;
+                    case "a":
+                        if ( !isIgnorableWikiMarkupLink( e ) ) {
+                            if ( e.getChild( "IMG" ) != null ) {
+                                printImage( e );
+                            } else {
+                                String ref = e.getAttributeValue( "href" );
+                                if ( ref == null ) {
+                                    if ( isUndefinedPageLink( e ) ) {
                                         m_out.print( "[" );
                                         print( e );
-                                        if( !e.getTextTrim().equalsIgnoreCase( ref ) )
+                                        m_out.print( "]" );
+                                    } else {
+                                        print( e );
+                                    }
+                                } else {
+                                    ref = trimLink( ref );
+                                    if ( ref != null ) {
+                                        if ( ref.startsWith( "#" ) ) // This is a link to a footnote.
                                         {
-                                            m_out.print( "|" );
-                                            print( ref );
+                                            // convert "#ref-PageName-1" to just "1"
+                                            final String href = ref.replaceFirst( "#ref-.+-(\\d+)", "$1" );
 
-                                            if( !augmentedWikiLinkAttributes.isEmpty() )
-                                            {
+                                            // remove the brackets around "[1]"
+                                            final String textValue = e.getValue().substring( 1, ( e.getValue().length() - 1 ) );
+
+                                            if ( href.equals( textValue ) ) { // handles the simplest case. Example: [1]
+                                                print( e );
+                                            } else { // handles the case where the link text is different from the href. Example: [something|1]
+                                                m_out.print( "[" + textValue + "|" + href + "]" );
+                                            }
+                                        } else {
+                                            final Map<String, String> augmentedWikiLinkAttributes = getAugmentedWikiLinkAttributes( e );
+
+                                            m_out.print( "[" );
+                                            print( e );
+                                            if ( !e.getTextTrim().equalsIgnoreCase( ref ) ) {
                                                 m_out.print( "|" );
+                                                print( ref );
 
+                                                if ( !augmentedWikiLinkAttributes.isEmpty() ) {
+                                                    m_out.print( "|" );
+
+                                                    final String augmentedWikiLink = augmentedWikiLinkMapToString( augmentedWikiLinkAttributes );
+                                                    m_out.print( augmentedWikiLink );
+                                                }
+                                            } else if ( !augmentedWikiLinkAttributes.isEmpty() ) {
+                                                // If the ref has the same value as the text and also if there
+                                                // are attributes, then just print: [ref|ref|attributes] .
+                                                m_out.print( "|" + ref + "|" );
                                                 final String augmentedWikiLink = augmentedWikiLinkMapToString( augmentedWikiLinkAttributes );
                                                 m_out.print( augmentedWikiLink );
                                             }
-                                        }
-                                        else if( !augmentedWikiLinkAttributes.isEmpty() )
-                                        {
-                                            // If the ref has the same value as the text and also if there
-                                            // are attributes, then just print: [ref|ref|attributes] .
-                                            m_out.print( "|" + ref + "|" );
-                                            final String augmentedWikiLink = augmentedWikiLinkMapToString( augmentedWikiLinkAttributes );
-                                            m_out.print( augmentedWikiLink );
-                                        }
 
-                                        m_out.print( "]" );
+                                            m_out.print( "]" );
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                }
-                else if( n.equals( "b" ) || n.equals("strong") )
-                {
-                    m_out.print( "__" );
-                    print( e );
-                    m_out.print( "__" );
-                }
-                else if( n.equals( "i" ) || n.equals("em") || n.equals( "address" ) )
-                {
-                    m_out.print( "''" );
-                    print( e );
-                    m_out.print( "''" );
-                }
-                else if( n.equals( "u" ) )
-                {
-                    m_out.print( "%%( text-decoration:underline; )" );
-                    print( e );
-                    m_out.print( "/%" );
-                }
-                else if( n.equals( "strike" ) )
-                {
-                    m_out.print( "%%strike " );
-                    print( e );
-                    m_out.print( "/%" );
-                    // NOTE: don't print a space before or after the double percents because that can break words into two.
-                    // For example: %%(color:red)ABC%%%%(color:green)DEF%% is different from %%(color:red)ABC%% %%(color:green)DEF%%
-                }
-                else if( n.equals( "sup" ) )
-                {
-                    m_out.print( "%%sup " );
-                    print( e );
-                    m_out.print( "/%" );
-                }
-                else if( n.equals( "sub" ) )
-                {
-                    m_out.print( "%%sub " );
-                    print( e );
-                    m_out.print( "/%" );
-                }
-                else if( n.equals("dl") )
-                {
-                    m_out.print( "\n" );
-                    print( e );
-
-                    // print a newline after the definition list. If we don't,
-                    // it may cause problems for the subsequent element.
-                    m_out.print( "\n" );
-                }
-                else if( n.equals("dt") )
-                {
-                    m_out.print( ";" );
-                    print( e );
-                }
-                else if( n.equals("dd") )
-                {
-                    m_out.print( ":" );
-                    print( e );
-                }
-                else if( n.equals( "ul" ) )
-                {
-                    m_out.println();
-                    m_liStack.push( "*" );
-                    print( e );
-                    m_liStack.pop();
-                }
-                else if( n.equals( "ol" ) )
-                {
-                    m_out.println();
-                    m_liStack.push( "#" );
-                    print( e );
-                    m_liStack.pop();
-                }
-                else if( n.equals( "li" ) )
-                {
-                    m_out.print( m_liStack + " " );
-                    print( e );
-
-                    // The following line assumes that the XHTML has been "pretty-printed"
-                    // (newlines separate child elements from their parents).
-                    final boolean lastListItem = base.indexOf( e ) == ( base.getContentSize() - 2 );
-                    final boolean sublistItem = m_liStack.toString().length() > 1;
-
-                    // only print a newline if this <li> element is not the last item within a sublist.
-                    if( !sublistItem || !lastListItem )
-                    {
-                        m_out.println();
-                    }
-                }
-                else if( n.equals( "pre" ) )
-                {
-                    m_out.print( "\n{{{" ); // start JSPWiki "code blocks" on its own line
-                    m_preStack.push();
-                    print( e );
-                    m_preStack.pop();
-
-                    // print a newline after the closing braces
-                    // to avoid breaking any subsequent wiki markup that follows.
-                    m_out.print( "}}}\n" );
-                }
-                else if( n.equals( "code" ) || n.equals( "tt" ) )
-                {
-                    m_out.print( "{{" );
-                    m_preStack.push();
-                    print( e );
-                    m_preStack.pop();
-                    m_out.print( "}}" );
-                    // NOTE: don't print a newline after the closing brackets because if the Text is inside
-                    // a table or list, it would break it if there was a subsequent row or list item.
-                }
-                else if( n.equals( "img" ) )
-                {
-                    if( !isIgnorableWikiMarkupLink( e ) )
-                    {
-                        m_out.print( "[" );
-                        print( trimLink( e.getAttributeValue( "src" ) ) );
-                        m_out.print( "]" );
-                    }
-                }
-                else if( n.equals( "form" ) )
-                {
-                    // remove the hidden input where name="formname" since a new one will be generated again when the xhtml is rendered.
-                    final Element formName = getXPathElement( e, "INPUT[@name='formname']" );
-                    if( formName != null )
-                    {
-                        formName.detach();
-                    }
-
-                    final String name = e.getAttributeValue( "name" );
-
-                    m_out.print( "\n[{FormOpen" );
-
-                    if( name != null )
-                    {
-                        m_out.print( " form='" + name + "'" );
-                    }
-
-                    m_out.print( "}]\n" );
-
-                    print( e );
-                    m_out.print( "\n[{FormClose}]\n" );
-                }
-                else if( n.equals( "input" ) )
-                {
-                    final String type = e.getAttributeValue( "type" );
-                    String name = e.getAttributeValue( "name" );
-                    final String value = e.getAttributeValue( "value" );
-                    final String checked = e.getAttributeValue( "checked" );
-
-                    m_out.print( "[{FormInput" );
-
-                    if( type != null )
-                    {
-                        m_out.print( " type='" + type + "'" );
-                    }
-                    if( name != null )
-                    {
-                        // remove the "nbf_" that was prepended since new one will be generated again when the xhtml is rendered.
-                        if( name.startsWith( "nbf_" ) )
-                        {
-                            name = name.substring( 4, name.length( ));
-                        }
-                        m_out.print( " name='" + name + "'" );
-                    }
-                    if( value != null && !value.equals( "" ) )
-                    {
-                        m_out.print( " value='" + value + "'" );
-                    }
-                    if( checked != null )
-                    {
-                        m_out.print( " checked='" + checked + "'" );
-                    }
-
-                    m_out.print( "}]" );
-
-                    print( e );
-                }
-                else if( n.equals( "textarea" ) )
-                {
-                    String name = e.getAttributeValue( "name" );
-                    final String rows = e.getAttributeValue( "rows" );
-                    final String cols = e.getAttributeValue( "cols" );
-
-                    m_out.print( "[{FormTextarea" );
-
-                    if( name != null )
-                    {
-                        if( name.startsWith( "nbf_" ) )
-                        {
-                            name = name.substring( 4, name.length( ));
-                        }
-                        m_out.print( " name='" + name + "'" );
-                    }
-                    if( rows != null )
-                    {
-                        m_out.print( " rows='" + rows + "'" );
-                    }
-                    if( cols != null )
-                    {
-                        m_out.print( " cols='" + cols + "'" );
-                    }
-
-                    m_out.print( "}]" );
-                    print( e );
-                }
-                else if( n.equals( "select" ) )
-                {
-                    String name = e.getAttributeValue( "name" );
-
-                    m_out.print( "[{FormSelect" );
-
-                    if( name != null )
-                    {
-                        if( name.startsWith( "nbf_" ) )
-                        {
-                            name = name.substring( 4, name.length( ));
-                        }
-                        m_out.print( " name='" + name + "'" );
-                    }
-
-                    m_out.print( " value='" );
-                    print( e );
-                    m_out.print( "'}]" );
-                }
-                else if( n.equals( "option" ) )
-                {
-                    // If this <option> element isn't the second child element within the parent <select>
-                    // element, then we need to print a semicolon as a separator. (The first child element
-                    // is expected to be a newline character which is at index of 0).
-                    if( base.indexOf( e ) != 1 )
-                    {
-                        m_out.print( ";" );
-                    }
-
-                    final Attribute selected = e.getAttribute( "selected" );
-                    if( selected !=  null )
-                    {
-                        m_out.print( "*" );
-                    }
-
-                    final String value = e.getAttributeValue( "value" );
-                    if( value != null )
-                    {
-                        m_out.print( value );
-                    }
-                    else
-                    {
+                        break;
+                    case "b":
+                    case "strong":
+                        m_out.print( "__" );
                         print( e );
+                        m_out.print( "__" );
+                        break;
+                    case "i":
+                    case "em":
+                    case "address":
+                        m_out.print( "''" );
+                        print( e );
+                        m_out.print( "''" );
+                        break;
+                    case "u":
+                        m_out.print( "%%( text-decoration:underline; )" );
+                        print( e );
+                        m_out.print( "/%" );
+                        break;
+                    case "strike":
+                        m_out.print( "%%strike " );
+                        print( e );
+                        m_out.print( "/%" );
+                        // NOTE: don't print a space before or after the double percents because that can break words into two.
+                        // For example: %%(color:red)ABC%%%%(color:green)DEF%% is different from %%(color:red)ABC%% %%(color:green)DEF%%
+                        break;
+                    case "sup":
+                        m_out.print( "%%sup " );
+                        print( e );
+                        m_out.print( "/%" );
+                        break;
+                    case "sub":
+                        m_out.print( "%%sub " );
+                        print( e );
+                        m_out.print( "/%" );
+                        break;
+                    case "dl":
+                        m_out.print( "\n" );
+                        print( e );
+
+                        // print a newline after the definition list. If we don't,
+                        // it may cause problems for the subsequent element.
+                        m_out.print( "\n" );
+                        break;
+                    case "dt":
+                        m_out.print( ";" );
+                        print( e );
+                        break;
+                    case "dd":
+                        m_out.print( ":" );
+                        print( e );
+                        break;
+                    case "ul":
+                        m_out.println();
+                        m_liStack.push( "*" );
+                        print( e );
+                        m_liStack.pop();
+                        break;
+                    case "ol":
+                        m_out.println();
+                        m_liStack.push( "#" );
+                        print( e );
+                        m_liStack.pop();
+                        break;
+                    case "li":
+                        m_out.print( m_liStack + " " );
+                        print( e );
+
+                        // The following line assumes that the XHTML has been "pretty-printed"
+                        // (newlines separate child elements from their parents).
+                        final boolean lastListItem = base.indexOf( e ) == ( base.getContentSize() - 2 );
+                        final boolean sublistItem = m_liStack.toString().length() > 1;
+
+                        // only print a newline if this <li> element is not the last item within a sublist.
+                        if ( !sublistItem || !lastListItem ) {
+                            m_out.println();
+                        }
+                        break;
+                    case "pre":
+                        m_out.print( "\n{{{" ); // start JSPWiki "code blocks" on its own line
+
+                        m_preStack.push();
+                        print( e );
+                        m_preStack.pop();
+
+                        // print a newline after the closing braces
+                        // to avoid breaking any subsequent wiki markup that follows.
+                        m_out.print( "}}}\n" );
+                        break;
+                    case "code":
+                    case "tt":
+                        m_out.print( "{{" );
+                        m_preStack.push();
+                        print( e );
+                        m_preStack.pop();
+                        m_out.print( "}}" );
+                        // NOTE: don't print a newline after the closing brackets because if the Text is inside
+                        // a table or list, it would break it if there was a subsequent row or list item.
+                        break;
+                    case "img":
+                        if ( !isIgnorableWikiMarkupLink( e ) ) {
+                            m_out.print( "[" );
+                            print( trimLink( e.getAttributeValue( "src" ) ) );
+                            m_out.print( "]" );
+                        }
+                        break;
+                    case "form": {
+                        // remove the hidden input where name="formname" since a new one will be generated again when the xhtml is rendered.
+                        final Element formName = getXPathElement( e, "INPUT[@name='formname']" );
+                        if ( formName != null ) {
+                            formName.detach();
+                        }
+
+                        final String name = e.getAttributeValue( "name" );
+
+                        m_out.print( "\n[{FormOpen" );
+
+                        if ( name != null ) {
+                            m_out.print( " form='" + name + "'" );
+                        }
+
+                        m_out.print( "}]\n" );
+
+                        print( e );
+                        m_out.print( "\n[{FormClose}]\n" );
+                        break;
                     }
-                }
-                else
-                {
-                    print( e );
+                    case "input": {
+                        final String type = e.getAttributeValue( "type" );
+                        String name = e.getAttributeValue( "name" );
+                        final String value = e.getAttributeValue( "value" );
+                        final String checked = e.getAttributeValue( "checked" );
+
+                        m_out.print( "[{FormInput" );
+
+                        if ( type != null ) {
+                            m_out.print( " type='" + type + "'" );
+                        }
+                        if ( name != null ) {
+                            // remove the "nbf_" that was prepended since new one will be generated again when the xhtml is rendered.
+                            if ( name.startsWith( "nbf_" ) ) {
+                                name = name.substring( 4, name.length() );
+                            }
+                            m_out.print( " name='" + name + "'" );
+                        }
+                        if ( value != null && !value.equals( "" ) ) {
+                            m_out.print( " value='" + value + "'" );
+                        }
+                        if ( checked != null ) {
+                            m_out.print( " checked='" + checked + "'" );
+                        }
+
+                        m_out.print( "}]" );
+
+                        print( e );
+                        break;
+                    }
+                    case "textarea": {
+                        String name = e.getAttributeValue( "name" );
+                        final String rows = e.getAttributeValue( "rows" );
+                        final String cols = e.getAttributeValue( "cols" );
+
+                        m_out.print( "[{FormTextarea" );
+
+                        if ( name != null ) {
+                            if ( name.startsWith( "nbf_" ) ) {
+                                name = name.substring( 4, name.length() );
+                            }
+                            m_out.print( " name='" + name + "'" );
+                        }
+                        if ( rows != null ) {
+                            m_out.print( " rows='" + rows + "'" );
+                        }
+                        if ( cols != null ) {
+                            m_out.print( " cols='" + cols + "'" );
+                        }
+
+                        m_out.print( "}]" );
+                        print( e );
+                        break;
+                    }
+                    case "select": {
+                        String name = e.getAttributeValue( "name" );
+
+                        m_out.print( "[{FormSelect" );
+
+                        if ( name != null ) {
+                            if ( name.startsWith( "nbf_" ) ) {
+                                name = name.substring( 4, name.length() );
+                            }
+                            m_out.print( " name='" + name + "'" );
+                        }
+
+                        m_out.print( " value='" );
+                        print( e );
+                        m_out.print( "'}]" );
+                        break;
+                    }
+                    case "option": {
+                        // If this <option> element isn't the second child element within the parent <select>
+                        // element, then we need to print a semicolon as a separator. (The first child element
+                        // is expected to be a newline character which is at index of 0).
+                        if ( base.indexOf( e ) != 1 ) {
+                            m_out.print( ";" );
+                        }
+
+                        final Attribute selected = e.getAttribute( "selected" );
+                        if ( selected != null ) {
+                            m_out.print( "*" );
+                        }
+
+                        final String value = e.getAttributeValue( "value" );
+                        if ( value != null ) {
+                            m_out.print( value );
+                        } else {
+                            print( e );
+                        }
+                        break;
+                    }
+                    default:
+                        print( e );
+                        break;
                 }
             }
             else
@@ -949,33 +881,28 @@ public class XHtmlElementToWikiTranslator
             }
             if( size != null )
             {
-                if( size.equals( "1" ) )
-                {
-                    style = style + "font-size:xx-small;";
-                }
-                else if( size.equals( "2" ) )
-                {
-                    style = style + "font-size:x-small;";
-                }
-                else if( size.equals( "3" ) )
-                {
-                    style = style + "font-size:small;";
-                }
-                else if( size.equals( "4" ) )
-                {
-                    style = style + "font-size:medium;";
-                }
-                else if( size.equals( "5" ) )
-                {
-                    style = style + "font-size:large;";
-                }
-                else if( size.equals( "6" ) )
-                {
-                    style = style + "font-size:x-large;";
-                }
-                else if( size.equals( "7" ) )
-                {
-                    style = style + "font-size:xx-large;";
+                switch ( size ) {
+                    case "1":
+                        style = style + "font-size:xx-small;";
+                        break;
+                    case "2":
+                        style = style + "font-size:x-small;";
+                        break;
+                    case "3":
+                        style = style + "font-size:small;";
+                        break;
+                    case "4":
+                        style = style + "font-size:medium;";
+                        break;
+                    case "5":
+                        style = style + "font-size:large;";
+                        break;
+                    case "6":
+                        style = style + "font-size:x-large;";
+                        break;
+                    case "7":
+                        style = style + "font-size:xx-large;";
+                        break;
                 }
             }
         }
