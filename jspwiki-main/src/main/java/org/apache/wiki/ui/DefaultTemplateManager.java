@@ -300,9 +300,8 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
 
             for( final String s : tfArr ) {
                 try {
-                    final String f = s;
-                    fmt.applyPattern( f );
-                    resultMap.put( f, fmt.format( d ) );
+                    fmt.applyPattern( s );
+                    resultMap.put( s, fmt.format( d ) );
                 } catch( final IllegalArgumentException e ) {
                 } // skip parameter
             }

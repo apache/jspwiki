@@ -65,8 +65,8 @@ public abstract class BaseModuleManager implements ModuleManager {
 
     protected < T extends WikiModuleInfo > Collection< WikiModuleInfo > modules( final Iterator< T > iterator ) {
         final Set< WikiModuleInfo > ls = new TreeSet<>();
-        for( final Iterator< T > i = iterator; i.hasNext(); ) {
-            final WikiModuleInfo wmi = i.next();
+        for( ; iterator.hasNext(); ) {
+            final WikiModuleInfo wmi = iterator.next();
             ls.add( wmi );
         }
 

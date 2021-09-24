@@ -31,13 +31,12 @@ import javax.servlet.jsp.tagext.VariableInfo;
 public class SearchResultIteratorInfo extends TagExtraInfo {
 
     public VariableInfo[] getVariableInfo( final TagData data ) {
-        final VariableInfo[] var = { new VariableInfo( data.getAttributeString( "id" ),
+
+        return new VariableInfo[]{ new VariableInfo( data.getAttributeString( "id" ),
                                                       "org.apache.wiki.api.search.SearchResult",
                                                       true,
                                                        VariableInfo.NESTED )
         };
-
-        return var;
     }
 
 }

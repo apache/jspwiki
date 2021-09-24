@@ -239,8 +239,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
         // The profiler showed the probability was very high that when  calling for the history of
         // a page the propertyfile would be read as much times as there were versions of that file.
         // It is statistically likely the propertyfile will be examined many times before it is updated.
-        final CachedProperties cp = new CachedProperties( page, properties, propertyFile.lastModified() );
-        m_cachedProperties = cp; // Atomic
+        m_cachedProperties = new CachedProperties( page, properties, propertyFile.lastModified() ); // Atomic
     }
 
     /**

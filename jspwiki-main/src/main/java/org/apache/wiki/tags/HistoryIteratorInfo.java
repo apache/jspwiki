@@ -31,13 +31,12 @@ public class HistoryIteratorInfo extends TagExtraInfo
 {
     public VariableInfo[] getVariableInfo( final TagData data)
     {
-        final VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
+
+        return new VariableInfo[]{ new VariableInfo( data.getAttributeString("id"),
                                                  "org.apache.wiki.api.core.Page",
                                                  true,
                                                  VariableInfo.NESTED )
         };
-
-        return var;
 
     }
 }
