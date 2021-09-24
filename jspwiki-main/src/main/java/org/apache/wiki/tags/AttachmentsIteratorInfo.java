@@ -35,13 +35,12 @@ public class AttachmentsIteratorInfo extends TagExtraInfo
     @Override
     public VariableInfo[] getVariableInfo( final TagData data)
     {
-        final VariableInfo[] var = { new VariableInfo( data.getAttributeString("id"),
+
+        return new VariableInfo[]{ new VariableInfo( data.getAttributeString("id"),
                                                  "org.apache.wiki.api.core.Attachment",
                                                  true,
                                                  VariableInfo.NESTED )
         };
-
-        return var;
 
     }
 }

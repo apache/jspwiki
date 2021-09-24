@@ -65,9 +65,7 @@ public abstract class SimpleMBean implements DynamicMBean {
             final Class<?>[] params = { parm };
             final Class<?>[] emptyparms = {};
 
-            final Method m = clazz.getDeclaredMethod( name, parm != null ? params : emptyparms );
-
-            return m;
+            return clazz.getDeclaredMethod( name, parm != null ? params : emptyparms );
         }
         catch( final Exception e )
         {

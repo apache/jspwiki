@@ -91,8 +91,7 @@ public class HtmlStringToWikiTranslator
     {
         final Element element = htmlStringToElement( html );
         final XHtmlElementToWikiTranslator xhtmlTranslator = new XHtmlElementToWikiTranslator( element, config );
-        final String wikiMarkup = xhtmlTranslator.getWikiString();
-        return wikiMarkup;
+        return xhtmlTranslator.getWikiString();
     }
 
     /**
@@ -107,8 +106,7 @@ public class HtmlStringToWikiTranslator
     {
         final SAXBuilder builder = new SAXBuilder( new XMLReaderSAX2Factory( true, CYBERNEKO_PARSER), null, null );
         final Document doc = builder.build( new StringReader( html ) );
-        final Element element = doc.getRootElement();
-        return element;
+        return doc.getRootElement();
     }
 
     /**
