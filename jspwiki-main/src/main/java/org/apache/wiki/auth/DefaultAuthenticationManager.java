@@ -79,7 +79,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     /** Options passed to {@link LoginModule#initialize(Subject, CallbackHandler, Map, Map)};
      * initialized by {@link #initialize(Engine, Properties)}. */
-    protected Map< String, String > m_loginModuleOptions = new HashMap<>();
+    protected final Map< String, String > m_loginModuleOptions = new HashMap<>();
 
     /** The default {@link LoginModule} class name to use for custom authentication. */
     private static final String DEFAULT_LOGIN_MODULE = "org.apache.wiki.auth.login.UserDatabaseLoginModule";

@@ -28,8 +28,8 @@ import org.apache.wiki.its.environment.Env;
  */
 public class PageBuilder {
 
-    String url;
-    Page page;
+    final String url;
+    final Page page;
 
     PageBuilder( final String url, final Page page ) {
         this.url = url;

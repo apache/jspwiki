@@ -32,8 +32,8 @@ import java.io.IOException;
  */
 public abstract class WikiRenderer {
 
-    protected Context     m_context;
-    protected WikiDocument    m_document;
+    protected final Context     m_context;
+    protected final WikiDocument    m_document;
 
     public static final String LINKS_TRANSLATION = "$1#$2";
     public static final String LINKS_SOURCE = "(.+)#section-.+-(.+)";
