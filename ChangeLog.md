@@ -17,6 +17,23 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-09-27  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-10_
+
+* Several code improvements, all relevant PRs provided by Arturo Bernal, thanks!
+    * [JSPWIKI-1148](https://issues.apache.org/jira/browse/JSPWIKI-1148) - Avoid File Stream [#47](https://github.com/apache/jspwiki/pull/47)
+    * [JSPWIKI-1151](https://issues.apache.org/jira/browse/JSPWIKI-1151) - Simplify assertion with simpler and equivalent calls [#134](https://github.com/apache/jspwiki/pull/134)
+    * [JSPWIKI-1152](https://issues.apache.org/jira/browse/JSPWIKI-1152) - Make final variable when is possible [#135](https://github.com/apache/jspwiki/pull/135)
+    * [JSPWIKI-1153](https://issues.apache.org/jira/browse/JSPWIKI-1153) - Inline Variable [#136](https://github.com/apache/jspwiki/pull/136)
+    * [JSPWIKI-1154](https://issues.apache.org/jira/browse/JSPWIKI-1154) - Replace ´if´ with switch statements [#137](https://github.com/apache/jspwiki/pull/137)
+
+* Dependency updates, provided by dependabot
+    * JUnit to 5.8.1 [#132](https://github.com/apache/jspwiki/pull/132)
+    * Selenide to 5.24.4 [#131](https://github.com/apache/jspwiki/pull/131)
+    * Tomcat to 9.0.53 [#127](https://github.com/apache/jspwiki/pull/127)
+    * XStream to 1.4.18 [#128](https://github.com/apache/jspwiki/pull/128)
+
 **2021-09-11  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-09_
