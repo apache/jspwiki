@@ -28,13 +28,11 @@ import java.util.TreeSet;
 
 
 /**
- *  Superclass for all JSPWiki managers for modules (plugins, etc).
+ *  Superclass for all JSPWiki managers for modules (plugins, etc.).
  */
 public abstract class BaseModuleManager implements ModuleManager {
 
     protected final Engine m_engine;
-
-    private final boolean m_loadIncompatibleModules = false;
 
     /**
      *  Constructs the ModuleManager.
@@ -53,19 +51,15 @@ public abstract class BaseModuleManager implements ModuleManager {
      */
     @Override
     public boolean checkCompatibility( final WikiModuleInfo info ) {
-        if( !m_loadIncompatibleModules ) {
-            final String minVersion = info.getMinVersion();
-            final String maxVersion = info.getMaxVersion();
+        final String minVersion = info.getMinVersion();
+        final String maxVersion = info.getMaxVersion();
 
-            return Release.isNewerOrEqual( minVersion ) && Release.isOlderOrEqual( maxVersion );
-        }
-
-        return true;
+        return Release.isNewerOrEqual( minVersion ) && Release.isOlderOrEqual( maxVersion );
     }
 
     protected < T extends WikiModuleInfo > Collection< WikiModuleInfo > modules( final Iterator< T > iterator ) {
         final Set< WikiModuleInfo > ls = new TreeSet<>();
-        for( ; iterator.hasNext(); ) {
+        while( iterator.hasNext() ) {
             final WikiModuleInfo wmi = iterator.next();
             ls.add( wmi );
         }
