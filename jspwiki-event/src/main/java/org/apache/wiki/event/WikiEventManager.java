@@ -365,7 +365,7 @@ public final class WikiEventManager {
          *  Constructor for an WikiEventDelegateImpl, provided with the client Object it will service, or the Class
          *  of client, the latter when used to preload a future incoming delegate.
          */
-        protected WikiEventDelegate( final Object client ) {
+        WikiEventDelegate( final Object client ) {
             if( client instanceof Class ) {
                 m_class = ( Class< ? > )client;
             }
@@ -374,7 +374,7 @@ public final class WikiEventManager {
         /**
          *  Returns the class of the client-less delegate, null if this delegate is attached to a client Object.
          */
-        protected Class< ? > getClientClass() {
+        Class< ? > getClientClass() {
             return m_class;
         }
 

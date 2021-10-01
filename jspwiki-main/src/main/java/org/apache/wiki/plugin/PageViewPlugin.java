@@ -498,7 +498,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
          * @return int The page count for the given key.
          * @param key the key for the Counter
          */
-        protected int getCount( final Object key )
+        int getCount( final Object key )
         {
             return m_counters.get( key ).getValue();
         }
@@ -529,7 +529,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
         /**
          * Save the page view counters to file.
          */
-        protected void storeCounters() {
+        void storeCounters() {
             if( m_counters != null && m_storage != null && m_dirty ) {
                 log.info( "Storing " + m_counters.size() + " counter values." );
                 synchronized( this ) {

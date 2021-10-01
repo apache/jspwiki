@@ -27,7 +27,7 @@ import java.security.Principal;
 
 /**
  * <p>Event class for security events: login/logout, wiki group adds/changes, and authorization decisions. When a WikiSecurityEvent
- * is constructed, the security logger {@link #log} is notified.</p>
+ * is constructed, the security logger {@link #LOG} is notified.</p>
  * <p>These events are logged with priority <code>ERROR</code>:</p>
  * <ul>
  *   <li>login failed - bad credential or password</li>
@@ -112,7 +112,7 @@ public final class WikiSecurityEvent extends WikiEvent {
     public static final int   PROFILE_NAME_CHANGED     = 54;
     
     /** The security logging service. */
-    protected static final Logger log = LogManager.getLogger( "SecurityLog" );
+    private static final Logger LOG = LogManager.getLogger( "SecurityLog" );
     
     private final Principal m_principal;
     
@@ -126,7 +126,7 @@ public final class WikiSecurityEvent extends WikiEvent {
     
     /**
      * Constructs a new instance of this event type, which signals a security event has occurred. The <code>source</code> parameter is
-     * required, and may not be <code>null</code>. When the WikiSecurityEvent is constructed, the security logger {@link #log} is notified.
+     * required, and may not be <code>null</code>. When the WikiSecurityEvent is constructed, the security logger {@link #LOG} is notified.
      *
      * @param src the source of the event, which can be any object: a wiki page, group or authentication/authentication/group manager.
      * @param type the type of event
@@ -140,19 +140,19 @@ public final class WikiSecurityEvent extends WikiEvent {
         }
         this.m_principal = principal;
         this.m_target = target;
-        if( log.isEnabled( Level.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) ) {
-            log.error( this );
-        } else if( log.isEnabled( Level.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) ) {
-            log.warn( this );
-        } else if( log.isEnabled( Level.INFO ) && ArrayUtils.contains( INFO_EVENTS, type ) ) {
-            log.info( this );
+        if( LOG.isEnabled( Level.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) ) {
+            LOG.error( this );
+        } else if( LOG.isEnabled( Level.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) ) {
+            LOG.warn( this );
+        } else if( LOG.isEnabled( Level.INFO ) && ArrayUtils.contains( INFO_EVENTS, type ) ) {
+            LOG.info( this );
         }
-        log.debug( this );
+        LOG.debug( this );
     }
 
     /**
      * Constructs a new instance of this event type, which signals a security event has occurred. The <code>source</code> parameter
-     * is required, and may not be <code>null</code>. When the WikiSecurityEvent is constructed, the security logger {@link #log}
+     * is required, and may not be <code>null</code>. When the WikiSecurityEvent is constructed, the security logger {@link #LOG}
      * is notified.
      *
      * @param src the source of the event, which can be any object: a wiki page, group or authentication/authentication/group manager.

@@ -454,8 +454,8 @@ public class KendraSearchProvider implements SearchProvider {
      * Updater thread that updates Kendra indexes.
      */
     private static final class KendraUpdater extends WikiBackgroundThread {
-        protected static final int INDEX_DELAY = 5;
-        protected static final int INITIAL_DELAY = 10;
+        static final int INDEX_DELAY = 5;
+        static final int INITIAL_DELAY = 10;
         private final KendraSearchProvider provider;
 
         private final int initialDelay;

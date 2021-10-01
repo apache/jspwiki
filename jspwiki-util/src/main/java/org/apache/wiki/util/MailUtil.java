@@ -197,39 +197,39 @@ public final class MailUtil {
 
     private static final String PROP_MAIL_AUTH = "mail.smtp.auth";
 
-    protected static final Logger log = LogManager.getLogger(MailUtil.class);
+    static final Logger log = LogManager.getLogger(MailUtil.class);
 
-    protected static final String DEFAULT_MAIL_JNDI_NAME       = "mail/Session";
+    static final String DEFAULT_MAIL_JNDI_NAME       = "mail/Session";
 
-    protected static final String DEFAULT_MAIL_HOST            = "localhost";
+    static final String DEFAULT_MAIL_HOST            = "localhost";
 
-    protected static final String DEFAULT_MAIL_PORT            = "25";
+    static final String DEFAULT_MAIL_PORT            = "25";
 
-    protected static final String DEFAULT_MAIL_TIMEOUT         = "5000";
+    static final String DEFAULT_MAIL_TIMEOUT         = "5000";
 
-    protected static final String DEFAULT_MAIL_CONN_TIMEOUT    = "5000";
+    static final String DEFAULT_MAIL_CONN_TIMEOUT    = "5000";
 
-    protected static final String DEFAULT_SENDER               = "jspwiki@localhost";
+    static final String DEFAULT_SENDER               = "jspwiki@localhost";
 
-    protected static final String PROP_MAIL_JNDI_NAME          = "jspwiki.mail.jndiname";
+    static final String PROP_MAIL_JNDI_NAME          = "jspwiki.mail.jndiname";
 
-    protected static final String PROP_MAIL_HOST               = "mail.smtp.host";
+    static final String PROP_MAIL_HOST               = "mail.smtp.host";
 
-    protected static final String PROP_MAIL_PORT               = "mail.smtp.port";
+    static final String PROP_MAIL_PORT               = "mail.smtp.port";
 
-    protected static final String PROP_MAIL_ACCOUNT            = "mail.smtp.account";
+    static final String PROP_MAIL_ACCOUNT            = "mail.smtp.account";
 
-    protected static final String PROP_MAIL_PASSWORD           = "mail.smtp.password";
+    static final String PROP_MAIL_PASSWORD           = "mail.smtp.password";
 
-    protected static final String PROP_MAIL_TIMEOUT            = "mail.smtp.timeout";
+    static final String PROP_MAIL_TIMEOUT            = "mail.smtp.timeout";
 
-    protected static final String PROP_MAIL_CONNECTION_TIMEOUT = "mail.smtp.connectiontimeout";
+    static final String PROP_MAIL_CONNECTION_TIMEOUT = "mail.smtp.connectiontimeout";
 
-    protected static final String PROP_MAIL_TRANSPORT          = "smtp";
+    static final String PROP_MAIL_TRANSPORT          = "smtp";
 
-    protected static final String PROP_MAIL_SENDER             = "mail.from";
+    static final String PROP_MAIL_SENDER             = "mail.from";
 
-    protected static final String PROP_MAIL_STARTTLS           = "mail.smtp.starttls.enable";
+    static final String PROP_MAIL_STARTTLS           = "mail.smtp.starttls.enable";
 
     private static String c_fromAddress;
     
@@ -303,7 +303,7 @@ public final class MailUtil {
      * @param pProperties <code>Properties</code>
      * @return <code>String</code>
      */
-    protected static String getSenderEmailAddress(final Session pSession, final Properties pProperties)
+    static String getSenderEmailAddress(final Session pSession, final Properties pProperties)
     {
         if( c_fromAddress == null )
         {
@@ -380,7 +380,7 @@ public final class MailUtil {
      * @param props the properties that contain mail session properties
      * @return the initialized JavaMail Session
      */
-    protected static Session getStandaloneMailSession(final Properties props ) {
+    static Session getStandaloneMailSession(final Properties props ) {
         // Read the JSPWiki settings from the properties
         final String host     = props.getProperty( PROP_MAIL_HOST, DEFAULT_MAIL_HOST );
         final String port     = props.getProperty( PROP_MAIL_PORT, DEFAULT_MAIL_PORT );
@@ -433,7 +433,7 @@ public final class MailUtil {
      * @return the initialized JavaMail Session
      * @throws NamingException if the Session cannot be obtained; for example, if the factory is not configured
      */
-    protected static Session getJNDIMailSession(final String jndiName ) throws NamingException
+    static Session getJNDIMailSession(final String jndiName ) throws NamingException
     {
         Session session = null;
         try

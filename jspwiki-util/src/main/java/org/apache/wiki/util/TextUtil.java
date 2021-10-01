@@ -59,7 +59,7 @@ public final class TextUtil {
      *  @param rs the string to encode
      *  @return the URL-encoded string
      */
-    protected static String urlEncode( final byte[] rs ) {
+    static String urlEncode( final byte[] rs ) {
     	final StringBuilder result = new StringBuilder( rs.length * 2 );
 
         // Does the URLEncoding.  We could use the java.net one, but it does not eat byte[]s.
@@ -102,7 +102,7 @@ public final class TextUtil {
      *
      *  @throws IllegalArgumentException If the byte array is not a valid string.
      */
-    protected static String urlDecode( final byte[] bytes, final String encoding ) throws  IllegalArgumentException {
+    static String urlDecode( final byte[] bytes, final String encoding ) throws  IllegalArgumentException {
         if( bytes == null ) {
             return null;
         }

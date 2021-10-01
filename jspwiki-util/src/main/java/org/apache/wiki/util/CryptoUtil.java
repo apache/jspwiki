@@ -172,7 +172,7 @@ public final class CryptoUtil
      * @return the Base64-encoded password hash, prepended by <code>{SSHA}</code> or <code>{SHA256}</code>.
      * @throws NoSuchAlgorithmException If your JVM does not supply the necessary algorithm. Should not happen.
      */
-    protected static String getSaltedPassword(final byte[] password, final byte[] salt, final String algorithm ) throws NoSuchAlgorithmException
+    static String getSaltedPassword(final byte[] password, final byte[] salt, final String algorithm ) throws NoSuchAlgorithmException
     {
         //The term SSHA is used as a password prefix for backwards compatibility, but we use SHA-1 when fetching an instance
         //of MessageDigest, as it is the guaranteed option. We also need to remove curly braces surrounding the string for
@@ -237,7 +237,7 @@ public final class CryptoUtil
      * @throws IllegalArgumentException if the length of the supplied digest is
      *             less than or equal to 20 bytes
      */
-    protected static byte[] extractPasswordHash(final byte[] digest, final int hashLength ) throws IllegalArgumentException
+    static byte[] extractPasswordHash(final byte[] digest, final int hashLength ) throws IllegalArgumentException
     {
         if( digest.length < hashLength )
         {
@@ -261,7 +261,7 @@ public final class CryptoUtil
      * @throws IllegalArgumentException if the length of the supplied digest is
      *             less than given length.
      */
-    protected static byte[] extractSalt(final byte[] digest, final int hashLength ) throws IllegalArgumentException
+    static byte[] extractSalt(final byte[] digest, final int hashLength ) throws IllegalArgumentException
     {
         if( digest.length <= hashLength )
         {

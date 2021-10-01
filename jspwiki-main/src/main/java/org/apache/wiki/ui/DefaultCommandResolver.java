@@ -45,7 +45,7 @@ import java.util.Properties;
  *
  * @since 2.4.22
  */
-public final class DefaultCommandResolver implements CommandResolver {
+public class DefaultCommandResolver implements CommandResolver {
 
     /** Private map with request contexts as keys, Commands as values */
     private static final Map< String, Command > CONTEXTS;
@@ -325,7 +325,7 @@ public final class DefaultCommandResolver implements CommandResolver {
      * @throws ProviderException if the underlyng page provider that locates pages
      * throws an exception
      */
-    protected boolean simplePageExists( final String page ) throws ProviderException {
+    boolean simplePageExists( final String page ) throws ProviderException {
         if ( m_specialPages.containsKey( page ) ) {
             return true;
         }

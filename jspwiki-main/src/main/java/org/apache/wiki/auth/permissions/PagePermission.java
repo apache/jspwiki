@@ -87,19 +87,19 @@ public final class PagePermission extends Permission implements Serializable
     /** Action name for the view permission. */
     public static final String         VIEW_ACTION    = "view";
 
-    protected static final int         COMMENT_MASK   = 0x4;
+    static final int         COMMENT_MASK   = 0x4;
 
-    protected static final int         DELETE_MASK    = 0x10;
+    static final int         DELETE_MASK    = 0x10;
 
-    protected static final int         EDIT_MASK      = 0x2;
+    static final int         EDIT_MASK      = 0x2;
 
-    protected static final int         MODIFY_MASK    = 0x40;
+    static final int         MODIFY_MASK    = 0x40;
 
-    protected static final int         RENAME_MASK    = 0x20;
+    static final int         RENAME_MASK    = 0x20;
 
-    protected static final int         UPLOAD_MASK    = 0x8;
+    static final int         UPLOAD_MASK    = 0x8;
 
-    protected static final int         VIEW_MASK      = 0x1;
+    static final int         VIEW_MASK      = 0x1;
 
     /** A static instance of the comment permission. */
     public static final PagePermission COMMENT        = new PagePermission( COMMENT_ACTION );
@@ -139,7 +139,7 @@ public final class PagePermission extends Permission implements Serializable
     private final String               m_wiki;
 
     /** For serialization purposes. */
-    protected PagePermission()
+    PagePermission()
     {
         this("");
     }
@@ -351,7 +351,7 @@ public final class PagePermission extends Permission implements Serializable
      * @param mask binary mask for actions
      * @return binary mask for implied actions
      */
-    protected static int impliedMask( int mask )
+    static int impliedMask( int mask )
     {
         if ( ( mask & DELETE_MASK ) > 0 )
         {
@@ -387,7 +387,7 @@ public final class PagePermission extends Permission implements Serializable
      * @return the results of the test, where <code>true</code> indicates that
      *         <code>subSet</code> is a subset of <code>superSet</code>
      */
-    protected static boolean isSubset( final String superSet, final String subSet )
+    static boolean isSubset( final String superSet, final String subSet )
     {
         // If either is null, return false
         if ( superSet == null || subSet == null )
@@ -430,7 +430,7 @@ public final class PagePermission extends Permission implements Serializable
      * @param actions the actions for this permission, separated by commas
      * @return the binary actions mask
      */
-    protected static int createMask( final String actions )
+    static int createMask( final String actions )
     {
         if ( actions == null || actions.isEmpty() )
         {

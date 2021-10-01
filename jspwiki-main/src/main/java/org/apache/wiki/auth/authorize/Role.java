@@ -49,7 +49,7 @@ public final class Role implements Principal, Serializable
     /**
      *  Create an empty Role.
      */
-    protected Role()
+    Role()
     {
         this(null);
     }

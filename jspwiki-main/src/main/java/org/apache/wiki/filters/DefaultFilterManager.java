@@ -402,7 +402,7 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
             super( name );
         }
 
-        protected static PageFilterInfo newInstance( final String className, final Element pluginEl ) {
+        static PageFilterInfo newInstance( final String className, final Element pluginEl ) {
             if( className == null || className.isEmpty() ) {
                 return null;
             }

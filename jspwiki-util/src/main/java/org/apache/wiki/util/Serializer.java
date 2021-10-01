@@ -41,7 +41,7 @@ public final class Serializer
     /**
      * Prefix used to indicated that a serialized item was encoded with Base64.
      */
-    protected static final String BASE64_PREFIX = "base64 ";
+    static final String BASE64_PREFIX = "base64 ";
 
     /**
      *  Prevent instantiation.
