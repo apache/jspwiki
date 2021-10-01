@@ -70,7 +70,7 @@ public final class WikiPrincipal implements Principal, Comparable< Principal >, 
     private final String m_type;
 
     /** For serialization purposes */
-    protected WikiPrincipal()
+    WikiPrincipal()
     {
         this(null);
     }

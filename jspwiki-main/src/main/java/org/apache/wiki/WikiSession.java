@@ -58,7 +58,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * methods for managing WikiSessions for an entire wiki. These methods allow callers to find, query and remove WikiSession objects, and
  * to obtain a list of the current wiki session users.</p>
  */
-public final class WikiSession implements Session {
+public class WikiSession implements Session {
 
     private static final Logger log = LogManager.getLogger( WikiSession.class );
 
@@ -388,7 +388,7 @@ public final class WikiSession implements Session {
      * This method should generally be called after a user's {@link org.apache.wiki.auth.user.UserProfile} is saved. If the wiki session
      * is null, or there is no matching user profile, the method returns silently.
      */
-    protected void injectGroupPrincipals() {
+    void injectGroupPrincipals() {
         // Flush the existing GroupPrincipals
         m_subject.getPrincipals().removeAll( m_subject.getPrincipals(GroupPrincipal.class) );
 
@@ -406,7 +406,7 @@ public final class WikiSession implements Session {
      * and login name. These Principals will be WikiPrincipals, and they will replace all other WikiPrincipals in the Subject. <em>Note:
      * this method is never called during anonymous or asserted sessions.</em>
      */
-    protected void injectUserProfilePrincipals() {
+    void injectUserProfilePrincipals() {
         // Search for the user profile
         final String searchId = m_loginPrincipal.getName();
         if ( searchId == null ) {

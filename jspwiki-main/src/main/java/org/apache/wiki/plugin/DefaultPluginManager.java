@@ -476,7 +476,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
          *  @param externalJars the list of external jars to search
          *  @return A WikiPluginInfo object.
          */
-        protected static WikiPluginInfo newInstance( final String className, final Element el, final List<String> searchPath, final List<String> externalJars ) {
+        static WikiPluginInfo newInstance( final String className, final Element el, final List<String> searchPath, final List<String> externalJars ) {
             if( className == null || className.isEmpty() ) {
                 return null;
             }
@@ -494,7 +494,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
          *  @param searchPath A List of Strings, containing different package names.
          *  @param externalJars the list of external jars to search
          */
-        protected void initializePlugin( final WikiPluginInfo info, final Engine engine , final List<String> searchPath, final List<String> externalJars) {
+        void initializePlugin( final WikiPluginInfo info, final Engine engine , final List<String> searchPath, final List<String> externalJars) {
             if( !m_initialized ) {
                 // This makes sure we only try once per class, even if init fails.
                 m_initialized = true;
@@ -533,7 +533,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
          *  @param clazz The class to check
          *  @return A WikiPluginInfo instance
          */
-        protected static WikiPluginInfo newInstance( final Class< ? > clazz ) {
+        static WikiPluginInfo newInstance( final Class< ? > clazz ) {
         	return new WikiPluginInfo( clazz.getName() );
         }
 

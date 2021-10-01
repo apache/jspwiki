@@ -57,15 +57,15 @@ public final class WikiPermission extends Permission implements Serializable
     /** Value for a generic wildcard. */
     public static final String         WILDCARD                = "*";
 
-    protected static final int         CREATE_GROUPS_MASK      = 0x1;
+    static final int         CREATE_GROUPS_MASK      = 0x1;
 
-    protected static final int         CREATE_PAGES_MASK       = 0x2;
+    static final int         CREATE_PAGES_MASK       = 0x2;
 
-    protected static final int         EDIT_PREFERENCES_MASK   = 0x4;
+    static final int         EDIT_PREFERENCES_MASK   = 0x4;
 
-    protected static final int         EDIT_PROFILE_MASK       = 0x8;
+    static final int         EDIT_PROFILE_MASK       = 0x8;
 
-    protected static final int         LOGIN_MASK              = 0x10;
+    static final int         LOGIN_MASK              = 0x10;
 
     /** A static instance of the createGroups permission. */
     public static final WikiPermission CREATE_GROUPS           = new WikiPermission( WILDCARD, CREATE_GROUPS_ACTION );
@@ -215,7 +215,7 @@ public final class WikiPermission extends Permission implements Serializable
      * @param mask the initial mask
      * @return the implied mask
      */
-    protected static int impliedMask( int mask )
+    static int impliedMask( int mask )
     {
         if ( ( mask & CREATE_GROUPS_MASK ) > 0 )
         {
@@ -230,7 +230,7 @@ public final class WikiPermission extends Permission implements Serializable
      * @param actions the permission actions, separated by commas
      * @return binary mask representing the permissions
      */
-    protected static int createMask(final String actions )
+    static int createMask(final String actions )
     {
         if ( actions == null || actions.isEmpty() )
         {

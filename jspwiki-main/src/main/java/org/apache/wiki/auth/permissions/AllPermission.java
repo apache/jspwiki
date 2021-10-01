@@ -37,7 +37,7 @@ public final class AllPermission extends Permission implements Serializable {
     private final String m_wiki;
 
     /** For serialization purposes. */
-    protected AllPermission() {
+    AllPermission() {
         this( null );
     }
 

@@ -94,11 +94,11 @@ public final class GroupPermission extends Permission implements Serializable
     /** Action for viewing a group or collection of groups. */
     public static final String          VIEW_ACTION      = "view";
 
-    protected static final int          DELETE_MASK      = 0x4;
+    static final int          DELETE_MASK      = 0x4;
 
-    protected static final int          EDIT_MASK        = 0x2;
+    static final int          EDIT_MASK        = 0x2;
 
-    protected static final int          VIEW_MASK        = 0x1;
+    static final int          VIEW_MASK        = 0x1;
 
     /** Convenience constant that denotes <code>GroupPermission( "*:*, "delete" )</code>. */
     public static final GroupPermission DELETE           = new GroupPermission( DELETE_ACTION );
@@ -124,7 +124,7 @@ public final class GroupPermission extends Permission implements Serializable
     private final String                m_wiki;
 
     /** For serialization purposes */
-    protected GroupPermission()
+    GroupPermission()
     {
         this("");
     }
@@ -327,7 +327,7 @@ public final class GroupPermission extends Permission implements Serializable
      * @param mask binary mask for actions
      * @return binary mask for implied actions
      */
-    protected static int impliedMask( int mask )
+    static int impliedMask( int mask )
     {
         if ( ( mask & DELETE_MASK ) > 0 )
         {
@@ -346,7 +346,7 @@ public final class GroupPermission extends Permission implements Serializable
      * @param actions the actions for this permission, separated by commas
      * @return the binary actions mask
      */
-    protected static int createMask( final String actions )
+    static int createMask( final String actions )
     {
         if ( actions == null || actions.isEmpty() )
         {
@@ -464,7 +464,7 @@ public final class GroupPermission extends Permission implements Serializable
      *         GroupPrincipal matching the implied GroupPermission&#8217;s group;
      *         <code>false</code> otherwise
      */
-    protected boolean impliesMember(final Permission permission )
+    boolean impliesMember(final Permission permission )
     {
         if ( !( permission instanceof GroupPermission ) )
         {

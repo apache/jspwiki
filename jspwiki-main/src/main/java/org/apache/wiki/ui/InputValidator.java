@@ -48,9 +48,9 @@ public final class InputValidator {
      * Used when checking against IDs such as a full name when saving groups.
      * @since 2.4.82
      */
-    protected static final Pattern ID_PATTERN     = Pattern.compile( "[\\x00\\r\\n\\x0f\"'<>;&\\xff{}]" );
-    protected static final Pattern EMAIL_PATTERN  = Pattern.compile( "^[0-9a-zA-Z-_\\.\\+]+@([0-9a-zA-Z-_]+\\.)+[a-zA-Z]+$" );
-    protected static final Pattern UNSAFE_PATTERN = Pattern.compile( "[\\x00\\r\\n\\x0f\"':<>\\[\\];#&@\\xff{}\\$%\\\\]" );
+    static final Pattern ID_PATTERN     = Pattern.compile( "[\\x00\\r\\n\\x0f\"'<>;&\\xff{}]" );
+    static final Pattern EMAIL_PATTERN  = Pattern.compile( "^[0-9a-zA-Z-_\\.\\+]+@([0-9a-zA-Z-_]+\\.)+[a-zA-Z]+$" );
+    static final Pattern UNSAFE_PATTERN = Pattern.compile( "[\\x00\\r\\n\\x0f\"':<>\\[\\];#&@\\xff{}\\$%\\\\]" );
 
     private final String m_form;
     private final Session m_session;
