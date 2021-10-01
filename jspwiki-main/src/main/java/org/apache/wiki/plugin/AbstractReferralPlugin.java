@@ -371,7 +371,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
             output.append( m_before );
 
             // Make a Wiki markup link. See TranslatorReader.
-            output.append( "[" + m_engine.getManager( RenderingManager.class ).beautifyTitle(value) + "|" + value + "]" );
+            output.append( "[" ).append( m_engine.getManager( RenderingManager.class ).beautifyTitle( value ) ).append( "|" ).append( value ).append( "]" );
             count++;
         }
 

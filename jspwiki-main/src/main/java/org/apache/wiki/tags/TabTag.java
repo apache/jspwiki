@@ -133,7 +133,7 @@ public class TabTag extends WikiTagBase
 
         final StringBuilder sb = new StringBuilder(32);
 
-        sb.append( "<div id=\""+ getId() + "\"" );
+        sb.append( "<div id=\"" ).append( getId() ).append( "\"" );
 
         if( !parent.validateDefaultTab( getId()) )
         {
@@ -180,16 +180,16 @@ public class TabTag extends WikiTagBase
                 sb.append( " class=\"activetab\"" );
             }
 
-            sb.append( " id=\"menu-" + getId() + "\"" );
+            sb.append( " id=\"menu-" ).append( getId() ).append( "\"" );
 
             if( m_url != null )
             {
-                sb.append( " href='"+m_url+"'" );
+                sb.append( " href='" ).append( m_url ).append( "'" );
             }
 
             if( handleAccesskey() )
             {
-                sb.append( " accesskey=\"" + m_accesskey + "\"" );
+                sb.append( " accesskey=\"" ).append( m_accesskey ).append( "\"" );
             }
 
             sb.append( " >" );

@@ -113,12 +113,12 @@ public final class FileUtil {
             String line;
 
             while( (line = stdout.readLine()) != null ) {
-                result.append( line+"\n");
+                result.append( line ).append( "\n" );
             }
 
             final StringBuilder error = new StringBuilder();
             while( (line = stderr.readLine()) != null ) {
-                error.append( line+"\n");
+                error.append( line ).append( "\n" );
             }
 
             if( error.length() > 0 ) {
@@ -269,7 +269,7 @@ public final class FileUtil {
             sb.append( trace[0].isNativeMethod() ? "native method" : "" );
             sb.append( trace[0].getClassName() );
             sb.append(".");
-            sb.append(trace[0].getMethodName()+"(), line "+trace[0].getLineNumber());
+            sb.append( trace[0].getMethodName() ).append( "(), line " ).append( trace[0].getLineNumber() );
         }
         return sb.toString();
     }

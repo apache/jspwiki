@@ -121,25 +121,25 @@ public class TableOfContents implements Plugin, HeadingListener {
 
         final String sectref = "#section-"+pageName+"-"+titleSection;
 
-        m_buf.append( "<a class=\"wikipage\" href=\"" + sectref + "\">" );
+        m_buf.append( "<a class=\"wikipage\" href=\"" ).append( sectref ).append( "\">" );
         if (m_usingNumberedList)
         {
             switch( hd.m_level )
             {
             case Heading.HEADING_SMALL:
-                m_buf.append(m_prefix + m_level1Index + "." + m_level2Index + "."+ m_level3Index +" ");
+                m_buf.append( m_prefix ).append( m_level1Index ).append( "." ).append( m_level2Index ).append( "." ).append( m_level3Index ).append( " " );
                 break;
             case Heading.HEADING_MEDIUM:
-                m_buf.append(m_prefix + m_level1Index + "." + m_level2Index + " ");
+                m_buf.append( m_prefix ).append( m_level1Index ).append( "." ).append( m_level2Index ).append( " " );
                 break;
             case Heading.HEADING_LARGE:
-                m_buf.append(m_prefix + m_level1Index +" ");
+                m_buf.append( m_prefix ).append( m_level1Index ).append( " " );
                 break;
             default:
                 throw new InternalWikiException("Unknown depth in toc! (Please submit a bug report.)");
             }
         }
-        m_buf.append( TextUtil.replaceEntities(hd.m_titleText)+"</a></li>\n" );
+        m_buf.append( TextUtil.replaceEntities( hd.m_titleText ) ).append( "</a></li>\n" );
 
         m_lastLevel = hd.m_level;
     }

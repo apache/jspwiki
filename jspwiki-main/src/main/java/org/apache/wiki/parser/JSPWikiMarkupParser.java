@@ -2273,7 +2273,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             final char c = s.charAt(i);
 
             if( Verifier.isXMLCharacter( c ) ) sb.append( c );
-            else sb.append( "0x"+Integer.toString(c,16).toUpperCase() );
+            else sb.append( "0x" ).append( Integer.toString( c, 16 ).toUpperCase() );
         }
 
         return sb.toString();

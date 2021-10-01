@@ -136,32 +136,32 @@ public class Image implements Plugin {
         result.append( "<table border=\"0\" class=\"imageplugin\"" );
 
         if( title != null ) {
-            result.append( " title=\"" + title + "\"" );
+            result.append( " title=\"" ).append( title ).append( "\"" );
         }
 
         if( align != null ) {
             if( align.equals( "center" ) ) {
                 result.append( " style=\"margin-left: auto; margin-right: auto; text-align:center; vertical-align:middle;\"" );
             } else {
-                result.append( " style=\"float:" + align + ";\"" );
+                result.append( " style=\"float:" ).append( align ).append( ";\"" );
             }
         }
 
         result.append( ">\n" );
 
         if( caption != null ) {
-            result.append( "<caption>" + caption + "</caption>\n" );
+            result.append( "<caption>" ).append( caption ).append( "</caption>\n" );
         }
 
         // move css class and style to the container of the image, so it doesn't affect the caption
         result.append( "<tr><td" );
 
         if( cssclass != null ) {
-            result.append(" class=\""+cssclass+"\"");
+            result.append( " class=\"" ).append( cssclass ).append( "\"" );
         }
 
         if( style != null ) {
-            result.append(" style=\""+style);
+            result.append( " style=\"" ).append( style );
 
             // Make sure that we add a ";" to the end of the style string
             if( result.charAt( result.length()-1 ) != ';' ) result.append(";");
@@ -172,26 +172,26 @@ public class Image implements Plugin {
         result.append( ">" );
 
         if( link != null ) {
-            result.append("<a href=\""+link+"\"");
+            result.append( "<a href=\"" ).append( link ).append( "\"" );
             if( target != null ) {
-                result.append(" target=\""+target+"\"");
+                result.append( " target=\"" ).append( target ).append( "\"" );
             }
             result.append(">");
         }
 
-        result.append( "<img src=\""+src+"\"" );
+        result.append( "<img src=\"" ).append( src ).append( "\"" );
 
         if( ht != null ) {
-            result.append(" height=\""+ht+"\"");
+            result.append( " height=\"" ).append( ht ).append( "\"" );
         }
         if( wt != null ) {
-            result.append(" width=\""+wt+"\"");
+            result.append( " width=\"" ).append( wt ).append( "\"" );
         }
         if( alt != null ) {
-            result.append(" alt=\""+alt+"\"");
+            result.append( " alt=\"" ).append( alt ).append( "\"" );
         }
         if( border != null ) {
-            result.append(" border=\""+border+"\"");
+            result.append( " border=\"" ).append( border ).append( "\"" );
         }
         // if( map != null )    result.append(" map=\""+map+"\"");
 

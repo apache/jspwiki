@@ -73,20 +73,20 @@ public abstract class SimpleAdminBean extends SimpleMBean implements AdminBean {
         for( int i = 0; i < attributes.length; i++ ) {
             sb.append( "<div class='block'>\n" );
 
-            sb.append( "<label>" + StringUtils.capitalize( attributes[ i ].getName() ) + "</label>\n" );
+            sb.append( "<label>" ).append( StringUtils.capitalize( attributes[i].getName() ) ).append( "</label>\n" );
 
             try {
                 final Object value = getAttribute( attributes[ i ].getName() );
                 if( attributes[ i ].isWritable() ) {
-                    sb.append( "<input type='text' name='question' size='30' value='" + value + "' />\n" );
+                    sb.append( "<input type='text' name='question' size='30' value='" ).append( value ).append( "' />\n" );
                 } else {
-                    sb.append( "<input type='text' class='readonly' readonly='true' size='30' value='" + value + "' />\n" );
+                    sb.append( "<input type='text' class='readonly' readonly='true' size='30' value='" ).append( value ).append( "' />\n" );
                 }
             } catch( final Exception e ) {
-                sb.append( "Exception: " + e.getMessage() );
+                sb.append( "Exception: " ).append( e.getMessage() );
             }
 
-            sb.append( "<div class='description'>" + attributes[ i ].getDescription() + "</div>\n" );
+            sb.append( "<div class='description'>" ).append( attributes[i].getDescription() ).append( "</div>\n" );
 
             sb.append( "</div>\n" );
         }

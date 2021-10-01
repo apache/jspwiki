@@ -49,21 +49,19 @@ public class ListLocksPlugin implements Plugin {
         final ResourceBundle rb = Preferences.getBundle( context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
         result.append("<table class=\"wikitable\">\n");
         result.append("<tr>\n");
-        result.append( "<th>" + rb.getString( "plugin.listlocks.page" ) + "</th><th>" + rb.getString( "plugin.listlocks.locked.by" )
-                       + "</th><th>" + rb.getString( "plugin.listlocks.acquired" ) + "</th><th>"
-                       + rb.getString( "plugin.listlocks.expires" ) + "</th>\n" );
+        result.append( "<th>" ).append( rb.getString( "plugin.listlocks.page" ) ).append( "</th><th>" ).append( rb.getString( "plugin.listlocks.locked.by" ) ).append( "</th><th>" ).append( rb.getString( "plugin.listlocks.acquired" ) ).append( "</th><th>" ).append( rb.getString( "plugin.listlocks.expires" ) ).append( "</th>\n" );
         result.append("</tr>");
 
         if( locks.size() == 0 ) {
-            result.append( "<tr><td colspan=\"4\" class=\"odd\">" + rb.getString( "plugin.listlocks.no.locks.exist" ) + "</td></tr>\n" );
+            result.append( "<tr><td colspan=\"4\" class=\"odd\">" ).append( rb.getString( "plugin.listlocks.no.locks.exist" ) ).append( "</td></tr>\n" );
         } else {
             int rowNum = 1;
             for( final PageLock lock : locks ) {
                 result.append( rowNum % 2 != 0 ? "<tr class=\"odd\">" : "<tr>" );
-                result.append( "<td>" + lock.getPage() + "</td>" );
-                result.append( "<td>" + lock.getLocker() + "</td>" );
-                result.append( "<td>" + Preferences.renderDate( context, lock.getAcquisitionTime(), Preferences.TimeFormat.DATETIME ) + "</td>" );
-                result.append( "<td>" + Preferences.renderDate( context, lock.getExpiryTime(), Preferences.TimeFormat.DATETIME ) + "</td>" );
+                result.append( "<td>" ).append( lock.getPage() ).append( "</td>" );
+                result.append( "<td>" ).append( lock.getLocker() ).append( "</td>" );
+                result.append( "<td>" ).append( Preferences.renderDate( context, lock.getAcquisitionTime(), Preferences.TimeFormat.DATETIME ) ).append( "</td>" );
+                result.append( "<td>" ).append( Preferences.renderDate( context, lock.getExpiryTime(), Preferences.TimeFormat.DATETIME ) ).append( "</td>" );
                 result.append( "</tr>\n" );
                 rowNum++;
             }
