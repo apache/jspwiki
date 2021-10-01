@@ -847,7 +847,7 @@ public class SpamFilter extends BasePageFilter {
 
         //  And author as well
         if( page.getAuthor() != null ) {
-            change.append( "\r\n" + page.getAuthor() );
+            change.append( "\r\n" ).append( page.getAuthor() );
         }
 
         ch.m_change = change.toString();

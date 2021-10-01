@@ -145,9 +145,12 @@ public class ReferredPagesPlugin implements Plugin {
                              ( m_formatSort ? " sort" : "" ) + "]";
 
         m_result.append( "<div class=\"ReferredPagesPlugin\">\n" );
-        m_result.append( "<a class=\"wikipage\" href=\""+ href +
-                         "\" title=\"" + TextUtil.replaceEntities( title ) +
-                         "\">" + TextUtil.replaceEntities( rootname ) + "</a>\n" );
+        m_result.append( "<a class=\"wikipage\" href=\"" )
+                .append( href ).append( "\" title=\"" )
+                .append( TextUtil.replaceEntities( title ) )
+                .append( "\">" )
+                .append( TextUtil.replaceEntities( rootname ) )
+                .append( "</a>\n" );
         m_exists.add( rootname );
 
         // pre compile all needed patterns
@@ -235,7 +238,7 @@ public class ReferredPagesPlugin implements Plugin {
                     }
 
                     //See https://www.w3.org/wiki/HTML_lists  for proper nesting of UL and LI
-                    m_result.append( "<li> " + TextUtil.replaceEntities(link) + "\n" );
+                    m_result.append( "<li> " ).append( TextUtil.replaceEntities( link ) ).append( "\n" );
                     getReferredPages( context, link, depth );  // added recursive call - on general request
                     m_result.append( "\n</li>\n" );
                 }
@@ -246,7 +249,7 @@ public class ReferredPagesPlugin implements Plugin {
                 }
 
                 final String href = context.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link );
-                m_result.append( "<li><a class=\"wikipage\" href=\"" + href + "\">" + TextUtil.replaceEntities(link) + "</a>\n" );
+                m_result.append( "<li><a class=\"wikipage\" href=\"" ).append( href ).append( "\">" ).append( TextUtil.replaceEntities( link ) ).append( "</a>\n" );
                 m_exists.add( link );
                 getReferredPages( context, link, depth );
                 m_result.append( "\n</li>\n" );

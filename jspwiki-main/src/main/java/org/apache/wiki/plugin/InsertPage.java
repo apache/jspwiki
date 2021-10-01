@@ -182,8 +182,8 @@ public class InsertPage implements Plugin {
 
                 res.append("<div class=\"inserted-page ");
                 if( clazz != null ) res.append( clazz );
-                if( !style.equals(DEFAULT_STYLE) ) res.append("\" style=\""+style );
-                if( showOnce ) res.append("\" data-once=\""+cookieName );
+                if( !style.equals(DEFAULT_STYLE) ) res.append( "\" style=\"" ).append( style );
+                if( showOnce ) res.append( "\" data-once=\"" ).append( cookieName );
                 res.append("\" >");
 
                 res.append( engine.getManager( RenderingManager.class ).textToHTML( includedContext, pageData ) );
@@ -200,8 +200,8 @@ public class InsertPage implements Plugin {
                 if( defaultstr != null ) {
                     res.append( defaultstr );
                 } else {
-                    res.append( "There is no page called '" + includedPage + "'.  Would you like to " );
-                    res.append( "<a href=\"" + context.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), includedPage ) + "\">create it?</a>" );
+                    res.append( "There is no page called '" ).append( includedPage ).append( "'.  Would you like to " );
+                    res.append( "<a href=\"" ).append( context.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), includedPage ) ).append( "\">create it?</a>" );
                 }
             }
         } else {

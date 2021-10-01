@@ -217,14 +217,12 @@ public final class SecurityVerifier {
         // Write the table header
         s.append( "<table class=\"wikitable\" border=\"1\">\n" );
         s.append( "  <colgroup span=\"1\" width=\"33%\"/>\n" );
-        s.append( "  <colgroup span=\"" + pageActionsLength * rolesLength + "\" width=\"" + colWidth
-                + "\" align=\"center\"/>\n" );
+        s.append( "  <colgroup span=\"" ).append( pageActionsLength * rolesLength ).append( "\" width=\"" ).append( colWidth ).append( "\" align=\"center\"/>\n" );
         s.append( "  <tr>\n" );
         s.append( "    <th rowspan=\"2\" valign=\"bottom\">Permission</th>\n" );
         for( int i = 0; i < rolesLength; i++ )
         {
-            s.append( "    <th colspan=\"" + pageActionsLength + "\" title=\"" + roles[i].getClass().getName() + "\">"
-                    + roles[i].getName() + "</th>\n" );
+            s.append( "    <th colspan=\"" ).append( pageActionsLength ).append( "\" title=\"" ).append( roles[i].getClass().getName() ).append( "\">" ).append( roles[i].getName() ).append( "</th>\n" );
         }
         s.append( "  </tr>\n" );
 
@@ -235,7 +233,7 @@ public final class SecurityVerifier {
             for( final String pageAction : pageActions )
             {
                 final String action = pageAction.substring( 0, 1 );
-                s.append( "    <th title=\"" + pageAction + "\">" + action + "</th>\n" );
+                s.append( "    <th title=\"" ).append( pageAction ).append( "\">" ).append( action ).append( "</th>\n" );
             }
         }
         s.append( "  </tr>\n" );
@@ -243,7 +241,7 @@ public final class SecurityVerifier {
         // Write page permission tests first
         for( final String page : pages ) {
             s.append( "  <tr>\n" );
-            s.append( "    <td>PagePermission \"" + wiki + ":" + page + "\"</td>\n" );
+            s.append( "    <td>PagePermission \"" ).append( wiki ).append( ":" ).append( page ).append( "\"</td>\n" );
             for( final Principal role : roles ) {
                 for( final String pageAction : pageActions ) {
                     final Permission permission = PermissionFactory.getPagePermission( wiki + ":" + page, pageAction );
@@ -256,7 +254,7 @@ public final class SecurityVerifier {
         // Now do the group tests
         for( final String group : groups ) {
             s.append( "  <tr>\n" );
-            s.append( "    <td>GroupPermission \"" + wiki + ":" + group + "\"</td>\n" );
+            s.append( "    <td>GroupPermission \"" ).append( wiki ).append( ":" ).append( group ).append( "\"</td>\n" );
             for( final Principal role : roles ) {
                 for( final String groupAction : groupActions ) {
                     Permission permission = null;
@@ -274,7 +272,7 @@ public final class SecurityVerifier {
         final String[] wikiPerms = new String[] { "createGroups", "createPages", "login", "editPreferences", "editProfile" };
         for( final String wikiPerm : wikiPerms ) {
             s.append( "  <tr>\n" );
-            s.append( "    <td>WikiPermission \"" + wiki + "\",\"" + wikiPerm + "\"</td>\n" );
+            s.append( "    <td>WikiPermission \"" ).append( wiki ).append( "\",\"" ).append( wikiPerm ).append( "\"</td>\n" );
             for( final Principal role : roles ) {
                 final Permission permission = new WikiPermission( wiki, wikiPerm );
                 s.append( printPermissionTest( permission, role, pageActionsLength ) );
@@ -284,7 +282,7 @@ public final class SecurityVerifier {
 
         // Lastly, check for AllPermission
         s.append( "  <tr>\n" );
-        s.append( "    <td>AllPermission \"" + wiki + "\"</td>\n" );
+        s.append( "    <td>AllPermission \"" ).append( wiki ).append( "\"</td>\n" );
         for( final Principal role : roles )
         {
             final Permission permission = new AllPermission( wiki );
@@ -306,11 +304,11 @@ public final class SecurityVerifier {
     private String printPermissionTest( final Permission permission, final Principal principal, final int cols ) {
     	final StringBuilder s = new StringBuilder();
         if( permission == null ) {
-            s.append( "    <td colspan=\"" + cols + "\" align=\"center\" title=\"N/A\">" );
+            s.append( "    <td colspan=\"" ).append( cols ).append( "\" align=\"center\" title=\"N/A\">" );
             s.append( "&nbsp;</td>\n" );
         } else {
             final boolean allowed = verifyStaticPermission( principal, permission );
-            s.append( "    <td colspan=\"" + cols + "\" align=\"center\" title=\"" );
+            s.append( "    <td colspan=\"" ).append( cols ).append( "\" align=\"center\" title=\"" );
             s.append( allowed ? "ALLOW: " : "DENY: " );
             s.append( permission.getClass().getName() );
             s.append( " &quot;" );
@@ -361,12 +359,12 @@ public final class SecurityVerifier {
         s.append( "  <tr>\n" );
         s.append( "    <th rowspan=\"2\">Action</th>\n" );
         s.append( "    <th rowspan=\"2\">Page</th>\n" );
-        s.append( "    <th colspan=\"" + roles.length + 1 + "\">Roles</th>\n" );
+        s.append( "    <th colspan=\"" ).append( roles.length ).append( 1 ).append( "\">Roles</th>\n" );
         s.append( "  </tr>\n" );
         s.append( "  <tr>\n" );
         s.append( "    <th>Anonymous</th>\n" );
         for( final Principal role : roles ) {
-            s.append( "    <th>" + role.getName() + "</th>\n" );
+            s.append( "    <th>" ).append( role.getName() ).append( "</th>\n" );
         }
         s.append( "</tr>\n" );
         s.append( "</thead>\n" );
@@ -380,8 +378,8 @@ public final class SecurityVerifier {
             // Print whether the page is constrained for each role
             final boolean allowsAnonymous = !wca.isConstrained( jsp, Role.ALL );
             s.append( "  <tr>\n" );
-            s.append( "    <td>" + action + "</td>\n" );
-            s.append( "    <td>" + jsp + "</td>\n" );
+            s.append( "    <td>" ).append( action ).append( "</td>\n" );
+            s.append( "    <td>" ).append( jsp ).append( "</td>\n" );
             s.append( "    <td title=\"" );
             s.append( allowsAnonymous ? "ALLOW: " : "DENY: " );
             s.append( jsp );

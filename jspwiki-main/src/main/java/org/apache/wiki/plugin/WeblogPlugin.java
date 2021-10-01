@@ -327,7 +327,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
             }
             buffer.append(html.substring(0, cutoff));
             if (hasBeenCutOff) {
-                buffer.append(" <a href=\""+entryCtx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), entry.getName())+"\">"+rb.getString("weblogentryplugin.more")+"</a>\n");
+                buffer.append( " <a href=\"" ).append( entryCtx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), entry.getName() ) ).append( "\">" ).append( rb.getString( "weblogentryplugin.more" ) ).append( "</a>\n" );
             }
         } else {
             buffer.append(html);
@@ -350,7 +350,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
         }
 
         buffer.append( MessageFormat.format( rb.getString( "weblogentryplugin.postedby" ), author ) );
-        buffer.append( "<a href=\"" + entryCtx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), entry.getName() ) + "\">" + rb.getString("weblogentryplugin.permalink") + "</a>" );
+        buffer.append( "<a href=\"" ).append( entryCtx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), entry.getName() ) ).append( "\">" ).append( rb.getString( "weblogentryplugin.permalink" ) ).append( "</a>" );
         final String commentPageName = TextUtil.replaceString( entry.getName(), "blogentry", "comments" );
 
         if( hasComments ) {
@@ -363,10 +363,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
 
             final String addcomment = rb.getString("weblogentryplugin.addcomment");
 
-            buffer.append( "<a href=\""+
-                           entryCtx.getURL( ContextEnum.PAGE_COMMENT.getRequestContext(), commentPageName, "nc=" + numComments ) + "\">" +
-                           MessageFormat.format( addcomment, numComments ) +
-                           "</a>" );
+            buffer.append( "<a href=\"" ).append( entryCtx.getURL( ContextEnum.PAGE_COMMENT.getRequestContext(), commentPageName, "nc=" + numComments ) ).append( "\">" ).append( MessageFormat.format( addcomment, numComments ) ).append( "</a>" );
         }
 
         buffer.append("</div>\n");

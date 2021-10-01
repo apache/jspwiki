@@ -137,7 +137,7 @@ public class SetPaginationTag
 
         pagination.append( "<div class='pagination'>");
 
-        pagination.append( LocaleSupport.getLocalizedMessage(pageContext, m_fmtkey )+ " " );
+        pagination.append( LocaleSupport.getLocalizedMessage( pageContext, m_fmtkey ) ).append( " " );
 
         int cursor = 0;
         int cursormax = m_total;

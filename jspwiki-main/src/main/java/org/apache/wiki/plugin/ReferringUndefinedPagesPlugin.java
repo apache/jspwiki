@@ -84,7 +84,7 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
             final Object[] args = { "" + ( result.size() - items ) };
             extras = MessageFormat.format( extras, args );
 
-            resultHTML.append( "<br/>" + extras + "<br/>" );
+            resultHTML.append( "<br/>" ).append( extras ).append( "<br/>" );
         }
         return resultHTML.toString();
     }
