@@ -234,7 +234,7 @@ public class DefaultPageRenamer implements PageRenamer {
         
         while( matcher.find( start ) ) {
             final String match = matcher.group();
-            sb.append( sourceText.substring( start, matcher.start() ) );
+            sb.append( sourceText, start, matcher.start() );
             final int lastOpenBrace = sourceText.lastIndexOf( '[', matcher.start() );
             final int lastCloseBrace = sourceText.lastIndexOf( ']', matcher.start() );
             
@@ -270,7 +270,7 @@ public class DefaultPageRenamer implements PageRenamer {
             
             if( !matcher.group(1).isEmpty() || charBefore == '~' || charBefore == '[' ) {
                 //  Found an escape character, so I am escaping.
-                sb.append( sourceText.substring( start, matcher.end() ) );
+                sb.append( sourceText, start, matcher.end() );
                 start = matcher.end();
                 continue;
             }
@@ -291,7 +291,7 @@ public class DefaultPageRenamer implements PageRenamer {
             //
             //  Construct the new string
             //
-            sb.append( sourceText.substring( start, matcher.start() ) );
+            sb.append( sourceText, start, matcher.start() );
             sb.append( "[" ).append( text );
             if( !link.isEmpty() ) {
                 sb.append( "|" ).append( link );
