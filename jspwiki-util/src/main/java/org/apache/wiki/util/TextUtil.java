@@ -241,7 +241,7 @@ public final class TextUtil {
         int last = 0;
 
         while ( ( start = orig.indexOf( src,end ) ) != -1 ) {
-            res.append( orig.substring( last, start ) );
+            res.append( orig, last, start );
             res.append( dest );
             end  = start + src.length();
             last = start + src.length();
@@ -291,7 +291,7 @@ public final class TextUtil {
         final String origCaseUnsn = orig.toLowerCase();
         final String srcCaseUnsn = src.toLowerCase();
         while( ( start = origCaseUnsn.indexOf( srcCaseUnsn, end ) ) != -1 ) {
-            res.append( orig.substring( last, start ) );
+            res.append( orig, last, start );
             res.append( dest );
             end  = start + src.length();
             last = start + src.length();
@@ -829,7 +829,7 @@ public final class TextUtil {
         final StringBuilder pw = new StringBuilder();
         for( int i = 0; i < PASSWORD_LENGTH; i++ ) {
             final int index = ( int )( RANDOM.nextDouble() * PWD_BASE.length() );
-            pw.append(PWD_BASE.substring(index, index + 1));
+            pw.append(PWD_BASE.charAt( index ));
         }
         return pw.toString();
     }

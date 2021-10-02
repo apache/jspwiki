@@ -325,7 +325,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
                 }
                 cutoff++;
             }
-            buffer.append(html.substring(0, cutoff));
+            buffer.append( html, 0, cutoff );
             if (hasBeenCutOff) {
                 buffer.append(" <a href=\""+entryCtx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), entry.getName())+"\">"+rb.getString("weblogentryplugin.more")+"</a>\n");
             }

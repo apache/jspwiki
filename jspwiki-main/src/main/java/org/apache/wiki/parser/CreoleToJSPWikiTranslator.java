@@ -290,7 +290,7 @@ public class CreoleToJSPWikiTranslator
                    && (actSourceSymbol.equals("") || line.substring(0, 1).equals(actSourceSymbol)))
             {
                 actSourceSymbol = line.substring(0, 1);
-                line = line.substring(1, line.length());
+                line = line.substring( 1 );
                 counter++;
             }
             if ((inList == -1 && counter != 1) || (inList != -1 && inList + 1 < counter))
@@ -358,7 +358,7 @@ public class CreoleToJSPWikiTranslator
             final String protectedMarkup = c_protectionMap.get(hash);
             content = content.replace(hash, protectedMarkup);
             if ((protectedMarkup.length() < 3 || (protectedMarkup.length() > 2 &&
-                !protectedMarkup.substring(0, 3).equals("{{{")))&&replacePlugins)
+                !protectedMarkup.startsWith("{{{")))&&replacePlugins)
                 content = translateElement(content, CREOLE_PLUGIN, JSPWIKI_PLUGIN);
 
         }
@@ -475,7 +475,7 @@ public class CreoleToJSPWikiTranslator
 
             final int pos = contentCopy.indexOf(temp);
             contentCopy = contentCopy.substring(0, pos) + protectedMarkup
-                          + contentCopy.substring(pos + temp.length(), contentCopy.length());
+                          + contentCopy.substring(pos + temp.length());
         }
         return contentCopy;
     }
@@ -492,7 +492,7 @@ public class CreoleToJSPWikiTranslator
             protectedMarkup = protectedMarkup.replaceAll(replaceSource, replaceTarget);
             final int pos = contentCopy.indexOf(temp);
             contentCopy = contentCopy.substring(0, pos) + protectedMarkup
-                          + contentCopy.substring(pos + temp.length(), contentCopy.length());
+                          + contentCopy.substring(pos + temp.length() );
         }
         return contentCopy;
     }

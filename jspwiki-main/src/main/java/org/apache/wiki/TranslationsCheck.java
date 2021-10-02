@@ -126,7 +126,7 @@ public class TranslationsCheck {
                 System.out.println( iter.next() );
             }
         }
-        System.out.println( "" );
+        System.out.println( );
         return metrics;
     }
 
@@ -157,7 +157,7 @@ public class TranslationsCheck {
             }
         }
         if( missing > 0 ) {
-            System.out.println( "" );
+            System.out.println();
         }
 
         iter = sortedNames( p2 ).iterator();
@@ -175,7 +175,7 @@ public class TranslationsCheck {
             }
         }
         if( outdated > 0 ) {
-            System.out.println( "" );
+            System.out.println();
         }
 
         final Map< String, Integer > diff = new HashMap<>( 2 );

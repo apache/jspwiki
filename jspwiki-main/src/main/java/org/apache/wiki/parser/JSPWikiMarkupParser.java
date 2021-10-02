@@ -1602,7 +1602,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                  {
                      // Substitute all but the last character (keep the expressed bullet preference)
                      strBullets  = (numBullets > 1 ? m_genlistBulletBuffer.substring(0, numBullets-1) : "")
-                                   + strBullets.substring(numBullets-1, numBullets);
+                                   + strBullets.charAt( numBullets-1 );
                  }
                  else
                  {
