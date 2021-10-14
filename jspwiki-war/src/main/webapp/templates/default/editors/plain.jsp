@@ -104,11 +104,13 @@
       <span class="caret"></span>
     </button>
     <ul class="dropdown-menu" data-hover-parent="div">
+      <wiki:CheckRequestContext context="!comment">
       <li class="dropdown-header">
         <input class="form-control" type="text" name="changenote" id="changenote" size="80" maxlength="80"
              placeholder="<fmt:message key='editor.plain.changenote'/>"
              value="${changenote}" />
       </li>
+      </wiki:CheckRequestContext>
       <wiki:CheckRequestContext context="comment">
       <li class="divider" />
       <li class="dropdown-header">

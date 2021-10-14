@@ -20,8 +20,9 @@
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="java.util.*" %>
+<%@ page import="java.text.MessageFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-<%@ page import="org.apache.wiki.util.HttpUtil" %>
+<%@ page import="org.apache.commons.lang3.StringUtils" %>
 <%@ page import="org.apache.wiki.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.api.spi.Wiki" %>
@@ -32,7 +33,6 @@
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
 <%@ page import="org.apache.wiki.pages.PageLock" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
-<%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.preferences.Preferences.TimeFormat" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
@@ -76,18 +76,21 @@
     ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
     Session wikiSession = wikiContext.getWikiSession();
     String storedUser = wikiSession.getUserPrincipal().getName();
+    String commentedBy = storedUser;
 
     if( wikiSession.isAnonymous() ) {
         storedUser  = TextUtil.replaceEntities( request.getParameter( "author" ) );
+        commentedBy = rb.getString( "varmgr.anonymous" );
     }
+    String commentDate = Preferences.renderDate( wikiContext, Calendar.getInstance().getTime(), TimeFormat.DATETIME );
 
-    String ok      = request.getParameter("ok");
-    String preview = request.getParameter("preview");
-    String cancel  = request.getParameter("cancel");
-    String author  = TextUtil.replaceEntities( request.getParameter("author") );
-    String link    = TextUtil.replaceEntities( request.getParameter("link") );
-    String remember = TextUtil.replaceEntities( request.getParameter("remember") );
-    String changenote = TextUtil.replaceEntities( request.getParameter( "changenote" ) );
+    String ok       = request.getParameter( "ok" );
+    String preview  = request.getParameter( "preview" );
+    String cancel   = request.getParameter( "cancel" );
+    String author   = TextUtil.replaceEntities( request.getParameter( "author" ) );
+    String link     = TextUtil.replaceEntities( request.getParameter( "link" ) );
+    String remember = TextUtil.replaceEntities( request.getParameter( "remember" ) );
+    String changenote = MessageFormat.format( rb.getString( "comment.changenote" ), commentDate, commentedBy );
 
     Page wikipage = wikiContext.getPage();
     Page latestversion = wiki.getManager( PageManager.class ).getPage( pagereq );
@@ -118,7 +121,7 @@
         author = storedUser;
     }
     if( author == null || author.length() == 0 ) {
-        author = "AnonymousCoward";
+        author = StringUtils.capitalize( rb.getString( "varmgr.anonymous" ) );
     }
 
     session.setAttribute("author",author);
@@ -205,17 +208,12 @@
         log.debug("Author name ="+author);
         if( author != null && author.length() > 0 ) {
             String signature = author;
-
             if( link != null && link.length() > 0 ) {
                 link = HttpUtil.guessValidURI( link );
                 signature = "["+author+"|"+link+"]";
             }
 
-            Calendar cal = Calendar.getInstance();
-            SimpleDateFormat fmt = Preferences.getDateFormat( wikiContext , TimeFormat.DATETIME);
-
-            pageText.append("\n\n%%signature\n"+signature+", "+fmt.format(cal.getTime())+"\n/%");
-
+            pageText.append( "\n\n%%signature\n"+signature+", " + commentDate + "\n/%" );
         }
 
         if( TextUtil.isPositive(remember) ) {

@@ -50,7 +50,6 @@
     <input type="hidden" name="author" value="${author}" />
     <input type="hidden" name="link" value="${link}" />
     <input type="hidden" name="remember" value="${remember}" />
-    <input type="hidden" name="changenote" value="${changenote}" />
 
     <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
     <input type="hidden" name="action" value="save" />
