@@ -30,9 +30,8 @@ import java.io.IOException;
  *  @since 2.0
  *  @see org.apache.wiki.WikiContext
  */
-public class CheckRequestContextTag
-    extends WikiTagBase
-{
+public class CheckRequestContextTag extends WikiTagBase {
+
     private static final long serialVersionUID = 0L;
     
     private String m_context;
@@ -42,8 +41,7 @@ public class CheckRequestContextTag
      *  {@inheritDoc}
      */
     @Override
-    public void initTag()
-    {
+    public void initTag() {
         super.initTag();
         m_context = null;
         m_contextList = new String[0];
@@ -64,43 +62,29 @@ public class CheckRequestContextTag
      *  
      *  @param arg One of the RequestsContexts.
      */
-    public void setContext(final String arg )
-    {
+    public void setContext( final String arg ) {
         m_context = arg;
-        
-        m_contextList = StringUtils.split(arg,'|');
+        m_contextList = StringUtils.split( arg,'|' );
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public final int doWikiStartTag()
-        throws IOException,
-               ProviderException
-    {
-        for(int i = 0; i < m_contextList.length; i++ )
-        {
+    public final int doWikiStartTag() throws IOException, ProviderException {
+        for ( final String checkedCtx : m_contextList ) {
             final String ctx = m_wikiContext.getRequestContext();
-            
-            final String checkedCtx = m_contextList[i];
-
-            if( !checkedCtx.isEmpty() )
-            {
-                if( checkedCtx.charAt(0) == '!' )
-                {
-                    if( !ctx.equalsIgnoreCase(checkedCtx.substring(1) ) )
-                    {
+            if ( !checkedCtx.isEmpty() ) {
+                if ( checkedCtx.charAt( 0 ) == '!' ) {
+                    if ( !ctx.equalsIgnoreCase( checkedCtx.substring( 1 ) ) ) {
                         return EVAL_BODY_INCLUDE;
                     }
-                }
-                else if( ctx.equalsIgnoreCase(m_contextList[i]) )
-                {
+                } else if ( ctx.equalsIgnoreCase( checkedCtx ) ) {
                     return EVAL_BODY_INCLUDE;
                 }
             }
         }
-
         return SKIP_BODY;
     }
+
 }
