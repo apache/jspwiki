@@ -95,12 +95,12 @@ public class HtmlStringToWikiTranslator
     }
 
     /**
-     * Use NekoHtml to parse HTML like well formed XHTML
+     * Use NekoHtml to parse HTML like well-formed XHTML
      *
-     * @param html
+     * @param html HTML to parse.
      * @return xhtml jdom root element (node "HTML")
-     * @throws JDOMException
-     * @throws IOException
+     * @throws JDOMException when errors occur in parsing
+     * @throws IOException when an I/O error prevents a document from being fully parsed
      */
     private Element htmlStringToElement( final String html ) throws JDOMException, IOException
     {
