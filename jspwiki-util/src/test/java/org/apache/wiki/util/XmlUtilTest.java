@@ -97,4 +97,12 @@ public class XmlUtilTest {
         }
     }
 
+    @Test
+    public void testGetXPathElement() {
+        final Element base = XmlUtil.parse( "ini/jspwiki_module.xml", "/modules" ).get( 0 );
+        Assertions.assertNull( XmlUtil.getXPathElement( base, "folter" ) );
+        final Element element = XmlUtil.getXPathElement( base, "filter" );
+        Assertions.assertEquals( "org.apache.wiki.filters.SpamFilter", element.getAttributeValue( "class" ) );
+    }
+
 }

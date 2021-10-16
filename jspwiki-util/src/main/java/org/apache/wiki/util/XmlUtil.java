@@ -134,4 +134,13 @@ public final class XmlUtil  {
 		return sb.toString();
 	}
 
+	public static Element getXPathElement( final Element base, final String expression ) {
+		final List< ? > nodes = XPathFactory.instance().compile( expression ).evaluate( base );
+		if( nodes == null || nodes.size() == 0 ) {
+			return null;
+		} else {
+			return ( Element )nodes.get( 0 );
+		}
+	}
+
 }
