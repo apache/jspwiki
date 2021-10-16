@@ -17,6 +17,23 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-10-16  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-11_
+
+* [JSPWIKI-1140](https://issues.apache.org/jira/browse/JSPWIKI-1140) - Autogenerate changenote on page comments
+
+* [JSPWIKI-1149](https://issues.apache.org/jira/browse/JSPWIKI-1149) - Missing legacy Lucene codec [#143](https://github.com/apache/jspwiki/pull/143)
+
+* First stab at `XHtmlElementToWikiTranslator` refactor, so it'll be easier in the future to make it output other types of wiki syntaxes
+
+* Dependency updates, provided by dependabot
+    * Jetty-all to 9.4.44.v20210927 [#139](https://github.com/apache/jspwiki/pull/139) 
+    * Lucene to 8.10.0 [#143](https://github.com/apache/jspwiki/pull/143)
+    * Mockito to 4.0.0 [#144](https://github.com/apache/jspwiki/pull/144)
+    * Selenide to 5.25.0 [#138](https://github.com/apache/jspwiki/pull/138)
+    * Tomcat to 9.0.54
+
 **2021-09-27  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-10_
