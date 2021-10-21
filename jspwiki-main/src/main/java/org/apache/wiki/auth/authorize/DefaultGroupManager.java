@@ -426,7 +426,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
                 // Oooo! This is really bad...
                 log.error( "Could not change user name in Group lists because of GroupDatabase error:" + e.getMessage() );
             }
-            log.info( "Profile name change for '" + newPrincipal.toString() + "' caused " + groupsChanged + " groups to change also." );
+            log.info( "Profile name change for '" + newPrincipal + "' caused " + groupsChanged + " groups to change also." );
         }
     }
 

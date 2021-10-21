@@ -237,8 +237,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      * @param param A Heading object.
      */
     protected void callHeadingListenerChain( final Heading param ) {
-        final List< HeadingListener > list = m_headingListenerChain;
-        for( final HeadingListener h : list ) {
+        for( final HeadingListener h : m_headingListenerChain ) {
             h.headingAdded( m_context, param );
         }
     }

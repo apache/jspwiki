@@ -282,7 +282,7 @@ public class LuceneSearchProvider implements SearchProvider {
         if( searchSuffix ) {
             try( final InputStream attStream = mgr.getAttachmentStream( att ); final StringWriter sout = new StringWriter() ) {
                 FileUtil.copyContents( new InputStreamReader( attStream ), sout );
-                out = out + " " + sout.toString();
+                out = out + " " + sout;
             } catch( final ProviderException | IOException e ) {
                 log.error("Attachment cannot be loaded", e);
             }

@@ -282,9 +282,9 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
             return buf.toString();
         }
         if( !addTo.endsWith( "&amp;" ) ) {
-            return addTo + "&amp;" + buf.toString();
+            return addTo + "&amp;" + buf;
         }
-        return addTo + buf.toString();
+        return addTo + buf;
     }
 
     private String makeBasicURL( final String context, final String page, String parms ) {
@@ -358,7 +358,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                 break;
               default:
               case ANCHOR:
-                out.print("<a "+sb.toString()+" href=\""+url+"\">");
+                out.print("<a "+ sb +" href=\""+url+"\">");
                 break;
             }
 

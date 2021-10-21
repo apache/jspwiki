@@ -223,7 +223,7 @@ public class TableOfContents implements Plugin, HeadingListener {
             parser.addHeadingListener( this );
             parser.parse();
 
-            sb.append( "<ul>\n" ).append( m_buf.toString() ).append( "</ul>\n" );
+            sb.append( "<ul>\n" ).append( m_buf ).append( "</ul>\n" );
         } catch( final IOException e ) {
             log.error("Could not construct table of contents", e);
             throw new PluginException("Unable to construct table of contents (see logs)");

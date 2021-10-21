@@ -717,7 +717,7 @@ public class DefaultPageManager implements PageManager {
                         pagesChanged++;
                     }
                 }
-                LOG.info( "Profile name change for '" + newPrincipal.toString() + "' caused " + pagesChanged + " page ACLs to change also." );
+                LOG.info( "Profile name change for '" + newPrincipal + "' caused " + pagesChanged + " page ACLs to change also." );
             } catch( final ProviderException e ) {
                 // Oooo! This is really bad...
                 LOG.error( "Could not change user name in Page ACLs because of Provider error:" + e.getMessage(), e );

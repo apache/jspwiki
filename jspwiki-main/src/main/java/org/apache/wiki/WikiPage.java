@@ -316,9 +316,7 @@ public class WikiPage implements Page {
         p.m_version      = m_version;
         p.m_lastModified = m_lastModified != null ? (Date)m_lastModified.clone() : null;
         p.m_fileSize     = m_fileSize;
-        for( final Map.Entry< String, Object > entry : m_attributes.entrySet() ) {
-            p.m_attributes.put( entry.getKey(), entry.getValue() );
-        }
+        p.m_attributes.putAll( m_attributes );
 
         if( m_accessList != null ) {
             p.m_accessList = new AclImpl();

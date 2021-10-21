@@ -459,10 +459,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         }
 
         // check if we have to do a case insensitive compare
-        boolean caseSensitiveCompare = true;
-        if (matchAttribute.equals(EMAIL)) {
-            caseSensitiveCompare = false;
-        }
+        boolean caseSensitiveCompare = !matchAttribute.equals( EMAIL );
 
         for( int i = 0; i < users.getLength(); i++ ) {
             final Element user = (Element) users.item( i );
