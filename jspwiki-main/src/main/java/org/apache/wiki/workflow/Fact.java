@@ -103,6 +103,6 @@ public final class Fact implements Serializable
      */
     public String toString()
     {
-        return "[Fact:" + m_obj.toString() + "]";
+        return "[Fact:" + m_obj + "]";
     }
 }

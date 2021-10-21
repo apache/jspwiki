@@ -103,7 +103,7 @@ public class TikaSearchProvider extends LuceneSearchProvider {
             // -1 disables the character size limit; otherwise only the first 100.000 characters are indexed
 
             parser.parse( attStream, handler, metadata );
-            out.append( handler.toString() );
+            out.append( handler );
 
             final String[] names = metadata.names();
             for( final String name : names ) {
