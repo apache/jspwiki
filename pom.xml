@@ -787,9 +787,14 @@
   </ciManagement>
 
   <distributionManagement>
+    <snapshotRepository>
+      <id>des-snapshots-public</id>
+      <name>denkbares Public Snapshots Repository</name>
+      <url>https://repo.denkbares.com/snapshots-public/</url>
+    </snapshotRepository>
     <repository>
       <id>des-releases-public</id>
-      <name>Denkbares Public Releases Repository</name>
+      <name>denkbares Public Releases Repository</name>
       <url>https://repo.denkbares.com/releases-public/</url>
     </repository>
   </distributionManagement>
