@@ -45,12 +45,12 @@ public final class Release {
     public static final String     APPNAME       = "JSPWiki";
 
     /**
-     *  This should be empty when doing a release - otherwise keep it as "cvs" so that whenever someone checks out the code, they know
+     *  This should be empty when doing a release - otherwise keep it as "-git-" so that whenever someone checks out the code, they know
      *  it is a bleeding-edge version.  Other possible values are "alpha" and "beta" for alpha and beta versions, respectively.
      *  <p>
      *  If the POSTFIX is empty, it is not added to the version string.
      */
-    private static final String    POSTFIX       = "";
+    private static final String    POSTFIX       = "-git-";
 
     /** The JSPWiki major version. */
     public static final int        VERSION       = 2;
@@ -62,14 +62,14 @@ public final class Release {
     public static final int        MINORREVISION = 0;
 
     /** The build number/identifier.  This is a String as opposed to an integer, just so that people can add other identifiers to it.
-     * The build number is incremented every time a committer checks in code, and reset when the a release is made.
+     * The build number is incremented every time a committer checks in code, and reset when a release is made.
      *  <p>
      *  If you are a person who likes to build his own releases, we recommend that you add your initials to this
-     *  identifier (e.g. "13-jj", or 49-aj").
+     *  identifier (e.g. "13-jj", or "49-aj").
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "git-11";
+    public static final String     BUILD         = "12";
 
     /**
      *  This is the generic version string you should use when printing out the version.  It is of
@@ -78,8 +78,8 @@ public final class Release {
     public static final String     VERSTR        = VERSION + "." +
                                                    REVISION + "." +
                                                    MINORREVISION +
-                                                   ( POSTFIX.length() != 0 ? "-" + POSTFIX : "" ) +
-                                                   ( BUILD.length() != 0 ? "-" + BUILD : "" );
+                                                   POSTFIX +
+                                                   BUILD;
 
     /** Private constructor prevents instantiation. */
     private Release() {
