@@ -510,7 +510,7 @@ public class XHtmlElementToWikiTranslator {
         final String cssClass = a.getAttributeValue( "class" );
         if( StringUtils.isNotEmpty( cssClass )
                 && !cssClass.matches( "wikipage|createpage|external|interwiki|attachment" ) ) {
-            attributesMap.put( "class", cssClass.replaceAll( "'", "\"" ) );
+            attributesMap.put( "class", cssClass.replace( "'", "\"" ) );
         }
         addAttributeIfPresent( a, attributesMap, "accesskey" );
         addAttributeIfPresent( a, attributesMap, "charset" );
@@ -531,7 +531,7 @@ public class XHtmlElementToWikiTranslator {
     private void addAttributeIfPresent( final Element a, final Map< String, String > attributesMap, final String attribute ) {
         final String attr = a.getAttributeValue( attribute );
         if( StringUtils.isNotEmpty( attr ) ) {
-            attributesMap.put( attribute, attr.replaceAll( "'", "\"" ) );
+            attributesMap.put( attribute, attr.replace( "'", "\"" ) );
         }
     }
 
@@ -881,13 +881,15 @@ public class XHtmlElementToWikiTranslator {
 
     private class PreStack extends Stack< String > {
 
+        @Override
         public String push( final String item ) {
             final String push = super.push( item );
             outTrimmer.setWhitespaceTrimMode( isEmpty() );
             return push;
         }
 
-        public String pop() {
+        @Override
+        public synchronized String pop() {
             final String pop = super.pop();
             outTrimmer.setWhitespaceTrimMode( isEmpty() );
             return pop;
