@@ -17,6 +17,21 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-10-28  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-12_
+
+* [#148](https://github.com/apache/jspwiki/pull/148) - Added missing translation de/german - Thanks to [Peter Hormanns](https://github.com/phormanns)!
+
+* Several code improvements, all relevant PRs provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
+    * [JSPWIKI-1155](https://issues.apache.org/jira/browse/JSPWIKI-1155) - String concat in StringBuilder [#140](https://github.com/apache/jspwiki/pull/140)
+    * [JSPWIKI-1156](https://issues.apache.org/jira/browse/JSPWIKI-1156) - Remove `protected` member in `final` class [#141](https://github.com/apache/jspwiki/pull/141)
+    * [JSPWIKI-1157](https://issues.apache.org/jira/browse/JSPWIKI-1157) - Remove redundant String [#142](https://github.com/apache/jspwiki/pull/142)
+    * [JSPWIKI-1158](https://issues.apache.org/jira/browse/JSPWIKI-1158) - Remove unnecessary ToString [#147](https://github.com/apache/jspwiki/pull/147)
+
+* Dependency updates
+    * Selenide to 6.0.3 [#145](https://github.com/apache/jspwiki/pull/145)
+
 **2021-10-16  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-11_
@@ -38,7 +53,7 @@ under the License.
 
 * _2.11.0-git-10_
 
-* Several code improvements, all relevant PRs provided by Arturo Bernal, thanks!
+* Several code improvements, all relevant PRs provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
     * [JSPWIKI-1148](https://issues.apache.org/jira/browse/JSPWIKI-1148) - Avoid File Stream [#47](https://github.com/apache/jspwiki/pull/47)
     * [JSPWIKI-1151](https://issues.apache.org/jira/browse/JSPWIKI-1151) - Simplify assertion with simpler and equivalent calls [#134](https://github.com/apache/jspwiki/pull/134)
     * [JSPWIKI-1152](https://issues.apache.org/jira/browse/JSPWIKI-1152) - Make final variable when is possible [#135](https://github.com/apache/jspwiki/pull/135)
@@ -162,7 +177,7 @@ under the License.
     * Merged [PR #46](https://github.com/apache/jspwiki/pull/46), contributed by Julien Masnada, thanks!
 
 * [JSPWIKI-1144](https://issues.apache.org/jira/browse/JSPWIKI-1144) - Minor performance improvement
-    * Merged [PR #36](https://github.com/apache/jspwiki/pull/36), contributed by Arturo Bernal, thanks!
+    * Merged [PR #36](https://github.com/apache/jspwiki/pull/36), contributed by [Arturo Bernal](https://github.com/arturobernalg), thanks!
 
 * [JSPWIKI-1147](https://issues.apache.org/jira/browse/JSPWIKI-1147) - The button "Clear user preferences" 
 doesn't clear user preferences
@@ -172,7 +187,7 @@ doesn't clear user preferences
 * _2.11.0-git-03_
 
 * [JSPWIKI-1142](https://issues.apache.org/jira/browse/JSPWIKI-1142) - Minor performance improvements
-    * Merged [PR #32](https://github.com/apache/jspwiki/pull/32), contributed by Arturo Bernal, thanks!
+    * Merged [PR #32](https://github.com/apache/jspwiki/pull/32), contributed by [Arturo Bernal](https://github.com/arturobernalg), thanks!
 
 * `PropertyReader` logs stacktrace if unable to load the `jspwiki.properties` file
   
@@ -203,13 +218,13 @@ using a `TestEngine` could end up processing events using managers registered by
 * _2.11.0-git-01_
 
 * [JSPWIKI-1135](https://issues.apache.org/jira/browse/JSPWIKI-1135) - Add dependabot config file
-    * Merged [PR #15](https://github.com/apache/jspwiki/pull/15), contributed by Arturo Bernal, thanks!
+    * Merged [PR #15](https://github.com/apache/jspwiki/pull/15), contributed by [Arturo Bernal](https://github.com/arturobernalg), thanks!
 
 * [JSPWIKI-1136](https://issues.apache.org/jira/browse/JSPWIKI-1136) - Refine Class member fields
-    * Merged [PR #16](https://github.com/apache/jspwiki/pull/16), contributed by Arturo Bernal, thanks!
+    * Merged [PR #16](https://github.com/apache/jspwiki/pull/16), contributed by [Arturo Bernal](https://github.com/arturobernalg), thanks!
 
 * [JSPWIKI-1137](https://issues.apache.org/jira/browse/JSPWIKI-1137) - Minor Improvement
-    * Merged [PR #17](https://github.com/apache/jspwiki/pull/17), contributed by Arturo Bernal, thanks!
+    * Merged [PR #17](https://github.com/apache/jspwiki/pull/17), contributed by [Arturo Bernal](https://github.com/arturobernalg), thanks!
 
 * Dependency updates
     * Gson to 2.8.6
