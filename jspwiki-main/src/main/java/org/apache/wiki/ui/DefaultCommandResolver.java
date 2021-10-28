@@ -325,7 +325,7 @@ public class DefaultCommandResolver implements CommandResolver {
      * @throws ProviderException if the underlyng page provider that locates pages
      * throws an exception
      */
-    boolean simplePageExists( final String page ) throws ProviderException {
+    protected boolean simplePageExists( final String page ) throws ProviderException {
         if ( m_specialPages.containsKey( page ) ) {
             return true;
         }

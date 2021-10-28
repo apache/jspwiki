@@ -220,10 +220,10 @@ public class WikiSession implements Session {
     public Principal[] getRoles() {
         final Set< Principal > roles = new HashSet<>();
 
-        // Add all of the Roles possessed by the Subject directly
+        // Add all the Roles possessed by the Subject directly
         roles.addAll( m_subject.getPrincipals( Role.class ) );
 
-        // Add all of the GroupPrincipals possessed by the Subject directly
+        // Add all the GroupPrincipals possessed by the Subject directly
         roles.addAll( m_subject.getPrincipals( GroupPrincipal.class ) );
 
         // Return a defensive copy
@@ -388,7 +388,7 @@ public class WikiSession implements Session {
      * This method should generally be called after a user's {@link org.apache.wiki.auth.user.UserProfile} is saved. If the wiki session
      * is null, or there is no matching user profile, the method returns silently.
      */
-    void injectGroupPrincipals() {
+    protected void injectGroupPrincipals() {
         // Flush the existing GroupPrincipals
         m_subject.getPrincipals().removeAll( m_subject.getPrincipals(GroupPrincipal.class) );
 
@@ -406,7 +406,7 @@ public class WikiSession implements Session {
      * and login name. These Principals will be WikiPrincipals, and they will replace all other WikiPrincipals in the Subject. <em>Note:
      * this method is never called during anonymous or asserted sessions.</em>
      */
-    void injectUserProfilePrincipals() {
+    protected void injectUserProfilePrincipals() {
         // Search for the user profile
         final String searchId = m_loginPrincipal.getName();
         if ( searchId == null ) {
@@ -460,7 +460,7 @@ public class WikiSession implements Session {
      * logout process.
      *
      * @param engine the wiki engine
-     * @param request the users's HTTP request
+     * @param request the user's HTTP request
      */
     public static void removeWikiSession( final Engine engine, final HttpServletRequest request ) {
         if ( engine == null || request == null ) {
