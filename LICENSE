@@ -209,6 +209,7 @@ LIBRARY                                     LICENSE FILE
 =============================================================================================================
 activation-1.1.jar                          ./jspwiki-war/src/main/config/doc/LICENSE.cddl
 akismet-java-1.02.jar                       ./jspwiki-war/src/main/config/doc/LICENSE.akismet
+annotations-15.0.jar                        LICENSE
 aws-java-sdk-core-1.12.59.jar               LICENSE
 aws-java-sdk-kendra-1.12.59.jar             LICENSE
 commons-codec-1.3.jar                       LICENSE
@@ -223,8 +224,18 @@ ehcache-2.10.9.2.jar                        LICENSE
 flexmark-0.62.2.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 flexmark-ext-footnotes-0.62.2.jar           ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 flexmark-ext-toc-0.62.2.jar                 ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
-flexmark-formatter-0.62.2.jar               ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 flexmark-util-0.62.2.jar                    ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-util-ast-0.62.2.jar                ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-util-builder-0.62.2.jar            ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-util-collection-0.62.2.jar         ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-util-data-0.62.2.jar               ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-util-dependency-0.62.2.jar         ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-util-format-0.62.2.jar             ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-util-html-0.62.2.jar               ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-util-misc-0.62.2.jar               ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-util-options-0.62.2.jar            ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-util-sequence-0.62.2.jar           ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-util-visitor-0.62.2.jar            ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 freshcookies-security-0.60.jar              LICENSE
 gson-2.8.8                                  LICENSE
 httpclient-4.5.13                           LICENSE
@@ -243,13 +254,14 @@ log4j-1.2-api-2.14.1.jar                    LICENSE
 log4j-api-2.14.1.jar                        LICENSE
 log4j-core-2.14.1.jar                       LICENSE
 log4j-slf4j-impl-2.14.1                     LICENSE
-lucene-analyzers-common-8.9.0.jar           LICENSE
-lucene-core-8.9.0.jar                       LICENSE
-lucene-highlighter-8.9.0.jar                LICENSE
-lucene-memory-8.9.0.jar                     LICENSE
-lucene-queries-8.9.0.jar                    LICENSE
-lucene-queryparser-8.9.0.jar                LICENSE
-lucene-sandbox-8.9.0.jar                    LICENSE
+lucene-analyzers-common-8.10.0.jar          LICENSE
+lucene-backward-codecs-8.10.0.jar           LICENSE
+lucene-core-8.10.0.jar                      LICENSE
+lucene-highlighter-8.10.0.jar               LICENSE
+lucene-memory-8.10.0.jar                    LICENSE
+lucene-queries-8.10.0.jar                   LICENSE
+lucene-queryparser-8.10.0.jar               LICENSE
+lucene-sandbox-8.10.0.jar                   LICENSE
 mail-1.4.7.jar                              ./jspwiki-war/src/main/config/doc/LICENSE.cddl
 nekohtml-1.9.22.jar                         LICENSE
 org.suigeneris.jrcs.diff-0.4.2              LICENSE
@@ -270,10 +282,10 @@ commons-el-1.0.jar                          LICENSE
 custom_rhino-0.4.3.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mpl
 hsqldb-2.6.0.jar                            ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 sqltool-2.6.0.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
-jetty-all-9.4.43.v20210629.jar              LICENSE
+jetty-all-9.4.44.v20210927.jar              LICENSE
 junit-5.7.2                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
-mockito-core-3.12.4.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.mit
-selenide-5.24.2.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
+mockito-core-4.0.0.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
+selenide-6.0.3.jar                          ./jspwiki-war/src/main/config/doc/LICENSE.mit
 stripes-1.7.0-async.jar                     LICENSE
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui
 
@@ -289,7 +301,7 @@ SlimBox                                     ./jspwiki-war/src/main/config/doc/LI
 
 RESOURCES                                   LICENSE FILE
 =============================================================================================================
-Apache Tomcat 9.0.52                        LICENSE
+Apache Tomcat 9.0.54                        LICENSE
 Font Awesome (CSS & LESS files)             ./jspwiki-war/src/main/config/doc/LICENSE.mit
 Font Awesome (Fonts)                        ./jspwiki-war/src/main/config/doc/LICENSE.ofl
 SilkIconSet                                 ./jspwiki-war/src/main/config/doc/LICENSE.SilkIconSet
