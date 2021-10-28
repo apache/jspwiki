@@ -18,9 +18,7 @@
  */
 package org.apache.wiki.pages;
 
-import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
-import org.apache.wiki.its.environment.Env;
 
 
 /**
@@ -43,12 +41,12 @@ public class PageBuilder {
      * @return {@link Page} instance given on the {@link PageBuilder} constructor.
      */
     public < T extends Page > T openAs( final T page ) {
-        Configuration.headless = Env.TESTS_CONFIG_HEADLESS;
+        /* Configuration.headless = Env.TESTS_CONFIG_HEADLESS;
         Configuration.fastSetValue = true; // default value seems to not send `[` or `{` characters to input controls. weird.
         Configuration.reportsFolder = Env.TESTS_CONFIG_REPORTS_FOLDER;
-        Configuration.startMaximized = Env.TESTS_CONFIG_START_MAXIMIZED;
+        Configuration.browserSize = Env.TESTS_CONFIG_BROWSER_SIZE;
         Configuration.downloadsFolder = Env.TESTS_CONFIG_DOWNLOADS_FOLDER;
-        System.setProperty( "wdm.targetPath", Env.TESTS_CONFIG_WDM_TARGET_PATH );
+        System.setProperty( "wdm.targetPath", Env.TESTS_CONFIG_WDM_TARGET_PATH ); */
         
         Selenide.open( url );
         return page;

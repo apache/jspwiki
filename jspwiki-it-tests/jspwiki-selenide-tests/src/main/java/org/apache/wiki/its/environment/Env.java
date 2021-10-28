@@ -19,6 +19,8 @@
 package org.apache.wiki.its.environment;
 
 
+import com.codeborne.selenide.Configuration;
+
 /**
  * Tests' environment values that can be overwritten through System properties.
  */
@@ -39,8 +41,8 @@ public class Env {
     /** Amount of time, in milliseconds, to wait for the search index tasks to complete. Default value is {@code 1200}. */
     public static final long TESTS_CONFIG_SEARCH_INDEX_WAIT = Long.parseLong( System.getProperty( "it-jspwiki.config.search-index-wait", "1200" ) );
 
-    /** Should the browser start maximized?. Default value is {@code true}. */
-    public static final boolean TESTS_CONFIG_START_MAXIMIZED = Boolean.parseBoolean( System.getProperty( "it-jspwiki.config.start-maximized", "true" ) );
+    /** Which size should start the browser with?. Default value is {@code 1366x768}. */
+    public static final String TESTS_CONFIG_BROWSER_SIZE = System.getProperty( "it-jspwiki.config.browser-size", "1366x768" );
 
     /** Folder where the WebDriver will be downloaded. Default value is {@code ./target/wdm}. */
     public static final String TESTS_CONFIG_WDM_TARGET_PATH = System.getProperty( "it-jspwiki.config.wdm.target-path", "./target/wdm" );
@@ -50,5 +52,14 @@ public class Env {
 
     /** Janne's password. Default value is {@code myP@5sw0rd}. */
     public static final String LOGIN_JANNE_PASSWORD = System.getProperty( "it-jspwiki.login.janne.password", "myP@5sw0rd" );
+
+    public static void setUp() {
+        Configuration.headless = Env.TESTS_CONFIG_HEADLESS;
+        Configuration.fastSetValue = true; // default value seems to not send `[` or `{` characters to input controls. weird.
+        Configuration.reportsFolder = Env.TESTS_CONFIG_REPORTS_FOLDER;
+        Configuration.browserSize = Env.TESTS_CONFIG_BROWSER_SIZE;
+        Configuration.downloadsFolder = Env.TESTS_CONFIG_DOWNLOADS_FOLDER;
+        System.setProperty( "wdm.targetPath", Env.TESTS_CONFIG_WDM_TARGET_PATH );
+    }
 
 }

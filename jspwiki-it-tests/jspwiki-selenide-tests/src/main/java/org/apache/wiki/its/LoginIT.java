@@ -18,19 +18,16 @@
  */
 package org.apache.wiki.its;
 
-import com.codeborne.selenide.junit5.ScreenShooterExtension;
 import org.apache.wiki.pages.haddock.LoginPage;
 import org.apache.wiki.pages.haddock.ViewWikiPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 
 /**
  * Login-related tests for Apache JSPWiki
  */
-@ExtendWith( ScreenShooterExtension.class )
-public class LoginIT {
+public class LoginIT extends WithIntegrationTestSetup {
     
     @Test
     void loginAndLogout() {

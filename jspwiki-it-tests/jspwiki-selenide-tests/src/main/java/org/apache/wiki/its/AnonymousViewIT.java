@@ -18,12 +18,10 @@
  */
 package org.apache.wiki.its;
 
-import com.codeborne.selenide.junit5.ScreenShooterExtension;
 import org.apache.wiki.pages.Page;
 import org.apache.wiki.pages.haddock.ViewWikiPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.File;
 
@@ -34,8 +32,7 @@ import static com.codeborne.selenide.Condition.not;
 /**
  * Anonymous view related tests for Apache JSPWiki
  */
-@ExtendWith( ScreenShooterExtension.class )
-public class AnonymousViewIT {
+public class AnonymousViewIT extends WithIntegrationTestSetup {
     
     @Test
     void anonymousView() {

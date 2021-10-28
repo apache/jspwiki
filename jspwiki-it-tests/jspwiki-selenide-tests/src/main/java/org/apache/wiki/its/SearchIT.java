@@ -18,18 +18,15 @@
  */
 package org.apache.wiki.its;
 
-import com.codeborne.selenide.junit5.ScreenShooterExtension;
 import org.apache.wiki.its.environment.Env;
 import org.apache.wiki.pages.haddock.ViewWikiPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 /**
  * Search-related tests for Apache JSPWiki
  */
-@ExtendWith( ScreenShooterExtension.class )
-public class SearchIT {
+public class SearchIT extends WithIntegrationTestSetup {
 
     @Test
     void performSearches() throws Exception {
