@@ -1,5 +1,16 @@
-target
-.settings
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+overlays/
+
+# Eclipse
 .classpath
 .project
 nb-configuration.xml
@@ -7,3 +18,12 @@ nb-configuration.xml
 .idea
 .metadata
 .checkstyle
+
+.settings/
+
+# IntelliJ
+*.iml
+.idea/
+
+# Java
+*.class
