@@ -453,7 +453,7 @@ public final class WikiEventManager {
             boolean needsCleanup = false;
             try {
                 synchronized( m_listenerList ) {
-                    for( final WeakReference< WikiEventListener > wikiEventListenerWeakReference : m_listenerList ) {
+                    for( final WeakReference< WikiEventListener > wikiEventListenerWeakReference : new ArrayList<>(m_listenerList) ) {
                         final WikiEventListener listener = wikiEventListenerWeakReference.get();
                         if( listener != null ) {
                             listener.actionPerformed( event );
