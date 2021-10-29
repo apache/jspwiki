@@ -35,6 +35,7 @@ public interface SearchResult extends org.apache.wiki.api.search.SearchResult {
      *  
      *  @return the WikiPage object containing this result
      */
-    WikiPage getPage();
+	@Override
+	WikiPage getPage();
 
 }

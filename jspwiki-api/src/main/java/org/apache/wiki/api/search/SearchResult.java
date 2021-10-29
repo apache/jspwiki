@@ -18,6 +18,9 @@
  */
 package org.apache.wiki.api.search;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.wiki.api.core.Page;
 
 
@@ -25,17 +28,17 @@ import org.apache.wiki.api.core.Page;
  *  Defines a search result.
  */
 public interface SearchResult {
-    
+
 	/**
      *  Return the page.
-     *  
+     *
      *  @return the WikiPage object containing this result
      */
     Page getPage();
 
     /**
      *  Returns the score.
-     *  
+     *
      *  @return A positive score value.  Note that there is no upper limit for the score.
      */
     int getScore();
@@ -47,5 +50,17 @@ public interface SearchResult {
      * @since 2.4
      */
     String[] getContexts();
+
+    /**
+     * Map representation of this search result, usable for example for JSON serialization.
+     *
+     * @return a map version of this search result
+     */
+    default Map<String,Object> toMap() {
+        HashMap<String,Object> jsonMap = new HashMap<>();
+        jsonMap.put( "page", getPage().getName() );
+        jsonMap.put( "score", getScore() );
+        return  jsonMap;
+    }
 
 }
