@@ -203,10 +203,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                     int count = 0;
                     for( final Iterator< SearchResult > i = c.iterator(); i.hasNext() && count < maxLength; count++ ) {
                         final SearchResult sr = i.next();
-                        final HashMap< String, Object > hm = new HashMap<>();
-                        hm.put( "page", sr.getPage().getName() );
-                        hm.put( "score", sr.getScore() );
-                        list.add( hm );
+                        list.add( sr.toMap() );
                     }
                 } catch( final Exception e ) {
                     log.info( "AJAX search failed; ", e );
