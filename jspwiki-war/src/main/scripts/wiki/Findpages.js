@@ -114,14 +114,28 @@ Wiki.Findpages = new Class({
 
             item = result[0];
 
-            if( !item || item.page != value ){
+      var pageInResults = false;
+      for (var i = 0; i < result.length; i++) {
+        if (result[i].page === value) {
+          pageInResults = true;
+          break;
+        }
+      }
+
+      if (!item || !pageInResults) {
 
                 elements.push( "li.findpages", [
                     "a", { href: self.toUrl(value, true), title: "sbox.create".localize(value) }, [
-                        "label.btn.btn-danger.btn-xs.pull-right", { for:"cloney", text: "sbox.clone".localize()}, [
-                            "input#cloney[name=cloney][type=checkbox]"
-                        ],
-                        "span.createpage", { text: value }
+                        "div.search-flex", [
+                          "div.createpage.search-flex-left", {text: value},
+                          "div.btn.btn-danger.btn-xs.search-flex-right", {
+                            for: "cloney",
+                            text: "sbox.clone".localize()
+                          }, [
+                                        "input#cloney[name=cloney][type=checkbox]"
+                          ]
+
+                        ]
                     ]
                 ]);
 
@@ -133,8 +147,10 @@ Wiki.Findpages = new Class({
 
                 elements.push( "li.findpages", [
                     "a", { href: self.toUrl( item.page ) }, [
-                        "span.badge.pull-right", { text: item.score },
-                        "span", { text: item.page }
+                        "div.search-flex", [
+                          "div.search-flex-left", {text: item.page},
+                          "div.badge.search-flex-right", {text: item.score}
+                        ]
                     ]
                 ]);
             }
