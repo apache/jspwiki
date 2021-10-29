@@ -197,6 +197,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
                 final Directory luceneDir = new NIOFSDirectory( dir.toPath() );
                 try( final IndexWriter writer = getIndexWriter( luceneDir ) ) {
+                    long pagesStart = System.currentTimeMillis();
                     final Collection< Page > allPages = m_engine.getManager( PageManager.class ).getAllPages();
                     for( final Page page : allPages ) {
                         try {
@@ -206,6 +207,9 @@ public class LuceneSearchProvider implements SearchProvider {
                             log.warn( "Unable to index page " + page.getName() + ", continuing to next ", e );
                         }
                     }
+                    log.info("Indexed all pages in " + (System.currentTimeMillis() - pagesStart) + "ms");
+
+                    long attachmentStart = System.currentTimeMillis();
 
                     final Collection< Attachment > allAttachments = m_engine.getManager( AttachmentManager.class ).getAllAttachments();
                     for( final Attachment att : allAttachments ) {
@@ -216,7 +220,7 @@ public class LuceneSearchProvider implements SearchProvider {
                             log.warn( "Unable to index attachment " + att.getName() + ", continuing to next", e );
                         }
                     }
-
+                    log.info("Indexed all attachments in " + (System.currentTimeMillis() - attachmentStart) + "ms");
                 }
 
                 final Date end = new Date();
