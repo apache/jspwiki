@@ -199,7 +199,8 @@ public class BreadcrumbsTag extends WikiTagBase
         public void removeItem( final String pageName ) {
             for( int i = 0; i < size(); i++ ) {
                 final String page = get( i );
-                if( page != null && page.equals( pageName ) ) {
+                //noinspection ConstantConditions
+                if (!(page instanceof String) || (page != null && page.equals(pageName))) {
                     remove( page );
                 }
             }
