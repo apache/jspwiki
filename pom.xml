@@ -40,7 +40,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.outputTimestamp>2020-12-09T19:21:00Z</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
-    <jdk.version>1.8</jdk.version>
+    <jdk.version>14</jdk.version>
     <jdk.javadoc.doclet.version>1.1.4</jdk.javadoc.doclet.version>
     <maven.version>3.5</maven.version>
 
