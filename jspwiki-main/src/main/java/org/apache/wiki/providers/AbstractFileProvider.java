@@ -420,7 +420,12 @@ public abstract class AbstractFileProvider implements PageProvider {
     @Override
     public void deletePage( final String pageName ) throws ProviderException {
         final File f = findPage( pageName );
-        f.delete();
+        try {
+            Files.delete(f.toPath());
+        }
+        catch (IOException e) {
+            throw new ProviderException(e.getMessage(), e);
+        }
     }
 
     /**

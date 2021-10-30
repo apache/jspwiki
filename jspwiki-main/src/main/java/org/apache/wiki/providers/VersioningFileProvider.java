@@ -550,19 +550,41 @@ public class VersioningFileProvider extends AbstractFileProvider {
     @Override
     public void deletePage( final String page ) throws ProviderException {
         super.deletePage( page );
+        boolean hasError = false;
         final File dir = findOldPageDir( page );
         if( dir.exists() && dir.isDirectory() ) {
             final File[] files = dir.listFiles( new WikiFileFilter() );
             for( final File file : files ) {
-                file.delete();
+                try {
+                    Files.delete(file.toPath());
+                }
+                catch (IOException e) {
+                    log.error("Can't delete file " + file.getAbsolutePath() + " " + e.getMessage(), e);
+                    hasError = true;
+                }
             }
 
             final File propfile = new File( dir, PROPERTYFILE );
             if( propfile.exists() ) {
-                propfile.delete();
+                try {
+                    Files.delete(propfile.toPath());
+                }
+                catch (IOException e) {
+                    log.error("Can't delete file " + propfile.getAbsolutePath() + " " + e.getMessage(), e);
+                    hasError = true;
+                }
             }
 
-            dir.delete();
+            try {
+                Files.delete(dir.toPath());
+            }
+            catch (IOException e) {
+                log.error("Can't delete directory " + propfile.getAbsolutePath() + " " + e.getMessage(), e);
+                hasError = true;
+            }
+            if (hasError) {
+                throw new ProviderException("Can't completely delete the old version for file " + page);
+            }
         }
     }
 
