@@ -388,11 +388,17 @@ public class CachingProvider implements PageProvider {
     }
 
     //  FIXME: Kludge: make sure that the page is also parsed and it gets all the necessary variables.
-    private void refreshMetadata( final Page page ) {
+    private void refreshMetadata( final Page page, int version) {
         if( page != null && !page.hasMetadata() ) {
             final RenderingManager mgr = m_engine.getManager( RenderingManager.class );
             try {
-                final String data = m_provider.getPageText( page.getName(), page.getVersion() );
+                final String data;
+                if (version == LATEST_VERSION) {
+                    data = getTextFromCache(page.getName());
+                }
+                else {
+                    data = m_provider.getPageText(page.getName(), version);
+                }
                 final Context ctx = Wiki.context().create( m_engine, page );
                 final MarkupParser parser = mgr.getParser( ctx, data );
 
@@ -425,7 +431,7 @@ public class CachingProvider implements PageProvider {
             // We do not cache old versions.
             page = m_provider.getPageInfo( pageName, version );
         }
-        refreshMetadata( page );
+        refreshMetadata( page, version);
         return page;
     }
 
