@@ -158,7 +158,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         final Session session = SessionMonitor.getInstance( m_engine ).find( httpSession );
         final AuthenticationManager authenticationMgr = m_engine.getManager( AuthenticationManager.class );
         final AuthorizationManager authorizationMgr = m_engine.getManager( AuthorizationManager.class );
-        CallbackHandler handler = null;
+        // Create a callback handler, because sometimes it is missed in isAnonymous block
+        CallbackHandler handler = new WebContainerCallbackHandler(m_engine, request);
         final Map< String, String > options = EMPTY_MAP;
 
         // If user not authenticated, check if container logged them in, or if there's an authentication cookie
