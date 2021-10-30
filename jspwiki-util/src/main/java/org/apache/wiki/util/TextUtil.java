@@ -48,7 +48,7 @@ public final class TextUtil {
     public static final String LEGACY_CHARS_ALLOWED = "._";
 
     /** Lists all punctuation characters allowed in page names. */
-    public static final String PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
+    public static final String PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$@";
 
     /** Private constructor prevents instantiation. */
     private TextUtil() {}
