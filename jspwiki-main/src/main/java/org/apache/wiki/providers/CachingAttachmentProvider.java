@@ -300,6 +300,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     public void deleteVersion( final Attachment att ) throws ProviderException {
         // This isn't strictly speaking correct, but it does not really matter
         m_cache.remove( att.getParentName() );
+        m_attCache.remove(att.getName());
         m_provider.deleteVersion( att );
     }
 
