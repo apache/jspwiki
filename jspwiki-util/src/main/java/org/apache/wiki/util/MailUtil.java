@@ -21,15 +21,21 @@ package org.apache.wiki.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.activation.DataHandler;
 import javax.mail.*;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Map;
 import java.util.Properties;
 
 
@@ -231,6 +237,8 @@ public final class MailUtil {
 
     static final String PROP_MAIL_STARTTLS           = "mail.smtp.starttls.enable";
 
+    static final String PROP_MAIL_SSL_PROTOCOLS      = "mail.smtp.ssl.protocols";
+
     private static String c_fromAddress;
     
     /**
@@ -293,8 +301,93 @@ public final class MailUtil {
             throw e;
         }
     }
+
+    public static void sendMultiPartMessage(Properties props, String to, String subject, String plainContent,
+                                            String htmlContent, Map<String, URL> imageUrlsByCid) throws MessagingException{
+        Session session = getMailSession( props );
+        getSenderEmailAddress(session, props);
+
+        try
+        {
+            // Create and address the message
+            MimeMessage msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(c_fromAddress));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+            msg.setSubject(subject, "UTF-8");
+            msg.setSentDate(new Date());
+
+            // most of the code here taken from
+            // https://stackoverflow.com/questions/3902455/mail-multipart-alternative-vs-multipart-mixed
+            // but slightly easier organized and renamed
+            final MimeMultipart rootMp = new MimeMultipart("mixed");
+            msg.setContent(rootMp);
+            {
+                // alternative
+                final MimeMultipart alternativeMp = newChild(rootMp, "alternative");
+                {
+                    // Note: MUST RENDER HTML LAST otherwise iPad mail client only renders the last image and no email
+
+                    // text
+                    if (plainContent != null && !plainContent.isEmpty()) {
+                        final MimeBodyPart textBodyPart = new MimeBodyPart();
+                        textBodyPart.setText(plainContent, "UTF-8");
+                        textBodyPart.setHeader("Content-Type", "text/plain; charset=UTF-8");
+                        alternativeMp.addBodyPart(textBodyPart);
+                    }
+
+                    // html
+                    final MimeMultipart relatedMp = newChild(alternativeMp,"related");
+
+                    final MimeBodyPart htmlBodyPart = new MimeBodyPart();
+                    htmlBodyPart.setText(htmlContent, "UTF-8");
+                    htmlBodyPart.setHeader("Content-Type", "text/html; charset=UTF-8");
+                    relatedMp.addBodyPart(htmlBodyPart);
+
+                    // add multi-part for image
+                    for (Map.Entry<String, URL> entry : imageUrlsByCid.entrySet()) {
+                        MimeBodyPart part = new MimeBodyPart();
+                        DataHandler dh = new DataHandler(entry.getValue());
+                        part.setDataHandler(dh);
+                        part.addHeader("Content-ID", "<" + entry.getKey() + ">");
+                        part.addHeader("Content-Type", dh.getContentType());
+                        part.setDisposition(Part.INLINE);
+                        relatedMp.addBodyPart(part);
+                    }
+                }
+
+                // attachments
+                // TODO.. (~ addAttachments(mpMixed,attachments))
+            }
+
+            // Send and log it
+            Transport.send(msg);
+            if (log.isInfoEnabled())
+            {
+                log.info("Sent e-mail to=" + to + ", subject=\"" + subject + "\", used "
+                        + (c_useJndi ? "JNDI" : "standalone") + " mail session.");
+            }
+        }
+        catch (MessagingException e)
+        {
+            log.error(e);
+            throw e;
+        }
+    }
     
     // --------- JavaMail Session Helper methods  --------------------------------
+
+    /**
+     * Adds a MimeBodyPart instance to the given parent, which again holds a MimeMultipart child instance as content.
+     * This child instance is returned.
+     */
+    private static MimeMultipart newChild(MimeMultipart parent, String subtype) throws MessagingException {
+        final MimeBodyPart mbp = new MimeBodyPart();
+        parent.addBodyPart(mbp);
+
+        MimeMultipart child = new MimeMultipart(subtype);
+        mbp.setContent(child);
+        return child;
+    }
 
     /**
      * Gets the Sender's email address from JNDI Session if available, otherwise
@@ -400,6 +493,7 @@ public final class MailUtil {
         mailProps.put( PROP_MAIL_TIMEOUT, timeout );
         mailProps.put( PROP_MAIL_CONNECTION_TIMEOUT, conntimeout );
         mailProps.put( PROP_MAIL_STARTTLS, starttls ? TRUE : FALSE );
+        mailProps.put(PROP_MAIL_SSL_PROTOCOLS, "TLSv1.2");  // required for JavaMail 1.4.7, not required for >= 1.6.2
 
         // Add SMTP authentication if required
         Session session = null;
