@@ -21,6 +21,7 @@ package org.apache.wiki.ui;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -35,6 +36,7 @@ import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -272,6 +274,11 @@ public class DefaultCommandResolver implements CommandResolver {
         try {
             String page = m_engine.getManager( URLConstructor.class ).parsePage( requestContext, request, m_engine.getContentEncoding() );
             if ( page != null ) {
+                if (!(WikiContext.ATTACH.equals(requestContext) || WikiContext.DELETE.equals(requestContext))) {
+                    // page requests come encoded, attachment requests (att + del) come decoded...
+                    // so if attachment name contains a +, it would get decoded to white space, causing 404
+                    page = URLDecoder.decode(page, m_engine.getContentEncoding());
+                }
                 try {
                     // Look for singular/plural variants; if one not found, take the one the user supplied
                     final String finalPage = getFinalPageName( page );
