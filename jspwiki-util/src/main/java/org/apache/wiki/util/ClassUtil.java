@@ -50,8 +50,16 @@ public final class ClassUtil {
 
     private static final Logger log = LogManager.getLogger(ClassUtil.class);
 
-    /** The location of the classmappings.xml document. It will be searched for in the classpath.  It's value is "{@value}". */
-    public  static final String MAPPINGS = "ini/classmappings.xml";
+    /**
+     * System property to overwrite the class definition xml
+     */
+    public static final String CUSTOM_MAPPINGS = "jspwiki.custom.classmapping";
+    /**
+     *  The location of the classmappings.xml document. It will be searched for
+     *  in the classpath.  It's default value is "ini/classmappings.xml", but may be overwritten with
+     *  the system property "{@value CUSTOM_MAPPINGS}".
+     */
+    public static final String MAPPINGS = System.getProperty(CUSTOM_MAPPINGS, "ini/classmappings.xml");
 
     /** The location of the classmappings-extra.xml document. It will be searched for in the classpath.  It's value is "{@value}". */
     public  static final String MAPPINGS_EXTRA = "ini/classmappings-extra.xml";
