@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.api.exceptions;
 
+import java.io.IOException;
 
 /**
  *  This exception represents the superclass of all exceptions that providers may throw.  It is okay to throw
@@ -37,4 +38,7 @@ public class ProviderException extends WikiException {
         super( msg );
     }
 
+    public ProviderException(String msg, IOException e) {
+        super(msg, e);
+    }
 }

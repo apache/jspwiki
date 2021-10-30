@@ -286,11 +286,11 @@ public class BasicAttachmentProvider implements AttachmentProvider {
             if( author == null ) {
                 author = "unknown"; // FIXME: Should be localized, but cannot due to missing WikiContext
             }
-            props.setProperty( versionNumber + ".author", author );
+            props.setProperty( authorKey(versionNumber), author );
 
             final String changeNote = att.getAttribute( Page.CHANGENOTE );
             if( changeNote != null ) {
-                props.setProperty( versionNumber + ".changenote", changeNote );
+                props.setProperty( changeNoteKey(versionNumber), changeNote );
             }
             
             putPageProperties( att, props );
@@ -298,6 +298,10 @@ public class BasicAttachmentProvider implements AttachmentProvider {
             log.error( "Could not save attachment data: ", e );
             throw (IOException) e.fillInStackTrace();
         }
+    }
+
+    private String authorKey(int versionNumber) {
+        return versionNumber+".author";
     }
 
     /**
@@ -467,8 +471,8 @@ public class BasicAttachmentProvider implements AttachmentProvider {
         // System.out.println("Fetching info on version "+version);
         try {
             final Properties props = getPageProperties( att );
-            att.setAuthor( props.getProperty( version+".author" ) );
-            final String changeNote = props.getProperty( version+".changenote" );
+            att.setAuthor( props.getProperty(authorKey(version)) );
+            final String changeNote = props.getProperty(changeNoteKey(version));
             if( changeNote != null ) {
                 att.setAttribute( Page.CHANGENOTE, changeNote );
             }
@@ -486,6 +490,10 @@ public class BasicAttachmentProvider implements AttachmentProvider {
         // FIXME: Check for existence of this particular version.
 
         return att;
+    }
+
+    private String changeNoteKey(int version) {
+        return version+".changenote";
     }
 
     /**
@@ -515,7 +523,26 @@ public class BasicAttachmentProvider implements AttachmentProvider {
      */
     @Override
     public void deleteVersion( final Attachment att ) throws ProviderException {
-        // FIXME: Does nothing yet.
+        File attDir = findAttachmentDir( att );
+
+        // delete file
+        final File versionFile = new File(attDir, att.getVersion() + "." + getFileExtension(att.getFileName()));
+        if (versionFile.exists()) {
+            versionFile.delete();
+        }
+
+        // cleanup page properties
+        try {
+            final Properties pageProperties = getPageProperties(att);
+
+            pageProperties.remove(changeNoteKey(att.getVersion()));
+            pageProperties.remove(authorKey(att.getVersion()));
+
+            putPageProperties( att, pageProperties );
+        }
+        catch (IOException e) {
+            throw new ProviderException("Could not delete attachment: " + att.getName() + ", version: " + att.getVersion(), e);
+        }
     }
 
     /**
