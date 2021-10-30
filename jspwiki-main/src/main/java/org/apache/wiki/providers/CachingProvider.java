@@ -65,7 +65,7 @@ public class CachingProvider implements PageProvider {
 
     private static final Logger log = LogManager.getLogger( CachingProvider.class );
 
-    private final CacheManager m_cacheManager = CacheManager.getInstance();
+    private CacheManager m_cacheManager;
 
     private PageProvider m_provider;
     // FIXME: Find another way to the search engine to use instead of from Engine?
@@ -105,6 +105,14 @@ public class CachingProvider implements PageProvider {
     @Override
     public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
         log.debug("Initing CachingProvider");
+
+        if (System.getProperty("ehcacheConfig") != null) {
+            m_cacheManager = CacheManager.create(System.getProperty("ehcacheConfig"));
+            log.info("Using custom ehcache destination: " + System.getProperty("ehcacheConfig"));
+        }
+        else {
+            m_cacheManager = CacheManager.getInstance();
+        }
 
         // engine is used for getting the search engine
         m_engine = engine;
