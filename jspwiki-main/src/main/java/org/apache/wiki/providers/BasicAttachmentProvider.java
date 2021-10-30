@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -550,13 +551,19 @@ public class BasicAttachmentProvider implements AttachmentProvider {
      */
     @Override
     public void deleteAttachment( final Attachment att ) throws ProviderException {
-        final File dir = findAttachmentDir( att );
-        final String[] files = dir.list();
-        for( final String s : files ) {
-            final File file = new File( dir.getAbsolutePath() + "/" + s );
-            file.delete();
+        File dir = findAttachmentDir( att );
+        String[] files = dir.list();
+        try {
+            for(int i = 0; i < Objects.requireNonNull(files).length; i++ )
+            {
+                File file = new File( dir.getAbsolutePath() + "/" + files[i] );
+                Files.delete(file.toPath());
+            }
+            Files.delete(dir.toPath());
         }
-        dir.delete();
+        catch (IOException e) {
+            throw new ProviderException("Could not delete attachment: " + att.getName(), e);
+        }
     }
 
     /**
