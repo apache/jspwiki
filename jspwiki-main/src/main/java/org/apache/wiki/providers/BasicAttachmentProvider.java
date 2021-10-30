@@ -360,6 +360,13 @@ public class BasicAttachmentProvider implements AttachmentProvider {
             for( final String attachment : attachments ) {
                 final File f = new File( dir, attachment );
                 if( f.isDirectory() ) {
+                    final File[] files = f.listFiles();
+                    if (files == null || files.length == 0) {
+                        // can happen with git synced wiki contents, just clean up
+                        log.warn("Cleaning up empty attachment folder: " + f.getPath());
+                        f.delete();
+                        continue;
+                    }
                     String attachmentName = unmangleName( attachment );
 
                     //  Is it a new-stylea attachment directory?  If yes, we'll just deduce the name.  If not, however,
