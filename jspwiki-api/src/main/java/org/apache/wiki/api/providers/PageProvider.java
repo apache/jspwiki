@@ -138,11 +138,11 @@ public interface PageProvider extends WikiProvider {
      *  domain of the PageManager.  Just delete it as efficiently as you can.
      *
      *  @since 2.0.17.
-     *  @param pageName Name of the page to be removed.
+     *  @param page the page to be removed.
      *  @param version  Version of the page to be removed.  May be LATEST_VERSION.
      *  @throws ProviderException If the page cannot be removed for some reason.
      */
-    void deleteVersion( String pageName, int version ) throws ProviderException;
+    void deleteVersion(Page page, int version ) throws ProviderException;
 
     /**
      *  Removes an entire page from the repository.  The implementations should really do no more security checks, since that is the domain
@@ -153,18 +153,18 @@ public interface PageProvider extends WikiProvider {
      *  I want to be absolutely sure I don't accidentally use the wrong method.  With overloading something like that happens sometimes...
      *
      *  @since 2.0.17.
-     *  @param pageName Name of the page to be removed completely.
+     *  @param page the page to be removed completely.
      *  @throws ProviderException If the page could not be removed for some reason.
      */
-    void deletePage( String pageName ) throws ProviderException;
+    void deletePage(Page page) throws ProviderException;
 
     /**
      * Move a page
      *
-     * @param from  Name of the page to move.
+     * @param from  the page to move.
      * @param to    New name of the page.
      * @throws ProviderException If the page could not be moved for some reason.
      */
-    void movePage( String from, String to ) throws ProviderException;
+    void movePage(Page from, String to ) throws ProviderException;
 
 }

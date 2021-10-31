@@ -407,19 +407,20 @@ public abstract class AbstractFileProvider implements PageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void deleteVersion( final String pageName, final int version ) throws ProviderException {
+    public void deleteVersion(final Page page, final int version ) throws ProviderException {
         if( version == WikiProvider.LATEST_VERSION ) {
-            final File f = findPage( pageName );
+            final File f = findPage(page.getName());
             f.delete();
         }
     }
 
     /**
      *  {@inheritDoc}
+     * @param page
      */
     @Override
-    public void deletePage( final String pageName ) throws ProviderException {
-        final File f = findPage( pageName );
+    public void deletePage( final Page page) throws ProviderException {
+        final File f = findPage(page.getName());
         try {
             Files.delete(f.toPath());
         }

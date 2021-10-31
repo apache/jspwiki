@@ -87,6 +87,8 @@ public class DefaultPageRenamer implements PageRenamer {
         if( fromPage == null ) {
             throw new WikiException("No such page "+renameFrom);
         }
+        // Insert actual user for versioning
+        fromPage.setAuthor(context.getCurrentUser().getName());
         Page toPage = engine.getManager( PageManager.class ).getPage( renameToClean );
         if( toPage != null ) {
             throw new WikiException( "Page already exists " + renameToClean );
@@ -102,9 +104,9 @@ public class DefaultPageRenamer implements PageRenamer {
             engine.getManager( ReferenceManager.class ).pageRemoved( fromAttPage );
         }
 
-        engine.getManager( PageManager.class ).getProvider().movePage( renameFrom, renameToClean );
+        engine.getManager( PageManager.class ).getProvider().movePage( fromPage, renameToClean );
         if( engine.getManager( AttachmentManager.class ).attachmentsEnabled() ) {
-            engine.getManager( AttachmentManager.class ).getCurrentProvider().moveAttachmentsForPage( renameFrom, renameToClean );
+            engine.getManager( AttachmentManager.class ).getCurrentProvider().moveAttachmentsForPage( fromPage, renameToClean );
         }
         
         //  Add a comment to the page notifying what changed.  This adds a new revision to the repo with no actual change.

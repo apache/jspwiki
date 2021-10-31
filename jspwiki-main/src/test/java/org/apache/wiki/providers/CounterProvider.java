@@ -146,15 +146,15 @@ public class CounterProvider implements PageProvider {
     }
 
     @Override
-    public void deleteVersion( final String page, final int version ) {
+    public void deleteVersion(final Page page, final int version ) {
     }
 
     @Override
-    public void deletePage( final String page ) {
+    public void deletePage( final Page page ) {
     }
 
     @Override
-    public void movePage( final String from, final String to ) throws ProviderException {
+    public void movePage(final Page from, final String to ) throws ProviderException {
     }
 
 }

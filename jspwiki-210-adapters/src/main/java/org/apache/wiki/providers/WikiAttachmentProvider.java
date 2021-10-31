@@ -20,6 +20,7 @@ package org.apache.wiki.providers;
 
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.WikiProvider;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.Attachment;
 import org.apache.wiki.search.QueryItem;
@@ -142,7 +143,7 @@ public interface WikiAttachmentProvider extends WikiProvider {
      * @param newParent Name of the page we are to move the attachments to.
      * @throws ProviderException If the attachments could not be moved for some reason.
      */
-    void moveAttachmentsForPage( String oldParent, String newParent ) throws ProviderException;
+    void moveAttachmentsForPage(Page oldParent, String newParent ) throws ProviderException;
 
 }
 

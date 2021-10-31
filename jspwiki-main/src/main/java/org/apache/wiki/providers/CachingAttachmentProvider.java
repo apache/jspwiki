@@ -339,7 +339,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      * {@inheritDoc}
      */
     @Override
-    public void moveAttachmentsForPage( final String oldParent, final String newParent ) throws ProviderException {
+    public void moveAttachmentsForPage(final Page oldParent, final String newParent ) throws ProviderException {
         m_provider.moveAttachmentsForPage( oldParent, newParent );
         m_cache.remove( newParent );
         m_cache.remove( oldParent );

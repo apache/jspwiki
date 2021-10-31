@@ -151,19 +151,20 @@ public class WikiPageAdapterProvider implements PageProvider {
 
     /** {@inheritDoc} */
     @Override
-    public void deleteVersion( final String pageName, final int version ) throws ProviderException {
-        provider.deleteVersion( pageName, version );
+    public void deleteVersion(final Page page, final int version ) throws ProviderException {
+        provider.deleteVersion(page, version );
+    }
+
+    /** {@inheritDoc}
+     * @param page*/
+    @Override
+    public void deletePage( final Page page) throws ProviderException {
+        provider.deletePage(page);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void deletePage( final String pageName ) throws ProviderException {
-        provider.deletePage( pageName );
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void movePage( final String from, final String to ) throws ProviderException {
+    public void movePage(final Page from, final String to ) throws ProviderException {
         provider.movePage( from, to );
     }
 

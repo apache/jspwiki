@@ -598,8 +598,8 @@ public class BasicAttachmentProvider implements AttachmentProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void moveAttachmentsForPage( final String oldParent, final String newParent ) throws ProviderException {
-        final File srcDir = findPageDir( oldParent );
+    public void moveAttachmentsForPage(final Page oldParent, final String newParent ) throws ProviderException {
+        final File srcDir = findPageDir( oldParent.getName() );
         final File destDir = findPageDir( newParent );
 
         log.debug( "Trying to move all attachments from " + srcDir + " to " + destDir );

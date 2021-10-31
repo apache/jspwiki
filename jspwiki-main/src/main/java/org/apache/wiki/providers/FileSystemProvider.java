@@ -135,11 +135,12 @@ public class FileSystemProvider extends AbstractFileProvider {
 
     /**
      *  {@inheritDoc}
+     * @param page
      */
     @Override
-    public void deletePage( final String pageName) throws ProviderException {
-        super.deletePage( pageName );
-        final File file = new File( getPageDirectory(), mangleName(pageName)+PROP_EXT );
+    public void deletePage( final Page page) throws ProviderException {
+        super.deletePage(page);
+        final File file = new File( getPageDirectory(), mangleName(page.getName())+PROP_EXT );
         if( file.exists() ) {
             file.delete();
         }
@@ -149,8 +150,8 @@ public class FileSystemProvider extends AbstractFileProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void movePage( final String from, final String to ) throws ProviderException {
-        final File fromPage = findPage( from );
+    public void movePage(final Page from, final String to ) throws ProviderException {
+        final File fromPage = findPage( from.getName() );
         final File toPage = findPage( to );
         fromPage.renameTo( toPage );
     }

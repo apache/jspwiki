@@ -144,7 +144,7 @@ public class WikiAttachmentAdapterProvider implements AttachmentProvider {
 
     /** {@inheritDoc} */
     @Override
-    public void moveAttachmentsForPage( final String oldParent, final String newParent ) throws ProviderException {
+    public void moveAttachmentsForPage(final Page oldParent, final String newParent ) throws ProviderException {
         provider.moveAttachmentsForPage( oldParent, newParent );
     }
 

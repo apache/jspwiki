@@ -484,34 +484,35 @@ public class CachingProvider implements PageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void deleteVersion( final String pageName, final int version ) throws ProviderException {
+    public void deleteVersion(final Page page, final int version ) throws ProviderException {
         //  Luckily, this is such a rare operation it is okay to synchronize against the whole thing.
         synchronized( this ) {
-            final Page cached = getPageInfoFromCache( pageName );
+            final Page cached = getPageInfoFromCache(page.getName());
             final int latestcached = ( cached != null ) ? cached.getVersion() : Integer.MIN_VALUE;
 
             //  If we have this version cached, remove from cache.
             if( version == PageProvider.LATEST_VERSION || version == latestcached ) {
-                m_cache.remove( pageName );
-                m_textCache.remove( pageName );
+                m_cache.remove(page.getName());
+                m_textCache.remove(page.getName());
             }
 
-            m_provider.deleteVersion( pageName, version );
-            m_historyCache.remove( pageName );
+            m_provider.deleteVersion(page, version );
+            m_historyCache.remove(page.getName());
         }
     }
 
     /**
      *  {@inheritDoc}
+     * @param page
      */
     @Override
-    public void deletePage( final String pageName ) throws ProviderException {
+    public void deletePage( final Page page) throws ProviderException {
         //  See note in deleteVersion().
         synchronized( this ) {
-            m_cache.put( new Element( pageName, null ) );
-            m_textCache.put( new Element( pageName, null ) );
-            m_historyCache.put( new Element( pageName, null ) );
-            m_provider.deletePage( pageName );
+            m_cache.put( new Element(page.getName(), null ) );
+            m_textCache.put( new Element(page.getName(), null ) );
+            m_historyCache.put( new Element(page.getName(), null ) );
+            m_provider.deletePage(page);
         }
     }
 
@@ -519,14 +520,14 @@ public class CachingProvider implements PageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void movePage( final String from, final String to ) throws ProviderException {
+    public void movePage(final Page from, final String to ) throws ProviderException {
         m_provider.movePage( from, to );
 
         synchronized( this ) {
             // Clear any cached version of the old page and new page
-            m_cache.remove( from );
-            m_textCache.remove( from );
-            m_historyCache.remove( from );
+            m_cache.remove( from.getName() );
+            m_textCache.remove( from.getName() );
+            m_historyCache.remove( from.getName() );
             log.debug( "Removing to page " + to + " from cache" );
             m_cache.remove( to );
             m_textCache.remove( to );
