@@ -19,6 +19,8 @@
 package org.apache.wiki.i18n;
 
 import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -59,11 +61,13 @@ public interface InternationalizationManager {
      *  @throws MissingResourceException If the key cannot be located at all, even from the default locale.
      */
     default ResourceBundle getBundle( final String bundle, Locale locale ) throws MissingResourceException {
-        if( locale == null ) {
-            locale = Locale.getDefault();
-        }
 
-        return ResourceBundle.getBundle( bundle, locale );
+        return ResourceBundle.getBundle( bundle, Locale.ROOT , new ResourceBundle.Control() {
+            @Override
+            public List<Locale> getCandidateLocales(String baseName, Locale locale1) {
+                return Collections.singletonList(Locale.ROOT);
+            }
+        });
     }
 
     /**
