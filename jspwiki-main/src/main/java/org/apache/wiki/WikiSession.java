@@ -194,7 +194,7 @@ public class WikiSession implements Session {
     @Override
     public String[] getMessages( final String topic ) {
         final Set< String > messages = m_messages.get( topic );
-        if( messages == null || messages.size() == 0 ) {
+        if( messages == null || messages.isEmpty()) {
             return new String[ 0 ];
         }
         return messages.toArray( new String[0] );
@@ -206,7 +206,7 @@ public class WikiSession implements Session {
         final ArrayList< Principal > principals = new ArrayList<>();
 
         // Take the first non Role as the main Principal
-        for( final Principal principal : m_subject.getPrincipals() ) {
+        for( final Principal principal : new ArrayList<>(m_subject.getPrincipals()) ) {
             if ( AuthenticationManager.isUserPrincipal( principal ) ) {
                 principals.add( principal );
             }
