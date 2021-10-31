@@ -18,8 +18,14 @@
  */
 package org.apache.wiki.providers;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.search.QueryItem;
@@ -28,10 +34,6 @@ import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
 
 import static org.apache.wiki.TestEngine.with;
 
@@ -58,7 +60,8 @@ public class WikiProviderAdaptersTest {
         Assertions.assertTrue( pageProvider.pageExists( "page1" ) );
         Assertions.assertTrue( pageProvider.pageExists( "page1", 0 ) );
 
-        pageProvider.movePage( "page1", "page0" );
+        Page page1 = new WikiPage((Engine) engine, "page1");
+        pageProvider.movePage( page1, "page0" );
         Assertions.assertTrue( pageProvider.pageExists( "page0" ) );
         Assertions.assertFalse( pageProvider.pageExists( "page1" ) );
 
@@ -69,9 +72,10 @@ public class WikiProviderAdaptersTest {
         Assertions.assertEquals( 2, pageProvider.getVersionHistory( "page4" ).size() );
         Assertions.assertEquals( "bloblobloblo", pageProvider.getPageText( "page4", 0 ) );
         Assertions.assertEquals( "blublublublu", pageProvider.getPageText( "page4", 1 ) );
-        pageProvider.deleteVersion( "page4", 1 );
+        Page page4 = new WikiPage((Engine) engine, "page4");
+        pageProvider.deleteVersion( page4, 1 );
         Assertions.assertEquals( 1, pageProvider.getVersionHistory( "page4" ).size() );
-        pageProvider.deletePage( "page4" );
+        pageProvider.deletePage( page4 );
         Assertions.assertFalse( pageProvider.pageExists( "page4" ) );
     }
 
@@ -105,7 +109,7 @@ public class WikiProviderAdaptersTest {
         Assertions.assertEquals( 0, attachmentProvider.getVersionHistory( att13 ).size() );
 
         Assertions.assertEquals( 2, attachmentProvider.listAttachments( new WikiPage( engine, "page1" ) ).size() );
-        attachmentProvider.moveAttachmentsForPage( "page1", "page0" );
+        attachmentProvider.moveAttachmentsForPage(new WikiPage((Engine) engine, "page1"), "page0" );
         Assertions.assertEquals( 2, attachmentProvider.listAttachments( new WikiPage( engine, "page0" ) ).size() );
         Assertions.assertEquals( 0, attachmentProvider.listAttachments( new WikiPage( engine, "page1" ) ).size() );
     }
