@@ -47,6 +47,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -99,11 +100,16 @@ public class XMLGroupDatabase implements GroupDatabase {
 
     private static final String   PRINCIPAL        = "principal";
 
-    private static final String  DATE_FORMAT       = "yyyy.MM.dd 'at' HH:mm:ss:SSS z";
-
     private Document              m_dom;
 
-    private final DateFormat            m_defaultFormat  = DateFormat.getDateTimeInstance();
+    private final DateFormat    m_defaultFormat  = DateFormat.getDateTimeInstance();
+
+    private final DateFormat    m_format         = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z");
+
+    private final DateFormat    m_format_en         = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z", Locale.ENGLISH);
+
+    private final DateFormat	m_format_de = new SimpleDateFormat("yyyy.MM.dd 'at' HH:mm:ss:SSS z", Locale.GERMAN);
+
 
     private File                  m_file;
 
@@ -322,8 +328,8 @@ public class XMLGroupDatabase implements GroupDatabase {
         final String modifier = groupNode.getAttribute( MODIFIER );
         final String modified = groupNode.getAttribute( LAST_MODIFIED );
         try {
-            group.setCreated( new SimpleDateFormat( DATE_FORMAT ).parse( created ) );
-            group.setLastModified( new SimpleDateFormat( DATE_FORMAT ).parse( modified ) );
+            group.setCreated(parseDate(created));
+            group.setLastModified(parseDate(modified));
         } catch ( final ParseException e ) {
             // If parsing failed, use the platform default
             try {
@@ -337,6 +343,19 @@ public class XMLGroupDatabase implements GroupDatabase {
         group.setCreator( creator );
         group.setModifier( modifier );
         return group;
+    }
+
+    private Date parseDate(String created) throws ParseException {
+        // first try english, then for compatibility, default and german
+        try {
+            return m_format_en.parse(created);
+        } catch (ParseException e1) {
+            try {
+                return m_format.parse(created);
+            } catch (ParseException e2) {
+                return m_format_de.parse(created);
+            }
+        }
     }
 
     private void saveDOM() throws WikiSecurityException {
@@ -358,11 +377,11 @@ public class XMLGroupDatabase implements GroupDatabase {
                 io.write( CREATOR );
                 io.write( "=\"" + StringEscapeUtils.escapeXml11( group.getCreator() ) + "\" " );
                 io.write( CREATED );
-                io.write( "=\"" + new SimpleDateFormat( DATE_FORMAT ).format( group.getCreated() ) + "\" " );
+                io.write( "=\"" + m_format_en.format( group.getCreated() ) + "\" " );
                 io.write( MODIFIER );
                 io.write( "=\"" + group.getModifier() + "\" " );
                 io.write( LAST_MODIFIED );
-                io.write( "=\"" + new SimpleDateFormat( DATE_FORMAT ).format( group.getLastModified() ) + "\"" );
+                io.write( "=\"" + m_format_en.format( group.getLastModified() ) + "\"" );
                 io.write( ">\n" );
 
                 // Write each member as a <member> node

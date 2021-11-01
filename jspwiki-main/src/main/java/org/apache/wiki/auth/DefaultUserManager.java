@@ -160,7 +160,7 @@ public class DefaultUserManager implements UserManager {
             try {
                 profile = getUserDatabase().find( user.getName() );
                 newProfile = false;
-            } catch( final NoSuchPrincipalException e ) { }
+            } catch( final NoSuchPrincipalException ignored) { }
         }
 
         if ( newProfile ) {
@@ -180,7 +180,7 @@ public class DefaultUserManager implements UserManager {
 
     /** {@inheritDoc} */
     @Override
-    public void setUserProfile( final Context context, final UserProfile profile ) throws DuplicateUserException, WikiException {
+    public void setUserProfile( final Context context, final UserProfile profile ) throws WikiException {
         final Session session = context.getWikiSession();
         // Verify user is allowed to save profile!
         final Permission p = new WikiPermission( m_engine.getApplicationName(), WikiPermission.EDIT_PROFILE_ACTION );
@@ -193,23 +193,23 @@ public class DefaultUserManager implements UserManager {
 
         // Check if another user profile already has the fullname or loginname
         final UserProfile oldProfile = getUserProfile( session );
-        final boolean nameChanged = ( oldProfile != null && oldProfile.getFullname() != null ) &&
-                                    !( oldProfile.getFullname().equals( profile.getFullname() ) &&
-                                    oldProfile.getLoginName().equals( profile.getLoginName() ) );
+        boolean nameChanged = !(oldProfile == null || oldProfile.getFullname() == null) && !(oldProfile.getFullname()
+                .equals(profile.getFullname()) &&
+                oldProfile.getLoginName().equals(profile.getLoginName()));
         UserProfile otherProfile;
         try {
             otherProfile = getUserDatabase().findByLoginName( profile.getLoginName() );
             if( otherProfile != null && !otherProfile.equals( oldProfile ) ) {
                 throw new DuplicateUserException( "security.error.login.taken", profile.getLoginName() );
             }
-        } catch( final NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException ignored) {
         }
         try {
             otherProfile = getUserDatabase().findByFullName( profile.getFullname() );
             if( otherProfile != null && !otherProfile.equals( oldProfile ) ) {
                 throw new DuplicateUserException( "security.error.fullname.taken", profile.getFullname() );
             }
-        } catch( final NoSuchPrincipalException e ) {
+        } catch( final NoSuchPrincipalException ignored) {
         }
 
         // For new accounts, create approval workflow for user profile save.

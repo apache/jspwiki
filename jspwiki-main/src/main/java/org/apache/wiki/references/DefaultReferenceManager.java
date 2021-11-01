@@ -127,6 +127,8 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
     private static final Logger log = LogManager.getLogger( DefaultReferenceManager.class);
     private static final String SERIALIZATION_FILE = "refmgr.ser";
     private static final String SERIALIZATION_DIR  = "refmgr-attr";
+    private static final String SERIALIZATION_PROPERTY  = "jspwiki.referenceManager.serialize";
+
 
     /** We use this also a generic serialization id */
     private static final long serialVersionUID = 4L;
@@ -233,6 +235,9 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      */
     @SuppressWarnings("unchecked")
     private synchronized long unserializeFromDisk() throws IOException, ClassNotFoundException {
+
+        if (!doSerialize()) return Long.MIN_VALUE;
+
         final long saved;
 
         final File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
@@ -264,6 +269,9 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  Serializes hashmaps to disk.  The format is private, don't touch it.
      */
     private synchronized void serializeToDisk() {
+
+        if (!doSerialize()) return;
+
         final File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
         try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
             final StopWatch sw = new StopWatch();
@@ -297,10 +305,17 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
 		}
     }
 
+    private boolean doSerialize() {
+        return "true".equals(m_engine.getWikiProperties().getProperty(SERIALIZATION_PROPERTY, "true"));
+    }
+
     /**
      *  Reads the serialized data from the disk back to memory. Returns the date when the data was last written on disk
      */
     private synchronized long unserializeAttrsFromDisk( final Page p ) throws IOException, ClassNotFoundException {
+
+        if (!doSerialize()) return Long.MIN_VALUE;
+
         long saved = 0L;
 
         //  Find attribute cache, and check if it exists
@@ -351,6 +366,9 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  Serializes hashmaps to disk.  The format is private, don't touch it.
      */
     private synchronized void serializeAttrsToDisk( final Page p ) {
+
+        if (!doSerialize()) return;
+
         final StopWatch sw = new StopWatch();
         sw.start();
 

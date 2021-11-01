@@ -479,6 +479,7 @@ public class LuceneSearchProvider implements SearchProvider {
              final IndexReader reader = DirectoryReader.open( luceneDir ) ) {
             final String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS, LUCENE_PAGE_KEYWORDS };
             final QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
+            qp.setAllowLeadingWildcard(true);
             final Query luceneQuery = qp.parse( query );
             final IndexSearcher searcher = new IndexSearcher( reader, searchExecutor );
 

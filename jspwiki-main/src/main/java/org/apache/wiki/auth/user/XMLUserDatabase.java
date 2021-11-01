@@ -48,6 +48,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
@@ -85,13 +86,15 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     private static final String UID               = "uid";
     private static final String USER_TAG          = "user";
     private static final String WIKI_NAME         = "wikiName";
-    private static final String DATE_FORMAT       = "yyyy.MM.dd 'at' HH:mm:ss:SSS z";
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy.MM.dd 'at' HH:mm:ss:SSS z");
+    private static final DateFormat DATE_FORMAT_EN = new SimpleDateFormat( "yyyy.MM.dd 'at' HH:mm:ss:SSS z", Locale.ENGLISH );
+    private static final DateFormat DATE_FORMAT_DE = new SimpleDateFormat( "yyyy.MM.dd 'at' HH:mm:ss:SSS z", Locale.GERMAN );
     private Document            c_dom;
     private File                c_file;
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void deleteByLoginName( final String loginName ) throws NoSuchPrincipalException, WikiSecurityException {
+    public synchronized void deleteByLoginName( final String loginName ) throws WikiSecurityException {
         if( c_dom == null ) {
             throw new WikiSecurityException( "FATAL: database does not exist" );
         }
@@ -318,7 +321,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
      * @see org.apache.wiki.auth.user.UserDatabase#rename(String, String)
      */
     @Override
-    public synchronized void rename( final String loginName, final String newName) throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException {
+    public synchronized void rename( final String loginName, final String newName) throws DuplicateUserException, WikiSecurityException {
         if( c_dom == null ) {
             log.fatal( "Could not rename profile '" + loginName + "'; database does not exist" );
             throw new IllegalStateException( "FATAL: database does not exist" );
@@ -343,10 +346,9 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         for( int i = 0; i < users.getLength(); i++ ) {
             final Element user = ( Element )users.item( i );
             if( user.getAttribute( LOGIN_NAME ).equals( loginName ) ) {
-                final DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
                 final Date modDate = new Date( System.currentTimeMillis() );
                 setAttribute( user, LOGIN_NAME, newName );
-                setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
+                setAttribute( user, LAST_MODIFIED, DATE_FORMAT_EN.format( modDate ) );
                 profile.setLoginName( newName );
                 profile.setLastModified( modDate );
                 break;
@@ -367,7 +369,6 @@ public class XMLUserDatabase extends AbstractUserDatabase {
 
         checkForRefresh();
 
-        final DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
         final String index = profile.getLoginName();
         final NodeList users = c_dom.getElementsByTagName( USER_TAG );
         Element user = null;
@@ -388,7 +389,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             log.info( "Creating new user " + index );
             user = c_dom.createElement( USER_TAG );
             c_dom.getDocumentElement().appendChild( user );
-            setAttribute( user, CREATED, c_format.format( profile.getCreated() ) );
+            setAttribute( user, CREATED, DATE_FORMAT_EN.format( profile.getCreated() ) );
             isNew = true;
         } else {
             // To update existing user node, delete old attributes first...
@@ -399,13 +400,13 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         }
 
         setAttribute( user, UID, profile.getUid() );
-        setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
+        setAttribute( user, LAST_MODIFIED, DATE_FORMAT_EN.format( modDate ) );
         setAttribute( user, LOGIN_NAME, profile.getLoginName() );
         setAttribute( user, FULL_NAME, profile.getFullname() );
         setAttribute( user, WIKI_NAME, profile.getWikiName() );
         setAttribute( user, EMAIL, profile.getEmail() );
         final Date lockExpiry = profile.getLockExpiry();
-        setAttribute( user, LOCK_EXPIRY, lockExpiry == null ? "" : c_format.format( lockExpiry ) );
+        setAttribute( user, LOCK_EXPIRY, lockExpiry == null ? "" : DATE_FORMAT_EN.format( lockExpiry ) );
 
         // Hash and save the new password if it's different from old one
         final String newPassword = profile.getPassword();
@@ -543,8 +544,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
      */
     private Date parseDate( final UserProfile profile, final String date ) {
         try {
-            final DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
-            return c_format.parse( date );
+            return parseDate(date);
         } catch( final ParseException e ) {
             try {
                 return DateFormat.getDateTimeInstance().parse( date );
@@ -554,6 +554,23 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             }
         }
         return null;
+    }
+
+    private Date parseDate( String date ) throws ParseException {
+        try {
+            return DATE_FORMAT_EN.parse( date );
+        }  catch( ParseException e0 ) {
+            try {
+                return DATE_FORMAT.parse( date );
+            }  catch( ParseException e1 ) {
+                try {
+                    return DATE_FORMAT_DE.parse( date );
+                } catch (Exception e2) {
+                    return DateFormat.getDateTimeInstance().parse( date );
+                }
+            }
+        }
+
     }
 
     /**
@@ -580,22 +597,15 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             final String loginName = user.getAttribute( LOGIN_NAME );
             String created = user.getAttribute( CREATED );
             String modified = user.getAttribute( LAST_MODIFIED );
-            final DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
+
             try {
-                created = c_format.format( c_format.parse( created ) );
-                modified = c_format.format( c_format.parse( modified ) );
+                created = DATE_FORMAT_EN.format( parseDate( created ) );
+                modified = DATE_FORMAT_EN.format( parseDate( modified ) );;
                 user.setAttribute( CREATED, created );
                 user.setAttribute( LAST_MODIFIED, modified );
             } catch( final ParseException e ) {
-                try {
-                    created = c_format.format( DateFormat.getDateTimeInstance().parse( created ) );
-                    modified = c_format.format( DateFormat.getDateTimeInstance().parse( modified ) );
-                    user.setAttribute( CREATED, created );
-                    user.setAttribute( LAST_MODIFIED, modified );
-                } catch( final ParseException e2 ) {
-                    log.warn( "Could not parse 'created' or 'lastModified' attribute for profile '" + loginName + "'."
-                            + " It may have been tampered with." );
-                }
+                log.warn( "Could not parse 'created' or 'lastModified' attribute for profile '" + loginName + "'."
+                        + " It may have been tampered with." );
             }
         }
     }
