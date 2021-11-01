@@ -44,11 +44,13 @@ import javax.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -64,7 +66,7 @@ public class WikiSession implements Session {
 
     private static final String ALL = "*";
 
-    private static final ThreadLocal< Session > c_guestSession = new ThreadLocal<>();
+    private static final Map<Thread, Session> c_guestSession = Collections.synchronizedMap(new WeakHashMap<>());
 
     private final Subject m_subject = new Subject();
 
@@ -468,7 +470,7 @@ public class WikiSession implements Session {
         }
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         monitor.remove( request.getSession() );
-        c_guestSession.remove();
+        c_guestSession.remove(Thread.currentThread());
     }
 
     /**
@@ -534,15 +536,8 @@ public class WikiSession implements Session {
      *  @param engine Engine for this session
      *  @return A static WikiSession which is shared by all in this same Thread.
      */
-    // FIXME: Should really use WeakReferences to clean away unused sessions.
     private static Session staticGuestSession( final Engine engine ) {
-        Session session = c_guestSession.get();
-        if( session == null ) {
-            session = guestSession( engine );
-            c_guestSession.set( session );
-        }
-
-        return session;
+        return c_guestSession.computeIfAbsent(Thread.currentThread(), k -> guestSession(engine));
     }
 
     /**
