@@ -241,7 +241,15 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
 
         // Initialize local security policy
         try {
-            final String policyFileName = properties.getProperty( POLICY, DEFAULT_POLICY );
+            String policyFileName = engine.getServletContext().getInitParameter(POLICY);
+
+            if (policyFileName == null) {
+                policyFileName = System.getProperty( POLICY );
+            }
+            if (policyFileName == null) {
+                policyFileName = properties.getProperty(POLICY, DEFAULT_POLICY);
+            }
+
             final URL policyURL = engine.findConfigFile( policyFileName );
 
             if (policyURL != null) {

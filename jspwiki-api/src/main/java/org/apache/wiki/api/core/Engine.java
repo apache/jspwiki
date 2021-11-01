@@ -239,11 +239,11 @@ public interface Engine {
      * @return the URL to the file
      */
     default URL findConfigFile( final String name ) {
-        LogManager.getLogger( Engine.class ).info( "looking for " + name + " inside WEB-INF " );
+        LogManager.getLogger( Engine.class ).info( "looking for " + name + " as absolute path" );
         // Try creating an absolute path first
         File defaultFile = null;
         if( getRootPath() != null ) {
-            defaultFile = new File( getRootPath() + "/WEB-INF/" + name );
+            defaultFile = new File( name );
         }
         if ( defaultFile != null && defaultFile.exists() ) {
             try {
