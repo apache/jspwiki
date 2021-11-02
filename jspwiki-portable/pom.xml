@@ -232,11 +232,20 @@
   </build>
   
   <dependencies>
+    <dependency><!-- added so we can issue safe, parallel builds -->
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-war</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+      <scope>provided</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-core</artifactId>
       <version>${tomcat.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jsp-api</artifactId>
