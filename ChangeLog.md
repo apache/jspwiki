@@ -30,6 +30,8 @@ under the License.
     * [JSPWIKI-1158](https://issues.apache.org/jira/browse/JSPWIKI-1158) - Remove unnecessary ToString [#147](https://github.com/apache/jspwiki/pull/147)
 
 * Dependency updates
+    * Gson to 2.8.9, thanks to dependabot [#150](https://github.com/apache/jspwiki/pull/150)
+    * Lucene to 8.10.1, thanks to dependabot [#149](https://github.com/apache/jspwiki/pull/149)
     * Selenide to 6.0.3 [#145](https://github.com/apache/jspwiki/pull/145)
 
 **2021-10-16  Juan Pablo Santos (juanpablo AT apache DOT org)**
