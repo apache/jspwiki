@@ -27,7 +27,7 @@ under the License.
 
 # 2. Build Specific
 
-| Maven Command                                                     | Description                                                                                                               |
+| Maven Command (1)                                                 | Description                                                                                                               |
 | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | mvn clean install                                                 | performs a build                                                                                                          |
 | mvn clean install -Dmaven.test.skip                               | performs a build, skipping the tests (not recommended)                                                                    |
@@ -43,6 +43,7 @@ under the License.
 | mvn clean install -Dmaven.test.skip -Dminimize=false              | performs a build, skipping the tests and skip compression                                                                 |
 | mvn clean install -Dgenerate-native-launchers=true                | (from portable module) performs a build, regenerating the native executables on the portable build                                               |
 
+(1) `-T 1C` can be added to any of these commands in order to run a parallel build, thus decreasing build time, i.e., `mvn clean install -T 1C`.
 
 # 3. Reports Specific
 
