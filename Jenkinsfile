@@ -39,7 +39,7 @@ try {
             dir( build ) {
                 git url: buildRepo, poll: true
                 if( env.BRANCH_NAME == 'master' ) {
-                    buildJSPWiki( '-Pattach-additional-artifacts -Djdk.javadoc.doclet.version=2.0.14' )
+                    buildJSPWiki( '-Pattach-additional-artifacts -Djdk.javadoc.doclet.version=2.0.15' )
                     pom = readMavenPom file: 'pom.xml'
                     writeFile file: 'target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
                     writeFile file: 'jspwiki-it-tests/target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
