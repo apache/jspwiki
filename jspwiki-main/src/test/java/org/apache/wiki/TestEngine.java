@@ -216,12 +216,7 @@ public class TestEngine extends WikiEngine {
         final MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path ) {
             @Override
             public ServletContext getServletContext() { // stripes mock returns null
-                return new MockServletContext( "/JSPWiki" ) {
-                    @Override
-                    public String getRealPath( final String path ) { // stripes mock returns null
-                        return path ;
-                    }
-                };
+                return createServletContext( "/JSPWiki" );
             }
         };
         request.setSession( new MockHttpSession( this.getServletContext() ) );
