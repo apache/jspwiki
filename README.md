@@ -8,7 +8,7 @@
     "License"); you may not use this file except in compliance
     with the License.  You may obtain a copy of the License at
 
-       http://www.apache.org/licenses/LICENSE-2.0
+       https://www.apache.org/licenses/LICENSE-2.0
 
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on an
@@ -22,8 +22,8 @@ The license file can be found in LICENSE.
 
 ## What is JSPWiki?
 
-JSPWiki is a simple (well, not any more) WikiWiki clone, written in Java
-and JSP.  A WikiWiki is a web site which allows anyone to participate
+JSPWiki is a simple (well, not anymore) WikiWiki clone, written in Java
+and JSP.  A WikiWiki is a website which allows anyone to participate
 in its development.  JSPWiki supports all the traditional wiki features,
 as well as very detailed access control and security integration using JAAS. 
 
@@ -35,7 +35,7 @@ Okay, so you wanna Wiki?  You'll need the following things:
 
 REQUIRED:
 
-* A JSP engine that supports Servlet API 3.1.  We recommend [Apache Tomcat](http://tomcat.apache.org/)
+* A JSP engine that supports Servlet API 3.1.  We recommend [Apache Tomcat](https://tomcat.apache.org/)
   for a really easy installation. Tomcat 9.x or later is recommended, although Tomcat 8.x 
   is supported too; see [additional configuration](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Getting%20Started#section-Getting+Started-Tomcat8.x) 
   that must be set up in order to run JSPWiki on Tomcat 8.x.
@@ -56,14 +56,14 @@ OPTIONAL:
 ## Really simple installation
 
 This section is meant for you, if you just want to have a really quick
-install without much worries.  If you want to have a more complicated
+install without many worries.  If you want to have a more complicated
 installation (with more power as to how to do things), 
 check out the "Install" section below.
 
 Since JSPWiki 2.1.153, JSPWiki comes with a really simple installation
 engine.  Just do the following:
 
-1) Install Tomcat from http://tomcat.apache.org/ (or any other servlet
+1) Install Tomcat from https://tomcat.apache.org/ (or any other servlet
    container)
 
 2) Rename the JSPWiki.war file from the download and rename it based on
@@ -140,14 +140,13 @@ advanced usage of the image.
 
 ## Upgrading from previous versions
 
-Please read ReleaseNotes and the UPGRADING document available with this
+Please read [ReleaseNotes](./ReleaseNotes) and the [UPGRADING](./UPGRADING) documents available with this
 distribution.
 
 ## Contact
 
 Questions can be asked to JSPWiki team members and fellow users via the jspwiki-users
-mailing list: See http://jspwiki.apache.org/community/mailing_lists.html.
+mailing list: See https://jspwiki.apache.org/community/mailing_lists.html.
 Please use the user mailing list instead of contacting team members directly, 
 and as this is a public list stored in public archives, be sure to avoid including
 any sensitive information (passwords, data, etc.) in your questions.
-
