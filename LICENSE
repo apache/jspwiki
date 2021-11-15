@@ -280,8 +280,8 @@ TEST LIBRARY                                LICENSE FILE
 awaitility-4.1.0.jar                        LICENSE
 commons-el-1.0.jar                          LICENSE
 custom_rhino-0.4.3.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mpl
-hsqldb-2.6.0.jar                            ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
-sqltool-2.6.0.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
+hsqldb-2.6.1.jar                            ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
+sqltool-2.6.1.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 jetty-all-9.4.44.v20210927.jar              LICENSE
 junit-5.8.1                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
 mockito-core-4.0.0.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
