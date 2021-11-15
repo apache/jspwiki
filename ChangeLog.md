@@ -27,9 +27,12 @@ under the License.
 
 * Fixed login when using `CookieAuthenticationLoginModule`, http response was being written after being committed
 
+* Fixed Dockerfile/JDK8 build
+
 * Dependency updates
     * cargo-maven2-plugin to cargo-maven3-plugin
     * hsqldb to 2.6.1, thanks to dependabot [#151](https://github.com/apache/jspwiki/pull/151)
+	* Tomcat to 9.0.55
 
 **2021-10-28  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
