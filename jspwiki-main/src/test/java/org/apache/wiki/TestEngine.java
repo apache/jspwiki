@@ -453,14 +453,6 @@ public class TestEngine extends WikiEngine {
         return getManager( RenderingManager.class ).getHTML( context, page );
     }
 
-    public static void trace() {
-        try {
-            throw new Exception("Foo");
-        } catch( final Exception e ) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Supplies a clean set of test properties for the TestEngine constructor.
      * @param props the properties supplied by callers
