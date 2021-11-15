@@ -60,9 +60,11 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
     /** The name of the cookie that gets stored to the user browser. */
     public static final String PREFS_COOKIE_NAME = "JSPWikiAssertedName";
 
-    protected static final Logger log = LogManager.getLogger( CookieAssertionLoginModule.class );
+    private static final Logger log = LogManager.getLogger( CookieAssertionLoginModule.class );
 
     /**
+     * {@inheritDoc}
+     *
      * Logs in the user by calling back to the registered CallbackHandler with
      * an HttpRequestCallback. The CallbackHandler must supply the current
      * servlet HTTP request as its response.
@@ -70,50 +72,38 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
      * found, this method returns <code>true</code>. If not found, this
      * method throws a <code>FailedLoginException</code>.
      * @see javax.security.auth.spi.LoginModule#login()
-     * @throws {@inheritDoc}
      */
-    public boolean login() throws LoginException
-    {
+    public boolean login() throws LoginException {
         // Otherwise, let's go and look for the cookie!
         final HttpRequestCallback hcb = new HttpRequestCallback();
-        final Callback[] callbacks = new Callback[]
-        { hcb };
-        try
-        {
+        final Callback[] callbacks = new Callback[] { hcb };
+        try {
             m_handler.handle( callbacks );
             final HttpServletRequest request = hcb.getRequest();
             final HttpSession session = ( request == null ) ? null : request.getSession( false );
             final String sid = ( session == null ) ? NULL : session.getId();
             final String name = (request != null) ? getUserCookie( request ) : null;
-            if ( name == null )
-            {
-                if ( log.isDebugEnabled() )
-                {
+            if ( name == null ) {
+                if ( log.isDebugEnabled() ) {
                     log.debug( "No cookie " + PREFS_COOKIE_NAME + " present in session ID=:  " + sid );
                 }
                 throw new FailedLoginException( "The user cookie was not found." );
             }
 
-            if ( log.isDebugEnabled() )
-            {
+            if ( log.isDebugEnabled() ) {
                 log.debug( "Logged in session ID=" + sid + "; asserted=" + name );
             }
             // If login succeeds, commit these principals/roles
             m_principals.add( new WikiPrincipal( name, WikiPrincipal.FULL_NAME ) );
             return true;
-        }
-        catch( final IOException e )
-        {
+        } catch( final IOException e ) {
             log.error( "IOException: " + e.getMessage() );
             return false;
-        }
-        catch( final UnsupportedCallbackException e )
-        {
+        } catch( final UnsupportedCallbackException e ) {
             final String message = "Unable to handle callback, disallowing login.";
             log.error( message, e );
             throw new LoginException( message );
         }
-
     }
 
     /**
@@ -122,11 +112,12 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
      *  @param request The Servlet request, as usual.
      *  @return the username, as retrieved from the cookie
      */
-    public static String getUserCookie(final HttpServletRequest request )
-    {
+    public static String getUserCookie( final HttpServletRequest request ) {
         final String cookie = HttpUtil.retrieveCookieValue( request, PREFS_COOKIE_NAME );
-
-        return TextUtil.urlDecodeUTF8(cookie);
+        final String usernameCookie = TextUtil.urlDecodeUTF8( cookie );
+        return usernameCookie!= null && usernameCookie.contains( "-->" ) ?
+               usernameCookie.substring( 0, usernameCookie.indexOf( "-->" ) ) :
+               usernameCookie;
     }
 
     /**
@@ -135,9 +126,8 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
      *  @param response The Servlet response
      *  @param name     The name to write into the cookie.
      */
-    public static void setUserCookie(final HttpServletResponse response, String name )
-    {
-        name = TextUtil.urlEncodeUTF8(name);
+    public static void setUserCookie( final HttpServletResponse response, String name ) {
+        name = TextUtil.urlEncodeUTF8( name );
         final Cookie userId = new Cookie( PREFS_COOKIE_NAME, name );
         userId.setMaxAge( 1001 * 24 * 60 * 60 ); // 1001 days is default.
         response.addCookie( userId );
@@ -151,4 +141,5 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
     public static void clearUserCookie( final HttpServletResponse response ) {
         HttpUtil.clearCookie( response, PREFS_COOKIE_NAME );
     }
+
 }
