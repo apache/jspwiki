@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
-    <version>2.11.1-SNAPSHOT</version>
+    <version>2.11.0-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.jspwiki.it</groupId>
@@ -179,7 +179,7 @@
             <!-- Additional Tomcat configuration (JNDI lookups for DB access, tomcat-users.xml file) -->
             <plugin>
               <groupId>org.codehaus.cargo</groupId>
-              <artifactId>cargo-maven2-plugin</artifactId>
+              <artifactId>cargo-maven3-plugin</artifactId>
               <configuration>
                 <configuration>
                   <datasources>
