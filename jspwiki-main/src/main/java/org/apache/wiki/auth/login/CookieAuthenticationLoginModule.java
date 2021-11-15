@@ -47,7 +47,7 @@ import java.util.UUID;
 
 
 /**
- * Logs in an user based on a cookie stored in the user's computer.  The cookie
+ * Logs in a user based on a cookie stored in the user's computer.  The cookie
  * information is stored in the <code>jspwiki.workDir</code>, under the directory
  * {@value #COOKIE_DIR}.  For security purposes it is a very, very good idea
  * to prevent access to this directory by everyone except the web server process;
@@ -97,45 +97,39 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
     /**
      * Describes how often we scrub the cookieDir directory.
      */
-    private static final long SCRUB_PERIOD = 60 * 60 * 1000L; // In milliseconds
+    private static final long SCRUB_PERIOD = 60 * 60 * 1_000L; // In milliseconds
 
     /**
-     * @see javax.security.auth.spi.LoginModule#login()
      * {@inheritDoc}
+     *
+     * @see javax.security.auth.spi.LoginModule#login()
      */
     @Override
     public boolean login() throws LoginException {
         // Otherwise, let's go and look for the cookie!
         final HttpRequestCallback hcb = new HttpRequestCallback();
         final WikiEngineCallback wcb = new WikiEngineCallback();
-
         final Callback[] callbacks = new Callback[] { hcb, wcb };
 
         try {
             m_handler.handle( callbacks );
-
             final HttpServletRequest request = hcb.getRequest();
             final String uid = getLoginCookie( request );
 
             if( uid != null ) {
                 final Engine engine = wcb.getEngine();
                 final File cookieFile = getCookieFile( engine, uid );
-
                 if( cookieFile != null && cookieFile.exists() && cookieFile.canRead() ) {
-
-                    try( final Reader in = new BufferedReader( new InputStreamReader(Files.newInputStream( cookieFile.toPath() ), StandardCharsets.UTF_8 ) ) ) {
+                    try( final Reader in = new BufferedReader( new InputStreamReader( Files.newInputStream( cookieFile.toPath() ), StandardCharsets.UTF_8 ) ) ) {
                         final String username = FileUtil.readContents( in );
-
                         if( log.isDebugEnabled() ) {
-                            log.debug( "Logged in cookie authenticated name=" + username );
+                            log.debug( "Logged in cookie authenticated name={}", username );
                         }
 
                         // If login succeeds, commit these principals/roles
                         m_principals.add( new WikiPrincipal( username, WikiPrincipal.LOGIN_NAME ) );
 
-                        //
-                        //  Tag the file so that we know that it has been accessed recently.
-                        //
+                        // Tag the file so that we know that it has been accessed recently.
                         return cookieFile.setLastModified( System.currentTimeMillis() );
 
                     } catch( final IOException e ) {
@@ -152,7 +146,6 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
             log.error( message, e );
             throw new LoginException( message );
         }
-
         return false;
     }
 
@@ -160,40 +153,41 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
      * Attempts to locate the cookie file.
      *
      * @param engine Engine
-     * @param uid    An unique ID fetched from the user cookie
+     * @param uid An unique ID fetched from the user cookie
      * @return A File handle, or null, if there was a problem.
      */
     private static File getCookieFile( final Engine engine, final String uid ) {
         final File cookieDir = new File( engine.getWorkDir(), COOKIE_DIR );
-
         if( !cookieDir.exists() ) {
             cookieDir.mkdirs();
         }
-
         if( !cookieDir.canRead() ) {
-            log.error( "Cannot read from cookie directory!" + cookieDir.getAbsolutePath() );
+            log.error( "Cannot read from cookie directory! {}", cookieDir.getAbsolutePath() );
             return null;
         }
-
         if( !cookieDir.canWrite() ) {
-            log.error( "Cannot write to cookie directory!" + cookieDir.getAbsolutePath() );
+            log.error( "Cannot write to cookie directory! {}", cookieDir.getAbsolutePath() );
             return null;
         }
 
-        //
         //  Scrub away old files
-        //
         final long now = System.currentTimeMillis();
-
         if( now > ( c_lastScrubTime + SCRUB_PERIOD ) ) {
             scrub( TextUtil.getIntegerProperty( engine.getWikiProperties(), PROP_LOGIN_EXPIRY_DAYS, DEFAULT_EXPIRY_DAYS ), cookieDir );
             c_lastScrubTime = now;
         }
 
-        //
         //  Find the cookie file
-        //
-        return new File( cookieDir, uid );
+        final File file = new File( cookieDir, uid );
+        try {
+            if( file.getCanonicalPath().startsWith( cookieDir.getCanonicalPath() ) ) {
+                return file;
+            }
+        } catch( final IOException e ) {
+            log.error( "Problem retrieving login cookie, returning null: {}", e.getMessage() );
+            return null;
+        }
+        return null;
     }
 
     /**
@@ -226,13 +220,11 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
             //  Write the cookie content to the cookie store file.
             try( final Writer out = new BufferedWriter( new OutputStreamWriter( Files.newOutputStream( cf.toPath() ), StandardCharsets.UTF_8 ) ) ) {
                 FileUtil.copyContents( new StringReader( username ), out );
-
                 if( log.isDebugEnabled() ) {
-                    log.debug( "Created login cookie for user " + username + " for " + days + " days" );
+                    log.debug( "Created login cookie for user {} for {} days", username, days );
                 }
-
             } catch( final IOException ex ) {
-                log.error( "Unable to create cookie file to store user id: " + uid );
+                log.error( "Unable to create cookie file to store user id: {}", uid );
             }
         }
     }
@@ -248,15 +240,12 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
         final Cookie userId = getLoginCookie( "" );
         userId.setMaxAge( 0 );
         response.addCookie( userId );
-
         final String uid = getLoginCookie( request );
-
         if( uid != null ) {
             final File cf = getCookieFile( engine, uid );
-
             if( cf != null ) {
                 if( !cf.delete() ) {
-                    log.debug( "Error deleting cookie login " + uid );
+                    log.debug( "Error deleting cookie login {}", uid );
                 }
             }
         }
@@ -265,12 +254,12 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
     /**
      * Helper function to get secure LOGIN cookie
      *
-     * @param: value of the cookie
+     * @param value of the cookie
      */
     private static Cookie getLoginCookie( final String value ) {
         final Cookie c = new Cookie( LOGIN_COOKIE_NAME, value );
-        c.setHttpOnly( true );  //no browser access
-        c.setSecure( true ); //only access via encrypted https allowed
+        c.setHttpOnly( true ); // no browser access
+        c.setSecure( true ); // only access via encrypted https allowed
         return c;
     }
 
@@ -280,8 +269,8 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
      * However, if the user has logged in during the expiry period, the expiry is
      * reset, and the cookie file left here.
      *
-     * @param days
-     * @param cookieDir
+     * @param days number of days that the cookie will survive
+     * @param cookieDir cookie directory
      */
     private static synchronized void scrub( final int days, final File cookieDir ) {
         log.debug( "Scrubbing cookieDir..." );
@@ -296,12 +285,12 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
                 if( f.delete() ) {
                     deleteCount++;
                 } else {
-                    log.debug( "Error deleting cookie login with index " + i );
+                    log.debug( "Error deleting cookie login with index {}", i );
                 }
             }
         }
 
-        log.debug( "Removed " + deleteCount + " obsolete cookie logins" );
+        log.debug( "Removed {} obsolete cookie logins", deleteCount );
     }
 
 }
