@@ -21,7 +21,7 @@ WORKDIR /tmp
 
 COPY . .
 
-RUN ./mvn -B dependency:go-offline
+RUN mvn -B dependency:go-offline
 
 RUN set -x \
 # fastest, minimum build
