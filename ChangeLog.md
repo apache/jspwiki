@@ -17,6 +17,20 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-11-14  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-13_
+
+* [JSPWIKI-1159](https://issues.apache.org/jira/browse/JSPWIKI-1159) - [ReferredPagesPlugin](https://jspwiki-wiki.apache.org/Wiki.jsp?page=ReferredPagesPlugin), [ReferringPagesPlugin](https://jspwiki-wiki.apache.org/Wiki.jsp?page=ReferringPagesPlugin), [ReferringUndefinedPagesPlugin](https://jspwiki-wiki.apache.org/Wiki.jsp?page=ReferringUndefinedPagesPlugin), [UndefinedPagesPlugin](https://jspwiki-wiki.apache.org/Wiki.jsp?page=UndefinedPagesPlugin) and [UnusedPagesPlugin](https://jspwiki-wiki.apache.org/Wiki.jsp?page=UnusedPagesPlugin) now accept a `columns` parameter to split the results into
+
+* `CookieAuthenticationLoginModule#clearLoginCookie` ensures that the cookie to be deleted belongs to the logincookie directory
+
+* Fixed login when using `CookieAuthenticationLoginModule`, http response was being written after being committed
+
+* Dependency updates
+    * cargo-maven2-plugin to cargo-maven3-plugin
+    * hsqldb to 2.6.1, thanks to dependabot [#151](https://github.com/apache/jspwiki/pull/151)
+
 **2021-10-28  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-12_
