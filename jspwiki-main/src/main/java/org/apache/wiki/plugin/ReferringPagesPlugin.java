@@ -80,7 +80,6 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
         }
 
         final Page page = context.getEngine().getManager( PageManager.class ).getPage( pageName );
-
         if( page != null ) {
             Collection< String > links  = refmgr.findReferrers( page.getName() );
             String wikitext;
@@ -91,23 +90,22 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
 
             String extras = TextUtil.replaceEntities( params.get( PARAM_EXTRAS ) );
             if( extras == null ) {
-                extras = rb.getString("referringpagesplugin.more");
+                extras = rb.getString( "referringpagesplugin.more" );
             }
 
             if( log.isDebugEnabled() ) {
-                log.debug( "Fetching referring pages for " + page.getName() + " with a max of "+items);
+                log.debug( "Fetching referring pages for {} with a max of {}", page.getName(), items );
             }
 
             if( links != null && links.size() > 0 ) {
                 links = filterAndSortCollection( links );
                 wikitext = wikitizeCollection( links, m_separator, items );
 
-                result.append( makeHTML( context, wikitext ) );
+                result.append( applyColumnsStyle( makeHTML( context, wikitext ) ) );
 
-                if( items < links.size() && items > 0 )
-                {
-                    final Object[] args = { "" + ( links.size() - items) };
-                    extras = MessageFormat.format(extras, args);
+                if( items < links.size() && items > 0 ) {
+                    final Object[] args = { "" + ( links.size() - items ) };
+                    extras = MessageFormat.format( extras, args );
 
                     result.append( "<br />" )
                           .append( "<a class='morelink' href='" )
@@ -119,20 +117,15 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
                 }
             }
 
-            //
             // If nothing was left after filtering or during search
-            //
             if( links == null || links.size() == 0 ) {
                 wikitext = rb.getString( "referringpagesplugin.nobody" );
-
                 result.append( makeHTML( context, wikitext ) );
-            } else {
-                if( m_show.equals( PARAM_SHOW_VALUE_COUNT ) ) {
-                    result = new StringBuilder();
-                    result.append( links.size() );
-                    if( m_lastModified ) {
-                        result.append( " (" ).append( m_dateFormat.format( m_dateLastModified ) ).append( ")" );
-                    }
+            } else  if( m_show.equals( PARAM_SHOW_VALUE_COUNT ) ) {
+                result = new StringBuilder();
+                result.append( links.size() );
+                if( m_lastModified ) {
+                    result.append( " (" ).append( m_dateFormat.format( m_dateLastModified ) ).append( ")" );
                 }
             }
 

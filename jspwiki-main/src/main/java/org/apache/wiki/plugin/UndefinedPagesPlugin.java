@@ -55,11 +55,11 @@ public class UndefinedPagesPlugin extends AbstractReferralPlugin {
         final String wikitext;
         if( m_show.equals( PARAM_SHOW_VALUE_COUNT ) ) {
             wikitext = "" + links.size();
+            return makeHTML( context, wikitext );
         } else {
             wikitext = wikitizeCollection( links, m_separator, ALL_ITEMS );
+            return applyColumnsStyle( makeHTML( context, wikitext ) );
         }
-        
-        return makeHTML( context, wikitext );
     }
 
 }

@@ -72,6 +72,7 @@ import java.util.stream.Collectors;
  *  <li><b>include</b> -  a regular expression of pages to include in the list. </li>
  *  <li><b>show</b> - value is either "pages" (default) or "count".  When "count" is specified, shows only the count
  *      of pages which match. (since 2.8)</li>
+ *  <li><b>columns</b> - How many columns should the output be displayed on.</li>
  *  <li><b>showLastModified</b> - When show=count, shows also the last modified date. (since 2.8)</li>
  *  <li><b>sortOrder</b> - specifies the sort order for the resulting list.  Options are
  *  'human', 'java', 'locale' or a <code>RuleBasedCollator</code> rule string. (since 2.8.3)</li>
@@ -115,28 +116,32 @@ public abstract class AbstractReferralPlugin implements Plugin {
     /** Parameter name for showing the last modification count.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LASTMODIFIED     = "showLastModified";
 
+    /** Parameter name for setting the number of columns that will be displayed by the plugin.  Value is <tt>{@value}</tt>. Available since 2.11.0. */
+    public static final String PARAM_COLUMNS          = "columns";
+
     /** Parameter name for specifying the sort order.  Value is <tt>{@value}</tt>. */
     protected static final String PARAM_SORTORDER        = "sortOrder";
     protected static final String PARAM_SORTORDER_HUMAN  = "human";
     protected static final String PARAM_SORTORDER_JAVA   = "java";
     protected static final String PARAM_SORTORDER_LOCALE = "locale";
 
-    protected           int      m_maxwidth = Integer.MAX_VALUE;
-    protected           String   m_before = ""; // null not blank
-    protected           String   m_separator = ""; // null not blank
-    protected           String   m_after = "\\\\";
+    protected int m_maxwidth = Integer.MAX_VALUE;
+    protected String m_before = ""; // null not blank
+    protected String m_separator = ""; // null not blank
+    protected String m_after = "\\\\";
+    protected int items = 0;
 
-    protected           Pattern[]  m_exclude;
-    protected           Pattern[]  m_include;
-    protected           PageSorter m_sorter;
+    protected Pattern[]  m_exclude;
+    protected Pattern[]  m_include;
+    protected PageSorter m_sorter;
 
-    protected           String m_show = "pages";
-    protected           boolean m_lastModified;
+    protected String m_show = "pages";
+    protected boolean m_lastModified;
     // the last modified date of the page that has been last modified:
-    protected           Date m_dateLastModified = new Date(0);
-    protected           SimpleDateFormat m_dateFormat;
+    protected Date m_dateLastModified = new Date(0);
+    protected SimpleDateFormat m_dateFormat;
 
-    protected           Engine m_engine;
+    protected Engine m_engine;
 
     /**
      * @param context the wiki context
@@ -144,16 +149,16 @@ public abstract class AbstractReferralPlugin implements Plugin {
      * @throws PluginException if any of the plugin parameters are malformed
      */
     // FIXME: The compiled pattern strings should really be cached somehow.
-    public void initialize( final Context context, final Map<String, String> params ) throws PluginException {
+    public void initialize( final Context context, final Map< String, String > params ) throws PluginException {
         m_dateFormat = Preferences.getDateFormat( context, TimeFormat.DATETIME );
         m_engine = context.getEngine();
         m_maxwidth = TextUtil.parseIntParameter( params.get( PARAM_MAXWIDTH ), Integer.MAX_VALUE );
-        if( m_maxwidth < 0 ) m_maxwidth = 0;
+        if( m_maxwidth < 0 ) {
+            m_maxwidth = 0;
+        }
 
         String s = params.get( PARAM_SEPARATOR );
-
-        if( s != null )
-        {
+        if( s != null ) {
             m_separator = TextUtil.replaceEntities( s );
             // pre-2.1.145 there was a separator at the end of the list
             // if they set the parameters, we use the new format of
@@ -162,89 +167,63 @@ public abstract class AbstractReferralPlugin implements Plugin {
         }
 
         s = params.get( PARAM_BEFORE );
-
-        if( s != null )
-        {
+        if( s != null ) {
             m_before = s;
         }
 
         s = params.get( PARAM_AFTER );
-
-        if( s != null )
-        {
+        if( s != null ) {
             m_after = s;
         }
 
+        s = params.get( PARAM_COLUMNS );
+        if( s!= null ) {
+            items = TextUtil.parseIntParameter( s, 0 );
+        }
+
         s = params.get( PARAM_EXCLUDE );
-
-        if( s != null )
-        {
-            try
-            {
+        if ( s != null ) {
+            try {
                 final PatternCompiler pc = new GlobCompiler();
-
                 final String[] ptrns = StringUtils.split( s, "," );
-
-                m_exclude = new Pattern[ptrns.length];
-
-                for( int i = 0; i < ptrns.length; i++ )
-                {
-                    m_exclude[i] = pc.compile( ptrns[i] );
+                m_exclude = new Pattern[ ptrns.length ];
+                for ( int i = 0; i < ptrns.length; i++ ) {
+                    m_exclude[ i ] = pc.compile( ptrns[ i ] );
                 }
-            }
-            catch( final MalformedPatternException e )
-            {
-                throw new PluginException("Exclude-parameter has a malformed pattern: "+e.getMessage());
+            } catch ( final MalformedPatternException e ) {
+                throw new PluginException( "Exclude-parameter has a malformed pattern: " + e.getMessage() );
             }
         }
 
         // TODO: Cut-n-paste, refactor
         s = params.get( PARAM_INCLUDE );
-
-        if( s != null )
-        {
-            try
-            {
+        if ( s != null ) {
+            try {
                 final PatternCompiler pc = new GlobCompiler();
-
                 final String[] ptrns = StringUtils.split( s, "," );
-
-                m_include = new Pattern[ptrns.length];
-
-                for( int i = 0; i < ptrns.length; i++ )
-                {
-                    m_include[i] = pc.compile( ptrns[i] );
+                m_include = new Pattern[ ptrns.length ];
+                for ( int i = 0; i < ptrns.length; i++ ) {
+                    m_include[ i ] = pc.compile( ptrns[ i ] );
                 }
-            }
-            catch( final MalformedPatternException e )
-            {
-                throw new PluginException("Include-parameter has a malformed pattern: "+e.getMessage());
+            } catch ( final MalformedPatternException e ) {
+                throw new PluginException( "Include-parameter has a malformed pattern: " + e.getMessage() );
             }
         }
 
         // log.debug( "Requested maximum width is "+m_maxwidth );
         s = params.get(PARAM_SHOW);
-
-        if( s != null )
-        {
-            if( s.equalsIgnoreCase( "count" ) )
-            {
+        if ( s != null ) {
+            if ( s.equalsIgnoreCase( "count" ) ) {
                 m_show = "count";
             }
         }
 
         s = params.get( PARAM_LASTMODIFIED );
-
-        if( s != null )
-        {
-            if( s.equalsIgnoreCase( "true" ) )
-            {
-                if( m_show.equals( "count" ) )
-                {
+        if ( s != null ) {
+            if ( s.equalsIgnoreCase( "true" ) ) {
+                if ( m_show.equals( "count" ) ) {
                     m_lastModified = true;
-                }
-                else
-                {
+                } else {
                     throw new PluginException( "showLastModified=true is only valid if show=count is also specified" );
                 }
             }
@@ -255,8 +234,8 @@ public abstract class AbstractReferralPlugin implements Plugin {
 
     protected List< Page > filterWikiPageCollection( final Collection< Page > pages ) {
         final List< String > pageNames = filterCollection( pages.stream()
-                                                          .map( page -> page.getName() )
-                                                          .collect( Collectors.toList() ) );
+                                                                .map( Page::getName )
+                                                                .collect( Collectors.toList() ) );
         return pages.stream()
                     .filter( wikiPage -> pageNames.contains( wikiPage.getName() ) )
                     .collect( Collectors.toList() );
@@ -268,12 +247,9 @@ public abstract class AbstractReferralPlugin implements Plugin {
      *  @param c The collection to filter.
      *  @return A filtered collection.
      */
-    protected List< String > filterCollection( final Collection< String > c )
-    {
+    protected List< String > filterCollection( final Collection< String > c ) {
         final ArrayList< String > result = new ArrayList<>();
-
         final PatternMatcher pm = new Perl5Matcher();
-
         for( final String pageName : c ) {
             //
             //  If include parameter exists, then by default we include only those
@@ -303,7 +279,6 @@ public abstract class AbstractReferralPlugin implements Plugin {
 
             if( includeThis ) {
                 result.add( pageName );
-                //
                 //  if we want to show the last modified date of the most recently change page, we keep a "high watermark" here:
                 final Page page;
                 if( m_lastModified ) {
@@ -355,30 +330,29 @@ public abstract class AbstractReferralPlugin implements Plugin {
         final Iterator< String > it = links.iterator();
         int count = 0;
 
-        //
         //  The output will be B Item[1] A S B Item[2] A S B Item[3] A
-        //
-        while( it.hasNext() && ( (count < numItems) || ( numItems == ALL_ITEMS ) ) )
-        {
+        while( it.hasNext() && ( (count < numItems) || ( numItems == ALL_ITEMS ) ) ) {
             final String value = it.next();
-
-            if( count > 0 )
-            {
+            if( count > 0 ) {
                 output.append( m_after );
-                output.append( m_separator );
+                output.append( separator );
             }
 
             output.append( m_before );
 
             // Make a Wiki markup link. See TranslatorReader.
-            output.append( "[" ).append( m_engine.getManager( RenderingManager.class ).beautifyTitle( value ) ).append( "|" ).append( value ).append( "]" );
+            output.append( "[" )
+                  .append( m_engine.getManager( RenderingManager.class ).beautifyTitle( value ) )
+                  .append( "|" )
+                  .append( value )
+                  .append( "]" );
             count++;
         }
 
-        //
         //  Output final item - if there have been none, no "after" is printed
-        //
-        if( count > 0 ) output.append( m_after );
+        if( count > 0 ) {
+            output.append( m_after );
+        }
 
         return output.toString();
     }
@@ -397,8 +371,8 @@ public abstract class AbstractReferralPlugin implements Plugin {
         final RenderingManager mgr = m_engine.getManager( RenderingManager.class );
 
         try {
-            final MarkupParser parser = mgr.getParser(context, wikitext);
-            parser.addLinkTransmutator( new CutMutator(m_maxwidth) );
+            final MarkupParser parser = mgr.getParser( context, wikitext );
+            parser.addLinkTransmutator( new CutMutator( m_maxwidth ) );
             parser.enableImageInlining( false );
 
             final WikiDocument doc = parser.parse();
@@ -407,6 +381,16 @@ public abstract class AbstractReferralPlugin implements Plugin {
             log.error("Failed to convert page data to HTML", e);
         }
 
+        return result;
+    }
+
+    protected String applyColumnsStyle( final String result ) {
+        if( items > 1 ) {
+            return "<div style=\"columns:" + items + ";" +
+                                "-moz-columns:" + items + ";" +
+                                "-webkit-columns:" + items + ";" + "\">"
+                    + result + "</div>";
+        }
         return result;
     }
 

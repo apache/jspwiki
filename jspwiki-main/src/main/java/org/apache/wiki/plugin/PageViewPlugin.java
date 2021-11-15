@@ -428,7 +428,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                             // did we specify what pages to exclude?
                             if( use && null != exclude ) {
                                 for( int n = 0; use && n < exclude.length; n++ ) {
-                                    use &= !matcher.matches( name, exclude[ n ] );
+                                    use = !matcher.matches( name, exclude[ n ] );
                                 }
                             }
 
@@ -610,7 +610,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
         }
 
         /**
-         * @return String String representation of the count.
+         * @return String representation of the count.
          */
         @Override
         public String toString()
