@@ -22,10 +22,12 @@ import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.PageProvider;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.pages.PageManager;
@@ -36,7 +38,7 @@ import org.junit.jupiter.api.Test;
 
 public class IfPluginTest {
 
-    TestEngine testEngine = TestEngine.build();
+    static TestEngine testEngine = TestEngine.build();
 
     @AfterEach
     public void tearDown() throws Exception {
@@ -50,11 +52,11 @@ public class IfPluginTest {
      * @return {@link WikiContext} associated to given {@link Page}.
      * @throws WikiException problems while logging in.
      */
-    WikiContext getJanneBasedWikiContextFor( final Page page ) throws WikiException {
+    Context getJanneBasedWikiContextFor( final Page page ) throws WikiException {
         final MockHttpServletRequest request = testEngine.newHttpRequest();
         final Session session =  WikiSession.getWikiSession( testEngine, request );
         testEngine.getManager( AuthenticationManager.class ).login( session, request, Users.JANNE, Users.JANNE_PASS );
-        return new WikiContext( testEngine, request, page );
+        return Wiki.context().create( testEngine, request, page );
     }
 
     /**
@@ -70,7 +72,7 @@ public class IfPluginTest {
 
         testEngine.saveText( "Test", src );
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
-        final WikiContext context = getJanneBasedWikiContextFor( page );
+        final Context context = getJanneBasedWikiContextFor( page );
 
         final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
         Assertions.assertEquals( expected, res );
@@ -89,7 +91,7 @@ public class IfPluginTest {
 
         testEngine.saveText( "Test", src );
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
-        final WikiContext context = getJanneBasedWikiContextFor( page );
+        final Context context = getJanneBasedWikiContextFor( page );
 
         final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
         Assertions.assertEquals( expected, res );
@@ -107,7 +109,7 @@ public class IfPluginTest {
 
         testEngine.saveText( "Test", src );
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
-        final WikiContext context = getJanneBasedWikiContextFor( page );
+        final Context context = getJanneBasedWikiContextFor( page );
 
         final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
         Assertions.assertEquals( expected, res );
@@ -125,7 +127,7 @@ public class IfPluginTest {
 
         testEngine.saveText( "Test", src );
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
-        final WikiContext context = getJanneBasedWikiContextFor( page );
+        final Context context = getJanneBasedWikiContextFor( page );
 
         final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
         Assertions.assertEquals( expected, res );

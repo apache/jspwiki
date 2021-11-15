@@ -34,7 +34,7 @@ import java.io.StringReader;
 
 public class CounterPluginTest {
 
-    TestEngine testEngine = TestEngine.build();
+    static TestEngine testEngine = TestEngine.build();
 
     private String translate( final String src ) throws IOException {
         final Context context = Wiki.context().create( testEngine, Wiki.contents().page(testEngine, "TestPage") );

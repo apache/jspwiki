@@ -19,7 +19,6 @@ under the License.
 
 package org.apache.wiki.plugin;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.spi.Wiki;
@@ -28,12 +27,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Properties;
+import static org.apache.wiki.TestEngine.with;
 
 public class RecentChangesPluginTest {
-    Properties props = TestEngine.getTestProperties();
-    TestEngine testEngine = TestEngine.build( props );
-    PluginManager manager = new DefaultPluginManager(testEngine, props);
+    static TestEngine testEngine = TestEngine.build( with( "jspwiki.usePageCache", "false" ) );
+    static PluginManager manager = testEngine.getManager( PluginManager.class );
 
     Context context;
 
@@ -53,7 +51,6 @@ public class RecentChangesPluginTest {
         testEngine.deleteTestPage("TestPage04");
 
         TestEngine.emptyWorkDir();
-        CacheManager.getInstance().removeAllCaches();
     }
 
     /**
@@ -101,8 +98,7 @@ public class RecentChangesPluginTest {
     public void testParmExClude() throws Exception {
         context = Wiki.context().create(testEngine, Wiki.contents().page(testEngine, "TestPage03"));
 
-        final String res = manager.execute( context,
-                                      "{INSERT org.apache.wiki.plugin.RecentChangesPlugin exclude='TestPage03*'}" );
+        final String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.RecentChangesPlugin exclude='TestPage03*'}" );
 
         Assertions.assertTrue(res.contains("<table class=\"recentchanges\" cellpadding=\"4\">"));
         Assertions.assertTrue(res.contains("<a href=\"/test/Wiki.jsp?page=TestPage01\">Test Page 01</a>"));

@@ -19,7 +19,6 @@
 
 package org.apache.wiki.plugin;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -30,26 +29,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Properties;
+import static org.apache.wiki.TestEngine.with;
 
 
 public class UndefinedPagesPluginTest {
 
-    Properties props = TestEngine.getTestProperties();
-    TestEngine testEngine;
+    static TestEngine testEngine = TestEngine.build( with( "jspwiki.usePageCache", "false" ) );
+    static PluginManager manager = testEngine.getManager( PluginManager.class );
     Context context;
-    PluginManager manager;
 
     @BeforeEach
     public void setUp() throws Exception {
-        CacheManager.getInstance().removeAllCaches();
-        testEngine = new TestEngine(props);
-
         testEngine.saveText( "TestPage", "Reference to [Foobar]." );
         testEngine.saveText( "Foobar", "Reference to [Foobar 2], [Foobars]" );
-
-        context = Wiki.context().create( testEngine, Wiki.contents().page(testEngine, "TestPage") );
-        manager = new DefaultPluginManager( testEngine, props );
+        context = Wiki.context().create( testEngine, Wiki.contents().page( testEngine, "TestPage" ) );
     }
 
     @AfterEach
@@ -75,6 +68,14 @@ public class UndefinedPagesPluginTest {
         final String exp = "[Foobar 2]\\\\";
 
         Assertions.assertEquals( wikitize( exp ), res );
+    }
+
+    @Test
+    public void testUndefinedWithColumns() throws Exception {
+        final Context context2 = Wiki.context().create( testEngine, Wiki.contents().page( testEngine, "Foobar" ) );
+        final String res = manager.execute( context2,"{UndefinedPagesPlugin columns=2" );
+
+        Assertions.assertTrue( res.startsWith( "<div style=\"columns:2;-moz-columns:2;-webkit-columns:2;\"><a " ) );
     }
 
     @Test

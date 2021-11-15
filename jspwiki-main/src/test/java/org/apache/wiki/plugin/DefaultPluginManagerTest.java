@@ -20,8 +20,7 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.WikiEngine;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.spi.Wiki;
@@ -36,15 +35,15 @@ import java.util.Properties;
 
 public class DefaultPluginManagerTest {
 
+    static Engine engine = TestEngine.build();
+    static PluginManager manager = engine.getManager( PluginManager.class );
     Properties props = TestEngine.getTestProperties();
-    WikiEngine engine = TestEngine.build();
-    DefaultPluginManager manager = new DefaultPluginManager( engine, props );
 
-    WikiContext context;
+    Context context;
 
     @BeforeEach
     public void setUp() throws Exception {
-        context = new WikiContext( engine, Wiki.contents().page(engine, "Testpage") );
+        context = Wiki.context().create( engine, Wiki.contents().page(engine, "Testpage") );
     }
 
     @AfterEach
