@@ -46,11 +46,11 @@ public final class Release {
 
     /**
      *  This should be empty when doing a release - otherwise keep it as "-git-" so that whenever someone checks out the code, they know
-     *  it is a bleeding-edge version.  Other possible values are "alpha" and "beta" for alpha and beta versions, respectively.
+     *  it is a bleeding-edge version.  Other possible values are "-alpha-" and "-beta-" for alpha and beta versions, respectively.
      *  <p>
      *  If the POSTFIX is empty, it is not added to the version string.
      */
-    private static final String    POSTFIX       = "-git-";
+    private static final String    POSTFIX       = "";
 
     /** The JSPWiki major version. */
     public static final int        VERSION       = 2;
@@ -69,7 +69,7 @@ public final class Release {
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "14";
+    public static final String     BUILD         = "";
 
     /**
      *  This is the generic version string you should use when printing out the version.  It is of
