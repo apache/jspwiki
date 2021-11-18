@@ -18,29 +18,27 @@
  */
 package org.apache.wiki.util;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
-public class CryptoUtilTest
-{
+public class CryptoUtilTest {
 
     @Test
-    public void testCommandLineHash() throws Exception
-    {
+    public void testCommandLineHash() throws Exception {
         // Save old printstream
         final PrintStream oldOut = System.out;
 
         // Swallow System out and get command output
         final OutputStream out = new ByteArrayOutputStream();
         System.setOut( new PrintStream( out ) );
-        CryptoUtil.main( new String[] { "--hash", "password" } );
-        final String output = new String( out.toString() );
+        CryptoUtil.main( new String[]{ "--hash", "password" } );
+        final String output = out.toString();
 
         // Restore old printstream
         System.setOut( oldOut );
@@ -50,8 +48,7 @@ public class CryptoUtilTest
     }
 
     @Test
-    public void testCommandLineNoVerify() throws Exception
-    {
+    public void testCommandLineNoVerify() throws Exception {
         // Save old printstream
         final PrintStream oldOut = System.out;
 
@@ -59,8 +56,8 @@ public class CryptoUtilTest
         final OutputStream out = new ByteArrayOutputStream();
         System.setOut( new PrintStream( out ) );
         // Supply a bogus password
-        CryptoUtil.main( new String[] { "--verify", "password", "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" } );
-        final String output = new String( out.toString() );
+        CryptoUtil.main( new String[]{ "--verify", "password", "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" } );
+        final String output = out.toString();
 
         // Restore old printstream
         System.setOut( oldOut );
@@ -70,29 +67,21 @@ public class CryptoUtilTest
     }
 
     @Test
-    public void testCommandLineSyntaxError1() throws Exception
-    {
+    public void testCommandLineSyntaxError1() {
         // Try verifying password without the {SSHA} prefix
-        try {
-            CryptoUtil.main( new String[] { "--verify", "password", "yfT8SRT/WoOuNuA6KbJeF10OznZmb28=", "{SSHA}" } );
-        }
-        catch (final IllegalArgumentException e)
-        {
-            // Excellent; we expected an error
-        }
+        Assertions.assertThrows( IllegalArgumentException.class, () -> CryptoUtil.main( new String[]{ "--verify", "password", "yfT8SRT/WoOuNuA6KbJeF10OznZmb28=", "{SSHA}" } ) );
     }
 
     @Test
-    public void testCommandLineVerify() throws Exception
-    {
+    public void testCommandLineVerify() throws Exception {
         // Save old printstream
         final PrintStream oldOut = System.out;
 
         // Swallow System out and get command output
         final OutputStream out = new ByteArrayOutputStream();
         System.setOut( new PrintStream( out ) );
-        CryptoUtil.main( new String[] { "--verify", "testing123", "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" } );
-        final String output = new String( out.toString() );
+        CryptoUtil.main( new String[]{ "--verify", "testing123", "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" } );
+        final String output = out.toString();
 
         // Restore old printstream
         System.setOut( oldOut );
@@ -102,8 +91,7 @@ public class CryptoUtilTest
     }
 
     @Test
-    public void testExtractHash()
-    {
+    public void testExtractHash() {
         byte[] digest;
 
         digest = Base64.getDecoder().decode( "yfT8SRT/WoOuNuA6KbJeF10OznZmb28=".getBytes() );
@@ -117,8 +105,7 @@ public class CryptoUtilTest
     }
 
     @Test
-    public void testGetSaltedPassword() throws Exception
-    {
+    public void testGetSaltedPassword() throws Exception {
         byte[] password;
 
         // Generate a hash with a known password and salt
@@ -132,8 +119,7 @@ public class CryptoUtilTest
     }
 
     @Test
-    public void testMultipleHashes() throws Exception
-    {
+    public void testMultipleHashes() throws Exception {
         final String p1 = CryptoUtil.getSaltedPassword( "password".getBytes(), "{SSHA}" );
         final String p2 = CryptoUtil.getSaltedPassword( "password".getBytes(), "{SSHA}" );
         final String p3 = CryptoUtil.getSaltedPassword( "password".getBytes(), "{SSHA}" );
@@ -143,8 +129,7 @@ public class CryptoUtilTest
     }
 
     @Test
-    public void testSaltedPasswordLength() throws Exception
-    {
+    public void testSaltedPasswordLength() throws Exception {
         // Generate a hash with a known password and salt
         final byte[] password = "mySooperRandomPassword".getBytes();
         final String hash = CryptoUtil.getSaltedPassword( password, "salt".getBytes(), "{SSHA}" );
@@ -154,12 +139,10 @@ public class CryptoUtilTest
         Assertions.assertEquals( 38, hash.length() );
     }
 
-    public void verifySaltedPassword() throws Exception
-    {
-        byte[] password;
-
+    @Test
+    public void verifySaltedPassword() throws Exception {
         // Verify with a known digest
-        password = "testing123".getBytes(StandardCharsets.UTF_8.name());
+        byte[] password = "testing123".getBytes( StandardCharsets.UTF_8.name() );
         Assertions.assertTrue( CryptoUtil.verifySaltedPassword( password, "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" ) );
 
         // Verify with two more known digests
