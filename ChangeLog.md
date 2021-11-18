@@ -17,7 +17,16 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-**2021-11-15  Juan Pablo Santos (juanpablo AT apache DOT org)**
+**2021-11-18  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.0-git-14_
+
+* [JSPWIKI-1160](https://issues.apache.org/jira/browse/JSPWIKI-1160) - Ensure JSPWiki builds with JDKs 8, 11 and 17
+  
+* Dependency updates
+    * Lucene to 8.11.0
+
+**2021-11-17  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-13_
 
