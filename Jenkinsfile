@@ -23,56 +23,66 @@ creds = '9b041bd0-aea9-4498-a576-9eeb771411dd'
 
 asfsite = 'asf-site'
 build = 'build'
-buildJdk = 'jdk_11_latest'
+buildJdk8 = 'jdk_1.8_latest'
+buildJdk11 = 'jdk_11_latest'
+buildJdk17 = 'jdk_17_latest'
 buildMvn = 'maven_3_latest'
+errMsg = ''
 jbake = 'jbake'
 
 try {
     def pom
 
-    node( 'ubuntu' ) {
-        stage( 'clean ws' ) {
-            cleanWs()
-        }
-
-        stage( 'build source' ) {
-            dir( build ) {
-                git url: buildRepo, poll: true
-                if( env.BRANCH_NAME == 'master' ) {
-                    buildJSPWiki( '-Pattach-additional-artifacts -Djdk.javadoc.doclet.version=2.0.15' )
-                    pom = readMavenPom file: 'pom.xml'
-                    writeFile file: 'target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
-                    writeFile file: 'jspwiki-it-tests/target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
-                    withMaven( jdk: buildJdk, maven: buildMvn, publisherStrategy: 'EXPLICIT' ) {
-                        sh 'mvn package javadoc:aggregate-no-fork -DskipTests -pl !jspwiki-portable -Djdk.javadoc.doclet.version=2.0.14'
-                        sh 'java -cp jspwiki-main/target/classes org.apache.wiki.TranslationsCheck site'
+    stage( "build source" ) {
+        parallel jdk11Build: {
+            node( 'ubuntu' ) {
+                stage( buildJdk11 ) {
+                    cleanWs()
+                    dir( build ) {
+                        git url: buildRepo, poll: true
+                        if( env.BRANCH_NAME == 'master' ) {
+                            buildJSPWiki( '-Pattach-additional-artifacts -Djdk.javadoc.doclet.version=2.0.15' )
+                            pom = readMavenPom file: 'pom.xml'
+                            writeFile file: 'target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
+                            writeFile file: 'jspwiki-it-tests/target/classes/apidocs.txt', text: 'file created in order to allow aggregated javadoc generation, target/classes is needed for all modules'
+                            withMaven( jdk: buildJdk11, maven: buildMvn, publisherStrategy: 'EXPLICIT' ) {
+                                sh 'mvn package javadoc:aggregate-no-fork -DskipTests -pl !jspwiki-portable -Djdk.javadoc.doclet.version=2.0.15'
+                                sh 'java -cp jspwiki-main/target/classes org.apache.wiki.TranslationsCheck site'
+                            }
+                        } else {
+                            buildJSPWiki()
+                        }
                     }
-                } else {
-                    buildJSPWiki()
+                }
+
+                stage( 'build website' ) {
+                    if( env.BRANCH_NAME == 'master' ) {
+                        withMaven( jdk: buildJdk8, maven: buildMvn, publisherStrategy: 'EXPLICIT' ) {
+                            dir( jbake ) {
+                                git branch: jbake, url: siteRepo, credentialsId: creds, poll: false
+                                sh "cp ../$build/ChangeLog.md ./src/main/config/changelog.md"
+                                sh "cp ../$build/i18n-table.txt ./src/main/config/i18n-table.md"
+                                sh "cat ./src/main/config/changelog-header.txt ./src/main/config/changelog.md > ./src/main/jbake/content/development/changelog.md"
+                                sh "cat ./src/main/config/i18n-header.txt ./src/main/config/i18n-table.md > ./src/main/jbake/content/development/i18n.md"
+                                sh 'mvn clean process-resources -Dplugin.japicmp.jspwiki-new=' + pom.version
+                            }
+                            stash name: 'jbake-website'
+                        }
+                    }
                 }
             }
-        }
-
-        stage( 'build website' ) {
-            if( env.BRANCH_NAME == 'master' ) {
-                withMaven( jdk: 'jdk_1.8_latest', maven: buildMvn, publisherStrategy: 'EXPLICIT' ) {
-                    dir( jbake ) {
-                        git branch: jbake, url: siteRepo, credentialsId: creds, poll: false
-                        sh "cp ../$build/ChangeLog.md ./src/main/config/changelog.md"
-                        sh "cp ../$build/i18n-table.txt ./src/main/config/i18n-table.md"
-                        sh "cat ./src/main/config/changelog-header.txt ./src/main/config/changelog.md > ./src/main/jbake/content/development/changelog.md"
-                        sh "cat ./src/main/config/i18n-header.txt ./src/main/config/i18n-table.md > ./src/main/jbake/content/development/i18n.md"
-                        sh 'mvn clean process-resources -Dplugin.japicmp.jspwiki-new=' + pom.version
-                    }
-                    stash name: 'jbake-website'
-                }
-            }
+        },
+        jdk8Build: {
+            reducedBuildWith( buildJdk8 )
+        },
+        jdk17Build: {
+            reducedBuildWith( buildJdk17 )
         }
     }
 
-    node( 'git-websites' ) {
-        stage( 'publish website' ) {
-            if( env.BRANCH_NAME == 'master' ) {
+    stage( 'publish website' ) {
+        if( env.BRANCH_NAME == 'master' ) {
+            node( 'git-websites' ) {
                 cleanWs()
                 unstash 'jbake-website'
                 dir( asfsite ) {
@@ -100,13 +110,14 @@ try {
 } catch( Exception err ) {
     currentBuild.result = 'FAILURE'
     echo err.message
+    errMsg = '- ' + err.message
 } finally {
     node( 'ubuntu' ) {
         if( currentBuild.result == null ) {
             currentBuild.result = 'ABORTED'
         }
         if( env.BRANCH_NAME == 'master' ) {
-            emailext body: "See ${env.BUILD_URL}",
+            emailext body: "See ${env.BUILD_URL} $errMsg",
                      replyTo: 'dev@jspwiki.apache.org',
                      to: 'commits@jspwiki.apache.org',
                      subject: "[${env.JOB_NAME}] build ${env.BUILD_DISPLAY_NAME} - ${currentBuild.result}"
@@ -115,12 +126,23 @@ try {
 }
 
 def buildJSPWiki( buildOpts = '' ) {
-    withMaven( jdk: buildJdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [ jacocoPublisher(), junitPublisher() ] ) {
+    withMaven( jdk: buildJdk11, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [ jacocoPublisher(), junitPublisher() ] ) {
         withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
-            def masterBranchOptions = ""
             def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
             echo 'Will use SonarQube instance at https://sonarcloud.io'
-            sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report sonar:sonar $sonarOptions $buildOpts"
+            sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report sonar:sonar $sonarOptions $buildOpts -T 1C"
+        }
+    }
+}
+
+def reducedBuildWith( jdk ) {
+    node( 'ubuntu' ) {
+        stage( jdk ) {
+            cleanWs()
+            git url: buildRepo, poll: true
+            withMaven( jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [] ) {
+                sh 'mvn clean package -T 1C'
+            }
         }
     }
 }
