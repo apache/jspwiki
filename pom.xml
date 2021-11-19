@@ -45,7 +45,7 @@
     <maven.version>3.5</maven.version>
 
     <akismet-java.version>1.02</akismet-java.version>
-    <awaitility.version>4.1.0</awaitility.version>
+    <awaitility.version>4.1.1</awaitility.version>
     <aws-java-sdk-kendra.version>1.12.59</aws-java-sdk-kendra.version>
     <commons-collections.version>4.4</commons-collections.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
