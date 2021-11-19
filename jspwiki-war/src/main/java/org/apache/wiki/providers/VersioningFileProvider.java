@@ -27,6 +27,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -86,7 +89,8 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
-    public void initialize( WikiEngine engine, Properties properties )
+    @Override
+    public void initialize(WikiEngine engine, Properties properties )
         throws NoRequiredPropertyException,
                IOException
     {
@@ -308,8 +312,8 @@ public class VersioningFileProvider
      *  @throws NoSuchVersionException if there is no such version.
      */
     private int realVersion( String page, int requestedVersion )
-        throws NoSuchVersionException,
-               ProviderException
+        throws
+            ProviderException
     {
         //
         //  Quickly check for the most common case.
@@ -337,7 +341,8 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
-    public synchronized String getPageText( String page, int version )
+    @Override
+    public synchronized String getPageText(String page, int version )
         throws ProviderException
     {
         File dir = findOldPageDir( page );
@@ -415,7 +420,8 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
-    public synchronized void putPageText( WikiPage page, String text )
+    @Override
+    public synchronized void putPageText(WikiPage page, String text )
         throws ProviderException
     {
         //
@@ -502,8 +508,8 @@ public class VersioningFileProvider
 
                 // remember the simulated original author (or something)
                 // in the new properties
-                authorFirst = props2.getProperty( "1.author", "unknown" );
-                props.setProperty( "1.author", authorFirst );
+                authorFirst = props2.getProperty( getAuthorPropertyKey(1), "unknown" );
+                props.setProperty( getAuthorPropertyKey(1), authorFirst );
             }
 
             String newAuthor = page.getAuthor();
@@ -512,13 +518,15 @@ public class VersioningFileProvider
                 newAuthor = ( authorFirst != null ) ? authorFirst : "unknown";
             }
             page.setAuthor(newAuthor);
-            props.setProperty( versionNumber + ".author", newAuthor );
+            props.setProperty(getAuthorPropertyKey(versionNumber), newAuthor );
 
             String changeNote = (String) page.getAttribute(WikiPage.CHANGENOTE);
             if( changeNote != null )
             {
-                props.setProperty( versionNumber+".changenote", changeNote );
+                props.setProperty(getChangeNotePropertyKey(versionNumber), changeNote );
             }
+
+            props.put(getDatePropertyKey(versionNumber), ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
 
             // Get additional custom properties from page and add to props
             getCustomProperties(page, props);
@@ -532,10 +540,15 @@ public class VersioningFileProvider
         }
     }
 
+    private String getAuthorPropertyKey(int versionNumber) {
+        return versionNumber + ".author";
+    }
+
     /**
      *  {@inheritDoc}
      */
-    public WikiPage getPageInfo( String page, int version )
+    @Override
+    public WikiPage getPageInfo(String page, int version )
         throws ProviderException
     {
         int latest = findLatestVersion(page);
@@ -599,7 +612,7 @@ public class VersioningFileProvider
             try
             {
                 Properties props = getPageProperties( page );
-                String author = props.getProperty( realVersion+".author" );
+                String author = props.getProperty(getAuthorPropertyKey(realVersion));
                 if ( author == null )
                 {
                     // we might not have a versioned author because the
@@ -612,9 +625,14 @@ public class VersioningFileProvider
                     p.setAuthor( author );
                 }
 
-                String changenote = props.getProperty( realVersion+".changenote" );
+                String changenote = props.getProperty(getChangeNotePropertyKey(realVersion));
                 if( changenote != null ) p.setAttribute( WikiPage.CHANGENOTE, changenote );
 
+                String dateString = props.getProperty(getDatePropertyKey(realVersion));
+                if ( dateString != null ) {
+                    Date date = Date.from(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateString)));
+                    p.setLastModified(date);
+                }
                 // Set the props values to the page attributes
                 setCustomProperties(p, props);
             }
@@ -627,10 +645,15 @@ public class VersioningFileProvider
         return p;
     }
 
+    private String getChangeNotePropertyKey(int realVersion) {
+        return realVersion+".changenote";
+    }
+
     /**
      *  {@inheritDoc}
      */
-    public boolean pageExists( String pageName, int version )
+    @Override
+    public boolean pageExists(String pageName, int version )
     {
         if (version == WikiPageProvider.LATEST_VERSION || version == findLatestVersion( pageName ) ) {
             return pageExists(pageName);
@@ -653,7 +676,8 @@ public class VersioningFileProvider
      *  {@inheritDoc}
      */
      // FIXME: Does not get user information.
-    public List getVersionHistory( String page )
+    @Override
+    public List getVersionHistory(String page )
     throws ProviderException
     {
         ArrayList<WikiPage> list = new ArrayList<WikiPage>();
@@ -742,7 +766,8 @@ public class VersioningFileProvider
      *  @throws {@inheritDoc}
      */
     // FIXME: Should log errors.
-	public void deletePage(WikiPage page)
+	@Override
+    public void deletePage(WikiPage page)
         throws ProviderException
     {
         super.deletePage( page );
@@ -799,7 +824,8 @@ public class VersioningFileProvider
      *  Using deleteVersion() is definitely not recommended.
      *
      */
-	public void deleteVersion(WikiPage page, int version)
+	@Override
+    public void deleteVersion(WikiPage page, int version)
         throws ProviderException
     {
 		File dir = findOldPageDir(page.getName());
@@ -816,8 +842,10 @@ public class VersioningFileProvider
             try
             {
 				Properties props = getPageProperties(page.getName());
-                props.remove( ((latest > 0) ? latest : 1)+".author" );
+                int versionPropertyPrefix = (latest > 0) ? latest : 1;
+                props.remove(getAuthorPropertyKey(versionPropertyPrefix));
 				putPageProperties(page.getName(), props);
+                props.remove(getDatePropertyKey(versionPropertyPrefix));
             }
             catch( IOException e )
             {
@@ -884,10 +912,15 @@ public class VersioningFileProvider
         }
     }
 
+    private String getDatePropertyKey(int versionPropertyPrefix) {
+        return versionPropertyPrefix+".date";
+    }
+
     /**
      *  {@inheritDoc}
      */
     // FIXME: This is kinda slow, we should need to do this only once.
+    @Override
     public Collection getAllPages() throws ProviderException
     {
         Collection pages = super.getAllPages();
@@ -908,6 +941,7 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String getProviderInfo()
     {
         return "";
@@ -916,8 +950,9 @@ public class VersioningFileProvider
     /**
      *  {@inheritDoc}
      */
-	public void movePage(WikiPage from,
-						 String to)
+	@Override
+    public void movePage(WikiPage from,
+                         String to)
         throws ProviderException
     {
         // Move the file itself
