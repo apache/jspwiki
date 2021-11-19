@@ -37,6 +37,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -373,8 +376,8 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 final Properties props2 = getHeritagePageProperties( page.getName() );
 
                 // remember the simulated original author (or something) in the new properties
-                authorFirst = props2.getProperty( "1.author", "unknown" );
-                props.setProperty( "1.author", authorFirst );
+                authorFirst = props2.getProperty( getAuthorPropertyKey(1), "unknown" );
+                props.setProperty( getAuthorPropertyKey(1), authorFirst );
             }
 
             String newAuthor = page.getAuthor();
@@ -382,12 +385,14 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 newAuthor = ( authorFirst != null ) ? authorFirst : "unknown";
             }
             page.setAuthor(newAuthor);
-            props.setProperty( versionNumber + ".author", newAuthor );
+            props.setProperty(getAuthorPropertyKey(versionNumber), newAuthor );
 
             final String changeNote = page.getAttribute( Page.CHANGENOTE );
             if( changeNote != null ) {
-                props.setProperty( versionNumber + ".changenote", changeNote );
+                props.setProperty(getChangeNotePropertyKey(versionNumber), changeNote );
             }
+
+            props.put(getDatePropertyKey(versionNumber), ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
 
             // Get additional custom properties from page and add to props
             getCustomProperties( page, props );
@@ -396,6 +401,10 @@ public class VersioningFileProvider extends AbstractFileProvider {
             log.error( "Saving failed", e );
             throw new ProviderException("Could not save page text: "+e.getMessage());
         }
+    }
+
+    private String getAuthorPropertyKey(int versionNumber) {
+        return versionNumber + ".author";
     }
 
     /**
@@ -443,7 +452,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
         if( p != null ) {
             try {
                 final Properties props = getPageProperties( page );
-                String author = props.getProperty( realVersion + ".author" );
+                String author = props.getProperty(getAuthorPropertyKey(realVersion));
                 if( author == null ) {
                     // we might not have a versioned author because the old page was last maintained by FileSystemProvider
                     final Properties props2 = getHeritagePageProperties( page );
@@ -453,9 +462,15 @@ public class VersioningFileProvider extends AbstractFileProvider {
                     p.setAuthor( author );
                 }
 
-                final String changenote = props.getProperty( realVersion + ".changenote" );
+                final String changenote = props.getProperty(getChangeNotePropertyKey(realVersion));
                 if( changenote != null ) {
                     p.setAttribute( Page.CHANGENOTE, changenote );
+                }
+
+                String dateString = props.getProperty(getDatePropertyKey(realVersion));
+                if ( dateString != null ) {
+                    Date date = Date.from(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateString)));
+                    p.setLastModified(date);
                 }
 
                 // Set the props values to the page attributes
@@ -466,6 +481,10 @@ public class VersioningFileProvider extends AbstractFileProvider {
         }
 
         return p;
+    }
+
+    private String getChangeNotePropertyKey(int realVersion) {
+        return realVersion+".changenote";
     }
 
     /**
@@ -605,8 +624,10 @@ public class VersioningFileProvider extends AbstractFileProvider {
             //  Delete the properties
             try {
                 final Properties props = getPageProperties( page.getName() );
-                props.remove( ((latest > 0) ? latest : 1)+".author" );
+                int versionPropertyPrefix = (latest > 0) ? latest : 1;
+                props.remove(getAuthorPropertyKey(versionPropertyPrefix));
                 putPageProperties( page.getName(), props );
+                props.remove(getDatePropertyKey(versionPropertyPrefix));
             } catch( final IOException e ) {
                 log.error("Unable to modify page properties",e);
                 throw new ProviderException("Could not modify page properties: " + e.getMessage());
@@ -643,6 +664,10 @@ public class VersioningFileProvider extends AbstractFileProvider {
         } else {
             throw new NoSuchVersionException("Page "+page+", version="+version);
         }
+    }
+
+    private String getDatePropertyKey(int versionPropertyPrefix) {
+        return versionPropertyPrefix+".date";
     }
 
     /**
