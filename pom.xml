@@ -808,7 +808,7 @@
             <!-- <deployables>
               <deployable>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>jspwiki-war</artifactId>
+                <artifactId>jspwiki-knowwe-war</artifactId>
                 <type>war</type>
                 <properties>
                   <context>/JSPWiki</context>

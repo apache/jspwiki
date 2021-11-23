@@ -26,7 +26,7 @@
   </parent>
 
   <groupId>org.apache.jspwiki.it</groupId>
-  <artifactId>jspwiki-it-builder</artifactId>
+  <artifactId>jspwiki-knowwe-it-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <description>selenium tests execution for jspwiki</description>
   <packaging>pom</packaging>
@@ -43,7 +43,7 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.jspwiki</groupId>
-      <artifactId>jspwiki-war</artifactId>
+      <artifactId>jspwiki-knowwe-war</artifactId>
       <version>${project.version}</version>
       <type>war</type>
     </dependency>

@@ -33,7 +33,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-bootstrap</artifactId>
+      <artifactId>jspwiki-knowwe-bootstrap</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -51,13 +51,13 @@
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-210-adapters</artifactId>
+      <artifactId>jspwiki-knowwe-210-adapters</artifactId>
       <version>${project.version}</version>
     </dependency>
     
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-kendra-searchprovider</artifactId>
+      <artifactId>jspwiki-knowwe-kendra-searchprovider</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -237,7 +237,7 @@
               <artifactItems>
                 <artifactItem>
                   <groupId>org.apache.jspwiki.wikipages</groupId>
-                  <artifactId>jspwiki-wikipages-en</artifactId>
+                  <artifactId>jspwiki-knowwe-wikipages-en</artifactId>
                   <version>${project.version}</version>
                 </artifactItem>
               </artifactItems>

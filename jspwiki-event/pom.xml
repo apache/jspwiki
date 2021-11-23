@@ -26,7 +26,7 @@
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>jspwiki-event</artifactId>
+  <artifactId>jspwiki-knowwe-event</artifactId>
   <name>Apache JSPWiki event subsystem</name>
 
   <dependencies>

@@ -32,19 +32,19 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-util</artifactId>
+      <artifactId>jspwiki-knowwe-util</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-event</artifactId>
+      <artifactId>jspwiki-knowwe-event</artifactId>
       <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-api</artifactId>
+      <artifactId>jspwiki-knowwe-api</artifactId>
       <version>${project.version}</version>
     </dependency>
 

@@ -21,12 +21,12 @@
 
   <parent>
     <groupId>org.apache.jspwiki.it</groupId>
-    <artifactId>jspwiki-it-builder</artifactId>
+    <artifactId>jspwiki-knowwe-it-builder</artifactId>
     <version>2.11.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   
-  <artifactId>jspwiki-selenide-tests</artifactId>
+  <artifactId>jspwiki-knowwe-selenide-tests</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <description>selenide tests for jspwiki</description>
   
