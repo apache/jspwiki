@@ -167,24 +167,19 @@ a.logo {
 Fixed .header with hide (on scrolldown)  and show (on scrollup) effects.
 */
 .fixed-header > .header {
-    position: fixed;
-    top:0;
-    z-index:5;
-    width:100%;
-    //will-change: transform;
-    .transition( transform 0.1s ease-in-out);
-    .translate( 0; 0 ); //transform: translateY(0);
+    top: 0;
+    z-index: 5;
+    width: 100%;
 
-    //when scrolling-down,  hide the fixed header
-    &.scrolling-down {
-        .translate(0;-100%); //transform: translateY(-100%); /*hide the header*/
-    }
 }
-
 .fixed-header > .header.scrolling-down .navigation {
     position: fixed;
     top: 0;
     width: 100%;
+}
+
+.fixed-header > .header.scrolling-down  + .content {
+    padding-top: 42px;
 }
 
 .fixed-header.container > .header {
@@ -214,7 +209,7 @@ Fixed .header with hide (on scrolldown)  and show (on scrollup) effects.
     text-align: center;
     a { text-decoration:none; }
 
-    line-height: 1.2;
+    line-height: 1.3;
     padding: 0 .5em;
 }
 .reader .pagename {

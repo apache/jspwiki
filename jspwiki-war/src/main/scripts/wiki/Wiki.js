@@ -325,50 +325,20 @@ var Wiki = {
     */
     yoyo: function( header ){
 
-        var height = "offsetHeight",
-            scrollY,
-            lastScrollY = 0,
-
-            //add spacer just infront of fixed element,
-            //and adjust height == header (fixed elements do not take space in the dom)
-			      spacer = document.getElementById("header-spacer"),
-            busy;
+		var sticky = header.querySelector('.navigation').offsetTop;
 
         function update(){
-
-            scrollY = window.getScroll().y;
-
-            spacer.style.paddingTop = header[height]+"px"; //update after window resize
-
-            // Limit scroll top to counteract iOS / OSX bounce.
-            scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
-
-            if (Math.abs(lastScrollY - scrollY) > header[height] /* minimum difference */) {
-
-                header.ifClass(scrollY > lastScrollY && scrollY > header[height], "scrolling-down");
-                lastScrollY = scrollY;
-
-            }
-            busy = false;
+			header.ifClass(window.pageYOffset > sticky, "scrolling-down");
         }
 
-        function handleEvent(){
-            if(!busy){
-              busy = true;
-              requestAnimationFrame( update );
-            }
-        }
-
-        window.addEvents({ scroll: handleEvent, resize: handleEvent });
-        update(); //first run: set height of the spacer
-
+		window.addEvents({scroll: update, resize: update});
     },
 
 
     /*
     Function: popstate
         When pressing the back-button, the "popstate" event is fired.
-        This popstate function will fire an internal 'popstate' event
+		This popstate function will fire a internal 'popstate' event
         on the target DOM element.
 
         Behaviors (such as Tabs or Accordions) can push the ID of their
