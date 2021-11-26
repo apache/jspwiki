@@ -25,7 +25,7 @@ RUN mvn -B dependency:go-offline
 
 RUN set -x \
 # fastest, minimum build
-  && mvn -B clean package -pl jspwiki-war,jspwiki-wikipages/en -am -Dmaven.test.skip
+  && mvn -B clean package -pl jspwiki-war,jspwiki-wikipages/en -am -DskipTests
 
 FROM tomcat:9.0
 
