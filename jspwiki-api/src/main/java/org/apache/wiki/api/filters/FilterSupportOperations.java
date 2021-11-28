@@ -41,7 +41,7 @@ class FilterSupportOperations {
      * @param pf given object to check
      * @param method requested method
      * @param params class names denoting method parameters
-     * @return old, non public api method if it exists, {@code null} otherwise
+     * @return old, non-public api method if it exists, {@code null} otherwise
      */
     static Method methodOfNonPublicAPI( final PageFilter pf, final String method, final String... params ) {
         if( !pf.getClass().getName().startsWith( "org.apache.wiki" ) ) {
