@@ -29,7 +29,6 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.ClassUtil;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 
@@ -58,10 +57,9 @@ public class DefaultDifferenceManager implements DifferenceManager {
     private void loadProvider( final Properties props ) {
         final String providerClassName = props.getProperty( PROP_DIFF_PROVIDER, TraditionalDiffProvider.class.getName() );
         try {
-            final Class< ? > providerClass = ClassUtil.findClass("org.apache.wiki.diff", providerClassName );
-            m_provider = (DiffProvider) providerClass.getDeclaredConstructor().newInstance();
-        } catch( final ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e ) {
-            log.warn("Failed loading DiffProvider, will use NullDiffProvider.", e);
+            m_provider = ClassUtil.buildInstance( "org.apache.wiki.diff", providerClassName );
+        } catch( final ReflectiveOperationException e ) {
+            log.warn( "Failed loading DiffProvider, will use NullDiffProvider.", e );
         }
 
         if( m_provider == null ) {

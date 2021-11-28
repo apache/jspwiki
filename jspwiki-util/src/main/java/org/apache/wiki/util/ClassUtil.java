@@ -41,19 +41,18 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- *  Contains useful utilities for class file manipulation.  This is a static class,
- *  so there is no need to instantiate it.
+ * Contains useful utilities for class file manipulation. This is a static class, so there is no need to instantiate it.
  *
- *  @since 2.1.29.
+ * @since 2.1.29.
  */
 public final class ClassUtil {
 
     private static final Logger log = LogManager.getLogger(ClassUtil.class);
 
-    /** The location of the classmappings.xml document. It will be searched for in the classpath.  It's value is "{@value}". */
+    /** The location of the classmappings.xml document. It will be searched for in the classpath. Its value is "{@value}". */
     public  static final String MAPPINGS = "ini/classmappings.xml";
 
-    /** The location of the classmappings-extra.xml document. It will be searched for in the classpath.  It's value is "{@value}". */
+    /** The location of the classmappings-extra.xml document. It will be searched for in the classpath. Its value is "{@value}". */
     public  static final String MAPPINGS_EXTRA = "ini/classmappings-extra.xml";
 
     /** Initialize the class mappings document. */
@@ -100,17 +99,18 @@ public final class ClassUtil {
      * @return The class, if it was found.
      *  @throws ClassNotFoundException if this particular class cannot be found from the list.
      */
-    public static Class<?> findClass( final List< String > packages,  final List< String > externaljars, final String className ) throws ClassNotFoundException {
+    @SuppressWarnings( "unchecked" )
+    public static < T > Class< T > findClass( final List< String > packages,  final List< String > externaljars, final String className ) throws ClassNotFoundException {
         if (!classLoaderSetup) {
             loader = setupClassLoader(externaljars);
         }
 
         try {
-            return loader.loadClass( className );
+            return ( Class< T > )loader.loadClass( className );
         } catch( final ClassNotFoundException e ) {
             for( final String packageName : packages ) {
                 try {
-                    return loader.loadClass( packageName + "." + className );
+                    return ( Class< T > )loader.loadClass( packageName + "." + className );
                 } catch( final ClassNotFoundException ex ) {
                     // This is okay, we go to the next package.
                 }
@@ -122,7 +122,7 @@ public final class ClassUtil {
     }
 
     /**
-     * Setup the plugin classloader, checking if there are external JARS to add.
+     * Set up the plugin classloader, checking if there are external JARS to add.
      * 
      * @param externaljars external jars to load into the classloader.
      * @return the classloader that can load classes from the configured external jars or, if not specified, the classloader that loaded this class.
@@ -157,19 +157,19 @@ public final class ClassUtil {
     }
 
     /**
+     * It will first attempt to instantiate the class directly from the className, and will then try to prefix it with the packageName.
      *
-     *  It will first attempt to instantiate the class directly from the className, and will then try to prefix it with the packageName.
-     *
-     *  @param packageName A package name (such as "org.apache.wiki.plugins").
-     *  @param className The class name to find.
-     *  @return The class, if it was found.
-     *  @throws ClassNotFoundException if this particular class cannot be found.
+     * @param packageName A package name (such as "org.apache.wiki.plugins").
+     * @param className The class name to find.
+     * @return The class, if it was found.
+     * @throws ClassNotFoundException if this particular class cannot be found.
      */
-    public static Class< ? > findClass( final String packageName, final String className ) throws ClassNotFoundException {
+    @SuppressWarnings( "unchecked" )
+    public static < T > Class< T > findClass( final String packageName, final String className ) throws ClassNotFoundException {
         try {
-            return ClassUtil.class.getClassLoader().loadClass( className );
+            return ( Class< T > )ClassUtil.class.getClassLoader().loadClass( className );
         } catch( final ClassNotFoundException e ) {
-            return ClassUtil.class.getClassLoader().loadClass( packageName + "." + className );
+            return ( Class< T > )ClassUtil.class.getClassLoader().loadClass( packageName + "." + className );
         }
     }
     
@@ -268,10 +268,9 @@ public final class ClassUtil {
      *  @throws ReflectiveOperationException If the class cannot be found or instantiated.
      *  @since 2.5.40
      */
-    @SuppressWarnings("unchecked")
     public static < T > T getMappedObject( final String requestedClass ) throws ReflectiveOperationException, IllegalArgumentException {
         final Object[] initargs = {};
-        return ( T )getMappedObject(requestedClass, initargs );
+        return getMappedObject( requestedClass, initargs );
     }
 
     /**
@@ -297,23 +296,7 @@ public final class ClassUtil {
     @SuppressWarnings( "unchecked" )
     public static < T > T getMappedObject( final String requestedClass, final Object... initargs ) throws ReflectiveOperationException, IllegalArgumentException {
         final Class< ? > cl = getMappedClass( requestedClass );
-        final Constructor< ? >[] ctors = cl.getConstructors();
-        
-        //  Try to find the proper constructor by comparing the initargs array classes and the constructor types.
-        for( final Constructor< ? > ctor : ctors ) {
-            final Class< ? >[] params = ctor.getParameterTypes();
-            if( params.length == initargs.length ) {
-                for( int arg = 0; arg < initargs.length; arg++ ) {
-                    if( params[ arg ].isAssignableFrom( initargs[ arg ].getClass() ) ) {
-                        //  Ha, found it!  Instantiating and returning...
-                        return ( T )ctor.newInstance( initargs );
-                    }
-                }
-            }
-        }
-        
-        //  No arguments, so we can just call a default constructor and ignore the arguments.
-        return ( T )cl.getDeclaredConstructor().newInstance();
+        return ( T )buildInstance( cl, initargs );
     }
 
     /**
@@ -367,6 +350,78 @@ public final class ClassUtil {
 
     public static Map< String, String > getExtraClassMappings() {
         return c_classMappingsExtra;
+    }
+
+    /**
+     * This method is used to instantiate a given class.
+     *
+     * @param className The name of the class you wish to instantiate.
+     * @return An instantiated Object.
+     * @throws ReflectiveOperationException If the class cannot be found or instantiated.
+     * @since 2.11.1
+     */
+    public static < T > T buildInstance( final String className ) throws ReflectiveOperationException {
+        return buildInstance( "", className );
+    }
+
+    /**
+     * This method is used to instantiate a given class.
+     * <p>
+     * * It will first attempt to instantiate the class directly from the className, and will then try to prefix it with the packageName.
+     *
+     * @param packageName A package name (such as "org.apache.wiki.plugins").
+     * @param className The class name to find.
+     * @return An instantiated Object.
+     * @throws ReflectiveOperationException If the class cannot be found or instantiated.
+     * @since 2.11.1
+     */
+    public static < T > T buildInstance( final String packageName, final String className ) throws ReflectiveOperationException {
+        return buildInstance( findClass( packageName, className ) );
+    }
+
+    /**
+     * This method is used to instantiate a given class.
+     *
+     * @param from The name of the class you wish to instantiate.
+     * @return An instantiated Object.
+     * @throws ReflectiveOperationException If the class cannot be found or instantiated.
+     * @since 2.11.1
+     */
+    public static < T > T buildInstance( final Class< T > from ) throws ReflectiveOperationException {
+        final Object[] initArgs = {};
+        return buildInstance( from, initArgs );
+    }
+
+    /**
+     * This method is used to instantiate a given class.
+     * <p>
+     * This method takes in an object array for the constructor arguments for classes
+     * which have more than two constructors.
+     *
+     * @param from The name of the class you wish to instantiate.
+     * @param initArgs The parameters to be passed to the constructor. May be <code>null</code>.
+     * @return An instantiated Object.
+     * @throws ReflectiveOperationException If the class cannot be found or instantiated.
+     * @since 2.11.1
+     */
+    @SuppressWarnings( "unchecked" )
+    public static < T > T buildInstance( final Class< T > from, final Object... initArgs ) throws ReflectiveOperationException {
+        final Constructor< ? >[] ctors = from.getConstructors();
+
+        //  Try to find the proper constructor by comparing the initargs array classes and the constructor types.
+        for( final Constructor< ? > ctor : ctors ) {
+            final Class< ? >[] params = ctor.getParameterTypes();
+            if( params.length == initArgs.length ) {
+                for( int arg = 0; arg < initArgs.length; arg++ ) {
+                    if( params[ arg ].isAssignableFrom( initArgs[ arg ].getClass() ) ) {
+                        //  Ha, found it!  Instantiating and returning...
+                        return ( T )ctor.newInstance( initArgs );
+                    }
+                }
+            }
+        }
+        //  No arguments, so we can just call a default constructor and ignore the arguments.
+        return from.getDeclaredConstructor().newInstance();
     }
     
 }

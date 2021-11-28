@@ -121,24 +121,19 @@ public class DefaultUserManager implements UserManager {
         try {
             dbClassName = TextUtil.getRequiredProperty( m_engine.getWikiProperties(), PROP_DATABASE );
 
-            log.info( "Attempting to load user database class " + dbClassName );
-            final Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
-            m_database = (UserDatabase) dbClass.newInstance();
+            log.info( "Attempting to load user database class {}", dbClassName );
+            m_database = ClassUtil.buildInstance( USERDATABASE_PACKAGE, dbClassName );
             m_database.initialize( m_engine, m_engine.getWikiProperties() );
-            log.info("UserDatabase initialized.");
+            log.info( "UserDatabase initialized." );
         } catch( final NoSuchElementException | NoRequiredPropertyException e ) {
-            log.error( "You have not set the '"+PROP_DATABASE+"'. You need to do this if you want to enable user management by JSPWiki.", e );
-        } catch( final ClassNotFoundException e ) {
-            log.error( "UserDatabase class " + dbClassName + " cannot be found", e );
-        } catch( final InstantiationException e ) {
-            log.error( "UserDatabase class " + dbClassName + " cannot be created", e );
-        } catch( final IllegalAccessException e ) {
-            log.error( "You are not allowed to access this user database class", e );
+            log.error( "You have not set the '{}'. You need to do this if you want to enable user management by JSPWiki.", PROP_DATABASE, e );
+        } catch( final ReflectiveOperationException e ) {
+            log.error( "UserDatabase {} cannot be instantiated", dbClassName, e );
         } catch( final WikiSecurityException e ) {
-            log.error( "Exception initializing user database: " + e.getMessage(), e );
+            log.error( "Exception initializing user database: {}", e.getMessage(), e );
         } finally {
             if( m_database == null ) {
-                log.info("I could not create a database object you specified (or didn't specify), so I am falling back to a default.");
+                log.info( "I could not create a database object you specified (or didn't specify), so I am falling back to a default." );
                 m_database = new DummyUserDatabase();
             }
         }

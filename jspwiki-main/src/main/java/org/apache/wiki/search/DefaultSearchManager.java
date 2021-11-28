@@ -215,7 +215,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
 
             sw.stop();
             if( log.isDebugEnabled() ) {
-                log.debug( "AJAX search complete in " + sw );
+                log.debug( "AJAX search complete in {}", sw );
             }
             return list;
         }
@@ -236,22 +236,19 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
     }
 
     private void loadSearchProvider( final Properties properties ) {
-        // See if we're using Lucene, and if so, ensure that its index directory is up to date.
-
+        // See if we're using Lucene, and if so, ensure that its index directory is up-to-date.
         final String providerClassName = TextUtil.getStringProperty( properties, PROP_SEARCHPROVIDER, DEFAULT_SEARCHPROVIDER );
 
         try {
-            final Class<?> providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
-            m_searchProvider = ( SearchProvider )providerClass.newInstance();
-        } catch( final ClassNotFoundException | InstantiationException | IllegalAccessException e ) {
-            log.warn("Failed loading SearchProvider, will use BasicSearchProvider.", e);
+            m_searchProvider = ClassUtil.buildInstance( "org.apache.wiki.search", providerClassName );
+        } catch( final ReflectiveOperationException e ) {
+            log.warn( "Failed loading SearchProvider, will use BasicSearchProvider.", e );
         }
 
         if( null == m_searchProvider ) {
-            // FIXME: Make a static with the default search provider
             m_searchProvider = new BasicSearchProvider();
         }
-        log.debug("Loaded search provider " + m_searchProvider);
+        log.debug( "Loaded search provider {}", m_searchProvider );
     }
 
     /** {@inheritDoc} */

@@ -65,14 +65,13 @@ public class WikiAttachmentAdapterProvider implements AttachmentProvider {
         final String classname = TextUtil.getRequiredProperty( properties, PROP_ADAPTER_IMPL );
         try {
             LOG.debug( "Page provider class: '" + classname + "'" );
-            final Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", classname);
-            provider = ( WikiAttachmentProvider ) providerclass.newInstance();
-        } catch( final IllegalAccessException | InstantiationException | ClassNotFoundException e ) {
-            LOG.error( "Could not instantiate " + classname, e );
+            provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
+        } catch( final ReflectiveOperationException e ) {
+            LOG.error( "Could not instantiate {}", classname, e );
             throw new IOException( e.getMessage(), e );
         }
 
-        LOG.debug( "Initializing attachment provider class " + provider );
+        LOG.debug( "Initializing attachment provider class {}", provider );
         provider.initialize( engine, properties );
     }
 

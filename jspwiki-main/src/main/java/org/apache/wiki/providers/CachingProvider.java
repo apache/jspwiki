@@ -136,12 +136,9 @@ public class CachingProvider implements PageProvider {
             m_cacheManager.addCache(m_historyCache);
         }
 
-        //
         // m_cache.getCacheEventNotificationService().registerListener(new CacheItemCollector());
 
-        //
         //  Find and initialize real provider.
-        //
         final String classname;
         try {
             classname = TextUtil.getRequiredProperty( properties, PageManager.PROP_PAGEPROVIDER );
@@ -150,19 +147,11 @@ public class CachingProvider implements PageProvider {
         }
 
         try {
-            final Class< ? > providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname );
-            m_provider = ( PageProvider )providerclass.newInstance();
-
-            log.debug( "Initializing real provider class " + m_provider );
+            m_provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
+            log.debug( "Initializing real provider class {}", m_provider );
             m_provider.initialize( engine, properties );
-        } catch( final ClassNotFoundException e ) {
-            log.error( "Unable to locate provider class " + classname, e );
-            throw new IllegalArgumentException( "no provider class", e );
-        } catch( final InstantiationException e ) {
-            log.error( "Unable to create provider class " + classname, e );
-            throw new IllegalArgumentException( "faulty provider class", e );
-        } catch( final IllegalAccessException e ) {
-            log.error( "Illegal access to provider class " + classname, e );
+        } catch( final ReflectiveOperationException e ) {
+            log.error( "Unable to instantiate provider class {}", classname, e );
             throw new IllegalArgumentException( "illegal provider class", e );
         }
     }

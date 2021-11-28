@@ -239,7 +239,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
         return ClassUtil.findClass( m_searchPath, m_externalJars, classname );
     }
 
-    /** Outputs a HTML-formatted version of a stack trace. */
+    /** Outputs an HTML-formatted version of a stack trace. */
     private String stackTrace( final Map<String,String> params, final Throwable t ) {
         final Element div = XhtmlUtil.element( XHTML.div, "Plugin execution failed, stack trace follows:" );
         div.setAttribute( XHTML.ATTR_class, "debug" );
@@ -463,7 +463,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
         private String    m_className;
         private String    m_alias;
         private String    m_ajaxAlias;
-        private Class<?>  m_clazz;
+        private Class< Plugin >  m_clazz;
 
         private boolean m_initialized;
 
@@ -582,12 +582,12 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
          *  @throws IllegalAccessException If the class cannot be accessed.
          */
 
-        public Plugin newPluginInstance( final List< String > searchPath, final List< String > externalJars) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        public Plugin newPluginInstance( final List< String > searchPath, final List< String > externalJars) throws ReflectiveOperationException {
             if( m_clazz == null ) {
                 m_clazz = ClassUtil.findClass( searchPath, externalJars ,m_className );
             }
 
-            return ( Plugin )m_clazz.newInstance();
+            return ClassUtil.buildInstance( m_clazz );
         }
 
         /**

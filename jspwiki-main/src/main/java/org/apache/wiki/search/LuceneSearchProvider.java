@@ -68,9 +68,18 @@ import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
 
-import java.io.*;
-import java.lang.reflect.Constructor;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -318,9 +327,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
     private Analyzer getLuceneAnalyzer() throws ProviderException {
         try {
-            final Class< ? > clazz = ClassUtil.findClass( "", m_analyzerClass );
-            final Constructor< ? > constructor = clazz.getConstructor();
-            return ( Analyzer )constructor.newInstance();
+            return ClassUtil.buildInstance( m_analyzerClass );
         } catch( final Exception e ) {
             final String msg = "Could not get LuceneAnalyzer class " + m_analyzerClass + ", reason: ";
             log.error( msg, e );

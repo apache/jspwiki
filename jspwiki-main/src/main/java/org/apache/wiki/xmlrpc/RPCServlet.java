@@ -24,6 +24,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.spi.Wiki;
+import org.apache.wiki.util.ClassUtil;
 import org.apache.xmlrpc.ContextXmlRpcHandler;
 import org.apache.xmlrpc.Invoker;
 import org.apache.xmlrpc.XmlRpcContext;
@@ -71,8 +72,8 @@ public class RPCServlet extends HttpServlet {
         rpchandler.initialize( m_engine );
         m_xmlrpcServer.addHandler( prefix, rpchandler );
         */
-        final Class< ? > handlerClass = Class.forName( handlerName );
-        m_xmlrpcServer.addHandler( prefix, new LocalHandler(handlerClass) );
+        final Class< WikiRPCHandler > handlerClass = ClassUtil.findClass( "", handlerName );
+        m_xmlrpcServer.addHandler( prefix, new LocalHandler( handlerClass ) );
     }
 
     /**
@@ -155,16 +156,16 @@ public class RPCServlet extends HttpServlet {
     }
 
     private static class LocalHandler implements ContextXmlRpcHandler {
-        private final Class< ? > m_clazz;
+        private final Class< WikiRPCHandler > m_clazz;
 
-        public LocalHandler( final Class< ? > clazz )
+        public LocalHandler( final Class< WikiRPCHandler > clazz )
         {
             m_clazz = clazz;
         }
 
         @Override
         public Object execute( final String method, final Vector params, final XmlRpcContext context ) throws Exception {
-            final WikiRPCHandler rpchandler = (WikiRPCHandler) m_clazz.newInstance();
+            final WikiRPCHandler rpchandler = ClassUtil.buildInstance( m_clazz );
             rpchandler.initialize( ((WikiXmlRpcContext)context).getWikiContext() );
 
             final Invoker invoker = new Invoker( rpchandler );

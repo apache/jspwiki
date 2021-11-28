@@ -129,27 +129,20 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
         try {
             final PageFilterInfo info = m_filterClassMap.get( className );
             if( info != null && !checkCompatibility( info ) ) {
-                log.warn( "Filter '" + info.getName() + "' not compatible with this version of JSPWiki" );
+                log.warn( "Filter '{}' not compatible with this version of JSPWiki", info.getName() );
                 return;
             }
 
-            final int priority = 0; // FIXME: Currently fixed.
-            final Class< ? > cl = ClassUtil.findClass( "org.apache.wiki.filters", className );
-            final PageFilter filter = (PageFilter)cl.newInstance();
+            final int priority = 0;
+            final PageFilter filter = ClassUtil.buildInstance( "org.apache.wiki.filters", className );
             filter.initialize( m_engine, props );
 
             addPageFilter( filter, priority );
-            log.info("Added page filter "+cl.getName()+" with priority "+priority);
-        } catch( final ClassNotFoundException e ) {
-            log.error("Unable to find the filter class: "+className);
-        } catch( final InstantiationException e ) {
-            log.error("Cannot create filter class: "+className);
-        } catch( final IllegalAccessException e ) {
-            log.error("You are not allowed to access class: "+className);
-        } catch( final ClassCastException e ) {
-            log.error("Suggested class is not a PageFilter: "+className);
+            log.info( "Added page filter {} with priority {}", filter.getClass().getName(), priority );
+        } catch( final ReflectiveOperationException e ) {
+            log.error( "Unable to instantiate PageFilter: {}", className );
         } catch( final FilterException e ) {
-            log.error("Filter "+className+" failed to initialize itself.", e);
+            log.error( "Filter {} failed to initialize itself.", className, e );
         }
     }
 
@@ -157,7 +150,7 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
     /**
      *  Initializes the filters from an XML file.
      *
-     *  @param props The list of properties.  Typically jspwiki.properties
+     *  @param props The list of properties. Typically, jspwiki.properties
      *  @throws WikiException If something goes wrong.
      */
     protected void initialize( final Properties props ) throws WikiException {

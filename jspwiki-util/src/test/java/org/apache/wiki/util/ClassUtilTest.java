@@ -55,7 +55,7 @@ public class ClassUtilTest
      */
     @Test
     public void testFindClass() throws Exception {
-        final Class< ? > foo = ClassUtil.findClass( "java.util", "List" );
+        final Class< List< ? > > foo = ClassUtil.findClass( "java.util", "List" );
 
         Assertions.assertEquals( foo.getName(), "java.util.List" );
     }
@@ -81,6 +81,12 @@ public class ClassUtilTest
     public void testExists() {
         Assertions.assertTrue( ClassUtil.exists( "java.util.List" ) );
         Assertions.assertFalse( ClassUtil.exists( "org.apache.wiski.FrisFrus" ) );
+    }
+
+    @Test
+    public void testBuildInstance() throws Exception {
+        Assertions.assertTrue( ClassUtil.buildInstance( "java.util.ArrayList" ) instanceof List );
+        Assertions.assertThrows( NoSuchMethodException.class, () -> ClassUtil.buildInstance( "java.util.List" ) );
     }
 
 }

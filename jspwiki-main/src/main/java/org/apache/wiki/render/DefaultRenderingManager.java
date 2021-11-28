@@ -109,20 +109,20 @@ public class DefaultRenderingManager implements RenderingManager {
         m_engine = engine;
         m_markupParserClass = properties.getProperty( PROP_PARSER, DEFAULT_PARSER );
         if( !ClassUtil.assignable( m_markupParserClass, MarkupParser.class.getName() ) ) {
-        	log.warn( m_markupParserClass + " does not subclass " + MarkupParser.class.getName() + " reverting to default markup parser." );
+        	log.warn( "{} does not subclass {} reverting to default markup parser.", m_markupParserClass, MarkupParser.class.getName() );
         	m_markupParserClass = DEFAULT_PARSER;
         }
-        log.info( "Using " + m_markupParserClass + " as markup parser." );
+        log.info( "Using {} as markup parser.", m_markupParserClass );
 
         m_beautifyTitle  = TextUtil.getBooleanProperty( properties, PROP_BEAUTIFYTITLE, m_beautifyTitle );
         m_useCache = "true".equals( properties.getProperty( PageManager.PROP_USECACHE ) );
 
         if( m_useCache ) {
             final String documentCacheName = engine.getApplicationName() + "." + DOCUMENTCACHE_NAME;
-            if (m_cacheManager.cacheExists(documentCacheName)) {
-                m_documentCache = m_cacheManager.getCache(documentCacheName);
+            if( m_cacheManager.cacheExists( documentCacheName ) ) {
+                m_documentCache = m_cacheManager.getCache( documentCacheName );
             } else {
-                log.info( "cache with name " + documentCacheName + " not found in ehcache.xml, creating it with defaults." );
+                log.info( "cache with name {} not found in ehcache.xml, creating it with defaults.", documentCacheName );
                 m_documentCache = new Cache( documentCacheName, DEFAULT_CACHESIZE, false, false, m_cacheExpiryPeriod, m_cacheExpiryPeriod );
                 m_cacheManager.addCache( m_documentCache );
             }
@@ -135,9 +135,9 @@ public class DefaultRenderingManager implements RenderingManager {
         m_rendererConstructor = initRenderer( renderImplName, rendererParams );
         m_rendererWysiwygConstructor = initRenderer( renderWysiwygImplName, rendererParams );
 
-        log.info( "Rendering content with " + renderImplName + "." );
+        log.info( "Rendering content with {}.", renderImplName );
 
-        WikiEventManager.getInstance().addWikiEventListener( m_engine.getManager( FilterManager.class ),this );
+        WikiEventManager.addWikiEventListener( m_engine.getManager( FilterManager.class ),this );
     }
 
     private Constructor< ? > initRenderer( final String renderImplName, final Class< ? >[] rendererParams ) throws WikiException {
@@ -443,7 +443,7 @@ public class DefaultRenderingManager implements RenderingManager {
                     final Collection< String > referringPages = m_engine.getManager( ReferenceManager.class ).findReferrers( pageName );
 
                     //
-                    //  Flush also those pages that refer to this page (if an nonexistent page
+                    //  Flush also those pages that refer to this page (if a nonexistent page
                     //  appears, we need to flush the HTML that refers to the now-existent page)
                     //
                     if( referringPages != null ) {

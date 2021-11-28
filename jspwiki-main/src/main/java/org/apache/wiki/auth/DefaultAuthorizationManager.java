@@ -275,23 +275,16 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
      */
     private Authorizer getAuthorizerImplementation( final Properties props ) throws WikiException {
         final String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAULT_AUTHORIZER );
-        return ( Authorizer )locateImplementation( authClassName );
+        return locateImplementation( authClassName );
     }
 
-    private Object locateImplementation( final String clazz ) throws WikiException {
+    private Authorizer locateImplementation( final String clazz ) throws WikiException {
         if ( clazz != null ) {
             try {
-                final Class< ? > authClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", clazz );
-                return authClass.newInstance();
-            } catch( final ClassNotFoundException e ) {
-                log.fatal( "Authorizer " + clazz + " cannot be found", e );
-                throw new WikiException( "Authorizer " + clazz + " cannot be found", e );
-            } catch( final InstantiationException e ) {
-                log.fatal( "Authorizer " + clazz + " cannot be created", e );
-                throw new WikiException( "Authorizer " + clazz + " cannot be created", e );
-            } catch( final IllegalAccessException e ) {
-                log.fatal( "You are not allowed to access this authorizer class", e );
-                throw new WikiException( "You are not allowed to access this authorizer class", e );
+                return ClassUtil.buildInstance( "org.apache.wiki.auth.authorize", clazz );
+            } catch( final ReflectiveOperationException e ) {
+                log.fatal( "Authorizer {} cannot be instantiated", clazz, e );
+                throw new WikiException( "Authorizer " + clazz + " cannot be instantiated", e );
             }
         }
 

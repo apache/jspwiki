@@ -88,14 +88,14 @@ public class PageSorter implements Comparator< String > {
      * 
      * @param props this Engine's properties.
      */
-    @SuppressWarnings( "unchecked" )
     public void initialize( final Properties props ) {
         // Default is Java natural order
         m_comparator = JavaNaturalComparator.DEFAULT_JAVA_COMPARATOR;
         final String className = props.getProperty( PROP_PAGE_NAME_COMPARATOR );
         if( className != null && !className.isEmpty() ) {
             try {
-                m_comparator = ( Comparator< String > )ClassUtil.findClass( "org.apache.wiki.util.comparators", className ).newInstance();
+                final Class< Comparator< String > > cl = ClassUtil.findClass( "org.apache.wiki.util.comparators", className );
+                m_comparator = ClassUtil.buildInstance( cl );;
             } catch( final Exception e ) {
                 LOG.error( "Falling back to default \"natural\" comparator", e );
             }

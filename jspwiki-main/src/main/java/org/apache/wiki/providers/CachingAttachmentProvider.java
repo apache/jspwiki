@@ -61,7 +61,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     private final CacheManager m_cacheManager = CacheManager.getInstance();
 
     /** Default cache capacity for now. */
-    public static final int m_capacity = 1000;
+    public static final int m_capacity = 1_000;
 
     /** The cache contains Collection objects which contain Attachment objects. The key is the parent wiki page name (String). */
     private Cache m_cache;
@@ -79,10 +79,6 @@ public class CachingAttachmentProvider implements AttachmentProvider {
 
     private final long m_cacheMisses = 0;
     private final long m_cacheHits = 0;
-
-    /** The extension to append to directory names to denote an attachment directory. */
-    public static final String DIR_EXTENSION   = "-att";
-
 
     private boolean m_gotall;
 
@@ -121,19 +117,11 @@ public class CachingAttachmentProvider implements AttachmentProvider {
         }
 
         try {
-            final Class< ? > providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname );
-            m_provider = ( AttachmentProvider )providerclass.newInstance();
-
-            log.debug( "Initializing real provider class " + m_provider );
+            m_provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
+            log.debug( "Initializing real provider class {}", m_provider );
             m_provider.initialize( engine, properties );
-        } catch( final ClassNotFoundException e ) {
-            log.error( "Unable to locate provider class " + classname, e );
-            throw new IllegalArgumentException( "no provider class", e );
-        } catch( final InstantiationException e ) {
-            log.error( "Unable to create provider class " + classname, e );
-            throw new IllegalArgumentException( "faulty provider class", e );
-        } catch( final IllegalAccessException e ) {
-            log.error( "Illegal access to provider class " + classname, e );
+        } catch( final ReflectiveOperationException e ) {
+            log.error( "Unable to instantiate provider class {}", classname, e );
             throw new IllegalArgumentException( "illegal provider class", e );
         }
     }
@@ -314,9 +302,9 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     }
 
     /**
-     * Gets the provider class name, and cache statistics (misscount and,hitcount of the attachment cache).
+     * Gets the provider class name, and cache statistics (misscount and hitcount of the attachment cache).
      *
-     * @return A plain string with all the above mentioned values.
+     * @return A plain string with all the above-mentioned values.
      */
     @Override
     public synchronized String getProviderInfo() {

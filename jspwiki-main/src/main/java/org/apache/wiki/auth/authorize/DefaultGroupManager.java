@@ -111,21 +111,12 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             if( dbClassName == null ) {
                 dbClassName = XMLGroupDatabase.class.getName();
             }
-            log.info( "Attempting to load group database class " + dbClassName );
-            final Class< ? > dbClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", dbClassName );
-            m_groupDatabase = ( GroupDatabase )dbClass.newInstance();
+            log.info( "Attempting to load group database class {}" + dbClassName );
+            m_groupDatabase = ClassUtil.buildInstance( "org.apache.wiki.auth.authorize", dbClassName );
             m_groupDatabase.initialize( m_engine, m_engine.getWikiProperties() );
             log.info( "Group database initialized." );
-        } catch( final ClassNotFoundException e ) {
-            log.error( "GroupDatabase class " + dbClassName + " cannot be found.", e );
-            dbInstantiationError = "Failed to locate GroupDatabase class " + dbClassName;
-            cause = e;
-        } catch( final InstantiationException e ) {
-            log.error( "GroupDatabase class " + dbClassName + " cannot be created.", e );
-            dbInstantiationError = "Failed to create GroupDatabase class " + dbClassName;
-            cause = e;
-        } catch( final IllegalAccessException e ) {
-            log.error( "You are not allowed to access group database class " + dbClassName + ".", e );
+        } catch( final ReflectiveOperationException e ) {
+            log.error( "UserDatabase {} cannot be instantiated", dbClassName, e );
             dbInstantiationError = "Access GroupDatabase class " + dbClassName + " denied";
             cause = e;
         } catch( final NoRequiredPropertyException e ) {

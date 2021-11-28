@@ -72,7 +72,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
      *  Wikiengine.getManager( AttachmentManager.class ) if you're making a module for JSPWiki.
      *
      *  @param engine The wikiengine that owns this attachment manager.
-     *  @param props A list of properties from which the AttachmentManager will seek its configuration. Typically this is the "jspwiki.properties".
+     *  @param props A list of properties from which the AttachmentManager will seek its configuration. Typically, this is the "jspwiki.properties".
      */
     // FIXME: Perhaps this should fail somehow.
     public DefaultAttachmentManager( final Engine engine, final Properties props ) {
@@ -100,23 +100,17 @@ public class DefaultAttachmentManager implements AttachmentManager {
             if( m_cacheManager.cacheExists( cacheName ) ) {
                 m_dynamicAttachments = m_cacheManager.getCache( cacheName );
             } else {
-                log.info( "cache with name " + cacheName + " not found in ehcache.xml, creating it with defaults." );
+                log.info( "cache with name {} not found in ehcache.xml, creating it with defaults.", cacheName );
                 m_dynamicAttachments = new Cache( cacheName, DEFAULT_CACHECAPACITY, false, false, 0, 0 );
                 m_cacheManager.addCache( m_dynamicAttachments );
             }
 
-            final Class< ? > providerclass = ClassUtil.findClass( "org.apache.wiki.providers", classname );
-
-            m_provider = ( AttachmentProvider )providerclass.newInstance();
+            m_provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
             m_provider.initialize( m_engine, props );
-        } catch( final ClassNotFoundException e ) {
-            log.error( "Attachment provider class not found",e);
-        } catch( final InstantiationException e ) {
-            log.error( "Attachment provider could not be created", e );
-        } catch( final IllegalAccessException e ) {
-            log.error( "You may not access the attachment provider class", e );
+        } catch( final ReflectiveOperationException e ) {
+            log.error( "Attachment provider class could not be instantiated", e );
         } catch( final NoRequiredPropertyException e ) {
-            log.error( "Attachment provider did not find a property that it needed: " + e.getMessage(), e );
+            log.error( "Attachment provider did not find a property that it needed: {}", e.getMessage(), e );
             m_provider = null; // No, it did not work.
         } catch( final IOException e ) {
             log.error( "Attachment provider reports IO error", e );

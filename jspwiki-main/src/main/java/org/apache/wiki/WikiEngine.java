@@ -307,7 +307,7 @@ public class WikiEngine implements Engine {
         try {
             final String aclClassName = m_properties.getProperty( PROP_ACL_MANAGER_IMPL, ClassUtil.getMappedClass( AclManager.class.getName() ).getName() );
             final String urlConstructorClassName = TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" );
-            final Class< ? > urlclass = ClassUtil.findClass( "org.apache.wiki.url", urlConstructorClassName );
+            final Class< URLConstructor > urlclass = ClassUtil.findClass( "org.apache.wiki.url", urlConstructorClassName );
 
             initComponent( CommandResolver.class, this, props );
             initComponent( urlclass.getName(), URLConstructor.class );

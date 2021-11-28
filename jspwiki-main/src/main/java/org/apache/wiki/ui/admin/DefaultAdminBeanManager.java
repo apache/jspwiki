@@ -32,6 +32,7 @@ import org.apache.wiki.ui.admin.beans.FilterBean;
 import org.apache.wiki.ui.admin.beans.PluginBean;
 import org.apache.wiki.ui.admin.beans.SearchManagerBean;
 import org.apache.wiki.ui.admin.beans.UserBean;
+import org.apache.wiki.util.ClassUtil;
 
 import javax.management.DynamicMBean;
 import javax.management.InstanceAlreadyExistsException;
@@ -144,11 +145,10 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
             final String abname = wikiModuleInfo.getAdminBeanClass();
             try {
                 if( abname != null && !abname.isEmpty() ) {
-                    final Class< ? > abclass = Class.forName( abname );
-                    final AdminBean ab = ( AdminBean )abclass.newInstance();
+                    final AdminBean ab = ClassUtil.buildInstance( abname );
                     registerAdminBean( ab );
                 }
-            } catch( final ClassNotFoundException | InstantiationException | IllegalAccessException e ) {
+            } catch( final ReflectiveOperationException e ) {
                 log.error( e.getMessage(), e );
             }
         }

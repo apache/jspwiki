@@ -124,26 +124,18 @@ public class DefaultPageManager implements PageManager {
         pageSorter.initialize( props );
 
         try {
-            LOG.debug("Page provider class: '" + classname + "'");
-            final Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", classname);
-            m_provider = ( PageProvider ) providerclass.newInstance();
-
-            LOG.debug("Initializing page provider class " + m_provider);
-            m_provider.initialize(m_engine, props);
-        } catch (final ClassNotFoundException e) {
-            LOG.error("Unable to locate provider class '" + classname + "' (" + e.getMessage() + ")", e);
-            throw new WikiException("No provider class. (" + e.getMessage() + ")", e);
-        } catch (final InstantiationException e) {
-            LOG.error("Unable to create provider class '" + classname + "' (" + e.getMessage() + ")", e);
-            throw new WikiException("Faulty provider class. (" + e.getMessage() + ")", e);
-        } catch (final IllegalAccessException e) {
-            LOG.error("Illegal access to provider class '" + classname + "' (" + e.getMessage() + ")", e);
-            throw new WikiException("Illegal provider class. (" + e.getMessage() + ")", e);
-        } catch (final NoRequiredPropertyException e) {
-            LOG.error("Provider did not found a property it was looking for: " + e.getMessage(), e);
+            LOG.debug( "Page provider class: '{}'", classname );
+            m_provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
+            LOG.debug( "Initializing page provider class {}", m_provider );
+            m_provider.initialize( m_engine, props );
+        } catch( final ReflectiveOperationException e ) {
+            LOG.error( "Unable to instantiate provider class '{}' ({})", classname, e.getMessage(), e );
+            throw new WikiException( "Illegal provider class. (" + e.getMessage() + ")", e );
+        } catch( final NoRequiredPropertyException e ) {
+            LOG.error("Provider did not found a property it was looking for: {}", e.getMessage(), e);
             throw e;  // Same exception works.
-        } catch (final IOException e) {
-            LOG.error("An I/O exception occurred while trying to create a new page provider: " + classname, e);
+        } catch( final IOException e ) {
+            LOG.error("An I/O exception occurred while trying to create a new page provider: {}", classname, e);
             throw new WikiException("Unable to start page provider: " + e.getMessage(), e);
         }
 
