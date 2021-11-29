@@ -89,20 +89,6 @@ wiki.add("textarea#editorarea", function( main ){
             parser: jspwikiSectionParser
         });
 
-
-        LocalCache = "wiki" + wiki.PageName;
-
-        if(LocalCache in localStorage){
-
-            var cache = localStorage.getItem(LocalCache),
-                modal = getFormElem(".localstorage");
-
-            modal.appendChild("pre".slick({text:cache}) )
-                .openModal( function(){
-                    snipe.set("value", cache);
-                });
-        }
-
     }
 
 
