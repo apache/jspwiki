@@ -17,12 +17,45 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-12-02  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.1-git-01_
+
+* Cache management moved to a new maven module, jspwiki-cache
+    * Cache backend can now be overriden by providing a custom CachingManager via [classmappings-extra.xml](https://jspwiki-wiki.apache.org/Wiki.jsp?page=JSPWikiPublicAPI#section-JSPWikiPublicAPI-RegisteringCustomManagersInTheWikiEngine)
+    * Default cache manager remains ehcache-based, with default configuration file located at ehcache-jspwiki.xml
+    * Tests wanting to invalidate cache(s) should call either `Engine#shutdown()` or `Engine#getManager( CachingManager.class ).shutdown()`
+    * The `jspwiki.cache.config-file` setting on the `jspwiki[-custom].properties` file allows to use a custom ehcache configuration file, located elsewhere on classpath
+    * Fixed [JSPWIKI-873](https://issues.apache.org/jira/projects/JSPWIKI/issues/JSPWIKI-873) - AttachmentManager#getAllAttachments() does not return more than exactly 1000 attachments
+
+* Introduced `TextUtil#get[Required|String]Property( Properties, String key, String deprecatedKey[, String defval] )` to allow deprecation of properties, so they can be removed later on
+    * Deprecated key will be looked first and, if found, a warning will be logged asking to move to the new property
+    * If there's no deprecated key on the properties set, the normal key will be looked, and if not found, the default value will be returned (or exception thrown)
+    * The idea is to move related configuration towards common "namespaces" 
+    * A few properties are deprecated
+        * `jspwiki.usePageCache` -> `jspwiki.cache.enable` should be used instead
+        * `jspwiki.attachmentProvider` -> `jspwiki.attachment.provider` should be used instead
+        * `jspwiki.attachmentProvider.adapter.impl` -> `jspwiki.attachment.provider.adapter.impl` should be used instead
+
+* `WikiEngine#initComponent()` now asks the `mappedClass` if is `Initializable` instead of asking the `requestedClass` on `classmappings.xml`.
+    * This allows to decouple `Initializable` from the mapped managers, as it should only matter if their implementations are `Initializable` in order to init them. 
+
+* Moved site generation to [jspwiki-site's Jenkinsfile](https://github.com/apache/jspwiki-site/blob/jbake/Jenkinsfile)
+    * This second build is decoupled from the main one, so CI feedback is gathered faster 
+
+* Dockerfile's maven build does not rely on jspwiki-main:tests being available on a repo, thus avoiding [#1](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Common%20problems%20when%20building%20JSPWiki#section-Common+problems+when+building+JSPWiki-JspwikiMainJarTestsX.Y.ZNotFoundAtJspwikiMarkdown) when building new versions
+
+* Dependency updates
+    * Awaitility to 4.1.1, thanks to dependabot [#152](https://github.com/apache/jspwiki/pull/152)
+    * JUnit to 5.8.2
+    * Selenide to 6.1.1
+
 **2021-11-18  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.0-git-14_
 
 * [JSPWIKI-1160](https://issues.apache.org/jira/browse/JSPWIKI-1160) - Ensure JSPWiki builds with JDKs 8, 11 and 17
-  
+
 * Dependency updates
     * Lucene to 8.11.0
 
