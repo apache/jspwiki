@@ -18,9 +18,6 @@
  */
 package org.apache.wiki.attachment;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
@@ -31,6 +28,7 @@ import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.spi.Wiki;
+import org.apache.wiki.cache.CachingManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.references.ReferenceManager;
@@ -49,7 +47,7 @@ import java.util.Properties;
 
 
 /**
- *  Default implementation for {@link AttachmentManager}
+ *  Default implementation for {@link AttachmentManager}.
  *
  * {@inheritDoc}
  *
@@ -60,29 +58,24 @@ public class DefaultAttachmentManager implements AttachmentManager {
     /** List of attachment types which are forced to be downloaded */
     private String[] m_forceDownloadPatterns;
 
-    private static final Logger log = LogManager.getLogger( DefaultAttachmentManager.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultAttachmentManager.class );
     private AttachmentProvider m_provider;
     private final Engine m_engine;
-    private final CacheManager m_cacheManager = CacheManager.getInstance();
-    private Cache m_dynamicAttachments;
+    private final CachingManager cachingManager;
 
     /**
      *  Creates a new AttachmentManager.  Note that creation will never fail, but it's quite likely that attachments do not function.
-     *  <p><b>DO NOT CREATE</b> an AttachmentManager on your own, unless you really know what you're doing. Just use
+     *  <p><strong>DO NOT CREATE</strong> an AttachmentManager on your own, unless you really know what you're doing. Just use
      *  Wikiengine.getManager( AttachmentManager.class ) if you're making a module for JSPWiki.
      *
      *  @param engine The wikiengine that owns this attachment manager.
      *  @param props A list of properties from which the AttachmentManager will seek its configuration. Typically, this is the "jspwiki.properties".
      */
-    // FIXME: Perhaps this should fail somehow.
     public DefaultAttachmentManager( final Engine engine, final Properties props ) {
         m_engine = engine;
-
-        //  If user wants to use a cache, then we'll use the CachingProvider.
-        final boolean useCache = "true".equals( props.getProperty( PageManager.PROP_USECACHE ) );
-
+        cachingManager = m_engine.getManager( CachingManager.class );
         final String classname;
-        if( useCache ) {
+        if( cachingManager.enabled( CachingManager.CACHE_ATTACHMENTS_DYNAMIC ) ) {
             classname = "org.apache.wiki.providers.CachingAttachmentProvider";
         } else {
             classname = props.getProperty( PROP_PROVIDER );
@@ -90,30 +83,21 @@ public class DefaultAttachmentManager implements AttachmentManager {
 
         //  If no class defined, then will just simply fail.
         if( classname == null ) {
-            log.info( "No attachment provider defined - disabling attachment support." );
+            LOG.info( "No attachment provider defined - disabling attachment support." );
             return;
         }
 
         //  Create and initialize the provider.
-        final String cacheName = engine.getApplicationName() + "." + CACHE_NAME;
         try {
-            if( m_cacheManager.cacheExists( cacheName ) ) {
-                m_dynamicAttachments = m_cacheManager.getCache( cacheName );
-            } else {
-                log.info( "cache with name {} not found in ehcache.xml, creating it with defaults.", cacheName );
-                m_dynamicAttachments = new Cache( cacheName, DEFAULT_CACHECAPACITY, false, false, 0, 0 );
-                m_cacheManager.addCache( m_dynamicAttachments );
-            }
-
             m_provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
             m_provider.initialize( m_engine, props );
         } catch( final ReflectiveOperationException e ) {
-            log.error( "Attachment provider class could not be instantiated", e );
+            LOG.error( "Attachment provider class could not be instantiated", e );
         } catch( final NoRequiredPropertyException e ) {
-            log.error( "Attachment provider did not find a property that it needed: {}", e.getMessage(), e );
+            LOG.error( "Attachment provider did not find a property that it needed: {}", e.getMessage(), e );
             m_provider = null; // No, it did not work.
         } catch( final IOException e ) {
-            log.error( "Attachment provider reports IO error", e );
+            LOG.error( "Attachment provider reports IO error", e );
             m_provider = null;
         }
 
@@ -138,7 +122,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
         try {
             att = getAttachmentInfo( context, attachmentname );
         } catch( final ProviderException e ) {
-            log.warn( "Finding attachments failed: ", e );
+            LOG.warn( "Finding attachments failed: ", e );
             return null;
         }
 
@@ -251,20 +235,13 @@ public class DefaultAttachmentManager implements AttachmentManager {
     /** {@inheritDoc} */
     @Override
     public void storeDynamicAttachment( final Context ctx, final DynamicAttachment att ) {
-        m_dynamicAttachments.put( new Element( att.getName(), att ) );
+        cachingManager.put( CachingManager.CACHE_ATTACHMENTS_DYNAMIC, att.getName(), att );
     }
 
     /** {@inheritDoc} */
     @Override
     public DynamicAttachment getDynamicAttachment( final String name ) {
-        final Element element = m_dynamicAttachments.get( name );
-        if( element != null ) {
-            return ( DynamicAttachment )element.getObjectValue();
-        } else {
-            // Remove from cache, it has expired.
-            m_dynamicAttachments.put( new Element( name, null ) );
-            return null;
-        }
+        return cachingManager.get( CachingManager.CACHE_ATTACHMENTS_DYNAMIC, name, () -> null );
     }
 
     /** {@inheritDoc} */

@@ -58,14 +58,8 @@ public interface AttachmentManager {
     /** A space-separated list of attachment types which cannot be uploaded */
     String PROP_FORBIDDENEXTENSIONS = "jspwiki.attachment.forbidden";
 
-    /** A space-separated list of attachment types which never will open in the browser. */
+    /** A space-separated list of attachment types which will never open in the browser. */
     String PROP_FORCEDOWNLOAD = "jspwiki.attachment.forceDownload";
-
-    /** Name of the page cache. */
-    String CACHE_NAME = "jspwiki.dynamicAttachmentCache";
-
-    /** The capacity of the cache, if you want something else, tweak ehcache.xml. */
-    int DEFAULT_CACHECAPACITY = 1_000;
 
     /**
      *  Returns true, if attachments are enabled and running.
@@ -294,7 +288,7 @@ public interface AttachmentManager {
             throw new WikiException(  "attach.empty.file" );
         }
 
-        //  Some browser send the full path info with the filename, so we need
+        //  Some browsers send the full path info with the filename, so we need
         //  to remove it here by simply splitting along slashes and then taking the path.
         final String[] splitpath = filename.split( "[/\\\\]" );
         filename = splitpath[splitpath.length-1];
