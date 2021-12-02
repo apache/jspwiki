@@ -404,7 +404,7 @@ public class WikiEngine implements Engine {
             component = ClassUtil.getMappedObject( componentInitClass, initArgs );
         }
         managers.put( componentClass, component );
-        if( Initializable.class.isAssignableFrom( componentClass ) ) {
+        if( Initializable.class.isAssignableFrom( component.getClass() ) ) {
             ( ( Initializable )component ).initialize( this, m_properties );
         }
     }
