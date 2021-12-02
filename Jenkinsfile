@@ -39,7 +39,7 @@ try {
     }
 
     if( env.BRANCH_NAME == 'master' ) {
-        build wait: false, job: 'site', parameters: [ text( name: 'version', value: 'master' ) ]
+        build wait: false, job: 'JSPWiki/site', parameters: [ text( name: 'version', value: 'master' ) ]
     }
 
     currentBuild.result = 'SUCCESS'
