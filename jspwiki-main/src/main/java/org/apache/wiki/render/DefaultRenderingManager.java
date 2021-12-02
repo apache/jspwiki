@@ -18,9 +18,6 @@
  */
 package org.apache.wiki.render;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +33,7 @@ import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.cache.CachingManager;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
@@ -61,20 +59,16 @@ import java.util.Properties;
  *  This class provides a facade towards the differing rendering routines.  You should use the routines in this manager
  *  instead of the ones in Engine, if you don't want the different side effects to occur - such as WikiFilters.
  *  <p>
- *  This class also manages a rendering cache, i.e. documents are stored between calls. You may control the cache by
- *  tweaking the ehcache.xml file.
+ *  This class also delegates to a rendering cache, i.e. documents are stored between calls. You may control the cache by
+ *  tweaking the ehcache configuration file.
  *  <p>
  *
  *  @since  2.4
  */
 public class DefaultRenderingManager implements RenderingManager {
 
-    private static final Logger log = LogManager.getLogger( DefaultRenderingManager.class );
-
-    /** The capacity of the caches, if you want something else, tweak ehcache.xml. */
-    private static final int    DEFAULT_CACHESIZE     = 1_000;
-    private static final String VERSION_DELIMITER     = "::";
-
+    private static final Logger LOG = LogManager.getLogger( DefaultRenderingManager.class );
+    private static final String VERSION_DELIMITER = "::";
     /** The name of the default renderer. */
     private static final String DEFAULT_PARSER = JSPWikiMarkupParser.class.getName();
     /** The name of the default renderer. */
@@ -83,16 +77,10 @@ public class DefaultRenderingManager implements RenderingManager {
     private static final String DEFAULT_WYSIWYG_RENDERER = WysiwygEditingRenderer.class.getName();
 
     private Engine m_engine;
-
-    private boolean m_useCache = true;
-    private final CacheManager m_cacheManager = CacheManager.getInstance();
-    private final int m_cacheExpiryPeriod = 24*60*60; // This can be relatively long
+    private CachingManager cachingManager;
 
     /** If true, all titles will be cleaned. */
     private boolean m_beautifyTitle;
-
-    /** Stores the WikiDocuments that have been cached. */
-    private Cache m_documentCache;
 
     private Constructor< ? > m_rendererConstructor;
     private Constructor< ? > m_rendererWysiwygConstructor;
@@ -107,27 +95,15 @@ public class DefaultRenderingManager implements RenderingManager {
     @Override
     public void initialize( final Engine engine, final Properties properties ) throws WikiException {
         m_engine = engine;
+        cachingManager = m_engine.getManager( CachingManager.class );
         m_markupParserClass = properties.getProperty( PROP_PARSER, DEFAULT_PARSER );
         if( !ClassUtil.assignable( m_markupParserClass, MarkupParser.class.getName() ) ) {
-        	log.warn( "{} does not subclass {} reverting to default markup parser.", m_markupParserClass, MarkupParser.class.getName() );
+        	LOG.warn( "{} does not subclass {} reverting to default markup parser.", m_markupParserClass, MarkupParser.class.getName() );
         	m_markupParserClass = DEFAULT_PARSER;
         }
-        log.info( "Using {} as markup parser.", m_markupParserClass );
+        LOG.info( "Using {} as markup parser.", m_markupParserClass );
 
         m_beautifyTitle  = TextUtil.getBooleanProperty( properties, PROP_BEAUTIFYTITLE, m_beautifyTitle );
-        m_useCache = "true".equals( properties.getProperty( PageManager.PROP_USECACHE ) );
-
-        if( m_useCache ) {
-            final String documentCacheName = engine.getApplicationName() + "." + DOCUMENTCACHE_NAME;
-            if( m_cacheManager.cacheExists( documentCacheName ) ) {
-                m_documentCache = m_cacheManager.getCache( documentCacheName );
-            } else {
-                log.info( "cache with name {} not found in ehcache.xml, creating it with defaults.", documentCacheName );
-                m_documentCache = new Cache( documentCacheName, DEFAULT_CACHESIZE, false, false, m_cacheExpiryPeriod, m_cacheExpiryPeriod );
-                m_cacheManager.addCache( m_documentCache );
-            }
-        }
-
         final String renderImplName = properties.getProperty( PROP_RENDERER, DEFAULT_RENDERER );
         final String renderWysiwygImplName = properties.getProperty( PROP_WYSIWYG_RENDERER, DEFAULT_WYSIWYG_RENDERER );
 
@@ -135,7 +111,7 @@ public class DefaultRenderingManager implements RenderingManager {
         m_rendererConstructor = initRenderer( renderImplName, rendererParams );
         m_rendererWysiwygConstructor = initRenderer( renderWysiwygImplName, rendererParams );
 
-        log.info( "Rendering content with {}.", renderImplName );
+        LOG.info( "Rendering content with {}.", renderImplName );
 
         WikiEventManager.addWikiEventListener( m_engine.getManager( FilterManager.class ),this );
     }
@@ -146,11 +122,11 @@ public class DefaultRenderingManager implements RenderingManager {
             final Class< ? > clazz = Class.forName( renderImplName );
             c = clazz.getConstructor( rendererParams );
         } catch( final ClassNotFoundException e ) {
-            log.error( "Unable to find WikiRenderer implementation " + renderImplName );
+            LOG.error( "Unable to find WikiRenderer implementation {}", renderImplName );
         } catch( final SecurityException e ) {
-            log.error( "Unable to access the WikiRenderer(WikiContext,WikiDocument) constructor for "  + renderImplName );
+            LOG.error( "Unable to access the WikiRenderer(WikiContext,WikiDocument) constructor for {}", renderImplName );
         } catch( final NoSuchMethodException e ) {
-            log.error( "Unable to locate the WikiRenderer(WikiContext,WikiDocument) constructor for "  + renderImplName );
+            LOG.error( "Unable to locate the WikiRenderer(WikiContext,WikiDocument) constructor for {}", renderImplName );
         }
         if( c == null ) {
             throw new WikiException( "Failed to get WikiRenderer '" + renderImplName + "'." );
@@ -200,7 +176,7 @@ public class DefaultRenderingManager implements RenderingManager {
     	try {
 			return ClassUtil.getMappedObject( m_markupParserClass, context, new StringReader( pagedata ) );
 		} catch( final ReflectiveOperationException | IllegalArgumentException e ) {
-			log.error( "unable to get an instance of " + m_markupParserClass + " (" + e.getMessage() + "), returning default markup parser.", e );
+			LOG.error( "unable to get an instance of {} ({}), returning default markup parser.", m_markupParserClass, e.getMessage(), e );
 			return new JSPWikiMarkupParser( context, new StringReader( pagedata ) );
 		}
     }
@@ -216,42 +192,38 @@ public class DefaultRenderingManager implements RenderingManager {
                               context.getVariable( Context.VAR_EXECUTE_PLUGINS );
 
         if( useCache( context ) ) {
-            final Element element = m_documentCache.get( pageid );
-            if ( element != null ) {
-                final WikiDocument doc = ( WikiDocument )element.getObjectValue();
-
-                //
+            final WikiDocument doc = cachingManager.get( CachingManager.CACHE_DOCUMENTS, pageid, () -> null );
+            if ( doc != null ) {
                 //  This check is needed in case the different filters have actually changed the page data.
                 //  FIXME: Figure out a faster method
                 if( pagedata.equals( doc.getPageData() ) ) {
-                    if( log.isDebugEnabled() ) {
-                        log.debug( "Using cached HTML for page " + pageid );
-                    }
+                    LOG.debug( "Using cached HTML for page {}", pageid );
                     return doc;
                 }
-            } else if( log.isDebugEnabled() ) {
-                log.debug( "Re-rendering and storing " + pageid );
+            } else {
+                LOG.debug( "Re-rendering and storing {}", pageid );
             }
         }
 
-        //  Refresh the data content
+        // Refresh the data content
         try {
             final MarkupParser parser = getParser( context, pagedata );
             final WikiDocument doc = parser.parse();
             doc.setPageData( pagedata );
             if( useCache( context ) ) {
-                m_documentCache.put( new Element( pageid, doc ) );
+                cachingManager.put( CachingManager.CACHE_DOCUMENTS, pageid, doc );
             }
             return doc;
         } catch( final IOException ex ) {
-            log.error( "Unable to parse", ex );
+            LOG.error( "Unable to parse", ex );
         }
 
         return null;
     }
 
     boolean useCache( final Context context ) {
-        return m_useCache && ContextEnum.PAGE_VIEW.getRequestContext().equals( context.getRequestContext() );
+        return cachingManager.enabled( CachingManager.CACHE_DOCUMENTS )
+               && ContextEnum.PAGE_VIEW.getRequestContext().equals( context.getRequestContext() );
     }
 
     /**
@@ -323,13 +295,11 @@ public class DefaultRenderingManager implements RenderingManager {
                 result = m_engine.getManager( FilterManager.class ).doPostTranslateFiltering( context, result );
             }
         } catch( final FilterException e ) {
-            log.error( "page filter threw exception: ", e );
+            LOG.error( "page filter threw exception: ", e );
             // FIXME: Don't yet know what to do
         }
         sw.stop();
-        if( log.isDebugEnabled() ) {
-            log.debug( "Page " + context.getRealPage().getName() + " rendered, took " + sw );
-        }
+        LOG.debug( "Page {} rendered, took {}", context.getRealPage().getName(), sw );
 
         return result;
     }
@@ -348,7 +318,7 @@ public class DefaultRenderingManager implements RenderingManager {
         String result = "";
 
         if( pagedata == null ) {
-            log.error("NULL pagedata to textToHTML()");
+            LOG.error( "NULL pagedata to textToHTML()" );
             return null;
         }
 
@@ -372,11 +342,9 @@ public class DefaultRenderingManager implements RenderingManager {
             }
 
             final WikiDocument doc = mp.parse();
-
             //  In some cases it's better just to parse, not to render
             if( !justParse ) {
                 result = getHTML( context, doc );
-
                 if( runFilters && m_engine.getManager( FilterManager.class ) != null ) {
                     result = m_engine.getManager( FilterManager.class ).doPostTranslateFiltering( context, result );
                 }
@@ -384,13 +352,11 @@ public class DefaultRenderingManager implements RenderingManager {
 
             sw.stop();
 
-            if( log.isDebugEnabled() ) {
-                log.debug( "Page " + context.getRealPage().getName() + " rendered, took " + sw );
-            }
+            LOG.debug( "Page {} rendered, took {}", context.getRealPage().getName(), sw );
         } catch( final IOException e ) {
-            log.error( "Failed to scan page data: ", e );
+            LOG.error( "Failed to scan page data: ", e );
         } catch( final FilterException e ) {
-            log.error( "page filter threw exception: ", e );
+            LOG.error( "page filter threw exception: ", e );
             // FIXME: Don't yet know what to do
         }
 
@@ -420,7 +386,7 @@ public class DefaultRenderingManager implements RenderingManager {
         try {
             return ( T )rendererConstructor.newInstance( params );
         } catch( final Exception e ) {
-            log.error( "Unable to create WikiRenderer", e );
+            LOG.error( "Unable to create WikiRenderer", e );
         }
         return null;
     }
@@ -434,32 +400,30 @@ public class DefaultRenderingManager implements RenderingManager {
      */
     @Override
     public void actionPerformed( final WikiEvent event ) {
-        log.debug( "event received: " + event.toString() );
-        if( m_useCache ) {
-            if( ( event instanceof WikiPageEvent ) && ( event.getType() == WikiPageEvent.POST_SAVE_BEGIN ) ) {
-                if( m_documentCache != null ) {
-                    final String pageName = ( ( WikiPageEvent ) event ).getPageName();
-                    m_documentCache.remove( pageName );
-                    final Collection< String > referringPages = m_engine.getManager( ReferenceManager.class ).findReferrers( pageName );
+        LOG.debug( "event received: {}", event.toString() );
+        if( isBeginningAWikiPagePostSaveEventAndDocumentCacheIsEnabled( event ) ) {
+            final String pageName = ( ( WikiPageEvent ) event ).getPageName();
+            cachingManager.remove( CachingManager.CACHE_DOCUMENTS, pageName );
+            final Collection< String > referringPages = m_engine.getManager( ReferenceManager.class ).findReferrers( pageName );
 
-                    //
-                    //  Flush also those pages that refer to this page (if a nonexistent page
-                    //  appears, we need to flush the HTML that refers to the now-existent page)
-                    //
-                    if( referringPages != null ) {
-                        for( final String page : referringPages ) {
-                            if( log.isDebugEnabled() ) {
-                                log.debug( "Flushing latest version of " + page );
-                            }
-                            // as there is a new version of the page expire both plugin and pluginless versions of the old page
-                            m_documentCache.remove( page + VERSION_DELIMITER + PageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.FALSE );
-                            m_documentCache.remove( page + VERSION_DELIMITER + PageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.TRUE );
-                            m_documentCache.remove( page + VERSION_DELIMITER + PageProvider.LATEST_VERSION  + VERSION_DELIMITER + null );
-                        }
-                    }
+            // Flush also those pages that refer to this page (if a nonexistent page
+            // appears, we need to flush the HTML that refers to the now-existent page)
+            if( referringPages != null ) {
+                for( final String page : referringPages ) {
+                    LOG.debug( "Flushing latest version of {}", page );
+                    // as there is a new version of the page expire both plugin and pluginless versions of the old page
+                    cachingManager.remove( CachingManager.CACHE_DOCUMENTS, page + VERSION_DELIMITER + PageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.FALSE );
+                    cachingManager.remove( CachingManager.CACHE_DOCUMENTS, page + VERSION_DELIMITER + PageProvider.LATEST_VERSION  + VERSION_DELIMITER + Boolean.TRUE );
+                    cachingManager.remove( CachingManager.CACHE_DOCUMENTS, page + VERSION_DELIMITER + PageProvider.LATEST_VERSION  + VERSION_DELIMITER + null );
                 }
             }
         }
+    }
+
+    boolean isBeginningAWikiPagePostSaveEventAndDocumentCacheIsEnabled( final WikiEvent event ) {
+        return event instanceof WikiPageEvent
+               && event.getType() == WikiPageEvent.POST_SAVE_BEGIN
+               && cachingManager.enabled( CachingManager.CACHE_DOCUMENTS );
     }
 
 }

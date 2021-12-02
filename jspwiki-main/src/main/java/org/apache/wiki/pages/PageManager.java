@@ -34,8 +34,6 @@ public interface PageManager extends WikiEventListener {
 
     /** The property value for setting the current page provider.  Value is {@value}. */
     String PROP_PAGEPROVIDER = "jspwiki.pageProvider";
-    /** The property value for setting the cache on/off.  Value is {@value}. */
-    String PROP_USECACHE = "jspwiki.usePageCache";
     /** The property value for setting the amount of time before the page locks expire. Value is {@value}. */
     String PROP_LOCKEXPIRY = "jspwiki.lockExpiryTime";
 

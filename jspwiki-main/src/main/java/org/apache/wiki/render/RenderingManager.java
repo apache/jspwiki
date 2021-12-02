@@ -38,7 +38,7 @@ import java.io.IOException;
  *  instead of the ones in Engine, if you don't want the different side effects to occur - such as WikiFilters.
  *  <p>
  *  This class also manages a rendering cache, i.e. documents are stored between calls. You may control the cache by
- *  tweaking the ehcache.xml file.
+ *  tweaking the ehcache-jspwiki.xml file.
  *  <p>
  *
  *  @since  2.4
@@ -55,9 +55,6 @@ public interface RenderingManager extends RenderApi, WikiEventListener, Internal
     String PROP_WYSIWYG_RENDERER = "jspwiki.renderingManager.renderer.wysiwyg";
 
     String PROP_BEAUTIFYTITLE = "jspwiki.breakTitleWithSpaces";
-
-    /** Name of the regular page cache. */
-    String DOCUMENTCACHE_NAME = "jspwiki.renderingCache";
 
     /**
      *  Beautifies the title of the page by appending spaces in suitable places, if the user has so decreed in the properties when

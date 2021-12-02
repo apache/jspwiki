@@ -39,6 +39,7 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.cache.CachingManager;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
@@ -87,18 +88,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultPageManager implements PageManager {
 
     private static final Logger LOG = LogManager.getLogger( DefaultPageManager.class );
-
     private final PageProvider m_provider;
-
     private final Engine m_engine;
-
-    protected final ConcurrentHashMap< String, PageLock > m_pageLocks = new ConcurrentHashMap<>();
-
     private final int m_expiryTime;
-
-    private LockReaper m_reaper;
-
+    protected final ConcurrentHashMap< String, PageLock > m_pageLocks = new ConcurrentHashMap<>();
     private final PageSorter pageSorter = new PageSorter();
+    private LockReaper m_reaper;
 
     /**
      * Creates a new PageManager.
@@ -111,7 +106,7 @@ public class DefaultPageManager implements PageManager {
     public DefaultPageManager(final Engine engine, final Properties props) throws NoSuchElementException, WikiException {
         m_engine = engine;
         final String classname;
-        final boolean useCache = "true".equals( props.getProperty( PROP_USECACHE ) );
+        final boolean useCache = m_engine.getManager( CachingManager.class ).enabled( CachingManager.CACHE_PAGES );
         m_expiryTime = TextUtil.parseIntParameter( props.getProperty( PROP_LOCKEXPIRY ), 60 );
 
         //  If user wants to use a cache, then we'll use the CachingProvider.
