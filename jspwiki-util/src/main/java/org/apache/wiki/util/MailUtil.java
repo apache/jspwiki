@@ -269,8 +269,7 @@ public final class MailUtil {
         final Session session = getMailSession( props );
         getSenderEmailAddress(session, props);
 
-        try
-        {
+        try {
             // Create and address the message
             final MimeMessage msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(c_fromAddress));
@@ -281,14 +280,8 @@ public final class MailUtil {
 
             // Send and log it
             Transport.send(msg);
-            if (log.isInfoEnabled())
-            {
-                log.info("Sent e-mail to=" + to + ", subject=\"" + subject + "\", used "
-                         + (c_useJndi ? "JNDI" : "standalone") + " mail session.");
-            }
-        }
-        catch (final MessagingException e)
-        {
+            log.info("Sent e-mail to={}, subject=\"{}\", used {} mail session.", to, subject, (c_useJndi ? "JNDI" : "standalone") );
+        } catch (final MessagingException e) {
             log.error(e);
             throw e;
         }
@@ -303,30 +296,20 @@ public final class MailUtil {
      * @param pProperties <code>Properties</code>
      * @return <code>String</code>
      */
-    static String getSenderEmailAddress(final Session pSession, final Properties pProperties)
-    {
+    static String getSenderEmailAddress(final Session pSession, final Properties pProperties) {
         if( c_fromAddress == null )
         {
-            // First, attempt to get the email address from the JNDI Mail
-            // Session.
-            if( pSession != null && c_useJndi )
-            {
+            // First, attempt to get the email address from the JNDI Mail Session.
+            if( pSession != null && c_useJndi ) {
                 c_fromAddress = pSession.getProperty( MailUtil.PROP_MAIL_SENDER );
             }
-            // If unsuccessful, get the email address from the properties or
-            // default.
-            if( c_fromAddress == null )
-            {
+            // If unsuccessful, get the email address from the properties or default.
+            if( c_fromAddress == null ) {
                 c_fromAddress = pProperties.getProperty( PROP_MAIL_SENDER, DEFAULT_SENDER ).trim();
-                if( log.isDebugEnabled() )
-                    log.debug( "Attempt to get the sender's mail address from the JNDI mail session failed, will use \""
-                               + c_fromAddress + "\" (configured via jspwiki.properties or the internal default)." );
-            }
-            else
-            {
-                if( log.isDebugEnabled() )
-                    log.debug( "Attempt to get the sender's mail address from the JNDI mail session was successful (" + c_fromAddress
-                               + ")." );
+                log.debug( "Attempt to get the sender's mail address from the JNDI mail session failed, will use \"{}" +
+                           "\" (configured via jspwiki.properties or the internal default).", c_fromAddress );
+            } else {
+                log.debug( "Attempt to get the sender's mail address from the JNDI mail session was successful ({}).", c_fromAddress );
             }
         }
         return c_fromAddress;
@@ -334,7 +317,7 @@ public final class MailUtil {
 
     /**
      * Returns the Mail Session from either JNDI or creates a stand-alone.
-     * @param props a the properties that contain mail session properties
+     * @param props the properties that contain mail session properties
      * @return <code>Session</code>
      */
     private static Session getMailSession(final Properties props)
@@ -345,26 +328,20 @@ public final class MailUtil {
         if (c_useJndi)
         {
             // Try getting the Session from the JNDI factory first
-            if ( log.isDebugEnabled() )
-                log.debug("Try getting a mail session via JNDI name \"" + jndiName + "\".");
-            try
-            {
+            log.debug("Try getting a mail session via JNDI name \"{}\".", jndiName);
+            try {
                 result = getJNDIMailSession(jndiName);
-            }
-            catch (final NamingException e)
-            {
+            } catch (final NamingException e) {
                 // Oops! JNDI factory must not be set up
                 c_useJndi = false;
-                if ( log.isInfoEnabled() )
-                    log.info("Unable to get a mail session via JNDI, will use custom settings at least until next startup.");
+                log.info("Unable to get a mail session via JNDI, will use custom settings at least until next startup.");
             }
         }
 
         // JNDI failed; so, get the Session from the standalone factory
         if (result == null)
         {
-            if ( log.isDebugEnabled() )
-                log.debug("Getting a standalone mail session configured by jspwiki.properties and/or internal default values.");
+            log.debug("Getting a standalone mail session configured by jspwiki.properties and/or internal default values.");
             result = getStandaloneMailSession(props);
         }
         return result;
@@ -402,26 +379,20 @@ public final class MailUtil {
         mailProps.put( PROP_MAIL_STARTTLS, starttls ? TRUE : FALSE );
 
         // Add SMTP authentication if required
-        Session session = null;
-        if ( useAuthentication )
-        {
+        final Session session;
+        if ( useAuthentication ) {
             mailProps.put( PROP_MAIL_AUTH, TRUE );
             final SmtpAuthenticator auth = new SmtpAuthenticator( account, password );
 
             session = Session.getInstance( mailProps, auth );
-        }
-        else
-        {
+        } else {
             session = Session.getInstance( mailProps );
         }
 
-        if ( log.isDebugEnabled() )
-        {
-            final String mailServer = host + ":" + port + ", account=" + account + ", password not displayed, timeout="
-            + timeout + ", connectiontimeout=" + conntimeout + ", starttls.enable=" + starttls
-            + ", use authentication=" + ( useAuthentication ? TRUE : FALSE );
-            log.debug( "JavaMail session obtained from standalone mail factory: " + mailServer );
-        }
+        final String mailServer = host + ":" + port + ", account=" + account + ", password not displayed, timeout=" +
+                                  timeout + ", connectiontimeout=" + conntimeout + ", starttls.enable=" + starttls +
+                                  ", use authentication=" + ( useAuthentication ? TRUE : FALSE );
+        log.debug( "JavaMail session obtained from standalone mail factory: {}", mailServer );
         return session;
     }
 
@@ -435,22 +406,16 @@ public final class MailUtil {
      */
     static Session getJNDIMailSession(final String jndiName ) throws NamingException
     {
-        Session session = null;
-        try
-        {
+        final Session session;
+        try {
             final Context initCtx = new InitialContext();
             final Context ctx = (Context) initCtx.lookup( JAVA_COMP_ENV );
             session = (Session) ctx.lookup( jndiName );
-        }
-        catch( final NamingException e )
-        {
-            log.warn( "JNDI mail session initialization error: " + e.getMessage() );
+        } catch( final NamingException e ) {
+            log.warn( "JNDI mail session initialization error: {}" + e.getMessage() );
             throw e;
         }
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "mail session obtained from JNDI mail factory: " + jndiName );
-        }
+        log.debug( "mail session obtained from JNDI mail factory: {}", jndiName );
         return session;
     }
 
@@ -466,7 +431,7 @@ public final class MailUtil {
 
         /**
          * Constructs a new SmtpAuthenticator with a supplied username and password.
-         * @param login the user name
+         * @param login the username
          * @param pass the password
          */
         public SmtpAuthenticator(final String login, final String pass)
