@@ -19,6 +19,8 @@
 package org.apache.wiki.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +37,11 @@ import java.util.Random;
  */
 public final class TextUtil {
 
+    private static final Logger LOG = LogManager.getLogger( TextUtil.class );
+
     static final String HEX_DIGITS = "0123456789ABCDEF";
 
-    /** Pick from some letters that won't be easily mistaken for each other to compose passwords. So, for example, omit o O and 0, 1 l and L.*/
+    /** Pick from some letters that won't be easily mistaken for each other to compose passwords. So, for example, omit o, O and 0, or 1, l and L.*/
     static final String PWD_BASE = "abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789+@";
 
     /** Length of password. {@link #generateRandomPassword() */
@@ -170,7 +174,7 @@ public final class TextUtil {
      *
      * @param data A string to encode
      * @param encoding The encoding in which to encode
-     * @return An URL encoded string.
+     * @return A URL encoded string.
      */
     public static String urlEncode( final String data, final String encoding ) {
         // Presumably, the same caveats apply as in FileSystemProvider. Don't see why it would be horribly kludgy, though.
@@ -217,7 +221,7 @@ public final class TextUtil {
     }
 
     /**
-     *  Replaces a string with an other string.
+     *  Replaces a string with another string.
      *
      *  @param orig Original string.  Null is safe.
      *  @param src  The string to find.
@@ -271,11 +275,11 @@ public final class TextUtil {
     }
 
     /**
-     *  Replaces a string with an other string. Case insensitive matching is used
+     *  Replaces a string with another string. Case-insensitive matching is used
      *
      *  @param orig Original string.  Null is safe.
      *  @param src  The string to find.
-     *  @param dest The string to replace <I>src</I> with.
+     *  @param dest The string to replace <em>src</em> with.
      *  @return A string with all instances of src replaced with dest.
      */
     public static String replaceStringCaseUnsensitive( final String orig, final String src, final String dest ) {
@@ -368,18 +372,18 @@ public final class TextUtil {
     }
 
     /**
-     *  Fetches a String property from the set of Properties.  This differs from Properties.getProperty() in a
-     *  couple of key respects: First, property value is trim()med (so no extra whitespace back and front).
+     * Fetches a String property from the set of Properties.  This differs from Properties.getProperty() in a
+     * couple of key respects: First, property value is trim()med (so no extra whitespace back and front).
      *
-     *  Before inspecting the props, we first check if there is a Java System Property with the same name, if it exists
-     *  we use that value, if not we check an environment variable with that (almost) same name, almost meaning we replace
-     *  dots with underscores.
+     * Before inspecting the props, we first check if there is a Java System Property with the same name, if it exists
+     * we use that value, if not we check an environment variable with that (almost) same name, almost meaning we replace
+     * dots with underscores.
      *
-     *  @param props The Properties to search through
-     *  @param key   The property key
-     *  @param defval A default value to return, if the property does not exist.
-     *  @return The property value.
-     *  @since 2.1.151
+     * @param props The Properties to search through
+     * @param key   The property key
+     * @param defval A default value to return, if the property does not exist.
+     * @return The property value.
+     * @since 2.1.151
      */
     public static String getStringProperty( final Properties props, final String key, final String defval ) {
         String val = System.getProperties().getProperty( key, System.getenv( StringUtils.replace( key,".","_" ) ) );
@@ -390,6 +394,26 @@ public final class TextUtil {
             return defval;
         }
         return val.trim();
+    }
+
+    /**
+     * {@link #getStringProperty(Properties, String, String)} overload that handles deprecated keys, so that a key and its
+     * deprecated counterpart can coexist in a given version of JSPWiki.
+     *
+     * @param props The Properties to search through
+     * @param key The property key
+     * @param deprecatedKey the property key being superseeded by key
+     * @param defval A default value to return, if the property does not exist.
+     * @return The property value.
+     */
+    public static String getStringProperty( final Properties props, final String key, final String deprecatedKey, final String defval ) {
+        final String val = getStringProperty( props, deprecatedKey, null );
+        if( val != null ) {
+            LOG.warn( "{} is being deprecated and will be removed on a future version, please consider using {} instead" +
+                      "in your jspwiki[-custom].properties file", key, key );
+            return val;
+        }
+        return getStringProperty( props, key, defval );
     }
 
     /**
@@ -470,7 +494,7 @@ public final class TextUtil {
      *  <LI>The CR/LF/CRLF mess is normalized to plain CRLF.
      *  </UL>
      *
-     *  The reason why we're using CRLF is that most browser already return CRLF since that is the closest thing to a HTTP standard.
+     *  The reason why we're using CRLF is that most browser already return CRLF since that is the closest thing to an HTTP standard.
      *
      *  @param postData The data to normalize
      *  @return Normalized data

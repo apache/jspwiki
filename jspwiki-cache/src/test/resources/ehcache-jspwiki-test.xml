@@ -58,20 +58,10 @@
                                      First In First Out (specified as FIFO) and Less Frequently Used
                                      (specified as LFU)
     -->
-    <!-- the default JSPWiki caches -->
-    <cache name="JSPWiki.jspwiki.renderingCache" maxElementsInMemory="1000" />
 
-    <cache name="JSPWiki.jspwiki.pageCache" maxElementsInMemory="1000" />
+    <cache name="jspwiki.renderingCache" maxElementsInMemory="1" />
+    <cache name="jspwiki.pageCache" maxElementsInMemory="1" />
+    <cache name="jspwiki.pageTextCache" maxElementsInMemory="1" />
+    <cache name="notManagedByJSPWikiCache" maxElementsInMemory="100" />
 
-    <cache name="JSPWiki.jspwiki.pageTextCache" maxElementsInMemory="1000" />
-
-    <cache name="JSPWiki.jspwiki.pageHistoryCache" maxElementsInMemory="1000" />
-
-    <cache name="JSPWiki.jspwiki.attachmentsCache" maxElementsInMemory="1000" />
-
-    <cache name="JSPWiki.jspwiki.attachmentCollectionsCache" maxElementsInMemory="1000" />
-
-    <cache name="JSPWiki.jspwiki.dynamicAttachmentCache" maxElementsInMemory="1000" />
-
-    <cache name="JSPWiki.jspwiki.rssCache" maxElementsInMemory="250" />
 </ehcache>

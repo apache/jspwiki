@@ -292,6 +292,15 @@ public class TextUtilTest {
     }
 
     @Test
+    public void testGetStringPropertyDeprecated() {
+        final String[] vals = { "foo", " this is a property ", "foo-dep", "deprecated" };
+        final Properties props = TextUtil.createProperties(vals);
+        Assertions.assertEquals( "deprecated", TextUtil.getStringProperty( props, "foo", "foo-dep", "err" ) );
+        Assertions.assertEquals( "this is a property", TextUtil.getStringProperty( props, "foo", "bar-dep", "err" ) );
+        Assertions.assertEquals( "err", TextUtil.getStringProperty( props, "fooo", "bar-dep", "err" ) );
+    }
+
+    @Test
     public void testGetStringPropertyDefaultValue() {
         final String defaultValue = System.getProperty( "user.home" ) + File.separator + "jspwiki-files";
         final String[] vals = { "foo", " this is a property " };
