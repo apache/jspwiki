@@ -13,7 +13,6 @@
  */
 package org.apache.wiki.references;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.spi.Wiki;
@@ -25,30 +24,24 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
+
+import static org.apache.wiki.TestEngine.with;
 
 /**
  * The ReferenceManager maintains all hyperlinks between wiki pages.
  */
 public class ReferenceManagerTest  {
 
-    Properties props = TestEngine.getTestProperties();
-    TestEngine engine;
-    ReferenceManager mgr;
+    TestEngine engine = TestEngine.build( with( "jspwiki.translatorReader.matchEnglishPlurals", "true" ) );
+    ReferenceManager mgr = engine.getManager( ReferenceManager.class );
 
     @BeforeEach
     public void setUp() throws Exception {
-        props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true");
-
-        engine = new TestEngine(props);
-
         // create two handy wiki pages used in most test cases
         // Danger! all wiki page names must start with a capital letter!
         engine.saveText( "TestPage", "Reference to [Foobar]." );
         engine.saveText( "Foobar", "Reference to [Foobar2], [Foobars], [Foobar]" );
-
-        mgr = engine.getManager( ReferenceManager.class );
     }
 
     @AfterEach
@@ -57,10 +50,10 @@ public class ReferenceManagerTest  {
         TestEngine.emptyWikiDir();
 
         // jspwiki always uses a singleton CacheManager, so clear the cache at the end of every test case to avoid polluting another test case
-        CacheManager.getInstance().removeAllCaches();
+        engine.shutdown();
 
         // make sure that the reference manager cache is cleaned
-        TestEngine.emptyWorkDir(null);
+        TestEngine.emptyWorkDir( null );
     }
 
     @Test

@@ -38,7 +38,7 @@ import static org.apache.wiki.TestEngine.with;
 
 public class WikiProviderAdaptersTest {
 
-    TestEngine engine = TestEngine.build( with( "jspwiki.usePageCache", "false" ),
+    TestEngine engine = TestEngine.build( with( "jspwiki.cache.enable", "false" ),
                                           with( "jspwiki.pageProvider", "WikiPageAdapterProvider" ),
                                           with( "jspwiki.attachmentProvider", "WikiAttachmentAdapterProvider" ),
                                           with( "jspwiki.pageProvider.adapter.impl", "com.example.providers.TwoXWikiPageProvider" ),

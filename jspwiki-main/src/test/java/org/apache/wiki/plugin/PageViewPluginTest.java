@@ -33,7 +33,7 @@ import static org.apache.wiki.TestEngine.with;
 
 public class PageViewPluginTest {
 
-    TestEngine testEngine = TestEngine.build( with( "jspwiki.usePageCache", "false" ) );
+    TestEngine testEngine = TestEngine.build( with( "jspwiki.cache.enable", "false" ) );
 
     @BeforeEach
     public void setUp() throws Exception {

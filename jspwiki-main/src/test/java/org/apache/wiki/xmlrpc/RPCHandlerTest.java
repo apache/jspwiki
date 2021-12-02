@@ -19,7 +19,6 @@
 
 package org.apache.wiki.xmlrpc;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
@@ -36,55 +35,43 @@ import org.junit.jupiter.api.Test;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Properties;
 import java.util.Vector;
 
-public class RPCHandlerTest
-{
-    TestEngine m_engine;
+public class RPCHandlerTest {
+
+    TestEngine m_engine = TestEngine.build();
     RPCHandler m_handler;
-    Properties m_props = TestEngine.getTestProperties();
 
     static final String NAME1 = "Test";
 
     @BeforeEach
-    public void setUp()
-        throws Exception
-    {
-        CacheManager.getInstance().removeAllCaches();
-        m_engine = new TestEngine( m_props );
-
+    public void setUp() throws Exception {
         m_handler = new RPCHandler();
-        final Context ctx = Wiki.context().create( m_engine, Wiki.contents().page(m_engine, "Dummy") );
+        final Context ctx = Wiki.context().create( m_engine, Wiki.contents().page( m_engine, "Dummy" ) );
         m_handler.initialize( ctx );
     }
 
     @AfterEach
-    public void tearDown()
-    {
+    public void tearDown() {
         m_engine.deleteTestPage( NAME1 );
+        m_engine.shutdown();
         TestEngine.deleteAttachments( NAME1 );
         TestEngine.emptyWorkDir();
     }
 
     @Test
-    public void testNonexistantPage()
-    {
-        try
-        {
+    public void testNonexistantPage() {
+        try {
             m_handler.getPage( "NoSuchPage" );
-            Assertions.fail("No exception for missing page.");
-        }
-        catch( final XmlRpcException e )
-        {
+            Assertions.fail( "No exception for missing page." );
+        } catch ( final XmlRpcException e ) {
             Assertions.assertEquals( RPCHandler.ERR_NOPAGE, e.code, "Wrong error code." );
         }
     }
 
     @Test
     public void testRecentChanges()
-        throws Exception
-    {
+            throws Exception {
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
         final Vector previousChanges = m_handler.getRecentChanges( time );
 
@@ -98,8 +85,7 @@ public class RPCHandlerTest
 
     @Test
     public void testRecentChangesWithAttachments()
-        throws Exception
-    {
+            throws Exception {
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
         final Vector previousChanges = m_handler.getRecentChanges( time );
 
@@ -116,15 +102,14 @@ public class RPCHandlerTest
 
     @Test
     public void testPageInfo()
-        throws Exception
-    {
+            throws Exception {
         m_engine.saveText( NAME1, "Foobar.[{ALLOW view Anonymous}]" );
         final Page directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
 
         final Hashtable ht = m_handler.getPageInfo( NAME1 );
-        Assertions.assertEquals( (String)ht.get( "name" ), NAME1, "name" );
+        Assertions.assertEquals( ( String ) ht.get( "name" ), NAME1, "name" );
 
-        final Date d = (Date) ht.get( "lastModified" );
+        final Date d = ( Date ) ht.get( "lastModified" );
 
         final Calendar cal = Calendar.getInstance();
         cal.setTime( d );
@@ -135,20 +120,19 @@ public class RPCHandlerTest
         // Offset the ZONE offset and DST offset away.  DST only
         // if we're actually in DST.
         cal.add( Calendar.MILLISECOND,
-                 (cal.get( Calendar.ZONE_OFFSET )+
-                  (cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
+                ( cal.get( Calendar.ZONE_OFFSET ) +
+                        ( cal.getTimeZone().inDaylightTime( d ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
         // System.out.println("RPC2: "+cal.getTime() );
 
         Assertions.assertEquals( cal.getTime().getTime(), directInfo.getLastModified().getTime(), "date" );
     }
 
     /**
-     *  Tests if listLinks() works with a single, non-existant local page.
+     * Tests if listLinks() works with a single, non-existant local page.
      */
     @Test
     public void testListLinks()
-        throws Exception
-    {
+            throws Exception {
         final String text = "[Foobar]";
         final String pageName = NAME1;
 
@@ -158,18 +142,17 @@ public class RPCHandlerTest
 
         Assertions.assertEquals( 1, links.size(), "link count" );
 
-        final Hashtable linkinfo = (Hashtable) links.elementAt(0);
+        final Hashtable linkinfo = ( Hashtable ) links.elementAt( 0 );
 
-        Assertions.assertEquals( "Foobar", linkinfo.get("page"), "name" );
-        Assertions.assertEquals( "local",  linkinfo.get("type"), "type" );
-        Assertions.assertEquals( "/test/Edit.jsp?page=Foobar", linkinfo.get("href"), "href" );
+        Assertions.assertEquals( "Foobar", linkinfo.get( "page" ), "name" );
+        Assertions.assertEquals( "local", linkinfo.get( "type" ), "type" );
+        Assertions.assertEquals( "/test/Edit.jsp?page=Foobar", linkinfo.get( "href" ), "href" );
     }
 
 
     @Test
     public void testListLinksWithAttachments()
-        throws Exception
-    {
+            throws Exception {
         final String text = "[Foobar] [Test/TestAtt.txt]";
         final String pageName = NAME1;
 
@@ -185,21 +168,20 @@ public class RPCHandlerTest
 
         Assertions.assertEquals( 2, links.size(), "link count" );
 
-        Hashtable linkinfo = (Hashtable) links.elementAt(0);
+        Hashtable linkinfo = ( Hashtable ) links.elementAt( 0 );
 
-        Assertions.assertEquals( "Foobar", linkinfo.get("page"), "edit name" );
-        Assertions.assertEquals( "local",  linkinfo.get("type"), "edit type" );
-        Assertions.assertEquals( "/test/Edit.jsp?page=Foobar", linkinfo.get("href"), "edit href" );
+        Assertions.assertEquals( "Foobar", linkinfo.get( "page" ), "edit name" );
+        Assertions.assertEquals( "local", linkinfo.get( "type" ), "edit type" );
+        Assertions.assertEquals( "/test/Edit.jsp?page=Foobar", linkinfo.get( "href" ), "edit href" );
 
-        linkinfo = (Hashtable) links.elementAt(1);
+        linkinfo = ( Hashtable ) links.elementAt( 1 );
 
-        Assertions.assertEquals( NAME1+"/TestAtt.txt", linkinfo.get("page"), "att name" );
-        Assertions.assertEquals( "local", linkinfo.get("type"), "att type" );
-        Assertions.assertEquals( "/test/attach/"+NAME1+"/TestAtt.txt", linkinfo.get("href"), "att href" );
+        Assertions.assertEquals( NAME1 + "/TestAtt.txt", linkinfo.get( "page" ), "att name" );
+        Assertions.assertEquals( "local", linkinfo.get( "type" ), "att type" );
+        Assertions.assertEquals( "/test/attach/" + NAME1 + "/TestAtt.txt", linkinfo.get( "href" ), "att href" );
     }
 
-    private Date getCalendarTime( final Date modifiedDate )
-    {
+    private Date getCalendarTime( final Date modifiedDate ) {
         final Calendar cal = Calendar.getInstance();
         cal.setTime( modifiedDate );
         cal.add( Calendar.HOUR, -1 );
@@ -208,8 +190,8 @@ public class RPCHandlerTest
         // Offset the ZONE offset and DST offset away.  DST only
         // if we're actually in DST.
         cal.add( Calendar.MILLISECOND,
-                 -(cal.get( Calendar.ZONE_OFFSET )+
-                  (cal.getTimeZone().inDaylightTime( modifiedDate ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
+                -( cal.get( Calendar.ZONE_OFFSET ) +
+                        ( cal.getTimeZone().inDaylightTime( modifiedDate ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) ) );
 
         return cal.getTime();
     }

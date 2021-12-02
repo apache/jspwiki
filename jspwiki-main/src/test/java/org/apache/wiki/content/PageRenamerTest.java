@@ -18,11 +18,10 @@
  */
 package org.apache.wiki.content;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.WikiProvider;
@@ -32,24 +31,16 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.references.ReferenceManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
-import java.util.Properties;
 
-public class PageRenamerTest
-{
-    TestEngine m_engine;
+import static org.apache.wiki.TestEngine.with;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        final Properties props = TestEngine.getTestProperties();
-        props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
-        CacheManager.getInstance().removeAllCaches();
-        TestEngine.emptyWorkDir();
-        m_engine = new TestEngine(props);
-    }
+
+public class PageRenamerTest {
+
+    TestEngine m_engine = TestEngine.build( with( Engine.PROP_MATCHPLURALS, "true" ) );
 
     @AfterEach
     public void tearDown() {
@@ -71,6 +62,7 @@ public class PageRenamerTest
         m_engine.deleteTestPage("Link two");
 
         TestEngine.emptyWorkDir();
+        m_engine.shutdown();
     }
 
     @Test

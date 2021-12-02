@@ -19,13 +19,13 @@
 
 package org.apache.wiki;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.engine.RenderApi;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.cache.CachingManager;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.pages.PageManager;
@@ -66,7 +66,7 @@ public class WikiEngineTest {
         }
 
         TestEngine.emptyWorkDir();
-        CacheManager.getInstance().removeAllCaches();
+        m_engine.shutdown();
     }
 
     @Test
@@ -262,7 +262,7 @@ public class WikiEngineTest {
     @Test
     public void testOldVersionVars() throws Exception {
         final Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
-        props.setProperty( PageManager.PROP_USECACHE, "true" );
+        props.setProperty( CachingManager.PROP_CACHE_ENABLE, "true" );
         final TestEngine engine = new TestEngine( props );
         engine.saveText( NAME1, "[{SET foo=bar}]" );
         engine.saveText( NAME1, "[{SET foo=notbar}]");

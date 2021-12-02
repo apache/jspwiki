@@ -16,35 +16,20 @@
  */
 package org.apache.wiki.search.tika;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.search.SearchManager;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Properties;
 
 
 public class TikaSearchProviderTest {
 
-    private static final long SLEEP_TIME = 200L;
-    private static final int SLEEP_COUNT = 500;
-    TestEngine engine;
-    Properties props;
-
-    @BeforeEach
-    void setUp() throws Exception {
-        props = TestEngine.getTestProperties();
-        TestEngine.emptyWorkDir( props );
-        CacheManager.getInstance().removeAllCaches();
-
-        engine = new TestEngine( props );
-    }
+    TestEngine engine = TestEngine.build();
 
     @Test
     void testGetAttachmentContent() throws Exception {

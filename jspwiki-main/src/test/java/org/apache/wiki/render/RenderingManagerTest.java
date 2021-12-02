@@ -18,11 +18,11 @@
  */
 package org.apache.wiki.render;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
@@ -38,7 +38,7 @@ public class RenderingManagerTest {
     @AfterEach
     public void tearDown() throws Exception {
         m_engine.getManager( PageManager.class ).deletePage( "TestPage" );
-        CacheManager.getInstance().removeAllCaches();
+        m_engine.shutdown();
     }
 
     @Test
@@ -97,9 +97,7 @@ public class RenderingManagerTest {
     }
 
     /**
-     * Tests the relative speed of the DOM cache with respect to
-     * page being parsed every single time.
-     * @throws Exception
+     * Tests the relative speed of the DOM cache with respect to page being parsed every single time.
      */
     @Test
     public void testCache()
@@ -117,38 +115,30 @@ public class RenderingManagerTest {
             final Page page = m_engine.getManager( PageManager.class ).getPage( "TestPage" );
             final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page );
 
-            final WikiContext context = new WikiContext( m_engine, page );
+            final Context context = Wiki.context().create( m_engine, page );
 
             final MarkupParser p = m_manager.getParser( context, pagedata );
 
             final WikiDocument d = p.parse();
 
             final String html = m_manager.getHTML( context, d );
-            Assertions.assertNotNull( "noncached got null response",html);
+            Assertions.assertNotNull( html, "noncached got null response" );
         }
 
         sw.stop();
-        // System.out.println("  Nocache took "+sw);
-
-        // long nocachetime = sw.getTime();
-
         sw.reset();
         sw.start();
 
         for( int i = 0; i < 300; i++ ) {
             final Page page = m_engine.getManager( PageManager.class ).getPage( "TestPage" );
             final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page );
-            final WikiContext context = new WikiContext( m_engine, page );
+            final Context context = Wiki.context().create( m_engine, page );
             final String html = m_manager.getHTML( context, pagedata );
 
-            Assertions.assertNotNull("cached got null response",html);
+            Assertions.assertNotNull( html, "cached got null response" );
         }
 
         sw.stop();
-        // System.out.println("  Cache took "+sw);
-
-        // long speedup = nocachetime / sw.getTime();
-        // System.out.println("  Approx speedup: "+speedup+"x");
     }
 
     private static final String TEST_TEXT =

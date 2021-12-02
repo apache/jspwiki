@@ -397,7 +397,7 @@ public class TestEngine extends WikiEngine {
      * @param data attachment data
      */
     public void addAttachment( final String pageName, final String attachmentName, final byte[] data ) throws ProviderException, IOException {
-        final Attachment att = Wiki.contents().attachment( this,pageName,attachmentName );
+        final Attachment att = Wiki.contents().attachment( this, pageName, attachmentName );
         getManager( AttachmentManager.class ).storeAttachment( att, new ByteArrayInputStream( data ) );
     }
 

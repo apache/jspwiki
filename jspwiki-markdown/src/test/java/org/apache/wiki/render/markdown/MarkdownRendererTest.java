@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.render.markdown;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
@@ -287,7 +286,7 @@ public class MarkdownRendererTest {
         }
 
         created.clear();
-        CacheManager.getInstance().removeAllCaches();
+        // CacheManager.getInstance().removeAllCaches();
     }
 
     String translate( final String src ) throws Exception {
