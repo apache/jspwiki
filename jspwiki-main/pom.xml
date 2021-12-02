@@ -49,6 +49,12 @@
     </dependency>
 
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-cache</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>xmlrpc</groupId>
       <artifactId>xmlrpc</artifactId>
     </dependency>
@@ -95,16 +101,6 @@
       <artifactId>sandler</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-    </dependency>
-
-    <dependency> <!-- ehcache brings slf4j, so we route it to log4j2 -->
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-    </dependency>
-    
     <dependency>
       <groupId>oro</groupId>
       <artifactId>oro</artifactId>
