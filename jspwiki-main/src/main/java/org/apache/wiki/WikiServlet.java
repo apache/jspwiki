@@ -18,7 +18,6 @@
  */
 package org.apache.wiki;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
@@ -35,8 +34,8 @@ import java.io.IOException;
 
 
 /**
- * This provides a master servlet for dealing with short urls.  It mostly does redirects to the proper JSP pages. It also intercepts the
- * servlet shutdown events and uses it to signal wiki shutdown.
+ * This provides a master servlet for dealing with short urls. It mostly does redirects to the proper JSP pages.
+ * It also intercepts the servlet shutdown events and uses it to signal wiki shutdown.
  *
  * @since 2.2
  */
@@ -66,7 +65,6 @@ public class WikiServlet extends HttpServlet {
     @Override
     public void destroy() {
         log.info( "WikiServlet shutdown." );
-        CacheManager.getInstance().shutdown();
         m_engine.shutdown();
         super.destroy();
     }
@@ -86,7 +84,7 @@ public class WikiServlet extends HttpServlet {
     public void doGet( final HttpServletRequest req, final HttpServletResponse res ) throws IOException, ServletException {
         String pageName = URLConstructor.parsePageFromURL( req, m_engine.getContentEncoding() );
 
-        log.info( "Request for page: " + pageName );
+        log.info( "Request for page: {}", pageName );
         if( pageName == null ) {
             pageName = m_engine.getFrontPage(); // FIXME: Add special pages as well
         }
