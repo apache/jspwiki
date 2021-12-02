@@ -70,7 +70,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
         // Find and initialize real provider.
         final String classname;
         try {
-            classname = TextUtil.getRequiredProperty( properties, AttachmentManager.PROP_PROVIDER );
+            classname = TextUtil.getRequiredProperty( properties, AttachmentManager.PROP_PROVIDER, AttachmentManager.PROP_PROVIDER_DEPRECATED );
         } catch( final NoSuchElementException e ) {
             throw new NoRequiredPropertyException( e.getMessage(), AttachmentManager.PROP_PROVIDER );
         }

@@ -52,7 +52,8 @@ import java.util.stream.Collectors;
 public class WikiAttachmentAdapterProvider implements AttachmentProvider {
 
     private static final Logger LOG = LogManager.getLogger( WikiAttachmentAdapterProvider.class );
-    private static final String PROP_ADAPTER_IMPL = "jspwiki.attachmentProvider.adapter.impl";
+    private static final String PROP_ADAPTER_IMPL = "jspwiki.attachment.provider.adapter.impl";
+    @Deprecated private static final String PROP_ADAPTER_IMPL_DEPRECATED = "jspwiki.attachmentProvider.adapter.impl";
 
     WikiAttachmentProvider provider;
 
@@ -62,9 +63,9 @@ public class WikiAttachmentAdapterProvider implements AttachmentProvider {
         LOG.warn( "Using an attachment provider through org.apache.wiki.providers.WikiAttachmentAdapterProvider" );
         LOG.warn( "Please contact the attachment provider's author so there can be a new release of the provider " +
                   "implementing the new org.apache.wiki.api.providers.AttachmentProvider public API" );
-        final String classname = TextUtil.getRequiredProperty( properties, PROP_ADAPTER_IMPL );
+        final String classname = TextUtil.getRequiredProperty( properties, PROP_ADAPTER_IMPL, PROP_ADAPTER_IMPL_DEPRECATED );
         try {
-            LOG.debug( "Page provider class: '" + classname + "'" );
+            LOG.debug( "Page provider class: '{}'", classname );
             provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
         } catch( final ReflectiveOperationException e ) {
             LOG.error( "Could not instantiate {}", classname, e );

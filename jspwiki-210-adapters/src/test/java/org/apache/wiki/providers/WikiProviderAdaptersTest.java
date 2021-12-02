@@ -40,9 +40,9 @@ public class WikiProviderAdaptersTest {
 
     TestEngine engine = TestEngine.build( with( "jspwiki.cache.enable", "false" ),
                                           with( "jspwiki.pageProvider", "WikiPageAdapterProvider" ),
-                                          with( "jspwiki.attachmentProvider", "WikiAttachmentAdapterProvider" ),
                                           with( "jspwiki.pageProvider.adapter.impl", "com.example.providers.TwoXWikiPageProvider" ),
-                                          with( "jspwiki.attachmentProvider.adapter.impl", "com.example.providers.TwoXWikiAttachmentProvider" ) );
+                                          with( "jspwiki.attachment.provider", "WikiAttachmentAdapterProvider" ),
+                                          with( "jspwiki.attachment.provider.adapter.impl", "com.example.providers.TwoXWikiAttachmentProvider" ) );
 
     @Test
     public void testPageProvider() throws Exception {

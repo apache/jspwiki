@@ -47,7 +47,10 @@ import java.util.List;
 public interface AttachmentManager {
 
     /** The property name for defining the attachment provider class name. */
-    String PROP_PROVIDER = "jspwiki.attachmentProvider";
+    String PROP_PROVIDER = "jspwiki.attachment.provider";
+
+    /** The property name for defining the attachment provider class name. */
+    @Deprecated String PROP_PROVIDER_DEPRECATED = "jspwiki.attachmentProvider";
 
     /** The maximum size of attachments that can be uploaded. */
     String PROP_MAXSIZE  = "jspwiki.attachment.maxsize";
