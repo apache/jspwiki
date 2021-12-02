@@ -341,6 +341,15 @@ public class TextUtilTest {
     }
 
     @Test
+    public void testGetRequiredPropertyDeprecated() {
+        final String[] vals = { "foo", " this is a property ", "foo-dep", "deprecated" };
+        final Properties props = TextUtil.createProperties( vals );
+        Assertions.assertEquals( "deprecated", TextUtil.getRequiredProperty( props, "foo", "foo-dep" ) );
+        Assertions.assertEquals( "this is a property", TextUtil.getRequiredProperty( props, "foo", "bar-dep" ) );
+        Assertions.assertThrows( NoSuchElementException.class, () -> TextUtil.getRequiredProperty( props, "fooo", "bar-dep" ) );
+    }
+
+    @Test
     public void testCleanString() {
         Assertions.assertNull( TextUtil.cleanString( null, TextUtil.PUNCTUATION_CHARS_ALLOWED ) );
         Assertions.assertEquals( " This is a link ", TextUtil.cleanString( " [ This is a link ] ", TextUtil.PUNCTUATION_CHARS_ALLOWED ) );

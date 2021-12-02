@@ -409,8 +409,8 @@ public final class TextUtil {
     public static String getStringProperty( final Properties props, final String key, final String deprecatedKey, final String defval ) {
         final String val = getStringProperty( props, deprecatedKey, null );
         if( val != null ) {
-            LOG.warn( "{} is being deprecated and will be removed on a future version, please consider using {} instead" +
-                      "in your jspwiki[-custom].properties file", key, key );
+            LOG.warn( "{} is being deprecated and will be removed on a future version, please consider using {} instead " +
+                      "in your jspwiki[-custom].properties file", deprecatedKey, key );
             return val;
         }
         return getStringProperty( props, key, defval );
@@ -431,6 +431,25 @@ public final class TextUtil {
         if( value == null ) {
             throw new NoSuchElementException( "Required property not found: " + key );
         }
+        return value;
+    }
+
+    /**
+     * {@link #getRequiredProperty(Properties, String)} overload that handles deprecated keys, so that a key and its
+     * deprecated counterpart can coexist in a given version of JSPWiki.
+     *
+     * @param props The Properties to search through
+     * @param key The property key
+     * @param deprecatedKey the property key being superseeded by key
+     * @return The property value.
+     */
+    public static String getRequiredProperty( final Properties props, final String key, final String deprecatedKey ) throws NoSuchElementException {
+        final String value = getStringProperty( props, deprecatedKey, null );
+        if( value == null ) {
+            return getRequiredProperty( props, key );
+        }
+        LOG.warn( "{} is being deprecated and will be removed on a future version, please consider using {} instead " +
+                  "in your jspwiki[-custom].properties file", deprecatedKey, key );
         return value;
     }
 
