@@ -114,9 +114,7 @@ public class SessionMonitor implements HttpSessionListener {
 
         // If the weak reference returns a wiki session, return it
         if( storedSession != null ) {
-            if( log.isDebugEnabled() ) {
-                log.debug( "Looking up WikiSession for session ID=" + sid + "... found it" );
-            }
+            log.debug( "Looking up WikiSession for session ID={}... found it", sid );
             wikiSession = storedSession;
         }
 
@@ -169,9 +167,7 @@ public class SessionMonitor implements HttpSessionListener {
      * @return a new guest session
      */
     private Session createGuestSessionFor( final String sessionId ) {
-        if( log.isDebugEnabled() ) {
-            log.debug( "Session for session ID=" + sessionId + "... not found. Creating guestSession()" );
-        }
+        log.debug( "Session for session ID={}... not found. Creating guestSession()", sessionId );
         final Session wikiSession = Wiki.session().guest( m_engine );
         synchronized( m_sessions ) {
             m_sessions.put( sessionId, wikiSession );

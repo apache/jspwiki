@@ -84,15 +84,11 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
             final String sid = ( session == null ) ? NULL : session.getId();
             final String name = (request != null) ? getUserCookie( request ) : null;
             if ( name == null ) {
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "No cookie " + PREFS_COOKIE_NAME + " present in session ID=:  " + sid );
-                }
+                log.debug( "No cookie {} present in session ID=:  {}", PREFS_COOKIE_NAME, sid );
                 throw new FailedLoginException( "The user cookie was not found." );
             }
 
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Logged in session ID=" + sid + "; asserted=" + name );
-            }
+            log.debug( "Logged in session ID={}; asserted={}", sid, name );
             // If login succeeds, commit these principals/roles
             m_principals.add( new WikiPrincipal( name, WikiPrincipal.FULL_NAME ) );
             return true;

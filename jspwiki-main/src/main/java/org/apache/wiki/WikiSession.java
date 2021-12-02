@@ -486,9 +486,7 @@ public class WikiSession implements Session {
      */
     public static Session getWikiSession( final Engine engine, final HttpServletRequest request ) {
         if ( request == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Looking up WikiSession for NULL HttpRequest: returning guestSession()" );
-            }
+            log.debug( "Looking up WikiSession for NULL HttpRequest: returning guestSession()" );
             return staticGuestSession( engine );
         }
 

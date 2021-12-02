@@ -274,9 +274,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
         final HttpSession session = request.getSession();
         final String sid = ( session == null ) ? "(null)" : session.getId();
-        if( log.isDebugEnabled() ) {
-            log.debug( "Invalidating Session for session ID=" + sid );
-        }
+        log.debug( "Invalidating Session for session ID= {}", sid );
         // Retrieve the associated Session and clear the Principal set
         final Session wikiSession = Wiki.session().find( m_engine, request );
         final Principal originalPrincipal = wikiSession.getLoginPrincipal();
@@ -411,17 +409,13 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             // Test the Authorizer
             if( authorizer.isUserInRole( session, role ) ) {
                 fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
-                if( log.isDebugEnabled() ) {
-                    log.debug( "Added authorizer role " + role.getName() + "." );
-                }
+                log.debug( "Added authorizer role {}.", role.getName() );
             // If web authorizer, test the request.isInRole() method also
             } else if ( request != null && authorizer instanceof WebAuthorizer ) {
                 final WebAuthorizer wa = ( WebAuthorizer )authorizer;
                 if ( wa.isUserInRole( request, role ) ) {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "Added container role " + role.getName() + "." );
-                    }
+                    log.debug( "Added container role {}.",role.getName() );
                 }
             }
         }

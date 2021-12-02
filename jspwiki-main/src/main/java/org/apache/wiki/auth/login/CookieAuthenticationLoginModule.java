@@ -122,9 +122,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
                 if( cookieFile != null && cookieFile.exists() && cookieFile.canRead() ) {
                     try( final Reader in = new BufferedReader( new InputStreamReader( Files.newInputStream( cookieFile.toPath() ), StandardCharsets.UTF_8 ) ) ) {
                         final String username = FileUtil.readContents( in );
-                        if( log.isDebugEnabled() ) {
-                            log.debug( "Logged in cookie authenticated name={}", username );
-                        }
+                        log.debug( "Logged in cookie authenticated name={}", username );
 
                         // If login succeeds, commit these principals/roles
                         m_principals.add( new WikiPrincipal( username, WikiPrincipal.LOGIN_NAME ) );
@@ -220,9 +218,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
             //  Write the cookie content to the cookie store file.
             try( final Writer out = new BufferedWriter( new OutputStreamWriter( Files.newOutputStream( cf.toPath() ), StandardCharsets.UTF_8 ) ) ) {
                 FileUtil.copyContents( new StringReader( username ), out );
-                if( log.isDebugEnabled() ) {
-                    log.debug( "Created login cookie for user {} for {} days", username, days );
-                }
+                log.debug( "Created login cookie for user {} for {} days", username, days );
             } catch( final IOException ex ) {
                 log.error( "Unable to create cookie file to store user id: {}", uid );
             }

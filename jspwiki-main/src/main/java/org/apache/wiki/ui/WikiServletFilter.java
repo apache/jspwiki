@@ -129,9 +129,7 @@ public class WikiServletFilter implements Filter {
                 m_engine.getManager( AuthenticationManager.class ).login( httpRequest );
                 final Session wikiSession = SessionMonitor.getInstance( m_engine ).find( httpRequest.getSession() );
                 httpRequest = new WikiRequestWrapper( m_engine, httpRequest );
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Executed security filters for user=" + wikiSession.getLoginPrincipal().getName() + ", path=" + httpRequest.getRequestURI() );
-                }
+                log.debug( "Executed security filters for user={}, path={}",wikiSession.getLoginPrincipal().getName(), httpRequest.getRequestURI() );
             } catch( final WikiSecurityException e ) {
                 throw new ServletException( e );
             }

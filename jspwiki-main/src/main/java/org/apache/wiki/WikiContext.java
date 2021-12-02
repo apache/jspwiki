@@ -217,11 +217,9 @@ public class WikiContext implements Context, Command {
         }
 
         // Debugging...
-        if( log.isDebugEnabled() ) {
-            final HttpSession session = ( request == null ) ? null : request.getSession( false );
-            final String sid = session == null ? "(null)" : session.getId();
-            log.debug( "Creating WikiContext for session ID=" + sid + "; target=" + getName() );
-        }
+        final HttpSession session = ( request == null ) ? null : request.getSession( false );
+        final String sid = session == null ? "(null)" : session.getId();
+        log.debug( "Creating WikiContext for session ID={}; target={}", sid, getName() );
 
         // Figure out what template to use
         setDefaultTemplate( request );
@@ -461,7 +459,7 @@ public class WikiContext implements Context, Command {
 
     /**
      *  This method will safely return any HTTP parameters that might have been defined.  You should use this method instead
-     *  of peeking directly into the result of getHttpRequest(), since this method is smart enough to do all of the right things,
+     *  of peeking directly into the result of getHttpRequest(), since this method is smart enough to do all the right things,
      *  figure out UTF-8 encoded parameters, etc.
      *
      *  @since 2.0.13.
@@ -479,8 +477,8 @@ public class WikiContext implements Context, Command {
     }
 
     /**
-     *  If the request did originate from a HTTP request, then the HTTP request can be fetched here.  However, it the request
-     *  did NOT originate from a HTTP request, then this method will return null, and YOU SHOULD CHECK FOR IT!
+     *  If the request did originate from an HTTP request, then the HTTP request can be fetched here.  However, if the request
+     *  did NOT originate from an HTTP request, then this method will return null, and YOU SHOULD CHECK FOR IT!
      *
      *  @return Null, if no HTTP request was done.
      *  @since 2.0.13.
@@ -554,7 +552,7 @@ public class WikiContext implements Context, Command {
      *  A shortcut to generate a VIEW url.
      *
      *  @param page The page to which to link.
-     *  @return An URL to the page.  This honours the current absolute/relative setting.
+     *  @return A URL to the page.  This honours the current absolute/relative setting.
      */
     @Override
     public String getViewURL( final String page ) {
@@ -562,11 +560,11 @@ public class WikiContext implements Context, Command {
     }
 
     /**
-     *  Creates an URL for the given request context.
+     *  Creates a URL for the given request context.
      *
      *  @param context e.g. WikiContext.EDIT
      *  @param page The page to which to link
-     *  @return An URL to the page, honours the absolute/relative setting in jspwiki.properties
+     *  @return A URL to the page, honours the absolute/relative setting in jspwiki.properties
      */
     @Override
     public String getURL( final String context, final String page ) {
@@ -574,14 +572,14 @@ public class WikiContext implements Context, Command {
     }
 
     /**
-     *  Returns an URL from a page. It this WikiContext instance was constructed with an actual HttpServletRequest, we will attempt to
+     *  Returns a URL from a page. It this WikiContext instance was constructed with an actual HttpServletRequest, we will attempt to
      *  construct the URL using HttpUtil, which preserves the HTTPS portion if it was used.
      *
      *  @param context The request context (e.g. WikiContext.UPLOAD)
      *  @param page The page to which to link
      *  @param params A list of parameters, separated with "&amp;"
      *
-     *  @return An URL to the given context and page.
+     *  @return A URL to the given context and page.
      */
     @Override
     public String getURL( final String context, final String page, final String params ) {
@@ -686,7 +684,7 @@ public class WikiContext implements Context, Command {
     }
 
     /**
-     * Returns the permission required to successfully execute this context. For example, the a wiki context of VIEW for a certain page
+     * Returns the permission required to successfully execute this context. For example, a wiki context of VIEW for a certain page
      * means that the PagePermission "view" is required for the page. In some cases, no particular permission is required, in which case
      * a dummy permission will be returned ({@link java.util.PropertyPermission}<code> "os.name", "read"</code>). This method is guaranteed
      * to always return a valid, non-null permission.

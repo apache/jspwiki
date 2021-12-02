@@ -146,9 +146,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
             }
         }
 
-        if( log.isDebugEnabled() ) {
-            log.debug( "Final name = "+name );
-        }
+        log.debug( "Final name = {}", name );
         return name;
     }
 
@@ -185,44 +183,6 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
         return getPath( template ) + "/" + name;
     }
 
-    /*
-     *  Returns a property, as defined in the template.  The evaluation is lazy, i.e. the properties are not loaded until the template is
-     *  actually used for the first time.
-     */
-    /*
-    public String getTemplateProperty( WikiContext context, String key )
-    {
-        String template = context.getTemplate();
-
-        try
-        {
-            Properties props = (Properties)m_propertyCache.getFromCache( template, -1 );
-
-            if( props == null )
-            {
-                try
-                {
-                    props = getTemplateProperties( template );
-
-                    m_propertyCache.putInCache( template, props );
-                }
-                catch( IOException e )
-                {
-                    log.warn("IO Exception while reading template properties",e);
-
-                    return null;
-                }
-            }
-
-            return props.getProperty( key );
-        }
-        catch( NeedsRefreshException ex )
-        {
-            // FIXME
-            return null;
-        }
-    }
-*/
     /**
      *  Returns an absolute path to a given template.
      */
@@ -238,10 +198,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
         final Set< String > skinSet = sContext.getResourcePaths( place );
         final Set< String > resultSet = new TreeSet<>();
 
-        if( log.isDebugEnabled() ) {
-            log.debug( "Listings skins from " + place );
-        }
-
+        log.debug( "Listings skins from {}", place );
         if( skinSet != null ) {
             final String[] skins = skinSet.toArray( new String[]{} );
             for( final String skin : skins ) {
@@ -249,16 +206,13 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
                 if( s.length > 2 && skin.endsWith( "/" ) ) {
                     final String skinName = s[ s.length - 1 ];
                     resultSet.add( skinName );
-                    if( log.isDebugEnabled() ) {
-                        log.debug( "...adding skin '" + skinName + "'" );
-                    }
+                    log.debug( "...adding skin '{}'", skinName );
                 }
             }
         }
 
         return resultSet;
     }
-
 
     /** {@inheritDoc} */
     @Override
@@ -309,34 +263,6 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
 
         return resultMap;
     }
-
-    /*
-     *  Always returns a valid property map.
-     */
-    /*
-    private Properties getTemplateProperties( String templateName )
-        throws IOException
-    {
-        Properties p = new Properties();
-
-        ServletContext context = m_engine.getServletContext();
-
-        InputStream propertyStream = context.getResourceAsStream(getPath(templateName)+PROPERTYFILE);
-
-        if( propertyStream != null )
-        {
-            p.load( propertyStream );
-
-            propertyStream.close();
-        }
-        else
-        {
-            log.debug("Template '"+templateName+"' does not have a propertyfile '"+PROPERTYFILE+"'.");
-        }
-
-        return p;
-    }
-*/
 
     /** {@inheritDoc} */
     @Override

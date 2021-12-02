@@ -93,9 +93,7 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
                 extras = rb.getString( "referringpagesplugin.more" );
             }
 
-            if( log.isDebugEnabled() ) {
-                log.debug( "Fetching referring pages for {} with a max of {}", page.getName(), items );
-            }
+            log.debug( "Fetching referring pages for {} with a max of {}", page.getName(), items );
 
             if( links != null && links.size() > 0 ) {
                 links = filterAndSortCollection( links );

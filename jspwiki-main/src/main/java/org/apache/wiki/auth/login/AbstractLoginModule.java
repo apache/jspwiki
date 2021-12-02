@@ -100,9 +100,7 @@ public abstract class AbstractLoginModule implements LoginModule {
         if ( succeeded() ) {
             for ( final Principal principal : m_principals ) {
                 m_subject.getPrincipals().add( principal );
-                if ( log.isDebugEnabled() ) {
-                    log.debug("Committed Principal " + principal.getName() );
-                }
+                log.debug("Committed Principal {}", principal.getName() );
             }
             return true;
         }
@@ -186,12 +184,10 @@ public abstract class AbstractLoginModule implements LoginModule {
      * @param principals the principals to remove
      */
     private void removePrincipals( final Collection<Principal> principals ) {
-        for ( final Principal principal : principals ) {
+        for( final Principal principal : principals ) {
             if ( m_subject.getPrincipals().contains( principal ) ) {
                 m_subject.getPrincipals().remove( principal );
-                if ( log.isDebugEnabled() ) {
-                    log.debug("Removed Principal " + principal.getName() );
-                }
+                log.debug("Removed Principal {}", principal.getName() );
             }
         }
     }

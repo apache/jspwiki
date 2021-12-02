@@ -285,14 +285,11 @@ public abstract class AbstractReferralPlugin implements Plugin {
                     page = m_engine.getManager( PageManager.class ).getPage( pageName );
                     if( page != null ) {
                         final Date lastModPage = page.getLastModified();
-                        if( log.isDebugEnabled() ) {
-                            log.debug( "lastModified Date of page " + pageName + " : " + m_dateLastModified );
-                        }
+                        log.debug( "lastModified Date of page {} : {}", pageName, m_dateLastModified );
                         if( lastModPage.after( m_dateLastModified ) ) {
                             m_dateLastModified = lastModPage;
                         }
                     }
-
                 }
             }
         }

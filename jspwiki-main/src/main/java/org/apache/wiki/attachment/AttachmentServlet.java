@@ -79,30 +79,18 @@ import java.util.Properties;
  */
 public class AttachmentServlet extends HttpServlet {
 
-    private static final int BUFFER_SIZE = 8192;
-
     private static final long serialVersionUID = 3257282552187531320L;
+    private static final int BUFFER_SIZE = 8192;
 
     private Engine m_engine;
     private static final Logger log = LogManager.getLogger( AttachmentServlet.class );
+    private static final String HDR_VERSION = "version";
 
-    private static final String HDR_VERSION     = "version";
-    // private static final String HDR_NAME        = "page";
+    /** The maximum size that an attachment can be. */
+    private int m_maxSize = Integer.MAX_VALUE;
 
-    /** Default expiry period is 1 day */
-    protected static final long DEFAULT_EXPIRY = 1 * 24 * 60 * 60 * 1000;
-
-    /**
-     *  The maximum size that an attachment can be.
-     */
-    private int   m_maxSize = Integer.MAX_VALUE;
-
-    /**
-     *  List of attachment types which are allowed
-     */
-
+    /** List of attachment types which are allowed */
     private String[] m_allowedPatterns;
-
     private String[] m_forbiddenPatterns;
 
     //
@@ -139,10 +127,10 @@ public class AttachmentServlet extends HttpServlet {
         if( !f.exists() ) {
             f.mkdirs();
         } else if( !f.isDirectory() ) {
-            log.fatal( "A file already exists where the temporary dir is supposed to be: " + tmpDir + ".  Please remove it." );
+            log.fatal( "A file already exists where the temporary dir is supposed to be: {}. Please remove it.", tmpDir );
         }
 
-        log.debug( "UploadServlet initialized. Using " + tmpDir + " for temporary storage." );
+        log.debug( "UploadServlet initialized. Using {} for temporary storage.", tmpDir );
     }
 
     private boolean isTypeAllowed( String name )
@@ -151,15 +139,13 @@ public class AttachmentServlet extends HttpServlet {
 
         name = name.toLowerCase();
 
-        for( int i = 0; i < m_forbiddenPatterns.length; i++ )
-        {
-            if( name.endsWith(m_forbiddenPatterns[i]) && !m_forbiddenPatterns[i].isEmpty() )
+        for( final String m_forbiddenPattern : m_forbiddenPatterns ) {
+            if( name.endsWith( m_forbiddenPattern ) && !m_forbiddenPattern.isEmpty() )
                 return false;
         }
 
-        for( int i = 0; i < m_allowedPatterns.length; i++ )
-        {
-            if( name.endsWith(m_allowedPatterns[i]) && !m_allowedPatterns[i].isEmpty() )
+        for( final String m_allowedPattern : m_allowedPatterns ) {
+            if( name.endsWith( m_allowedPattern ) && !m_allowedPattern.isEmpty() )
                 return true;
         }
 
@@ -258,10 +244,7 @@ public class AttachmentServlet extends HttpServlet {
                         out.write( buffer, 0, read );
                     }
                 }
-
-                if( log.isDebugEnabled() ) {
-                    log.debug( "Attachment "+att.getFileName()+" sent to "+req.getRemoteUser()+" on "+HttpUtil.getRemoteAddress(req) );
-                }
+                log.debug( "Attachment {} sent to {} on {}", att.getFileName(), req.getRemoteUser(), HttpUtil.getRemoteAddress(req) );
                 if( nextPage != null ) {
                     res.sendRedirect(
                         validateNextPage(
@@ -543,8 +526,8 @@ public class AttachmentServlet extends HttpServlet {
             throw new RedirectException("File could not be opened.", errorPage);
         }
 
-        //  Check whether we already have this kind of a page. If the "page" parameter already defines an attachment
-        //  name for an update, then we just use that file. Otherwise we create a new attachment, and use the
+        //  Check whether we already have this kind of page. If the "page" parameter already defines an attachment
+        //  name for an update, then we just use that file. Otherwise, we create a new attachment, and use the
         //  filename given.  Incidentally, this will also mean that if the user uploads a file with the exact
         //  same name than some other previous attachment, then that attachment gains a new version.
         Attachment att = mgr.getAttachmentInfo( context.getPage().getName() );

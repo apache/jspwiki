@@ -84,9 +84,7 @@ public class PingWeblogsComFilter extends BasePageFilter {
             params.addElement( "The Butt Ugly Weblog" ); // FIXME: Must be settable
             params.addElement( engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), blogName, null ) );
 
-            if( log.isDebugEnabled() ) {
-                log.debug( "Pinging weblogs.com with URL: " + engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), blogName, null ) );
-            }
+            log.debug( "Pinging weblogs.com with URL: {}", engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), blogName, null ) );
 
             xmlrpc.executeAsync("weblogUpdates.ping", params, 
                                 new AsyncCallback() {

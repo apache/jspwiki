@@ -345,16 +345,14 @@ public class LuceneSearchProvider implements SearchProvider {
      *  @throws IOException If there's an indexing problem
      */
     protected Document luceneIndexPage( final Page page, final String text, final IndexWriter writer ) throws IOException {
-        if( log.isDebugEnabled() ) {
-            log.debug( "Indexing " + page.getName() + "..." );
-        }
-        
+        log.debug( "Indexing {}...", page.getName() );
+
         // make a new, empty document
         final Document doc = new Document();
-
         if( text == null ) {
             return doc;
         }
+
         final String indexedText = text.replace( "__", " " ); // be nice to Language Analyzers - cfr. JSPWIKI-893
 
         // Raw name is the keyword we'll use to refer to this document for updates.

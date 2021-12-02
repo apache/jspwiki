@@ -62,46 +62,38 @@ public class AnonymousLoginModule extends AbstractLoginModule
     protected static final Logger log = LogManager.getLogger( AnonymousLoginModule.class );
 
     /**
+     * {@inheritDoc}
+     *
      * Logs in the user by calling back to the registered CallbackHandler with an
      * HttpRequestCallback. The CallbackHandler must supply the current servlet
      * HTTP request as its response.
      * @return the result of the login; this will always be <code>true</code>.
      * @see javax.security.auth.spi.LoginModule#login()
-     * @throws {@inheritDoc}
+     * @throws LoginException if unable to handle callback
      */
     public boolean login() throws LoginException
     {
         // Let's go and make a Principal based on the IP address
         final HttpRequestCallback hcb = new HttpRequestCallback();
-        final Callback[] callbacks = new Callback[]
-        { hcb };
-        try
-        {
+        final Callback[] callbacks = new Callback[]{ hcb };
+        try {
             m_handler.handle( callbacks );
             final HttpServletRequest request = hcb.getRequest();
             final WikiPrincipal ipAddr = new WikiPrincipal( HttpUtil.getRemoteAddress(request) );
-            if ( log.isDebugEnabled() )
-            {
-                final HttpSession session = request.getSession( false );
-                final String sid = (session == null) ? NULL : session.getId();
-                log.debug("Logged in session ID=" + sid + "; IP=" + ipAddr);
-            }
+            final HttpSession session = request.getSession( false );
+            final String sid = (session == null) ? NULL : session.getId();
+            log.debug("Logged in session ID={}; IP={}", sid, ipAddr);
             // If login succeeds, commit these principals/roles
             m_principals.add( ipAddr );
             return true;
-        }
-        catch( final IOException e )
-        {
+        } catch( final IOException e ) {
             log.error("IOException: " + e.getMessage());
             return false;
-        }
-        catch( final UnsupportedCallbackException e )
-        {
+        } catch( final UnsupportedCallbackException e ) {
             final String message = "Unable to handle callback, disallowing login.";
             log.error( message, e );
             throw new LoginException( message );
         }
-
     }
 
 }

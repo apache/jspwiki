@@ -1018,17 +1018,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
             ruleLine = ruleLine.substring( 0, ruleLine.length() - 1 );
         }
 
-        if( log.isDebugEnabled() ) {
-            log.debug("page="+page.getName()+", ACL = "+ruleLine);
-        }
+        log.debug("page={}, ACL = {}", page.getName(), ruleLine);
 
         try {
             final Acl acl = m_engine.getManager( AclManager.class ).parseAcl( page, ruleLine );
             page.setAcl( acl );
-
-            if( log.isDebugEnabled() ) {
-                log.debug( acl.toString() );
-            }
+            log.debug( acl.toString() );
         } catch( final WikiSecurityException wse ) {
             return makeError( wse.getMessage() );
         }

@@ -81,47 +81,31 @@ public class WebContainerLoginModule extends AbstractLoginModule {
             // directly. If we find one, we're done.
             m_handler.handle( callbacks );
             final HttpServletRequest request = rcb.getRequest();
-            if ( request == null )
-            {
+            if ( request == null ) {
                 throw new LoginException( "No Http request supplied." );
             }
             final HttpSession session = request.getSession(false);
             final String sid = (session == null) ? NULL : session.getId();
             Principal principal = request.getUserPrincipal();
-            if ( principal == null )
-            {
+            if ( principal == null ) {
                 // If no Principal in request, try the remoteUser
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( "No userPrincipal found for session ID=" + sid);
-                }
+                log.debug( "No userPrincipal found for session ID={}", sid);
                 userId = request.getRemoteUser();
-                if ( userId == null )
-                {
-                    if ( log.isDebugEnabled() )
-                    {
-                        log.debug( "No remoteUser found for session ID=" + sid);
-                    }
+                if ( userId == null ) {
+                    log.debug( "No remoteUser found for session ID={}", sid);
                     throw new FailedLoginException( "No remote user found" );
                 }
                 principal = new WikiPrincipal( userId, WikiPrincipal.LOGIN_NAME );
             }
-            if ( log.isDebugEnabled() )
-            {
-                log.debug("Logged in container principal " + principal.getName() + "." );
-            }
+            log.debug("Logged in container principal {}.", principal.getName() );
             m_principals.add( principal );
 
             return true;
-        }
-        catch( final IOException e )
-        {
-            log.error( "IOException: " + e.getMessage() );
+        } catch( final IOException e ) {
+            log.error( "IOException: {}", e.getMessage() );
             return false;
-        }
-        catch( final UnsupportedCallbackException e )
-        {
-            log.error( "UnsupportedCallbackException: " + e.getMessage() );
+        } catch( final UnsupportedCallbackException e ) {
+            log.error( "UnsupportedCallbackException: {}", e.getMessage() );
             return false;
         }
     }

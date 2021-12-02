@@ -137,7 +137,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
         }
 
         /**
-         *  Provides a list of suggestions to use for a page name. Currently the algorithm just looks into the value parameter,
+         *  Provides a list of suggestions to use for a page name. Currently, the algorithm just looks into the value parameter,
          *  and returns all page names from that.
          *
          *  @param wikiName the page name
@@ -173,9 +173,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
             }
 
             sw.stop();
-            if( log.isDebugEnabled() ) {
-                log.debug( "Suggestion request for " + wikiName + " done in " + sw );
-            }
+            log.debug( "Suggestion request for {} done in {}", wikiName, sw );
             return list;
         }
 
@@ -214,9 +212,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
             }
 
             sw.stop();
-            if( log.isDebugEnabled() ) {
-                log.debug( "AJAX search complete in {}", sw );
-            }
+            log.debug( "AJAX search complete in {}", sw );
             return list;
         }
     }
