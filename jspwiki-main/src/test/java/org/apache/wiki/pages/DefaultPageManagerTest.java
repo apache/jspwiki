@@ -16,7 +16,6 @@
     specific language governing permissions and limitations
     under the License.
  */
-
 package org.apache.wiki.pages;
 
 import org.apache.wiki.TestEngine;
@@ -27,6 +26,7 @@ import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.cache.CachingManager;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
@@ -86,7 +86,7 @@ public class DefaultPageManagerTest {
 
     @Test
     public void testPageCacheNotInUse() throws Exception {
-        engine.getWikiProperties().setProperty( "jspwiki.cache.enable", "false" );
+        engine.getManager( CachingManager.class ).shutdown();
         final PageManager m = new DefaultPageManager( engine, engine.getWikiProperties() );
 
         Assertions.assertFalse( m.getProvider() instanceof CachingProvider );

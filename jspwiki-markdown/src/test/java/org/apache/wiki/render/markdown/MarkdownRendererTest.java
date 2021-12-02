@@ -270,12 +270,12 @@ public class MarkdownRendererTest {
     }
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true" );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", "./target/md-pageDir" );
         props.setProperty( "jspwiki.renderingManager.markupParser", MarkdownParser.class.getName() );
         props.setProperty( "jspwiki.renderingManager.renderer", MarkdownRenderer.class.getName() );
-        testEngine = new TestEngine( props );
+        testEngine = TestEngine.build( props );
     }
 
     @AfterEach
@@ -286,7 +286,7 @@ public class MarkdownRendererTest {
         }
 
         created.clear();
-        // CacheManager.getInstance().removeAllCaches();
+        testEngine.shutdown();
     }
 
     String translate( final String src ) throws Exception {
