@@ -180,7 +180,7 @@ var Snipe = new Class({
 
             //fixme: any click outside the suggestion block should clear the context -- blur ?
             //blur: self.reset.bind(self),
-            keyup: self.suggest.debounce(), //(250, true)
+            // keyup: self.suggest.debounce(), //(250, true)
             click: self.suggest.debounce(),
 
             input: (function( ){
@@ -629,7 +629,9 @@ var Snipe = new Class({
         in the textarea.
 
     */
-    suggest: function( /*event*/ ){
+    suggest: function( event ){
+
+        if (event && !event.control) return;
 
         var suggest;
 
