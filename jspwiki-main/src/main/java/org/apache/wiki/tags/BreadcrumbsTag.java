@@ -185,6 +185,7 @@ public class BreadcrumbsTag extends WikiTagBase
         }
 
         String pushItem( final String o ) {
+            remove(o);
             add( o );
             if( size() > m_size ) {
                 return removeFirst();
