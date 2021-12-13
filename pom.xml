@@ -69,7 +69,7 @@
     <junit.version>5.8.2</junit.version>
     <log4j.version>1.2.17</log4j.version>
     <log4j2.version>2.15.0</log4j2.version>
-    <lucene.version>8.11.0</lucene.version>
+    <lucene.version>8.11.0</lucene.version> <!-- 9.0.0 and above require JDK >= 11 to execute -->
     <mockito.version>4.1.0</mockito.version>
     <nekohtml.version>1.9.22</nekohtml.version>
     <oro.version>2.0.8</oro.version>
@@ -78,7 +78,7 @@
     <slf4j.version>1.7.32</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>2.1.0</tika.version>
-    <tomcat.version>9.0.55</tomcat.version>
+    <tomcat.version>9.0.56</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version> <!-- 1.9.0 and above require JDK >= 9 to execute -->
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
@@ -87,9 +87,7 @@
     <plugin.clean.version>3.1.0</plugin.clean.version>
     <plugin.compiler.version>3.8.1</plugin.compiler.version>
     <plugin.dependency.version>3.2.0</plugin.dependency.version>
-    <plugin.eclipse.version>2.10</plugin.eclipse.version>
     <plugin.enforcer.version>3.0.0</plugin.enforcer.version>
-    <plugin.idea.version>2.2.1</plugin.idea.version>
     <plugin.install.version>2.5.2</plugin.install.version>
     <plugin.jar.version>3.2.0</plugin.jar.version>
     <plugin.javadoc.version>3.3.1</plugin.javadoc.version>
@@ -255,12 +253,6 @@
         <groupId>jaxen</groupId>
         <artifactId>jaxen</artifactId>
         <version>${jaxen.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${log4j.version}</version>
       </dependency>
 
       <dependency>
@@ -514,15 +506,6 @@
         </plugin>
 
         <plugin>
-          <artifactId>maven-idea-plugin</artifactId>
-          <version>${plugin.idea.version}</version>
-          <configuration>
-            <downloadSources>true</downloadSources>
-            <downloadJavadocs>true</downloadJavadocs>
-          </configuration>
-        </plugin>
-
-        <plugin>
           <artifactId>maven-install-plugin</artifactId>
           <version>${plugin.install.version}</version>
           <configuration>
@@ -755,7 +738,7 @@
               <home>${project.build.directory}/tomcat9x</home>
               <properties>
                 <cargo.servlet.port>8080</cargo.servlet.port>
-                <cargo.jvmargs>-XX:MaxPermSize=512m -Xms256m -Xmx3072m -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -XX:+DisableExplicitGC -Xverify:none -Djava.awt.headless=true</cargo.jvmargs>
+                <cargo.jvmargs>-Xms256m -Xmx3072m -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -XX:+DisableExplicitGC -Xverify:none -Djava.awt.headless=true</cargo.jvmargs>
               </properties>
             </configuration>
             <!-- <deployables>
