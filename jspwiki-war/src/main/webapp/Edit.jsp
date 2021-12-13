@@ -88,7 +88,7 @@
     //
     String htmlText = findParam( pageContext, "htmlPageText" );
     if( htmlText != null && cancel == null ) {
-        text = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);
+        text = new HtmlStringToWikiTranslator( wiki ).translate( htmlText, wikiContext );
     }
 
     Page wikipage = wikiContext.getPage();
@@ -101,7 +101,6 @@
     //
     //  Set the response type before we branch.
     //
-
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     response.setHeader( "Cache-control", "max-age=0" );
     response.setDateHeader( "Expires", new Date().getTime() );
@@ -117,7 +116,6 @@
         //
         //  Check for session expiry
         //
-
         if( !SpamFilter.checkHash(wikiContext,pageContext) ) {
             return;
         }
@@ -127,14 +125,12 @@
         //  FIXME: I am not entirely sure if the JSP page is the
         //  best place to check for concurrent changes.  It certainly
         //  is the best place to show errors, though.
-
         String h = SpamFilter.getSpamHash( latestversion, request );
 
         if( !h.equals(spamhash) ) {
             //
             // Someone changed the page while we were editing it!
             //
-
             log.info("Page changed, warning user.");
 
             session.setAttribute( EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext) );

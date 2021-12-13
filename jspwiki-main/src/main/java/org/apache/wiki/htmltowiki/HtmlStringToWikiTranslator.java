@@ -19,6 +19,7 @@
 package org.apache.wiki.htmltowiki;
 
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Engine;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -34,16 +35,17 @@ import java.io.StringReader;
  * Xhtml2WikiTranslator for converting xhtml to Wiki Markup.
  *
  */
-public class HtmlStringToWikiTranslator
-{
+public class HtmlStringToWikiTranslator {
 
     private static final String CYBERNEKO_PARSER = "org.cyberneko.html.parsers.SAXParser";
+    private final Engine e;
 
     /**
      *  Create a new translator.
      */
-    public HtmlStringToWikiTranslator()
-    {}
+    public HtmlStringToWikiTranslator( final Engine e ) {
+        this.e = e;
+    }
 
     /**
      *  Translates text from HTML into WikiMarkup without a WikiContext (meaning
@@ -55,8 +57,7 @@ public class HtmlStringToWikiTranslator
      *  @throws JDOMException If parsing fails
      *  @throws IOException For other kinds of errors.
      */
-    public String translate( final String html ) throws JDOMException, IOException
-    {
+    public String translate( final String html ) throws JDOMException, IOException, ReflectiveOperationException {
         return translate( html, new XHtmlToWikiConfig() );
     }
 
@@ -71,8 +72,7 @@ public class HtmlStringToWikiTranslator
      *  @throws JDOMException If parsing fails
      *  @throws IOException For other kinds of errors.
      */
-    public String translate( final String html, final Context wikiContext ) throws JDOMException, IOException
-    {
+    public String translate( final String html, final Context wikiContext ) throws JDOMException, IOException, ReflectiveOperationException {
         return translate( html, new XHtmlToWikiConfig( wikiContext ) );
     }
 
@@ -86,11 +86,9 @@ public class HtmlStringToWikiTranslator
      *  @throws JDOMException If parsing fails
      *  @throws IOException For other kinds of errors.
      */
-
-    public String translate( final String html, final XHtmlToWikiConfig config ) throws JDOMException, IOException
-    {
+    public String translate( final String html, final XHtmlToWikiConfig config ) throws JDOMException, IOException, ReflectiveOperationException {
         final Element element = htmlStringToElement( html );
-        final XHtmlElementToWikiTranslator xhtmlTranslator = new XHtmlElementToWikiTranslator( element, config );
+        final XHtmlElementToWikiTranslator xhtmlTranslator = new XHtmlElementToWikiTranslator( e, element, config );
         return xhtmlTranslator.getWikiString();
     }
 
@@ -102,9 +100,8 @@ public class HtmlStringToWikiTranslator
      * @throws JDOMException when errors occur in parsing
      * @throws IOException when an I/O error prevents a document from being fully parsed
      */
-    private Element htmlStringToElement( final String html ) throws JDOMException, IOException
-    {
-        final SAXBuilder builder = new SAXBuilder( new XMLReaderSAX2Factory( true, CYBERNEKO_PARSER), null, null );
+    private Element htmlStringToElement( final String html ) throws JDOMException, IOException {
+        final SAXBuilder builder = new SAXBuilder( new XMLReaderSAX2Factory( true, CYBERNEKO_PARSER ), null, null );
         final Document doc = builder.build( new StringReader( html ) );
         return doc.getRootElement();
     }
@@ -115,8 +112,7 @@ public class HtmlStringToWikiTranslator
      *  @param element The element to get HTML from.
      *  @return HTML
      */
-    public static String element2String( final Element element )
-    {
+    public static String element2String( final Element element ) {
         final Document document = new Document( element );
         final XMLOutputter outputter = new XMLOutputter();
         return outputter.outputString( document );

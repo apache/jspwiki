@@ -48,6 +48,6 @@
 
   if( htmlText != null )
   {
-%><%= new HtmlStringToWikiTranslator().translate(htmlText, wikiContext) %><%
+%><%= new HtmlStringToWikiTranslator( wiki ).translate( htmlText, wikiContext ) %><%
   }
 %>

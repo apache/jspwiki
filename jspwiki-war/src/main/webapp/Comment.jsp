@@ -200,7 +200,7 @@
         //
         String htmlText = findParam( pageContext, "htmlPageText" );
         if( htmlText != null && cancel == null ) {
-        	commentText = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);
+        	commentText = new HtmlStringToWikiTranslator( wiki ).translate(htmlText,wikiContext);
         }
 
         pageText.append( commentText );
