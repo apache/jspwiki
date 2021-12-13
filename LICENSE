@@ -250,10 +250,10 @@ jdom2-2.0.6.jar                             ./jspwiki-war/src/main/config/doc/LI
 jmespath-java-1.12.59                       LICENSE
 joda-time-2.8.1                             LICENSE
 jstl-1.2.jar                                LICENSE
-log4j-1.2-api-2.15.0.jar                    LICENSE
-log4j-api-2.15.0.jar                        LICENSE
-log4j-core-2.15.0.jar                       LICENSE
-log4j-slf4j-impl-2.15.0                     LICENSE
+log4j-1.2-api-2.16.0.jar                    LICENSE
+log4j-api-2.16.0.jar                        LICENSE
+log4j-core-2.16.0.jar                       LICENSE
+log4j-slf4j-impl-2.16.0                     LICENSE
 lucene-analyzers-common-8.11.0.jar          LICENSE
 lucene-backward-codecs-8.11.0.jar           LICENSE
 lucene-core-8.11.0.jar                      LICENSE

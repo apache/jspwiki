@@ -27,7 +27,7 @@ under the License.
 
 * Dependency updates
     * Mockito to 4.1.0, thanks to dependabot [#152](https://github.com/apache/jspwiki/pull/152)
-    * Log4J2 to 2.15.0, thanks to [Paulino Calderon](https://github.com/cldrn) [#155](https://github.com/apache/jspwiki/pull/155)
+    * Log4J2 to 2.15.0, thanks to [Paulino Calderon](https://github.com/cldrn) [#155](https://github.com/apache/jspwiki/pull/155) and then to 2.16.0, thanks to dependabot [#157](https://github.com/apache/jspwiki/pull/157)
     * Sonar maven plugin to 3.9.1.2184, thanks to dependabot [#153](https://github.com/apache/jspwiki/pull/153)
     * Tomcat to 9.0.56
 
