@@ -94,7 +94,7 @@ public class DefaultPageRenamer implements PageRenamer {
         
         final Set< String > referrers = getReferencesToChange( fromPage, engine );
 
-        //  Do the actual rename by changing from the frompage to the topage, including all of the attachments
+        //  Do the actual rename by changing from the frompage to the topage, including all the attachments
         //  Remove references to attachments under old name
         final List< Attachment > attachmentsOldName = engine.getManager( AttachmentManager.class ).listAttachments( fromPage );
         for( final Attachment att: attachmentsOldName ) {
@@ -257,7 +257,7 @@ public class DefaultPageRenamer implements PageRenamer {
         
         // This monstrosity just looks for a JSPWiki link pattern.  But it is pretty cool for a regexp, isn't it?  If you can
         // understand this in a single reading, you have way too much time in your hands.
-        final Pattern linkPattern = Pattern.compile( "([\\[\\~]?)\\[([^\\|\\]]*)(\\|)?([^\\|\\]]*)(\\|)?([^\\|\\]]*)\\]" );
+        final Pattern linkPattern = Pattern.compile( "([\\[~]?)\\[([^|\\]]*)(\\|)?([^|\\]]*)(\\|)?([^|\\]]*)]" );
         final Matcher matcher = linkPattern.matcher( sourceText );
         int start = 0;
         

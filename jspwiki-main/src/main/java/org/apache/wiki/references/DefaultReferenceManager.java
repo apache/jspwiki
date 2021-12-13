@@ -64,12 +64,12 @@ import java.util.concurrent.ConcurrentHashMap;
    A word about synchronizing:
 
    I expect this object to be accessed in three situations:
-   - when a Engine is created and it scans its wikipages
-   - when the WE saves a page
-   - when a JSP page accesses one of the WE's ReferenceManagers to display a list of (un)referenced pages.
+   - when an Engine is created, and it scans its wikipages
+   - when the Engine saves a page
+   - when a JSP page accesses one of the Engine's ReferenceManagers to display a list of (un)referenced pages.
 
    So, access to this class is fairly rare, and usually triggered by user interaction. OTOH, the methods in this class use their storage
-   objects intensively (and, sorry to say, in an unoptimized manner =). My deduction: using unsynchronized HashMaps etc and syncing methods
+   objects intensively (and, sorry to say, in an unoptimized manner =). My deduction: using unsynchronized HashMaps etc. and syncing methods
    or code blocks is preferrable to using slow, synced storage objects. We don't have iterative code here, so I'm going to use synced
    methods for now.
 
@@ -182,7 +182,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
         try {
             //  Unserialize things.  The loop below cannot be combined with the other loop below, simply because
             //  engine.getPage() has side effects such as loading initializing the user databases, which in turn want all
-            //  of the pages to be read already...
+            //  the pages to be read already...
             //
             //  Yes, this is a kludge.  We know.  Will be fixed.
             final long saved = unserializeFromDisk();
@@ -502,7 +502,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  Updates the referred pages of a new or edited WikiPage. If a refersTo entry for this page already exists, it is removed
      *  and a new one is built from scratch. Also calls updateReferredBy() for each referenced page.
      *  <P>
-     *  This is the method to call when a new page has been created and we want to a) set up its references and b) notify the
+     *  This is the method to call when a new page has been created, and we want to a) set up its references and b) notify the
      *  referred pages of the references. Use this method during run-time.
      *
      *  @param page Name of the page to update.
@@ -664,7 +664,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
 
 
     /**
-     * Clears the references to a certain page so it's no longer in the map.
+     * Clears the references to a certain page, so it's no longer in the map.
      *
      * @param pagename  Name of the page to clear references for.
      */
