@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.htmltowiki;
 
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.core.Engine;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,11 +29,13 @@ import org.junit.jupiter.api.Test;
  *
  */
 public class HtmlStringToWikiTranslatorTest {
+
+    static Engine e = TestEngine.build();
     HtmlStringToWikiTranslator html2wiki;
 
     @BeforeEach
     public void setUp() {
-        html2wiki = new HtmlStringToWikiTranslator();
+        html2wiki = new HtmlStringToWikiTranslator( e );
     }
 
     @Test
