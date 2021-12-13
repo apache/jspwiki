@@ -17,6 +17,20 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-12-13  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.1-git-02_
+
+* Decoupled `XHtmlElementToWikiTranslator` from jspwiki syntax, so it will be able in a near future to output other wiki syntaxes.
+    * `XHtmlElementToWikiTranslator` acts as a chain in a chain of responsability pattern, delegating to a `SyntaxDecorator` the output of specific wiki syntaxes.
+    * Refactored classes may still change a little. 
+
+* Dependency updates
+    * Mockito to 4.1.0, thanks to dependabot [#152](https://github.com/apache/jspwiki/pull/152)
+    * Log4J2 to 2.15.0, thanks to [Paulino Calderon](https://github.com/cldrn) [#155](https://github.com/apache/jspwiki/pull/155)
+    * Sonar maven plugin to 3.9.1.2184, thanks to dependabot [#153](https://github.com/apache/jspwiki/pull/153)
+    * Tomcat to 9.0.56
+
 **2021-12-02  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.1-git-01_
@@ -31,17 +45,17 @@ under the License.
 * Introduced `TextUtil#get[Required|String]Property( Properties, String key, String deprecatedKey[, String defval] )` to allow deprecation of properties, so they can be removed later on
     * Deprecated key will be looked first and, if found, a warning will be logged asking to move to the new property
     * If there's no deprecated key on the properties set, the normal key will be looked, and if not found, the default value will be returned (or exception thrown)
-    * The idea is to move related configuration towards common "namespaces" 
+    * The idea is to move related configuration towards common "namespaces"
     * A few properties are deprecated
         * `jspwiki.usePageCache` -> `jspwiki.cache.enable` should be used instead
         * `jspwiki.attachmentProvider` -> `jspwiki.attachment.provider` should be used instead
         * `jspwiki.attachmentProvider.adapter.impl` -> `jspwiki.attachment.provider.adapter.impl` should be used instead
 
-* `WikiEngine#initComponent()` now asks the `mappedClass` if is `Initializable` instead of asking the `requestedClass` on `classmappings.xml`.
-    * This allows to decouple `Initializable` from the mapped managers, as it should only matter if their implementations are `Initializable` in order to init them. 
+* `WikiEngine#initComponent()` now asks the `mappedClass` if it is `Initializable` instead of asking the `requestedClass` on `classmappings.xml`.
+    * This allows to decouple `Initializable` from the mapped managers, as it should only matter if their implementations are `Initializable` in order to init them.
 
 * Moved site generation to [jspwiki-site's Jenkinsfile](https://github.com/apache/jspwiki-site/blob/jbake/Jenkinsfile)
-    * This second build is decoupled from the main one, so CI feedback is gathered faster 
+    * This second build is decoupled from the main one, so CI feedback is gathered faster
 
 * Dockerfile's maven build does not rely on jspwiki-main:tests being available on a repo, thus avoiding [#1](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Common%20problems%20when%20building%20JSPWiki#section-Common+problems+when+building+JSPWiki-JspwikiMainJarTestsX.Y.ZNotFoundAtJspwikiMarkdown) when building new versions
 
