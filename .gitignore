@@ -7,3 +7,5 @@ nb-configuration.xml
 .idea
 .metadata
 .checkstyle
+**/node_modules/*
+.vscode
