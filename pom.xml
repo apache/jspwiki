@@ -68,7 +68,7 @@
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.8.2</junit.version>
     <log4j2.version>2.16.0</log4j2.version>
-    <lucene.version>8.11.0</lucene.version> <!-- 9.0.0 and above require JDK >= 11 to execute -->
+    <lucene.version>8.11.1</lucene.version> <!-- 9.0.0 and above require JDK >= 11 to execute -->
     <mockito.version>4.1.0</mockito.version>
     <nekohtml.version>1.9.22</nekohtml.version>
     <oro.version>2.0.8</oro.version>
