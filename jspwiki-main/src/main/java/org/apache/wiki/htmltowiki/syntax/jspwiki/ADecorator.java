@@ -49,16 +49,22 @@ class ADecorator {
      * @param e XHTML element being translated.
      */
     void decorate( final Element e, final String ref ) throws JDOMException {
+        final Map< String, String > augmentedWikiLinkAttributes = MarkupHelper.getAugmentedWikiLinkAttributes( e );
         out.print( "[" );
         chain.translate( e );
 
-        // May end up with duplicated text/ref ([ref|ref] or [ref|ref|attributes]), but that's ok, as it's valid and required code gets simpler
-        out.print( "|" );
-        MarkupHelper.printUnescaped( out, ref );
-
-        final Map< String, String > augmentedWikiLinkAttributes = MarkupHelper.getAugmentedWikiLinkAttributes( e );
-        if( containsAdditionalLinkAttributes( augmentedWikiLinkAttributes ) ) {
+        if( !e.getTextTrim().equalsIgnoreCase( ref ) ) {
             out.print( "|" );
+            MarkupHelper.printUnescaped( out, ref );
+            if( !augmentedWikiLinkAttributes.isEmpty() ) {
+                out.print( "|" );
+                final String augmentedWikiLink = MarkupHelper.augmentedWikiLinkMapToString( augmentedWikiLinkAttributes );
+                out.print( augmentedWikiLink );
+            }
+        } else if( containsAdditionalLinkAttributes( augmentedWikiLinkAttributes ) ) {
+            // If the ref has the same value as the text and also if there
+            // are attributes, then just print: [ref|ref|attributes] .
+            out.print( "|" + ref + "|" );
             final String augmentedWikiLink = MarkupHelper.augmentedWikiLinkMapToString( augmentedWikiLinkAttributes );
             out.print( augmentedWikiLink );
         }

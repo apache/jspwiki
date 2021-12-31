@@ -298,8 +298,9 @@ public class XHtmlElementToWikiTranslator {
                     } else { // handles the case where the link text is different from the href. Example: [something|1]
                         syntax.aFootnote( textValue, href );
                     }
+                } else {
+                    syntax.a( e, ref );
                 }
-                syntax.a( e, ref );
             }
         }
     }
