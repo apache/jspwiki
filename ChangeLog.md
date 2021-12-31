@@ -17,6 +17,27 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2021-12-31  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.2-git-01_
+
+* [JSPWIKI-1168](https://issues.apache.org/jira/projects/JSPWIKI/issues/JSPWIKI-1168) - Simplify required configuration to log on file: Added an unused rolling file appender configuration to `jspwiki.properties`, so switching log to file only requires referencing/overwritting a bit of configuration.
+
+* Added [AttributesExtension](https://github.com/vsch/flexmark-java/wiki/Extensions#attributes) to `jspwiki-markdown` in order to add support for [Markdown Extra attributes](https://michelf.ca/projects/php-markdown/extra/#spe-attr).
+
+* [JSPWIKI-1169](https://issues.apache.org/jira/projects/JSPWIKI/issues/JSPWIKI-1169) - Add Bill of materials module to build.
+ 
+* `DefaultReferenceManager` now only synchronizes when (un)serializing data, since the underlying maps used are already handling concurrency.
+
+* Some small refactors on htmltowiki decorators. Most notably, `<a>` syntax decorator only performs tasks related to syntax decoration.
+
+* Dependency updates
+    * Log4J2 to 2.17.1, thanks to dependabot [#161](https://github.com/apache/jspwiki/pull/161)
+    * Lucene to 8.11.1, thanks to dependabot [#162](https://github.com/apache/jspwiki/pull/162)
+    * Mockito to 4.2.0, thanks to dependabot [#160](https://github.com/apache/jspwiki/pull/160)
+    * Selenide to 6.1.2
+    * Tika to 2.2.1
+
 **2021-12-13  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.1-git-02_
@@ -230,14 +251,10 @@ under the License.
 
 * _2.11.0-git-05_
 
-* [JSPWIKI-1145](https://issues.apache.org/jira/browse/JSPWIKI-1146) - Add [AWS Kendra as a Search Provider](https://jspwiki-wiki.apache.org/Wiki.jsp?page=KendraSearchProvider)
+* [JSPWIKI-1145](https://issues.apache.org/jira/browse/JSPWIKI-1145) - Weak one-way hash used
     * Merged [PR #51](https://github.com/apache/jspwiki/pull/51), contributed by [takalat](https://github.com/takalat), [samhareem](https://github.com/samhareem), thanks!
 
-* Dependency & plugin updates provided by dependabot (PRs [#34](https://github.com/apache/jspwiki/pull/34),
-  [#35](https://github.com/apache/jspwiki/pull/35), [#39](https://github.com/apache/jspwiki/pull/39),
-  [#52](https://github.com/apache/jspwiki/pull/52), [#55](https://github.com/apache/jspwiki/pull/55),
-  [#56](https://github.com/apache/jspwiki/pull/56), [#57](https://github.com/apache/jspwiki/pull/57)
-  and [#59](https://github.com/apache/jspwiki/pull/59)), most notably
+* Dependency & plugin updates provided by dependabot (PRs [#34](https://github.com/apache/jspwiki/pull/34), [#35](https://github.com/apache/jspwiki/pull/35), [#39](https://github.com/apache/jspwiki/pull/39), [#52](https://github.com/apache/jspwiki/pull/52), [#55](https://github.com/apache/jspwiki/pull/55), [#56](https://github.com/apache/jspwiki/pull/56), [#57](https://github.com/apache/jspwiki/pull/57) and [#59](https://github.com/apache/jspwiki/pull/59)), most notably
     * HSQLDB to 2.6.0
     * JUnit to 5.7.1
     * Mockito to 3.9.0
