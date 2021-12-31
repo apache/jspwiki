@@ -102,6 +102,8 @@ public class HtmlStringToWikiTranslator {
      */
     private Element htmlStringToElement( final String html ) throws JDOMException, IOException {
         final SAXBuilder builder = new SAXBuilder( new XMLReaderSAX2Factory( true, CYBERNEKO_PARSER ), null, null );
+        //builder.setProperty( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
+        //builder.setProperty( XMLConstants.ACCESS_EXTERNAL_SCHEMA, "" );
         final Document doc = builder.build( new StringReader( html ) );
         return doc.getRootElement();
     }

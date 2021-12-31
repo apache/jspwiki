@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.htmltowiki.syntax.MarkupHelper;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Content;
@@ -244,7 +245,7 @@ public class XHtmlElementToWikiTranslator {
                     case "tr": syntax.tr( e ); break;
                     case "td": syntax.td( e ); break;
                     case "th": syntax.th( e ); break;
-                    case "a": syntax.a( e ); break;
+                    case "a": translateA( e ); break;
                     case "b":
                     case "strong": syntax.strong( e ); break;
                     case "i":
@@ -273,6 +274,32 @@ public class XHtmlElementToWikiTranslator {
                 }
             } else {
                 translate( c );
+            }
+        }
+    }
+
+    void translateA( final Element e ) throws JDOMException {
+        if( config.isNotIgnorableWikiMarkupLink( e ) ) {
+            if( e.getChild( "IMG" ) != null ) {
+                translateImage( e );
+            } else {
+                final String ref = config.trimLink( e.getAttributeValue( "href" ) );
+                if( ref == null ) {
+                    if( MarkupHelper.isUndefinedPageLink( e ) ) {
+                        syntax.aUndefined( e );
+                    } else {
+                        translate( e );
+                    }
+                } else if( MarkupHelper.isFootnoteLink( ref ) ) {
+                    final String href = ref.replaceFirst( "#ref-.+-(\\d+)", "$1" ); // convert "#ref-PageName-1" to just "1"
+                    final String textValue = e.getValue().substring( 1, ( e.getValue().length() - 1 ) ); // remove the brackets around "[1]"
+                    if( href.equals( textValue ) ) { // handles the simplest case. Example: [1]
+                        translate( e );
+                    } else { // handles the case where the link text is different from the href. Example: [something|1]
+                        syntax.aFootnote( textValue, href );
+                    }
+                }
+                syntax.a( e );
             }
         }
     }
