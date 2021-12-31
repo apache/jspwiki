@@ -299,7 +299,7 @@ public class XHtmlElementToWikiTranslator {
                         syntax.aFootnote( textValue, href );
                     }
                 }
-                syntax.a( e );
+                syntax.a( e, ref );
             }
         }
     }
