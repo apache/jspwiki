@@ -53,6 +53,11 @@
 
     <dependency>
       <groupId>com.vladsch.flexmark</groupId>
+      <artifactId>flexmark-ext-attributes</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vladsch.flexmark</groupId>
       <artifactId>flexmark-ext-footnotes</artifactId>
     </dependency>
 
