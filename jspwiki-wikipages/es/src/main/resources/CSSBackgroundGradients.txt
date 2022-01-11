@@ -1,0 +1,49 @@
+%%add-css
+.bg-warm-flame {background-image: linear-gradient(45deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);}
+.bg-night-fade {background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);}
+.bg-spring-warmth {background-image: linear-gradient(to top, #fad0c4 0%, #fad0c4 1%, #ffd1ff 100%);}
+.bg-juicy-peach {background-image: linear-gradient(to right, #ffecd2 0%, #fcb69f 100%);}
+.bg-lady-lips {background-image: linear-gradient(to top, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);}
+.bg-sunny-morning {background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%);}
+.bg-rainy-ashville {background-image: linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%);}
+.bg-frozen-dreams {background-image: linear-gradient(to top, #fdcbf1 0%, #fdcbf1 1%, #e6dee9 100%);}
+.bg-winter-neva {background-image: linear-gradient(120deg, #a1c4fd 0%, #c2e9fb 100%);}
+.bg-dusty-grass {background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);}
+.bg-tempting-azure {background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);}
+.bg-deep-blue {background-image: linear-gradient(120deg, #e0c3fc 0%, #8ec5fc 100%);}
+.bg-cloudy-knoxville {background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);}
+.bg-everlasting-sky {background-image: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);}
+.bg-plum-plate {background-image: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white;}
+.bg-wild-apple {background-image: linear-gradient(to top, #d299c2 0%, #fef9d7 100%);}
+/%
+
+%%add-css
+.bg-gradient-1 { background: linear-gradient(90deg, #69b7eb, #b3dbd3, #f4d6db); }
+.bg-gradient-2 { background: linear-gradient(90deg, #cfecd0, #ffc5ca); }
+.bg-gradient-3 { background: linear-gradient(90deg, #f598a8, #f6edb2); }
+.bg-gradient-4 { background: linear-gradient(90deg, #ee5c87, #f1a4b5, #d587b3);color:#fff; }
+.bg-gradient-5 { background: linear-gradient(90deg, #b9deed, #efefef); }
+.bg-gradient-6 { background: linear-gradient(90deg, #aea4e3, #d3ffe8); }
+.bg-gradient-7 { background: linear-gradient(90deg, #faf0cd, #fab397); }
+.bg-gradient-8 { background: linear-gradient(90deg, #cfecd0, #a0cea7, #9ec0db); }
+.bg-gradient-9 { background: linear-gradient(135deg, #e55d87 0%, #5fc3e4 100%);color:#fff; }
+/%
+
+%%add-css
+/*circle with center content*/
+.bollen { display:flex; flex-wrap:wrap; position:relative;}
+.bollen > [[class*=bg-] { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+  text-align: center;
+  border-radius:100%;
+  width:200px; height:200px; margin:.25em;
+  transition: 0.5s all;
+}
+.bollen > [[class*=bg-]:hover { border-radius:0;}
+/%
+
+
+[{ALLOW edit Admin}]
+[{ALLOW view All}]

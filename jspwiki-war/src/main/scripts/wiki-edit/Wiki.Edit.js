@@ -27,11 +27,13 @@ Class: Wiki.Edit
 */
 
 /*eslint-env browser*/
-/*global Wiki, Snipe, Request */
+/*global $, Wiki, Snipe, Request */
 
 !(function( wiki ){
 
-var PreviewSemaphore;  //global semaphore to avoid double running the XHR preview
+var PreviewSemaphore,  //global semaphore to avoid double running the XHR preview
+    LocalCache; //name of the localstorage key
+
 
 wiki.add("textarea#editorarea", function( main ){
 
@@ -41,8 +43,7 @@ wiki.add("textarea#editorarea", function( main ){
 
     onbeforeunload( window, main );
 
-
-    if( snipe = getFormElem("textarea.snipeable") ){
+    if(( snipe = getFormElem("textarea.snipeable") )){
 
         snipe = new Snipe( snipe, {
             container: form,
@@ -51,14 +52,15 @@ wiki.add("textarea#editorarea", function( main ){
                 redo: getFormElem("[data-cmd=redo]")
             },
             snippets: wiki.Snips,
-            directsnips: wiki.DirectSnips
+            directsnips: wiki.DirectSnips,
+            dragAndDrop: processDragAndDropData
         });
 
         wiki.configPrefs(form, function(cmd, isChecked){
             snipe.set(cmd, isChecked);
         });
 
-        if( preview = getFormElem(".ajaxpreview") ){
+        if(( preview = getFormElem(".ajaxpreview") )){
 
             var snipeHasChanged = false;
 
@@ -66,8 +68,12 @@ wiki.add("textarea#editorarea", function( main ){
 
                 if( snipeHasChanged && !PreviewSemaphore ){
 
+                    var content = snipe.get('value').trim();
+
+                    localStorage.setItem(LocalCache, content);
+
                     snipeHasChanged = false;
-                    livepreview( snipe, preview, getFormElem("[data-cmd=livepreview]") );
+                    livepreview( content, preview, getFormElem("[data-cmd=livepreview]") );
 
                 }
 
@@ -85,8 +91,15 @@ wiki.add("textarea#editorarea", function( main ){
 
     }
 
-});
 
+}).add("textarea[name=htmlPageText]", function( /*main*/ ){
+
+    LocalCache = "wiki" + wiki.PageName;
+    if(LocalCache in localStorage){
+        localStorage.removeItem( LocalCache );
+    }
+
+})
 
 /*
 Function: onbeforeunload
@@ -109,6 +122,7 @@ function onbeforeunload( window, main ){
 
     main.form.addEvent("submit", function(){
 
+        localStorage.removeItem( LocalCache );
         window.onbeforeunload = null;
 
     });
@@ -121,26 +135,24 @@ Function: livepreview
     Make AJAX call to the wiki server to convert the contents of the textarea
     (wiki markup) to HTML.
 */
+function livepreview(content, preview, previewToggle){
 
-function livepreview(snipe, preview, previewToggle){
-
-    var content = snipe.get("value").trim(),
-        isEmpty = content == "",
+    var isEmpty = content == "",
+        loading = "loading",
         name, link;
 
 
-    function previewDone(){  PreviewSemaphore = false;  } //semaphore OFF!
+    function previewDone(){  PreviewSemaphore = false;  }
 
-    function renderPreview( completed ){
+    function renderPreview(done){
 
-        preview.ifClass(!completed, "loading");
-
-        if( completed ){
+        preview.ifClass(done,loading);
+        if(done){
             wiki.update();  //render the preview area
             previewDone();
         }
-
     }
+
 
     if( !previewToggle.checked ){
 
@@ -187,7 +199,7 @@ function livepreview(snipe, preview, previewToggle){
             },
             update: preview,
             onRequest: renderPreview,
-            onComplete: renderPreview.pass(true),
+            onSuccess: renderPreview.pass(true),
             onError: previewDone
 
         }).send();
@@ -239,10 +251,11 @@ function jspwikiSectionParser( text ){
         title = tt[i + 1].split(/[\r\n]/)[0]
 
             //remove unescaped(~) inline wiki markup __,"",{{,}}, %%(*), /%
-            .replace(/(^|[^~])(__|""|\{\{|\}\}|%%\([^\)]+\)|%%\S+\s|%%\([^\)]+\)|\/%)/g, "$1")
+            .replace(/(^|[^~])(__|""|\{\{|\}\}|%%\([^)]+\)|%%\S+\s|%%\([^)]+\)|\/%)/g, "$1")
 
             //and remove wiki-markup escape chars ~
-            .replace(/~([^~])/g, "$1");
+            .replace(/~([^~])/g, "$1")
+            .escapeHtml();
 
         //depth: convert length of header markup (!!!,!!,!) into #depth-level:  3,2,1 => 0,1,2
         result[ i/2 ] = { title: title, start: pos, depth: 3 - hlen };
@@ -253,5 +266,18 @@ function jspwikiSectionParser( text ){
     return result;
 
 }
+
+/*
+Function: processDragAndDropData
+    Call back handler, invoked when data is dragged or copied into the editor textarea.
+    Convert url links or html to convert to wiki markup
+*/
+function processDragAndDropData( dataTransfer ){
+
+    return wiki.url2links( dataTransfer.getData('text/uri-list') )
+        || wiki.html2wiki( dataTransfer.getData('text/html') );
+
+}
+
 
 })( Wiki );

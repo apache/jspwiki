@@ -159,8 +159,11 @@ VERTICAL VIEW
 }
 
 .comment-page {
-    height: 150px;
+    height: 30vh;
     overflow-y: scroll;
+    border: 3px double @silver;
+    padding: @padding-base-vertical @padding-base-horizontal;
+
 }
 .comment-page + [data-resize] {
 	cursor:row-resize;
@@ -237,4 +240,25 @@ General styles to support wysiwyg editors
         overflow-wrap:normal;
     }
 
+}
+
+/*
+modal dialog
+*/
+.localstorage {
+
+	display:flex;
+	flex-direction:column;
+
+	.modal-footer {
+    	margin:0 0 @modal-inner-padding 0;
+    }
+	pre {
+		display:flex;
+		flex:1;
+		margin:0;
+		font-size:90%;
+		overflow:scroll;
+		white-space: pre-wrap;
+	}
 }

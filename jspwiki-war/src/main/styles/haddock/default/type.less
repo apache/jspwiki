@@ -19,6 +19,15 @@
     under the License.
 */
 
+
+/*
+Credit: Lea Verou
+Gets rid of the annoying outline for mouse users but preserves it for keyboard users,
+and is ignored by browsers that don’t support :focus-visible.
+*/
+*:focus:not(:focus-visible) { outline: none }
+
+
 //bootstrap
 p, .p {
   margin: 0 0 (@line-height-computed / 2);
@@ -32,7 +41,7 @@ ol:last-child {
 /*
 Headings:
     The headings h2, h3 and h4 get a {{clear:left}} so they can appear
-    side by side with .commentboxes.
+    side by side with floated-right commentboxes.
 
     The {{.editsection}} and {{.hashlink}} define the styling of the
     [[Edit] and # hash-hover link on each heading.
@@ -49,17 +58,19 @@ DOM structure:
 
     .btn; .btn-default; .btn-xs;
     margin-right: .25em;
-    .transition(all 1s ease);
-    &:hover { .opacity(1); border-color:transparent; }
-
+    .transition(all .5s ease);
+    &:hover, &:focus {
+    	.opacity(1);
+    	border-color:transparent;
+    }
+    &:focus {
+    	outline:none;
+    	border-color: @link-color;
+    	box-shadow: 0 0 .25em @link-color;
+    }
+	user-select:none;
 }
 
-/* The original jspwiki margins on headers were  somewhat larger then bootstrap
-h2,h3,h4 {
-    margin:1em 0 0.5em 0;
-    line-height:1.5;
-}
-*/
 h2,h3,h4 {
 
     .editsection, .hashlink { .opacity(0); }
@@ -69,8 +80,11 @@ h2,h3,h4 {
 
 }
 
-.sidebar .hashlink, .sidebar .editsection, .panel-title .hashlink { .hidden; }
-
+.sidebar .hashlink,
+.sidebar .editsection,
+.panel-title .hashlink {
+	.hidden;
+}
 
 .lead {
     font-family:@wiki-logo-font-family;
@@ -105,9 +119,9 @@ br { clear: both; }
     background: @table-border-color;
     content: '';
     height: 1px;
-    left: -1.5em;
+    left: -1.8em;
     position: absolute;
-    top: 0.9em;
+    top: .75em;
     width: 1em;
 }
 /* vertical connecting lines */
@@ -115,18 +129,18 @@ br { clear: both; }
     background: @table-border-color;
     content: '';
     height: 100%;
-    left: -1.5em;
+    left: -1.8em;
     position: absolute;
     top: 0;
     width: 1px;
 }
 /* closing vertical connecting corner */
 .tree ul li:last-child::after {
-    height: .95em;
+    height: .8em;
 }
 
 //dl { .dl-horizontal; }
-dl dd { margin-left: 2em; }   //reset flat style of bootstrap/type
+dl dd { margin-left: @list-item-indent; }   //reset flat style of bootstrap/type
 
 //copied from bootstrap scaffolding
 .hr {
@@ -220,22 +234,40 @@ span.text-white, div.text-white, .bg.dark + .bg-overlay { color:@white; }
 span.text-black, div.text-black, .bg.light + .bg-overlay { color:@black; }
 
 .text-white.shadow {
-  text-shadow: 1px 1px 0 rgba(0,0,0,.25), 0 0 1em @white;
+    text-shadow: 1px 1px 0 rgba(0,0,0,.25), 0 0 1em @white;
 }
 .text-black.shadow {
-  text-shadow: 1px 1px 0 rgba(255,255,255,.25), 0 0 1em @white;
+    text-shadow: 1px 1px 0 rgba(255,255,255,.25), 0 0 1em @white;
 }
 
 //checkme - should be defined in bootstrap
 [class*=bg-]:not(.columns) {
     padding: @padding-base-vertical  @padding-base-horizontal;
-    a {  color:inherit; }
+    a, a:link, a:visited {  color:inherit; }
 }
 
-.bg-success { background-color: @state-success-bg; }
-.bg-info    { background-color: @state-info-bg; }
-.bg-warning { background-color: @state-warning-bg; }
-.bg-danger  { background-color: @state-danger-bg; }
+.bg-success { background-color: @state-success-bg; color:@state-success-text;}
+.bg-info    { background-color: @state-info-bg; color:@state-info-text;}
+.bg-warning { background-color: @state-warning-bg; color:@state-warning-text;}
+.bg-danger  { background-color: @state-danger-bg; color:@state-danger-text;}
+
+.text-aqua  { color: @aqua; }
+.text-blue  { color: @blue; }
+.text-navy  { color: @navy; }
+.text-teal  { color: @teal; }
+.text-green  { color: @green; }
+.text-olive  { color: @olive; }
+.text-lime   { color: @lime; }
+.text-yellow { color: @yellow; }
+.text-orange { color: @orange; }
+.text-red    { color: @red; }
+.text-fuchsia { color: @fuchsia; }
+.text-purple  { color: @purple; }
+.text-maroon  { color: @maroon; }
+.text-white   { color: @white; }
+.text-silver  { color: @silver; }
+.text-gray, .text-grey  { color: @gray; }
+.text-black   { color: @black; }
 
 .bg-aqua  { background-color: @aqua; color:hsla(197, 100%, 20%, 1.0);}
 .bg-blue  { background-color: @blue; color:hsla(208, 100%, 85%, 1.0);}
@@ -251,17 +283,19 @@ span.text-black, div.text-black, .bg.light + .bg-overlay { color:@black; }
 .bg-purple  { background-color: @purple; color:hsla(292, 88%, 82%, 1.0);}
 .bg-maroon  { background-color: @maroon; color:hsla(331, 74%, 70%, 1.0);}
 .bg-white   { background-color: @white; color: @black; }
-.bg-silver  { background-color: @silver; }
+.bg-silver  { background-color: @silver; color: @black; }
 .bg-gray, .bg-grey  { background-color: @gray; color:@white; }
 .bg-black   { background-color: @black; color:@white; }
 
-/* Background images in jspwiki
-markup
-    %%bg [some image link] /%
+/*
+Background images in jspwiki
+
+Markup
+>    %%bg [some image link] /%
 becomes
-    span.background(.fixed|.cover|.contain)(.top|.bottom|.left|.right)
-    div.background-overlay
-        <wrapping all siblings>
+>    span.background(.fixed|.cover|.contain)(.top|.bottom|.left|.right)
+>    div.background-overlay
+>        <wrapping all siblings>
 */
 .bg > img, .bg > img.inline, .bg > .imageplugin img { display:none; }
 
@@ -323,10 +357,10 @@ pre {
   //better is to set top & bottom margins, in case the previous dom elements is a text node
   //  margin: (@line-height-computed / 2) 0;
 
-  //overwrite bootstratp defaults: use alpha/transparency to also support dark backgrounds.
+  //overwrite bootstrap defaults: use alpha/transparency to also support dark backgrounds.
   //color: @pre-color;
-  background-color: fadeout(@pre-bg,50%);
-  border: 1px solid fadeout(@pre-border-color,50%);
+  background-color: @wiki-pre-bg;
+  border: 1px solid @wiki-pre-border-color;
 
 }
 .small pre {
@@ -335,16 +369,20 @@ pre {
 
 //inline code: jspwiki uses <tt> ; styles copied from bootstrap/code.less
 tt {
-  padding: 2px 4px;
-  font-size: 90%;
-  color: @code-color;
-  background-color: @code-bg;
-  white-space: nowrap;
-  border-radius: @border-radius-base;
+    padding: 2px 4px;
+    position: relative;
+    color: @code-color;
+    background-color: @code-bg;
+    white-space: nowrap;
+    border-radius: @border-radius-base;
+}
+//used for inline {{{code snippets}}}
+span.inline-code {
+	font-family:monospace;
+    white-space:pre;
 }
 
 //list-unstyled : bootstrap
-//list-hover
 .list-hover {
     li:hover {
         background-color:@dropdown-link-hover-bg;
@@ -352,7 +390,8 @@ tt {
     }
 }
 .list-nostyle { list-style: none; }
-
+/*Credit: https://unfetteredthoughts.net/2017/09/26/voiceover-and-list-style-type-none/ */
+.list-nostyle > * >li:before { content: "\200B"; /* add zero-width space */ }
 .list-group.raised li { border:none; }
 
 
@@ -373,9 +412,9 @@ ul[class*=list-] > li > [class*="bg-"]:only-child {
 
 
 
-.indent-1 { margin-left: 40px !important; }
-.indent-2 { margin-left: 80px !important; }
-.indent-3 { margin-left: 120px !important; }
+.indent-1 { margin-left:   @list-item-indent !important; }
+.indent-2 { margin-left: 2*@list-item-indent !important; }
+.indent-3 { margin-left: 3*@list-item-indent !important; }
 
 /*
 Links:
@@ -400,6 +439,10 @@ a:hover {
     cursor:pointer;
     //text-decoration: underline;
     -webkit-text-decoration-skip: ink;
+}
+a:focus {
+	outline:none;
+	box-shadow: 0 0 .25em @link-color;
 }
 
 //mimic :hover, for old ie cases which may not yet support :hover
@@ -428,6 +471,7 @@ a.external:after {
     //content: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVklEQVR4Xn3PgQkAMQhDUXfqTu7kTtkpd5RA8AInfArtQ2iRXFWT2QedAfttj2FsPIOE1eCOlEuoWWjgzYaB/IkeGOrxXhqB+uA9Bfcm0lAZuh+YIeAD+cAqSz4kCMUAAAAASUVORK5CYII=");
     //content:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAMAAADXEh96AAAAB3RJTUUH0wMUEC8DV5a0ngAAAAlwSFlzAAAK8AAACvABQqw0mAAAAwBQTFRFAAAAgAAAAIAAgIAAAACAgACAAICAwMDAwNzApsrw//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////vwoKCkgICA/wAAAP8A//8AAAD//wD/AP//////9ptMMgAAAAt0Uk5T/////////////wBKTwHyAAAAG0lEQVR42mPg4voJBAxcYJoBxgMSXGAKKA6lALPeEyZVnxeBAAAAAElFTkSuQmCC);
 }
+
 a.infolink,
 button + a.infolink {
    .icon--all;
@@ -498,17 +542,36 @@ a.interwiki[href*="Group.jsp?group="] {
         background-color:@link-hover-color;
     }
 }
+a[href^="https://maps.google.com/maps?q="],
+a[href^="https://maps.apple.com/maps?q="],
+a[href^="https://www.bing.com/maps/default.aspx?rtp="] {
+    &::before {
+        margin-right:.15em;
+        color:@link-color;
+        .icon--all;
+        content:@icon-map-marker;
+    }
+    &:hover::before {
+        text-decoration:none;
+        //background-color:@link-hover-color;
+    }
+}
 a.interwiki[href^="rss.jsp"],
 .feed {
 	&:after {
        .icon--all;
-        margin-left:.15em;
-        .sup;
         content:@icon-rss;
 	}
     &:hover { text-decoration:none; }
-
 }
+
+a[href^="mailto:"]::after {
+    .icon--text;
+    content:"mail-to";
+    margin-left:.15em;
+}
+
+.dropdown-menu > li > a.feed { padding-left:0; }
 
 /*
 Footnotes
@@ -605,7 +668,11 @@ div.dropcaps {
 
 //%%quote .. /%
 //.quote is replaced by <blockquote>, to reuse bootstraps styling -- see Wiki.Behaviour.js
-blockquote:last-child { margin-bottom:0; }
+blockquote {
+	border-left: @line-height-computed/2 solid @blockquote-border-color;
+
+    &:last-child { margin-bottom:0; }
+}
 
 //when showing the quote style in a dialog dropdown, use .quote-item -- see Wiki.Snips.js
 .dialog .quote-item {
@@ -652,6 +719,8 @@ blockquote:last-child { margin-bottom:0; }
 //TODO: why not use .panel iso .alert as base for these communication boxes
 .default, .success, .information, .info,  .warning, .error, .danger {
     .alert;
+    padding: ((@line-height-computed - 1) / 2);   //re-use same padding as a PRE block
+
 }
 //support inline information blocks
 span.default, span.success, span.information, span.info,  span.warning, span.error, span.danger {
@@ -663,7 +732,8 @@ span.success, span.information, span.info,  span.warning, span.error, span.dange
 }
 
 .default {
-    .alert-variant(@btn-default-bg; @btn-default-border; @btn-default-color);
+    .alert-variant(@wiki-pre-bg; @wiki-pre-border-color; @btn-default-color);
+
 }
 .success            { .alert-success; }
 .info, .information { .alert-info; }

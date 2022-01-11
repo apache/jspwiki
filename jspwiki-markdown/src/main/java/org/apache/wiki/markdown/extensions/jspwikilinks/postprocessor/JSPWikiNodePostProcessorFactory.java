@@ -18,13 +18,15 @@
 */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import org.apache.wiki.WikiContext;
-
-import com.vladsch.flexmark.ast.Document;
 import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.parser.block.NodePostProcessor;
 import com.vladsch.flexmark.parser.block.NodePostProcessorFactory;
-import com.vladsch.flexmark.util.options.DataHolder;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.data.DataHolder;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.wiki.api.core.Context;
+
+import java.util.List;
 
 
 /**
@@ -32,20 +34,27 @@ import com.vladsch.flexmark.util.options.DataHolder;
  */
 public class JSPWikiNodePostProcessorFactory extends NodePostProcessorFactory {
 
-    private final WikiContext m_context;
+    private final Context m_context;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public JSPWikiNodePostProcessorFactory( final WikiContext m_context, final DataHolder options ) {
+    public JSPWikiNodePostProcessorFactory( final Context m_context,
+                                            final DataHolder options,
+                                            final boolean isImageInlining,
+                                            final List< Pattern > inlineImagePatterns ) {
         super( true );
         addNodes( Link.class ); // needs to be called before create( Document )
         this.m_context = m_context;
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public NodePostProcessor create( final Document document ) {
-        return new JSPWikiLinkNodePostProcessor( m_context, document );
+    public NodePostProcessor apply( final Document document ) {
+        return new JSPWikiLinkNodePostProcessor( m_context, document, isImageInlining, inlineImagePatterns );
     }
 
 }

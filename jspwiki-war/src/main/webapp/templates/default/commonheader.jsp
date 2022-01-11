@@ -18,7 +18,7 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
@@ -38,72 +38,109 @@
    can be included).
 --%>
 <%-- CSS stylesheet --%>
-<link rel="stylesheet" media="screen, projection, print" type="text/css"  id="main-stylesheet"
-     href="<wiki:Link format='url' templatefile='jspwiki.css'/>"/>
-<%-- put this at the top, to avoid double load when not yet cached --%>
-<link rel="stylesheet" type="text/css" media="print"
-     href="<wiki:Link format='url' templatefile='jspwiki_print.css'/>" />
-<wiki:IncludeResources type="stylesheet"/>
-<wiki:IncludeResources type="inlinecss" />
+<%--
+BOOTSTRAP, IE compatibility / http://getbootstrap.com/getting-started/#support-ie-compatibility-modes
+--%>
+<meta charset="<wiki:ContentEncoding />">
+<meta http-equiv="x-ua-compatible" content="ie=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<%--
+<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+--%>
 
-<%-- display the more-menu inside the leftmenu, when javascript is not avail --%>
-<noscript>
-<style type="text/css">
-#hiddenmorepopup { display:block; }
-</style>
-</noscript>
+<wiki:PageExists>
+  <meta name="author" content="<wiki:Author format='plain'/>">
+  <meta name="description" content="Page version <wiki:PageVersion />, last modified by <wiki:Author format='plain'/>, on <wiki:PageDate format='${prefs["DateFormat"]}'/>" />
+  <c:set var="keywords"><wiki:Variable var='keywords' default='' /></c:set>
+  <c:if test="${!empty keywords}">
+    <meta name="keywords" content="<wiki:Variable var='keywords' default='' />" /><%--seo keywords--%>
+  </c:if>
+</wiki:PageExists>
 
-<%-- JAVASCRIPT --%>
-<script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/mootools.js'/>"></script>
-<script type="text/javascript" src="<wiki:Link format='url' jsp='scripts/jspwiki-common.js'/>"></script>
-<wiki:IncludeResources type="script"/>
 
 <%-- COOKIE read client preferences --%>
 <%
    Preferences.setupPreferences(pageContext);
- %>
+%>
+
+<%-- Localized JS; must come before any css, to avoid blocking immediate execution --%>
+<%-- var LocalizedStrings= { "javascript.<xx>":"...", etc. } --%>
+<script type="text/javascript">//<![CDATA[
+<wiki:IncludeResources type="jslocalizedstrings"/>
+String.I18N = LocalizedStrings;
+String.I18N.PREFIX = "javascript.";
+//]]></script>
+
+<link rel="stylesheet" type="text/css" media="screen, projection, print" id="main-stylesheet"
+     href="<wiki:Link format='url' templatefile='haddock.css'/>" />
+
+<c:if test="${prefs.Appearance }">
+<link rel="stylesheet" type="text/css" media="screen, projection, print" id="main-stylesheet"
+     href="<wiki:Link format='url' templatefile='haddock-dark.css'/>"/>
+</c:if>
+
+<wiki:IncludeResources type="stylesheet"/>
+<wiki:IncludeResources type="inlinecss" />
+
+<%-- JAVASCRIPT --%>
+
+<script src="<wiki:Link format='url' jsp='scripts/haddock.js'/>"></script>
+
+<wiki:IncludeResources type="script"/>
+
 
 <meta name="wikiContext" content='<wiki:Variable var="requestcontext" />' />
+<wiki:Permission permission="edit"><meta name="wikiEditPermission" content="true"/></wiki:Permission>
 <meta name="wikiBaseUrl" content='<wiki:BaseURL />' />
 <meta name="wikiPageUrl" content='<wiki:Link format="url"  page="#$%"/>' />
-<meta name="wikiEditUrl" content='<wiki:EditLink format="url" />' />
-<meta name="wikiJsonUrl" content='<%=  WikiContext.findContext(pageContext).getURL( WikiContext.NONE, "ajax" ) %>' /><%--unusual pagename--%>
+<meta name="wikiEditUrl" content='<wiki:EditLink format="url" page="#$%"/>' />
+<meta name="wikiCloneUrl" content='<wiki:EditLink format="url" page="#$%"/>&clone=<wiki:Variable var="pagename" />' />
+<meta name="wikiJsonUrl" content='<%= Context.findContext(pageContext).getURL( ContextEnum.PAGE_NONE.getRequestContext(), "ajax" ) %>' /><%--unusual pagename--%>
 <meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>
 <meta name="wikiUserName" content='<wiki:UserName />' />
 <meta name="wikiTemplateUrl" content='<wiki:Link format="url" templatefile="" />' />
 <meta name="wikiApplicationName" content='<wiki:Variable var="ApplicationName" />' />
+<%--CHECKME
+    <wiki:link> seems not to lookup the right jsp from the right template directory
+    EG when a templatefile is not present, the generated link should point to the default template.
+    Solution for now: manually force the relevant links back to the default template
+--%>
+<meta name="wikiXHRSearch" content='<wiki:Link format="url" templatefile="../default/AJAXSearch.jsp" />' />
+<meta name="wikiXHRPreview" content='<wiki:Link format="url" templatefile="../default/AJAXPreview.jsp" />' />
+<meta name="wikiXHRCategories" content='<wiki:Link format="url" templatefile="../default/AJAXCategories.jsp" />' />
+<meta name="wikiXHRHtml2Markup" content='<wiki:Link format="url" jsp="XHRHtml2Markup.jsp" />' />
+<meta name="wikiXHRMarkup2Wysiwyg" content='<wiki:Link format="url" jsp="XHRMarkup2Wysiwyg.jsp" />' />
 
 <script type="text/javascript">//<![CDATA[
-/* Localized javascript strings: LocalizedStrings[] */
-<wiki:IncludeResources type="jslocalizedstrings"/>
 <wiki:IncludeResources type="jsfunction"/>
 //]]></script>
 
-<meta http-equiv="Content-Type" content="text/html; charset=<wiki:ContentEncoding />" />
 <link rel="search" href="<wiki:LinkTo format='url' page='Search'/>"
     title='Search <wiki:Variable var="ApplicationName" />' />
 <link rel="help"   href="<wiki:LinkTo format='url' page='TextFormattingRules'/>"
     title="Help" />
-<%
-  WikiContext c = WikiContext.findContext( pageContext );
-  String frontpage = c.getEngine().getFrontPage();
- %>
- <link rel="start"  href="<wiki:LinkTo format='url' page='<%=frontpage%>' />"
-    title="Front page" />
-<link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki_print.css'/>"
-    title="Print friendly" />
-<link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='jspwiki.css'/>"
+<c:set var="frontpage"><wiki:Variable var="jspwiki.frontPage" /></c:set>
+<link rel="start"  href="<wiki:Link page='${frontpage}' format='url' />" title="Front page" />
+<link rel="alternate stylesheet" type="text/css" href="<wiki:Link format='url' templatefile='haddock.css'/>"
     title="Standard" />
-<link rel="shortcut icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico'/>" />
-<%-- ie6 needs next line --%>
-<link rel="icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico'/>" />
+
+<%-- Generated by https://realfavicongenerator.net/ --%>
+<link rel="apple-touch-icon" sizes="180x180" href="favicons/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicons/favicon-16x16.png">
+<link rel="manifest" href="favicons/site.webmanifest">
+<link rel="mask-icon" href="favicons/safari-pinned-tab.svg" color="#da532c">
+<link rel="shortcut icon" href="favicons/favicon.ico">
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="msapplication-config" content="favicons/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
 
 <%-- Support for the universal edit button (www.universaleditbutton.org) --%>
 <wiki:CheckRequestContext context='view|info|diff|upload'>
   <wiki:Permission permission="edit">
     <wiki:PageType type="page">
-    <link rel="alternate" type="application/x-wiki"
-          href="<wiki:EditLink format='url' />"
+      <link rel="alternate" type="application/x-wiki"
+           href="<wiki:EditLink format='url' />"
           title="<fmt:message key='actions.edit.title'/>" />
     </wiki:PageType>
   </wiki:Permission>
@@ -115,10 +152,6 @@
 <c:if test='${(!empty prefs.SkinName) && (prefs.SkinName!="PlainVanilla") }'>
 <link rel="stylesheet" type="text/css" media="screen, projection, print"
      href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs.SkinName}/skin.css' />" />
-<%--
-<link rel="stylesheet" type="text/css" media="print"
-     href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs.SkinName}/print_skin.css' />" />
---%>
 <script type="text/javascript"
          src="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs.SkinName}/skin.js' />" ></script>
 </c:if>

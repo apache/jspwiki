@@ -18,16 +18,16 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
-
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.MutableAttributes;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
 
-import com.vladsch.flexmark.util.html.Attributes;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 
 /**
@@ -35,10 +35,10 @@ import com.vladsch.flexmark.util.html.Attributes;
  */
 public class LocalEditLinkAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final String url;
 
-    public LocalEditLinkAttributeProviderState( final WikiContext wikiContext, final String url ) {
+    public LocalEditLinkAttributeProviderState( final Context wikiContext, final String url ) {
         this.wikiContext = wikiContext;
         this.url = url;
     }
@@ -46,10 +46,10 @@ public class LocalEditLinkAttributeProviderState implements NodeAttributeProvide
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
+     * @see NodeAttributeProviderState#setAttributes(MutableAttributes, Node)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
+    public void setAttributes( final MutableAttributes attributes, final JSPWikiLink link ) {
         final ResourceBundle rb = Preferences.getBundle( wikiContext, InternationalizationManager.CORE_BUNDLE );
         attributes.replaceValue( "title", MessageFormat.format( rb.getString( "markupparser.link.create" ), url ) );
         attributes.replaceValue( "class", MarkupParser.CLASS_EDITPAGE );

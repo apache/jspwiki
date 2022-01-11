@@ -39,7 +39,7 @@ DOM structure
 */
 function CommentBox(element, options){
 
-    var header = element.getFirst(),
+    var header = element.firstElementChild,
         caption = options.prefix.sliceArgs(element)[0],
         panelCSS = "panel".fetchContext(element);
 
@@ -50,7 +50,7 @@ function CommentBox(element, options){
 
         caption = "h4".slick({ text:caption.deCamelize() });
 
-    } else if( header && header.match("h2,h3,h4") ) {
+    } else if( header && header.matches("h2,h3,h4") ) {
 
         caption = header;
     }

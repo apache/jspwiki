@@ -32,6 +32,7 @@ Section: Responsive styles for small viewports or screens
 
 */
 
+
 /*
 very small screen-sizes,  phones in portrait mode
 */
@@ -83,9 +84,93 @@ Medium size screens,  tablets,  phones in landscape mode
 	// type.less
 	// grid.less
 	// tables.less
+	//	Use .table-responsive as wrapper around large wide tables
+	//  Modified from bootstrap/tables.less
+	.table-responsive {
+		overflow-x: auto;
+		min-height: 0.01%; // Workaround for IE9 bug (see https://github.com/twbs/bootstrap/issues/14837)
+
+	    width: 100%;
+	    margin-bottom: (@line-height-computed * 0.75);
+    	overflow-y: hidden;
+    	-ms-overflow-style: -ms-autohiding-scrollbar;
+    	border: 0; //overrule default bootstrap :  1px solid @table-border-color;
+
+	    // Tighten up spacing
+	    table, .wikitable {
+    		margin-bottom: 0;
+
+    		// Ensure the content doesn't wrap
+		    > thead,
+    		> tbody,
+    		> tfoot {
+        		> tr {
+        			> th,
+        			> td {
+            			white-space: nowrap;
+        			}
+        		}
+    		}
+    	}
+
+    	// Special overrides for the bordered tables
+    	.table-bordered {
+    		border: 0;
+
+    		// Nuke the appropriate borders so that the parent can handle them
+    		> thead,
+    		> tbody,
+    		> tfoot {
+        		> tr {
+        			> th:first-child,
+        			> td:first-child {
+            			border-left: 0;
+        			}
+	        		> th:last-child,
+    	    		> td:last-child {
+            			border-right: 0;
+        			}
+        		}
+    		}
+
+    		// Only nuke the last row's bottom-border in `tbody` and `tfoot` since
+    		// chances are there will be only one `tr` in a `thead` and that would
+    		// remove the border altogether.
+    		> tbody,
+    		> tfoot {
+        		> tr:last-child {
+        			> th,
+        			> td {
+            			border-bottom: 0;
+        			}
+        		}
+    		}
+    	}
+	}
+
+
 	// TableX.Sort.less
 	// TableX.Filter.less
 	// forms.less
+	.form-control {
+		width:auto;
+		display:inline;
+		//padding: @padding-xs-vertical @padding-xs-horizontal;
+
+	}
+	.form-group select {
+		padding-top: @padding-xs-vertical;
+		padding-bottom:@padding-xs-vertical;
+
+	    background-position:
+			( @padding-small-horizontal + @wikiTriangleSize/2 ) @padding-small-vertical*1,
+			( @padding-small-horizontal - @wikiTriangleSize*3/2 ) @padding-small-vertical*1;
+
+	}
+	label.form-switch {
+		padding-top: @padding-small-vertical;
+		padding-bottom:@padding-small-vertical;
+	}
 	// modals.less
 
 	// pagination.less
@@ -126,6 +211,7 @@ Medium size screens,  tablets,  phones in landscape mode
 	// Viewer.less
 	.viewport {
 		max-width: @wiki-small-viewport-width;
+		height: 100vh;
 		overflow:hidden;
 	}
 	// Viewer.Slimbox.less
@@ -133,11 +219,16 @@ Medium size screens,  tablets,  phones in landscape mode
 
 	// Template.View.less
 
+	// Make container 100% fluid
+	.container { padding:0; }
+
 	.header, .footer {
 	    .btn [class^="icon-"]:before { font-size: 1em;  }
 	}
 
 	.header > *:not(.titlebox), .footer > *:not(.titlebox) { padding:0;  }
+
+	.header .caret { display: none; }
 
 	.reader .pagename { font-size:1.5em; line-height:1.5;}
 	.pagename {
@@ -154,17 +245,22 @@ Medium size screens,  tablets,  phones in landscape mode
 		b:before {content:""};
 	}
 
-	.breadcrumb { display:none; }
-
 	// Template.UserBox.less
 
 	.userbox ul.dropdown-menu {
 			max-width:@wiki-small-viewport-dialog-width;
 			li:first-child a { white-space:normal; }
 	}
+	.userbox > .btn { padding: 6px  5px 6px 10px;}
 
 	// Template.SearchBox.less
 	.searchbox ul.dropdown-menu { max-width: @wiki-small-viewport-dialog-width; }
+	//.searchbox .btn .icon-search { padding: 5px 10px; }
+
+	.searchbox > .btn { padding: 6px 10px 6px 10px;}  //keep original top/bottom padding 6px
+	.searchbox > .btn > .icon-search { padding: 0;}
+
+
 
 	// Template.Nav.less
 	// Only show the menu icons
@@ -173,18 +269,34 @@ Medium size screens,  tablets,  phones in landscape mode
 		> *:first-child { display:initial; }
 		> *:nth-child(even) { display:none; }
 	}
+	#attach .badge {
+		background:transparent;
+		color:white;
+		padding:3px 0;
+		min-width:auto;
+	}
+
+	.header > .navigation .nav > li > a {
+
+		& > *:first-child { display:inline-block; }
+		&:hover > *:first-child { animation: wiggle 1s ease-in-out infinite; }
+
+	}
+	@keyframes wiggle {
+    	0% { transform:rotate(10deg); }
+	    50% { transform:rotate(-10deg); }
+    	100% { transform:rotate(10deg); }
+	}
 
 	// Template.Content.less
 	/* hide sidebar on extra small devices, and give it a fixed width
 	   the sidebar will overlay the main page which remains fit to 100% of the screen-size
 	*/
 	.content {
-		.sidebar, &:after { width: @wiki-small-viewport-dialog-width; }
-	}
-
-	//hide sidebar
-	.content {
-		.sidebar, &:after { margin-left:-100%; }
+		.sidebar, &:after {
+				width: @wiki-small-viewport-dialog-width;
+				margin-left:-100%;
+		}
 	}
 	.sidebar { position:absolute; }
 
@@ -231,7 +343,6 @@ Medium size screens,  tablets,  phones in landscape mode
 	input#changenote { max-width: @wiki-small-viewport-dialog-width; }
 
 
-	.modal,
 	.slmbx,
 	.dialog.find {
 		max-width:@wiki-small-viewport-dialog-width;

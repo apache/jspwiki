@@ -26,20 +26,25 @@
     <js>/scripts/lib/mootools-core-1.6.0.js</js>
     <js>/scripts/lib/mootools-more-1.6.0.js</js>
     <js>/scripts/lib/prettify4mar13.js</js>
+    <js>/scripts/util/polyfill.js</js>
+    <js>/scripts/util/cookies.js</js>
+    <js>/scripts/util/hash.js</js>
+    <js>/scripts/util/extend-string.js</js>
+    <js>/scripts/util/extend-function.js</js>
+    <js>/scripts/util/extend-element.js</js>
   </group>
 
   <group name="mooextend" abstract="true">
     <js>/scripts/moo-extend/Function.Extend.js</js>
     <js>/scripts/moo-extend/Behavior.js</js>
     <js>/scripts/moo-extend/String.Extend.js</js>
+    <!--<js>/scripts/moo-extend/Date.Extend.js</js>-->
     <js>/scripts/moo-extend/Array.Extend.js</js>
     <js>/scripts/moo-extend/Array.NaturalSort.js</js>
     <js>/scripts/moo-extend/Element.Extend.js</js>
-    <js>/scripts/moo-extend/Element.Placeholder.js</js>
     <js>/scripts/moo-extend/Color.js</js>
     <js>/scripts/moo-extend/HighlightQuery.js</js>
     <js>/scripts/moo-extend/Accesskey.js</js>
-    <js>/scripts/moo-extend/Cookie.Flags.js</js>
     <js>/scripts/moo-extend/Tips.js</js>
     <js>/scripts/moo-extend/Request.File.js</js>
     <js>/scripts/moo-extend/Form.MultipleFile.js</js>
@@ -67,7 +72,6 @@
   </group>
 
   <group name="haddock">
-
     <group-ref>lib</group-ref>
     <group-ref>mooextend</group-ref>
     <group-ref>behaviors</group-ref>
@@ -76,9 +80,9 @@
     <js>/scripts/wiki/Search.js</js>
     <js>/scripts/wiki/Recents.js</js>
     <js>/scripts/wiki/Findpages.js</js>
-    <js>/scripts/wiki/Category.js</js>
-    <js>/scripts/wiki/Wiki.Behaviors.js</js>
     <js>/scripts/wiki/Prefs.js</js>
+    <js>/scripts/wiki/Wiki.Behaviors.js</js>
+    <js>/scripts/wiki/Category.js</js>
 
     <css>/styles/haddock/default/build.less</css>
   </group>
@@ -86,13 +90,14 @@
   <group name="haddock-wysiwyg">
     <css>/scripts/wiki-wysiwyg/Assets/MooEditable/MooEditable.css</css>
     <css>/scripts/wiki-wysiwyg/Assets/MooEditable/MooEditable.Extras.css</css>
+    <css>/styles/haddock/default/wiki-wysiwyg.less</css>
+
     <js>/scripts/wiki-wysiwyg/Source/MooEditable/MooEditable.js</js>
     <js>/scripts/wiki-wysiwyg/Source/MooEditable/MooEditable.UI.MenuList.js</js>
     <js>/scripts/wiki-wysiwyg/Source/MooEditable/MooEditable.Extras.js</js>
   </group>
 
   <group name="haddock-edit">
-
     <js>/scripts/moo-extend/Date.Extend.js</js>
     <js>/scripts/moo-extend/Array.Extend.HSV.js</js>
 
@@ -105,6 +110,7 @@
     <js>/scripts/dialog/Dialog.Find.js</js>
 
     <js>/scripts/moo-extend/Textarea.js</js>
+    <js>/scripts/wiki-edit/Html2Wiki.js</js>
     <js>/scripts/wiki-edit/Undoable.js</js>
     <js>/scripts/wiki-edit/Snipe.js</js>
     <js>/scripts/wiki-edit/Snipe.Snips.js</js>

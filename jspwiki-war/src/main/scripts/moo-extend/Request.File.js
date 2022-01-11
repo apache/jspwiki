@@ -57,13 +57,14 @@ Request.File = new Class({
         xhr.open('POST', this.options.url, true);
         xhr.onreadystatechange = this.onStateChange.bind(this);
 
-        Object.each(this.headers, function(value, key){
+        for(var key in this.headers){
+            var value = this.headers[key];
             try {
                 xhr.setRequestHeader(key, value);
             } catch (e){
                 this.fireEvent('exception', [key, value]);
             }
-        }, this);
+        }
 
         this.fireEvent('request');
         xhr.send(this.formData);

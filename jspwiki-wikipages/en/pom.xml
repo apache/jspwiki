@@ -21,12 +21,12 @@
 
   <parent>
     <groupId>org.apache.jspwiki.wikipages</groupId>
-    <artifactId>jspwiki-wikipages-builder</artifactId>
-	  <version>2.10.6-SNAPSHOT</version>
+    <artifactId>jspwiki-knowwe-wikipages-builder</artifactId>
+    <version>2.11.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>jspwiki-wikipages-en</artifactId>
+  <artifactId>jspwiki-knowwe-wikipages-en</artifactId>
   <name>Apache JSPWiki initial wiki pages (en)</name>
 
 </project>

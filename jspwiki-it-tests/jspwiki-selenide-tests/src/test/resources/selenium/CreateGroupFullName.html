@@ -1,0 +1,109 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>JSPWiki Test Create Group Full Name</title>
+</head>
+<body> 
+<table cellpadding="1" cellspacing="1" border="1">
+	<tbody>
+	<tr><td rowspan="1" colspan="3">JSPWiki Test Create Group Full Name<br></td></tr>
+
+	<tr><td>store</td>	<td>/${it-jspwiki.context}</td>	<td>it_baseUrl</td></tr>
+	<tr><td>store</td>	<td>javascript{'Test-group-'+new Date().getTime()}</td>	<td>group</td></tr>
+	<tr><td>store</td>	<td>Janne Jalkanen</td>									<td>members</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Wiki.jsp</td>			<td>wikiurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Login.jsp</td>		<td>loginurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Group.jsp?</td>		<td>viewgroupurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/NewGroup.jsp?</td>	<td>newgroupurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/EditGroup.jsp?</td>	<td>editgroupurl</td></tr>
+	<tr><td>store</td>	<td>janne</td>	<td>TestUsername</td></tr>
+    <tr><td>store</td>	<td>myP@5sw0rd</td>	<td>TestPassword</td></tr>
+
+    <tr><td>open</td>	<td>${wikiurl}</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>G&#8217;day (anonymous guest)</td>	<td>&nbsp;</td></tr>
+
+    <!-- login -->
+    <tr><td>open</td>	<td>${loginurl}</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>verifyTitle</td>	<td>JSPWiki: Login</td>	<td>&nbsp;</td></tr>
+    <tr><td>type</td>	<td>j_username</td>	<td>${TestUsername}</td></tr>
+    <tr><td>type</td>	<td>j_password</td>	<td>${TestPassword}</td></tr>
+    <tr><td>clickAndWait</td>	<td>submitlogin</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>verifyTextNotPresent</td>	<td>Please sign in</td>	<td></td></tr>
+    <tr><td>verifyTextPresent</td>	<td>G&#8217;day</td>	<td></td></tr>
+    <tr><td>verifyTextPresent</td>	<td>(authenticated)</td>	<td></td></tr>
+        
+    <!-- First, name the group -->
+    <tr><td>open</td>	<td>${newgroupurl}</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>verifyTitle</td>		<td>JSPWiki: New Group</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>css=form#createGroup input[name="ok"]</td>	<td></td></tr>
+    <tr><td>verifyElementPresent</td>	<td>group</td>	<td></td></tr>
+    <tr><td>verifyElementPresent</td>	<td>members</td>	<td></td></tr>
+
+    <tr><td>type</td>			<td>group</td>		<td>${group}</td></tr>
+    <tr><td>type</td>			<td>members</td>	<td>${members}</td></tr>
+    <tr><td>clickAndWait</td>	<td>css=form#createGroup input[name="ok"]</td>	<td>&nbsp;</td></tr>
+        
+    <!-- Verify the group was created -->
+    <tr><td>verifyTextNotPresent</td>	<td>Could not create group</td>	<td></td></tr>
+
+    <tr><td>open</td>	<td>${viewgroupurl}group=${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTitle</td>		<td>JSPWiki: ${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>This is the wiki group called</td>	<td></td></tr>
+        
+    <!-- Log out -->
+    <tr><td>clickAndWait</td>	<td>link=Log out</td> 	<td>&nbsp;</td></tr>
+
+    <!-- Verifiy that anonymous users can't view the group -->
+    <tr><td>open</td>	<td>${viewgroupurl}group=${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>Please sign in</td>	<td></td></tr>
+        
+    <!-- Log in again and verify we can read it -->
+    <tr><td>open</td>	<td>${loginurl}</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>type</td>	<td>j_username</td>	<td>${TestUsername}</td></tr>
+    <tr><td>type</td>	<td>j_password</td>	<td>${TestPassword}</td></tr>
+    <tr><td>clickAndWait</td>	<td>submitlogin</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>open</td>	<td>${viewgroupurl}group=${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>This is the wiki group called</td>	<td></td></tr>
+        
+    <!-- Try to edit, it should be allowed -->
+    <tr><td>open</td>	<td>${editgroupurl}group=${group}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextNotPresent</td>	<td>Please sign in</td>	<td></td></tr>
+
+    <tr><td>verifyElementPresent</td>	<td>css=form#editGroup</td>	<td></td></tr>
+        
+    <!-- Log out -->
+    <tr><td>clickAndWait</td>	<td>link=Log out</td> 	<td>&nbsp;</td></tr>
+
+    
+	</tbody>
+</table>
+
+</body>
+</html>

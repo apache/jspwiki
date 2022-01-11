@@ -17,36 +17,48 @@
     under the License.
 --%>
 
-<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<%
-  WikiContext context = WikiContext.findContext( pageContext );
-  TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT, "scripts/jspwiki-prefs.js" );
-%>
 
-<wiki:TabbedSection defaultTab="${param.tab}">
+<div class="page-content">
 
-  <wiki:Tab id="prefs" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "prefs.tab.prefs")%>' accesskey="p" >
-     <wiki:Include page="PreferencesTab.jsp" />
-  </wiki:Tab>
+<wiki:UserCheck status="notAuthenticated">
+  <wiki:Include page="PreferencesTab.jsp" />
+</wiki:UserCheck>
 
-  <wiki:UserCheck status="authenticated">
+<wiki:UserCheck status="authenticated">
+<div class="tabs">
+
+  <h3 id="section-prefs">
+    <fmt:message key="prefs.tab.prefs" />
+  </h3>
+  <wiki:Include page="PreferencesTab.jsp" />
+
   <wiki:Permission permission="editProfile">
-  <wiki:Tab id="profile" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "prefs.tab.profile")%>' accesskey="o" >
-     <wiki:Include page="ProfileTab.jsp" />
-  </wiki:Tab>
+  <wiki:UserProfile property="exists">
+    <c:set var="profileTab" value="${param.tab == 'profile' ? 'data-activePane' : ''}"/>
+    <h3 ${profileTab} id="section-profile"><fmt:message key="prefs.tab.profile"/></h3>
+    <wiki:Include page="ProfileTab.jsp" />
+    <%-- <%=LocaleSupport.getLocalizedMessage(pageContext, "prefs.tab.profile")%> --%>
+  </wiki:UserProfile>
   </wiki:Permission>
-  </wiki:UserCheck>
 
-  <wiki:Permission permission="createGroups"> <!-- FIXME check right permissions -->
-  <wiki:Tab id="group" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "group.tab")%>' accesskey="g" >
+  <wiki:Permission permission="createGroups"><%-- use WikiPermission --%>
+    <c:set var="groupTab" value="${param.tab == 'groups' ? 'data-activePane' : ''}"/>
+    <wiki:CheckRequestContext context='viewGroup|editGroup|createGroup'>
+       <c:set var="groupTab">data-activePane</c:set>
+    </wiki:CheckRequestContext>
+    <h3 ${groupTab} id="section-groups"><fmt:message key="group.tab" /></h3>
     <wiki:Include page="GroupTab.jsp" />
-  </wiki:Tab>
   </wiki:Permission>
 
-</wiki:TabbedSection>
+</div>
+</wiki:UserCheck>
+
+</div>

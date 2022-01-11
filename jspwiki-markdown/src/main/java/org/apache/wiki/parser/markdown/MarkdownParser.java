@@ -18,15 +18,16 @@
  */
 package org.apache.wiki.parser.markdown;
 
-import java.io.IOException;
-import java.io.Reader;
-
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.ast.Node;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 
-import com.vladsch.flexmark.ast.Node;
-import com.vladsch.flexmark.parser.Parser;
+import java.io.IOException;
+import java.io.Reader;
 
 
 /**
@@ -34,26 +35,27 @@ import com.vladsch.flexmark.parser.Parser;
  */
 public class MarkdownParser extends MarkupParser {
 
-	private final Parser parser;
+    private final Parser parser;
 
-	public MarkdownParser( final WikiContext context, final Reader in ) {
-		super( context, in );
-		if( context.getEngine().getUserManager().getUserDatabase() == null || context.getEngine().getAuthorizationManager() == null ) {
+    public MarkdownParser( final Context context, final Reader in ) {
+        super( context, in );
+        if( context.getEngine().getManager( UserManager.class ).getUserDatabase() == null || 
+            context.getEngine().getManager( AuthorizationManager.class ) == null ) {
             disableAccessRules();
         }
-		parser = Parser.builder( MarkdownDocument.options( context ) ).build();
-	}
+        parser = Parser.builder( MarkdownDocument.options( context, isImageInlining(), getInlineImagePatterns() ) ).build();
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public WikiDocument parse() throws IOException {
-		Node document = parser.parseReader( m_in );
-		MarkdownDocument md = new MarkdownDocument( m_context.getPage(), document );
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public WikiDocument parse() throws IOException {
+        final Node document = parser.parseReader( m_in );
+        final MarkdownDocument md = new MarkdownDocument( m_context.getPage(), document );
         md.setContext( m_context );
 
-		return md;
-	}
+        return md;
+    }
 
 }

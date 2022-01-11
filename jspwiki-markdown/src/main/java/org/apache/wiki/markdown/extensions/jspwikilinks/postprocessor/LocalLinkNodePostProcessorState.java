@@ -18,14 +18,19 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.ast.HtmlInline;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeTracker;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 
-import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.util.NodeTracker;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import java.util.List;
 
 
 /**
@@ -33,26 +38,32 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
  */
 public class LocalLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final LinkParsingOperations linkOperations;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public LocalLinkNodePostProcessorState( final WikiContext wikiContext ) {
+    public LocalLinkNodePostProcessorState( final Context wikiContext,
+                                            final boolean isImageInlining,
+                                            final List< Pattern > inlineImagePatterns ) {
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
+     * @see NodePostProcessorState#process(NodeTracker, Node) 
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
         final int hashMark = link.getUrl().toString().indexOf( '#' );
-        final String attachment = wikiContext.getEngine().getAttachmentManager().getAttachmentInfoName( wikiContext, link.getUrl().toString() );
+        final String attachment = wikiContext.getEngine().getManager( AttachmentManager.class ).getAttachmentInfoName( wikiContext, link.getUrl().toString() );
         if( attachment != null  ) {
-            if( !linkOperations.isImageLink( link.getUrl().toString() ) ) {
-                final String attlink = wikiContext.getURL( WikiContext.ATTACH, link.getUrl().toString() );
+            if( !linkOperations.isImageLink( link.getUrl().toString(), isImageInlining, inlineImagePatterns ) ) {
+                final String attlink = wikiContext.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), link.getUrl().toString() );
                 link.setUrl( CharSubSequence.of( attlink ) );
                 link.removeChildren();
                 final HtmlInline content = new HtmlInline( CharSubSequence.of( link.getText().toString() ) );
@@ -69,22 +80,22 @@ public class LocalLinkNodePostProcessorState implements NodePostProcessorState< 
             if( matchedLink != null ) {
                 String sectref = "#section-" + wikiContext.getEngine().encodeName( matchedLink + "-" + MarkupParser.wikifyLink( namedSection ) );
                 sectref = sectref.replace('%', '_');
-                link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.VIEW, link.getUrl().toString() + sectref ) ) );
+                link.setUrl( CharSubSequence.of( wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link.getUrl().toString() + sectref ) ) );
             } else {
-                link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.EDIT, link.getUrl().toString() ) ) );
+                link.setUrl( CharSubSequence.of( wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), link.getUrl().toString() ) ) );
             }
         } else {
             if( linkOperations.linkExists( link.getUrl().toString() ) ) {
-                link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.VIEW, link.getUrl().toString() ) ) );
+                link.setUrl( CharSubSequence.of( wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link.getUrl().toString() ) ) );
             } else {
-                link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.EDIT, link.getUrl().toString() ) ) );
+                link.setUrl( CharSubSequence.of( wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), link.getUrl().toString() ) ) );
             }
         }
     }
 
     void addAttachmentLink( final NodeTracker state, final JSPWikiLink link ) {
-        final String infolink = wikiContext.getURL( WikiContext.INFO, link.getWikiLink() );
-        final String imglink = wikiContext.getURL( WikiContext.NONE, "images/attachment_small.png" );
+        final String infolink = wikiContext.getURL( ContextEnum.PAGE_INFO.getRequestContext(), link.getWikiLink() );
+        final String imglink = wikiContext.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "images/attachment_small.png" );
         final HtmlInline aimg = new HtmlInline( CharSubSequence.of( "<a href=\""+ infolink + "\" class=\"infolink\">" +
                                                                        "<img src=\""+ imglink + "\" border=\"0\" alt=\"(info)\" />" +
                                                                      "</a>" ) );

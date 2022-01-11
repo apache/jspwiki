@@ -14,70 +14,57 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<%
-  WikiContext c = WikiContext.findContext( pageContext );
-  int attCount = c.getEngine().getAttachmentManager().listAttachments(c.getPage()).size();
-  String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
-  if( attCount != 0 ) attTitle += " (" + attCount + ")";
-%>
+<!doctype html>
+<html lang="${prefs.Language}" name="top">
+  <head>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html id="top" xmlns="http://www.w3.org/1999/xhtml" xmlns:jspwiki="http://jspwiki.apache.org">
-
-<head>
   <title><fmt:message key="upload.title"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></title>
   <wiki:Include page="commonheader.jsp"/>
   <meta name="robots" content="noindex,nofollow" />
 </head>
 
-<body>
+<body class="context-<wiki:Variable var='requestcontext' />">
 
-<div id="wikibody" class="${prefs.Orientation}">
+<div class="container${prefs.Layout=='fixed' ? ' ' : '-fluid ' } ${prefs.Orientation} fixed-header">
 
   <wiki:Include page="Header.jsp" />
 
-  <div id="content">
+  <c:set var="sidebarState"><wiki:Variable var="sidebar" default="${prefs.Sidebar}" /></c:set>
+  <c:set var="sidebarCookie" value="Sidebar" />
+  <wiki:CheckRequestContext context='login|prefs|createGroup|viewGroup|conflict'>
+    <c:set var="sidebarState" value="" />
+    <c:set var="sidebarCookie" value="" />
+  </wiki:CheckRequestContext>
 
-    <div id="page">
-      <wiki:Include page="PageActionsTop.jsp"/>
+  <div class="content ${sidebarState}" data-toggle="li#menu,.sidebar>.close"
+                                       data-toggle-pref="${sidebarCookie}" >
+    <div class="page" role="main">
+      <wiki:PageExists>
+        <wiki:Include page="AttachmentTab.jsp"/>
+      </wiki:PageExists>
 
-      <wiki:TabbedSection defaultTab="attachments" >
-        <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>'
-	  		     url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>"
-	       accesskey="v" >
-        </wiki:Tab>
-        
-        <wiki:PageExists>
-        <wiki:Tab id="attachments" title="<%= attTitle %>" >
-          <wiki:Include page="AttachmentTab.jsp"/>
-        </wiki:Tab>
-        <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
-                 url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
-           accesskey="i" >
-        </wiki:Tab>
+      <wiki:NoSuchPage>
+        <div class="danger">
+        <fmt:message key="common.nopage">
+          <fmt:param><a class="createpage" href="<wiki:EditLink format='url'/>"><fmt:message key="common.createit"/></a></fmt:param>
+        </fmt:message>
+        </div>
+      </wiki:NoSuchPage>
 
-        </wiki:PageExists>
-      </wiki:TabbedSection>
-
-      <wiki:Include page="PageActionsBottom.jsp"/>
-
+      <wiki:Include page="PageInfo.jsp"/>
     </div>
-
-    <wiki:Include page="Favorites.jsp"/>
-
-	<div class="clearbox"></div>
+    <wiki:Include page="Sidebar.jsp"/>
   </div>
-
   <wiki:Include page="Footer.jsp" />
 
 </div>

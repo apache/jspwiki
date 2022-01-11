@@ -1,0 +1,82 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<title>Test Suite</title>
+</head>
+
+<!-- Note: Selenium IDE's export-to-JUnit feature (so far not used by JSPWiki)
+uses the text contents of the anchor tags below in creating the Java class name,
+including invalid spaces and punctuation if part of the text contents.  Using 
+alphanumeric CamelCase in the text areas will keep any generated JUnit class
+names valid. -->
+<body>
+
+    <table id="suiteTable"    cellpadding="1"
+           cellspacing="1"
+           border="1"
+           class="selenium">
+        <tbody>
+		<tr><td><b>JSPWiki Test Suite for ${it-jspwiki.context}</b></td></tr>
+		
+        <!-- Anonymous user tests -->
+        <tr><td><a href="./AnonymousView.html">AnonymousView</a></td></tr>
+        <tr><td><a href="./AnonymousViewImage.html">AnonymousViewImage</a></td></tr>
+
+        <!-- Asserted user tests -->
+        <tr><td><a href="./AssertedName.html">AssertedName</a></td></tr>
+        <tr><td><a href="./AssertedPermissions.html">AssertedPermissions</a></td></tr>
+
+        <!-- Authentication tests -->
+        <tr><td><a href="./Login.html">Login</a></td></tr>
+        <tr><td><a href="./Logout.html">Logout</a></td></tr>
+        <tr><td><a href="./RedirectAfterLogin.html">RedirectAfterLogin</a></td></tr>
+
+        <!-- Page creation/rename tests -->
+        <tr><td><a href="./CreatePage.html">CreatePage</a></td></tr>
+        <tr><td><a href="./RenamePage.html">RenamePage</a></td></tr>
+        
+        <!-- Page deletion tests -->
+        <tr><td><a href="./DeletePage.html">DeletePage</a></td></tr>
+        <tr><td><a href="./DeletePageNonAdmin.html">DeletePageNonAdmin</a></td></tr>
+        
+        <!-- ACL tests -->
+        <tr><td><a href="./AclJanneEdit.html">AclJanneEditNobodyElseCanView</a></td></tr>
+        <tr><td><a href="./AclJanneEditAllView.html">AclJanneEditAllCanView</a></td></tr>
+        
+        <!-- Group creation tests -->
+        <tr><td><a href="./AnonymousCreateGroup.html">AnonymousCreateGroup</a></td></tr>
+        <tr><td><a href="./CreateGroupFullName.html">CreateGroupFullName</a></td></tr>
+        <tr><td><a href="./CreateGroupLoginName.html">CreateGroupLoginName</a></td></tr>
+        <tr><td><a href="./CreateGroupWikiName.html">CreateGroupWikiName</a></td></tr>
+        
+        <!-- User profile/preferences tests -->
+        <tr><td><a href="./RenameProfile.html">RenameProfile</a></td></tr>
+
+        <!-- View Page Source Test -->
+        <tr><td><a href="./ViewPageSource.html">ViewPageSource</a></td></tr>
+
+        </tbody>
+    </table>
+
+</body>
+</html>

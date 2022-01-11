@@ -1,0 +1,677 @@
+%%add-css
+
+/* Inspired by:  https://medium.com/@mwichary/dark-theme-in-a-day-3518dde2955a. Adapted for JSPWIKI,  as delta on top of haddock.css.   */
+
+html {
+  /*red / ...
+  --hue: 10;
+  --accent-hue: 185;
+  */
+  /*green / ...
+  --hue: 110;
+  --accent-hue: 285;
+  */
+  /* blue / orange */
+  --hue: 210;
+  --accent-hue: 25;
+
+  --text-color-normal: hsl(var(--hue), 10%, 62%);
+  --text-color-light: hsl(var(--hue), 15%, 35%);
+  --text-color-richer: hsl(var(--hue), 50%, 72%);
+  --text-color-highlight: hsl(var(--accent-hue), 70%, 45%);
+
+  --link-color: hsl(var(--accent-hue), 90%, 70%);
+
+  --accent-color: hsl(var(--accent-hue), 100%, 70%);
+  --error-color: rgb(240, 50, 50);
+
+  --button-background: hsl(var(--hue), 63%, 43%);
+  --button-text-color: black;
+
+  --background: hsla(var(--hue), 20%, 12%, 0.9);
+  --background-sidebar: hsla(var(--hue), 20%, 28%, 0.5);
+  --background-light: hsla(var(--hue), 20%, 28%, 0.9);
+  --background-lighter: hsla(var(--hue), 20%, 32%, 0.9);
+
+  --background-dropdown: hsla(var(--hue), 20%, 20%, 0.95);
+  --background-dialog: hsla(var(--hue), 20%, 20%, 0.95);
+
+  --border-color: var(--background-lighter);
+
+  --context-primary: #0088cc;
+  --context-success: #47a447;
+  --context-info: #5bc0de;
+  --context-warning: #ed9c28;
+  --context-error: #d53f3a;
+  --color-black: #111;
+  --color-white: #fff;
+}
+
+::selection {
+  color:var(--accent-color);
+  background-color: var(--color-black);
+}
+
+/* --- BOOTSTRAP --- */
+
+.panel {
+  background-color: var(--background-light);
+  border-color: var(--border-color);
+}
+.panel-default .panel-heading {
+  background-color: var(--background-lighter);
+  border-color: var(--border-color);
+  color:inherit;
+}
+
+.list-group-item {
+  background-color: var(--background-light);
+  border-color: var(--border-color);
+}
+
+.nav-tabs {
+  border-color: var(--border-color);
+}
+.nav-tabs > li > a {
+  color:inherit;
+}
+.nav-tabs > li > a:hover {
+  background-color: var(--background-light);
+  border-color: var(--border-color);
+  color:inherit;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active {
+  background:transparent;
+  color:var(--text-color-richer);
+  border-color: var(--border-color);
+  border-bottom-color: var(--background);
+}
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  background-color: var(--background-lighter);
+  border-color: var(--border-color);
+  color:var(--text-color-richer);
+}
+
+/*.nav-pills > li.active > a,
+.nav-pills > li.active > a:hover,
+.nav-pills > li.active > a:focus {
+
+}*/
+.nav > li > a:hover, .nav > li > a:focus {
+  background-color: var(--background-lighter);
+  border-color: var(--border-color);
+  color:var(--text-color-richer);
+}
+
+
+.btn-default,
+.default {
+  background-color: var(--background-light);
+  border-color: var(--border-color);
+  color:var(--text-color-richer);
+}
+.btn:hover, .btn:focus, .btn.focus,
+.btn-default:hover {
+  background-color: var(--background-lighter);
+  border-color: var(--border-color);
+  color:var(--text-color-richer);
+}
+.btn.disabled:hover {
+  background-color: var(--background-lighter);
+  border-color: var(--border-color);
+}
+.btn-default:active,
+.btn-default:active:hover,
+.btn-default.active,
+.btn-default.active:hover {
+  background-color: var(--background-lighter);
+  border-color: var(--border-color);
+  color:var(--accent-color);
+}
+
+.dropdown-menu {
+  background-color: var(--background-dropdown);
+  border-color: var(--border-color);
+}
+.dropdown-header {
+  color:var(--text-color-richer);
+}
+.dropdown-menu .divider {
+  background-color: var(--border-color);
+}
+.dropdown-menu > li > a {
+  color:var(--text-color-normal);
+}
+.dropdown-menu > li > a:hover {
+  background-color: var(--background-lighter);
+  color:inherit;
+}
+
+.form-control {
+  background-color: var(--background-light);
+  border-color: var(--border-color);
+}
+.form-control:focus {
+  border-color: var(--accent-color);
+}
+.form-control[[disabled] {
+  background-color: transparent;
+  border-color: var(--border-color);
+}
+.form-frame {
+  border-color: var(--border-color);
+}
+
+select,
+.form-group select {
+  background-color: var(--background-light);
+  border-color: var(--border-color);
+  color:var(--text-color-normal);
+}
+
+.modal {
+  background-color: var(--background-dropdown);
+  color:var(--text-color-normal);
+}
+
+/*pagination.less*/
+.pagination {
+  background-color: var(--background-light);
+  border-color: var(--border-color);
+}
+.pagination a {
+  color:var(--link-color);
+  text-decoration:none;
+}
+.pagination .cursor,
+.pagination a:hover {
+  background-color: var(--background-lighter);
+  border-color: var(--border-color);
+  color: var(--accent-color);
+}
+
+/* --- JSPWiki --- */
+
+/* --- variables.less --- */
+
+/* --- type.less --- */
+
+hr,.hr {
+  border-color: var(--border-color);
+}
+
+mark, .highlight {
+  background-color: var(--accent-color) !important;
+  color:var(--text-color-highlight);
+}
+
+span.text-white, div.text-white, .bg.dark + .bg-overlay { color:var(--text-color-normal;); }
+/*span.text-black, div.text-black, .bg.light + .bg-overlay { color:(var(--text-???); } */
+
+.text-primary { color: var(--context-primary); }
+.text-success { color: var(--context-success); }
+.text-info { color: var(--context-info); }
+.text-warning { color: var(--context-warning); }
+.text-error,
+.text-danger { color: var(--context-error); }
+
+/* primary */
+.panel-primary > .panel-heading,
+.bg-primary {
+  background-color: var(--context-primary);
+  border-color: var(--context-primary);
+  color:var(--color-white);
+}
+.panel-primary > .panel-heading a:link,
+.bg-primary a:link {
+  color:var(--color-black);
+}
+/* success */
+.panel-success > .panel-heading,
+.success,
+.bg-success {
+  background-color: var(--context-success);
+  border-color: var(--context-success);
+  color:var(--color-black);
+}
+.panel-success > .panel-heading a:link,
+.success a:link,
+.bg-success a:link {
+  color:inherit;
+  text-decoration:underline;
+}
+/* info */
+.panel-info > .panel-heading,
+.info, .information,
+.bg-info  {
+  background-color: var(--context-info);
+  border-color: var(--context-info);
+  color:var(--color-black);
+}
+.panel-info > .panel-heading a:link,
+.info a:link, .information a:link,
+.bg-info a:link {
+  color:inherit; 
+  text-decoration:underline;
+}
+/* warning */
+.panel-warning > .panel-heading,
+.alert-warning,
+.warning,
+.bg-warning {
+  background-color: var(--context-warning);
+  border-color: var(--context-warning);
+  color:var(--color-black);
+}
+.panel-warning > .panel-heading a:link,
+.alert-warning a:link,
+.warning a:link,
+.bg-warning  a:link {
+  color:inherit;
+  text-decoration:underline;
+}
+/* danger, error */
+.panel-danger > .panel-heading,
+.error,.danger,
+.bg-danger  {
+  background-color: var(--context-error);
+  border-color: var(--context-error);
+  color:var(--color-black);
+}
+.panel-danger > .panel-heading a:link,
+.error a:link,.danger a:link,
+.bg-danger a:link  {
+  color:inherit;
+  text-decoration:underline;
+}
+
+span.label { color:var(--color-black); }
+
+pre {
+  background-color:var(--background-light);
+  border-color:var(--border-color);
+  color:var(--text-color-richer);
+}
+
+code,
+tt {
+  background-color:var(--background-light);
+  border-color:var(--border-color);
+  color:var(--text-color-richer);
+}
+
+a.list-group-item:hover,
+.list-hover li:hover {
+  background-color:var(--background-lighter);
+  color:inherit;
+}
+
+.tree ul li::before,
+.tree ul li::after {
+  background: var(--border-color);
+}
+
+.list-hover li:hover {
+  background-color:var(--background-lighter);
+}
+
+.hover {
+    background-color:var(--background-lighter);
+}
+
+a.slimbox-link:after,
+.slimbox-btn:before,
+a:visited,
+a:link { color:var(--link-color); }
+
+a.createpage {
+  color:var(--error-color);
+}
+
+.interwiki-raw::after,
+a.interwiki[[href$="skin=raw"]::after,
+.interwiki-reader::after,
+a.interwiki[[href$="skin=reader"]::after,
+.interwiki-edit::after,
+a.interwiki[[href*="Edit.jsp?page="]::after,
+.interwiki-group::after,
+a.interwiki[[href*="Group.jsp?group="]::after,
+a.interwiki[[href^="rss.jsp"]::after {
+    background-color:var(--background-lighter);
+    color:var(--accent-color);
+}
+
+.editsection,
+.hashlink {
+  background-color: var(--background-light);
+  border-color: var(--border-color);
+  color:var(--link-color);
+}
+h2 .editsection:hover,
+h3 .editsection:hover,
+h4 .editsection:hover,
+h2 .hashlink:hover,
+h3 .hashlink:hover,
+h4 .hashlink:hover {
+  background-color: var(--background-lighter);
+  border-color: var(--border-color);
+  color:var(--link-color);
+  opacity:1;
+}
+
+div.dropcaps  > span.dropcaps {
+  color: var(--text-color-highlight);
+}
+blockquote,
+.dialog .quote-item {
+  border-color:var(--text-color-highlight);
+}
+.page-break {
+  border-color: var(--border-color);
+}
+
+
+/* --- grid.less --- */
+/* --- tables.less --- */
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+  border-color: var(--border-color);
+}
+
+.wikitable > thead > tr > th,
+.wikitable > tbody > tr > th,
+.wikitable > tfoot > tr > th,
+.wikitable > thead > tr > td,
+.wikitable > tbody > tr > td,
+.wikitable > tfoot > tr > td,
+.wikitable tr:first-child th {
+  border-color: var(--border-color);
+}
+
+.table-bordered,
+.table-bordered tr:first-child th,
+.table-bordered tr:first-child td {
+  border-color: var(--border-color);
+}
+.table-bordered > thead > tr > th,
+.table-bordered > tbody > tr > th,
+.table-bordered > tfoot > tr > th,
+.table-bordered > thead > tr > td,
+.table-bordered > tbody > tr > td,
+.table-bordered > tfoot > tr > td {
+  border-color: var(--border-color);
+}
+
+.table-hover > tbody > tr:nth-of-type(odd):hover,
+.table-hover > tbody > tr:nth-child(odd):hover > td,
+.table-hover > tbody > tr:nth-child(odd):hover > th,
+.table-hover > tbody > tr:hover {
+  background-color: var(--background-lighter);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) ,
+.table-striped > tbody > tr:nth-child(odd) > td,
+.table-striped > tbody > tr:nth-child(odd) > th {
+  background-color: var(--background-light);
+}
+[[class*=zebra] .odd {
+  background-color: var(--background-light);
+}
+
+
+/* --- TableX.Sort.less --- */
+.sortable th:hover {
+  background-color: var(--background-lighter);;
+}
+.sortable th.up:after,
+.sortable th.up:hover:after {
+  border-bottom-color: var(--accent-color);
+  opacity:1;
+}
+.sortable th:hover:after,
+.sortable th.down:after,
+.sortable th.down:hover:after {
+  border-top-color: var(--accent-color);
+  opacity:1;
+}
+
+/* --- TableX.Filter.less --- */
+/* --- forms.less --- */
+/* --- modals.less --- */
+
+/* --- fontjspwiki/font-jspwiki.less --- */
+/* --- dropdown.less --- */
+
+/* --- pagination.less --- */
+/* --- Tips.less --- */
+.tip-link,
+.tip-link:hover {
+  color: var(--link-color);
+}
+/* --- Magnify.less --- */
+/* --- Viewer.less --- */
+/* --- Viewer.Slimbox.less --- */
+/* --- Viewer.Carousel.less --- */
+/* --- Template.View.less --- */
+.header, .footer {
+  background-image: -webkit-radial-gradient(circle, var(--background-light), var(--background));
+  background-image: radial-gradient(circle, var(--background-light), var(--background) );
+  color:var(--text-color-normal);
+}
+a.logo { border-color: var(--border-color); }
+
+
+div.admin .formcontainer {
+  /*.default*/
+  background-color: var(--background-light);
+  border-color: var(--border-color);
+  color:var(--text-color-richer);
+}
+
+.admin .formcontainer table {
+  border-color: var(--border-color);
+  /*
+      .table;
+      .table-bordered;
+      .table-striped;
+  */
+}
+.admin-user-form > div#userlist .list-group-item.new-user{
+  background-color: var(--background-light);
+  border-color: var(--border-color);
+  color:var(--text-color-richer);
+}
+
+
+
+
+/* --- Template.UserBox.less --- */
+.login-form {
+  background-color: var(--background-dialog);
+  border:1px solid var(--border-color);
+}
+.login-form hr { border-color:var(--border-color); }
+
+
+/* --- Template.SearchBox.less --- */
+/* --- Template.Nav.less --- */
+.badge,
+.header > .navigation  .nav > li > a > .badge {
+  background-color:var(--background-lighter);
+  color:var(--text-color-normal);
+}
+
+.header > .navigation .nav .btn-xs .badge {
+  background-color: var(--background-lighter);
+}
+
+/* --- Template.Content.less --- */
+body, .content {
+  background-color: var(--background);
+  color:var(--text-color-normal);
+  overflow-y: auto;
+}
+.content:after {
+  background: var(--background-sidebar);
+}
+/* --- Template.Attach.less --- */
+/* --- Template.Diff.less --- */
+.diffadd { background-color:var(--context-success); color:var(--color-black);  }
+.diffrem { background:var(--context-error); color:var(--color-black); }
+
+/* --- Template.Search.less --- */
+
+form#searchform2 + div 	.fragment {
+  color: var(--text-color-richer);
+}
+form#searchform2 + div .gb-bar {
+  background-color: var(--context-warning);
+}
+
+/* --- Template.Workflow.less --- */
+/* --- Template.Edit.less --- */
+
+.editform input[[type="text"]:focus,
+.dialog.find input[[type="text"]:focus,
+.editform textarea:focus,
+.dialog.find textarea:focus {
+  background-color:var(--background-lighter);
+  border-color:var(--border-color);
+  color:var(--text-color-richer);
+}
+.ajaxpreview {
+  border-color:var(--border-color);
+}
+.edit-area ~ .ajaxpreview {
+  border-left-color:var(--border-color);
+}
+
+/* --- Dialog.less --- */
+.dialog {
+  background-color: var(--background-dialog);
+  border-color: var(--border-color);
+}
+.dialog .caption {
+  border-color: var(--border-color);
+  color: var(--text-color-normal);
+}
+.dialog.selection .body .item:hover {
+  background-color: var(--background-lighter);
+}
+.dialog.selection .body .divider {
+  background-color: var(--border-color);
+}
+
+.dialog.find [[name=tbTEXTSEL] {  /*same as selected text*/
+  color:var(--accent-color);
+  background-color: var(--color-black);
+}
+
+
+
+/* --- Template.Preview.less --- */
+
+/* --- ImagePlugin.less --- */
+/* --- IndexPlugin.less --- */
+
+.index .header {
+  background-color:var(--background-light);
+  border-color:var(--border-color);
+}
+.index .header:hover {
+  background-color:var(--background-light);
+}
+.index .header a {
+  color:var(--text-color-richer);
+}
+.index .header a:hover {
+  background-color:var(--background-lighter);
+}
+.index > .section a {
+  color:var(--text-color-richer);
+}
+
+
+/* --- TOCPlugin.less --- */
+
+.toc ul li:hover {
+  background-color:var(--background-lighter);
+}
+
+/* --- WeblogPlugin.less --- */
+/* --- RecentChangesPlugin.less --- */
+
+.recentchanges .date {
+  border-color:var(--border-color);
+}
+/* --- CommentBox.less --- */
+
+
+/* --- GraphBar.less --- */
+.gb-group {
+  background-color:var(--background-light);
+  border:1px solid var(--border-color);
+}
+
+/* --- Tabs.less --- */
+/* --- Accordion.less --- */
+/* --- Columns.less --- */
+.columns.border,
+.columns.border > .col:not(:last-child)  {
+  border-color:var(--border-color);
+}
+.columns.hover .col:hover {
+  background-color: var(--background-lighter);
+}
+
+
+/* --- Collapsible.less --- */
+.bullet, .bullet.clpse { border-left-color: var(--text-color-normal); }
+.bullet.clpse:hover { border-left-color: var(--text-color-richer); }
+
+.bullet.xpand { border-top-color: var(--text-color-normal); }
+.bullet.xpand:hover { border-top-color: var(--text-color-richer); }
+
+/* --- Category.less --- */
+.category-link {
+  border-color:var(--border-color);
+}
+/* --- Flip.less --- */
+/* --- Invisibles.less --- */
+/* --- prettify.less --- */
+  .prettify pre,  .prettify-nonum pre, pre.prettylines {
+  background-color:var(--background-light);
+  border-color:var(--border-color);
+  color:var(--text-color-richer);
+  }
+  .pln { color: #cccccc; }  /* plain text */
+  .str { color: #99cc99; }  /* string content */
+  .kwd { color: #ffeea6; }  /* keyword */
+  .com { color: #8a8a80; }  /* comment */
+  .typ { color: #bbdaff; }  /* type name */
+  .lit { color: #FCA369; }  /* literal value */
+  .pun { color: #cda869; }  /* punctuation */
+  .opn { color: #ffffff; }  /* lisp open bracket */
+  .clo { color: #ffffff; }  /* lisp close bracket */
+  .tag { color: #78AAD6; }  /* markup tag name */
+  .atn { color: #ffc58f; }  /* markup attribute name */
+  .atv { color: #FFD479; }  /* markup attribute value */
+  .dec { color: #D6ACD6; }  /* declaration */
+  .var { color: #76D4D6; }  /* variable name */
+  .fun { color: #d6acd6; }  /* function name */
+
+/* --- responsive-viewport.less --- */
+/* --- print.less --- */
+
+/% 
+
+
+[{ALLOW edit Admin}]
+[{ALLOW view All}]

@@ -19,17 +19,20 @@
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page language="java" pageEncoding="UTF-8"%>
-<%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="java.util.Collection" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="org.apache.commons.lang3.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
+<%@ page import="org.apache.wiki.api.search.SearchResult" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ page import="org.apache.wiki.search.SearchResult" %>
+<%@ page import="org.apache.wiki.search.SearchManager" %>
 <%@ page import="org.apache.wiki.ui.*" %>
-<%@ page import="java.util.*" %>
-<%@ page import="java.util.Collection" %>
-<%@ page import="org.apache.commons.lang.*" %>
-<%@ page import="java.net.URLEncoder" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
@@ -38,17 +41,17 @@
 <%!
   public void jspInit()
   {
-    wiki = WikiEngine.getInstance( getServletConfig() );
+    wiki = Wiki.engine().find( getServletConfig() );
   }
-  Logger log = Logger.getLogger("JSPWikiSearch");
-  WikiEngine wiki;
+  Logger log = LogManager.getLogger("JSPWikiSearch");
+  Engine wiki;
 %>
 <%
   /* ********************* actual start ********************* */
   /* FIXME: too much hackin on this level -- should better happen in toplevel jsp's */
-  /* Create wiki context and check for authorization */
-  WikiContext wikiContext = wiki.createContext( request, WikiContext.FIND );
-  if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+
+  Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_FIND.getRequestContext() );
+  if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
 
   String query = request.getParameter( "query");
 
@@ -56,18 +59,18 @@
   {
     try
     {
-      Collection list = wiki.findPages( query, wikiContext );
+      Collection< SearchResult > list = wiki.getManager( SearchManager.class ).findPages( query, wikiContext );
 
       //  Filter down to only those that we actually have a permission to view
-      AuthorizationManager mgr = wiki.getAuthorizationManager();
+      AuthorizationManager mgr = wiki.getManager( AuthorizationManager.class );
 
-      ArrayList items = new ArrayList();
+      ArrayList< SearchResult > items = new ArrayList<>();
 
-      for( Iterator i = list.iterator(); i.hasNext(); )
+      for( Iterator< SearchResult > i = list.iterator(); i.hasNext(); )
       {
-        SearchResult r = (SearchResult)i.next();
+        SearchResult r = i.next();
 
-        WikiPage p = r.getPage();
+        Page p = r.getPage();
 
         PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
 
@@ -102,19 +105,19 @@
 
 <wiki:SearchResults>
 
-  <h4><fmt:message key="find.heading.results"><fmt:param><c:out value="${param.query}"/></fmt:param></fmt:message></h4>
+  <h4 id="find-heading-results"><fmt:message key="find.heading.results"><fmt:param><c:out value="${param.query}"/></fmt:param></fmt:message></h4>
 
   <p>
   <fmt:message key="find.externalsearch"/>
-    <a class="external"
+    &nbsp;<a class="external"
         href="http://www.google.com/search?q=<c:out value='${param.query}'/>"
         title="Google Search '<c:out value='${param.query}'/>'"
-       target="_blank">Google</a><img class="outlink" src="images/out.png" alt="" />
+       target="_blank">Google</a>
     |
     <a class="external"
         href="http://en.wikipedia.org/wiki/Special:Search?search=<c:out value='${param.query}'/>"
         title="Wikipedia Search '<c:out value='${param.query}'/>'"
-       target="_blank">Wikipedia</a><img class="outlink" src="images/out.png" alt="" />
+       target="_blank">Wikipedia</a>
   </p>
 
   <wiki:SetPagination start="${param.start}" total="<%=list.size()%>" pagesize="20" maxlinks="9"
@@ -123,11 +126,11 @@
 
     <div class="graphBars">
     <div class="zebra-table">
-    <table class="wikitable  table-striped" >
+    <table class="wikitable  table-striped" aria-describedby="find-heading-results">
 
       <tr>
-         <th align="left"><fmt:message key="find.results.page"/></th>
-         <th align="left"><fmt:message key="find.results.score"/></th>
+         <th scope="col"><fmt:message key="find.results.page"/></th>
+         <th scope="col"><fmt:message key="find.results.score"/></th>
       </tr>
 
       <wiki:SearchResultIterator id="searchref" start="${param.start}" maxItems="<%=maxitems%>">

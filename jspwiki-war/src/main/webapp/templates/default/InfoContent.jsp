@@ -17,37 +17,34 @@
     under the License.
 --%>
 
-<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.ui.progress.ProgressManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="java.security.Permission" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext c = WikiContext.findContext(pageContext);
-  WikiPage wikiPage = c.getPage();
-  int attCount = c.getEngine().getAttachmentManager().listAttachments( c.getPage() ).size();
+  Context c = Context.findContext(pageContext);
+  Page wikiPage = c.getPage();
+  int attCount = c.getEngine().getManager( AttachmentManager.class ).listAttachments( c.getPage() ).size();
   String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
   if( attCount != 0 ) attTitle += " (" + attCount + ")";
-  
-  String tabParam = (String)request.getParameter( "tab" );
-  if ( tabParam == null ) tabParam = "info";
-
-  String parm_renameto = (String)request.getParameter( "renameto" );
-  if( parm_renameto == null ) parm_renameto = wikiPage.getName();
 
   String creationAuthor ="";
 
   //FIXME -- seems not to work correctly for attachments !!
-  WikiPage firstPage = c.getEngine().getPage( wikiPage.getName(), 1 );
+  Page firstPage = c.getEngine().getManager( PageManager.class ).getPage( wikiPage.getName(), 1 );
   if( firstPage != null )
   {
     creationAuthor = firstPage.getAuthor();
@@ -76,34 +73,20 @@
   if( parm_start != null ) startitem = Integer.parseInt( parm_start ) ;
 
   /* round to start of block: 0-19 becomes 0; 20-39 becomes 20 ... */
-  if( startitem > -1 ) startitem = ((startitem)/pagesize) * pagesize;
+  if( startitem > -1 ) startitem = ( startitem / pagesize ) * pagesize;
 
   /* startitem drives the pagination logic */
   /* startitem=-1:show all; startitem=0:show block 1-20; startitem=20:block 21-40 ... */
 %>
+<div class="page-content">
+
 <wiki:PageExists>
 
-<%-- part 1 : normal wiki pages --%>
 <wiki:PageType type="page">
-
-  <wiki:TabbedSection defaultTab="<%=tabParam%>">
-
-  <wiki:Tab id="pagecontent"
-         title='<%=LocaleSupport.getLocalizedMessage(pageContext, "actions.view")%>'
-     accesskey="v"
-	       url="<%=c.getURL(WikiContext.VIEW, c.getPage().getName())%>">
-      <%--<wiki:Include page="PageTab.jsp"/> --%>
-  </wiki:Tab>
-
-  <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
-    <wiki:Include page="AttachmentTab.jsp"/>
-  </wiki:Tab>
-
-  <%-- actual infopage content --%>
-  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>' accesskey="i" >
+  <div class="form-frame">
   <p>
   <fmt:message key='info.lastmodified'>
-    <fmt:param><wiki:PageVersion >1</wiki:PageVersion></fmt:param>
+    <fmt:param><span class="badge"><wiki:PageVersion >1</wiki:PageVersion></span></fmt:param>
     <fmt:param>
       <a href="<wiki:DiffLink format='url' version='latest' newVersion='previous' />"
         title="<fmt:message key='info.pagediff.title' />" >
@@ -112,12 +95,11 @@
     </fmt:param>
     <fmt:param><wiki:Author /></fmt:param>
   </fmt:message>
-
-  <wiki:RSSImageLink mode="wiki"/>
+  <wiki:RSSImageLink mode="wiki" title="<fmt:message key='info.feed'/>" />
   </p>
 
   <wiki:CheckVersion mode="notfirst">
-    <p>
+  <p>
     <fmt:message key='info.createdon'>
       <fmt:param>
         <wiki:Link version="1">
@@ -126,139 +108,140 @@
       </fmt:param>
       <fmt:param><%= creationAuthor %></fmt:param>
     </fmt:message>
-    </p>
+  </p>
   </wiki:CheckVersion>
 
   <wiki:Permission permission="rename">
 
-    <div class="formhelp">
-      <wiki:Messages div="error" topic="rename" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.rename")%>'/>
-    </div>
+    <wiki:Messages div="alert alert-danger" topic="rename" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.rename")%>'/>
 
     <form action="<wiki:Link format='url' jsp='Rename.jsp'/>"
-           class="wikiform"
+           class="form-group form-inline"
               id="renameform"
-        onsubmit="return Wiki.submitOnce(this);"
           method="post" accept-charset="<wiki:ContentEncoding />" >
-      <p>
+
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
-      <input type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
-      <input type="text" name="renameto" value="<%= parm_renameto %>" size="40" />
-      &nbsp;&nbsp;
-      <input type="checkbox" name="references" checked="checked" />
-      <fmt:message key="info.updatereferrers"/>
-      </p>
+      <input class="btn btn-success" type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
+      <input class="form-control form-col-50" type="text" name="renameto"
+             value="<c:out value='${param.renameto}' default='<%= wikiPage.getName() %>'/>" size="40" />
+      <label class="btn btn-default" for="references">
+        <input type="checkbox" name="references" id="references" checked="checked" />
+        <fmt:message key="info.updatereferrers"/>
+      </label>
     </form>
   </wiki:Permission>
   <wiki:Permission permission="!rename">
-      <p><fmt:message key="info.rename.permission"/></p>
+    <p class="text-warning"><fmt:message key="info.rename.permission"/></p>
   </wiki:Permission>
 
   <wiki:Permission permission="delete">
-    <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
-           class="wikiform"
+    <form action="<wiki:Link format='url' context='<%=ContextEnum.PAGE_DELETE.getRequestContext()%>' />"
+           class="form-group"
               id="deleteForm"
-          method="post" accept-charset="<wiki:ContentEncoding />"
-        onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );">
-      <p>
-      <input type="submit" name="delete-all" id="delete-all"
+          method="post" accept-charset="<wiki:ContentEncoding />" >
+      <input class="btn btn-danger" type="submit" name="delete-all" id="delete-all"
+        data-modal="+ .modal"
             value="<fmt:message key='info.delete.submit'/>" />
-      </p>
+      <div class="modal"><fmt:message key='info.confirmdelete'/></div>
     </form>
   </wiki:Permission>
   <wiki:Permission permission="!delete">
-      <p><fmt:message key="info.delete.permission"/></p>
+    <p class="text-warning"><fmt:message key="info.delete.permission"/></p>
   </wiki:Permission>
 
-  <div class="collapsebox-closed" id="incomingLinks">
-  <h4><fmt:message key="info.tab.incoming" /></h4>
-    <wiki:LinkTo><wiki:PageName /></wiki:LinkTo>
-    <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " />
   </div>
 
-  <div class="collapsebox-closed" id="outgoingLinks">
-  <h4><fmt:message key="info.tab.outgoing" /></h4>
-    <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
-  </div>
 
-  <div class="clearbox"></div>
-
-  <%-- DIFF section --%>
-  <wiki:CheckRequestContext context='diff'>
-     <wiki:Include page="DiffTab.jsp"/>
-  </wiki:CheckRequestContext>
-  <%-- DIFF section --%>
-
-	<%--
-    <wiki:CheckVersion mode="first"><fmt:message key="info.noversions"/></wiki:CheckVersion>
-	--%>
-
-    <%-- if( itemcount > 1 ) { --%>
+  <div class="tabs">
+    <h4 id="history"><fmt:message key="info.history"/></h4>
 
     <wiki:SetPagination start="<%=startitem%>" total="<%=itemcount%>" pagesize="<%=pagesize%>" maxlinks="9"
                        fmtkey="info.pagination"
-                         href='<%=c.getURL(WikiContext.INFO, c.getPage().getName(), "start=%s")%>' />
+                         href='<%=c.getURL(ContextEnum.PAGE_INFO.getRequestContext(), wikiPage.getName(), "start=%s")%>' />
 
-    <div class="zebra-table sortable table-filter">
-    <table class="wikitable" >
+    <c:set var="first" value="<%= startitem %>"/>
+    <c:set var="last" value="<%= startitem + pagesize %>"/>
+
+    <div class="table-filter-sort-condensed-striped">
+    <table class="table" aria-describedby="history">
       <tr>
-        <th><fmt:message key="info.version"/></th>
-        <th><fmt:message key="info.date"/></th>
-        <th><fmt:message key="info.size"/></th>
-        <th><fmt:message key="info.author"/></th>
-        <th><fmt:message key="info.changes"/></th>
-        <th class='changenote'><fmt:message key="info.changenote"/></th>
+        <th scope="col"><fmt:message key="info.version"/></th>
+        <th scope="col"><fmt:message key="info.date"/></th>
+        <th scope="col"><fmt:message key="info.size"/></th>
+        <th scope="col"><fmt:message key="info.author"/></th>
+        <th scope="col"><fmt:message key="info.changes"/></th>
+        <th scope="col"><fmt:message key="info.changenote"/></th>
       </tr>
 
       <wiki:HistoryIterator id="currentPage">
-      <% if( ( startitem == -1 ) ||
-             (  ( currentPage.getVersion() > startitem )
-             && ( currentPage.getVersion() <= startitem + pagesize ) ) )
-         {
-       %>
+      <c:if test="${ first == -1 || ((currentPage.version > first ) && (currentPage.version <= last )) }">
       <tr>
         <td>
-          <wiki:LinkTo version="<%=Integer.toString(currentPage.getVersion())%>">
+          <wiki:Link version="${currentPage.version}">
             <wiki:PageVersion/>
-          </wiki:LinkTo>
+          </wiki:Link>
         </td>
 
-	    <td style="white-space:nowrap;" jspwiki:sortvalue="<%= currentPage.getLastModified().getTime() %>">
-        <fmt:formatDate value="<%= currentPage.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+	    <td class="nowrap" data-sortvalue="${currentPage.lastModified.time}">
+        <fmt:formatDate value="${currentPage.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
         </td>
-        <td style="white-space:nowrap;text-align:right;">
-          <c:set var="ff"><wiki:PageSize /></c:set>
-          <fmt:formatNumber value='${ff/1000}' maxFractionDigits='3' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
+
+        <c:set var="pageSize"><wiki:PageSize /></c:set>
+        <td class="nowrap" title="${pageSize} bytes">
+          <%--<fmt:formatNumber value='${pageSize/1000}' maxFractionDigits='3' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>--%>
+          <%= org.apache.commons.io.FileUtils.byteCountToDisplaySize( currentPage.getSize() ) %>
         </td>
         <td><wiki:Author /></td>
 
-        <td>
+        <td class="nowrap">
           <wiki:CheckVersion mode="notfirst">
             <wiki:DiffLink version="current" newVersion="previous"><fmt:message key="info.difftoprev"/></wiki:DiffLink>
             <wiki:CheckVersion mode="notlatest"> | </wiki:CheckVersion>
           </wiki:CheckVersion>
-
           <wiki:CheckVersion mode="notlatest">
             <wiki:DiffLink version="latest" newVersion="current"><fmt:message key="info.difftolast"/></wiki:DiffLink>
           </wiki:CheckVersion>
         </td>
 
-         <td class="changenote">
-           <% String changenote = (String) currentPage.getAttribute( WikiPage.CHANGENOTE );  %>
-		   <%= (changenote==null) ? "" : changenote  %>
-         </td>
+        <c:set var="changenote" value="<%= (String)currentPage.getAttribute( Page.CHANGENOTE ) %>" />
+        <td class="changenote"><c:out value="${changenote}"/></td>
 
       </tr>
-      <% } %>
+      </c:if>
       </wiki:HistoryIterator>
 
     </table>
     </div>
     ${pagination}
-    <%-- } /* itemcount > 1 */ --%>
-  </wiki:Tab>
 
-  </wiki:TabbedSection>
+    <h4 id="page-refs"><fmt:message key="info.tab.links" /></h4>
+    <table class="table" aria-describedby="page-refs">
+      <tr>
+      <th scope="col"><fmt:message key="info.tab.incoming" /></th>
+      <th scope="col"><fmt:message key="info.tab.outgoing" /></th>
+      </tr>
+      <tr>
+      <td>
+        <div class="tree list-hover">
+          <wiki:Link><wiki:PageName /></wiki:Link>
+          <wiki:Plugin plugin="ReferringPagesPlugin" args="before='*' after='\n' " />
+        </div>
+      </td>
+      <td>
+        <div class="tree list-hover">
+          <wiki:Plugin plugin="ReferredPagesPlugin" args="depth='1' type='local'" />
+        </div>
+      </td>
+      </tr>
+    </table>
+
+    <%-- DIFF section --%>
+    <wiki:CheckRequestContext context='diff'>
+      <h4 data-activePane id="diff"><fmt:message key="diff.tab" /></h4>
+      <wiki:Include page="DiffTab.jsp"/>
+    </wiki:CheckRequestContext>
+
+  </div>
 
 </wiki:PageType>
 
@@ -267,123 +250,114 @@
 <wiki:PageType type="attachment">
 <%
   int MAXATTACHNAMELENGTH = 30;
-  String progressId = c.getEngine().getProgressManager().getNewProgressIdentifier();
 %>
+<c:set var="progressId" value="<%= c.getEngine().getManager( ProgressManager.class ).getNewProgressIdentifier() %>" />
+<wiki:Permission permission="upload">
 
-  <wiki:TabbedSection defaultTab="<%=tabParam%>">
-  <wiki:Tab id="pagecontent"
-         title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.parent")%>'
-     accesskey="v"
-	       url="<%=c.getURL(WikiContext.VIEW, ((Attachment)wikiPage).getParentName()) %>">
-  </wiki:Tab>
-
-  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.attachment.tab")%>' accesskey="i" >
-
-  <h3><fmt:message key="info.uploadnew"/></h3>
-
-  <wiki:Permission permission="upload">
-  <form action="<wiki:Link jsp='attach' format='url' absolute='true'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>"
-         class="wikiform"
+  <form action="<wiki:Link jsp='attach' format='url'><wiki:Param name='progressid' value='${progressId}'/></wiki:Link>"
+         class="accordion-close"
             id="uploadform"
-      onsubmit="return Wiki.submitUpload(this, '<%=progressId%>');"
         method="post" accept-charset="<wiki:ContentEncoding/>"
        enctype="multipart/form-data" >
 
   <%-- Do NOT change the order of wikiname and content, otherwise the
        servlet won't find its parts. --%>
 
-  <table>
-  <tr>
-    <td colspan="2"><div class="formhelp"><fmt:message key="info.uploadnew.help" /></div></td>
-  </tr>
-  <tr>
-    <td><label for="content"><fmt:message key="info.uploadnew.filename" /></label></td>
-    <td><input type="file" name="content" size="60"/></td>
-  </tr>
-  <tr>
-    <td><label for="changenote"><fmt:message key="info.uploadnew.changenote" /></label></td>
-    <td>
-    <input type="text" name="changenote" maxlength="80" size="60" />
-    </td>
-  </tr>
-  <tr>
-    <td></td>
-    <td>
-    <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
-    <input type="submit" name="upload" value="<fmt:message key='attach.add.submit'/>" id="upload" /> <input type="hidden" name="action"  value="upload" />
-    <input type="hidden" name="nextpage" value="<wiki:PageInfoLink format='url'/>" />
-        <div id="progressbar"><div class="ajaxprogress"></div></div>
-    </td>
-  </tr>
-  </table>
+  <h4><span class="icon-paper-clip"></span> <fmt:message key="info.uploadnew"/></h4>
+
+    <div class="form-group">
+      <label class="control-label form-col-20" for="files"><fmt:message key="attach.add.selectfile"/></label>
+      <ul class="list-group form-col-50">
+        <li class="list-group-item droppable">
+          <label>Select files <%--or drop them here!--%></label>
+          <input type="file" name="files" id="files" size="60"/>
+          <a class="hidden delete btn btn-danger btn-xs pull-right">Delete</a>
+        </li>
+      </ul>
+    </div>
+    <div class="form-group">
+      <label class="control-label form-col-20" for="changenote"><fmt:message key="attach.add.changenote"/></label>
+      <input class="form-control form-col-50" type="text" name="changenote" id="changenote" maxlength="80" size="60" />
+    </div>
+    <div class="form-group">
+    <input type="hidden" name="nextpage" value="<wiki:Link context='info' format='url'/>" /><%-- *** --%>
+    <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
+    <input class="btn btn-success form-col-offset-20 form-col-50"
+           type="submit" name="upload" id="upload" disabled="disabled" value="<fmt:message key='attach.add.submit'/>" />
+    <%--<input type="hidden" name="action" value="upload" />--%>
+    </div>
+    <div class="hidden form-col-offset-20 form-col-50 progress progress-striped active">
+      <div class="progress-bar" data-progressid="${progressId}" style="width: 100%;"></div>
+    </div>
 
   </form>
-  </wiki:Permission>
-  <wiki:Permission permission="!upload">
-    <div class="formhelp"><fmt:message key="attach.add.permission"/></div>
-  </wiki:Permission>
+</wiki:Permission>
+<wiki:Permission permission="!upload">
+  <div class="block-help bg-warning"><fmt:message key="attach.add.permission"/></div>
+</wiki:Permission>
 
-  <wiki:Permission permission="delete">
-    <h3><fmt:message key="info.deleteattachment"/></h3>
-    <form action="<wiki:Link format='url' context='<%=WikiContext.DELETE%>' />"
-           class="wikiform"
+
+<form action="<wiki:Link format='url' context='<%=ContextEnum.PAGE_DELETE.getRequestContext()%>' ><wiki:Param name='tab' value='attach' /></wiki:Link>"
+           class="form-group"
               id="deleteForm"
-          method="post" accept-charset="<wiki:ContentEncoding />"
-        onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );" >
-     <div>
-     <input type="submit" name="delete-all" id="delete-all"
+          method="post" accept-charset="<wiki:ContentEncoding />" >
+
+<%-- See Nav.jsp  "view" menu item
+  <c:set var="parentPage"><wiki:ParentPageName/></c:set>
+  <a class="btn btn-primary" href="<wiki:Link page='${parentPage}' format='url' />" >
+    <fmt:message key="info.backtoparentpage" >
+      <fmt:param><span class="badge">${parentPage}</span></fmt:param>
+    </fmt:message>
+  </a>
+--%>
+  <wiki:Permission permission="delete">
+    <input class="btn btn-danger" type="submit" name="delete-all" id="delete-all"
+      data-modal="+ .modal"
            value="<fmt:message key='info.deleteattachment.submit' />" />
-     </div>
-    </form>
+    <div class="modal"><fmt:message key='info.confirmdelete'/></div>
   </wiki:Permission>
+</form>
 
-  <%-- FIXME why not add pagination here - no need for large amounts of attach versions on one page --%>
-  <h3><fmt:message key='info.attachment.history' /></h3>
 
-  <div class="zebra-table"><div class="slimbox-img sortable">
-  <table class="wikitable">
+<%-- TODO why no pagination here - number of attach versions of one page limited ?--%>
+  <h4 id="info-attachment-history"><fmt:message key='info.attachment.history' /></h4>
+  <div class="slimbox-attachments table-filter-sort-condensed-striped">
+  <table class="table" aria-describedby="info-attachment-history">
     <tr>
-      <th><fmt:message key="info.attachment.type"/></th>
-      <%--<th><fmt:message key="info.attachment.name"/></th>--%>
-      <th><fmt:message key="info.version"/></th>
-      <th><fmt:message key="info.size"/></th>
-      <th><fmt:message key="info.date"/></th>
-      <th><fmt:message key="info.author"/></th>
+      <th scope="col"><fmt:message key="info.attachment.name"/></th>
+      <th scope="col"><fmt:message key="info.version"/></th>
+      <th scope="col"><fmt:message key="info.date"/></th>
+      <th scope="col"><fmt:message key="info.size"/></th>
+      <th scope="col"><fmt:message key="info.attachment.type"/></th>
+      <th scope="col"><fmt:message key="info.author"/></th>
       <%--
       <wiki:Permission permission="upload">
-         <th><fmt:message key="info.actions"/></th>
+         <th scope="col"><fmt:message key="info.actions"/></th>
       </wiki:Permission>
       --%>
-      <th  class='changenote'><fmt:message key="info.changenote"/></th>
+      <th scope="col"><fmt:message key="info.changenote"/></th>
     </tr>
 
     <wiki:HistoryIterator id="att"><%-- <wiki:AttachmentsIterator id="att"> --%>
-    <%
-      String name = att.getName(); //att.getFileName();
-      int dot = name.lastIndexOf(".");
-      String attachtype = ( dot != -1 ) ? name.substring(dot+1) : "&nbsp;";
-
-      String sname = name;
-      if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";
-    %>
-
     <tr>
-      <td><div id="attach-<%= attachtype %>" class="attachtype"><%= attachtype %></div></td>
-      <%--<td><wiki:LinkTo title="<%= name %>" ><%= sname %></wiki:LinkTo></td>--%>
-      <%--FIXME classs parameter throws java exception
-      <td><wiki:Link version='<%=Integer.toString(att.getVersion())%>'
-                       title="<%= name %>"
-                       class="attachment" ><wiki:PageVersion /></wiki:Link></td>
-      --%>
-      <td><a href="<wiki:Link version='<%=Integer.toString(att.getVersion())%>' format='url' />"
-                       title="<%= name %>"
-                       class="attachment" ><wiki:PageVersion /></a></td>
-      <td style="white-space:nowrap;text-align:right;">
-        <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0) %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
-      </td>
-	  <td style="white-space:nowrap;" jspwiki:sortvalue="<%= att.getLastModified().getTime() %>">
-	  <fmt:formatDate value="<%= att.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+
+      <td class="attach-name"><wiki:LinkTo version="${att.version}"><c:out value="${att.fileName}" /></wiki:LinkTo></td>
+
+      <td><wiki:PageVersion /></td>
+
+	  <td class="nowrap" data-sortvalue="${att.lastModified.time}">
+	    <fmt:formatDate value="${att.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
 	  </td>
+
+      <td class="nowrap" title="${att.size} bytes" data-sortvalue="${att.size}">
+        <%= org.apache.commons.io.FileUtils.byteCountToDisplaySize( att.getSize() ) %>
+      </td>
+
+      <%-- see styles/fontjspwiki/icon.less : icon-file-<....>-o  --%>
+      <c:set var="parts" value="${fn:split(att.fileName, '.')}" />
+      <c:set var="type" value="${ fn:length(parts)>1 ? fn:escapeXml(parts[fn:length(parts)-1]) : ''}" />
+      <td class="attach-type"><span class="icon-file-${fn:toLowerCase(type)}-o"></span>${type}</td>
+
       <td><wiki:Author /></td>
       <%--
       // FIXME: This needs to be added, once we figure out what is going on.
@@ -391,29 +365,30 @@
          <td>
             <input type="button"
                    value="Restore"
-                   url="<wiki:Link format='url' context='<%=WikiContext.UPLOAD%>'/>"/>
+                   url="<wiki:Link format='url' context='<%=ContextEnum.PAGE_UPLOAD.getRequestContext()%>'/>"/>
          </td>
       </wiki:Permission>
       --%>
-      <td class='changenote'>
-        <% String changenote = (String) att.getAttribute( WikiPage.CHANGENOTE ); %>
-		<%= (changenote==null) ? "" : changenote  %>
-      </td>
+
+      <c:set var="changenote" value="<%= (String)att.getAttribute( Page.CHANGENOTE ) %>" />
+        <td class="changenote"><c:out value="${changenote}"/></td>
+
     </tr>
     </wiki:HistoryIterator><%-- </wiki:AttachmentsIterator> --%>
 
   </table>
-  </div></div>
-  </wiki:Tab>
-
-  </wiki:TabbedSection> <%-- end of .tabs --%>
+  </div>
 
 </wiki:PageType>
 
 </wiki:PageExists>
 
 <wiki:NoSuchPage>
+  <div class="danger">
   <fmt:message key="common.nopage">
-    <fmt:param><wiki:EditLink><fmt:message key="common.createit"/></wiki:EditLink></fmt:param>
+    <fmt:param><a class="createpage" href="<wiki:EditLink format='url'/>"><fmt:message key="common.createit"/></a></fmt:param>
   </fmt:message>
+  </div>
 </wiki:NoSuchPage>
+
+</div>

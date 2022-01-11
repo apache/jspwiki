@@ -18,6 +18,12 @@
     specific language governing permissions and limitations
     under the License.
 */
+
+/*eslint-env browser*/
+/*global $ */
+/*exported AddCSS */
+
+
 /* Behavior: Add-CSS
         Inject any custom css into a wiki page.
         You can either directly insert the css definitions in your page or
@@ -38,12 +44,15 @@ function AddCSS(element) {
             item;
 
         //concatenate all css to be inserted
-        while (item = elements.shift()) { css += item.innerHTML; }
+        while( (item = elements.shift()) ){ css += item.innerHTML; }
 
         css = css //cascading replaces
 
             //allow google fonts @import url(https://fonts.googleapis.com/css?family=XXXX);
             .replace(/@import url\(https:\/\/fonts.googleapis.com\/css\?family=/gi, "\xa4")
+
+            //fixme: allow data:image/svg+xml
+            .replace(/url\("data:image\/svg\+xml/gi,"\xa6")
 
             //replace wiki-image links to css url()
             //xss protection: remove invalid url's;  only allow url([wiki-attachement])
@@ -51,11 +60,16 @@ function AddCSS(element) {
             .replace(/url\(<a class="attachment" href="([^"]+.ttf)".*><\/a>\)/gi, 'url(<\xa5$1")')
             .replace(/url\(<a class="attachment" href="([^"]+.otf)".*><\/a>\)/gi, 'url(<\xa5$1")')
 
+            //remaining unmarked urls are invalid
             .replace(/url\(<a[^>]+>\)/gi, "url(invalid)") //remove remaining url(<a...)
             .replace(/url\([^<][^)]+\)/gi, "url(invalid)")  //remove remaining url(xxx)
 
             .replace(/@import/gi, "invalid") //xss protection: remove the remaining @import statements
 
+            //restore svg images
+            .replace(/\xa6/g, "url(\"data:image/svg+xml")
+
+            //restore google font urls
             .replace(/\xa4/g, "@import url(https://fonts.googleapis.com/css?family=") //google fonts -part2
 
             .replace(/expression|behavior/gi, "invalid") //xss protection: remove IE dynamic properties
@@ -80,18 +94,19 @@ function AddCSS(element) {
         need to be inserted at the top of the DOM, i.e. just at the top of the BODY element.
         Other CCS is injected in the order of appearance.
         */
-        if (element.getParent(".sidebar")) {
+        if (element.closest(".sidebar")) {
 
-            $(document.body).grab(css, "top");
-            element.destroy();
+            var body = document.body;
+            body.insertBefore(css, body.firstChild);
+            //$.start(css, document.body);
+            element.remove();
 
         } else {
 
             css.replaces(element);
 
         }
-
-    };
+    }
 
     if (element.innerHTML.test(/^\s*<a class="wikipage" href="([^"]+)">/)) {
 
@@ -109,5 +124,4 @@ function AddCSS(element) {
         insertStyle([element]);
 
     }
-
 }

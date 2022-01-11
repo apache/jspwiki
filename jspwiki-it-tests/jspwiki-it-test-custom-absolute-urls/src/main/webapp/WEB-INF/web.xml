@@ -15,13 +15,13 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 -->
 
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-         version="2.5">
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
 
    <description>
        JSPWiki is an open source JSP-based WikiClone.  It is licensed
@@ -83,7 +83,7 @@
    <filter-mapping>
        <filter-name>WikiServletFilter</filter-name>
        <url-pattern>/JSON-RPC</url-pattern>
-   </filter-mapping> 
+   </filter-mapping>
    <filter-mapping>
        <filter-name>WikiJSPFilter</filter-name>
        <url-pattern>/wiki/*</url-pattern>
@@ -92,14 +92,19 @@
        <filter-name>WikiJSPFilter</filter-name>
        <url-pattern>*.jsp</url-pattern>
    </filter-mapping>
-   
+
    <!--
        HttpSessionListener used for managing WikiSession's.
      -->
    <listener>
       <listener-class>org.apache.wiki.auth.SessionMonitor</listener-class>
    </listener>
-   
+
+   <!-- servlet context listener to configure API's SPI -->
+   <listener>
+       <listener-class>org.apache.wiki.bootstrap.WikiBootstrapServletContextListener</listener-class>
+   </listener>
+
    <!--
        Now, let's define the XML-RPC interfaces.  You probably don't have to
        touch these.
@@ -108,7 +113,7 @@
      -->
    <servlet>
        <servlet-name>XMLRPC</servlet-name>
-       <servlet-class>org.apache.wiki.xmlrpc.RPCServlet</servlet-class>       
+       <servlet-class>org.apache.wiki.xmlrpc.RPCServlet</servlet-class>
        <init-param>
            <param-name>handler</param-name>
            <param-value>org.apache.wiki.xmlrpc.RPCHandler</param-value>
@@ -126,7 +131,7 @@
 
    <servlet>
        <servlet-name>XMLRPC-UTF8</servlet-name>
-       <servlet-class>org.apache.wiki.xmlrpc.RPCServlet</servlet-class>       
+       <servlet-class>org.apache.wiki.xmlrpc.RPCServlet</servlet-class>
        <init-param>
            <param-name>handler</param-name>
            <param-value>org.apache.wiki.xmlrpc.RPCHandlerUTF8</param-value>
@@ -147,13 +152,13 @@
    <!-- Atom Publishing Protocol -->
    <servlet>
        <servlet-name>ATOM</servlet-name>
-       <servlet-class>org.apache.wiki.rpc.atom.AtomAPIServlet</servlet-class>       
+       <servlet-class>org.apache.wiki.rpc.atom.AtomAPIServlet</servlet-class>
    </servlet>
 
    <!-- Maps short URLS to JSPs; also, detects webapp shutdown. -->
    <servlet>
        <servlet-name>WikiServlet</servlet-name>
-       <servlet-class>org.apache.wiki.WikiServlet</servlet-class>       
+       <servlet-class>org.apache.wiki.WikiServlet</servlet-class>
        <load-on-startup>1</load-on-startup>
    </servlet>
 
@@ -204,7 +209,7 @@
        <servlet-name>WikiServlet</servlet-name>
        <url-pattern>/wiki/*</url-pattern>
    </servlet-mapping>
-   
+
    <servlet-mapping>
        <servlet-name>com.metaparadigm.jsonrpc.JSONRPCServlet</servlet-name>
        <url-pattern>/JSON-RPC</url-pattern>
@@ -215,13 +220,13 @@
    <welcome-file-list>
        <welcome-file>Wiki.jsp</welcome-file>
    </welcome-file-list>
-   
+
    <!-- Error pages -->
    <error-page>
      <error-code>403</error-code>
      <location>/error/Forbidden.html</location>
    </error-page>
-   
+
    <resource-ref>
        <description>
            Resource reference to JNDI factory for the JDBCUserDatabase.

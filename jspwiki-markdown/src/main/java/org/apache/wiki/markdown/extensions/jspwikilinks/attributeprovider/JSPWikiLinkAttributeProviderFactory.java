@@ -18,12 +18,14 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
-import org.apache.wiki.WikiContext;
-
 import com.vladsch.flexmark.html.AttributeProvider;
 import com.vladsch.flexmark.html.AttributeProviderFactory;
 import com.vladsch.flexmark.html.IndependentAttributeProviderFactory;
-import com.vladsch.flexmark.html.renderer.NodeRendererContext;
+import com.vladsch.flexmark.html.renderer.LinkResolverContext;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.wiki.api.core.Context;
+
+import java.util.List;
 
 
 /**
@@ -31,20 +33,26 @@ import com.vladsch.flexmark.html.renderer.NodeRendererContext;
  */
 public class JSPWikiLinkAttributeProviderFactory extends IndependentAttributeProviderFactory {
 
-    final WikiContext wikiContext;
+    final Context wikiContext;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public JSPWikiLinkAttributeProviderFactory( final WikiContext wikiContext ) {
+    public JSPWikiLinkAttributeProviderFactory( final Context wikiContext,
+                                                final boolean isImageInlining,
+                                                final List< Pattern > inlineImagePatterns ) {
         this.wikiContext = wikiContext;
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see com.vladsch.flexmark.html.AttributeProviderFactory#create(com.vladsch.flexmark.html.renderer.NodeRendererContext)
+     * @see com.vladsch.flexmark.html.AttributeProviderFactory#apply(com.vladsch.flexmark.html.renderer.LinkResolverContext)
      */
     @Override
-    public AttributeProvider create( final NodeRendererContext context ) {
-        return new JSPWikiLinkAttributeProvider( wikiContext );
+    public AttributeProvider apply( final LinkResolverContext context ) {
+        return new JSPWikiLinkAttributeProvider( wikiContext, isImageInlining, inlineImagePatterns );
     }
 
 }

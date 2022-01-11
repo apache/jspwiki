@@ -17,31 +17,35 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.util.HttpUtil" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.WatchDog" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ page import="org.apache.wiki.util.*" %>
 <%@ page import="org.apache.wiki.tags.InsertDiffTag" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
+<%@ page import="org.apache.wiki.util.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Logger log = LogManager.getLogger("JSPWiki");
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.DIFF );
-    if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_DIFF.getRequestContext() );
+    if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     if( wikiContext.getCommand().getTarget() == null ) {
         response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
         return;
     }
     String pagereq = wikiContext.getName();
 
-    WatchDog w = wiki.getCurrentWatchDog();
+    WatchDog w = WatchDog.getCurrentWatchDog( wiki );
     try
     {
     w.enterState("Generating INFO response",60);
@@ -55,45 +59,33 @@
     // FIXME: There is a set of unnecessary conversions here: InsertDiffTag
     //        does the String->int conversion anyway.
 
-    WikiPage wikipage = wikiContext.getPage();
+    Page wikipage = wikiContext.getPage();
 
     String srev1 = request.getParameter("r1");
     String srev2 = request.getParameter("r2");
 
     int ver1 = -1, ver2 = -1;
 
-    if( srev1 != null )
-    {
+    if( srev1 != null ) {
         ver1 = Integer.parseInt( srev1 );
     }
 
-    if( srev2 != null )
-    {
+    if( srev2 != null ) {
         ver2 = Integer.parseInt( srev2 );
-    }
-    else
-    {
+    } else {
         int lastver = wikipage.getVersion();
-
-        if( lastver > 1 )
-        {
+        if( lastver > 1 ) {
             ver2 = lastver-1;
         }
     }
 
-    pageContext.setAttribute( InsertDiffTag.ATTR_OLDVERSION,
-                              new Integer(ver1),
-                              PageContext.REQUEST_SCOPE );
-    pageContext.setAttribute( InsertDiffTag.ATTR_NEWVERSION,
-                              new Integer(ver2),
-                              PageContext.REQUEST_SCOPE );
+    pageContext.setAttribute( InsertDiffTag.ATTR_OLDVERSION, Integer.valueOf(ver1), PageContext.REQUEST_SCOPE );
+    pageContext.setAttribute( InsertDiffTag.ATTR_NEWVERSION, Integer.valueOf(ver2), PageContext.REQUEST_SCOPE );
 
     // log.debug("Request for page diff for '"+pagereq+"' from "+HttpUtil.getRemoteAddress(request)+" by "+request.getRemoteUser()+".  R1="+ver1+", R2="+ver2 );
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 <% } finally { w.exitState(); } %>

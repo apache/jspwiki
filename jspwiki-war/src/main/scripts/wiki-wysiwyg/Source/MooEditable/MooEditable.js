@@ -303,7 +303,7 @@ this.MooEditable = new Class({
 		this.saveContent();
 		this.textarea.setStyle('display', '').removeClass('mooeditable-textarea').inject(this.container, 'before');
 		this.textarea.removeEvent('keypress', this.textarea.retrieve('mooeditable:textareaKeyListener'));
-		this.container.dispose();
+		this.container.remove();
 		this.fireEvent('detach', this);
 		return this;
 	},
@@ -634,6 +634,7 @@ this.MooEditable = new Class({
 	},
 
 	ensureRootElement: function(val){
+
 		if (this.options.rootElement){
 			var el = new Element('div', {html: val.trim()});
 			var start = -1;
@@ -647,7 +648,13 @@ this.MooEditable = new Class({
 					if (nodeName === '#text'){
 						if (childNode.nodeValue.trim()){
 							if (start < 0) start = i;
-							html += childNode.nodeValue;
+/*
+JSPWiki : bugfix
+Ensure to maintain critical html entities to avoid unsafe element creation (xss)
+*/
+	                        var vv = childNode.nodeValue;
+	                        vv = vv.replace(/</g,"&lt;").replace(/>/,"&gt;");
+    						html += vv;
 						}
 					} else {
 						if (start < 0) start = i;
@@ -673,6 +680,7 @@ this.MooEditable = new Class({
 			}
 			val = el.get('html').replace(/\n\n/g, '');
 		}
+
 		return val;
 	},
 

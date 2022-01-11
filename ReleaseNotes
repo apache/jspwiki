@@ -1,4 +1,174 @@
 
+Apache JSPWiki 2.10.4 - Release Notes
+=====================================
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+
+The license file can be found in LICENSE.
+
+
+Welcome to the stable version of Apache JSPWiki 2.10.4!
+
+Apache JSPWiki 2.10.4 is the fifth JSPWiki release made as an Apache TLP. This release features, among other things:
+  * Better support for mobile devices in the Haddock Template (JSPWIKI-835)
+  * Favicon for haddock template
+  * Important fixes
+    -> ACL related: JSPWIKI-1039/JSPWIKI-1047/JSPWIKI-1067
+    -> rendering cache fixes: JSPWIKI-1064
+  * A handful of smaller fixes
+
+Full details are available in the ChangeLog file or via our issue tracker. 
+
+Please report any issues at https://issues.apache.org/jira/browse/JSPWIKI
+
+
+
+Apache JSPWiki 2.10.3 - Release Notes
+=====================================
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+
+The license file can be found in LICENSE.
+
+
+Welcome to the stable version of Apache JSPWiki 2.10.3!
+
+Apache JSPWiki 2.10.3 is the fourth JSPWiki release made as an Apache TLP. This release features, among other things:
+  * A ton of Haddock updates
+    -> new Image Styles like magnifying images, animations, captions, frames,...
+    -> new Background Styles like gradients, images, background colours, etc,
+    -> more mobile-friendly updates like hide/reveal site header when scrolling
+    -> blogs styling
+    -> a plethora of styles which can be triggered through %%add-css constructs, like custom fonts, image galleries, background patterns, page ribbons, and many more!
+    -> Haddock Behaviours (javascript extensions to the Haddock Template) integrating SheetJS, MathJax, Marked and Chartist 
+  * JSPWiki doesn't have mandatory properties anymore (JSPWIKI-1035 and JSPWIKI-1051) 
+  * Important fixes
+    -> default log is now redirected to stdout (JSPWIKI-1051)
+    -> rendering cache fixes (JSPWIKI-1064) 
+  * Portable binaries now use Apache Tomcat 7.0.81 and Launch4J 3.11
+  * Devs-only: test-jar available 
+
+Full details are available in the ChangeLog file or via our issue tracker. 
+
+Please report any issues at https://issues.apache.org/jira/browse/JSPWIKI
+
+
+
+Apache JSPWiki 2.10.2 - Release Notes
+=====================================
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+
+The license file can be found in LICENSE.
+
+
+Welcome to the stable version of Apache JSPWiki 2.10.2!
+
+Apache JSPWiki 2.10.2 is the third JSPWiki release made as an Apache TLP. This release features, among other things:
+  * JSPWiki portable binaries 
+  * Support to run JSPWiki on dockerized containers 
+  * Complete rewrite of ajax functionality - see SampleAjaxPlugin for an example of use 
+  * New Cryptography Framework - see EncryptedPageFilter for an example of use 
+  * New EncryptPlugin 
+  * Fixes for running JSPWiki on Glassfish and improved support on Tomcat installations 
+  * Upgrade of used libraries:
+    -> ehcache to 2.8.3
+    -> slf4j to 1.7.12
+    -> jetty to 8.1.15 (for testing)
+    -> selenium to 2.42.0 (for testing)
+    -> stripes to 1.5.8 (for testing)
+    -> junit to 4.12 (for testing)
+
+Full details are available in the ChangeLog file or via our issue tracker. 
+
+Please report any issues at https://issues.apache.org/jira/browse/JSPWIKI
+
+
+
+Apache JSPWiki 2.10.1 - Release Notes
+=====================================
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+
+The license file can be found in LICENSE.
+
+
+Welcome to the stable version of Apache JSPWiki 2.10.1!
+
+Apache JSPWiki 2.10.1 is the second JSPWiki release made as an Apache TLP. This release features, among other things:
+  * Introducing HADDOCK Template (still under development) 
+  * WikiPlugins can now be loaded from an external directory, via jspwiki.plugin.externalJars property 
+  * VersioningFileProvider is now able to migrate contents from an existing FileSystemProvider installation 
+  * ECS replaced by JDOM2 
+  * Lucene upgraded to 4.7.0 
+  * Fixed known issues on 2.10.0 with the installation page and container managed authentication 
+
+Full details are available in the ChangeLog file or via our issue tracker. 
+
+Please report any issues at https://issues.apache.org/jira/browse/JSPWIKI
+
+
+
 Apache JSPWiki 2.10.0 - Release Notes
 =====================================
 

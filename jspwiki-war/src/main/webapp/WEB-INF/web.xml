@@ -18,10 +18,10 @@
     under the License.
 -->
 
-<web-app xmlns="http://java.sun.com/xml/ns/javaee"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
-        version="2.5">
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
 
    <description>
        JSPWiki is an open source JSP-based WikiClone.  It is licensed
@@ -29,6 +29,17 @@
        For more information, please come to http://jspwiki.apache.org/
    </description>
    <display-name>JSPWiki</display-name>
+
+   <!--
+   Supported starting from servlet specification 2.5
+   Credit:  https://raibledesigns.com/rd/entry/trim_spaces_in_your_jsp1
+   -->
+   <jsp-config>
+     <jsp-property-group>
+       <url-pattern>*.jsp</url-pattern>
+       <trim-directive-whitespaces>true</trim-directive-whitespaces>
+     </jsp-property-group>
+   </jsp-config>
 
    <!-- Resource bundle default location -->
    <context-param>
@@ -81,6 +92,11 @@
      -->
    <listener>
       <listener-class>org.apache.wiki.auth.SessionMonitor</listener-class>
+   </listener>
+
+   <!-- servlet context listener to configure API's SPI -->
+   <listener>
+       <listener-class>org.apache.wiki.bootstrap.WikiBootstrapServletContextListener</listener-class>
    </listener>
 
    <!--

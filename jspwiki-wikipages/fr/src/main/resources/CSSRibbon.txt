@@ -1,0 +1,33 @@
+%%add-css
+.ribbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: .4em 3em;
+  transform-origin: 100% 0;
+  transform: rotate(90deg) translateX(70.71067814%) rotate(-90deg) rotate(45deg) translateY(-100%);
+  box-shadow: 0 0 .25em rgba(0,0,0,0.3);
+  
+  /*main bootstrap colors */
+  color: white;  /*text color*/
+  /*background:#337ab7; /*primary*/
+  /*background:#5cb85c; /*succes*/
+  background:#5bc0de; /*info*/
+  /*background:#f0ad4e; /*warning*/
+  /*background:#d9534f; /*danger*
+
+  /* red ribbon github
+  background: hsl(350, 80%, 55%);
+  color: #f5ebd6;
+  box-shadow: 0 0.1em 0 0.1em rgba(0, 0, 0, 0.15);
+  */
+}
+.ribbon a { 
+  color:inherit; 
+  text-decoration:none !important; 
+}
+/%
+
+
+[{ALLOW edit Admin}]
+[{ALLOW view All}]

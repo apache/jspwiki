@@ -18,15 +18,14 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.ast.HtmlInline;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeTracker;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
-import org.apache.wiki.render.RenderingManager;
-
-import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.ast.Node;
-import com.vladsch.flexmark.util.NodeTracker;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**
@@ -47,12 +46,12 @@ class NodePostProcessorStateCommonOperations {
         }
     }
 
-    static void addOutlinkImage( final NodeTracker state, final Node node, final WikiContext wikiContext, final boolean useOutlinkImage ) {
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        boolean wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+    static void addOutlinkImage( final NodeTracker state, final Node node, final Context wikiContext, final boolean useOutlinkImage ) {
+        final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
+        final boolean wysiwygEditorMode = wysiwygVariable != null && wysiwygVariable;
 
         if( useOutlinkImage && !wysiwygEditorMode ) {
-            final String m_outlinkImageURL = wikiContext.getURL( WikiContext.NONE, MarkupParser.OUTLINK_IMAGE );
+            final String m_outlinkImageURL = wikiContext.getURL( ContextEnum.PAGE_NONE.getRequestContext(), MarkupParser.OUTLINK_IMAGE );
             final HtmlInline img = new HtmlInline( CharSubSequence.of( "<img class=\""+ MarkupParser.OUTLINK + "\" " +
                                                                               "alt=\"\" src=\""+ m_outlinkImageURL + "\" />" ) );
             node.insertAfter( img );

@@ -17,9 +17,11 @@
     under the License.  
 --%>
 
-<%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.tags.WikiTagBase" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%!
@@ -31,28 +33,23 @@
        container-managed authentication is in force, the container
        will prevent direct access to it.
      */
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Logger log = LogManager.getLogger("JSPWiki");
 
 %>
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Retrieve the Login page context, then go and find the login form
 
-    WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+    Context wikiContext = ( Context )pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
     
     // If no context, it means we're using container auth.  So, create one anyway
-    if( wikiContext == null )
-    {
-        wikiContext = wiki.createContext( request, WikiContext.LOGIN );
-        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT,
-                                  wikiContext,
-                                  PageContext.REQUEST_SCOPE );
+    if( wikiContext == null ) {
+        wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_LOGIN.getRequestContext() );
+        pageContext.setAttribute( Context.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
     }
     
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
                                                             
     log.debug("Login template content is: " + contentPage);
     

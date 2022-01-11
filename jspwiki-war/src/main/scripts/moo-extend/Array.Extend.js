@@ -44,7 +44,7 @@ Example
 >   new Element("div",{ attach:[this] });    //this.element now refers to div
 >   new Element("div",{ attach:[this,"myproperty"] }); //this.myproperty now refers to div
 
-Example rendAr()
+Example [...].slick()
 >   ["div",{attach:[this,"myproperty"] }].slick();
 >   ["ul", ["li[text=One]","li[text=Two]","li[text=Three]"]].slick();
 
@@ -68,10 +68,10 @@ Array.implement({
             if(item != null){
                 type = typeOf(item);
                 if ( type == "elements" ){ elements.append(item); }
-                else if ( item.grab /*isElement*/ ){ elements.push(item); }
-                else if ( item.big  /*isString*/ ){ elements.push(item.slick()); }
+                else if ( item instanceof Element ){ elements.push(item); }
+                else if ( ""+item === item /*isString*/ ){ elements.push(item.slick()); }
                 else if ( type == "object" ){ elements.getLast().set(item); }
-                else if ( item.pop /*isArray*/ ){ elements.getLast().adopt(item.slick()); }
+                else if ( Array.isArray(item) ){ elements.getLast().adopt(item.slick()); }
             }
         });
 

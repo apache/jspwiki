@@ -121,36 +121,54 @@ Element.implement({
     /*
     Function: onHover
         Turns a DOM element into a hoverable menu.
+        Only one menu at a time can be visible.
 
     Arguments:
         toggle - (string,optional) A CSS selector to match the hoverable toggle element
-        onOpen - (function, optional) Function which is call when opening the menu
+        onOpen - (function, optional) Function which is to be called when opening the menu
 
     Example
     > $("li.dropdown-menu").onHover("ul");
     */
     onHover: function( toggle, onOpen ){
 
-        var element = this;
+        function toggleMenu( event ){
 
-        if( (toggle = element.getParent(toggle)) ){
+            if( /enter|focus/.test(event.type) ){
 
-             element.fade("hide");  //CHECKME : is this sill needed, menu should be hidden/visible depending on .open
+                //on touch devices, a starttouch also generates a mouseenter on :hover links
+                //however, there is no mouseleave when clicking outside the hover menu
+                //so we need to temporary add a touchend handler on the document to help close the menu
+                document.addEvent("touchend", toggleMenu);
+                toggle.addClass("open");
+                if( onOpen ){ onOpen(); }
 
-             toggle.addEvents({
-                mouseenter: function(){
-                    element.fade(1);
-                    toggle.addClass("open");
-                    if(onOpen){ onOpen(); }
-                },
-                mouseleave: function(){
-                    element.fade(0);
-                    toggle.removeClass("open");
-                }
+            } else {
+
+                //close the menu if toggle receives the event
+                //or a (touchend-)event is received outside the menu
+                if( (event.target != toggle) && toggle.contains(event.target) ){ return; }
+
+                toggle.removeClass("open");
+                document.removeEvent("touchend", toggleMenu);
+
+            }
+            event.preventDefault();
+        }
+
+        toggle = this.getParent( toggle );
+
+        if( toggle ){
+
+            toggle.addEvents({
+                focus: toggleMenu,  //keyboard
+                blur: toggleMenu,
+                mouseenter: toggleMenu,
+                mouseleave: toggleMenu
             });
 
         }
-        return element;
+        return this;
     },
 
     /*
@@ -225,7 +243,7 @@ Element.implement({
     Function onModal
         Open a modal dialog with ""message"".
 
-        Used on clickable elements (input, button, a.href) to get a
+        Used on certain clickable elements (input, button, a.href) to get a
         confirmation prior to executing the default behaviour of the CLICK.
 
     Example:
@@ -237,6 +255,12 @@ Element.implement({
         behavior.add("[data-modal]", function(element){
             element.onModal( element.get("data-modal") );
         });
+
+
+       //immediate invocation
+        modal.openModal( function(){
+                //onSuccess
+        });
     (end)
 
     */
@@ -245,40 +269,48 @@ Element.implement({
         var self = this,
             modal = self.getElement(selector);
 
-        function doSelfEvent(event){
-
-            modal.addClass( "active" );
-            document.body.addClass( "show-modal" );
-            event.preventDefault(); //postpone the click event
+        function onClick(event){
+            event.preventDefault();
+            modal.openModal( function(){
+                self.removeEvent("click", onClick).click();
+            });
         }
 
-        function doModalEvent(){
+        if( modal ){ self.addEvent( "click" , onClick); }
 
-            modal.removeClass( "active" );
-            document.body.removeClass( "show-modal" );
+    },
+    openModal: function( callback ){
 
-            if( this.match(".btn-success") ){
-                self.removeEvent( "click" , doSelfEvent ).click();
-            }
+        var modal = this,
+            init = "modal-initialized";
+
+        function clickModal(event){
+
+            modal.ifClass(!event, "active");
+            document.body.ifClass(!event, "show-modal");
+            if( event && this.matches(".btn-success") ){ callback(); }
+
         }
 
-        if( modal ){
-
-            //build a pretty modal dialog
-            if( !modal.getElement("> modal-footer") ){
-                modal.grab([
-                    "div.modal-footer", [
-                        "button.btn.btn-success", { text: "Confirm" },  //FIXME: i18n
-                        "button.btn.btn-danger", { text: "Cancel" }
+        if( !modal.getElement(".btn.btn-success") ){
+            //add buttons at the bottom of the modal dialog
+            modal.appendChild([
+                "div.modal-footer", [
+                    "button.btn.btn-success", { text: "dialog.confirm".localize() },
+                    "button.btn.btn-danger", { text: "dialog.cancel".localize() }
                     ]
                 ].slick());
-            }
+        }
+
+        if( !modal.hasClass(init) ){
+
             //move it just before the backdrop element for easy css styling
             modal.inject( document.getBackdrop(), "before" )
-                 .addEvent( "click:relay(.btn)",  doModalEvent );
-
-            self.addEvent( "click" , doSelfEvent );
+                 .addClass( init )
+                 .addEvent("click:relay(.btn)",  clickModal);
         }
+
+        clickModal(false); //and now show the modal
     },
 
     /*
@@ -316,7 +348,6 @@ Element.implement({
 
         "div.sticky-spacer".slick({styles: {height: element.offsetHeight} }).inject(element, "after");
 
-        //FFS: consider adding throttle to limit event invocation rate eg "scroll:throttle"
         document.addEvent("scroll", function(){
 
             on = ( window.scrollY >= origOffset );
@@ -446,8 +477,9 @@ Element.implement({
 
     /*
     Function: mapTextNodes
-
-        Walk all text nodes recursively and map their value via a callback function.
+        Allows you to search and replace using strings or regular expressions within HTML documents.
+        Keeps the HTML intact, and only changes text nodes.
+        It walks all text nodes recursively and maps their value via a callback function.
 
     Arguments:
         fn - callback function returning the processed textnodes (string)
@@ -455,6 +487,20 @@ Element.implement({
                                      which contain pre-formatted text
         includedEmptyNodes - (bool) skip/process empty text nodes
 
+    Example:
+        $('#my_div').stringReplace('half empty', 'half full');
+        $('#my_div').mapTextNodes( function(s){
+            return s
+                .replace( /(c)/i, "&copy;" )à
+                .replace( /(tm)/i, "&trade;" )
+                .replace( /(sm)/i, "&#8480;" );
+        );
+
+    */
+    /*
+    nodeReplace: function(findRegExp, replace){
+        this.mapTextNodes( function(s){ return s.replace(findRegExp, replace); });
+    }
     */
     mapTextNodes: function(fn, includePreCodeNodes, includeEmptyNodes){
 

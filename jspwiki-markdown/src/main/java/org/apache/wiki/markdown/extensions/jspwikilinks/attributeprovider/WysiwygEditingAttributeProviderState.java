@@ -18,13 +18,12 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.MutableAttributes;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
-import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.render.WikiRenderer;
-
-import com.vladsch.flexmark.util.html.Attributes;
 
 
 /**
@@ -33,35 +32,33 @@ import com.vladsch.flexmark.util.html.Attributes;
  */
 public class WysiwygEditingAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final boolean m_wysiwygEditorMode;
 
-    public WysiwygEditingAttributeProviderState( final WikiContext wikiContext ) {
+    public WysiwygEditingAttributeProviderState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+        final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
+        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
+     * @see NodeAttributeProviderState#setAttributes(MutableAttributes, Node)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
+    public void setAttributes( final MutableAttributes attributes, final JSPWikiLink link ) {
         if( m_wysiwygEditorMode ) {
             if( attributes.getValue( "class" ) != null ) {
-                String href = attributes.getValue( "href" );
-                XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( wikiContext );
+                final String href = attributes.getValue( "href" );
+                final XHtmlToWikiConfig wikiConfig = new XHtmlToWikiConfig( wikiContext );
                 // Get the url for wiki page link - it's typically "Wiki.jsp?page=MyPage"
                 // or when using the ShortURLConstructor option, it's "wiki/MyPage" .
-                String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
-                String editPageLinkUrl = wikiConfig.getEditJspPage();
+                final String wikiPageLinkUrl = wikiConfig.getWikiJspPage();
+                final String editPageLinkUrl = wikiConfig.getEditJspPage();
                 if( href != null && href.startsWith( wikiPageLinkUrl ) ) {
-                    // Remove the leading url string so that users will only see the
-                    // wikipage's name when editing an existing wiki link.
+                    // Remove the leading url string so that users will only see the wikipage's name when editing an existing wiki link.
                     // For example, change "Wiki.jsp?page=MyPage" to just "MyPage".
-
                     String newHref = href.substring( wikiPageLinkUrl.length() );
 
                     // Convert "This%20Pagename%20Has%20Spaces" to "This Pagename Has Spaces"
@@ -72,7 +69,7 @@ public class WysiwygEditingAttributeProviderState implements NodeAttributeProvid
                     // to this wiki string: "TargetPage#Heading2".
                     attributes.replaceValue( "href", newHref.replaceFirst( WikiRenderer.LINKS_SOURCE, WikiRenderer.LINKS_TRANSLATION ) );
                 } else if( href != null && href.startsWith( editPageLinkUrl ) ) {
-                    String title = attributes.getValue( "title" );
+                    final String title = attributes.getValue( "title" );
                     if( title != null ) {
                         // remove the title since we don't want to eventually save the default undefined page title.
                         attributes.replaceValue( "title", "" );

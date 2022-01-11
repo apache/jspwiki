@@ -18,12 +18,13 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.MutableAttributes;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
-
-import com.vladsch.flexmark.util.html.Attributes;
 
 
 /**
@@ -33,10 +34,10 @@ public class ImageLinkAttributeProviderState implements NodeAttributeProviderSta
 
     private final boolean isLinkFromText;
     private final LinkParsingOperations linkOperations;
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final String urlRef;
 
-    public ImageLinkAttributeProviderState( final WikiContext wikiContext, final String urlRef, final boolean isLinkFromText ) {
+    public ImageLinkAttributeProviderState( final Context wikiContext, final String urlRef, final boolean isLinkFromText ) {
         this.isLinkFromText = isLinkFromText;
         this.urlRef = urlRef;
         this.wikiContext = wikiContext;
@@ -46,15 +47,15 @@ public class ImageLinkAttributeProviderState implements NodeAttributeProviderSta
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
+     * @see NodeAttributeProviderState#setAttributes(MutableAttributes, Node)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
+    public void setAttributes( final MutableAttributes attributes, final JSPWikiLink link ) {
         if( isLinkFromText && linkOperations.isExternalLink( link.getText().toString() ) ) {
             attributes.replaceValue( "class", MarkupParser.CLASS_EXTERNAL );
             attributes.replaceValue( "href", urlRef );
         } else if ( isLinkFromText && linkOperations.linkExists( link.getText().toString() ) ) {
-            final String pagelink = wikiContext.getURL( WikiContext.VIEW, link.getText().toString() );
+            final String pagelink = wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link.getText().toString() );
             attributes.replaceValue( "class", MarkupParser.CLASS_WIKIPAGE );
             attributes.replaceValue( "href", pagelink );
         }

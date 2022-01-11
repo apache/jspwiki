@@ -19,10 +19,11 @@
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <!doctype html>
-<html lang="en">
+<html lang="<c:out value='${prefs.Language}' default='en'/>" name="top">
   <head>
 
   <title>
@@ -45,7 +46,7 @@ String.I18N.PREFIX = "javascript.";
 <meta name="wikiPageUrl" content='<wiki:Link format="url"  page="#$%"/>' />
 <meta name="wikiEditUrl" content='<wiki:EditLink format="url" page="#$%"/>' />
 <meta name="wikiCloneUrl" content='<wiki:EditLink format="url" page="#$%"/>&clone=<wiki:Variable var="pagename" />' />
-<meta name="wikiJsonUrl" content='<%=  WikiContext.findContext(pageContext).getURL( WikiContext.NONE, "ajax" ) %>' /><%--unusual pagename--%>
+<meta name="wikiJsonUrl" content='<%=  Context.findContext(pageContext).getURL( ContextEnum.PAGE_NONE.getRequestContext(), "ajax" ) %>' /><%--unusual pagename--%>
 <meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>
 <meta name="wikiUserName" content='<wiki:UserName />' />
 <meta name="wikiTemplateUrl" content='<wiki:Link format="url" templatefile="" />' />
@@ -74,7 +75,7 @@ String.I18N.PREFIX = "javascript.";
 
 <%-- FIXME: for now, reuse haddock's stylesheet --%>
 <link rel="stylesheet" media="screen, projection, print" type="text/css"
-     href="<wiki:Link format='url' templatefile='../../templates/haddock/haddock.css'/>"/>
+     href="<wiki:Link format='url' templatefile='../../templates/default/haddock.css'/>"/>
 
 </head>
 

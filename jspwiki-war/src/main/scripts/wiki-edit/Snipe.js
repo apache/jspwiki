@@ -162,6 +162,15 @@ var Snipe = new Class({
         });
 
 
+        //add drag&drop handler: drag or paste data into the textarea
+        if( options.dragAndDrop ){
+
+            textarea.onDragAndDrop(options.dragAndDrop, function(){
+                self.fireEvent("change")
+            });
+        }
+
+
         self.reset();
 
         element.addEvents({
@@ -171,7 +180,7 @@ var Snipe = new Class({
 
             //fixme: any click outside the suggestion block should clear the context -- blur ?
             //blur: self.reset.bind(self),
-            keyup: self.suggest.debounce(), //(250, true)
+            // keyup: self.suggest.debounce(), //(250, true)
             click: self.suggest.debounce(),
 
             input: (function( ){
@@ -620,7 +629,9 @@ var Snipe = new Class({
         in the textarea.
 
     */
-    suggest: function( /*event*/ ){
+    suggest: function( event ){
+
+        if (event && !event.control) return;
 
         var suggest;
 
@@ -708,7 +719,7 @@ var Snipe = new Class({
 
             // match "pfx{selection}sfx" into ["pfx","selection","sfx"]
             // do not match "pfx~{do-not-match}sfx"
-            if( snipXL = snippet.match( /(^|[\S\s]*[^~])\{([^!\{\}][^\{\}]*)\}([\S\s]*)/ ) ){
+            if(( snipXL = snippet.match( /(^|[\S\s]*[^~])\{([^!{}][^{}]*)\}([\S\s]*)/ ) )){
             //if( snipXL = snippet.match( /(^|[\S\s]*[^~])\{([^\{\}]+)\}([\S\s]*)/ ) ){
 
                 //console.log("Snipe:action complex snippet 'pfx{selection}sfx' ", pfx, sel, sfx, caret.thin );

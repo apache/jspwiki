@@ -70,6 +70,7 @@ TableX.Filter = new Class({
             ["div.form-inline.form-group.cage.filter-input", [
                 "input.form-control[type=search][placeholder=\"" + options.hint + "\"]", {
                     attach: [ self, "input" ],
+                    "aria-label": "tablefilter".localize(),
                     events: {
                         keyup: filter,    //"keyup:throttle": filter,
                         click: filter
@@ -103,7 +104,7 @@ TableX.Filter = new Class({
 
         try {
             queryRE = RegExp( query, "i");  //support regexp in filter
-            //queryRE = RegExp( query.escapeRegExp(), "i");
+            //queryRE = RegExp( $.escapeRegExp(query), "i");
         }
         catch(e){}
 

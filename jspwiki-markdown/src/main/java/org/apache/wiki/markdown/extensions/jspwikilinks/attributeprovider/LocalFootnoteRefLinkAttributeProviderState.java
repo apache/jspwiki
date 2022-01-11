@@ -18,11 +18,11 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.MutableAttributes;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.MarkupParser;
-
-import com.vladsch.flexmark.util.html.Attributes;
 
 
 /**
@@ -30,19 +30,19 @@ import com.vladsch.flexmark.util.html.Attributes;
  */
 public class LocalFootnoteRefLinkAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
-    final WikiContext wikiContext;
+    final Context wikiContext;
 
-    public LocalFootnoteRefLinkAttributeProviderState( final WikiContext wikiContext ) {
+    public LocalFootnoteRefLinkAttributeProviderState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
+     * @see NodeAttributeProviderState#setAttributes(MutableAttributes, Node)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
+    public void setAttributes( final MutableAttributes attributes, final JSPWikiLink link ) {
         attributes.replaceValue( "class", MarkupParser.CLASS_FOOTNOTE_REF );
         attributes.replaceValue( "href", "#ref-" + wikiContext.getName() + "-" + link.getText().toString() );
     }

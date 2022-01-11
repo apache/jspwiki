@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -22,21 +22,24 @@
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<wiki:TabbedSection >
+<div class="page-content prettify">
 
-<wiki:Tab id="conflict" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.oops.title")%>'>
-  <div class="error"><fmt:message key="conflict.oops" /></div>
-  <fmt:message key="conflict.goedit" >
-    <fmt:param><wiki:EditLink><wiki:PageName /></wiki:EditLink></fmt:param>
-  </fmt:message>
-</wiki:Tab>
- 
-<wiki:Tab id="conflictOther" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.modified")%>' >
-  <tt><%=pageContext.getAttribute("conflicttext",PageContext.REQUEST_SCOPE)%></tt>      
-</wiki:Tab>
- 
-<wiki:Tab id="conflictOwn" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "conflict.yourtext")%>' >
-  <tt><%=pageContext.getAttribute("usertext",PageContext.REQUEST_SCOPE)%></tt>
-</wiki:Tab>
+<h4><fmt:message key="conflict.oops.title"/></h4>
+  <div class="error">
+    <fmt:message key="conflict.oops" />
+  </div>
+  <wiki:Link cssClass="btn btn-primary btn-block" context="edit" >
+    <fmt:message key="conflict.goedit" >
+      <fmt:param><wiki:PageName /></fmt:param>
+    </fmt:message>
+  </wiki:Link>
+<br />
+<div class="columns">
+<h4><fmt:message key="conflict.modified"/></h4>
+  <pre>${conflicttext}</pre>
+<hr />
+<h4><fmt:message key="conflict.yourtext"/></h4>
+  <pre>${usertext}</pre>
+</div>
 
-</wiki:TabbedSection>
+</div>

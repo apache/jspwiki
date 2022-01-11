@@ -1,0 +1,82 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>JSPWiki Test Asserted Name</title>
+</head>
+<body> 
+<table cellpadding="1" cellspacing="1" border="1">
+	<tbody>
+	<tr><td rowspan="1" colspan="3">JSPWiki Test Asserted Name<br></td></tr>
+
+	<tr><td>store</td>	<td>/${it-jspwiki.context}</td>	<td>it_baseUrl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Wiki.jsp?page=Main</td>	<td>wikiurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/UserPreferences.jsp?redirect=Main</td>	<td>prefsurl</td></tr>
+	<tr><td>store</td>	<td>DonQuixote</td>						<td>TestUsername</td></tr>
+
+	<!-- Navigate to Prefs page; see the 'G'day message' for the anonymous user -->
+    <tr><td>open</td>	<td>${wikiurl}</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>G&#8217;day (anonymous guest)</td>	<td>&nbsp;</td></tr>
+
+    <!-- Go to the UserPreferences page; see the set-cookie form, plus welcome text that invites -->
+    <tr><td>open</td>	<td>${prefsurl}</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>verifyTitle</td>			<td>JSPWiki: User Preferences</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>		<td>You wouldn&#8217;t lie to us would you?</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>assertedName</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>css=form#setCookie input[name="ok"]</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>type</td>			<td>assertedName</td>	<td>${TestUsername}</td></tr>
+    <tr><td>clickAndWait</td>	<td>css=form#setCookie input[name="ok"]</td>	<td>&nbsp;</td></tr>
+
+    <!-- Now navigate back to the main page; see the 'G'day message' for the test user -->
+    <tr><td>verifyTitle</td>		<td>JSPWiki: Main</td>		<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>G&#8217;day</td>		<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>DonQuixote</td>		<td>&nbsp;</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>link=${TestUsername}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>(not logged in)</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>assertCookie</td>	<td>regex:JSPWikiAssertedName=${TestUsername}</td>	<td></td></tr>
+
+    <!-- Clear user cookie -->
+    <tr><td>open</td>	<td>${prefsurl}</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>verifyTitle</td>			<td>JSPWiki: User Preferences</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyValue</td>			<td>assertedName</td>				<td>${TestUsername}</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>css=form#clearCookie input[name="ok"]</td>		<td>&nbsp;</td></tr>
+
+    <tr><td>clickAndWait</td>	<td>css=form#clearCookie input[name="ok"]</td>	<td>&nbsp;</td></tr>
+        
+    <!-- Go back to the main page, and see the 'G'day message for the anonymous user again -->
+    <tr><td>verifyTitle</td><td>JSPWiki: Main</td><td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>		<td>G&#8217;day (anonymous guest)</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextNotPresent</td>	<td>${TextUsername}</td>	<td>&nbsp;</td></tr>
+    <tr><td>assertNotCookie</td>	<td>regex:JSPWikiAssertedName=</td>	<td></td></tr>
+
+    
+	</tbody>
+</table>
+
+</body>
+</html>

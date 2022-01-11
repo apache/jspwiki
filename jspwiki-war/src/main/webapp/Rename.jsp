@@ -17,29 +17,34 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.util.HttpUtil" %>
+<%@ page import="java.text.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.api.exceptions.WikiException" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
+<%@ page import="org.apache.wiki.content.PageRenamer" %>
+<%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag.FixedQueue" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="java.util.*" %>
-<%@ page import="java.text.*" %>
 <fmt:setBundle basename="CoreResources"/>
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Logger log = LogManager.getLogger("JSPWiki");
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-	WikiContext wikiContext = wiki.createContext( request, WikiContext.RENAME );
-	if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+	Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_RENAME.getRequestContext() );
+	if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     if( wikiContext.getCommand().getTarget() == null ) {
         response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
         return;
@@ -59,23 +64,22 @@
 
     log.info("Page rename request for page '"+renameFrom+ "' to new name '"+renameTo+"' from "+HttpUtil.getRemoteAddress(request)+" by "+request.getRemoteUser() );
 
-    WikiSession wikiSession = wikiContext.getWikiSession();
+    Session wikiSession = wikiContext.getWikiSession();
     try
     {
         if (renameTo.length() > 0)
         {
-            String renamedTo = wiki.renamePage(wikiContext, renameFrom, renameTo, changeReferences);
+            String renamedTo = wiki.getManager( PageRenamer.class ).renamePage(wikiContext, renameFrom, renameTo, changeReferences);
 
             FixedQueue trail = (FixedQueue) session.getAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY );
-            if( trail != null )
-            {
+            if( trail != null ) {
                 trail.removeItem( renameFrom );
                 session.setAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail );
             }
 
             log.info("Page successfully renamed to '"+renamedTo+"'");
 
-            response.sendRedirect( wikiContext.getURL( WikiContext.VIEW, renamedTo ) );
+            response.sendRedirect( wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), renamedTo ) );
             return;
         }
        wikiSession.addMessage("rename", rb.getString("rename.empty"));
@@ -101,13 +105,8 @@
 
     }
 
-    pageContext.setAttribute( "renameto",
-                              TextUtil.replaceEntities( renameTo ),
-                              PageContext.REQUEST_SCOPE );
-
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+    pageContext.setAttribute( "renameto", TextUtil.replaceEntities( renameTo ), PageContext.REQUEST_SCOPE );
+    response.setContentType("text/html; charset=" + wiki.getContentEncoding() );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" />

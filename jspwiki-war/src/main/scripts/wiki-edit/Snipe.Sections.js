@@ -214,7 +214,7 @@ Snipe.Sections = new Class({
             if( item.target ){ item = item.target.className; }
 
             //section-2=All, section-1=StartOfPage, section0..section99=rest
-            item = ( item.match( /section=?(-?\d+)/ )||[,-2])[1].toInt();
+            item = parseInt(( item.match( /section=?(-?\d+)/ )||[,-2])[1]);
 
             if( item == -1 ){
 

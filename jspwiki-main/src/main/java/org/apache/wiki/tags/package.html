@@ -1,0 +1,68 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<title>org.apache.wiki.tags</title>
+</head>
+<body>
+Provides standard JSP tags for JSPWiki.
+
+<h2>Package specification</h2>
+
+<p>This package contains a diverse set of JSP tags which are used in the template pages.</p>
+
+<h3>Managing tag pooling</h3>
+
+<p>A typical problem for many tag developers is that many web containers pool tags,
+i.e. the tag is not released after doEndTag(), but put into a pool, from which it
+can be invoked again.  This is highly efficient, as you don't need to instantiate
+the tag again.</p>
+
+<p>The problem, however, is that when your tag is put back into the pool, it still
+retains all the internal references, i.e. none of the member fields are cleared.
+This means there can be dangling references to things which will take a lot of memory.
+In JSPWiki's case, the WikiContext is a good example: it can actually contain quite
+a lot of stuff accumulated during it's life time, and therefore it's important for
+memory use that all references are cleared.</p>
+
+<p>Unfortunately, the "easy" solution of implementing your custom release handler
+in <code>Tag.release()</code> does not help, since it is called only when the tag
+is truly and completely released <em>from the pool</em>.  So, as long as the tag sits
+in the pool, release() is not called, and your references keep on dangling like wet
+spaghetti off the balcony.</p>
+
+<p>Neither can you trust e.g. doEndTag() being called every time, since e.g. if there
+is an exception, doEndTag() is never called.</p>
+
+<p>The correct way to do reference cleaning is to implement the {@link javax.servlet.jsp.tagext.TryCatchFinally}
+interface, where the <code>doFinally()</code> method is called every time the tag
+has been finished with and prior to it being put back into the pool.  Most JSPWiki
+base tag classes {@link org.apache.wiki.tags.IteratorTag} and {@link org.apache.wiki.tags.WikiTagBase}
+implement the TryCatchFinally
+interface, which means that any class subclassed from them also allows has those methods.</p>
+
+<p>Check out the javadocs for the tags for more info!</p>
+
+<h2>Related documentation</h2>
+
+TBD.
+
+</body>
+</html>

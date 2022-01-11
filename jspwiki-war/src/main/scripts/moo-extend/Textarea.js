@@ -18,8 +18,11 @@
     specific language governing permissions and limitations
     under the License.
 */
+
 /*eslint-env browser*/
 /*global Class, Options, Events  */
+/*exported Textarea */
+
 /*exported Textarea */
 
 /*
@@ -43,11 +46,8 @@ var Textarea = new Class({
     initialize: function(el, options){
 
         var self = this,
-            ta = self.ta = document.id(el),
-            fireChange = function( event ){
-                console.log('hi');
-                self.fireEvent("change", event);
-            };
+            ta = self.ta = document.id(el);
+            //fireChange = function( event ){ self.fireEvent("change", event); };
 
         self.setOptions(options);
 
@@ -369,9 +369,56 @@ var Textarea = new Class({
         w = el.offsetWidth;
         h = el.offsetHeight;
 
-        console.log(offset, ta.offsetTop, "top: "+t, ta.offsetLeft, "left: "+l, "width: "+w, "height: "+h, "right: "+(l + w), "bottom: "+(t + h) );
+        //console.log(offset, ta.offsetTop, "top: "+t, ta.offsetLeft, "left: "+l, "width: "+w, "height: "+h, "right: "+(l + w), "bottom: "+(t + h) );
         return { top: t, left: l, width: w, height: h, right: l + w, bottom: t + h };
 
+    },
+
+
+    /*
+    Function: onDragAndDrop
+        Add Drag&Drop handlers on the Textarea
+        Inspired by https://github.com/github/paste-markdown
+
+    */
+    onDragAndDrop: function(processData, onSuccess){
+
+        var self = this,
+            ta = this.ta;
+
+        ta.addEventListener('dragover', function(event /*DragEvent*/){
+
+            var dataTransfer = event.dataTransfer;
+            if (dataTransfer){ dataTransfer.dropEffect = 'copy'; }
+        });
+
+        ta.addEventListener('drop', function(event /*DragEvent*/){
+
+            var dataTransfer = event.dataTransfer;
+            if (dataTransfer && (dataTransfer.files.length == 0)){
+                insertData(event, dataTransfer);
+            }
+        });
+
+        ta.addEventListener('paste', function(event /*ClipboardEvent*/){
+
+            insertData(event, event.clipboardData);
+        });
+
+        function insertData(event, dataTransfer){
+
+            var content = processData(dataTransfer);
+
+            if ( content ) {
+
+                event.stopPropagation();
+                event.preventDefault();
+                self.insertAfter(content);
+
+                if( onSuccess ){ onSuccess(); }
+            }
+        }
     }
+
 
 });

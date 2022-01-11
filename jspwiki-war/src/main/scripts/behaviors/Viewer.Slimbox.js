@@ -74,8 +74,8 @@ Viewer.Slimbox = new Class({
 
         //helper function
         function clickFn(){
-            if( this.match(".next")){ self.update(1); }
-            else if( this.match(".prev")){ self.update(-1); }
+            if( this.matches(".next")){ self.update(1); }
+            else if( this.matches(".prev")){ self.update(-1); }
             else { self.attach( /*O=close*/ ); }
         }
 
@@ -140,7 +140,7 @@ Viewer.Slimbox = new Class({
 
         return elements.each( function(el, idx){
 
-            caption = el.get("text") || el.title || el.alt;
+            caption = el.textContent || el.title || el.alt;
 
             if( btn ){
                 el = btn.slick({
@@ -261,7 +261,7 @@ Viewer.Slimbox = new Class({
         self.get(".caption").set({
             href: url,
             html: ( many ? hints.nofm.xsubs( cursor + 1, max)  : "" ) +
-                    (el.title || el.alt || el.get("text") || ""  )
+                    (el.title || el.alt || el.textContent || ""  ).escapeHtml()
 
         });
 
@@ -280,7 +280,7 @@ Viewer.Slimbox = new Class({
     resize: function( preload ){
 
         var self = this,
-            isImage = preload.match("img"),
+            isImage = preload.matches("img"),
             viewport = self.viewport,
 
             wSize = window.getSize(),

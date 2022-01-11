@@ -17,28 +17,30 @@
     under the License.  
 --%>
 
-<%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
 
 <%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Logger log = LogManager.getLogger("JSPWiki");
 %>
 
 <% 
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.UPLOAD );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_UPLOAD.getRequestContext() );
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
     String pagereq = wikiContext.getName();
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "UploadTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "UploadTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 

@@ -1,0 +1,183 @@
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+Since v1.6.3 you can now define your own plugins.  These are just
+simply Java classes that implement the
+''org.apache.wiki.plugin.WikiPlugin'' interface and can be found from
+somewhere in your class path.  The plugins work so that when you write
+a special code on the Wiki page, the plugins are invoked and their
+output is inserted into the page, verbatim.
+
+The form is:
+
+  [[{INSERT <plugin class> WHERE <param1=value1>,<param2=value2>,...}]
+
+You can also use a shortcut: instead of using {{[[{INSERT org.apache.wiki.plugin.RecentChangesPlugin}} you can also use {{[[{INSERT RecentChangesPlugin}]}}.  This works only with the plugins that come with JSPWiki, though.
+
+In addition, you can now (since 1.9.30) omit even the "INSERT", so the shortest possible version for plugins becomes:
+
+[[{CurrentTimePlugin}]
+
+If a parameter contains spaces, you can use single quotes (') around the parameter.  Like this:
+
+[[{INSERT CurrentTimePlugin format='dd MM yyyy'}]
+
+Here are some sample plugins included in the archive:
+
+----
+
+!!RecentChangesPlugin
+
+Inserts the latest changes in order. 
+
+!Parameters: 
+* __since__=''n'' : show changes from the last n days.
+* __format__=''(full|compact)'' : if "full", then display a long
+  version with all possible info.  If "compact", then be as compact as possible.
+
+!Example:
+{{{
+[{INSERT RecentChangesPlugin since=5, format=compact}]
+}}}
+
+Inserts the changes from the past 5 days in a compact format.  You
+might use this to make an automatical list of changes to the [LeftMenu], or [LeftMenuFooter], for example.
+
+----
+  
+!!UnusedPagesPlugin
+
+Lists all pages that are not currently referred to by any other page, thus meaning they are inaccessible through any other means.
+
+!Parameters
+
+* __maxwidth__=''n'' : Limits the length of the generated links to at most ''n'' characters.  This should used to keep the [LeftMenu] or [LeftMenuFooter] at a manageable width.  Default is to not limit the length at all.
+
+
+!Example:
+
+See [UnusedPages].
+
+----
+
+!!UndefinedPagesPlugin
+
+Lists all pages that are referred to, but not yet created.
+
+!Parameters
+
+* __maxwidth__=''n'' : Limits the length of the generated links to at most ''n'' characters.  This should used to keep the [LeftMenu] or [LeftMenuFooter] at a manageable width.  Default is to not limit the length at all.
+
+!Example:
+
+See [UndefinedPages].
+
+----
+
+
+!!ReferringPagesPlugin
+
+Finds and lists all pages that refer to the current page.
+
+!Parameters 
+
+* __max__=''n'' : How many pages to list.  Default is 10. Some pages might create very long lists, so it's a good idea to limit the list size.
+* __maxwidth__=''n'' : Limits the length of the generated links to at most ''n'' characters.  This should used to keep the [LeftMenu] or [LeftMenuFooter] at a manageable width.  Default is to not limit the length at all.
+
+!Example
+
+See [LeftMenuFooter].
+
+----
+
+!!CurrentTimePlugin
+
+Just displays the current server time.
+
+!Parameters
+
+* __format__=''format string'' : How the date and time should be formatted.  If you omit this, a default format will be used. The following characters are available to you:
+
+{{{
+ Symbol   Meaning                 Presentation        Example
+ ------   -------                 ------------        -------
+ G        era designator          (Text)              AD
+ y        year                    (Number)            1996
+ M        month in year           (Text & Number)     July & 07
+ d        day in month            (Number)            10
+ h        hour in am/pm (1~12)    (Number)            12
+ H        hour in day (0~23)      (Number)            0
+ m        minute in hour          (Number)            30
+ s        second in minute        (Number)            55
+ S        millisecond             (Number)            978
+ E        day in week             (Text)              Tuesday
+ D        day in year             (Number)            189
+ F        day of week in month    (Number)            2 (2nd Wed in July)
+ w        week in year            (Number)            27
+ W        week in month           (Number)            2
+ a        am/pm marker            (Text)              PM
+ k        hour in day (1~24)      (Number)            24
+ K        hour in am/pm (0~11)    (Number)            0
+ z        time zone               (Text)              Pacific Standard Time
+ \'       escape for text         (Delimiter)
+ \''      single quote            (Literal)           '
+}}}
+
+For example, two 'y':s give you the year using two digits.  Four 'y':s give you the year in four digits.  Three 'M':s give you the month in letters, whereas two 'M':s give just the month number.
+
+(Yes, these are exactly the Java [SimpleDateFormat|http://java.sun.com/j2se/1.3/docs/api/java/text/SimpleDateFormat.html] arguments.  Sorry for copying them in.)
+
+!Example
+
+Using [[{INSERT CurrentTimePlugin format='yyyy.MM.dd G \'at\' hh:mm:ss z'}] would give you:
+
+[{INSERT CurrentTimePlugin format='yyyy.MM.dd G \'at\' hh:mm:ss z'}]
+
+----
+
+!!IndexPlugin
+
+Displays all of the pages in this Wiki in alphabetical order.  IndexPlugin has been contributed by AlainRavet.
+
+!Parameters
+* __itemsPerLine__ = ''n''.  Break every 'n' items on line.
+
+!Example
+
+See [PageIndex].
+
+----
+
+!!Counter
+
+A simple counter that starts counting at 1 at the top of the page, and each time it is invoked, will increase its value by one.   These counters are transient, and relative to the current page view only - i.e. two persons viewing the same page at the same time get their own counters.
+
+The current counter value is accessible also as a [WikiVariable].  The name of the variable is "counter", or "counter-<name>", if you have defined a counter name.
+
+!Parameters
+
+* __name__ = ''counter name''.  You may define as many counters per page as you want; you just need to separate them with the ''counter name''
+
+!Example
+
+[[{Counter}], [[{Counter}], [[{Counter}], [[{Counter name='aa'}] produces
+
+[{Counter}], [{Counter}], [{Counter}], [{Counter name='aa'}].
+
+The value of "counter" at the end is [{$counter}] and the value of "counter-aa" is [{$counter-aa}].
+
+

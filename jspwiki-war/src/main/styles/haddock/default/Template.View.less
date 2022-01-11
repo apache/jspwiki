@@ -85,9 +85,6 @@ DOM structure:
 		        li.recents ...
 		        li.recents.clear ...
 
-
-      div.breadcrumbs
-
     ...
 
     div.footer
@@ -98,13 +95,19 @@ DOM structure:
 (end)
 */
 
-.container-fluid {
-	//margin:0 1em;
+// Set the container width, and override it for fixed navbars in media queries
+.container {
+  .container-fixed();
 
-    .header > *:not(.titlebox),
-    > .row > ul.nav {
-        //padding-right:@padding-base-horizontal;
-    }
+  @media (min-width: @screen-sm) {
+    width: @container-sm;
+  }
+  @media (min-width: @screen-md) {
+    width: @container-md;
+  }
+  @media (min-width: @screen-lg-min) {
+    width: @container-lg;
+  }
 }
 
 .titlebox {
@@ -176,13 +179,27 @@ Fixed .header with hide (on scrolldown)  and show (on scrollup) effects.
 }
 
 .fixed-header > .header.scrolling-down  + .content {
-  padding-top: 42px;
+    padding-top: 42px;
 }
 
+.fixed-header.container > .header {
 
+    //compensate for the 2x15px padding on the .container (bootstrap)
+    @media (min-width: @screen-sm) {
+      //width: unit(unit(@container-sm)-30,px);
+      width: @container-sm - 30px;
+    }
+    @media (min-width: @screen-md) {
+      //width: unit(unit(@container-md)-30,px);
+      width: @container-md - 30px;
+    }
+    @media (min-width: @screen-lg-min) {
+      width: unit(unit(@container-lg)-30,px);
+      width: @container-lg - 30px;
+    }
+}
 
-.header .pagename,
-.header .breadcrumb {
+.header .pagename {
     .text-overflow();
 }
 
@@ -196,28 +213,15 @@ Fixed .header with hide (on scrolldown)  and show (on scrollup) effects.
     padding: 0 .5em;
 }
 .reader .pagename {
-    font-size: 6em;
-}
-
-/*
-JSPWiki-s breadcrumb - do not inherit bootstraps breadcrumbs
-Only show breadcrumb on mouse hover
-*/
-.breadcrumb {
-    .small;
-    .transition(all .5s ease);
-    color:transparent;
-    &:hover { color:inherit; }
-
-    .divider:before {
-        content:"\2022";   //&bull;
-        padding:0 .25em;
-    }
+    font-size: 3.2em;
+    margin-bottom:.5em;
+    padding-bottom:.2em;
+    border-bottom:2px solid @link-color;
 }
 
 
 .footer {
-    //background: @wiki-footer-bg; //reuse header background
+    background: @wiki-footer-bg;
     padding: @padding-base-horizontal;
 	text-align: center;
 }

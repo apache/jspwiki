@@ -18,17 +18,18 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeTracker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.variables.VariableManager;
 
-import com.vladsch.flexmark.util.NodeTracker;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 
 /**
@@ -36,20 +37,20 @@ import com.vladsch.flexmark.util.NodeTracker;
  */
 public class MetadataLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private static final Logger LOG = Logger.getLogger( MetadataLinkNodePostProcessorState.class );
-    private final WikiContext wikiContext;
+    private static final Logger LOG = LogManager.getLogger( MetadataLinkNodePostProcessorState.class );
+    private final Context wikiContext;
     private final boolean m_wysiwygEditorMode;
 
-    public MetadataLinkNodePostProcessorState( final WikiContext wikiContext ) {
+    public MetadataLinkNodePostProcessorState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+        final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
+        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
+     * @see NodePostProcessorState#process(NodeTracker, Node) 
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
@@ -57,7 +58,7 @@ public class MetadataLinkNodePostProcessorState implements NodePostProcessorStat
         try {
             final String args = metadataLine.substring( metadataLine.indexOf(' '), metadataLine.length() - 1 );
             String name = args.substring( 0, args.indexOf( '=' ) );
-            String val = args.substring( args.indexOf( '=' ) + 1, args.length() );
+            String val = args.substring( args.indexOf( '=' ) + 1 );
 
             name = name.trim();
             val = val.trim();
@@ -71,8 +72,8 @@ public class MetadataLinkNodePostProcessorState implements NodePostProcessorStat
 
             LOG.debug( "page=" + wikiContext.getRealPage().getName() + " SET name='" + name + "', value='" + val + "'" );
 
-            if( name.length() > 0 && val.length() > 0 ) {
-                val = wikiContext.getEngine().getVariableManager().expandVariables( wikiContext, val );
+            if( !name.isEmpty() && !val.isEmpty() ) {
+                val = wikiContext.getEngine().getManager( VariableManager.class ).expandVariables( wikiContext, val );
                 wikiContext.getPage().setAttribute( name, val );
                 link.unlink();
                 state.nodeRemoved( link );

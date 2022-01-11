@@ -25,15 +25,14 @@
 <fmt:setBundle basename="templates.default"/>
 
 <%-- Inserts page content for preview. --%>
-<wiki:TabbedSection>
-<wiki:Tab id="previewcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "preview.tab")%>'>
+<div class="page-content preview-content">
 
   <div class="information">
-    <fmt:message key="preview.info"/>
     <wiki:Editor/>
+    <p class="help-block"><fmt:message key="preview.info"/></p>
   </div>
 
-  <div class="previewcontent">
+  <div class="preview-body">
     <wiki:Translate><%=EditorManager.getEditedText(pageContext)%></wiki:Translate>
   </div>
 
@@ -41,5 +40,4 @@
     <fmt:message key="preview.info"/>
   </div>
 
-</wiki:Tab>
-</wiki:TabbedSection>
+</div>

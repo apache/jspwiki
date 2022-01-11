@@ -18,22 +18,22 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.ast.HtmlInline;
+import com.vladsch.flexmark.ext.toc.TocBlock;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeTracker;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.WikiPlugin;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.PluginContent;
 import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.render.RenderingManager;
 
-import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.ext.toc.TocBlock;
-import com.vladsch.flexmark.util.NodeTracker;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import java.text.MessageFormat;
+import java.util.ResourceBundle;
 
 
 /**
@@ -41,20 +41,20 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
  */
 public class PluginLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private static final Logger LOG = Logger.getLogger( PluginLinkNodePostProcessorState.class );
-    private final WikiContext wikiContext;
+    private static final Logger LOG = LogManager.getLogger( PluginLinkNodePostProcessorState.class );
+    private final Context wikiContext;
     private final boolean m_wysiwygEditorMode;
 
-    public PluginLinkNodePostProcessorState( final WikiContext wikiContext ) {
+    public PluginLinkNodePostProcessorState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+        final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
+        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
+     * @see NodePostProcessorState#process(NodeTracker, Node) 
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
@@ -78,7 +78,7 @@ public class PluginLinkNodePostProcessorState implements NodePostProcessorState<
         } catch( final PluginException e ) {
             LOG.info( wikiContext.getRealPage().getWiki() + " : " + wikiContext.getRealPage().getName() + " - Failed to insert plugin: " + e.getMessage() );
             if( !m_wysiwygEditorMode ) {
-                final ResourceBundle rbPlugin = Preferences.getBundle( wikiContext, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+                final ResourceBundle rbPlugin = Preferences.getBundle( wikiContext, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
                 NodePostProcessorStateCommonOperations.makeError( state, link, MessageFormat.format( rbPlugin.getString( "plugin.error.insertionfailed" ),
                                                                                                                          wikiContext.getRealPage().getWiki(),
                                                                                                                          wikiContext.getRealPage().getName(),
@@ -109,7 +109,7 @@ public class PluginLinkNodePostProcessorState implements NodePostProcessorState<
 
     void handleTableOfContentsPlugin(final NodeTracker state, final JSPWikiLink link) {
         if( !m_wysiwygEditorMode ) {
-            final ResourceBundle rb = Preferences.getBundle( wikiContext, WikiPlugin.CORE_PLUGINS_RESOURCEBUNDLE );
+            final ResourceBundle rb = Preferences.getBundle( wikiContext, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
             final HtmlInline divToc = new HtmlInline( CharSubSequence.of( "<div class=\"toc\">\n" ) );
             final HtmlInline divCollapseBox = new HtmlInline( CharSubSequence.of( "<div class=\"collapsebox\">\n" ) );
             final HtmlInline divsClosing = new HtmlInline( CharSubSequence.of( "</div>\n</div>\n" ) );

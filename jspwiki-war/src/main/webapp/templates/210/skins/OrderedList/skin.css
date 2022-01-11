@@ -1,0 +1,655 @@
+/*
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ *
+*/
+
+/* ORDERED LIST skin
+ * additional .css on top of jspwiki.css
+ * inspired by http://orderedlist.com
+ */
+
+/* COLOR scheme
+	#ccc normal font color
+	#c7ff70 green : font color headers, th
+	#ffff99  light yellow: font color pre
+	#6cf blue/green: font color links
+
+	#202326  hr, body background
+
+	#fc3 (orange) edit resizer, category, tip anchor
+	#ffff99 (light yellow) edit textarea, input fields
+
+	#3f464a (light grey) favorites, pre, commentbox
+		borders, tables
+ 	#303538: dark grey: footer
+ */
+
+/* +++ 010 LAYOUT of main ID blocks +++ */
+#wikibody {
+	margin:10px;
+}
+#favorites {
+	background:#3f464a;
+}
+
+/* +++ 020 LOOK and FEEL of main blocks with ID +++ */
+#actionsBottom {
+	margin-top:15px;
+}
+#footer {
+	border-top:4px solid #303538;
+}
+/* +++ 200 Generic stuff here +++ */
+body {
+	font-family:"Lucida Grande","Lucida Sans Unicode",Tahoma, Helvetica, Verdana, sans-serif;
+	color:#ccc;
+	line-height:1.5;
+	text-shadow:black 0 0 0;
+}
+/* +++ 210 Page titles, headings, and paragraphs +++ */
+.pagename {
+	font-size:22px;
+	color:white;
+	line-height:28px;
+}
+h2,h3,h4 {
+	color:#c7ff70;
+	font-weight:normal;
+	text-transform:uppercase;
+	margin:10px 0 0;
+}
+.editsection a {
+	border:none !important;
+	text-transform:none;
+}
+.editsection a:hover {
+	background:#202326;
+	color:#6cf;
+}
+/* +++ 220 Lists and bullets +++ */
+/* +++ 225 Forms, Labels, form-values and form-help +++ */
+/* +++ 230 Horizontal rules +++ */
+.hr, hr {
+	display:block;
+	border:none;
+	border-top:2px solid #202326;
+	background-color:transparent;
+	height:0px;
+	width:100%;
+	text-align:center;
+}
+/* +++ 240 Pre-formatted text blocks and code +++ */
+tt,pre {
+	color:#ffff99;
+	font-family:Monaco, "Courier New", Courier, monospace;
+}
+pre {
+	background:#3f464a;
+	border:none;
+}
+/* +++ 250 Hyperlinks +++ */
+a:link, a:visited, a:active {
+	color:#6cf;
+	text-decoration:none;
+	border-bottom:1px solid #6cf;
+}
+a.editpage {
+	color:red;
+	border-bottom:1px dashed red;
+}
+a.editpage:hover {
+	border-bottom:1px solid red;
+}
+a.wikipage:hover {
+	border-bottom:1px solid #6cf;
+}
+a.feed {
+	border-bottom:none;
+}
+a.toc:hover {
+	background:transparent;
+}
+.calendar a, .breadcrumbs a, .applicationlogo a {
+	border-bottom:none !important;
+}
+/* +++ 260 Image styles, and Logo +++ */
+#header .applicationlogo {
+	left:35px;
+	top:10px;
+}
+.applicationlogo a {
+	display:block;
+	height:43px;
+	width:110px;
+	margin:0;
+	background-image:url(images/smart-logo.gif) ;
+	background-position:0 0;
+}
+.applicationlogo a:hover {
+	background-image:url(images/smart-logo.gif) ;
+}
+/* +++ 270 Footnotes and small text +++ */
+.small, .sub, .sup {
+	font-size:10px;
+}
+/* +++ 280 Convenience styles and info/warning/error dialogs +++ */
+.additinfo {
+	background-color:transparent;
+	color:#c7ff70;
+}
+.information,
+.warning,
+.error {
+	color:#c7ff70;
+	font-weight:bold;
+	background-color:#3f464a;
+	border-top:2px groove #c7ff70;
+	border-bottom:2px groove #c7ff70;
+	padding:0.5em 0.5em 0.5em 3em;
+}
+
+/* +++ 290 Comment boxes (used on some pages) +++ */
+.commentbox {
+	border:none;
+	font-size:100%;
+	background:#3f464a;
+	padding:10px;
+}
+/* +++ 300 Wiki tables and zebra tables +++ */
+.wikitable * td {
+	text-align:left;
+	padding:4px;
+	border:2px solid #3f464a;
+}
+.wikitable * th {
+	color:#c7ff70;
+	text-align:center;
+	padding:4px;
+	background:transparent;
+	border:2px solid #3f464a;
+}
+.zebra-table th {
+	background:transparent;
+}
+.zebra-table tr.odd td {
+	background:#3f464a;
+}
+/* +++ 350 Attachments +++ */
+/* +++ 400 Styles for specific JSPs +++ */
+/* +++ 405 AttachmentTab.JSP +++ */
+#attachImg {
+	border:1px solid #3f464a;
+	background:#3f464a;
+}
+#attachImg img {
+	border:0;
+	padding:0;
+}
+/* +++ 410 CommentContent +++ */
+/* +++ 415 ConflictContent +++ */
+/* +++ 420 DiffContent and Diff Providers:Traditional and External +++ */
+td.diffadd, td.diffrem {
+	color:black;
+}
+td.diff {
+	background:transparent;
+}
+/* +++ 421 Contextual diff provider +++ */
+/* +++ 425 Edit/EditContent and CommentContent +++ */
+/* +++ 430 Edit/EditContent +++ */
+.textarea-resizer, .textarea-resizer:hover {
+    background:#fc3;
+}
+#meta {
+	background-color:#3f464a;
+}
+.edit textarea, input[type=text] {
+	/*background-color:#ffff99;*/
+	/*color:#grey;*/
+}
+#toctoc label {
+	color:#c7ff70;
+}
+#toctoc ul {
+	border-color:#fc3;
+	background:#ffff99;
+}
+#toctoc a {
+	color:black;
+}
+#toctoc a.action:hover, #toctoc .cursor {
+	background-color:#fc3 !important;
+}
+
+/* +++ 440 Favorites +++ */
+.userbox {
+	background:#3f464a;
+	padding:0;
+	margin-bottom:0.5em;
+}
+.userbox a.action {
+	background:transparent;
+	border:none;
+	border-left:2px groove #c7ff70;
+	line-height:2;
+}
+.username {
+	border:none;
+	padding:1em 0.5em;
+	color:#c7ff70;
+	font-weight:bold;
+	text-decoration:none;
+}
+/* +++ 450 FindContent / 450 Graph Bars +++ */
+.graphBar {
+	border-color:#c7ff70;
+	color:#3f464a;
+}
+.searchword, .cursor, .searchmatch {
+	background-color:#c7ff70;
+	color:black !important;
+}
+/* +++ 455 Footer +++ */
+.copyright {
+	color:white;
+	margin:0 200px;
+}
+/* +++ 460 Header +++ */
+.banner, #header {
+}
+.banner * {
+	color:white;
+}
+.breadcrumbs, .breadcrumbs a:link, .breadcrumbs a:visited, .breadcrumbs a:active {
+	font-size:10px;
+	color:#6cf !important;
+}
+/* +++ 465 InfoContent +++ */
+.pagination {
+	background:#3f464a;
+	color:#c7ff70;
+}
+.pagination a {
+	border:none;
+}
+.pagination .cursor, .pagination a:hover {
+	background-color:#c7ff70;
+	color:black;
+}
+/* +++ 470 PageActions.jsp +++ */
+.pageactions {
+}
+.pageactions li ul {
+	background:#3f464a;
+	border:2px solid #3f464a;
+}
+.pageactions li ul li.separator {
+	border-top:2px solid #c7ff70;
+}
+.pageactions a.action {
+	border-bottom:none;
+	font-weight:bold;
+	color:#c7ff70;
+}
+#morebutton a:hover, a.action:hover, #sectiontoc a:hover
+.userbox a.action:hover, a.action.quick2bottom:hover, a.action.quick2top:hover {
+	background:#3f464a !important;
+}
+#searchTools a.action, .userbox a.action, a.action.edit, a.action.more, a.action.sectiontoc {
+	background:#3f464a;
+	border:none;
+}
+a.action.more, a.action.sectiontoc {
+	background:#3f464a url(images/arrdown.gif) 95% center no-repeat;
+}
+
+a.tool {
+	background:#ffff99; /*transparent;*/
+	border:none;
+	color:black;
+}
+a.tool:hover {
+	background-color:#fc3 !important;
+}
+#tools {
+	background:#ffff99;
+	color:black;
+	border:4px solid #fc3;
+}
+#tools h4 {
+	color:black;
+	font-weight:bold;
+	border-color:#ffff99;
+}
+#tools .collapsetitle:hover {
+	background:#fc3;
+}
+
+#toolbuttons span {
+	border:1px solid #fc3;
+}
+#toolbar a.tool {
+	border:none;
+	background-repeat:no-repeat;
+	background-color:transparent;
+	background-position:3px 3px;
+	height:16px;
+	width:16px;
+	text-indent:20px;
+	overflow:hidden;
+}
+
+#findSuggestionMenu {
+	color:#c30;
+	background-color:#ff9;
+	border:4px solid #fc3;
+}
+#findSuggestionMenu .hover {
+	background-color:#fc3;
+}
+
+/* +++ 475 PageContent.jsp +++ */
+#sneakpreviewheader {
+	background-color:#3f464a;
+}
+#sneakpreview {
+	background:transparent !important;
+}
+/* +++ 475 PreviewContent - "This is a preview" comment +++ */
+.previewcontent {
+	background:url(images/preview.png);
+	border:none;
+}
+/* +++ 480 PreferencesContent, LoginContent, GroupContent +++ */
+#userPrefs tr td {
+	padding:5px ;
+}
+#userPrefs tr th {
+	text-align:right;
+}
+#newGroup .index a {
+	border-bottom:none;
+}
+/* +++ 485 SearchBox +++ */
+.spin {
+	background:url(images/spin.gif) no-repeat;
+}
+#header a:link, #header a:visited, #recentSearches div {
+	color:#c7ff70;
+}
+#recentSearches {
+	color:#6cf;
+}
+#searchboxMenu {
+	border:none ;
+	background:#3f464a;
+}
+#searchTools a:hover, #searchboxMenu li:hover, #searchboxMenu a:hover {
+	background:#c7ff70;
+	color:black !important;
+}
+/* +++ 490 ViewTemplate +++ */
+body {
+	background:#202326;
+}
+/* +++ 600 JSPWiki plugins +++ */
+/* +++ 610 Image plugin +++ */
+/* +++ 203 image plugin stuff +++ */
+/* +++ 620 Index plugin +++ */
+.index .header {
+	background:#3f464a;
+	border:none;
+	font-weight:bold;
+}
+.index .header a, .index .section  a {
+	color:#c7ff70;
+	border-bottom:none;
+}
+
+/* +++ 625 Table of contents plugin +++ */
+
+/* +++ 630 Weblog and weblogarchive plugins +++ */
+.weblogentryheading, .weblogentryfooter {
+	color:#c7ff70;
+	background:#202326;
+}
+.weblogentrytitle {
+	color:#c7ff70;
+	background:#202326;
+}
+.weblogentryfooter {
+	border-bottom:3px solid #202326;
+}
+.weblogcommentstitle {
+	background:#202326;
+}
+.weblogcomments {
+	background:#202326;
+}
+
+/* +++ 640 RecentChangesPlugin +++ */
+.recentchanges td {
+	border-bottom:1px solid #202326;
+}
+.recentchanges .date {
+	border-top:1.5em solid #303538;
+	background-color:transparent !important;
+}
+
+/* +++ 800 JSPWiki JSP Taglibs +++ */
+
+/* +++ 805 CalendarTag +++ */
+table.calendar * {
+	font-size:0.9em;
+}
+/* +++ 900 "Special-effects" JavaScript styles +++ */
+/* +++ 905 Search highlights +++ */
+/* +++ 910 Tabbed Pages +++ */
+.tabs {
+	border:1px solid #202326;
+	padding:10px 10px 10px 15px;
+	background:#303538;
+}
+.tabmenu {
+	padding:2px 10px;
+}
+/* ie6 and lower */
+* html .tabmenu {
+	border:none;
+}
+/*ie7 hack */
+*:first-child+html .tabmenu {
+	border:none;
+}
+.tabmenu a {
+	padding:4px 8px;
+	border:1px solid #282c2f;
+	background:#282c2f;
+	margin-left:4px;
+}
+.tabmenu a:hover {
+	color:white;
+	background:#202326;
+	border:1px solid #202326;
+}
+.tabmenu a.activetab {
+	color:white;
+	background:#303538;
+	border-bottom:1px solid #303538;
+}
+/* +++ 910 Accordion +++ */
+.accordion, .tabbedAccordion {
+	border:1px solid #3f464a;
+	background:#3f464a;
+}
+.accordion .toggle {
+	border:2px solid #3f464a;
+	background:#303538;
+	color:#c7ff70;
+}
+.accordion .toggle:hover, .togglemenu .toggle:hover, .sidemenu .toggle:hover {
+	background:#202326;
+}
+.togglemenu .toggle {
+	background:#303538;
+	border:none;
+	border-bottom:1px solid #3f464a;
+	margin:0 0 -1px 4px;
+}
+.togglemenu .toggle.active {
+	background:#3f464a;
+	border-bottom:1px solid #3f464a;
+	color:white;
+}
+.leftAccordion .tab, .rightAccordion .tab {
+	border-color:#3f464a !important;
+}
+.sidemenu .toggle {
+	background:#282c2f;
+	border:1px solid #3f464a;
+	color:#c7ff70;
+}
+.sidemenu .toggle.active {
+	color:#c7ff70;
+}
+
+/* +++ 915 Tips +++ */
+.tip-anchor {
+	border-bottom:2px solid #fc3;
+	color:#fc3;
+}
+.tip-tip {
+	color:#c30;
+	background-color:#ff9;
+	border:4px solid #fc3;
+}
+* html .tip-title {
+	background:url(images/tip_bg.png) top left;
+}
+/*ie7 hack */
+*:first-child+html .tip-title {
+	background:url(images/tip_bg.png) top left;
+}
+.tip-text {
+	padding:4px 8px 8px;
+}
+.tip-text th {
+	background:grey !important;
+}
+* html .tip-text {
+	background:url(images/tip.png) bottom right;
+}
+/*ie7 hack */
+*:first-child+html .tip-text {
+	background:url(images/tip.png) bottom right;
+}
+.tip-text a {
+	color:#c30 !important;
+}
+
+
+/* +++ 920 Collapsible lists +++ */
+.collapseBullet,
+.collapseOpen,
+.collapseOpen:hover,
+.collapseClose,
+.collapseClose:hover {
+	color:#c7ff70;
+	background-color:transparent;
+}
+/* +++ collapsebox +++ */
+.collapsebox {
+	border:1px solid #3f464a;
+	background:#3f464a;
+}
+.collapsetitle {
+	border:2px solid #3f464a;
+}
+.collapsetitle:hover {
+	background:#303538;
+}
+/* +++ 930 Sortable tables +++ */
+.sortable .sort,
+.sortable .sortAscending,
+.sortable .sortDescending {
+	padding:0 1.25em;
+	background-color:inherit;
+	background-position:0.25em 50%;
+}
+.sortable .sort {
+	background-image:url(images/sortable.gif);
+}
+.sortable .sortAscending {
+	background-image:url(images/bulletDown.gif);
+	background-position:0.25em 50%;
+}
+.sortable .sortDescending {
+	background-image:url(images/bulletUp.gif);
+	background-position:0.25em 50%;
+}
+/* +++ 940 Quick Section Links +++ */
+a.slimbox {
+	font-size:18px;
+	line-height:normal;
+}
+a.slimbox:hover {
+	background:#c7ffc0;
+}
+#lbOverlay {
+	background-color:#fff;
+}
+#lbCenter,
+#lbBottomContainer {
+	background-color:#202326;
+}
+#lbImage, #lbBottom {
+	border-color:#202326;
+}
+
+.categoryLink:link, .categoryLink:active, .categoryLink:visited {
+	border-bottom:2px solid #fc3;
+	color:#fc3;
+}
+.categoryPopup {
+	background-color:#ff9; /*rgba(255,255,153,0.7); */
+	border:4px solid #fc3;
+}
+.categoryPopup a:link, .categoryPopup a:active, .categoryPopup a:visited {
+	color:#c30;
+	border-bottom:1px solid #c30;
+}
+.categoryPopup .hover {
+	background-color:#fc3;
+}
+
+pre.prettyprint {
+	background-color:#ff9;
+	border:4px solid #fc3;
+}
+
+#tb {
+	border:4px solid #ffff99;
+	background-color:#ffff99;
+	color:#cc3300;
+}
+.recentchanges .date {
+	color:#c7ff70;
+	font-weight:bold;
+	border-bottom:2px solid #c7ff70;
+}

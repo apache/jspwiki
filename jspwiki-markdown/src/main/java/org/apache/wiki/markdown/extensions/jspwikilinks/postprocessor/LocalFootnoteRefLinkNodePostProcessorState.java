@@ -18,12 +18,13 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.markdown.nodes.JSPWikiLink;
-
 import com.vladsch.flexmark.ast.Text;
-import com.vladsch.flexmark.util.NodeTracker;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 
 
 /**
@@ -31,20 +32,20 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
  */
 public class LocalFootnoteRefLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
 
-    public LocalFootnoteRefLinkNodePostProcessorState( final WikiContext wikiContext ) {
+    public LocalFootnoteRefLinkNodePostProcessorState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
+     * @see NodePostProcessorState#process(NodeTracker, Node) 
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
-        link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.VIEW, link.getUrl().toString() ) ) );
+        link.setUrl( CharSubSequence.of( wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link.getUrl().toString() ) ) );
         final Text opBracket = new Text( CharSubSequence.of( "[" ) );
         final Text clBracket = new Text( CharSubSequence.of( "]" ) );
         link.prependChild( opBracket );

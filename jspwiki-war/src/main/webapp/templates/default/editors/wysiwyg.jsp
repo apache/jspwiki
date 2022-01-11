@@ -16,49 +16,61 @@
     specific language governing permissions and limitations
     under the License.
 --%>
-
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="java.util.Properties"%>
+<%@ page import="org.apache.commons.lang3.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
-<%@ page import="org.apache.wiki.tags.*" %>
-<%@ page import="org.apache.wiki.filters.SpamFilter" %>
+<%@ page import="org.apache.wiki.filters.*" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
+<%@ page import="org.apache.wiki.parser.MarkupParser" %>
+<%@ page import="org.apache.wiki.render.*" %>
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="org.apache.wiki.variables.VariableManager" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
+<wiki:RequestResource type="stylesheet" resource="templates/default/haddock-wysiwyg.css" />
+<wiki:RequestResource type="script" resource="scripts/haddock-wysiwyg.js" />
 <%--
-        This is a plain editor for JSPWiki.
+    This provides a wysiwy editor for JSPWiki. (based on mooeditable)
 --%>
 <%
-   WikiContext context = WikiContext.findContext( pageContext );
-   WikiEngine engine = context.getEngine();
+    Context context = Context.findContext( pageContext );
+    Engine engine = context.getEngine();
 
-   TemplateManager.addResourceRequest( context, TemplateManager.RESOURCE_SCRIPT,
-   		context.getURL( WikiContext.NONE, "scripts/jspwiki-edit.js" ) );
+    context.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
+    context.setVariable( VariableManager.VAR_RUNFILTERS,  "false" );
 
-   String usertext = EditorManager.getEditedText( pageContext );
+    Page wikiPage = context.getPage();
+    String originalCCLOption = (String)wikiPage.getAttribute( MarkupParser.PROP_CAMELCASELINKS );
+    wikiPage.setAttribute( MarkupParser.PROP_CAMELCASELINKS, "false" );
+
+    String usertext = EditorManager.getEditedText(pageContext);
 %>
+<c:set var='context'><wiki:Variable var='requestcontext' /></c:set>
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
 <%
   String clone = request.getParameter( "clone" );
   if( clone != null )
   {
-    WikiPage p = engine.getPage( clone );
+    Page p = engine.getManager( PageManager.class ).getPage( clone );
     if( p != null )
     {
-        AuthorizationManager mgr = engine.getAuthorizationManager();
+        AuthorizationManager mgr = engine.getManager( AuthorizationManager.class );
         PagePermission pp = new PagePermission( p, PagePermission.VIEW_ACTION );
 
         try
         {
           if( mgr.checkPermission( context.getWikiSession(), pp ) )
           {
-            usertext = engine.getPureText( p );
+            usertext = engine.getManager( PageManager.class ).getPureText( p );
           }
         }
         catch( Exception e ) {  /*log.error( "Accessing clone page "+clone, e );*/ }
@@ -69,173 +81,236 @@
 <%
   if( usertext == null )
   {
-    usertext = engine.getPureText( context.getPage() );
+    usertext = engine.getManager( PageManager.class ).getPureText( context.getPage() );
   }
 %>
 </wiki:CheckRequestContext>
-<% if( usertext == null ) usertext = "";  %>
+<%
+    if( usertext == null ) usertext = "";
 
+    String pageAsHtml;
+    try
+    {
+        pageAsHtml = engine.getManager( RenderingManager.class ).getHTML( context, usertext );
+    }
+        catch( Exception e )
+    {
+        pageAsHtml = "<div class='error'>Error in converting wiki-markup to well-formed HTML <br/>" + e.toString() +  "</div>";
+        /*
+        java.io.StringWriter sw = new java.io.StringWriter();
+        java.io.PrintWriter pw = new java.io.PrintWriter(sw);
+        e.printStackTrace(pw);
+        pageAsHtml += "<pre>" + sw.toString() + "</pre>";
+        */
+    }
 
-<div style="width:100%"> <%-- Required for IE6 on Windows --%>
+   // Disable the WYSIWYG_EDITOR_MODE and reset the other properties immediately
+   // after the XHTML for wysiwyg editor has been rendered.
+   context.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.FALSE );
+   context.setVariable( VariableManager.VAR_RUNFILTERS,  null );
+   wikiPage.setAttribute( MarkupParser.PROP_CAMELCASELINKS, originalCCLOption );
 
-<%--
-WYSIWYG not yet implemented for the JSPWiki Default template.
-Falling back to the plain editor.
---%>
+   /*not used
+   String templateDir = (String)engine.getWikiProperties().get( Engine.PROP_TEMPLATEDIR );
+   String protocol = "http://";
+   if( request.isSecure() ) {
+       protocol = "https://";
+   }
+   */
 
-<form action="<wiki:CheckRequestContext
+%>
+
+<form method="post" accept-charset="<wiki:ContentEncoding/>"
+      action="<wiki:CheckRequestContext
      context='edit'><wiki:EditLink format='url'/></wiki:CheckRequestContext><wiki:CheckRequestContext
      context='comment'><wiki:CommentLink format='url'/></wiki:CheckRequestContext>"
-       class="wikiform"
+       class="editform wysiwyg"
           id="editform"
-    onsubmit="return Wiki.submitOnce(this);"
-      method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
 
   <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
-  <p id="submitbuttons">
-  <input name="page" type="hidden" value="<wiki:Variable var='pagename' />" />
-  <input name="action" type="hidden" value="save" />
-  <%=SpamFilter.insertInputFields( pageContext )%>
-  <input name="<%=SpamFilter.getHashFieldName(request)%>" type="hidden" value="<c:out value='${lastchange}' />" />
-  <input type="submit" name="ok" value="<fmt:message key='editor.plain.save.submit'/>"
-    accesskey="s"
-        title="<fmt:message key='editor.plain.save.title'/>" />
-  <input type="submit" name="preview" value="<fmt:message key='editor.plain.preview.submit'/>"
-    accesskey="v"
-        title="<fmt:message key='editor.plain.preview.title'/>" />
-  <input type="submit" name="cancel" value="<fmt:message key='editor.plain.cancel.submit'/>"
-    accesskey="q"
-        title="<fmt:message key='editor.plain.cancel.title'/>" />
-  </p>
-    <%-- This following field is only for the SpamFilter to catch bots which are just randomly filling all fields and submitting.
-       Normal user should never see this field, nor type anything in it. --%>
-  <div style="display:none;">Authentication code: <input type="text" name="<%=SpamFilter.getBotFieldName()%>" id="<%=SpamFilter.getBotFieldName()%>" value="" /></div>
-  <table>
-<%--FIXME
+  <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
+  <input type="hidden" name="action" value="save" />
+  <wiki:SpamFilterInputs/>
+
+  <div class="form-inline form-group">
+
+    <div class="form-group dropdown">
+    <button class="btn btn-success" type="submit" name="ok" accesskey="s">
+      <fmt:message key='editor.plain.save.submit${ context == "edit" ? "" : ".comment" }'/>
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" data-hover-parent="div">
+      <wiki:CheckRequestContext context="!comment">
+      <li class="dropdown-header">
+        <input class="form-control" type="text" name="changenote" id="changenote" size="80" maxlength="80"
+             placeholder="<fmt:message key='editor.plain.changenote'/>"
+             value="${changenote}" />
+      </li>
+      </wiki:CheckRequestContext>
+      <wiki:CheckRequestContext context="comment">
+      <li class="divider" />
+      <li class="dropdown-header">
+        <fmt:message key="editor.commentsignature"/>
+      </li>
+      <li class="dropdown-header">
+        <input class="form-control" type="text" name="author" id="authorname"  size="80" maxlength="80"
+             placeholder="<fmt:message key='editor.plain.name'/>"
+             value="${author}" />
+      </li>
+      <li  class="dropdown-header">
+        <label class="btn btn-default btn-xs" for="rememberme">
+          <input type="checkbox" name="remember" id="rememberme" ${ remember ? "checked='checked'" : "" } />
+          <fmt:message key="editor.plain.remember"/>
+        </label>
+      </li>
+      <li  class="dropdown-header">
+        <input class="form-control" type="text" name="link" id="link" size="80" maxlength="80"
+               placeholder="<fmt:message key='editor.plain.email'/>"
+               value="${link}" />
+      </li>
+      </wiki:CheckRequestContext>
+    </ul>
+    </div>
+
+  <div class="btn-group editor-tools">
+
+    <div class="btn-group config">
+      <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
+      <button class="btn btn-default dropdown-toggle"><span class="icon-wrench"></span><span class="caret"></span></button>
+      <ul class="dropdown-menu" data-hover-parent="div">
+            <li>
+              <a>
+                <label for="livepreview">
+                  <input type="checkbox" data-cmd="livepreview" id="livepreview" ${prefs.livepreview ? 'checked="checked"' : ''}/>
+                  <fmt:message key='editor.plain.livepreview'/> <span class="icon-refresh"/>
+                </label>
+              </a>
+            </li>
+            <li>
+              <a>
+                <label for="previewcolumn">
+                  <input type="checkbox" data-cmd="previewcolumn" id="previewcolumn" ${prefs.previewcolumn ? 'checked="checked"' : ''}/>
+                  <fmt:message key='editor.plain.sidebysidepreview'/> <span class="icon-columns"/>
+                </label>
+              </a>
+            </li>
+
+      </ul>
+    </div>
+
+    <c:set var="editors" value="<%= engine.getManager( EditorManager.class ).getEditorList() %>" />
+    <c:if test='${fn:length(editors)>1}'>
+   <div class="btn-group config">
+      <%-- note: 'dropdown-toggle' is only here to style the last button properly! --%>
+      <button class="btn btn-default dropdown-toggle"><span class="icon-pencil"></span><span class="caret"></span></button>
+      <ul class="dropdown-menu" data-hover-parent="div">
+        <c:forEach items="${editors}" var="edt">
+          <c:choose>
+            <c:when test="${edt != prefs.editor}">
+              <li>
+                <wiki:Link context="edit" cssClass="editor-type">${edt}</wiki:Link>
+              </li>
+            </c:when>
+            <c:otherwise>
+              <li class="active"><a>${edt}</a></li>
+            </c:otherwise>
+          </c:choose>
+      </c:forEach>
+      </ul>
+    </div>
+    </c:if>
+
+  </div>
+
+  <div class="form-group pull-right">
+
+  <%-- is PREVIEW functionality still needed - with livepreview ?
+  <input class="btn btn-primary" type="submit" name="preview" accesskey="v"
+         value="<fmt:message key='editor.plain.preview.submit'/>"
+         title="<fmt:message key='editor.plain.preview.title'/>" />
+  --%>
+  <input class="btn btn-danger" type="submit" name="cancel" accesskey="q"
+         value="<fmt:message key='editor.plain.cancel.submit'/>"
+         title="<fmt:message key='editor.plain.cancel.title'/>" />
+
+  </div>
+  <%--TODO: allow page rename as part of an edit session
     <wiki:Permission permission="rename">
-    <tr>
-    <td><label for="renameto"><fmt:message key='editor.renameto'/></label></td>
-    <td><input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" />
-    &nbsp;&nbsp;
+    <div class="form-group form-inline">
+    <label for="renameto"><fmt:message key='editor.renameto'/></label>
+    <input type="text" name="renameto" value="<wiki:Variable var='pagename' />" size="40" />
     <input type="checkbox" name="references" checked="checked" />
     <fmt:message key="info.updatereferrers"/>
-    FIXME</td>
-    </tr>
+    </div>
     </wiki:Permission>
---%>
-    <tr>
-    <td><label for="changenote"><fmt:message key='editor.plain.changenote'/></label></td>
-    <td><input type="text" name="changenote" id="changenote" size="80" maxlength="80" value="${changenote}"/></td>
+  --%>
 
-    </tr>
-  </table>
-
-  <div id="tools">
-      <h4><fmt:message key='editor.plain.toolbar'/></h4>
-      <div id="toolbuttons">
-      <span>
-	  <a href="#" class="tool" rel="" id="tbLink" title="<fmt:message key='editor.plain.tbLink.title'/>">link</a>
-	  <a href="#" class="tool" rel="break" id="tbH1" title="<fmt:message key='editor.plain.tbH1.title'/>">h1</a>
-	  <a href="#" class="tool" rel="break" id="tbH2" title="<fmt:message key='editor.plain.tbH2.title'/>">h2</a>
-	  <a href="#" class="tool" rel="break" id="tbH3" title="<fmt:message key='editor.plain.tbH3.title'/>">h3</a>
-      </span>
-      <span>
-	  <a href="#" class="tool" rel="" id="tbB" title="<fmt:message key='editor.plain.tbB.title'/>">bold</a>
-	  <a href="#" class="tool" rel="" id="tbI" title="<fmt:message key='editor.plain.tbI.title'/>">italic</a>
-	  <a href="#" class="tool" rel="" id="tbMONO" title="<fmt:message key='editor.plain.tbMONO.title'/>">mono</a>
-	  <a href="#" class="tool" rel="" id="tbSUP" title="<fmt:message key='editor.plain.tbSUP.title'/>">sup</a>
-	  <a href="#" class="tool" rel="" id="tbSUB" title="<fmt:message key='editor.plain.tbSUB.title'/>">sub</a>
-	  <a href="#" class="tool" rel="" id="tbSTRIKE" title="<fmt:message key='editor.plain.tbSTRIKE.title'/>">strike</a>
-      </span>
-      <span>
-	  <a href="#" class="tool" rel="" id="tbBR" title="<fmt:message key='editor.plain.tbBR.title'/>">br</a>
-	  <a href="#" class="tool" rel="break" id="tbHR" title="<fmt:message key='editor.plain.tbHR.title'/>">hr</a>
-	  <a href="#" class="tool" rel="break" id="tbPRE" title="<fmt:message key='editor.plain.tbPRE.title'/>">pre</a>
-	  <a href="#" class="tool" rel="break" id="tbCODE" title="<fmt:message key='editor.plain.tbCODE.title'/>">code</a>
-	  <a href="#" class="tool" rel="break" id="tbDL" title="<fmt:message key='editor.plain.tbDL.title'/>">dl</a>
-      </span>
-      <span>
-	  <a href="#" class="tool" rel="break" id="tbTOC" title="<fmt:message key='editor.plain.tbTOC.title'/>">toc</a>
-	  <a href="#" class="tool" rel="break" id="tbTAB" title="<fmt:message key='editor.plain.tbTAB.title'/>">tab</a>
-	  <a href="#" class="tool" rel="break" id="tbTABLE" title="<fmt:message key='editor.plain.tbTABLE.title'/>">table</a>
-	  <a href="#" class="tool" rel="" id="tbIMG" title="<fmt:message key='editor.plain.tbIMG.title'/>">img</a>
-	  <a href="#" class="tool" rel="break" id="tbQUOTE" title="<fmt:message key='editor.plain.tbQUOTE.title'/>">quote</a>
-	  <a href="#" class="tool" rel="break" id="tbSIGN" title="<fmt:message key='editor.plain.tbSIGN.title'/>">sign</a>
-      </span>
-      <span>
-      <a href="#" class="tool" rel="break" id="tbUNDO" title="<fmt:message key='editor.plain.undo.title'/>"><fmt:message key='editor.plain.undo.submit'/></a>
-      </span>
-      <span>
-	  <a href="#" class="tool" rel="break" id="tbREDO" title="<fmt:message key='editor.plain.redo.title'/>"><fmt:message key='editor.plain.redo.submit'/></a>
-      </span>
-	  </div>
-
-	  <div id="toolextra" class="clearbox" style="display:none;">
-      <span>
-      <input type="checkbox" name="tabcompletion" id="tabcompletion" <%=TextUtil.isPositive((String)session.getAttribute("tabcompletion")) ? "checked='checked'" : ""%>/>
-      <label for="tabcompletion" title="<fmt:message key='editor.plain.tabcompletion.title'/>"><fmt:message key="editor.plain.tabcompletion"/></label>
-      </span>
-      <span>
-      <input type="checkbox" name="smartpairs" id="smartpairs" <%=TextUtil.isPositive((String)session.getAttribute("smartpairs")) ? "checked='checked'" : ""%>/>
-      <label for="smartpairs" title="<fmt:message key='editor.plain.smartpairs.title'/>"><fmt:message key="editor.plain.smartpairs"/></label>
-      </span>
-	  </div>
-
-	  <div id="searchbar">
-  		<span>
-        <label for="tbFIND" ><fmt:message key="editor.plain.find"/></label>
-  		<input type="text"   name="tbFIND" id="tbFIND" size="16" />
-		<label for="tbREPLACE" ><fmt:message key="editor.plain.replace"/></label>
-		<input type="text"   name="tbREPLACE" id="tbREPLACE" size="16" />
-        <input type="button" name="doreplace" id="doreplace" value="<fmt:message key='editor.plain.find.submit' />" />
-        </span>
-  		<span>
-  		<input type="checkbox" name="tbMatchCASE" id="tbMatchCASE" />
-  		<label for="tbMatchCASE"><fmt:message key="editor.plain.matchcase"/></label>
-  		</span>
-  		<span>
-  		<input type="checkbox" name="tbREGEXP" id="tbREGEXP" />
-  		<label for="tbREGEXP" ><fmt:message key="editor.plain.regexp"/></label>
-  		</span>
-  		<span>
-  		<input type="checkbox" name="tbGLOBAL" id="tbGLOBAL" checked="checked" />
-  		<label for="tbGLOBAL"><fmt:message key="editor.plain.global"/></label>
-  		</span>
-	  </div>
-	  <div class="clearbox" ></div>
   </div>
 
-  <div>
-  <textarea id="editorarea" name="<%=EditorManager.REQ_EDITEDTEXT%>"
-         class="editor"
-          rows="20" cols="80"><%=TextUtil.replaceEntities(usertext)%></textarea>
-  <div class="clearbox" ></div>
+  <div class="row edit-area livepreview previewcolumn"><%-- .livepreview  .previewcolumn--%>
+      <div>
+        <%--
+        XSS note
+        Textareas automatically decodes html entities : so &lt;  is converted to <
+        To avoid this, double escape the & char =>  so &amp;lt; is converted to &lt;
+        --%>
+        <textarea name="htmlPageText"
+             autofocus="autofocus"><%= pageAsHtml.replace("&", "&amp;")%></textarea>
+      </div>
+      <div class="ajaxpreview">Preview comes here</div>
   </div>
 
-  <wiki:CheckRequestContext context="comment">
-    <fieldset>
-	<legend><fmt:message key="editor.commentsignature"/></legend>
-    <p>
-    <label for="authorname" accesskey="n"><fmt:message key="editor.plain.name"/></label>
-    <input type="text" name="author" id="authorname" value="${author}" />
-    <input type="checkbox" name="remember" id="rememberme" <%=TextUtil.isPositive((String)session.getAttribute("remember")) ? "checked='checked'" : ""%> />
-    <label for="rememberme"><fmt:message key="editor.plain.remember"/></label>
-    </p>
-    <p>
-	<label for="link" accesskey="m"><fmt:message key="editor.plain.email"/></label>
-    <input type="text" name="link" id="link" size="24" value="${link}" />
-    </p>
-    </fieldset>
-  </wiki:CheckRequestContext>
+  <div class="resizer" data-pref="editorHeight"
+       title="<fmt:message key='editor.plain.edit.resize'/>"></div>
 
 </form>
+<script type="text/javascript">
+//<![CDATA[
 
-<div id="sneakpreviewheader">
-  <input type="checkbox" name="autopreview" id="autopreview" <%=TextUtil.isPositive((String)session.getAttribute("autopreview")) ? "checked='checked'" : ""%> />
-  <label for="autopreview" title="<fmt:message key='editor.plain.sneakpreview.title'/>"><fmt:message key="editor.plain.sneakpreview"/></label>
-  <span id="previewSpin" class="spin" style="position:absolute;display:none;"></span>
-</div>
-<div id="sneakpreview" ></div>
+Wiki.add("[name=htmlPageText]", function( element){
 
-</div>
+    function containerHeight(){ return editor.container.getStyle("height"); }
+    function editorHeight(){ return editor.iframe.getStyle("height"); }
+    function editorContent(){ return editor.getContent(); }
+    function resizePreview(){
+        preview.setStyle("height", containerHeight());
+        form.htmlPageText.setStyle("height", editorHeight());
+    }
+
+    var form = element.form,
+        editor,
+        preview = form.getElement(".ajaxpreview"),
+        resizer = form.getElement(".resizer"),
+        resizeCookie = "editorHeight",
+        html2markup = Wiki.getXHRPreview( editorContent, preview );
+
+    Wiki.configPrefs( form, function(cmd, isChecked){
+        if(isChecked && (cmd=="livepreview")){ html2markup(); }
+    });
+
+    element.mooEditable({
+        dimensions:{
+            x: "100%",
+            y: "100%"
+        },
+        extraCSS: "body{padding:.5em;}",
+  		externalCSS: $("main-stylesheet").href,
+  		onAttach: function(){
+
+  		    editor = this;
+            Wiki.resizer(resizer, $$(editor.iframe), resizePreview );
+            html2markup();
+            resizePreview();
+
+  		},
+  		onChange: html2markup,
+  		onEditorKeyUp: html2markup,
+        onEditorPaste: html2markup,
+	    actions: 'formatBlock | bold italic strikethrough | justifyleft justifyright justifycenter justifyfull | insertunorderedlist insertorderedlist indent outdent insertHorizontalRule / undo redo removeformat | createlink unlink | urlimage | toggleview'
+	});
+
+});
+
+//]]>
+</script>

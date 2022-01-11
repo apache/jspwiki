@@ -48,67 +48,71 @@ DOM Structure:
 */
 Wiki.Findpages = new Class({
 
-  Binds: ["search", "action"],
-  Implements: Events,
+    Binds: ["search", "action"],
+    Implements: Events,
 
-  initialize: function(element, options) {
+    initialize: function(element, options){
 
-    var self = this;
+        var self = this;
 
-    self.rpc = options.rpc;
-    self.toUrl = options.toUrl;
-    self.allowClone = options.allowClone;
-    self.query = element.getParent("form").query.observe(self.search);
-    self.element = element; //ul.dropdown menu
-    self.element.Findpages = self; // add reference this class instantiation to allow overrides
-    self.element.addEvent("click:relay(#cloney)", function(e) {
+        self.rpc = options.rpc;
+        self.toUrl = options.toUrl;
+        self.allowClone = options.allowClone;
+        self.query = element.getParent("form").query.observe( self.search );
+        self.element = element; //ul.dropdown menu
+        self.element.Findpages = self; // add reference this class instantiation to allow overrides
+        self.element.addEvent("click:relay(#cloney)", function(e){
 
-      this.getParent("a").href = self.toUrl(self.getValue(), true, this.checked);
+            this.getParent("a").href = self.toUrl(self.getValue(), true, this.checked);
 
-    });
+        });
 
-  },
+    },
 
-  getValue: function() {
-    return this.query.value.stripScripts();
-  },
+    getValue: function(){
 
-  empty: function() {
-    this.element.getElements("li.findpages").destroy();
-  },
+        return this.query.value.escapeHtml();
 
-  search: function() {
+    },
 
-    var value = this.getValue();
+    empty: function(){
 
-    if ((value == null) || (value.trim() == "")) {
+        $.remove("li.findpages", this.element);
 
-      this.empty();
+    },
 
-    } else {
+    search: function(){
 
-      //this.rpc( "name:" + value, this.action );
-      this.rpc(value, this.action);
-      //for testing ...
-      //this.action([{"score":91,"page":"Collapsible List"},{"score":78,"page":"BrushedTemplateEditor"},{"score":78,"page":"BrushedTemplate"},{"score":78,"page":"BrushedTemplateScreenshots"},{"score":76,"page":"BrushedWikiPlugin"},{"score":76,"page":"BrushedTemplateTypography"},{"score":76,"page":"BrushedTemplateDiscussion"},{"score":74,"page":"BrushedTemplateIdeas"},{"score":71,"page":"BrushedTemplateTOC"},{"score":70,"page":"BrushedTemplateDiscussion2006"},{"score":68,"page":"BrushedTemplateMetadataEditor"},{"score":66,"page":"BrushedTemplateEval"},{"score":66,"page":"BrushedTemplateForms"},{"score":66,"page":"BrushedTemplateJSP"},{"score":66,"page":"BrushedTemplateToolbar"},{"score":65,"page":"BrushedTemplateListTable"}]);
+        var value = this.getValue();
 
-      //obsolete:
-      //for testing ...
-      //this.action({"id":10000,"result":{"javaClass":"java.util.ArrayList","list":[{"map":{"page":"BrushedTemplateCollapse","score":99},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplate","score":95},"javaClass":"java.util.HashMap"},{"map":{"page":"CollapsibleList","score":61},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateInGerman","score":55},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateDiscussion","score":50},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateScreenshots","score":50},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateTypography","score":50},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedConditionalPlugin","score":48},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateDiscussion2006","score":45},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateMetadataEditor","score":44},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTablePlugin","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateColumns","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateCategories","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateToolbar","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateTOC","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateAccordion","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateTip","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateSlimbox","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateRoundedCorners","score":40},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedEditPageHelp","score":37},"javaClass":"java.util.HashMap"}]}});
+        if( (value == null) || (value.trim() == "") ){
 
-    }
+            this.empty();
 
-  },
+        } else {
 
-  action: function(result) {
+            //this.rpc( "name:" + value, this.action );
+            this.rpc( value, this.action );
+            //for testing ...
+            //this.action([{"score":91,"page":"Collapsible List"},{"score":78,"page":"BrushedTemplateEditor"},{"score":78,"page":"BrushedTemplate"},{"score":78,"page":"BrushedTemplateScreenshots"},{"score":76,"page":"BrushedWikiPlugin"},{"score":76,"page":"BrushedTemplateTypography"},{"score":76,"page":"BrushedTemplateDiscussion"},{"score":74,"page":"BrushedTemplateIdeas"},{"score":71,"page":"BrushedTemplateTOC"},{"score":70,"page":"BrushedTemplateDiscussion2006"},{"score":68,"page":"BrushedTemplateMetadataEditor"},{"score":66,"page":"BrushedTemplateEval"},{"score":66,"page":"BrushedTemplateForms"},{"score":66,"page":"BrushedTemplateJSP"},{"score":66,"page":"BrushedTemplateToolbar"},{"score":65,"page":"BrushedTemplateListTable"}]);
 
-    var self = this,
-      value = self.getValue(),
-      elements = [], item;
+            //obsolete:
+            //for testing ...
+            //this.action({"id":10000,"result":{"javaClass":"java.util.ArrayList","list":[{"map":{"page":"BrushedTemplateCollapse","score":99},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplate","score":95},"javaClass":"java.util.HashMap"},{"map":{"page":"CollapsibleList","score":61},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateInGerman","score":55},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateDiscussion","score":50},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateScreenshots","score":50},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateTypography","score":50},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedConditionalPlugin","score":48},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateDiscussion2006","score":45},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateMetadataEditor","score":44},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTablePlugin","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateColumns","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateCategories","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateToolbar","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateTOC","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateAccordion","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateTip","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateSlimbox","score":43},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedTemplateRoundedCorners","score":40},"javaClass":"java.util.HashMap"},{"map":{"page":"BrushedEditPageHelp","score":37},"javaClass":"java.util.HashMap"}]}});
 
-    if (result) {
+        }
 
-      item = result[0];
+    },
+
+    action: function( result ){
+
+        var self = this,
+            value = self.getValue(),
+            elements = [], item;
+
+        if( result ){
+
+            item = result[0];
 
       var pageInResults = false;
       for (var i = 0; i < result.length; i++) {
@@ -120,43 +124,41 @@ Wiki.Findpages = new Class({
 
       if (!item || !pageInResults) {
 
-        elements.push("li.findpages", [
-          "a", {href: self.toUrl(value, true), title: "sbox.create".localize(value)}, [
-            "div.search-flex", [
-              "div.createpage.search-flex-left", {text: value},
-              "div.btn.btn-danger.btn-xs.search-flex-right", {
-                for: "cloney",
-                text: "sbox.clone".localize()
-              }, [
-                "input#cloney[name=cloney][type=checkbox]"
-              ]
+                elements.push( "li.findpages", [
+                    "a", { href: self.toUrl(value, true), title: "sbox.create".localize(value) }, [
+                        "div.search-flex", [
+                          "div.createpage.search-flex-left", {text: value},
+                          "div.btn.btn-danger.btn-xs.search-flex-right", {
+                            for: "cloney",
+                            text: "sbox.clone".localize()
+                          }, [
+                                        "input#cloney[name=cloney][type=checkbox]"
+                          ]
 
-            ]
-          ]
-        ]);
+                        ]
+                    ]
+                ]);
 
-      }
+            }
 
-      while (result[0]) {
+            while( result[0] ){
 
-        item = result.shift();
+                item = result.shift();
 
-        elements.push("li.findpages", [
-          "a", {href: self.toUrl(item.page)}, [
-            "div.search-flex", [
-              "div.search-flex-left", {text: item.page},
-              "div.badge.search-flex-right", {text: item.score}
-            ]
-          ]
-        ]);
-      }
+                elements.push( "li.findpages", [
+                    "a", { href: self.toUrl( item.page ) }, [
+                        "div.search-flex", [
+                          "div.search-flex-left", {text: item.page},
+                          "div.badge.search-flex-right", {text: item.score}
+                        ]
+                    ]
+                ]);
+            }
 
-      self.empty();
-      if (elements[0]) {
-        elements.slick().inject(self.element.getFirst(".divider"), "before");
-      }
-      //self.fireEvent("complete");
+			self.empty();
+			if( elements[0] ){ elements.slick().inject( self.element.getFirst(".divider"), "before" ); }
+            //self.fireEvent("complete");
 
+        }
     }
-  }
 });

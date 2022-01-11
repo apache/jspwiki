@@ -1,0 +1,49 @@
+%%add-css
+
+  /* Based on prism.js, default theme by Lea Verou (http://primsjs.com) */
+  .prettify pre.prettyprint { border-radius:0 4px 4px 0; }
+  .prettify pre.prettylines { border-radius: 4px 0 0 4px; 
+      color: #999; 
+      border-right: 1px solid #ddd;
+  }
+  .prettify pre {
+    color: black;
+    background: #f5f2f0;
+    border:none; 
+    text-shadow: 0 1px white;
+    line-height:1.5;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  }
+  .prettify pre::-moz-selection, .prettify pre ::-moz-selection {
+    text-shadow: none;
+    background: #b3d4fc;
+  }
+  .prettify pre::selection, .prettify pre ::selection {
+    text-shadow: none;
+    background: #b3d4fc;
+  }
+  @media print {
+    .prettify pre { text-shadow: none; }
+  }
+
+  .pln { color: black; }  /* plain text */
+  .str { color: #690; }  /* string content */
+  .kwd { color: #07a; }  /* keyword */
+  .com { color: slategray; }  /* comment */
+  .typ { color: #a67f59; background: hsla(0, 0%, 100%, .5); }  /* type name */
+  .lit { color: #905; }  /* literal value */
+  .pun { color: #999; }  /* punctuation */
+  .opn { color: #07a; }  /* lisp open bracket */
+  .clo { color: #07a; }  /* lisp close bracket */
+  .tag { color: #905; }  /* markup tag name */
+  .atn { color: #690; }  /* markup attribute name */
+  .atv { color: #07a; }  /* markup attribute value */
+  .dec { color: #07a; }  /* declaration */
+  .var { color: #e90; }  /* variable name */
+  .fun { color: #dd4a68; }  /* function name */
+
+/%
+
+
+[{ALLOW edit Admin}]
+[{ALLOW view All}]

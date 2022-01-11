@@ -17,24 +17,29 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.commons.lang.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.commons.text.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
+<%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Logger log = LogManager.getLogger("JSPWiki");
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.CONFLICT );
-    if( !wiki.getAuthorizationManager().hasAccess( wikiContext, response ) ) return;
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_CONFLICT.getRequestContext() );
+    if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     if( wikiContext.getCommand().getTarget() == null ) {
         response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
         return;
@@ -44,24 +49,18 @@
     String usertext = (String)session.getAttribute( EditorManager.REQ_EDITEDTEXT );
 
     // Make the user and conflicting text presentable for display.
-    usertext = StringEscapeUtils.escapeXml( usertext );
+    usertext = StringEscapeUtils.escapeXml11( usertext );
 
-    String conflicttext = wiki.getText(pagereq);
-    conflicttext = StringEscapeUtils.escapeXml( conflicttext );
+    String conflicttext = wiki.getManager( PageManager.class ).getText(pagereq);
+    conflicttext = StringEscapeUtils.escapeXml11( conflicttext );
 
-    pageContext.setAttribute( "conflicttext",
-                              conflicttext,
-                              PageContext.REQUEST_SCOPE );
+    pageContext.setAttribute( "conflicttext", conflicttext, PageContext.REQUEST_SCOPE );
 
     log.info("Page concurrently modified "+pagereq);
-    pageContext.setAttribute( "usertext",
-                              usertext,
-                              PageContext.REQUEST_SCOPE );
+    pageContext.setAttribute( "usertext", usertext, PageContext.REQUEST_SCOPE );
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 

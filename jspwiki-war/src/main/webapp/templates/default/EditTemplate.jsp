@@ -14,18 +14,17 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!doctype html>
+<html lang="${prefs.Language}" name="top">
+  <head>
 
-<html id="top" xmlns="http://www.w3.org/1999/xhtml" xmlns:jspwiki="http://jspwiki.apache.org">
-
-<head>
   <title>
     <wiki:CheckRequestContext context="edit">
     <fmt:message key="edit.title.edit">
@@ -44,25 +43,18 @@
   <wiki:Include page="commonheader.jsp"/>
 </head>
 
-<body <wiki:CheckRequestContext context='edit'>class="edit"</wiki:CheckRequestContext><wiki:CheckRequestContext context='comment'>class="comment"</wiki:CheckRequestContext> >
+<body class="context-<wiki:Variable var='requestcontext' />" >
 
-<div id="wikibody" class="${prefs.Orientation}">
+<div class="container${prefs.Layout=='fixed' ? ' ' : '-fluid ' } ${prefs.Orientation}">
 
   <wiki:Include page="Header.jsp" />
-
-  <div id="content">
-
-    <div id="page">
-      <wiki:Include page="PageActionsTop.jsp"/>
+  <div class="content" data-toggle="li#menu,.sidebar>.close" >
+    <div class="page">
       <wiki:Content/>
-      <wiki:Include page="PageActionsBottom.jsp"/>
-	</div>
-
-    <wiki:Include page="Favorites.jsp"/> 
-
-	<div class="clearbox"></div>
-  </div>	
-
+      <wiki:Include page="PageInfo.jsp"/>
+    </div>
+    <wiki:Include page="Sidebar.jsp"/>
+  </div>
   <wiki:Include page="Footer.jsp" />
 
 </div>

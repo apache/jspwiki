@@ -19,28 +19,31 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.AuthenticationManager" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.Installer" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="java.text.MessageFormat" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Logger log = LogManager.getLogger("JSPWiki");
 %>
 
 <%
-WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+Engine wiki = Wiki.engine().find( getServletConfig() );
 // Create wiki context and check for authorization
-WikiContext wikiContext = wiki.createContext( request, WikiContext.INSTALL );
-if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_INSTALL.getRequestContext() );
+if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
 
 Installer installer = new Installer( request, config );
-WikiSession wikiSession = wikiContext.getWikiSession();
+Session wikiSession = wikiContext.getWikiSession();
 
 // Parse the existing properties
 installer.parseProperties();
@@ -76,9 +79,8 @@ if ( !installer.adminExists() )
     response.setHeader("Cache-Control", "no-cache" );
     response.setContentType("text/html; charset=UTF-8");
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!doctype html>
+<html lang="en">
 <head>
   <title><fmt:message key="install.jsp.title" /></title>
   <link rel="stylesheet" media="screen, projection" type="text/css" href='<wiki:Link format="url" templatefile="jspwiki.css"/>'/>

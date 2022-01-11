@@ -14,52 +14,30 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
-  WikiContext c = WikiContext.findContext( pageContext );
-  int attCount = c.getEngine().getAttachmentManager().listAttachments(c.getPage()).size();
-  String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
-  if( attCount != 0 ) attTitle += " (" + attCount + ")";
+  Context c = Context.findContext( pageContext );
 %>
+<%-- Main Content Section --%>
+<%-- This has been source ordered to come first in the markup (and on small devices)
+     but to be to the right of the nav on larger screens --%>
+<div class="page-content <wiki:Variable var='page-styles' default='' />">
 
-<wiki:TabbedSection defaultTab='${param.tab}' >
+  <wiki:Include page="PageTab.jsp"/>
 
-  <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "view.tab")%>' accesskey="v">
-    <wiki:Include page="PageTab.jsp"/>
-    <wiki:PageType type="attachment">
-      <div class="information">
-	    <fmt:message key="info.backtoparentpage" >
-	      <fmt:param><wiki:LinkToParent><wiki:ParentPageName/></wiki:LinkToParent></fmt:param>
-        </fmt:message>
-      </div>
-      <div style="overflow:hidden;">
-        <wiki:Translate>[<%= c.getPage().getName()%>]</wiki:Translate>
-      </div>
-    </wiki:PageType>    
-  </wiki:Tab>
-
-  <wiki:PageExists>
-
-  <wiki:PageType type="page">
-  <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
-    <wiki:Include page="AttachmentTab.jsp"/>
-  </wiki:Tab>
+  <wiki:PageType type="attachment">
+    <div><%-- insert the actual attachement, image, etc... --%>
+      <wiki:Translate>[<%= Context.findContext( pageContext ).getPage().getName() %>]</wiki:Translate>
+    </div>
   </wiki:PageType>
-    
-  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
-           url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
-           accesskey="i" >
-  </wiki:Tab>
-    
-  </wiki:PageExists>
 
-</wiki:TabbedSection>
+</div>

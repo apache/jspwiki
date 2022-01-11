@@ -18,14 +18,13 @@
 */
 package org.apache.wiki.markdown.renderer;
 
-import java.util.Set;
-
-import org.apache.wiki.WikiContext;
-
 import com.vladsch.flexmark.html.renderer.DelegatingNodeRendererFactory;
 import com.vladsch.flexmark.html.renderer.NodeRenderer;
 import com.vladsch.flexmark.html.renderer.NodeRendererFactory;
-import com.vladsch.flexmark.util.options.DataHolder;
+import com.vladsch.flexmark.util.data.DataHolder;
+import org.apache.wiki.api.core.Context;
+
+import java.util.Set;
 
 
 /**
@@ -33,9 +32,9 @@ import com.vladsch.flexmark.util.options.DataHolder;
  */
 public class JSPWikiNodeRendererFactory implements DelegatingNodeRendererFactory {
 
-    final WikiContext wikiContext;
+    final Context wikiContext;
 
-    public JSPWikiNodeRendererFactory( final WikiContext wikiContext ) {
+    public JSPWikiNodeRendererFactory( final Context wikiContext ) {
         this.wikiContext = wikiContext;
     }
 
@@ -43,7 +42,7 @@ public class JSPWikiNodeRendererFactory implements DelegatingNodeRendererFactory
      * {@inheritDoc}
      */
     @Override
-    public NodeRenderer create( final DataHolder options ) {
+    public NodeRenderer apply( final DataHolder options ) {
         return new JSPWikiLinkRenderer();
     }
 
@@ -51,7 +50,7 @@ public class JSPWikiNodeRendererFactory implements DelegatingNodeRendererFactory
      * {@inheritDoc}
      */
     @Override
-    public Set< Class< ? extends NodeRendererFactory > > getDelegates() {
+    public Set< Class< ? > > getDelegates() {
         // return null if renderer does not delegate or delegates only to core node renderer
         return null;
     }

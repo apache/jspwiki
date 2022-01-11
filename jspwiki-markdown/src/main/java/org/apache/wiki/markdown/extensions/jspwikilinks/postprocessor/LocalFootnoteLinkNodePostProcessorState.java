@@ -1,10 +1,11 @@
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import org.apache.wiki.WikiContext;
-import org.apache.wiki.markdown.nodes.JSPWikiLink;
-
-import com.vladsch.flexmark.util.NodeTracker;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
+import org.apache.wiki.markdown.nodes.JSPWikiLink;
 
 
 /**
@@ -12,20 +13,20 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
  */
 public class LocalFootnoteLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    final WikiContext wikiContext;
+    final Context wikiContext;
 
-    public LocalFootnoteLinkNodePostProcessorState( final WikiContext wikiContext ) {
+    public LocalFootnoteLinkNodePostProcessorState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
+     * @see NodePostProcessorState#process(NodeTracker, Node) 
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
-        link.setUrl( CharSubSequence.of( wikiContext.getURL( WikiContext.VIEW, link.getUrl().toString() ) ) );
+        link.setUrl( CharSubSequence.of( wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link.getUrl().toString() ) ) );
     }
 
 }

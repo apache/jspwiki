@@ -14,36 +14,21 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.Release" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<%
-  WikiContext c = WikiContext.findContext(pageContext);
-  String frontpage = c.getEngine().getFrontPage(); 
-%> 
-<div id="footer">
+<div class="footer">
 
-  <div class="applicationlogo" > 
-    <a href="<wiki:LinkTo page='<%=frontpage%>' format='url' />"
-       title="<fmt:message key='actions.home.title' ><fmt:param><%=frontpage%></fmt:param></fmt:message> "><fmt:message key='actions.home' /></a>
-  </div>
+  <wiki:InsertPage page="CopyrightNotice"/>
 
-  <div class="companylogo"></div>
-
-  <div class="copyright"><wiki:InsertPage page="CopyrightNotice"/></div>
-
-  <div class="wikiversion">
-    <%=Release.APPNAME%> v<%=Release.getVersionString()%>
-  </div>
-
-  <div class="rssfeed">
-    <wiki:RSSImageLink title="Aggregate the RSS feed" />
+  <div class="wiki-version"><%=Release.APPNAME%> v<%=Release.getVersionString()%>
+    <wiki:RSSImageLink title="<fmt:message key='fav.aggregatewiki.title'/>" mode="full"/>
   </div>
 
 </div>

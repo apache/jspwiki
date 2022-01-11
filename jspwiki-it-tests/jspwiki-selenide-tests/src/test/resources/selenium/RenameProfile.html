@@ -1,0 +1,156 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+<head>
+  <meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+  <title>JSPWiki Test Rename Profile</title>
+</head>
+<body> 
+<table cellpadding="1" cellspacing="1" border="1">
+	<tbody>
+	<tr><td rowspan="1" colspan="3">
+	JSPWiki Test Rename Profile<br>
+<!--
+0. Clear all session/assertion cookies using the browser options preferences tools.
+1. Create new user profile with login name "TestRenameProfileUser", name "TestRenameProfileUser" and password "password".
+2. Verify that it was created by looking for the text "G'Day TestRenameProfileUser".
+3. Clear all session/assertion cookies using the browser options preferences tools.
+4. Log in with test user name and password (janne/myP@5sw0rd).
+5. Create a new page called "TestRenameProfilePage" with these contents:
+
+[{ALLOW edit TestRenameProfileUser}]
+This page was created with an ACL by TestRenameProfileUser
+
+6. Clear all session/assertion cookies using the browser options preferences tools.
+7. Log in with renamed user name (TestRenameProfileUser/password).
+8. Try to view page 'TestRenameProfilePage'. It should succeed.
+9. Try to edit page 'TestRenameProfilePage'. It should succeed also.
+A. Go to the My Prefs page, the Profile tab. Change the login name and wiki name to "RenamedUser".
+B. Verify that the front page now shows "G'Day RenamedUser".
+C. Try to edit page 'TestRenameProfilePage'. It should still succeed. Verify that the ACL contains:
+
+[{ALLOW edit RenamedUser}]
+This page was created with an ACL by TestRenameProfileUser
+-->
+	</td></tr>
+	<tr><td>store</td>	<td>/${it-jspwiki.context}</td>	<td>it_baseUrl</td></tr>
+	<tr><td>store</td>	<td>javascript{'Test Rename Profile Page '+new Date().getTime()}</td>	<td>page</td></tr>
+	<tr><td>store</td>	<td>javascript{'TestRenameProfileUser'+new Date().getTime()}</td>	<td>user</td></tr>
+	<tr><td>store</td>	<td>janne</td>			<td>TestUsername</td></tr>
+	<tr><td>store</td>	<td>myP@5sw0rd</td>		<td>TestPassword</td></tr>
+
+	<tr><td>store</td>	<td>${it_baseUrl}/Wiki.jsp?page=${page}</td>	<td>viewurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Edit.jsp?page=${page}</td>	<td>editurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Group.jsp?</td>		<td>viewgroupurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/NewGroup.jsp?</td>	<td>newgroupurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/UserPreferences.jsp?redirect=Main&tab=profile</td>	<td>prefsurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Login.jsp</td>			<td>loginurl</td></tr>
+	<tr><td>store</td>	<td>${it_baseUrl}/Logout.jsp</td>			<td>logouturl</td></tr>
+	<tr><td>store</td>	<td>This page was created with an ACL by ${user}</td>	<td>PageContent</td></tr>
+
+	<tr><td rowspan="1" colspan="3"> Create a new user and group (and log in) -- at the moment, this ALWAYS fails for container-managed tests.<br/></td></tr>
+    <tr><td>open</td>	<td>${loginurl}?tab=profile</td>	<td>&nbsp;</td></tr>
+	<tr><td>type</td>	<td>loginname</td>	<td>${user}</td></tr>
+	<tr><td>type</td>	<td>password</td>	<td>password</td></tr>
+	<tr><td>type</td>	<td>password2</td>	<td>password</td></tr>
+	<tr><td>type</td>	<td>fullname</td>	<td>${user}</td></tr>
+	<tr><td>clickAndWait</td>	<td>ok</td>	<td></td></tr>
+    <!-- Log out -->
+    <tr><td>clickAndWait</td>	<td>link=Log out</td> 	<td>&nbsp;</td></tr>
+        
+	<!-- Login --!>
+    <tr><td>open</td>	<td>${loginurl}</td>	<td>&nbsp;</td></tr>
+    <tr><td>type</td>	<td>j_username</td>	<td>${TestUsername}</td></tr>
+    <tr><td>type</td>	<td>j_password</td>	<td>${TestPassword}</td></tr>
+    <tr><td>clickAndWait</td>	<td>submitlogin</td>	<td>&nbsp;</td></tr>
+
+	<tr><td rowspan="1" colspan="3"> Create a page with a view ACL restricted to the new user<br/></td></tr>
+
+    <tr><td>open</td>	<td>${editurl}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTitle</td>		<td>JSPWiki: Edit: ${page}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>ok</td>	<td></td></tr>
+    <tr><td>verifyElementPresent</td>	<td>id=editorarea</td>	<td></td></tr>
+
+    <tr><td>type</td>			<td>id=editorarea</td>		<td>[{ALLOW edit ${user} }]<br />${PageContent}</td></tr>
+    <tr><td>clickAndWait</td>	<td>ok</td>	<td>&nbsp;</td></tr>
+<!--
+    <tr><td>verifyTitle</td>		<td>JSPWiki: ${page}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>${PageContent}</td>	<td>&nbsp;</td></tr>	
+-->    
+	<tr><td rowspan="1" colspan="3"> Anonymous editing should fail<br/></td></tr>
+
+    <!-- Log out -->
+    <tr><td>open</td>	<td>${logouturl}</td> 	<td>&nbsp;</td></tr>
+
+    <tr><td>open</td>				<td>${editurl}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>Please sign in</td>	<td></td></tr>
+
+	<tr><td rowspan="1" colspan="3"> Now log in as the test user and view/edit it successfully<br/></td></tr>
+
+    <tr><td>open</td>	<td>${loginurl}</td>	<td>&nbsp;</td></tr>
+    <tr><td>type</td>	<td>j_username</td>	<td>${user}</td></tr>
+    <tr><td>type</td>	<td>j_password</td>	<td>password</td></tr>
+    <tr><td>clickAndWait</td>	<td>submitlogin</td>	<td>&nbsp;</td></tr>
+
+    <tr><td>open</td>				<td>${viewurl}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTitle</td>		<td>JSPWiki: ${page}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>	<td>${PageContent}</td>	<td>&nbsp;</td></tr>	
+
+    <tr><td>open</td>			<td>${editurl}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTitle</td>	<td>JSPWiki: Edit: ${page}</td>	<td>&nbsp;</td></tr>
+
+	<tr><td rowspan="1" colspan="3"> Verify that our ACL test is present (note the extra linebreak at the end of the text<br/></td></tr>
+
+    <tr><td>verifyElementPresent</td>	<td>ok</td>	<td></td></tr>
+    <tr><td>verifyElementPresent</td>	<td>id=editorarea</td>	<td></td></tr>
+    <tr><td>verifyValue</td>	<td>id=editorarea</td>		<td>[{ALLOW edit ${user} }]<br />${PageContent}</td></tr>
+
+	<tr><td rowspan="1" colspan="3"> OK -- now that we've got a user, a protected page and a group  successfully set up, let's change the profile name<br/></td></tr>
+
+    <tr><td>open</td>	<td>${prefsurl}</td>	<td>&nbsp;</td></tr>
+
+	<tr><td>verifyElementPresent</td>	<td>css=form#editProfile input[name="ok"]</td>	<td></td></tr>
+	<tr><td>type</td>			<td>fullname</td>	<td>Renamed${user}</td></tr>
+	<tr><td>type</td>			<td>loginname</td>	<td>Renamed${user}</td></tr>
+	<tr><td>clickAndWait</td>	<td>css=form#editProfile input[name="ok"]</td>	<td></td></tr>
+
+	<tr><td rowspan="1" colspan="3"> Now, the main page should show the new authenticated user name<br/></td></tr>
+
+    <tr><td>verifyTitle</td>			<td>JSPWiki: Main</td>		<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>		<td>G&#8217;day</td>		<td>&nbsp;</td></tr>
+    <tr><td>verifyElementPresent</td>	<td>link=Renamed${user}</td>	<td>&nbsp;</td></tr>
+    <tr><td>verifyTextPresent</td>		<td>(authenticated)</td>	<td>&nbsp;</td></tr>
+
+	<tr><td rowspan="1" colspan="3"> When we navigate to the protected page, the ACL should have the NEW name in it<br/></td></tr>
+
+    <tr><td>open</td>			<td>${editurl}</td>				<td>&nbsp;</td></tr>
+    <tr><td>verifyTitle</td>	<td>JSPWiki: Edit: ${page}</td>	<td>&nbsp;</td></tr>
+<!--CHECK!! seems to double the carriage returns when renaming the profile and remove the last space from the ACL -->
+    <tr><td>assertValue</td>	<td>id=editorarea</td>			<td>[{ALLOW edit Renamed${user}}]<br /><br />${PageContent}</td></tr>
+    
+    <!-- Log out -->
+    <tr><td>clickAndWait</td>	<td>link=Log out</td> 	<td>&nbsp;</td></tr>
+
+	</tbody>
+</table>
+
+</body>
+</html>

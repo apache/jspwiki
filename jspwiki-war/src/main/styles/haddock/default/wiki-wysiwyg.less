@@ -1,0 +1,210 @@
+/*
+    JSPWiki - a JSP-based WikiWiki clone.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); fyou may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+*/
+
+/*
+Overwrite of MooEditable.css,
+adopting the jspwiki haddock icons for the editor toolbar
+
+DOM Structure:
+
+<div class="mooeditable-ui-toolbar ">
+	<button class="mooeditable-ui-button bold-item toolbar-item" title="Bold ( Cmd+B )">
+	    <span class="button-icon"></span>
+	    <span class="button-text">Bold</span>
+	</button>
+	<button class="mooeditable-ui-button italic-item toolbar-item" title="Italic ( Cmd+I )"><span class="button-icon"></span><span class="button-text">Italic</span></button>
+	<button class="mooeditable-ui-button underline-item toolbar-item" title="Underline ( Cmd+U )"><span class="button-icon"></span><span class="button-text">Underline</span></button>
+	<button class="mooeditable-ui-button strikethrough-item toolbar-item" title="Strikethrough ( Cmd+S )"><span class="button-icon"></span><span class="button-text">Strikethrough</span></button>
+
+	<span class="toolbar-separator"></span>
+
+	<select class="formatBlock-item toolbar-item" title="Block Formatting" style="height: 21px;">
+		<option value="p" style="">Paragraph</option>
+		<option value="h2" style="font-size:18px; font-weight:bold;">Heading 2</option>
+		<option value="h3" style="font-size:14px; font-weight:bold;">Heading 3</option>
+		<option value="h4" style="font-size:12px; font-weight:bold;">Heading 4</option>
+	</select>
+
+	<button class="mooeditable-ui-button justifyleft-item toolbar-item" title="Align Left"><span class="button-icon"></span><span class="button-text">Align Left</span></button>
+	<button class="mooeditable-ui-button justifyright-item toolbar-item" title="Align Right"><span class="button-icon"></span><span class="button-text">Align Right</span></button>
+	<button class="mooeditable-ui-button justifycenter-item toolbar-item" title="Align Center"><span class="button-icon"></span><span class="button-text">Align Center</span></button>
+	<button class="mooeditable-ui-button justifyfull-item toolbar-item" title="Align Justify"><span class="button-icon"></span><span class="button-text">Align Justify</span></button>
+	<span class="toolbar-separator"></span>
+	<button class="mooeditable-ui-button insertunorderedlist-item toolbar-item" title="Unordered List"><span class="button-icon"></span><span class="button-text">Unordered List</span></button>
+	<button class="mooeditable-ui-button insertorderedlist-item toolbar-item" title="Ordered List"><span class="button-icon"></span><span class="button-text">Ordered List</span></button>
+	<button class="mooeditable-ui-button indent-item toolbar-item" title="Indent"><span class="button-icon"></span><span class="button-text">Indent</span></button>
+	<button class="mooeditable-ui-button outdent-item toolbar-item" title="Outdent"><span class="button-icon"></span><span class="button-text">Outdent</span></button>
+	<button class="mooeditable-ui-button insertHorizontalRule-item toolbar-item" title="Insert Horizontal Rule"><span class="button-icon"></span><span class="button-text">Insert Horizontal Rule</span></button>
+	<span class="toolbar-separator"></span>
+	<button class="mooeditable-ui-button undo-item toolbar-item" title="Undo ( Cmd+Z )"><span class="button-icon"></span><span class="button-text">Undo</span></button>
+	<button class="mooeditable-ui-button redo-item toolbar-item" title="Redo ( Cmd+Y )"><span class="button-icon"></span><span class="button-text">Redo</span></button>
+	<button class="mooeditable-ui-button removeformat-item toolbar-item" title="Remove Formatting"><span class="button-icon"></span><span class="button-text">Remove Formatting</span></button>
+	<span class="toolbar-separator"></span>
+	<button class="mooeditable-ui-button createlink-item toolbar-item" title="Add Hyperlink ( Cmd+L )"><span class="button-icon"></span><span class="button-text">Add Hyperlink</span></button>
+	<button class="mooeditable-ui-button unlink-item toolbar-item" title="Remove Hyperlink"><span class="button-icon"></span><span class="button-text">Remove Hyperlink</span></button>
+	<span class="toolbar-separator"></span>
+	<button class="mooeditable-ui-button urlimage-item toolbar-item" title="Add Image ( Cmd+M )"><span class="button-icon"></span><span class="button-text">Add Image</span></button>
+	<span class="toolbar-separator"></span>
+	<button class="mooeditable-ui-button toggleview-item toolbar-item" title="Toggle View"><span class="button-icon"></span><span class="button-text">Toggle View</span></button>
+</div>
+
+*/
+
+/*
+Additional styles for  the MooEditable toolbar using JSPWiki icons, iso the standard icons
+FIXME: tidy up the css
+*/
+
+.mooeditable-ui-toolbar {
+	background-color: transparent;
+	border-bottom: 1px dashed #ccc;
+
+	select.formatBlock-item.toolbar-item {
+		webkit-appearance: none;
+		-moz-appearance: none;
+		background-color: #fff;
+		text-indent: 0.01px;
+		text-overflow: '';
+		cursor: pointer;
+		border-radius:0;
+		box-shadow: 0 0 0 6px white, 0 0 0 7px #ccc;  /*draw alternative border on selection */
+		border:none;
+		padding: 6px 12px 6px 24px;
+		color: #333;
+		margin: 6px;
+		position: relative;
+
+		&:before {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			border: 1px solid #ccc;
+		}
+	}
+
+	.mooeditable-ui-button {
+		display: inline-block;
+		font-weight: normal;
+		text-align: center;
+		vertical-align: middle;
+		touch-action: manipulation;
+		cursor: pointer;
+		background-image: none;
+		border: 1px solid transparent;
+		white-space: nowrap;
+		padding: 6px 12px;
+		font-size: 16px;
+		line-height: 1.42857143;
+		border-radius: 0;
+		margin-bottom: 1px;
+		color: #333;
+		background-color: #fff;
+		border-color: #ccc;
+
+		&:not(:first-child) {
+			margin-left: -1px;
+		}
+
+		&.onActive {
+			background-color: rgba(255, 133, 26, 0.5);
+		}
+
+		.button-icon {
+			font-family: 'FontJspwiki' !important;
+			speak: none;
+			font-style: normal;
+			font-weight: normal;
+			font-variant: normal;
+			text-transform: none;
+			line-height: 1;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			width: auto;
+			height: auto;
+			background: none;
+		}
+
+		&.bold-item .button-icon:before { content: "B"; font-weight: bold; }
+		&.italic-item .button-icon:before { content: "I"; font-family: serif; }
+		&.strikethrough-item .button-icon:before { content: "S"; text-decoration: line-through; }
+		&.justifyleft-item .button-icon:before { content: "\f036"; }
+		&.justifyright-item .button-icon:before { content: "\f038"; }
+		&.justifycenter-item .button-icon:before { content: "\f037"; }
+		&.justifyfull-item .button-icon:before { content: "\f039"; }
+		&.insertunorderedlist-item .button-icon:before { content: "\f0ca"; }
+		&.insertorderedlist-item .button-icon:before { content: "\f0cb"; }
+		&.indent-item .button-icon:before { content: "\f03c"; }
+		&.outdent-item .button-icon:before { content: "\f03b"; }
+		&.insertHorizontalRule-item .button-icon {
+			border-bottom: 2px solid grey;
+			position: relative;
+			padding: 0 8px;
+			top: -50%;
+		}
+		&.undo-item .button-icon:before { content: "\e615"; }
+		&.redo-item .button-icon:before { content: "\e606"; }
+		&.removeformat-item .button-icon:before { content: "\f006"; }
+		&.createlink-item .button-icon:before { content: "\e613"; }
+		&.unlink-item .button-icon { color: grey; }
+		&.unlink-item .button-icon:before { content: "\e613"; }
+		&.createlink-item.onActive + .unlink-item .button-icon { color: inherit; }
+		&.urlimage-item .button-icon:before { content: "\e607"; }
+		&.toggleview-item .button-icon:before { content: "\e604"; }
+	}
+}
+
+
+.mooeditable-ui-dialog {
+  font-size: inherit;
+  background-color: rgba(255, 133, 26, 0.5);
+
+  .dialog-content {
+    padding: 6px 12px;
+
+	input {
+		padding: 6px 12px;
+		margin: 0 6px;
+		border-radius: 4px;
+		background: white;
+
+		&:focus { outline: none; }
+	}
+
+	label {
+		font-weight: normal;
+		margin: 0;
+	}
+
+	button {
+		padding: 6px 12px;
+		border-radius: 4px;
+		border: 1px solid #ccc;
+		&.dialog-ok-button {
+			color: white;
+			background: #5cb85c;
+		}
+		&.dialog-cancel-button {
+			color: white;
+			background: #d9534f;
+		}
+	}
+  }
+}

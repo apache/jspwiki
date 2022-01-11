@@ -21,27 +21,27 @@
 //  JSPWiki color scheme an typography
 
 // Better base colors. See - https://github.com/mrmrs/colors/blob/master/less/_variables.less
-@aqua:  #7FDBFF;
-@blue:  #0074D9;
-@navy:  #001F3F;
-@teal:  #39CCCC;
-@green: #2ECC40;
-@olive: #3D9970;
-@lime:  #01FF70;
+@aqua:  hsl(197, 100%, 75%); //#7FDBFF;
+@blue:  hsl(208, 100%, 43%); //#0074D9;
+@navy:  hsl(210, 100%, 12%); //#001F3F;
+@teal:  hsl(180, 59%, 51%); //#39CCCC;
+@green: hsl(127, 63%, 49%); //#2ECC40;
+@olive: hsl(153, 43%, 42%); //#3D9970;
+@lime:  hsl(146, 100%, 50%); //#01FF70;
 
 // Warm
-@yellow:  #FFDC00;
-@orange:  #FF851B;
-@red:     #FF4136;
-@fuchsia: #F012BE;
-@purple:  #B10DC9;
-@maroon:  #85144B;
+@yellow:  hsl(52, 100%, 50%); //#FFDC00;
+@orange:  hsl(28, 100%, 55%); //#FF851B;
+@red:     hsl(3, 100%, 61%); //#FF4136;
+@fuchsia: hsl(314, 88%, 51%); //#F012BE;
+@purple:  hsl(292, 88%, 42%); //#B10DC9;
+@maroon:  hsl(331, 74%, 30%); //#85144B;
 
 // Gray Scale
-@white:  #fff;
-@silver: #ddd;
-@gray:   #aaa;
-@black:  #111;
+@white:  hsl(0, 0%, 100%); //#fff;
+@silver: hsl(0, 0%, 87%); //#ddd;
+@gray:   hsl(0, 0%, 67%); //#aaa;
+@black:  hsl(0, 0%, 7%); //#111;
 
 
 //Apache new logo styles
@@ -63,26 +63,36 @@ images/feather-small.png   wxh  162x286
 // Might as well use the nicest Helvetica you can... http://css-tricks.com/snippets/css/better-helvetica/
 @font-family-sans-serif: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", HelveticaNeue, Segoe UI, Helvetica, Arial, sans-serif;
 @font-size-base: 16px;
+@list-item-indent: 40px;  //default indentation level used by browsers (sometimes this is also 2.5em)
 
 //softer gray-tones
-@pre-bg:                      #f7f7f9; //#f2f2f2;
-@pre-border-color:            #e1e1e8; //#e5e5e5;
+@pre-bg:                      hsl(240, 14%, 97%); //#f7f7f9;
+@pre-border-color:            hsl(240, 13%, 90%); //#e1e1e8;
+@wiki-pre-bg:                 fadeout(@pre-bg,50%);
+@wiki-pre-border-color:       fadeout(@pre-border-color,50%);
 @panel-default-border:        @pre-border-color;
 @panel-default-heading-bg:    @pre-bg;
 
-@modal-backdrop-bg: #ca8E78; //copper blush
+
+//overwrite some bootstrap values, increasing visual contrast
+@nav-tabs-active-link-hover-color: hsl(210, 9%, 31%); //#495057;
+@nav-disabled-link-color: hsl(208, 7%, 46%); //#6c757d;
 
 // JPSWiki variables
 // Main color scheme
-@wiki-header-bg:    rgba(74,137,220,0.9); //@brand-primary;
+@wiki-header-bg:    hsla(214, 68%, 58%, 0.9); //@brand-primary;
+//@wiki-header-bg: -webkit-linear-gradient(108deg,rgba(112,208,238,0.8), rgba(74,137,220,0.9)/*rgba(42,132,210,0.8)*/ 90%);
+@wiki-footer-bg:    @wiki-header-bg;
 
 @wiki-header-color: @white;
 @wiki-page-bg:      @white;
-@wiki-sidebar-bg:   #e5e8ed;
+@wiki-sidebar-bg:   hsl(218, 18%, 91%); //#e5e8ed;
 @wiki-header-font-family: @font-family-sans-serif;
 
-@wiki-login-bg:     @pre-bg; //#f7f9fa;
+@wiki-login-bg:     @pre-bg;
 @wiki-login-width:  30em;
+
+@wiki-prettylines-color: #737373;
 
 //Layout ratios
 //ref. http://alistapart.com/article/content-out-layout
@@ -94,12 +104,17 @@ images/feather-small.png   wxh  162x286
 
 //blurb layout :        1 | (1*phi*phi)
 //three section layout: 1 | (1*phi*phi) | 1
-@wiki-sidebar-width: percentage( 1 / (1 + @golden-square + 1) );  //21.6447%
+@sidebar-ratio: 1 / (1 + @golden-square + 1); //21.6447
+@wiki-sidebar-width: percentage( @sidebar-ratio );  //21.6447%
 
 //wider layout :  1 | (1*phi)   => commentbox
 @wiki-commentbox-ratio: percentage( 1 / (1 + @golden-square) ); //27.6373%
 @wiki-commentbox-width: @wiki-commentbox-ratio * 100% / (100% - @wiki-sidebar-width);
 @wiki-commentbox-width-inverse: (100% - @wiki-commentbox-width);
+
+@modal-backdrop-bg: hsl(16, 44%, 63%); //copper blush
+@wiki-modal-max-width: 100 * (1-@sidebar-ratio);
+@wiki-modal-max-height: 100 * (1-@sidebar-ratio);
 
 //Nav bar
 @wiki-logo-font-family: 'HelveticaNeue-UltraLight', 'Helvetica Neue UltraLight', 'Helvetica Neue', Arial, Helvetica, sans-serif;
@@ -113,11 +128,23 @@ images/feather-small.png   wxh  162x286
 //@dialog-index:110;
 
 // Forms
-@wikiFormFontColor: #007; //font color for input, textarea form element
+@wikiFormFontColor: hsl(240, 100%, 23%);  //font color for input, textarea form element
+@wikiFormSwitch-bg:fade(@silver, 70%);
+@wikiFormSwitch-border:fade(@silver, 70%);
+@wikiFormSwitchOn-bg:fade(@blue, 70%);
+@wikiFormSwitchOn-border:fade(@blue, 70%);
+
+@wikiTriangleSize: @padding-base-horizontal/2.5;
+@wikiTriangleColor: @wiki-header-bg;
+
+@wikiRadioActive-color: @btn-primary-color;
+@wikiRadioActive-bg: lighten(@wiki-header-bg,10%);
+@wikiRadioActive-border: lighten(@wiki-header-bg,10%);
+
 
 // Highlight
 @wiki-hover:  @dropdown-link-hover-bg;
-@highlight:   rgba(255, 255, 0, 0.05); //highlight in item lists, search filter, ...
+@highlight:   hsla(60, 100%, 50%, 0.05); //highlight in item lists, search filter, ...
 @wiki-mark:   @orange; //mark search results, searchbars (amber), default graphbar
 
 // Misc.
@@ -129,6 +156,7 @@ images/feather-small.png   wxh  162x286
 @wiki-captcha-bg:      @gray-lighter;
 @wiki-captcha-width:   125px;
 
+@collapse-btn-base: .8em;
 
 @pre-scrollable-max-height: 240px;  //bootstrap default is 340px
 
@@ -141,7 +169,7 @@ images/feather-small.png   wxh  162x286
 @viewer-box-border-color:  @table-border-color;
 
 // Viewer.Slimbox
-@slimbox-viewport-corona:     0 0 5em 1em rgba(255,255,255,.5);
+@slimbox-viewport-corona:     0 0 5em 1em hsla(0, 0%, 100%, 0.5);
 //@slimbox-viewport-corona:  2px 2px 10px rgba(0,0,0,.5), 0 0 0 4000px rgba(0,0,0,.3);
 //@slimbox-viewport-corona: 0 0 5em 1em rgba(255,255,255,.5),0 0 0 999em rgba(255,255,255,.7);
 //@slimbox-viewport-corona: 0 0 5em 1em rgba(255,255,255,.5),0 0 0 999em rgba(0,0,0,.3);
@@ -149,7 +177,7 @@ images/feather-small.png   wxh  162x286
 
 @slimbox-font-family:         @wiki-header-font-family;
 @slimbox-font-size:           40px; //@carousel-control-font-size; //20px;
-@slimbox-text-shadow:         1px 1px 0 rgba(0,0,0,.1);
+@slimbox-text-shadow:         1px 1px 0 hsla(0, 0%, 0%, 0.1);
 @slimbox-text-color:          @black;
 @slimbox-control-bg:          @white;
 @slimbox-control-opacity:     .7;
@@ -167,14 +195,14 @@ images/feather-small.png   wxh  162x286
 //Editor
 @wiki-editor-bg : @white;
 @wiki-preview-bg : transparent; //@white;
-@wiki-empty-preview-bg : rgba(243, 156, 18, 0.03); //@pre-bg;
+@wiki-empty-preview-bg : hsla(37, 90%, 51%, 0.03); //@pre-bg;
 @wiki-resizer:  @btn-primary-bg;
-@wiki-editor-focus: rgba(243, 156, 18, 0.1);
+@wiki-editor-focus: hsla(37, 90%, 51%, 0.1);
 
 //Tip
 //overwrite bootstrap default style
-@tooltip-bg: rgba(0,0,0,.7);
-@tooltip-arrow-color: rgba(0,0,0,.7);
+@tooltip-bg: hsla(0, 0%, 0%, 0.7);
+@tooltip-arrow-color: @tooltip-bg;
 
 //Magnifier glass
 @magnifier-size: 300px;

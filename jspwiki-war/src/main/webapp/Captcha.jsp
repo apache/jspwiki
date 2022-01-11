@@ -14,37 +14,41 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="org.apache.commons.httpclient.*" %>
 <%@ page import="org.apache.commons.httpclient.methods.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.*" %>
 <%@ page import="org.apache.wiki.ui.EditorManager" %>
-<%@ page import="org.apache.commons.lang.time.StopWatch" %>
+<%@ page import="org.apache.commons.lang3.time.StopWatch" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 
 <%!
-    Logger log = Logger.getLogger("JSPWiki");
+    Logger log = LogManager.getLogger("JSPWiki");
 %>
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.VIEW );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_VIEW.getRequestContext() );
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
     String pagereq = wikiContext.getName();
-
-    String content = request.getParameter("text");
+    String reqPage = TextUtil.replaceEntities( request.getParameter( "page" ) );
+    String content = TextUtil.replaceEntities( request.getParameter( "text" ) );
 
     if( content != null )
     {
-        String ticket = request.getParameter("Asirra_Ticket");
+        String ticket = TextUtil.replaceEntities( request.getParameter( "Asirra_Ticket" ) );
         HttpClient client = new HttpClient();
         HttpMethod method = new GetMethod("http://challenge.asirra.com/cgi/Asirra?action=ValidateTicket&ticket="+ticket);
 
@@ -53,10 +57,10 @@
 
         if( status == HttpStatus.SC_OK )
         {
-            if( body.indexOf("Pass") != -1 )
+            if( body.indexOf( "Pass" ) != -1 )
             {
-                session.setAttribute("captcha","ok");
-                response.sendRedirect( wikiContext.getURL(WikiContext.EDIT, request.getParameter("page") ) );
+                session.setAttribute( "captcha", "ok" );
+                response.sendRedirect( wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), reqPage ) );
                 return;
             }
         }
@@ -65,9 +69,10 @@
     }
 
     // Set the content type and include the response content
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+    response.setContentType( "text/html; charset=" + wiki.getContentEncoding() );
 %>
-<html>
+<!doctype html>
+<html lang="<c:out value='${prefs.Language}' default='en'/>" name="top">
 
 <head>
   <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
@@ -87,16 +92,16 @@
           return false;
        }
     }
-    
+
     function i18nAsirra() {
        document.getElementById("asirra_InstructionsTextId").innerHTML = "<fmt:message key="captcha.asirra.please.select" />";
-	   for ( var i = 0; i < 12; i++) 
+	   for ( var i = 0; i < 12; i++)
        {
           document.getElementById("asirra_AdoptMeDiv" + i).getElementsByTagName("a")[0].innerHTML= '<font size="-1">' + '<fmt:message key="captcha.asirra.adopt.me" />' + '</font>' ;
        }
        document.getElementById("asirra_KnobsTable").getElementsByTagName("a")[0].title="<fmt:message key="captcha.asirra.a.get.challenge" />";
        document.getElementById("asirra_KnobsTable").getElementsByTagName("a")[1].title="<fmt:message key="captcha.asirra.a.whatsthis" />";
-       document.getElementById("mainForm").style.display="block"; // show form when i18n is done 
+       document.getElementById("mainForm").style.display="block"; // show form when i18n is done
     }
    </script>
 </head>
@@ -106,14 +111,15 @@
 
    <form action="<wiki:Link jsp='Captcha.jsp' format='url'/>" method="post" id="mainForm" style="display: none;">
       <input type="hidden" value="foo" name="text" />
-      <input type="hidden" value='<%=request.getParameter("page")%>' name='page'/>
+      <input type="hidden" value='<%=reqPage%>' name='page'/>
       <script type="text/javascript" src="http://challenge.asirra.com/js/AsirraClientSide.js"></script>
       <script type="text/javascript">
-         asirraState.SetEnlargedPosition("right");
-         // asirraState.SetCellsPerRow(6);
+         asirraState.SetEnlargedPosition( "right" );
+         // asirraState.SetCellsPerRow( 6 );
       </script>
       <br />
       <input type="button" value="<fmt:message key="captcha.submit" />" onclick="javascript:Asirra_CheckIfHuman(HumanCheckComplete)" />
   </form>
 </div>
 </body>
+</html>

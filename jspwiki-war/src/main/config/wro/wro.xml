@@ -53,12 +53,4 @@
     <css>/styles/jspwiki_print.css</css>
   </group>
 
-  <!-- FIXME : revise the way skins are handles with wro4j
-       For now, keep the skin css & js uncompressed/unmerged. (small files anyway)
-  <group name="skins">
-    <css>/templates/defaults/skins/**/skin.css</css>
-    <js>/templates/defaults/skins/**/skin.js</js>
-  </group>
-  -->
-
 </groups>

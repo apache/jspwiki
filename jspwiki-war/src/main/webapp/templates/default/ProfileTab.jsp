@@ -14,14 +14,14 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
-<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.user.*" %>
 <%@ page errorPage="/Error.jsp" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
@@ -29,141 +29,144 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   /* dateformatting not yet supported by wiki:UserProfile tag - diy */
-  WikiContext wikiContext = WikiContext.findContext(pageContext);
-  UserManager manager = wikiContext.getEngine().getUserManager();
+  Context wikiContext = Context.findContext(pageContext);
+  UserManager manager = wikiContext.getEngine().getManager( UserManager.class );
   UserProfile profile = manager.getUserProfile( wikiContext.getWikiSession() );
 %>
-<form action="<wiki:CheckRequestContext 
+<form method="post" accept-charset="UTF-8"
+      action="<wiki:CheckRequestContext
      context='login'><wiki:Link jsp='Login.jsp' format='url'><wiki:Param name='tab'
-       value='profile'/></wiki:Link></wiki:CheckRequestContext><wiki:CheckRequestContext 
-     context='prefs'><wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab'
-       value='profile'/></wiki:Link></wiki:CheckRequestContext>" 
-          id="editProfile" 
-       class="wikiform"
-    onsubmit="return Wiki.submitOnce( this );"
-      method="post" accept-charset="UTF-8">
+       value='profile'/></wiki:Link></wiki:CheckRequestContext><wiki:CheckRequestContext
+     context='!login'><wiki:Link jsp='UserPreferences.jsp' format='url'><wiki:Param name='tab'
+       value='profile'/></wiki:Link></wiki:CheckRequestContext>"
+       class=""
+          id="editProfile">
 
-      <h3>
-      <wiki:UserProfile property="exists"><fmt:message key="prefs.oldprofile"/></wiki:UserProfile>
-      <wiki:UserProfile property="new"><fmt:message key="prefs.newprofile"/></wiki:UserProfile>
-      </h3>
+  <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
 
-      <c:if test="${param.tab eq 'profile'}" >
-        <div class="formhelp">
-        <wiki:Messages div="error" topic="profile" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"prefs.errorprefix.profile")%>'/>
-        </div>
-      </c:if>
+  <div class="form-group">
+    <span class="form-col-20 control-label"></span>
+    <span class="dropdown" style="display:inline-block" >
+      <button class="btn btn-success" type="submit" name="action" value="saveProfile">
+        <wiki:UserProfile property="exists"><fmt:message key="prefs.oldprofile"/></wiki:UserProfile>
+        <wiki:UserProfile property="new"><fmt:message key='prefs.newprofile' /></wiki:UserProfile>   <%-- prefs.save.submit??--%>
+      </button>
+      <wiki:UserCheck status="assertionsAllowed">
+        <ul class="dropdown-menu" data-hover-parent=".dropdown">
+          <li class="dropdown-header"><fmt:message key="prefs.cookie.info"/></li>
+        </ul>
+      </wiki:UserCheck>
+    </span>
 
-     <table>
+  </div>
+
+  <c:if test="${param.tab eq 'profile'}" >
+  <div class="">
+    <span class="form-col-20 control-label"></span>
+    <fmt:message key="prefs.errorprefix.profile" var="msg"/>
+    <wiki:Messages div="alert alert-danger form-col-50" topic="profile" prefix="${msg}" />
+    <%-- seems not to work .?
+    <wiki:Messages div="error form-col-50" prefix="<fmt:message key='prefs.errorprefix.profile' />" topic="profile"  />
+    this is ok..
+    <wiki:Messages div="error form-col-50" topic="profile" >
+      <jsp:attribute name="prefix" ><fmt:message key="prefs.errorprefix.profile"/></jsp:attribute>
+    </wiki:Messages>
+    --%>
+  </div>
+  </c:if>
 
      <!-- Login name -->
-     <tr>
-       <td><label for="loginname"><fmt:message key="prefs.loginname"/></label></td>
-       <td>
-         <wiki:UserProfile property="canChangeLoginName">
-           <input type="text" name="loginname" id="loginname"
+     <div class="form-group">
+       <label class="control-label form-col-20" for="loginname"><fmt:message key="prefs.loginname"/></label>
+
+       <wiki:UserProfile property="canChangeLoginName">
+           <input class="form-control form-col-50" type="text" name="loginname" id="loginname" required
                   size="20" value="<wiki:UserProfile property='loginname' />" />
-         </wiki:UserProfile>
-         <wiki:UserProfile property="!canChangeLoginName">
+       </wiki:UserProfile>
+       <wiki:UserProfile property="!canChangeLoginName">
            <!-- If user can't change their login name, it's because the container manages the login -->
            <wiki:UserProfile property="new">
              <div class="warning"><fmt:message key="prefs.loginname.cannotset.new"/></div>
            </wiki:UserProfile>
            <wiki:UserProfile property="exists">
-             <span class="formvalue"><wiki:UserProfile property="loginname"/></span>
+             <span class="form-control-static"><wiki:UserProfile property="loginname"/></span>
              <div class="warning"><fmt:message key="prefs.loginname.cannotset.exists"/></div>
            </wiki:UserProfile>
          </wiki:UserProfile>
-       </td>
-     </tr>
+     </div>
 
-     <!-- Password; not displayed if container auth used -->
+     <!-- Password field; not displayed if container auth used -->
      <wiki:UserProfile property="canChangePassword">
-       <tr>
-         <td><label for="password"><fmt:message key="prefs.password"/></label></td>
-         <td>
-            <%--FIXME Enter Old PW to validate change flow, not yet treated by JSPWiki
-            <label for="password0">Old</label>&nbsp;
+     <div class="form-group">
+       <label class="control-label form-col-20" for="password"><fmt:message key="prefs.password"/></label>
+       <%--FIXME Enter Old PW to validate change flow, not yet treated by JSPWiki
+            <label class="control-label form-col-20" for="password0">Old</label>&nbsp;
             <input type="password" name="password0" id="password0" size="20" value="" />
-            &nbsp;&nbsp;--%>
-            <input type="password" name="password" id="password" size="20" value="" />
-          </td>
-        </tr>
-        <tr>
-          <td><label for="password2"><fmt:message key="prefs.password2"/></label></td>
-          <td>
-            <input type="password" name="password2" id="password2" size="20" value="" />
-            <%-- extra validation ? min size, allowed chars? --%>
-         </td>
-       </tr>
+       --%>
+       <input class="form-control form-col-50" type="password" name="password" id="password" size="20" value="" required/>
+     </div>
+     <div class="form-group">
+       <label class="control-label form-col-20" for="password2"><fmt:message key="prefs.password2"/></label>
+       <input class="form-control form-col-50" type="password" name="password2" id="password2" size="20" value="" required/>
+       <%-- extra validation ? min size, allowed chars? password-strength js routing --%>
+     </div>
      </wiki:UserProfile>
 
      <!-- Full name -->
-     <tr>
-       <td><label for="fullname"><fmt:message key="prefs.fullname"/></label></td>
-       <td>
-         <input type="text" name="fullname" id="fullname"
-                size="20" value="<wiki:UserProfile property='fullname'/>" />
-         <span class="formhelp"><fmt:message key="prefs.fullname.description"/></span>
-       </td>
-     </tr>
+     <div class="form-group">
+       <label class="control-label form-col-20" for="fullname"><fmt:message key="prefs.fullname"/></label>
+       <span class="dropdown form-col-50">
+         <input class="form-control" type="text" name="fullname" id="fullname" size="20" required
+                value="<wiki:UserProfile property='fullname' />" />
+         <ul class="dropdown-menu" data-hover-parent=".dropdown">
+           <li class="dropdown-header"><fmt:message key="prefs.fullname.description"/></li>
+         </ul>
+       </span>
+     </div>
 
      <!-- E-mail -->
-     <tr>
-       <td><label for="email"><fmt:message key="prefs.email"/></label></td>
-       <td>
-         <input type="text" name="email" id="email"
-                size="20" value="<wiki:UserProfile property='email' />" />
-         <span class="formhelp"><fmt:message key="prefs.email.description"/></span>
-       </td>
-     </tr>
+     <div class="form-group">
+       <label class="control-label form-col-20" for="email"><fmt:message key="prefs.email"/></label>
+       <span class="dropdown form-col-50">
+         <input class="form-control" type="email" name="email" id="email" size="20"
+                value="<wiki:UserProfile property='email' />" />
+         <ul class="dropdown-menu" data-hover-parent=".dropdown">
+           <li class="dropdown-header"><fmt:message key="prefs.email.description"/></li>
+         </ul>
+       </span>
+     </div>
 
      <wiki:UserProfile property="exists">
-     <tr class="additinfo">
-       <td><label><fmt:message key="prefs.roles"/></label></td>
-       <td><div class="formvalue"><wiki:UserProfile property="roles" /></div></td>
-     </tr>
-     <tr class="additinfo">
-       <td><label><fmt:message key="prefs.groups"/></label></td>
-       <td>
-         <%-- TODO this should become clickable group links so you can immediately go and look at them if you want --%>
-         <div class="formvalue"><wiki:UserProfile property="groups" /></div>
-         <div class="formhelp"><fmt:message key="prefs.acl.info" /></div>
-       </td>
-     </tr>
+     <div class="xinformation form-group">
+     <div class="xform-group">
+       <label class="control-label form-col-20"><fmt:message key="prefs.roles"/></label>
+       <div class="form-control-static form-col-50"><wiki:UserProfile property="roles" /></div>
+     </div>
+     <div class="xform-group">
+       <label class="control-label form-col-20"><fmt:message key="prefs.groups"/></label>
 
-     <tr class="additinfo">
-       <td><label><fmt:message key="prefs.creationdate"/></label></td>
-       <td class="formvalue">
-         <%--<wiki:UserProfile property="created"/>--%>
+       <span class="dropdown form-col-50">
+         <%-- TODO this should become clickable group links so you can immediately go and look at them if you want --%>
+         <div class="form-control-static"><wiki:UserProfile property="groups" /></div>
+         <ul class="dropdown-menu" data-hover-parent=".dropdown">
+           <li class="dropdown-header"><fmt:message key="prefs.acl.info" /></li>
+         </ul>
+       </span>
+     </div>
+     <div class="xform-group">
+       <label class="control-label form-col-20"><fmt:message key="prefs.creationdate"/></label>
+       <div class="form-control-static form-col-50">
  	     <fmt:formatDate value="<%= profile.getCreated() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
-       </td>
-     </tr>
-     <tr class="additinfo">
-       <td><label><fmt:message key="prefs.profile.lastmodified"/></label></td>
-       <td class="formvalue">
+       </div>
+     </div>
+     <div class="xform-group">
+       <label class="control-label form-col-20"><fmt:message key="prefs.profile.lastmodified"/></label>
+       <div class="form-control-static form-col-50">
          <%--<wiki:UserProfile property="modified"/>--%>
  	     <fmt:formatDate value="<%= profile.getLastModified() %>" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
-       </td>
-     </tr>
+       </div>
+     </div>
+     </div>
      </wiki:UserProfile>
 
-     <tr>
-       <td>&nbsp;</td>
-       <td>
-       <wiki:UserProfile property="exists">
-        <input type="submit" name="ok" value="<fmt:message key='prefs.save.submit' />" />
-       </wiki:UserProfile>
-       <wiki:UserProfile property="new">
-         <input type="submit" name="ok" value="<fmt:message key='prefs.save.submit' />" />
-       </wiki:UserProfile>
-       <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
-       <input type="hidden" name="action" value="saveProfile" />
-
-       <wiki:UserCheck status="assertionsAllowed">
-          <div class="formhelp"><fmt:message key="prefs.cookie.info"/></div>
-        </wiki:UserCheck>
-       </td>
-     </tr>
-   </table>
 </form>

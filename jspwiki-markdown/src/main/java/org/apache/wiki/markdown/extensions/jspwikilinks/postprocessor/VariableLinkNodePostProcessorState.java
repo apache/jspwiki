@@ -18,15 +18,15 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.ast.HtmlInline;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeTracker;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
-import org.apache.wiki.render.RenderingManager;
-
-import com.vladsch.flexmark.ast.HtmlInline;
-import com.vladsch.flexmark.util.NodeTracker;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import org.apache.wiki.variables.VariableManager;
 
 
 /**
@@ -34,27 +34,27 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
  */
 public class VariableLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final boolean m_wysiwygEditorMode;
 
-    public VariableLinkNodePostProcessorState( final WikiContext wikiContext ) {
+    public VariableLinkNodePostProcessorState( final Context wikiContext ) {
         this.wikiContext = wikiContext;
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+        final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
+        m_wysiwygEditorMode = wysiwygVariable != null && wysiwygVariable;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
+     * @see NodePostProcessorState#process(NodeTracker, Node)
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
         final String variable = NodePostProcessorStateCommonOperations.inlineLinkTextOnWysiwyg( state, link, m_wysiwygEditorMode );
         if( !m_wysiwygEditorMode ) {
             try {
-                final String parsedVariable = wikiContext.getEngine().getVariableManager().parseAndGetValue( wikiContext, variable );
-                final HtmlInline content = new HtmlInline( CharSubSequence.of( StringEscapeUtils.escapeXml( parsedVariable ) ) );
+                final String parsedVariable = wikiContext.getEngine().getManager( VariableManager.class ).parseAndGetValue( wikiContext, variable );
+                final HtmlInline content = new HtmlInline( CharSubSequence.of( StringEscapeUtils.escapeXml11( parsedVariable ) ) );
                 NodePostProcessorStateCommonOperations.addContent( state, link, content );
             } catch( final NoSuchVariableException e ) {
                 NodePostProcessorStateCommonOperations.makeError( state, link, "No such variable: " + variable + " (" + e.getMessage() + ")" );

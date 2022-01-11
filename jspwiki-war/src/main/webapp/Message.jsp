@@ -18,26 +18,25 @@
 --%>
 
 <%@ page isErrorPage="true" %>
-<%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
-<%@ page import="org.apache.wiki.tags.WikiTagBase" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Logger log = LogManager.getLogger("JSPWiki");
 %>
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
-    WikiContext wikiContext = wiki.createContext( request, 
-                                                  WikiContext.MESSAGE );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_MESSAGE.getRequestContext() );
 
     // Stash the wiki context and message text
-    request.setAttribute( WikiTagBase.ATTR_CONTEXT, wikiContext );
-    request.setAttribute( "message", request.getParameter("message"));
+    request.setAttribute( Context.ATTR_CONTEXT, wikiContext );
+    request.setAttribute( "message", request.getParameter( "message" ) );
 
     // Set the content type and include the response content
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+    response.setContentType( "text/html; charset=" + wiki.getContentEncoding() );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" />

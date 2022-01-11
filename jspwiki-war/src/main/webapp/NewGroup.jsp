@@ -17,38 +17,40 @@
     under the License.  
 --%>
 
-<%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="java.text.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.NoSuchPrincipalException" %>
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="java.util.*" %>
-<%@ page import="java.text.*" %>
-<%! 
-    Logger log = Logger.getLogger("JSPWiki"); 
+<%!
+    Logger log = LogManager.getLogger("JSPWiki");
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.CREATE_GROUP );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_CREATE_GROUP.getRequestContext() );
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
     
     // Extract the current user, group name, members and action attributes
-    WikiSession wikiSession = wikiContext.getWikiSession();
-    GroupManager groupMgr = wiki.getGroupManager();
+    Session wikiSession = wikiContext.getWikiSession();
+    GroupManager groupMgr = wiki.getManager( GroupManager.class );
     Group group = null;
     try 
     {
         group = groupMgr.parseGroup( wikiContext, true );
         pageContext.setAttribute ( "Group", group, PageContext.REQUEST_SCOPE );
-    }
-    catch ( WikiSecurityException e )
-    {
+    } catch ( WikiSecurityException e ) {
         wikiSession.addMessage( GroupManager.MESSAGES_KEY, e.getMessage() );
         response.sendRedirect( "Group.jsp" );
     }
@@ -95,9 +97,7 @@
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 
 %><wiki:Include page="<%=contentPage%>" />
 

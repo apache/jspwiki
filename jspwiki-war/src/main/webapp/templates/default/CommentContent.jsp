@@ -14,50 +14,29 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<%
-  WikiContext c = WikiContext.findContext( pageContext );
-  int attCount = c.getEngine().getAttachmentManager().listAttachments(c.getPage()).size();
-  String attTitle = LocaleSupport.getLocalizedMessage(pageContext, "attach.tab");
-  if( attCount != 0 ) attTitle += " (" + attCount + ")";  
-%>
-
-<wiki:TabbedSection defaultTab="commentcontent">
-  <wiki:Tab id="pagecontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"comment.tab.discussionpage")%>'>
-    <wiki:InsertPage/>
-  </wiki:Tab>
-
-  <wiki:Tab id="commentcontent" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"comment.tab.addcomment")%>'>
-
+<%--
+   First insert the main page or the corresponding blog-entry page
+   Then a horizontal resizer
+   And finally the editor for writing the comment
+--%>
+<div class="page-content">
+  <div class="row comment-page">
+    <c:set var="mainblogpage" value="${fn:substringBefore(param.page,'_comments_')}" />
+    <c:if test="${not empty mainblogpage}">
+      <c:set var="blogentrypage" value="${fn:replace(param.page,'_comments_','_blogentry_')}" />
+      <wiki:InsertPage page="${blogentrypage}" />
+    </c:if>
+    <wiki:InsertPage />
+  </div>
+  <div data-resize=".comment-page" title="<fmt:message key='editor.plain.comment.resize'/>" ></div>
   <wiki:Editor />
-  </wiki:Tab>
-
-  <wiki:Tab id="attach" title="<%= attTitle %>" accesskey="a">
-    <wiki:Include page="AttachmentTab.jsp"/>
-  </wiki:Tab>
-  
-  <wiki:Tab id="info" title='<%=LocaleSupport.getLocalizedMessage(pageContext, "info.tab")%>'
-           url="<%=c.getURL(WikiContext.INFO, c.getPage().getName())%>"
-           accesskey="i" >
-  </wiki:Tab>
-    
-  <wiki:Tab id="edithelp" title='<%=LocaleSupport.getLocalizedMessage(pageContext,"edit.tab.help")%>'>
-    <wiki:NoSuchPage page="EditPageHelp">
-      <div class="error">
-         <fmt:message key="comment.edithelpmissing">
-            <fmt:param><wiki:EditLink page="EditPageHelp">EditPageHelp</wiki:EditLink></fmt:param>
-         </fmt:message>
-      </div>
-    </wiki:NoSuchPage>
-
-    <wiki:InsertPage page="EditPageHelp" />
-  </wiki:Tab>
-</wiki:TabbedSection>
+</div>

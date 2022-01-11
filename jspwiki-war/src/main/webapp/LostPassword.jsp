@@ -17,60 +17,58 @@
     under the License.  
 --%>
 
-<%@ page import="org.apache.log4j.*"%>
-<%@ page import="org.apache.wiki.*"%>
 <%@ page import="java.util.*"%>
 <%@ page import="java.text.*"%>
 <%@ page import="javax.mail.*"%>
-<%@ page import="org.apache.wiki.auth.user.*"%>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*"%>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.api.core.Context" %>
+<%@ page import="org.apache.wiki.api.core.ContextEnum" %>
+<%@ page import="org.apache.wiki.api.core.Engine"%>
+<%@ page import="org.apache.wiki.api.core.Session"%>
+<%@ page import="org.apache.wiki.api.spi.Wiki"%>
 <%@ page import="org.apache.wiki.auth.*"%>
-<%@ page import="org.apache.wiki.util.*"%>
+<%@ page import="org.apache.wiki.auth.user.*"%>
 <%@ page import="org.apache.wiki.i18n.*"%>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ page import="org.apache.wiki.util.TextUtil" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
+<%@ page import="org.apache.wiki.url.URLConstructor"%>
+<%@ page import="org.apache.wiki.util.*"%>
 <%@ page errorPage="/Error.jsp"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ page import="org.apache.wiki.tags.WikiTagBase"%>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*"%>
-<%!Logger log = Logger.getLogger( "JSPWiki" );
+<%!Logger log = LogManager.getLogger( "JSPWiki" );
 
     String message = null;
 
-    public boolean resetPassword( WikiEngine wiki, HttpServletRequest request, ResourceBundle rb )
-    {
+    public boolean resetPassword( Engine wiki, HttpServletRequest request, ResourceBundle rb ) {
         // Reset pw for account name
         String name = request.getParameter( "name" );
-        UserDatabase userDatabase = wiki.getUserManager().getUserDatabase();
+        UserDatabase userDatabase = wiki.getManager( UserManager.class ).getUserDatabase();
         boolean success = false;
 
-        try
-        {
+        try {
             UserProfile profile = null;
             /*
              // This is disabled because it would otherwise be possible to DOS JSPWiki instances
              // by requesting new passwords for all users.  See https://issues.apache.org/jira/browse/JSPWIKI-78
-             try
-             {
-             profile = userDatabase.find(name);
-             }
-             catch (NoSuchPrincipalException e)
-             {
+             try {
+                 profile = userDatabase.find(name);
+             } catch (NoSuchPrincipalException e) {
              // Try email as well
              }
-             */
-            if( profile == null )
-            {
+            */
+            if( profile == null ) {
                 profile = userDatabase.findByEmail( name );
             }
 
             String email = profile.getEmail();
-
             String randomPassword = TextUtil.generateRandomPassword();
 
             // Try sending email first, as that is more likely to fail.
 
             Object[] args = { profile.getLoginName(), randomPassword, request.getScheme() + "://"+ request.getServerName() + ":" + request.getServerPort() +
-                             wiki.getURLConstructor().makeURL( WikiContext.NONE, "Login.jsp", true, "" ), wiki.getApplicationName() };
+                             wiki.getManager( URLConstructor.class ).makeURL( ContextEnum.PAGE_NONE.getRequestContext(), "Login.jsp", "" ), wiki.getApplicationName() };
 
             String mailMessage = MessageFormat.format( rb.getString( "lostpwd.newpassword.email" ), args );
 
@@ -86,64 +84,51 @@
             // If this fails, we're kind of screwed, because we already emailed.
             profile.setPassword( randomPassword );
             userDatabase.save( profile );
-            userDatabase.commit();
             success = true;
-        }
-        catch( NoSuchPrincipalException e )
-        {
+        } catch( NoSuchPrincipalException e ) {
             Object[] args = { name };
             message = MessageFormat.format( rb.getString( "lostpwd.nouser" ), args );
             log.info( "Tried to reset password for non-existent user '" + name + "'" );
-        }
-        catch( SendFailedException e )
-        {
+        } catch( SendFailedException e ) {
             message = rb.getString( "lostpwd.nomail" );
             log.error( "Tried to reset password and got SendFailedException: " + e );
-        }
-        catch( AuthenticationFailedException e )
-        {
+        } catch( AuthenticationFailedException e ) {
             message = rb.getString( "lostpwd.nomail" );
             log.error( "Tried to reset password and got AuthenticationFailedException: " + e );
-        }
-        catch( Exception e )
-        {
+        } catch( Exception e ) {
             message = rb.getString( "lostpwd.nomail" );
             log.error( "Tried to reset password and got another exception: " + e );
         }
         return success;
-    }%>
+    }
+%>
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
 
     //Create wiki context like in Login.jsp:
     //don't check for access permissions: if you have lost your password you cannot login!
-    WikiContext wikiContext = (WikiContext) pageContext.getAttribute( WikiTagBase.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
+    Context wikiContext = ( Context )pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
 
     // If no context, it means we're using container auth.  So, create one anyway
-    if( wikiContext == null )
-    {
-        wikiContext = wiki.createContext( request, WikiContext.LOGIN ); /* reuse login context ! */
-        pageContext.setAttribute( WikiTagBase.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
+    if( wikiContext == null ) {
+        wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_LOGIN.getRequestContext() ); /* reuse login context ! */
+        pageContext.setAttribute( Context.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
     }
 
     ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
 
-    WikiSession wikiSession = wikiContext.getWikiSession();
+    Session wikiSession = wikiContext.getWikiSession();
     String action = request.getParameter( "action" );
 
     boolean done = false;
 
-    if( (action != null) && (action.equals( "resetPassword" )) )
-    {
-        if( resetPassword( wiki, request, rb ) )
-        {
+    if( action != null && action.equals( "resetPassword" ) ) {
+        if( resetPassword( wiki, request, rb ) ) {
             done = true;
             wikiSession.addMessage( "resetpwok", rb.getString( "lostpwd.emailed" ) );
             pageContext.setAttribute( "passwordreset", "done" );
-        }
-        else
-        // Error
-        {
+        } else {
+            // Error
             wikiSession.addMessage( "resetpw", message );
         }
     }
@@ -153,6 +138,6 @@
     response.setDateHeader( "Expires", new Date().getTime() );
     response.setDateHeader( "Last-Modified", new Date().getTime() );
 
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 %>
 <wiki:Include page="<%=contentPage%>" />

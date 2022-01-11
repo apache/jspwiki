@@ -18,7 +18,7 @@
 --%>
 
 <%@ page import="java.util.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.ui.admin.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -27,26 +27,19 @@
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <script>
-function constructdate(date)
-{
-  var d = new Date();
-  d.setTime(date.time);
-  return d;
-}
-
 function refreshUserInfo()
 {
-   var userid = $('userid').getValue();
+   var userid = $('userid').value;
 
    if( userid == '--New--' ) return;
 
-   Wiki.ajaxJsonCall("/users/",[userid], function(userprofile) {
+   Wiki.jsonrpc("/users", [userid], function(userprofile){
 	   $('loginname').value = userprofile.loginName;
 	   $('loginid').value = userprofile.loginName;
 	   $('fullname').value = userprofile.fullname;
 	   $('email').value = userprofile.email;
-	   $('lastmodified').setHTML(constructdate(userprofile.lastModified));
-	   $('creationdate').setHTML(constructdate(userprofile.created));
+	   $('lastmodified').innerHTML = userprofile.modified || "";
+	   $('creationdate').innerHTML = userprofile.created || "";
    });
 }
 
@@ -81,40 +74,40 @@ function addNew()
    <form action="<wiki:Link jsp='admin/Admin.jsp' format='url'><wiki:Param name='tab-admin' value='users'/></wiki:Link>"
        class="wikiform"
           id="adminuserform"
-    onsubmit="return Wiki.submitOnce(this);"
       method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
      <input type="hidden" name='bean' value='org.apache.wiki.ui.admin.beans.UserBean'/>
      <input type="hidden" id="loginid" name="loginid" value="" />
      <table>
+     <caption class="hide">User Details form</caption>
      <tr>
-       <td><label for="loginname">Login name</label></td>
+       <th scope="row"><label for="loginname">Login name</label></th>
        <td>
            <input type="text" name="loginname" id="loginname"
                   size="20" value="" />
        </td>
      </tr>
      <tr>
-       <td><label for="password">Password </label></td>
+       <th scope="row"><label for="password">Password </label></th>
        <td>
           <input type="password" name="password" id="password" size="20" value="" />
        </td>
      </tr>
      <tr>
-       <td><label for="password2">Confirm password</label></td>
+       <th scope="row"><label for="password2">Confirm password</label></th>
        <td>
          <input type="password" name="password2" id="password2" size="20" value="" />
        </td>
      </tr>
      <tr>
-       <td><label for="fullname">Full name</label></td>
+       <th scope="row"><label for="fullname">Full name</label></th>
        <td>
          <input type="text" name="fullname" id="fullname"
                 size="20" value="" />
        </td>
      </tr>
      <tr>
-       <td><label for="email">Email</label></td>
+       <th scope="row"><label for="email">Email</label></th>
        <td>
          <input type="text" name="email" id="email"
                 size="20" value="" />
@@ -122,12 +115,12 @@ function addNew()
      </tr>
 
      <tr class="additinfo">
-       <td><label>Creation date</label></td>
+       <th scope="row"><label>Creation date</label></th>
        <td class="formvalue" id="creationdate">
        </td>
      </tr>
      <tr class="additinfo">
-       <td><label>Last modified</label></td>
+       <th scope="row"><label>Last modified</label></th>
        <td class="formvalue" id="lastmodified">
        </td>
      </tr>
@@ -138,7 +131,9 @@ function addNew()
 
      </table>
    <div id="useractions">
-     <input type="submit" name="action" value="Remove" onclick="return( confirm('Are you sure you wish to remove this user?') && Wiki.submitOnce(this) );"/>      <input type="button" value="Add" onclick="javascript:addNew()"/>
+     <input type="submit" name="action" value="Remove" data-modal="+ .modal" />
+     <div class="modal">"Are you sure you wish to remove this user?</div>
+     <input type="button" value="Add" onclick="javascript:addNew()"/>
    </div>
    </form>
    </div>

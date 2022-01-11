@@ -26,7 +26,7 @@
   <property environment="env"/>
 
   <!-- the build version if not overwritten by the caller -->
-  <property name="jspwiki.woas.version" value="2.10.4-SNAPSHOT" />
+  <property name="jspwiki.woas.version" value="2.11.0" />
   
   <!-- define the temporary build directory -->
   <property name="jspwiki.woas.target.dir" value="${basedir}/target" />
@@ -38,7 +38,7 @@
   <property name="jspwiki.woas.assembly.dir" value="${jspwiki.woas.target.dir}/woas" />
 
   <!-- the Tomcat version to use --> 
-  <property name="jspwiki.tomcat.version" value="7.0.84"/>
+  <property name="jspwiki.tomcat.version" value="${jspwiki.tomcat.version}"/>
 
   <!-- the Tomcat distribution to use --> 
   <property name="jspwiki.tomcat.distribution" value="apache-tomcat-${jspwiki.tomcat.version}"/>
@@ -50,15 +50,15 @@
   <!-- General Targets                                                -->
   <!-- ############################################################## -->
 
-    <target name="woas:info" description="Build the project">
-        <echo>jspwiki.woas.version = ${jspwiki.woas.version}</echo>
-        <echo>jspwiki.woas.assembly.dir = ${jspwiki.woas.assembly.dir}</echo>
-        <echo>jspwiki.woas.unpack.dir = ${jspwiki.woas.unpack.dir}</echo>
-        <echo>jspwiki.tomcat.distribution = ${jspwiki.tomcat.distribution}</echo>
-    </target>
+  <target name="woas:info" description="Build the project">
+    <echo>jspwiki.woas.version = ${jspwiki.woas.version}</echo>
+    <echo>jspwiki.woas.assembly.dir = ${jspwiki.woas.assembly.dir}</echo>
+    <echo>jspwiki.woas.unpack.dir = ${jspwiki.woas.unpack.dir}</echo>
+    <echo>jspwiki.tomcat.distribution = ${jspwiki.tomcat.distribution}</echo>
+  </target>
 
-    <target name="woas:clean" description="Clean the project">
-        <delete dir="${jspwiki.woas.target.dir}"/>
+  <target name="woas:clean" description="Clean the project">
+    <delete dir="${jspwiki.woas.target.dir}"/>
   </target>
 
   <!-- ############################################################## -->
@@ -83,10 +83,10 @@
   </target>  
 
   <!-- ############################################################## -->
-  <!-- Tomcat 7 Distribution                                          -->
+  <!-- Tomcat 9 Distribution                                          -->
   <!-- ############################################################## -->
 
-  <target name="woas:copy-tomcat-7" description="Prepares an unpacked Tomcat 7 deployment">
+  <target name="woas:copy-tomcat" description="Prepares an unpacked Tomcat deployment">
     <!-- copy the stuff to the assembly directory -->
     <copy todir="${jspwiki.woas.assembly.dir}">
       <fileset dir="${jspwiki.woas.unpack.dir}/tomcat/${jspwiki.tomcat.distribution}"/>
@@ -114,15 +114,24 @@
     <chmod dir="${jspwiki.woas.assembly.dir}/bin" includes="*.sh" perm="ugo+x"/>        
   </target>
 
-  <target name="woas:copy-tomcat-7-launchers" description="Copies the existing native launchers"> 
+  <target name="woas:copy-tomcat-launchers" description="Copies the existing native launchers"> 
     <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
       <fileset dir="${basedir}/src/overlay/launchers/tomcat"/>
-    </copy>    
+    </copy>
     <!-- make the shell scripts executable -->
     <chmod dir="${jspwiki.woas.assembly.dir}/bin" includes="*.sh" perm="ugo+x"/>    
     <chmod dir="${jspwiki.woas.assembly.dir}" includes="*.sh" perm="ugo+x"/>    
     <!-- make the Mac OS X stub executable -->
     <chmod file="${jspwiki.woas.assembly.dir}/woas.app/Contents/MacOS/*" perm="ugo+x"/>
+  </target>
+
+  <target name="woas:update-tomcat-launchers" description="Copies the generated native launchers over the existing ones">
+    <copy todir="${basedir}/src/overlay/launchers/tomcat" overwrite="true">
+      <fileset dir="${jspwiki.woas.assembly.dir}" includes="woas.exe" />
+    </copy>
+    <copy todir="${basedir}/src/overlay/launchers/tomcat/woas.app" overwrite="true">
+      <fileset dir="${jspwiki.woas.assembly.dir}/woas.app" includes="**" />
+    </copy>
   </target>
 
   <!-- ############################################################## -->
@@ -145,14 +154,18 @@
         icon="${basedir}/src/resources/windows/jspwiki.ico"
         jar="${basedir}/target/launchers/tomcat-launcher-${jspwiki.tomcat.version}.jar"
         >
+		<classPath mainClass="org.apache.catalina.startup.Bootstrap">
+          <cp>${basedir}/target/unpack/tomcat/${jspwiki.tomcat.distribution}/bin/bootstrap.jar</cp>
+          <cp>${basedir}/target/unpack/tomcat/${jspwiki.tomcat.distribution}/bin/tomcat-juli.jar</cp>
+        </classPath>
         <singleInstance mutexName="org.apache.jspwiki.jspwiki-portable" />
-        <jre minVersion="1.6.0" />
+        <jre minVersion="1.8.0" />
         <versionInfo
-          fileVersion="2.10.4.0"
+          fileVersion="${jspwiki.woas.version}.0"
           txtFileVersion="JSPWiki ${jspwiki.woas.version}"
           fileDescription="WikiOnAStick"
-          copyright="Apache Software Licence 2.0"
-          productVersion="2.10.4.0"
+          copyright="Apache Software License 2.0"
+          productVersion="${jspwiki.woas.version}.0"
           txtProductVersion="JSPWiki ${jspwiki.woas.version}"
           productName="WikiOnAStick"
           companyName="Apache Software Foundation"
@@ -212,24 +225,29 @@
     <target name="woas:download-launch4j-for-win" description="Download the Win32 launch4j distribution">
         <delete dir="${jspwiki.launch4j.install.dir}"/>
         <mkdir dir="${jspwiki.launch4j.install.dir}"/>
-        <get src="http://netassist.dl.sourceforge.net/project/launch4j/launch4j-3/3.11/launch4j-3.11-win32.zip" dest="${jspwiki.launch4j.install.dir}"/>
-        <unzip src="${jspwiki.launch4j.install.dir}/launch4j-3.11-win32.zip" dest="${jspwiki.launch4j.install.dir}/.."/>
-        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.11-win32.zip"/>
+        <get src="https://deac-ams.dl.sourceforge.net/project/launch4j/launch4j-3/3.14/launch4j-3.14-win32.zip" dest="${jspwiki.launch4j.install.dir}"/>
+        <unzip src="${jspwiki.launch4j.install.dir}/launch4j-3.14-win32.zip" dest="${jspwiki.launch4j.install.dir}/.."/>
+        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.14-win32.zip"/>
     </target>
 
     <target name="woas:download-launch4j-for-mac" description="Download the Mac OS X launch4j distribution">
         <delete dir="${jspwiki.launch4j.install.dir}"/>
         <mkdir dir="${jspwiki.launch4j.install.dir}"/>
-        <get src="http://netassist.dl.sourceforge.net/project/launch4j/launch4j-3/3.11/launch4j-3.11-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}"/>
-        <untar src="${jspwiki.launch4j.install.dir}/launch4j-3.11-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}/.." compression="gzip"/>
-        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.11-macosx-x86.tgz"/>
+        <get src="https://deac-ams.dl.sourceforge.net/project/launch4j/launch4j-3/3.14/launch4j-3.14-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}"/>
+        <untar src="${jspwiki.launch4j.install.dir}/launch4j-3.14-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}/.." compression="gzip"/>
+        <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.14-macosx-x86.tgz"/>
         <chmod dir="${jspwiki.launch4j.install.dir}/bin" includes="*" perm="ugo+x"/>
     </target>
 
     <target name="woas:download-appbundler-for-mac" description="Download the Mac OS X appbundler library">
         <delete dir="${jspwiki.appbundler.install.dir}"/>
         <mkdir dir="${jspwiki.appbundler.install.dir}"/>
-        <get src="http://search.maven.org/remotecontent?filepath=com/panayotis/appbundler/1.1.0/appbundler-1.1.0.jar" dest="${jspwiki.appbundler.install.dir}/appbundler-1.1.0.jar"/>
+        <get src="https://repo1.maven.org/fromsearch?filepath=com/panayotis/appbundler/1.1.0/appbundler-1.1.0.jar" dest="${jspwiki.appbundler.install.dir}/appbundler-1.1.0.jar"/>
+    </target>
+
+    <target name="woas:download-appbundler-for-mac-on-windows" description="Download the Mac OS X appbundler library when building under Windows OS">
+      <antcall target="woas:download-appbundler-for-mac"/>
+      <antcall target="woas:download-launch4j-for-mac"/>
     </target>
 
 </project>

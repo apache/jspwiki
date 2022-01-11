@@ -17,71 +17,60 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.search.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.search.SearchManager" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
-<%@ page import="org.apache.wiki.search.*" %>
-<%@ page import="java.util.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
 <%!
-    Logger log = Logger.getLogger("JSPWikiSearch");
+    Logger log = LogManager.getLogger("JSPWikiSearch");
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.FIND );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_FIND.getRequestContext() );
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
     String pagereq = wikiContext.getName();
 
     // Get the search results
-    Collection list = null;
+    Collection< SearchResult > list = null;
     String query = request.getParameter( "query");
     String go    = request.getParameter("go");
 
-    if( query != null )
-    {
+    if( query != null ) {
         log.info("Searching for string "+query);
 
-        try
-        {
-            list = wiki.findPages( query, wikiContext );
-
-            pageContext.setAttribute( "searchresults",
-                                      list,
-                                      PageContext.REQUEST_SCOPE );
-        }
-        catch( Exception e )
-        {
+        try {
+            list = wiki.getManager( SearchManager.class ).findPages( query, wikiContext );
+            pageContext.setAttribute( "searchresults", list, PageContext.REQUEST_SCOPE );
+        } catch( Exception e ) {
             wikiContext.getWikiSession().addMessage( e.getMessage() );
         }
 
         query = TextUtil.replaceEntities( query );
 
-        pageContext.setAttribute( "query",
-                                  query,
-                                  PageContext.REQUEST_SCOPE );
+        pageContext.setAttribute( "query", query, PageContext.REQUEST_SCOPE );
 
         //
         //  Did the user click on "go"?
         //
-        if( go != null )
-        {
-            if( list != null && list.size() > 0 )
-            {
-                SearchResult sr = (SearchResult) list.iterator().next();
-
-                WikiPage wikiPage = sr.getPage();
-
+        if( go != null ) {
+            if( list != null && list.size() > 0 ) {
+                SearchResult sr = list.iterator().next();
+                Page wikiPage = sr.getPage();
                 String url = wikiContext.getViewURL( wikiPage.getName() );
-
                 response.sendRedirect( url );
-
                 return;
             }
         }
@@ -89,9 +78,7 @@
 
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" /><%
     log.debug("SEARCH COMPLETE");
 %>

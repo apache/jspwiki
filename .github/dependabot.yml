@@ -1,0 +1,50 @@
+# Licensed to the Apache Software Foundation (ASF) under one or more
+# contributor license agreements.  See the NOTICE file distributed with
+# this work for additional information regarding copyright ownership.
+# The ASF licenses this file to You under the Apache License, Version 2.0
+# (the "License"); you may not use this file except in compliance with
+# the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+version: 2
+updates:
+  - package-ecosystem: "maven"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    ignore:
+      - dependency-name: com.amazonaws:aws-java-sdk-kendra
+# AWS Kendra releases semver-patches almost daily
+        update-types: [ "version-update:semver-patch" ]
+      - dependency-name: javax.servlet:javax.servlet-api
+        versions:
+# JSPWiki supported servlet-api is 3.1
+          - ">= 3.2.0"
+      - dependency-name: javax.servlet.jsp:javax.servlet.jsp-api
+        versions:
+# JSPWiki supported jsp-api is 2.3
+          - ">= 2.4.0"
+      - dependency-name: org.apache.tomcat:*
+        versions:
+# JSPWiki supported Tomcat is 8.5, 9.0 recommended (see https://jspwiki-wiki.apache.org/Wiki.jsp?page=Getting%20Started#section-Getting+Started-Requirements)
+          - ">= 10.0.0"
+      - dependency-name: org.slf4j:*
+        versions:
+# SLF4J versions in between [1.8.0-beta1,2.0.0) are all alpha and beta versions, skip them
+          - ">= 1.8.0-beta1"
+          - "< 2.0.0"
+      - dependency-name: ro.isdc.wro4j:wro4j-maven-plugin
+        versions:
+# 1.9.0 requires JDK >= 9
+          - ">= 1.9.0"
+      - dependency-name: io.leonard.maven.plugins:jspc-maven-plugin
+        versions:
+# 4.0.0 uses Tomcat 10 JSPC compiler, enforce Tomcat 9.x compiler by not using versions 4.0 or above
+          - ">= 4.0.0"

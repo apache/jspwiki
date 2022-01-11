@@ -14,166 +14,166 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
 --%>
 
-<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.text.MessageFormat" %>
 <%@ page import="java.util.*" %>
-<%@ page import="org.apache.wiki.WikiContext" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.api.core.Context" %>
 <%@ page import="org.apache.wiki.auth.*" %>
-<%@ page import="org.apache.wiki.auth.PrincipalComparator" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
+<%@ page import="org.apache.wiki.auth.permissions.GroupPermission" %>
+<%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
-<%@ page import="org.apache.log4j.*" %>
+<%@ page import="org.apache.wiki.util.comparators.PrincipalComparator" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<%!
-  String printWikiGroupPutGroup( Group group, String name, boolean cursor, PageContext pageContext)
-  {
-    Principal[] m = group.members();
-    java.util.Arrays.sort( m, new PrincipalComparator() );
-
-    String delim = "\", \"";
-      
-    StringBuffer ss = new StringBuffer();
-    MessageFormat mf = null;
-    Object[] args = null;
-      
-      ss.append( "WikiGroup.putGroup( \"" );
-      
-      ss.append( name );
-      ss.append( delim );
-      
-      for( int j=0; j < m.length; j++ ) { ss.append( m[j].getName().trim()+"\\n" ); }
-      
-      ss.append( delim );
-      mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.createdon") );
-      args = new Object[]{(group.getCreated()==null) ? "" : Preferences.renderDate(WikiContext.findContext( pageContext ), group.getCreated(),Preferences.TimeFormat.DATETIME), group.getCreator()};
-      ss.append( mf.format( args ) );
-      
-      mf = new MessageFormat(LocaleSupport.getLocalizedMessage(pageContext, "grp.lastmodified") );
-      args = new Object[]{(group.getLastModified()==null) ? "" : Preferences.renderDate(WikiContext.findContext( pageContext ), group.getLastModified(),Preferences.TimeFormat.DATETIME), group.getModifier()};
-      ss.append( mf.format( args ) );
-      
-      ss.append( "\", " );
-      ss.append( ( cursor ) ? "true" : "false" );
-      
-      ss.append( ");\n" );
-
-
-    return ss.toString();
-  }
-%>
-
-<wiki:Messages div="error" topic="<%=GroupManager.MESSAGES_KEY%>" prefix='<%=LocaleSupport.getLocalizedMessage(pageContext,"group.errorprefix")%>'/>
-
-<table id='wikigroups' class='wikitable' >
-<tr>
-  <th><fmt:message key="group.name" /></th>
-  <th><fmt:message key="group.members" /></th>
-</tr>
-<tr>
-  <td id="groupnames" rowspan="2">
-    <div id="grouptemplate" 
-            style="display:none; " 
-            title='<fmt:message key="grp.groupnames.title"/>'
-          onclick="WikiGroup.toggle(); WikiGroup.onMouseOverGroup(this);"
-      onmouseover="WikiGroup.onMouseOverGroup(this);" ></div>
-
-    <wiki:Permission permission="createGroups">
-    <div id="groupfield" 
-      onmouseover="WikiGroup.onMouseOverGroup(this);" >
-      <input type="text" size="30" 
-               id="newgroup"
-            value='<fmt:message key="grp.newgroupname"/>'
-           onblur="if( this.value == '' ) { this.value = this.defaultValue; }; " 
-          onfocus="if( this.value == this.defaultValue ) { this.value = ''; WikiGroup.onClickNew(); }; "/>
-    </div>
-    </wiki:Permission>
-  </td>
-  <td id="groupmembers">
-    <div style="float:left;">
-    <textarea rows="8" cols="30" disabled="disabled"
-              name="membersfield" id="membersfield" ></textarea>
-    </div>
-    <form action="<wiki:Link format='url' jsp='Group.jsp'/>" 
-              id="groupForm" 
-          method="post" accept-charset="<wiki:ContentEncoding />" >
-      <div>
-      <input type="hidden" name="group"   value="" />
-      <input type="hidden" name="members" value="" />
-      <input type="hidden" name="action"  value="save" />
-      <input type="button" disabled="disabled"
-             name="saveButton" id="saveButton" 
-            value='<fmt:message key="grp.savegroup"/>' 
-          onclick="WikiGroup.onSubmit( this.form, '<wiki:Link format='url' jsp='EditGroup.jsp' />' );" /></div>
-
-      <wiki:Permission permission="createGroups">
-      <div>
-      <input type="button" disabled="disabled"  
-             name="createButton" id="createButton"
-            value='<fmt:message key="grp.savenewgroup"/>' 
-            style="display:none; "
-          onclick="WikiGroup.onSubmitNew( this.form, '<wiki:Link format='url' jsp='NewGroup.jsp' />' );" /></div>
-      </wiki:Permission>
-
-      <div>
-      <input type="button" disabled="disabled"
-             name="cancelButton" id="cancelButton" 
-            value='<fmt:message key="grp.cancel"/>' 
-          onclick="WikiGroup.toggle();" /></div>
-
-      <wiki:Permission permission="deleteGroup">
-      <div>
-      <input type="button" disabled="disabled" 
-             name="deleteButton" id="deleteButton"
-            value='<fmt:message key="grp.deletegroup"/>' 
-          onclick="confirm( '<fmt:message key="grp.deletegroup.confirm"/>' ) 
-                && WikiGroup.onSubmit( this.form, '<wiki:Link format='url' jsp='DeleteGroup.jsp' />' );" /></div>
-      </wiki:Permission>
-    </form>
-  </td>
-  </tr>
-  <tr valign="top">
-  <td>
-    <div class="formhelp"><fmt:message key="grp.formhelp"/></div>
-    <p id="groupinfo" class="formhelp"></p>
-  </td>
-  </tr>
-</table>
-
-<h3><fmt:message key="grp.allgroups"/></h3>
-<p><wiki:Translate>[{Groups}]</wiki:Translate></p>
-
-
 <%
-  String groupname = request.getParameter( "group" );
-%>
- 
-<script type="text/javascript">//<![CDATA[
-<%
-  WikiContext c = WikiContext.findContext( pageContext );
-  Principal[] roles = c.getWikiSession().getRoles();
+  Context c = Context.findContext( pageContext );
 
-  for( int i = 0; i < roles.length; i++ )
-  {
-    if ( roles[i] instanceof GroupPrincipal ) /* bugfix */
+  // Extract the group name and members
+  //String name = request.getParameter( "group" );
+  //Group group = (Group)pageContext.getAttribute( "Group",PageContext.REQUEST_SCOPE );
+
+  AuthorizationManager authMgr = c.getEngine().getManager( AuthorizationManager.class );
+  GroupManager groupMgr = c.getEngine().getManager( GroupManager.class );
+
+  Principal[] groups = groupMgr.getRoles();
+  Arrays.sort( groups, new PrincipalComparator() );
+
+  String name = null;
+  Group group = null;
+  Principal[] members = null;
+  StringBuffer membersAsString = null;
+
+%>
+<c:set var="groups" value="<%= groups %>" />
+
+<wiki:CheckRequestContext context="!createGroup"><c:set var="createFormClose" value="-close"/></wiki:CheckRequestContext>
+<wiki:Permission permission="createGroups">
+  <form action="<wiki:Link format='url' jsp='NewGroup.jsp'/>"
+         class="accordion${createFormClose}"
+        method="post" accept-charset="<wiki:ContentEncoding />" >
+
+    <h4><fmt:message key="newgroup.heading.create"/></h4>
+    <input type="hidden" name="action"  value="save" />
+
+    <fmt:message key='newgroup.errorprefix' var="msg"/>
+    <wiki:Messages div="alert alert-danger form-col-offset-20 form-col-50" topic="group" prefix="${msg}"/>
+
+    <div class="form-group">
+      <label class="control-label form-col-20"><fmt:message key="group.name" /></label>
+      <input type="text" size="30"
+           class="form-control form-col-50"
+            name="group" id="group"
+     placeholder="<fmt:message key="grp.newgroupname"/>"   >
+    </div>
+
+    <div class="form-group">
+      <label class="control-label form-col-20"><fmt:message key="group.members" /></label>
+      <textarea class="form-control form-col-50" rows="5" cols="30"
+                 name="members" id="members" ></textarea>
+    </div>
+    <div class="help-block form-col-offset-20"><fmt:message key="editgroup.memberlist"/></div>
+    <%--<p class="help-block form-col-offset-20"><fmt:message key="grp.formhelp"/></p>--%>
+
+    <input class="btn btn-success form-col-offset-20" type="submit" value="<fmt:message key='grp.savenewgroup'/>" />
+
+
+  </form>
+</wiki:Permission>
+
+<wiki:CheckRequestContext context="!createGroup">
+  <fmt:message key='group.errorprefix' var="msg"/>
+  <wiki:Messages div="alert alert-danger" topic="group" prefix="${msg}" />
+</wiki:CheckRequestContext>
+
+<form action="<wiki:Link format='url' jsp='DeleteGroup.jsp'/>"
+      class="hidden"
+        name="deleteGroupForm" id="deleteGroupForm"
+      method="POST" accept-charset="UTF-8">
+  <input type="hidden" name="group" value="${group.name}" />
+  <input type="submit" name="ok"
+   data-modal="+ .modal"
+        value="<fmt:message key="actions.deletegroup"/>" />
+  <div class="modal"><fmt:message key='grp.deletegroup.confirm'/></div>
+</form>
+
+<h4 id="allgroups"><fmt:message key='grp.allgroups'/></h4>
+<div class="table-filter-sort-condensed-striped">
+  <table class="table" aria-described-by="allgroups">
+    <caption class="hide">Group Details</caption>
+    <thead>
+      <th scope="col"><fmt:message key="group.name"/></th>
+      <th scope="col"><fmt:message key="group.members"/></th>
+      <th scope="col"><fmt:message key="group.created"/></th>
+      <th scope="col"><fmt:message key="group.thecreator"/></th>
+      <th scope="col"><fmt:message key="group.modified"/></th>
+      <th scope="col"><fmt:message key="group.themodifier"/></th>
+      <th scope="col"><fmt:message key="group.actions"/></th>
+    </thead>
+    <tbody>
+    <%
+    for( int g = 0; g < groups.length; g++ )
     {
-      String name = roles[i].getName();
-      Group group = c.getEngine().getGroupManager().getGroup( name );
+      if ( groups[g] instanceof GroupPrincipal )
+      {
+        name = groups[g].getName();
+        group = groupMgr.getGroup( name );
+        members = group.members();
+        Arrays.sort( members, new PrincipalComparator() );
+        pageContext.setAttribute("members", members);
+    %>
+    <c:set var="group" value="<%= group %>" />
+    <tr class="${param.group == group.name ? 'highlight' : ''}">
+      <%--<td><wiki:Link jsp='Group.jsp'><wiki:Param name='group' value='${group.name}'/>${group.name}</wiki:Link></td>--%>
+      <td><c:if test="${group.name =='Admin'}"><span class="icon-unlock-alt"></span> </c:if>${group.name}</td>
+      <td>
+        <c:forEach items="${members}" var="member" varStatus="iterator">
+          <c:if test="${iterator.index > 0}">, </c:if>
+          ${member.name}
+        </c:forEach>
+      </td>
+      <td><fmt:formatDate value="${group.created}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
+      <td>${group.creator}</td>
+      <td><fmt:formatDate value="${group.lastModified}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
+      <td>${group.modifier}</td>
 
-      %><%= printWikiGroupPutGroup( group, name, name.equals( groupname ), pageContext )  %><%
-    }
-  }
-%>
-//]]></script>
+      <td class="nowrap">
+      <%--
+        We can't use wiki:Permission, cause we are in a loop; so let's just borrow some code from PermissionTag.java
+      --%>
+      <c:if test='<%= authMgr.checkPermission( c.getWikiSession(), new GroupPermission( name, "edit" ) ) %>'>
+      <%-- <wiki:Permission permission="editGroup"> --%>
+        <a class="btn btn-xs btn-primary"
+            href="<wiki:Link format='url' jsp='EditGroup.jsp'><wiki:Param name='group' value='${group.name}' /></wiki:Link>" >
+          <fmt:message key="actions.editgroup" />
+        </a>
+      <%--</wiki:Permission>--%>
+      </c:if>
 
-<%--
-WikiGroup.putGroup( "Group1qsdf qsdf qsdf qsdf qsdffsdfq en nog een beetje langer he", "Member1\nMember2\nMember3\nMember4\nMember5\nMember6", "createdon", "createdby", "changedon", "changedby" );
---%>
+      <c:if test='<%= authMgr.checkPermission( c.getWikiSession(), new GroupPermission( name, "delete" ) ) %>'>
+      <%-- <wiki:Permission permission="deleteGroup"> --%>
+        <button class="btn btn-xs btn-danger" type="button" onclick="document.deleteGroupForm.group.value ='${group.name}';document.deleteGroupForm.ok.click();">
+          <fmt:message key="actions.deletegroup"/>
+        </button>
+      <%--</wiki:Permission>--%>
+      </c:if>
+      </td>
+    </tr>
+    <%
+        } /* end of if-GroupPrincipal */
+    } /* end of for loop */
+    %>
+    </tbody>
+  </table>
+</div>

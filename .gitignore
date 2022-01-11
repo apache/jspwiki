@@ -13,6 +13,12 @@ overlays/
 # Eclipse
 .classpath
 .project
+nb-configuration.xml
+**/*.iml
+.idea
+.metadata
+.checkstyle
+
 .settings/
 
 # IntelliJ
@@ -21,4 +27,3 @@ overlays/
 
 # Java
 *.class
-jspwiki-it-tests/jspwiki-selenium-tests/overlays/

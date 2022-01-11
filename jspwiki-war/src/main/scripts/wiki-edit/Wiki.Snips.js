@@ -36,6 +36,7 @@ Wiki.DirectSnips = {
         }
 };
 
+
 /*
 Function: snippets
 
@@ -423,8 +424,8 @@ Wiki.Snips = {
         //match [link],  do not match [{, [[
         //do not include the [ in the matched string
         suggest: {
-        lback: /\[([^\|\[{\]\n\r]*)$/,
-        match: /^([^\|\[{\]\n\r]*)(?:[\]\n\r])/
+        lback: /\[([^|[{\]\n\r]*)$/,
+        match: /^([^|[{\]\n\r]*)(?:[\]\n\r])/
         },
         linkDlg: Wiki.pageDialog("Wiki Link", "/search/suggestions")
 
@@ -435,8 +436,8 @@ Wiki.Snips = {
         //do not match [{, [[
         //do not include the [ in the matched string
         suggest: {
-        lback: /\[(?:[^\|\]]+\|)([^\|\[{\]\n\r]*)$/,
-        match: /^([^\|\[{\]\n\r]*)(?:[\]\|\n\r])/
+        lback: /\[(?:[^|\]]+\|)([^|[{\]\n\r]*)$/,
+        match: /^([^|[{\]\n\r]*)(?:[\]|\n\r])/
         },
         linkPart2: Wiki.pageDialog("Wiki Link", "/search/suggestions")
     },
@@ -525,6 +526,7 @@ Wiki.Snips = {
         "SET {name}='value'":"Set a Wiki variable",
         "${varname}":"Get a Wiki variable",
         "If name='{value}' page='pagename' exists='true' contains='regexp'\n\nbody\n":"IF plugin",
+        "SET keywords={keyword1, keyword2}":"Set Page Keywords",
         "SET alias='{pagename}'":"Set Page Alias",
         "SET page-styles='prettify-nonum table-condensed-fit'":"Set Page Styles",
         "SET sidebar='off'":"Hide Sidebar",
@@ -599,7 +601,7 @@ Wiki.Snips = {
                 //"[description|{link}|options]": "<span class='icon-link'/>",
                 "[{Image src='{image.jpg}'}]": "<span class='icon-picture' title='Insert an image'/>",
                 "[{{plugin}}]": "<span class='icon-puzzle-piece' title='Insert a Plugin'></span>",
-                "%%style {body} /%":"<span style='font-family:monospace;' title='Add a Style'>%%</span>",
+                "%%style {body} /%":"<span style='font-family:monospace;letter-spacing:-.2em;' title='Add a Style'>%%</span>",
                 "divider2": "",
                 "%%(font-family:{font};) body /%":"<span title='Change the Font'><span style='font-family:serif;'>A</span><span style='font-family:sans-serif'>a</span></span>",
                 "&{entity};" : "<span style='font-family:cursive;' title='Insert a Special Character'>&amp;</span>",

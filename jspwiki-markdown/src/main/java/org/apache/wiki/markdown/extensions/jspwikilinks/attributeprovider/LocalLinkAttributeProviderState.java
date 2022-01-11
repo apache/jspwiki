@@ -18,12 +18,18 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.MutableAttributes;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 
-import com.vladsch.flexmark.util.html.Attributes;
+import java.util.List;
 
 
 /**
@@ -32,28 +38,35 @@ import com.vladsch.flexmark.util.html.Attributes;
 public class LocalLinkAttributeProviderState implements NodeAttributeProviderState< JSPWikiLink > {
 
     private final boolean hasRef;
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final LinkParsingOperations linkOperations;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public LocalLinkAttributeProviderState( final WikiContext wikiContext, final boolean hasRef ) {
+    public LocalLinkAttributeProviderState( final Context wikiContext,
+                                            final boolean hasRef,
+                                            final boolean isImageInlining,
+                                            final List< Pattern > inlineImagePatterns ) {
         this.hasRef = hasRef;
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
+     * @see NodeAttributeProviderState#setAttributes(MutableAttributes, Node)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
+    public void setAttributes( final MutableAttributes attributes, final JSPWikiLink link ) {
         final int hashMark = link.getUrl().toString().indexOf( '#' );
-        final String attachment = wikiContext.getEngine().getAttachmentManager().getAttachmentInfoName( wikiContext, link.getWikiLink() );
+        final String attachment = wikiContext.getEngine().getManager( AttachmentManager.class ).getAttachmentInfoName( wikiContext, link.getWikiLink() );
         if( attachment != null ) {
-            if( !linkOperations.isImageLink( link.getUrl().toString() ) ) {
+            if( !linkOperations.isImageLink( link.getUrl().toString(), isImageInlining, inlineImagePatterns ) ) {
                 attributes.replaceValue( "class", MarkupParser.CLASS_ATTACHMENT );
-                final String attlink = wikiContext.getURL( WikiContext.ATTACH, link.getWikiLink() );
+                final String attlink = wikiContext.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), link.getWikiLink() );
                 attributes.replaceValue( "href", attlink );
             } else {
                 new ImageLinkAttributeProviderState( wikiContext, attachment, hasRef ).setAttributes( attributes, link );
@@ -64,6 +77,7 @@ public class LocalLinkAttributeProviderState implements NodeAttributeProviderSta
             if( matchedLink != null ) {
                 String sectref = "#section-" + wikiContext.getEngine().encodeName( matchedLink + "-" + MarkupParser.wikifyLink( namedSection ) );
                 sectref = sectref.replace('%', '_');
+                link.setUrl( CharSubSequence.of( link.getUrl().toString() + sectref ) );
                 new LocalReadLinkAttributeProviderState( wikiContext ).setAttributes( attributes, link );
             } else {
                 new LocalEditLinkAttributeProviderState( wikiContext, link.getWikiLink() ).setAttributes( attributes, link );

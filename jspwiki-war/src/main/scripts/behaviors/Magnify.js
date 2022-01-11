@@ -34,7 +34,7 @@ function Magnify( images ){
     function move_maggy( event ){
 
         var img = event.target,
-            isVisible = ( event.type != "mouseleave" );
+            isVisible = /move/.test(event.type);
 
         if( isVisible ){
 
@@ -55,6 +55,9 @@ function Magnify( images ){
                 backgroundPosition: bgX + "px " + bgY + "px"
             });
 
+            /*avoid that the whole screen starts to scroll around when touch-down*/
+            if( /touch/.test(event.type) ){ event.preventDefault(); }
+
         }
 
         maggy.ifClass( isVisible , "show" );
@@ -62,8 +65,11 @@ function Magnify( images ){
     }
 
     $$( images ).addEvents({
+        mousedown: function(event){ event.stop(); },  //avoid dragging/selecting the img
         mousemove: move_maggy,
-        mouseleave: move_maggy
+        touchmove: move_maggy,
+        mouseleave: move_maggy,
+        touchend: move_maggy
     });
 
 }

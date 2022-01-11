@@ -18,15 +18,17 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.attributeprovider;
 
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.ast.Link;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.html.MutableAttributes;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
-import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
-import com.vladsch.flexmark.ast.Link;
-import com.vladsch.flexmark.util.html.Attributes;
+import java.util.List;
 
 
 /**
@@ -36,30 +38,37 @@ public class InterWikiLinkAttributeProviderState implements NodeAttributeProvide
 
     private final boolean hasRef;
     private final boolean m_wysiwygEditorMode;
-    private final WikiContext wikiContext;
+    private final Context wikiContext;
     private final LinkParsingOperations linkOperations;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
 
-    public InterWikiLinkAttributeProviderState( final WikiContext wikiContext, final boolean hasRef ) {
+    public InterWikiLinkAttributeProviderState( final Context wikiContext,
+                                                final boolean hasRef,
+                                                final boolean isImageInlining,
+                                                final List< Pattern > inlineImagePatterns ) {
         this.hasRef = hasRef;
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
+        final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
+        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodeAttributeProviderState#setAttributes(Attributes, JSPWikiLink)
+     * @see NodeAttributeProviderState#setAttributes(MutableAttributes, Node)
      */
     @Override
-    public void setAttributes( final Attributes attributes, final JSPWikiLink link ) {
+    public void setAttributes( final MutableAttributes attributes, final JSPWikiLink link ) {
         final String[] refAndPage = link.getWikiLink().split( ":" );
         if( !m_wysiwygEditorMode ) {
             String urlReference = wikiContext.getEngine().getInterWikiURL( refAndPage[ 0 ] );
             if( urlReference != null ) {
                 urlReference = TextUtil.replaceString( urlReference, "%s", refAndPage[ 1 ] );
-                if( linkOperations.isImageLink( urlReference ) ) {
+                if( linkOperations.isImageLink( urlReference, isImageInlining, inlineImagePatterns ) ) {
                     new ImageLinkAttributeProviderState( wikiContext, urlReference, hasRef ).setAttributes( attributes, link );
                 } else {
                     setInterWikiLinkAttrs( attributes, link, urlReference );
@@ -70,7 +79,7 @@ public class InterWikiLinkAttributeProviderState implements NodeAttributeProvide
         }
     }
 
-    void setInterWikiLinkAttrs( final Attributes attributes, final Link link, final String url ) {
+    void setInterWikiLinkAttrs( final MutableAttributes attributes, final Link link, final String url ) {
         attributes.replaceValue( "class", MarkupParser.CLASS_INTERWIKI );
         attributes.replaceValue( "href", url );
     }

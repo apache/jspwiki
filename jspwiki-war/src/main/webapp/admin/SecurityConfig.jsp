@@ -19,8 +19,10 @@
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.security.Principal" %>
-<%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.*" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.api.core.*" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
@@ -28,27 +30,28 @@
 <%!
   public void jspInit()
   {
-    wiki = WikiEngine.getInstance( getServletConfig() );
+    wiki = Wiki.engine().find( getServletConfig() );
   }
-  Logger log = Logger.getLogger("JSPWiki");
-  WikiEngine wiki;
+  Logger log = LogManager.getLogger("JSPWiki");
+  Engine wiki;
   SecurityVerifier verifier;
 %>
+<!doctype html>
+<html lang="en" name="top">
 <%
-  WikiContext wikiContext = wiki.createContext( request, WikiContext.NONE );
-  if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+  Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_NONE.getRequestContext() );
+  if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );
   verifier = new SecurityVerifier( wiki, wikiContext.getWikiSession() );
 
   //
-  //  This is a security feature, so we will turn it off unless the
-  //  user really wants to.
+  //  This is a security feature, so we will turn it off unless the user really wants to.
   //
   if( !TextUtil.isPositive(wiki.getWikiProperties().getProperty("jspwiki-x.securityconfig.enable")) )
   {
       %>
-      <html>
       <head>
+        <title><wiki:Variable var="applicationname" />: JSPWiki Security Configuration Verifier</title>
         <base href="../"/>
         <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
         <wiki:IncludeResources type="stylesheet"/>
@@ -61,7 +64,7 @@
          <pre>
              jspwiki-x.securityconfig.enable=true
          </pre>
-         <p>in your <tt>jspwiki-custom.properties</tt> file.</p>
+         <p>in your <code>jspwiki-custom.properties</code> file.</p>
          <p>Once you are done with debugging your security configuration, please turn this page
          off again by removing the preceding line, so that your system is safe again.</p>
          <p>Have a nice day.  May the Force be with you.</p>
@@ -72,11 +75,9 @@
   }
 
 %>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-  <title>JSPWiki Security Configuration Verifier</title>
+  <title><wiki:Variable var="applicationname" />: JSPWiki Security Configuration Verifier</title>
   <base href="../"/>
   <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
   <wiki:IncludeResources type="stylesheet"/>
@@ -119,17 +120,14 @@ and everyone in between. You have been warned.  You can turn it off by setting</
 -->
 <h3>Container-Managed Authentication</h3>
 <%
-  boolean isContainerAuth = wiki.getAuthenticationManager().isContainerAuthenticated();
-  AuthorizationManager authorizationManager = wiki.getAuthorizationManager();
-  if ( isContainerAuth )
-  {
+  boolean isContainerAuth = wiki.getManager( AuthenticationManager.class ).isContainerAuthenticated();
+  AuthorizationManager authorizationManager = wiki.getManager( AuthorizationManager.class );
+  if( isContainerAuth ) {
 %>
     <!-- We are using container auth -->
     <p>I see that you've configured container-managed authentication. Very nice.</p>
 <%
-  }
-  else
-  {
+  } else {
 %>
     <!-- We are not using container auth -->
     <p>Container-managed authentication appears to be disabled, according to your <code>WEB-INF/web.xml</code> file.</p>
@@ -261,7 +259,7 @@ And as an additional check, we will try to load each <code>Permission</code> cla
 
 <p>Now comes the <em>really</em> fun part. Using the current security policy, we will test the PagePermissions each JSPWiki role possesses for a range of pages. The roles we will test include the standard JSPWiki roles (Authenticated, All, etc.) plus any others you may have listed in the security policy. In addition to the PagePermissions, we will also test the WikiPermissions. The results of these tests should tell you what behaviors you can expect based on your security policy file. If we had problems finding, parsing or verifying the policy file, these tests will likely fail.</p>
 
-<p>The colors in each cell show the results of the test. <font style="background-color: #c0ffc0;">&nbsp;Green&nbsp;</font> means success; <font style="background-color: #ffc0c0;">&nbsp;red&nbsp;</font> means failure. Hovering over a role name or individual cell will display more detailed information about the role or test.</p>
+<p>The colors in each cell show the results of the test. <span style="background-color: #c0ffc0;">&nbsp;Green&nbsp;</span> means success; <span style="background-color: #ffc0c0;">&nbsp;red&nbsp;</span> means failure. Hovering over a role name or individual cell will display more detailed information about the role or test.</p>
 
 <%=verifier.policyRoleTable()%>
 
@@ -284,7 +282,7 @@ In addition, because you are using container-managed security, constraints on us
 
     <p>Here is how your web container will control role-based access to some common JSPWiki actions and their assocated JSPs. These restrictions will be enforced even if your Java security policy is more permissive.</p>
 
-    <p>The colors in each cell show the results of the test. <font style="background-color: #c0ffc0;">&nbsp;Green&nbsp;</font> means success; <font style="background-color: #ffc0c0;">&nbsp;red&nbsp;</font> means failure.</p>
+    <p>The colors in each cell show the results of the test. <span style="background-color: #c0ffc0;">&nbsp;Green&nbsp;</span> means success; <span style="background-color: #ffc0c0;">&nbsp;red&nbsp;</span> means failure.</p>
 
     <!-- Print table showing role restrictions by JSP -->
     <%=verifier.containerRoleTable()%>

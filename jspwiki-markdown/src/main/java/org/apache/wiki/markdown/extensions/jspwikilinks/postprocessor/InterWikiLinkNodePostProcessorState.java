@@ -18,22 +18,24 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import java.text.MessageFormat;
-import java.util.ResourceBundle;
-
-import org.apache.log4j.Logger;
-import org.apache.wiki.WikiContext;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.ast.Node;
+import com.vladsch.flexmark.util.ast.NodeTracker;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.oro.text.regex.Pattern;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 
-import com.vladsch.flexmark.ast.Document;
-import com.vladsch.flexmark.util.NodeTracker;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.ResourceBundle;
 
 
 /**
@@ -41,26 +43,33 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
  */
 public class InterWikiLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private static final Logger LOG = Logger.getLogger( InterWikiLinkNodePostProcessorState.class );
-    private final WikiContext wikiContext;
+    private static final Logger LOG = LogManager.getLogger( InterWikiLinkNodePostProcessorState.class );
+    private final Context wikiContext;
     private final LinkParsingOperations linkOperations;
+    private final boolean isImageInlining;
+    private final List< Pattern > inlineImagePatterns;
     private final Document document;
     private final boolean m_wysiwygEditorMode;
     private boolean m_useOutlinkImage = true;
 
-    public InterWikiLinkNodePostProcessorState( final WikiContext wikiContext, final Document document ) {
+    public InterWikiLinkNodePostProcessorState( final Context wikiContext,
+                                                final Document document,
+                                                final boolean isImageInlining,
+                                                final List< Pattern > inlineImagePatterns ) {
         this.wikiContext = wikiContext;
         this.linkOperations = new LinkParsingOperations( wikiContext );
+        this.isImageInlining = isImageInlining;
+        this.inlineImagePatterns = inlineImagePatterns;
         this.document = document;
         this.m_useOutlinkImage = wikiContext.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
-        final Boolean wysiwygVariable = ( Boolean )wikiContext.getVariable( RenderingManager.WYSIWYG_EDITOR_MODE );
-        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable.booleanValue() : false;
+        final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
+        m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }
 
     /**
      * {@inheritDoc}
      *
-     * @see NodePostProcessorState#process(NodeTracker, JSPWikiLink)
+     * @see NodePostProcessorState#process(NodeTracker, Node)
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
@@ -69,7 +78,7 @@ public class InterWikiLinkNodePostProcessorState implements NodePostProcessorSta
             String urlReference = wikiContext.getEngine().getInterWikiURL( refAndPage[ 0 ] );
             if( urlReference != null ) {
                 urlReference = TextUtil.replaceString( urlReference, "%s", refAndPage[ 1 ] );
-                if( linkOperations.isImageLink( urlReference ) ) {
+                if( linkOperations.isImageLink( urlReference, isImageInlining, inlineImagePatterns ) ) {
                     new ImageLinkNodePostProcessorState( wikiContext, urlReference, link.hasRef() ).process( state, link );
                 } else {
                     link.setUrl( CharSubSequence.of( urlReference ) );

@@ -19,33 +19,39 @@
 
 <%@ page import="java.util.Collection" %>
 <%@ page import="java.util.Iterator" %>
-<%@ page import="org.apache.log4j.*" %>
-<%@ page import="org.apache.wiki.WikiContext" %>
-<%@ page import="org.apache.wiki.WikiSession" %>
-<%@ page import="org.apache.wiki.WikiEngine" %>
+<%@ page import="org.apache.logging.log4j.Logger" %>
+<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.apache.wiki.api.core.Context" %>
+<%@ page import="org.apache.wiki.api.core.ContextEnum" %>
+<%@ page import="org.apache.wiki.api.core.Engine" %>
+<%@ page import="org.apache.wiki.api.core.Session" %>
+<%@ page import="org.apache.wiki.api.spi.Wiki" %>
+<%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
+<%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.workflow.Decision" %>
 <%@ page import="org.apache.wiki.workflow.DecisionQueue" %>
 <%@ page import="org.apache.wiki.workflow.NoSuchOutcomeException" %>
 <%@ page import="org.apache.wiki.workflow.Outcome" %>
 <%@ page import="org.apache.wiki.workflow.Workflow" %>
+<%@ page import="org.apache.wiki.workflow.WorkflowManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%!
-    Logger log = Logger.getLogger("JSPWiki"); 
+    Logger log = LogManager.getLogger("JSPWiki");
 %>
 
 <%
-    WikiEngine wiki = WikiEngine.getInstance( getServletConfig() );
+    Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
-    WikiContext wikiContext = wiki.createContext( request, WikiContext.WORKFLOW );
-    if(!wiki.getAuthorizationManager().hasAccess( wikiContext, response )) return;
+    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_WORKFLOW.getRequestContext() );
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
     
     // Extract the wiki session
-    WikiSession wikiSession = wikiContext.getWikiSession();
+    Session wikiSession = wikiContext.getWikiSession();
     
     // Get the current decisions
-    DecisionQueue dq = wiki.getWorkflowManager().getDecisionQueue();
+    DecisionQueue dq = wiki.getManager( WorkflowManager.class ).getDecisionQueue();
 
     if( "decide".equals(request.getParameter("action")) )
     {
@@ -56,23 +62,17 @@
           String outcomeKey = request.getParameter("outcome");
           Outcome outcome = Outcome.forName( outcomeKey );
           // Iterate through our actor decisions and see if we can find an ID match
-          Collection decisions = dq.getActorDecisions(wikiSession);
-          for (Iterator it = decisions.iterator(); it.hasNext();)
-          {
-            Decision d = (Decision)it.next();
-            if (d.getId() == id)
-            {
+          Collection< Decision > decisions = dq.getActorDecisions(wikiSession);
+          for (Iterator< Decision > it = decisions.iterator(); it.hasNext();) {
+            Decision d = it.next();
+            if( d.getId() == id ) {
               // Cool, we found it. Now make the decision.
-              dq.decide(d, outcome);
+              dq.decide( d, outcome, wikiContext );
             }
           }
-        }
-        catch ( NumberFormatException e )
-        {
+        } catch ( NumberFormatException e ) {
            log.warn("Could not parse integer from parameter 'decision'. Somebody is being naughty.");
-        }
-        catch ( NoSuchOutcomeException e )
-        {
+        } catch ( NoSuchOutcomeException e ) {
            log.warn("Could not look up Outcome from parameter 'outcome'. Somebody is being naughty.");
         }
     }
@@ -83,14 +83,14 @@
           // Extract parameters for decision ID & decision outcome
           int id = Integer.parseInt( request.getParameter( "id" ) );
           // Iterate through our owner decisions and see if we can find an ID match
-          Collection workflows = wiki.getWorkflowManager().getOwnerWorkflows(wikiSession);
-          for (Iterator it = workflows.iterator(); it.hasNext();)
+          Collection< Workflow > workflows = wiki.getManager( WorkflowManager.class ).getOwnerWorkflows(wikiSession);
+          for (Iterator< Workflow > it = workflows.iterator(); it.hasNext();)
           {
-            Workflow w = (Workflow)it.next();
+            Workflow w = it.next();
             if (w.getId() == id)
             {
               // Cool, we found it. Now kill the workflow.
-              w.abort();
+              w.abort( wikiContext );
             }
           }
         }
@@ -102,12 +102,10 @@
     
     // Stash the current decisions/workflows
     request.setAttribute("decisions",   dq.getActorDecisions(wikiSession));
-    request.setAttribute("workflows",   wiki.getWorkflowManager().getOwnerWorkflows(wikiSession));
+    request.setAttribute("workflows",   wiki.getManager( WorkflowManager.class ).getOwnerWorkflows( wikiSession ) );
     request.setAttribute("wikiSession", wikiSession);
     
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getTemplateManager().findJSP( pageContext,
-                                                            wikiContext.getTemplate(),
-                                                            "ViewTemplate.jsp" );
+    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 
