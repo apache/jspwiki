@@ -18,6 +18,21 @@
  */
 package org.apache.wiki.search;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+import java.util.concurrent.Executor;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -67,12 +82,6 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.TextUtil;
-
-import java.io.*;
-import java.lang.reflect.Constructor;
-import java.util.*;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 
 /**
@@ -127,7 +136,7 @@ public class LuceneSearchProvider implements SearchProvider {
     @Override
     public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException, IOException  {
         m_engine = engine;
-        searchExecutor = Executors.newCachedThreadPool();
+//        searchExecutor = Executors.newCachedThreadPool();
 
         m_luceneDirectory = engine.getWorkDir()+File.separator+LUCENE_DIR;
 
@@ -481,7 +490,8 @@ public class LuceneSearchProvider implements SearchProvider {
             final QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
             qp.setAllowLeadingWildcard(true);
             final Query luceneQuery = qp.parse( query );
-            final IndexSearcher searcher = new IndexSearcher( reader, searchExecutor );
+//            final IndexSearcher searcher = new IndexSearcher( reader, searchExecutor );
+            final IndexSearcher searcher = new IndexSearcher( reader );
 
             if( (flags & FLAG_CONTEXTS) != 0 ) {
                 highlighter = new Highlighter(new SimpleHTMLFormatter("<span class=\"searchmatch\">", "</span>"),
