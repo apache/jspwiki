@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.parser.markdown;
 
+import com.vladsch.flexmark.ext.attributes.AttributesExtension;
 import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
 import com.vladsch.flexmark.ext.toc.TocExtension;
 import com.vladsch.flexmark.parser.Parser;
@@ -63,9 +64,11 @@ public class MarkdownDocument extends WikiDocument {
 	public static MutableDataSet options( final Context context, final boolean isImageInlining, final List< Pattern > inlineImagePatterns ) {
 		final MutableDataSet options = new MutableDataSet();
 		options.setFrom( ParserEmulationProfile.COMMONMARK );
+		options.set( AttributesExtension.ASSIGN_TEXT_ATTRIBUTES, true );
 		// align style of Markdown's footnotes extension with jspwiki footnotes refs
 		options.set( FootnoteExtension.FOOTNOTE_LINK_REF_CLASS, JSPWikiMarkupParser.CLASS_FOOTNOTE_REF );
 		options.set( Parser.EXTENSIONS, Arrays.asList( new Extension[] { new MarkdownForJSPWikiExtension( context, isImageInlining, inlineImagePatterns ),
+				                                                         AttributesExtension.create(),
 		                                                                 FootnoteExtension.create(),
 		                                                                 TocExtension.create() } ) );
 		return options;

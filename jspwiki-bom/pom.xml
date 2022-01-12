@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements.  See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership.  The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License.  You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied.  See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <parent>
+    <groupId>org.apache.jspwiki</groupId>
+    <artifactId>jspwiki-builder</artifactId>
+    <version>2.11.2-SNAPSHOT</version>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>jspwiki-bom</artifactId>
+  <name>Apache JSPWiki bill of materials</name>
+
+  <properties>
+    <jspwiki.version>2.11.2-SNAPSHOT</jspwiki.version>
+  </properties>
+
+  <dependencyManagement>
+    <!-- main artifacts -->
+    <dependencies>
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-210-adapters</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-210-test-adaptees</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-api</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-bootstrap</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-cache</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-event</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-kendra-searchprovider</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-main</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-markdown</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-portable</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-tika-searchprovider</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-util</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-war</artifactId>
+        <version>${jspwiki.version}</version>
+        <type>war</type>
+      </dependency>
+
+      <!-- integration tests artifacts -->
+      <dependency>
+        <groupId>org.apache.jspwiki.it</groupId>
+        <artifactId>jspwiki-it-test-cma</artifactId>
+        <version>${jspwiki.version}</version>
+        <type>war</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.it</groupId>
+        <artifactId>jspwiki-it-test-cma-jdbc</artifactId>
+        <version>${jspwiki.version}</version>
+        <type>war</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.it</groupId>
+        <artifactId>jspwiki-it-test-custom</artifactId>
+        <version>${jspwiki.version}</version>
+        <type>war</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.it</groupId>
+        <artifactId>jspwiki-it-test-custom-absolute-urls</artifactId>
+        <version>${jspwiki.version}</version>
+        <type>war</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.it</groupId>
+        <artifactId>jspwiki-it-test-custom-jdbc</artifactId>
+        <version>${jspwiki.version}</version>
+        <type>war</type>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.it</groupId>
+        <artifactId>jspwiki-selenide-tests</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <!-- wikipages artifacts -->
+      <dependency>
+        <groupId>org.apache.jspwiki.wikipages</groupId>
+        <artifactId>jspwiki-wikipages-de</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.wikipages</groupId>
+        <artifactId>jspwiki-wikipages-en</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.wikipages</groupId>
+        <artifactId>jspwiki-wikipages-es</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.wikipages</groupId>
+        <artifactId>jspwiki-wikipages-fi</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.wikipages</groupId>
+        <artifactId>jspwiki-wikipages-fr</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.wikipages</groupId>
+        <artifactId>jspwiki-wikipages-it</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.wikipages</groupId>
+        <artifactId>jspwiki-wikipages-nl</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.wikipages</groupId>
+        <artifactId>jspwiki-wikipages-pt_BR</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.wikipages</groupId>
+        <artifactId>jspwiki-wikipages-ru</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki.wikipages</groupId>
+        <artifactId>jspwiki-wikipages-zh_CN</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+</project>

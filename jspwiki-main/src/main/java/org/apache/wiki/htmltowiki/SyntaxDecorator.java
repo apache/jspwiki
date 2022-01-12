@@ -48,9 +48,26 @@ public interface SyntaxDecorator {
      * Decorates an {@code a} element.
      * 
      * @param e XHTML element being translated.
+     * @param ref actual link.
      * @throws JDOMException if an error has ocurred parsing the xhtml chain.
      */
-    void a( Element e ) throws JDOMException;
+    void a( Element e, final String ref ) throws JDOMException;
+
+    /**
+     * Decorates an {@code a} element, pointing to a footnote.
+     *
+     * @param text text link of the footnote.
+     * @param ref link to footnote.
+     */
+    void aFootnote( final String text, final String ref );
+
+    /**
+     * Decorates an {@code a} element to an undefined page.
+     *
+     * @param e XHTML element being translated.
+     * @throws JDOMException if an error has ocurred parsing the xhtml chain.
+     */
+    void aUndefined( Element e ) throws JDOMException;
 
     /**
      * Decorates a {@code br} element.

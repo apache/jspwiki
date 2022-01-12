@@ -19,6 +19,7 @@
 package org.apache.wiki.htmltowiki.syntax.jspwiki;
 
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
+import org.apache.wiki.htmltowiki.syntax.MarkupHelper;
 import org.jdom2.JDOMException;
 
 import java.io.PrintWriter;
@@ -49,17 +50,17 @@ class PlainTextCssDecorator {
      */
     void decorate( final XHtmlElementToWikiTranslator.ElementDecoratorData dto ) throws JDOMException {
         if( dto.cssClass != null && !dto.ignoredCssClass ) {
-            if ( dto.htmlBase.equals( "div" ) ) {
+            if( MarkupHelper.isHtmlBaseDiv( dto ) ) {
                 out.print( "\n%%" + dto.cssClass + " \n" );
-            } else if ( dto.htmlBase.equals( "span" ) ) {
+            } else if( MarkupHelper.isHtmlBaseSpan( dto ) ) {
                 out.print( "%%" + dto.cssClass + " " );
             }
         }
         ptid.decorate( dto );
         if( dto.cssClass != null && !dto.ignoredCssClass ) {
-            if ( dto.htmlBase.equals( "div" ) ) {
+            if( MarkupHelper.isHtmlBaseDiv( dto ) ) {
                 out.print( "\n/%\n" );
-            } else if ( dto.htmlBase.equals( "span" ) ) {
+            } else if( MarkupHelper.isHtmlBaseSpan( dto ) ) {
                 out.print( "/%" );
             }
         }

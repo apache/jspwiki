@@ -19,6 +19,7 @@
 package org.apache.wiki.htmltowiki.syntax.jspwiki;
 
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
+import org.apache.wiki.htmltowiki.syntax.MarkupHelper;
 import org.jdom2.Element;
 
 import java.io.PrintWriter;

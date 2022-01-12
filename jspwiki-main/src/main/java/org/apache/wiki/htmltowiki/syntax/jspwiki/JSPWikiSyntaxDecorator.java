@@ -124,8 +124,20 @@ public class JSPWikiSyntaxDecorator implements SyntaxDecorator {
 
     /** {@inheritDoc} */
     @Override
-    public void a( final Element e ) throws JDOMException {
-        a.decorate( e );
+    public void a( final Element e, final String ref ) throws JDOMException {
+        a.decorate( e, ref );
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void aFootnote( final String text, final String ref ) {
+        a.decorateFootnote( text, ref );
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void aUndefined( final Element e ) throws JDOMException {
+        a.decorateUndefinedLink( e );
     }
 
     /** {@inheritDoc} */

@@ -28,10 +28,10 @@ import java.util.Stack;
 /**
  * Translates to JSPWiki syntax from a plain text. Specifically, this decorator handles the following conversions, when needed:
  * <ul>
- *     <li>Css classes</li>
  *     <li>Bold elements</li>
  *     <li>Italic elements</li>
  *     <li>Monospace elements</li>
+ *     <li>Css classes</li>
  *     <li>Css styles</li>
  * </ul>
  */
