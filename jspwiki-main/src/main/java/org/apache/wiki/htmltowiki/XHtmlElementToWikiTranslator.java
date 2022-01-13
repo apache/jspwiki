@@ -242,8 +242,10 @@ public class XHtmlElementToWikiTranslator {
                     case "br": syntax.br( base, e ); break;
                     case "hr": syntax.hr( e ); break;
                     case "table": syntax.table( e ); break;
+                    case "tbody": syntax.tbody( e ); break;
                     case "tr": syntax.tr( e ); break;
                     case "td": syntax.td( e ); break;
+                    case "thead": syntax.thead( e ); break;
                     case "th": syntax.th( e ); break;
                     case "a": translateA( e ); break;
                     case "b":
@@ -293,11 +295,7 @@ public class XHtmlElementToWikiTranslator {
                 } else if( MarkupHelper.isFootnoteLink( ref ) ) {
                     final String href = ref.replaceFirst( "#ref-.+-(\\d+)", "$1" ); // convert "#ref-PageName-1" to just "1"
                     final String textValue = e.getValue().substring( 1, ( e.getValue().length() - 1 ) ); // remove the brackets around "[1]"
-                    if( href.equals( textValue ) ) { // handles the simplest case. Example: [1]
-                        translate( e );
-                    } else { // handles the case where the link text is different from the href. Example: [something|1]
-                        syntax.aFootnote( textValue, href );
-                    }
+                    syntax.aFootnote( textValue, href );
                 } else {
                     syntax.a( e, ref );
                 }

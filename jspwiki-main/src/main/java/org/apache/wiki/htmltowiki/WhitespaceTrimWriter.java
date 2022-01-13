@@ -28,8 +28,7 @@ import java.util.regex.Pattern;
  * 
  */
 // FIXME: Needs a better description as to how it works.
-public class WhitespaceTrimWriter extends Writer
-{
+public class WhitespaceTrimWriter extends Writer {
 
     private final StringBuffer m_result = new StringBuffer();
 
@@ -37,6 +36,7 @@ public class WhitespaceTrimWriter extends Writer
 
     private boolean m_trimMode = true;
 
+    public static final String NO_TRIMMED_SPACE = "&nbsp;";
     private static final Pattern ONLINE_PATTERN = Pattern.compile( ".*?\\n\\s*?", Pattern.MULTILINE );
 
     private boolean m_currentlyOnLineBegin = true;
@@ -58,6 +58,7 @@ public class WhitespaceTrimWriter extends Writer
                 s = s.replaceAll( "\\p{Blank}+", " " );
                 s = s.replaceAll( "[ ]*\n[ ]*", "\n" );
                 s = replacePluginNewlineBackslashes( s );
+                s = s.replace( NO_TRIMMED_SPACE, " " );
             }
             m_result.append( s );
             m_buffer = new StringBuffer();

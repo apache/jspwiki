@@ -256,6 +256,14 @@ public interface SyntaxDecorator {
     void table( Element e ) throws JDOMException;
 
     /**
+     * Decorates a {@code tbody} element.
+     *
+     * @param e XHTML element being translated.
+     * @throws JDOMException if an error has ocurred parsing the xhtml chain.
+     */
+    void tbody( Element e ) throws JDOMException;
+
+    /**
      * Decorates an {@code td} element.
      *
      * @param e XHTML element being translated.
@@ -285,6 +293,14 @@ public interface SyntaxDecorator {
      * @throws JDOMException if an error has ocurred parsing the xhtml chain.
      */
     void th( Element e ) throws JDOMException;
+
+    /**
+     * Decorates a {@code thead} element.
+     *
+     * @param e XHTML element being translated.
+     * @throws JDOMException if an error has ocurred parsing the xhtml chain.
+     */
+    void thead( Element e ) throws JDOMException;
 
     /**
      * Decorates a {@code tr} element.

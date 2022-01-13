@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.htmltowiki.syntax;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
@@ -28,8 +27,9 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+
 /**
- * JSPWiki syntax helper operations
+ * Wiki syntax helper operations
  */
 public class MarkupHelper {
 
@@ -106,6 +106,15 @@ public class MarkupHelper {
         }
 
         return sb.toString().trim();
+    }
+
+    public static String nameSansNbf( final Element e ) {
+        final String name = e.getAttributeValue( "name" );
+        // remove the "nbf_" that was prepended since new one will be generated again when the xhtml is rendered.
+        if( name != null && name.startsWith( "nbf_" ) ) {
+            return name.substring( 4 );
+        }
+        return name;
     }
 
 }
