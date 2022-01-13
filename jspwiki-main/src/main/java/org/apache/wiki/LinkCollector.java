@@ -25,7 +25,7 @@ import java.util.List;
 
 
 /**
- *  Just a simple class collecting all of the links that come in.
+ *  Just a simple class collecting all the links that come in.
  */
 public class LinkCollector implements StringTransmutator {
 	
