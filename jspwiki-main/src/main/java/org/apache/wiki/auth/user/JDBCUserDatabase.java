@@ -310,7 +310,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
      * @param loginName the login name of the user profile that shall be deleted
      */
     @Override
-    public void deleteByLoginName( final String loginName ) throws NoSuchPrincipalException, WikiSecurityException {
+    public void deleteByLoginName( final String loginName ) throws WikiSecurityException {
         // Get the existing user; if not found, throws NoSuchPrincipalException
         findByLoginName( loginName );
 
@@ -392,12 +392,11 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
         final Set<Principal> principals = new HashSet<>();
         try( final Connection conn = m_ds.getConnection();
              final PreparedStatement ps = conn.prepareStatement( m_findAll );
-             final ResultSet rs = ps.executeQuery() )
-        {
-            while ( rs.next() ) {
+             final ResultSet rs = ps.executeQuery() ) {
+            while( rs.next() ) {
                 final String wikiName = rs.getString( m_wikiName );
-                if( wikiName == null ) {
-                    log.warn( "Detected null wiki name in XMLUserDataBase. Check your user database." );
+                if( StringUtils.isEmpty( wikiName ) ) {
+                    log.warn( "Detected null or empty wiki name for {} in JDBCUserDataBase. Check your user database.", rs.getString( m_loginName ) );
                 } else {
                     final Principal principal = new WikiPrincipal( wikiName, WikiPrincipal.WIKI_NAME );
                     principals.add( principal );
@@ -494,7 +493,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
             log.error( "DB connectivity error: " + e.getMessage() );
             throw new WikiSecurityException("DB connectivity error: " + e.getMessage(), e );
         }
-        log.info( "JDBCUserDatabase initialized from JNDI DataSource: " + jndiName );
+        log.info( "JDBCUserDatabase initialized from JNDI DataSource: {}", jndiName );
 
         // Determine if the datasource supports commits
         try( final Connection conn = m_ds.getConnection() ) {
@@ -505,7 +504,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                 log.info( "JDBCUserDatabase supports transactions. Good; we will use them." );
             }
         } catch( final SQLException e ) {
-            log.warn( "JDBCUserDatabase warning: user database doesn't seem to support transactions. Reason: " + e.getMessage() );
+            log.warn( "JDBCUserDatabase warning: user database doesn't seem to support transactions. Reason: {}", e.getMessage() );
         }
     }
 
@@ -513,7 +512,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
      * @see org.apache.wiki.auth.user.UserDatabase#rename(String, String)
      */
     @Override
-    public void rename( final String loginName, final String newName ) throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException {
+    public void rename( final String loginName, final String newName ) throws DuplicateUserException, WikiSecurityException {
         // Get the existing user; if not found, throws NoSuchPrincipalException
         final UserProfile profile = findByLoginName( loginName );
 
@@ -529,8 +528,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
 
         try( final Connection conn = m_ds.getConnection();
              final PreparedStatement ps1 = conn.prepareStatement( m_renameProfile );
-             final PreparedStatement ps2 = conn.prepareStatement( m_renameRoles ) )
-        {
+             final PreparedStatement ps2 = conn.prepareStatement( m_renameRoles ) ) {
             if( m_supportsCommits ) {
                 conn.setAutoCommit( false );
             }
@@ -599,8 +597,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
              final PreparedStatement ps1 = conn.prepareStatement( m_insertProfile );
              final PreparedStatement ps2 = conn.prepareStatement( m_findRoles );
              final PreparedStatement ps3 = conn.prepareStatement( m_insertRole );
-             final PreparedStatement ps4 = conn.prepareStatement( m_updateProfile ) )
-        {
+             final PreparedStatement ps4 = conn.prepareStatement( m_updateProfile ) ) {
             if( m_supportsCommits ) {
                 conn.setAutoCommit( false );
             }
@@ -608,8 +605,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
             final Timestamp ts = new Timestamp( System.currentTimeMillis() );
             final Date modDate = new Date( ts.getTime() );
             final java.sql.Date lockExpiry = profile.getLockExpiry() == null ? null : new java.sql.Date( profile.getLockExpiry().getTime() );
-            if( existingProfile == null )
-            {
+            if( existingProfile == null ) {
                 // User is new: insert new user record
                 ps1.setString( 1, profile.getUid() );
                 ps1.setString( 2, profile.getEmail() );
@@ -652,12 +648,9 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                 ps4.setString( 5, profile.getWikiName() );
                 ps4.setTimestamp( 6, ts );
                 ps4.setString( 7, profile.getLoginName() );
-                try
-                {
+                try {
                     ps4.setString( 8, Serializer.serializeToBase64( profile.getAttributes() ) );
-                }
-                catch ( final IOException e )
-                {
+                } catch ( final IOException e ) {
                     throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
                 }
                 ps4.setDate( 9, lockExpiry );
@@ -671,9 +664,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
             if( m_supportsCommits ) {
                 conn.commit();
             }
-        }
-        catch( final SQLException e )
-        {
+        } catch( final SQLException e ) {
             throw new WikiSecurityException( e.getMessage(), e );
         }
     }
@@ -685,7 +676,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
      * to set (either a String or a Long)
      * @param index the value to match
      * @return the resolved UserProfile
-     * @throws SQLException
+     * @throws NoSuchPrincipalException problems accessing the database
      */
     private UserProfile findByPreparedStatement( final String sql, final Object index ) throws NoSuchPrincipalException
     {
@@ -698,16 +689,16 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
             }
             
             // Set the parameter to search by
-            if ( index instanceof String ) {
-                ps.setString( 1, (String)index );
+            if( index instanceof String ) {
+                ps.setString( 1, ( String )index );
             } else if ( index instanceof Long ) {
-                ps.setLong( 1, ( (Long)index).longValue() );
+                ps.setLong( 1, ( Long )index );
             } else {
                 throw new IllegalArgumentException( "Index type not recognized!" );
             }
             
             // Go and get the record!
-            try ( final ResultSet rs = ps.executeQuery() ) {
+            try( final ResultSet rs = ps.executeQuery() ) {
                 while ( rs.next() ) {
                     if( profile != null ) {
                         unique = false;

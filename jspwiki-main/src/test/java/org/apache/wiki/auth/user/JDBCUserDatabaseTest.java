@@ -17,6 +17,7 @@
     under the License.
  */
 package org.apache.wiki.auth.user;
+
 import org.apache.wiki.HsqlDbUtils;
 import org.apache.wiki.TestJDBCDataSource;
 import org.apache.wiki.TestJNDIContext;
@@ -43,65 +44,60 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ *
  */
-public class JDBCUserDatabaseTest
-{
-    private final HsqlDbUtils      m_hu   = new HsqlDbUtils();
+public class JDBCUserDatabaseTest {
+    private final HsqlDbUtils m_hu = new HsqlDbUtils();
 
-    private JDBCUserDatabase m_db   = null;
+    private JDBCUserDatabase m_db = null;
 
     private static final String TEST_ATTRIBUTES = "rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAx3CAAAABAAAAACdAAKYXR0cmlidXRlMXQAEXNvbWUgcmFuZG9tIHZhbHVldAAKYXR0cmlidXRlMnQADWFub3RoZXIgdmFsdWV4";
 
     private static final String INSERT_JANNE = "INSERT INTO users (" +
-          JDBCUserDatabase.DEFAULT_DB_UID + "," +
-          JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
-          JDBCUserDatabase.DEFAULT_DB_FULL_NAME + "," +
-          JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
-          JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," +
-          JDBCUserDatabase.DEFAULT_DB_WIKI_NAME + "," +
-          JDBCUserDatabase.DEFAULT_DB_CREATED + "," +
-          JDBCUserDatabase.DEFAULT_DB_ATTRIBUTES + ") VALUES (" +
-          "'-7739839977499061014'," + "'janne@ecyrd.com'," + "'Janne Jalkanen'," + "'janne'," +
-          "'{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee'," +
-          "'JanneJalkanen'," +
-          "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ).toString() + "'," +
-          "'" + TEST_ATTRIBUTES +"'" + ");";
+            JDBCUserDatabase.DEFAULT_DB_UID + "," +
+            JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
+            JDBCUserDatabase.DEFAULT_DB_FULL_NAME + "," +
+            JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
+            JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," +
+            JDBCUserDatabase.DEFAULT_DB_WIKI_NAME + "," +
+            JDBCUserDatabase.DEFAULT_DB_CREATED + "," +
+            JDBCUserDatabase.DEFAULT_DB_ATTRIBUTES + ") VALUES (" +
+            "'-7739839977499061014'," + "'janne@ecyrd.com'," + "'Janne Jalkanen'," + "'janne'," +
+            "'{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee'," +
+            "'JanneJalkanen'," +
+            "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ) + "'," +
+            "'" + TEST_ATTRIBUTES + "'" + ");";
 
     private static final String INSERT_USER = "INSERT INTO users (" +
-        JDBCUserDatabase.DEFAULT_DB_UID + "," +
-        JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
-        JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
-        JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," +
-        JDBCUserDatabase.DEFAULT_DB_CREATED + ") VALUES (" +
-        "'-8629747547991531672'," + "'jspwiki.tests@mailinator.com'," + "'user'," +
-        "'{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'," +
-        "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ).toString() + "'" + ");";
+            JDBCUserDatabase.DEFAULT_DB_UID + "," +
+            JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
+            JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
+            JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," +
+            JDBCUserDatabase.DEFAULT_DB_CREATED + ") VALUES (" +
+            "'-8629747547991531672'," + "'jspwiki.tests@mailinator.com'," + "'user'," +
+            "'{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'," +
+            "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ) + "'" + ");";
 
     /**
      *
      */
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         m_hu.setUp();
         // Set up the mock JNDI initial context
         TestJNDIContext.initialize();
         final Context initCtx = new InitialContext();
-        try
-        {
+        try {
             initCtx.bind( "java:comp/env", new TestJNDIContext() );
-        }
-        catch( final NameAlreadyBoundException e )
-        {
+        } catch( final NameAlreadyBoundException e ) {
             // ignore
         }
-        final Context ctx = (Context) initCtx.lookup( "java:comp/env" );
+        final Context ctx = ( Context ) initCtx.lookup( "java:comp/env" );
         final DataSource ds = new TestJDBCDataSource( new File( "target/test-classes/jspwiki-custom.properties" ), m_hu.getDriverUrl() );
         ctx.bind( JDBCUserDatabase.DEFAULT_DB_JNDI_NAME, ds );
 
         // Get the JDBC connection and init tables
-        try
-        {
+        try {
             final Connection conn = ds.getConnection();
             final Statement stmt = conn.createStatement();
             final String sql;
@@ -121,39 +117,35 @@ public class JDBCUserDatabaseTest
             // Initialize the user database
             m_db = new JDBCUserDatabase();
             m_db.initialize( null, new Properties() );
-        }
-        catch( final SQLException e )
-        {
-            Assertions.fail("Looks like your database could not be connected to - "+
-                  "please make sure that you have started your database, exception: " + e.getMessage());
+        } catch( final SQLException e ) {
+            Assertions.fail( "Looks like your database could not be connected to - " +
+                             "please make sure that you have started your database, exception: " + e.getMessage() );
         }
     }
 
     @AfterEach
-    public void tearDown() throws Exception
-    {
+    public void tearDown() throws Exception {
         m_hu.tearDown();
     }
 
     @Test
-    public void testDeleteByLoginName() throws WikiSecurityException
-    {
+    public void testDeleteByLoginName() throws WikiSecurityException {
         // First, count the number of users in the db now.
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
         final String loginName = "TestUser" + System.currentTimeMillis();
         UserProfile profile = m_db.newProfile();
-        profile.setEmail("jspwiki.tests@mailinator.com");
+        profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
-        profile.setFullname( "FullName"+loginName );
-        profile.setPassword("password");
-        m_db.save(profile);
+        profile.setFullname( "FullName" + loginName );
+        profile.setPassword( "password" );
+        m_db.save( profile );
 
         // Make sure the profile saved successfully
         profile = m_db.findByLoginName( loginName );
         Assertions.assertEquals( loginName, profile.getLoginName() );
-        Assertions.assertEquals( oldUserCount+1, m_db.getWikiNames().length );
+        Assertions.assertEquals( oldUserCount + 1, m_db.getWikiNames().length );
 
         // Now delete the profile; should be back to old count
         m_db.deleteByLoginName( loginName );
@@ -161,11 +153,10 @@ public class JDBCUserDatabaseTest
     }
 
     @Test
-    public void testAttributes() throws Exception
-    {
+    public void testAttributes() throws Exception {
         UserProfile profile = m_db.findByEmail( "janne@ecyrd.com" );
 
-        Map<String,Serializable> attributes = profile.getAttributes();
+        Map< String, Serializable > attributes = profile.getAttributes();
         Assertions.assertEquals( 2, attributes.size() );
         Assertions.assertTrue( attributes.containsKey( "attribute1" ) );
         Assertions.assertTrue( attributes.containsKey( "attribute2" ) );
@@ -195,10 +186,8 @@ public class JDBCUserDatabaseTest
     }
 
     @Test
-    public void testFindByEmail()
-    {
-        try
-        {
+    public void testFindByEmail() {
+        try {
             final UserProfile profile = m_db.findByEmail( "janne@ecyrd.com" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
@@ -208,28 +197,21 @@ public class JDBCUserDatabaseTest
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNull( profile.getLastModified() );
-        }
-        catch( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.fail();
         }
-        try
-        {
+        try {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
             Assertions.fail();
-        }
-        catch( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
     }
 
     @Test
-    public void testFindByFullName()
-    {
-        try
-        {
+    public void testFindByFullName() {
+        try {
             final UserProfile profile = m_db.findByFullName( "Janne Jalkanen" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
@@ -239,28 +221,21 @@ public class JDBCUserDatabaseTest
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNull( profile.getLastModified() );
-        }
-        catch( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.fail();
         }
-        try
-        {
+        try {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
             Assertions.fail();
-        }
-        catch( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
     }
 
     @Test
-    public void testFindByUid()
-    {
-        try
-        {
+    public void testFindByUid() {
+        try {
             final UserProfile profile = m_db.findByUid( "-7739839977499061014" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
@@ -270,28 +245,21 @@ public class JDBCUserDatabaseTest
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNull( profile.getLastModified() );
-        }
-        catch( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.fail();
         }
-        try
-        {
+        try {
             m_db.findByEmail( "foo@bar.org" );
             // We should never get here
             Assertions.fail();
-        }
-        catch( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
     }
 
     @Test
-    public void testFindByWikiName()
-    {
-        try
-        {
+    public void testFindByWikiName() {
+        try {
             final UserProfile profile = m_db.findByWikiName( "JanneJalkanen" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
@@ -301,28 +269,21 @@ public class JDBCUserDatabaseTest
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNull( profile.getLastModified() );
-        }
-        catch( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.fail();
         }
-        try
-        {
+        try {
             m_db.findByEmail( "foo" );
             // We should never get here
             Assertions.fail();
-        }
-        catch( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
     }
 
     @Test
-    public void testFindByLoginName()
-    {
-        try
-        {
+    public void testFindByLoginName() {
+        try {
             final UserProfile profile = m_db.findByLoginName( "janne" );
             Assertions.assertEquals( "-7739839977499061014", profile.getUid() );
             Assertions.assertEquals( "janne", profile.getLoginName() );
@@ -332,41 +293,31 @@ public class JDBCUserDatabaseTest
             Assertions.assertEquals( "janne@ecyrd.com", profile.getEmail() );
             Assertions.assertNotNull( profile.getCreated() );
             Assertions.assertNull( profile.getLastModified() );
-        }
-        catch( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.fail();
         }
-        try
-        {
+        try {
             m_db.findByEmail( "FooBar" );
             // We should never get here
             Assertions.fail();
-        }
-        catch( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             Assertions.assertTrue( true );
         }
     }
 
     @Test
-    public void testGetWikiName() throws WikiSecurityException
-    {
+    public void testGetWikiName() throws WikiSecurityException {
         final Principal[] principals = m_db.getWikiNames();
         Assertions.assertEquals( 1, principals.length );
     }
 
     @Test
-    public void testRename() throws Exception
-    {
+    public void testRename() throws Exception {
         // Try renaming a non-existent profile; it should Assertions.fail
-        try
-        {
+        try {
             m_db.rename( "nonexistentname", "renameduser" );
             Assertions.fail( "Should not have allowed rename..." );
-        }
-        catch ( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             // Cool; that's what we expect
         }
 
@@ -381,13 +332,10 @@ public class JDBCUserDatabaseTest
         Assertions.assertNotNull( profile );
 
         // Try renaming to a login name that's already taken; it should Assertions.fail
-        try
-        {
+        try {
             m_db.rename( "olduser", "janne" );
             Assertions.fail( "Should not have allowed rename..." );
-        }
-        catch ( final DuplicateUserException e )
-        {
+        } catch( final DuplicateUserException e ) {
             // Cool; that's what we expect
         }
 
@@ -395,13 +343,10 @@ public class JDBCUserDatabaseTest
         m_db.rename( "olduser", "renameduser" );
 
         // The old user shouldn't be found
-        try
-        {
+        try {
             m_db.findByLoginName( "olduser" );
             Assertions.fail( "Old user was found, but it shouldn't have been." );
-        }
-        catch ( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             // Cool, it's gone
         }
 
@@ -417,10 +362,8 @@ public class JDBCUserDatabaseTest
     }
 
     @Test
-    public void testSave() throws Exception
-    {
-        try
-        {
+    public void testSave() throws Exception {
+        try {
             // Overwrite existing user
             UserProfile profile = m_db.newProfile();
             profile.setEmail( "jspwiki.tests@mailinator.com" );
@@ -459,16 +402,13 @@ public class JDBCUserDatabaseTest
             final String uid = profile.getUid();
             Assertions.assertNotNull( m_db.findByUid( uid ) );
 
-        }
-        catch( final WikiSecurityException e )
-        {
+        } catch( final WikiSecurityException e ) {
             Assertions.fail();
         }
     }
 
     @Test
-    public void testValidatePassword()
-    {
+    public void testValidatePassword() {
         Assertions.assertFalse( m_db.validatePassword( "janne", "test" ) );
         Assertions.assertTrue( m_db.validatePassword( "janne", "myP@5sw0rd" ) );
         Assertions.assertTrue( m_db.validatePassword( "user", "password" ) );
