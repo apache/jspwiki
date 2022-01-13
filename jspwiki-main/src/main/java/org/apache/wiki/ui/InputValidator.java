@@ -49,8 +49,8 @@ public final class InputValidator {
      * @since 2.4.82
      */
     static final Pattern ID_PATTERN     = Pattern.compile( "[\\x00\\r\\n\\x0f\"'<>;&\\xff{}]" );
-    static final Pattern EMAIL_PATTERN  = Pattern.compile( "^[0-9a-zA-Z-_\\.\\+]+@([0-9a-zA-Z-_]+\\.)+[a-zA-Z]+$" );
-    static final Pattern UNSAFE_PATTERN = Pattern.compile( "[\\x00\\r\\n\\x0f\"':<>\\[\\];#&@\\xff{}\\$%\\\\]" );
+    static final Pattern EMAIL_PATTERN  = Pattern.compile( "^[0-9a-zA-Z-_.+]+@([0-9a-zA-Z-_]+\\.)+[a-zA-Z]+$" );
+    static final Pattern UNSAFE_PATTERN = Pattern.compile( "[\\x00\\r\\n\\x0f\"':<>\\[\\];#&@\\xff{}$%\\\\]" );
 
     private final String m_form;
     private final Session m_session;
@@ -125,7 +125,7 @@ public final class InputValidator {
             if ( !valid ) {
                 // MessageTag already invokes replaceEntities()
                 // Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;[]#\\@{}%$" };
-                final Object[] args = { label, "\'\"<>;&[]#\\@{}%$" };
+                final Object[] args = { label, "'\"<>;&[]#\\@{}%$" };
                 m_session.addMessage( m_form, MessageFormat.format( rb.getString( "validate.unsafechars" ), args ) );
             }
             return valid;
@@ -143,7 +143,7 @@ public final class InputValidator {
             if ( !valid ) {
                 // MessageTag already invokes replaceEntities()
                 // Object[] args = { label, "&quot;&#39;&lt;&gt;;&amp;{}" };
-                final Object[] args = { label, "\'\"<>;&{}" };
+                final Object[] args = { label, "'\"<>;&{}" };
                 m_session.addMessage( m_form, MessageFormat.format( rb.getString( "validate.unsafechars" ), args ) );
             }
             return valid;
