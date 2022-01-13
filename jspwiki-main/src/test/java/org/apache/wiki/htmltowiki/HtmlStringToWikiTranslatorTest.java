@@ -189,30 +189,30 @@ public class HtmlStringToWikiTranslatorTest {
         Assertions.assertEquals( "[{Image src='Homunkulus/homunculus4.jpg' align='left'}]", html2wiki.translate(
                 "<table class=\"imageplugin\" align=\"left\" border=\"0\"> <tbody><tr><td><img src=\"attach?page=Homunkulus%2Fhomunculus4.jpg\"></td></tr> </tbody></table>" ) );
 
-        Assertions.assertEquals( "[{Image src=\'AbenteuerQuilpins/Quilpins.jpg\' align=\'left\'}]",
+        Assertions.assertEquals( "[{Image src='AbenteuerQuilpins/Quilpins.jpg' align='left'}]",
                 html2wiki.translate( "<table class=\"imageplugin\" align=\"left\" border=\"0\">\r\n"
                         + "<tbody><tr><td><img src=\"attach?page=AbenteuerQuilpins%2FQuilpins.jpg\"></td></tr>\r\n</tbody>" + "</table>" ) );
 
-        Assertions.assertEquals( "[{Image src=\'AbenteuerQuilpins/Quilpins.jpg\' caption=\'Testing Image\' style=\'font-size: 120%; color: green;\'}]",
+        Assertions.assertEquals( "[{Image src='AbenteuerQuilpins/Quilpins.jpg' caption='Testing Image' style='font-size: 120%; color: green;'}]",
                 html2wiki.translate( "<table class=\"imageplugin\" style=\"font-size: 120%; color: green;\" border=\"0\">\r\n"
                         + "<caption align=\"bottom\">Testing Image</caption>\r\n"
                         + "<tbody><tr><td><img src=\"attach?page=AbenteuerQuilpins%2FQuilpins.jpg\"></td></tr>\r\n</tbody>" + "</table>" ) );
 
         Assertions.assertEquals(
-                "[{Image src=\'http://opi.yahoo.com/online?u=YahooUser1234&m=g&t=2\' link=\'http://edit.yahoo.com/config/send_webmesg?.target=YahooUser1234&.src=pg\'}]",
+                "[{Image src='http://opi.yahoo.com/online?u=YahooUser1234&m=g&t=2' link='http://edit.yahoo.com/config/send_webmesg?.target=YahooUser1234&.src=pg'}]",
                 html2wiki.translate( "<table class=\"imageplugin\" border=\"0\">\r\n" + "<tbody><tr><td>"
                         + "<a href=\"http://edit.yahoo.com/config/send_webmesg?.target=YahooUser1234&amp;.src=pg\">"
                         + "<img src=\"http://opi.yahoo.com/online?u=YahooUser1234&amp;m=g&amp;t=2\">" + "</a></td></tr>\r\n" + "</tbody>" + "</table>" ) );
 
         Assertions.assertEquals(
-                "[{Image src=\'homunculus4.jpg\' align=\'left\' height=\'100px\' width=\'100px\' alt=\'alt text\' caption=\'caption text\' link=\'http://google.de\' border=\'1\'}]",
+                "[{Image src='homunculus4.jpg' align='left' height='100px' width='100px' alt='alt text' caption='caption text' link='http://google.de' border='1'}]",
                 html2wiki.translate( "<table class=\"imageplugin\" align=\"left\" border=\"0\"> \r\n"
                         + "  <caption align=\"bottom\">caption text</caption> \r\n" + "  <tbody><tr><td>\r\n"
                         + "    <a href=\"http://google.de\"><img src=\"homunculus4.jpg\" alt=\"alt text\" border=\"1\" height=\"100px\" width=\"100px\">\r\n"
                         + "    </a></td></tr> \r\n" + "  </tbody>  \r\n" + "</table>" ) );
 
         Assertions.assertEquals(
-                "[{Image src=\'http://opi.yahoo.com/online?u=YahooUser1234&m=g&t=2\' link=\'http://edit.yahoo.com/config/send_webmesg?.target=YahooUser1234&.src=pg\'}]",
+                "[{Image src='http://opi.yahoo.com/online?u=YahooUser1234&m=g&t=2' link='http://edit.yahoo.com/config/send_webmesg?.target=YahooUser1234&.src=pg'}]",
                 html2wiki.translate( "  <a href=\"http://edit.yahoo.com/config/send_webmesg?.target=YahooUser1234&amp;.src=pg\">\r\n"
                         + "  <img src=\"http://opi.yahoo.com/online?u=YahooUser1234&amp;m=g&amp;t=2\">\r\n" + "  </a" ) );
 
@@ -222,10 +222,10 @@ public class HtmlStringToWikiTranslatorTest {
     public void testPlugin() throws Exception {
         Assertions.assertEquals(
                 "This is a private homepage done by\n" + "----\n" + "Dies ist eine private, nicht-kommerzielle Homepage von\n"
-                        + "[{Text2gif width=\'150\' height=\'100\' \n" + " \n" + "Sebastian L. Baltes \n" + "Lange Str. 53 \n" + "44137 Dortmund \n" + " \n"
+                        + "[{Text2gif width='150' height='100' \n" + " \n" + "Sebastian L. Baltes \n" + "Lange Str. 53 \n" + "44137 Dortmund \n" + " \n"
                         + "email: info@sorokan.de \n" + "}]\n",
                 html2wiki.translate( "This is a private homepage done by\n" + "<hr>\n" + "Dies ist eine private, nicht-kommerzielle Homepage von\n" + "<p>\n"
-                        + "[{Text2gif width=\'150\' height=\'100\'\n" + "<br> <br>Sebastian L. Baltes\n" + "<br>Lange Str. 53\n" + "<br>44137 Dortmund\n"
+                        + "[{Text2gif width='150' height='100'\n" + "<br> <br>Sebastian L. Baltes\n" + "<br>Lange Str. 53\n" + "<br>44137 Dortmund\n"
                         + "<br> <br>email: info@sorokan.de\n" + "<br>}]\n" + "</p><p>" ) );
 
     }
@@ -248,19 +248,13 @@ public class HtmlStringToWikiTranslatorTest {
     @Test
     public void testParsing() throws Exception {
         Assertions.assertEquals( "Hello World!", html2wiki.translate( "Hello World!" ) );
-
         Assertions.assertEquals( "a", html2wiki.translate( "a" ) );
-
         Assertions.assertEquals( "a \\\\b", html2wiki.translate( "a<br/>b" ) );
-
         Assertions.assertEquals( "\\\\\\", html2wiki.translate( "\\\\\\" ) );
-
         Assertions.assertEquals( "[{Test\nHello World!}]", html2wiki.translate( "[{Test\\\\Hello World!}]" ) );
-
         Assertions.assertEquals( "{{{[{Test\\\\Hello World!}]}}}", html2wiki.translate( "{{{[{Test\\\\Hello World!}]}}}" ) );
-
         Assertions.assertEquals( "{{{[{Test\\\\Hello World!}]}}}{{{[{Test\\\\\\\\Hello World!}]}}}[{Test\n\nHello World!}][{Test\n\nHello World!}]", html2wiki
-                .translate( "{{{[{Test\\\\Hello World!}]}}}{{{[{Test\\\\\\\\Hello World!}]}}}[{Test\\\\\\\\Hello World!}][{Test\\\\\\\\Hello World!}]" ) );
+                  .translate( "{{{[{Test\\\\Hello World!}]}}}{{{[{Test\\\\\\\\Hello World!}]}}}[{Test\\\\\\\\Hello World!}][{Test\\\\\\\\Hello World!}]" ) );
 
     }
 
