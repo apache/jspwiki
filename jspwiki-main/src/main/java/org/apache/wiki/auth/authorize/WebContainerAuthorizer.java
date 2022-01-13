@@ -40,17 +40,17 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+
 /**
- * Authorizes users by delegating role membership checks to the servlet
- * container. In addition to implementing methods for the
- * <code>Authorizer</code> interface, this class also provides a convenience
- * method {@link #isContainerAuthorized()} that queries the web application
- * descriptor to determine if the container manages authorization.
+ * Authorizes users by delegating role membership checks to the servlet container. In addition to implementing
+ * methods for the <code>Authorizer</code> interface, this class also provides a convenience method
+ * {@link #isContainerAuthorized()} that queries the web application descriptor to determine if the container
+ * manages authorization.
+ *
  * @since 2.3
  */
 public class WebContainerAuthorizer implements WebAuthorizer  {
@@ -69,12 +69,9 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * that we have no direct way of querying the web container about which
      * roles it manages.
      */
-    protected Role[] m_containerRoles      = new Role[0];
+    protected Role[] m_containerRoles = new Role[0];
 
-    /**
-     * Lazily-initialized boolean flag indicating whether the web container
-     * protects JSPWiki resources.
-     */
+    /** Lazily-initialized boolean flag indicating whether the web container protects JSPWiki resources. */
     protected boolean m_containerAuthorized;
 
     private Document m_webxml;
@@ -101,7 +98,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         try {
             m_webxml = getWebXml();
             if( m_webxml != null ) {
-                // Add the J2EE 2.4 schema namespace
+                // Add the JEE schema namespace
                 m_webxml.getRootElement().setNamespace( Namespace.getNamespace( J2EE_SCHEMA_25_NAMESPACE ) );
 
                 m_containerAuthorized = isConstrained( "/Delete.jsp", Role.ALL ) && isConstrained( "/Login.jsp", Role.ALL );
@@ -137,12 +134,10 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * by converting the Principal's name to a String.
      * @param request the HTTP request
      * @param role the role to check
-     * @return <code>true</code> if the user is considered to be in the role,
-     *         <code>false</code> otherwise
+     * @return <code>true</code> if the user is considered to be in the role, <code>false</code> otherwise
      */
     @Override
-    public boolean isUserInRole( final HttpServletRequest request, final Principal role )
-    {
+    public boolean isUserInRole( final HttpServletRequest request, final Principal role ) {
         return request.isUserInRole( role.getName() );
     }
 
@@ -165,13 +160,12 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      *
      * @param session the current Session
      * @param role the role to check
-     * @return <code>true</code> if the user is considered to be in the role,
-     *         <code>false</code> otherwise
+     * @return <code>true</code> if the user is considered to be in the role, <code>false</code> otherwise
      * @see org.apache.wiki.auth.Authorizer#isUserInRole(org.apache.wiki.api.core.Session, java.security.Principal)
      */
     @Override
     public boolean isUserInRole( final Session session, final Principal role ) {
-        if ( session == null || role == null ) {
+        if( session == null || role == null ) {
             return false;
         }
         return session.hasPrincipal( role );
@@ -221,7 +215,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         final Namespace jeeNs = Namespace.getNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
 
         // Get all constraints that have our URL pattern
-        // (Note the crazy j: prefix to denote the 2.4 j2ee schema)
+        // (Note the crazy j: prefix to denote the jee schema)
         final String constrainsSelector = "//j:web-app/j:security-constraint[j:web-resource-collection/j:url-pattern=\"" + url + "\"]";
         final List< Element > constraints = XPathFactory.instance()
                                                         .compile( constrainsSelector, Filters.element(), null, jeeNs )
@@ -234,26 +228,24 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
                                                   .evaluate( root );
 
         // If we can't find either one, we must not be constrained
-        if ( constraints.size() == 0 ) {
+        if( constraints.size() == 0 ) {
             return false;
         }
 
         // Shortcut: if the role is ALL, we are constrained
-        if ( role.equals( Role.ALL ) ) {
+        if( role.equals( Role.ALL ) ) {
             return true;
         }
 
         // If no roles, we must not be constrained
-        if ( roles.size() == 0 ) {
+        if( roles.size() == 0 ) {
             return false;
         }
 
         // If a constraint is contained in both lists, we must be constrained
-        for ( final Iterator< Element > c = constraints.iterator(); c.hasNext(); ) {
-            final Element constraint = c.next();
-            for ( final Iterator< Element > r = roles.iterator(); r.hasNext(); ) {
-                final Element roleConstraint = r.next();
-                if ( constraint.equals( roleConstraint ) ) {
+        for( final Element constraint : constraints ) {
+            for( final Element roleConstraint : roles ) {
+                if( constraint.equals( roleConstraint ) ) {
                     return true;
                 }
             }
@@ -272,9 +264,9 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * <code>&lt;security-constraint&gt;</code> section of <code>web.xml</code>,
      * this will be true. This is admittedly an indirect way to go about it, but
      * it should be an accurate test for default installations, and also in 99%
-     * of customized installs.
-     * @return <code>true</code> if the container protects resources,
-     *         <code>false</code> otherwise
+     * of customized installations.
+     *
+     * @return <code>true</code> if the container protects resources, <code>false</code> otherwise
      */
     public boolean isContainerAuthorized()
     {
@@ -287,6 +279,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * the logical roles enumerated in the <code>web.xml</code>.
      * This method actually returns a defensive copy of an internally stored
      * array.
+     *
      * @return an array of Principals representing the roles
      */
     @Override
@@ -313,8 +306,8 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         final List< Element > constraints = XPathFactory.instance()
                                                         .compile( constrainsSelector, Filters.element(), null, jeeNs )
                                                         .evaluate( root );
-        for( final Iterator< Element > it = constraints.iterator(); it.hasNext(); ) {
-            final String role = ( it.next() ).getTextTrim();
+        for( final Element constraint : constraints ) {
+            final String role = constraint.getTextTrim();
             roles.add( new Role( role ) );
         }
 
@@ -323,8 +316,8 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         final List< Element > nodes = XPathFactory.instance()
                                                   .compile( rolesSelector, Filters.element(), null, jeeNs )
                                                   .evaluate( root );
-        for( final Iterator< Element > it = nodes.iterator(); it.hasNext(); ) {
-            final String role = ( it.next() ).getTextTrim();
+        for( final Element node : nodes ) {
+            final String role = node.getTextTrim();
             roles.add( new Role( role ) );
         }
 
@@ -343,30 +336,28 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * @throws IOException if the deployment descriptor cannot be found or opened
      * @throws JDOMException if the deployment descriptor cannot be parsed correctly
      */
-    protected Document getWebXml() throws JDOMException, IOException
-    {
+    protected Document getWebXml() throws JDOMException, IOException {
         final URL url;
         final SAXBuilder builder = new SAXBuilder();
         builder.setXMLReaderFactory( XMLReaders.NONVALIDATING );
         builder.setEntityResolver( new LocalEntityResolver() );
-        Document doc = null;
-        if ( m_engine.getServletContext() == null )
-        {
+        final Document doc;
+        if ( m_engine.getServletContext() == null ) {
             final ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
             url = cl.getResource( "WEB-INF/web.xml" );
-            if( url != null )
-                log.info( "Examining " + url.toExternalForm() );
-        }
-        else
-        {
+            if( url != null ) {
+                log.info( "Examining {}", url.toExternalForm() );
+            }
+        } else {
             url = m_engine.getServletContext().getResource( "/WEB-INF/web.xml" );
             if( url != null )
                 log.info( "Examining " + url.toExternalForm() );
         }
-        if( url == null )
+        if( url == null ) {
             throw new IOException("Unable to find web.xml for processing.");
+        }
 
-        log.debug( "Processing web.xml at " + url.toExternalForm() );
+        log.debug( "Processing web.xml at {}", url.toExternalForm() );
         doc = builder.build( url );
         return doc;
     }
@@ -379,42 +370,34 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * kept at <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>. The
      * local copy is stored at <code>WEB-INF/dtd/web-app_2_3.dtd</code>.</p>
      */
-    public class LocalEntityResolver implements EntityResolver
-    {
+    public class LocalEntityResolver implements EntityResolver {
         /**
          * Returns an XML input source for a requested external resource by
          * reading the resource instead from local storage. The local resource path
          * is <code>WEB-INF/dtd</code>, plus the file name of the requested
          * resource, minus the non-filename path information.
-         * @param publicId the public ID, such as
-         *            <code>-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN</code>
-         * @param systemId the system ID, such as
-         *            <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>
+         *
+         * @param publicId the public ID, such as <code>-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN</code>
+         * @param systemId the system ID, such as <code>http://java.sun.com/dtd/web-app_2_3.dtd</code>
          * @return the InputSource containing the resolved resource
-         * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String,
-         *      java.lang.String)
+         * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
          * @throws SAXException if the resource cannot be resolved locally
          * @throws IOException if the resource cannot be opened
          */
         @Override
-        public InputSource resolveEntity( final String publicId, final String systemId ) throws SAXException, IOException
-        {
+        public InputSource resolveEntity( final String publicId, final String systemId ) throws SAXException, IOException {
             final String file = systemId.substring( systemId.lastIndexOf( '/' ) + 1 );
             final URL url;
-            if ( m_engine.getServletContext() == null )
-            {
+            if( m_engine.getServletContext() == null ) {
                 final ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
                 url = cl.getResource( "WEB-INF/dtd/" + file );
-            }
-            else
-            {
+            } else {
                 url = m_engine.getServletContext().getResource( "/WEB-INF/dtd/" + file );
             }
 
-            if( url != null )
-            {
+            if( url != null ) {
                 final InputSource is = new InputSource( url.openStream() );
-                log.debug( "Resolved systemID=" + systemId + " using local file " + url );
+                log.debug( "Resolved systemID={} using local file {}", systemId, url );
                 return is;
             }
 
@@ -423,12 +406,12 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
             //  also let the user know what is going on.  This caught me by surprise
             //  while running JSPWiki on an unconnected laptop...
             //
-            //  The DTD needs to be resolved and read because it contains things like
-            //  entity definitions...
+            //  The DTD needs to be resolved and read because it contains things like entity definitions...
             //
-            log.info("Please note: There are no local DTD references in /WEB-INF/dtd/"+file+"; falling back to default behaviour."+
-                     " This may mean that the XML parser will attempt to connect to the internet to find the DTD."+
-                     " If you are running JSPWiki locally in an unconnected network, you might want to put the DTD files in place to avoid nasty UnknownHostExceptions.");
+            log.info("Please note: There are no local DTD references in /WEB-INF/dtd/{}; falling back to default" +
+                     " behaviour. This may mean that the XML parser will attempt to connect to the internet to find the" +
+                     " DTD. If you are running JSPWiki locally in an unconnected network, you might want to put the DTD " +
+                     " files in place to avoid nasty UnknownHostExceptions.", file );
 
 
             // Fall back to default behaviour
