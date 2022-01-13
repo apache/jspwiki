@@ -68,7 +68,7 @@
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.8.1</junit.version>
     <log4j.version>1.2.17</log4j.version>
-    <log4j2.version>2.17.0</log4j2.version>
+    <log4j2.version>2.17.1</log4j2.version>
     <lucene.version>6.6.6</lucene.version>
     <mockito.version>4.0.0</mockito.version>
     <nekohtml.version>1.9.22</nekohtml.version>
