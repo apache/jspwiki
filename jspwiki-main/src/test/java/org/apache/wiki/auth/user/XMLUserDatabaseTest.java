@@ -40,9 +40,6 @@ public class XMLUserDatabaseTest {
 
     private XMLUserDatabase m_db;
 
-    /**
-     *
-     */
     @BeforeEach
     public void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
@@ -58,7 +55,7 @@ public class XMLUserDatabaseTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        final String loginName = "TestUser" + System.currentTimeMillis();
         UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
@@ -227,9 +224,9 @@ public class XMLUserDatabaseTest {
     public void testGetWikiNames() throws WikiSecurityException {
         // There are 8 test users in the database
         final Principal[] p = m_db.getWikiNames();
-        Assertions.assertEquals( 8, p.length );
+        Assertions.assertEquals( 7, p.length );
         Assertions.assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "JanneJalkanen", WikiPrincipal.WIKI_NAME ) ) );
-        Assertions.assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "", WikiPrincipal.WIKI_NAME ) ) );
+        Assertions.assertFalse( ArrayUtils.contains( p, new WikiPrincipal( "", WikiPrincipal.WIKI_NAME ) ) );
         Assertions.assertTrue( ArrayUtils.contains( p, new WikiPrincipal( "Administrator", WikiPrincipal.WIKI_NAME ) ) );
         Assertions.assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.ALICE, WikiPrincipal.WIKI_NAME ) ) );
         Assertions.assertTrue( ArrayUtils.contains( p, new WikiPrincipal( Users.BOB, WikiPrincipal.WIKI_NAME ) ) );
@@ -271,7 +268,7 @@ public class XMLUserDatabaseTest {
 
         // The old user shouldn't be found
         try {
-            profile = m_db.findByLoginName( "olduser" );
+            m_db.findByLoginName( "olduser" );
             Assertions.fail( "Old user was found, but it shouldn't have been." );
         } catch( final NoSuchPrincipalException e ) {
             // Cool, it's gone
@@ -303,10 +300,8 @@ public class XMLUserDatabaseTest {
             // Make sure we can find it by uid
             final String uid = profile.getUid();
             Assertions.assertNotNull( m_db.findByUid( uid ) );
-        } catch( final NoSuchPrincipalException e ) {
-            Assertions.fail();
         } catch( final WikiSecurityException e ) {
-            Assertions.fail();
+            Assertions.fail( e.getMessage() );
         }
     }
 

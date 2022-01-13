@@ -91,7 +91,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void deleteByLoginName( final String loginName ) throws NoSuchPrincipalException, WikiSecurityException {
+    public synchronized void deleteByLoginName( final String loginName ) throws WikiSecurityException {
         if( c_dom == null ) {
             throw new WikiSecurityException( "FATAL: database does not exist" );
         }
@@ -154,15 +154,15 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         if ( c_dom == null ) {
             throw new IllegalStateException( "FATAL: database does not exist" );
         }
-        final SortedSet< Principal > principals = new TreeSet<>();
+        final SortedSet< WikiPrincipal > principals = new TreeSet<>();
         final NodeList users = c_dom.getElementsByTagName( USER_TAG );
         for( int i = 0; i < users.getLength(); i++ ) {
-            final Element user = (Element) users.item( i );
+            final Element user = ( Element )users.item( i );
             final String wikiName = user.getAttribute( WIKI_NAME );
-            if( wikiName == null ) {
-                log.warn( "Detected null wiki name in XMLUserDataBase. Check your user database." );
+            if( StringUtils.isEmpty( wikiName ) ) {
+                log.warn( "Detected null or empty wiki name for {} in XMLUserDataBase. Check your user database.", user.getAttribute( LOGIN_NAME ) );
             } else {
-                final Principal principal = new WikiPrincipal( wikiName, WikiPrincipal.WIKI_NAME );
+                final WikiPrincipal principal = new WikiPrincipal( wikiName, WikiPrincipal.WIKI_NAME );
                 principals.add( principal );
             }
         }
@@ -202,19 +202,21 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         factory.setExpandEntityReferences( false );
         factory.setIgnoringComments( true );
         factory.setNamespaceAware( false );
+        //factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
+        //factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_SCHEMA, "" );
         try {
             c_dom = factory.newDocumentBuilder().parse( c_file );
             log.debug( "Database successfully initialized" );
             c_lastModified = c_file.lastModified();
             c_lastCheck = System.currentTimeMillis();
         } catch( final ParserConfigurationException e ) {
-            log.error( "Configuration error: " + e.getMessage() );
+            log.error( "Configuration error: {}", e.getMessage() );
         } catch( final SAXException e ) {
-            log.error( "SAX error: " + e.getMessage() );
+            log.error( "SAX error: {}", e.getMessage() );
         } catch( final FileNotFoundException e ) {
             log.info( "User database not found; creating from scratch..." );
         } catch( final IOException e ) {
-            log.error( "IO error: " + e.getMessage() );
+            log.error( "IO error: {}", e.getMessage() );
         }
         if( c_dom == null ) {
             try {
@@ -318,7 +320,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
      * @see org.apache.wiki.auth.user.UserDatabase#rename(String, String)
      */
     @Override
-    public synchronized void rename( final String loginName, final String newName) throws NoSuchPrincipalException, DuplicateUserException, WikiSecurityException {
+    public synchronized void rename( final String loginName, final String newName) throws DuplicateUserException, WikiSecurityException {
         if( c_dom == null ) {
             log.fatal( "Could not rename profile '" + loginName + "'; database does not exist" );
             throw new IllegalStateException( "FATAL: database does not exist" );
@@ -416,7 +418,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             }
         }
 
-        // Save the attributes as as Base64 string
+        // Save the attributes as Base64 string
         if( profile.getAttributes().size() > 0 ) {
             try {
                 final String encodedAttributes = Serializer.serializeToBase64( profile.getAttributes() );
@@ -443,8 +445,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
      * Private method that returns the first {@link UserProfile}matching a &lt;user&gt; element's supplied attribute. This method will also
      * set the UID if it has not yet been set.
      *
-     * @param matchAttribute
-     * @param index
+     * @param matchAttribute matching attribute
+     * @param index value to match
      * @return the profile, or <code>null</code> if not found
      */
     private UserProfile findByAttribute( final String matchAttribute, String index ) {
@@ -458,8 +460,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             return null;
         }
 
-        // check if we have to do a case insensitive compare
-        boolean caseSensitiveCompare = !matchAttribute.equals( EMAIL );
+        // check if we have to do a case-insensitive compare
+        final boolean caseSensitiveCompare = !matchAttribute.equals( EMAIL );
 
         for( int i = 0; i < users.getLength(); i++ ) {
             final Element user = (Element) users.item( i );
@@ -489,13 +491,13 @@ public class XMLUserDatabase extends AbstractUserDatabase {
 
                 // Is the profile locked?
                 final String lockExpiry = user.getAttribute( LOCK_EXPIRY );
-                if( lockExpiry == null || lockExpiry.isEmpty() ) {
+                if( StringUtils.isEmpty( lockExpiry ) || lockExpiry.isEmpty() ) {
                     profile.setLockExpiry( null );
                 } else {
                     profile.setLockExpiry( new Date( Long.parseLong( lockExpiry ) ) );
                 }
 
-                // Extract all of the user's attributes (should only be one attributes tag, but you never know!)
+                // Extract all the user's attributes (should only be one attributes tag, but you never know!)
                 final NodeList attributes = user.getElementsByTagName( ATTRIBUTES_TAG );
                 for( int j = 0; j < attributes.getLength(); j++ ) {
                     final Element attribute = ( Element )attributes.item( j );
@@ -515,7 +517,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     }
 
     /**
-     * Extracts all of the text nodes that are immediate children of an Element.
+     * Extracts all the text nodes that are immediate children of an Element.
      *
      * @param element the base element
      * @return the text nodes that are immediate children of the base element, concatenated together
@@ -537,8 +539,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     /**
      *  Tries to parse a date using the default format - then, for backwards compatibility reasons, tries the platform default.
      *
-     *  @param profile
-     *  @param date
+     *  @param profile profile associated to the date.
+     *  @param date date to be parsed.
      *  @return A parsed date, or null, if both parse attempts fail.
      */
     private Date parseDate( final UserProfile profile, final String date ) {
@@ -571,7 +573,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
 
             // Sanitize UID (and generate a new one if one does not exist)
             String uid = user.getAttribute( UID ).trim();
-            if( uid == null || uid.isEmpty() || "-1".equals( uid ) ) {
+            if( StringUtils.isEmpty( uid ) || "-1".equals( uid ) ) {
                 uid = String.valueOf( generateUid( this ) );
                 user.setAttribute( UID, uid );
             }
