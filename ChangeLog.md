@@ -17,6 +17,28 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-01-13  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.2-git-03_
+
+* Added [DefinitionExtension](https://github.com/vsch/flexmark-java/wiki/Extensions#definition-lists) and [TablesExtension](https://github.com/vsch/flexmark-java/wiki/Extensions#tables) to `jspwiki-markdown` in order to add support for definition lists and tables.
+
+* [JSPWIKI-802](https://issues.apache.org/jira/browse/JSPWIKI-802) - Markdown syntax Support: added Markdown support for WYSIWYG editor.
+    * Currently, can be activated by setting the `jspwiki.syntax.decorator` property to `org.apache.wiki.htmltowiki.syntax.markdown.MarkdownSyntaxDecorator`.
+    * Details at [Markdown support page](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Markdown%20Support).
+    * Last item pending for full Markdown support is Plain Editor integration.
+
+* `XMLUserDatabase#getWikiNames()` now discards null and empty wiki names.
+    * It was discarding only `null` wiki names, but JDom returns an empty string (that is, not null) for missing attributes, which resulted in unreachable code.
+    * This change inlines with the logic of the UI on the registration form, which mandates a not empty value for the wiki name.
+    * Same on `JDBCUserDatabase#getWikiNames()` which seems to have been developed from the former (log message references XMLUserDatabase).
+
+* Dependency updates
+    * Selenide to 6.2.0, thanks to dependabot [#165](https://github.com/apache/jspwiki/pull/165)
+    * Maven release (3.0.0-M5) and cargo plugins (1.9.9), thanks to dependabot [#164](https://github.com/apache/jspwiki/pull/164), [#166](https://github.com/apache/jspwiki/pull/166)
+    * Maven compiler (3.9.0) and jar (3.2.2) plugins
+
+
 **2022-01-12  Dirk Frederickx (brushed AT apache DOT org)**
 
 * _2.11.2-git-02_
@@ -44,7 +66,7 @@ under the License.
     * Lucene to 8.11.1, thanks to dependabot [#162](https://github.com/apache/jspwiki/pull/162)
     * Mockito to 4.2.0, thanks to dependabot [#160](https://github.com/apache/jspwiki/pull/160)
     * Selenide to 6.1.2
-    * Tika to 2.2.1
+    * Tika to 2.2.1, thanks to dependabot [#163](https://github.com/apache/jspwiki/pull/163)
 
 
 **2021-12-13  Juan Pablo Santos (juanpablo AT apache DOT org)**
@@ -304,13 +326,7 @@ using a `TestEngine` could end up processing events using managers registered by
 
 * _2.11.0-git-02_
 
-* Dependency updates provided by dependabot (PRs [#18](https://github.com/apache/jspwiki/pull/18),
-  [#19](https://github.com/apache/jspwiki/pull/19), [#20](https://github.com/apache/jspwiki/pull/20),
-  [#21](https://github.com/apache/jspwiki/pull/21), [#22](https://github.com/apache/jspwiki/pull/22),
-  [#23](https://github.com/apache/jspwiki/pull/23), [#24](https://github.com/apache/jspwiki/pull/24),
-  [#25](https://github.com/apache/jspwiki/pull/25), [#26](https://github.com/apache/jspwiki/pull/26),
-  [#27](https://github.com/apache/jspwiki/pull/27), [#28](https://github.com/apache/jspwiki/pull/28),
-  [#29](https://github.com/apache/jspwiki/pull/29) and [#30](https://github.com/apache/jspwiki/pull/30)), most notably
+* Dependency updates provided by dependabot (PRs [#18](https://github.com/apache/jspwiki/pull/18), [#19](https://github.com/apache/jspwiki/pull/19), [#20](https://github.com/apache/jspwiki/pull/20), [#21](https://github.com/apache/jspwiki/pull/21), [#22](https://github.com/apache/jspwiki/pull/22), [#23](https://github.com/apache/jspwiki/pull/23), [#24](https://github.com/apache/jspwiki/pull/24), [#25](https://github.com/apache/jspwiki/pull/25), [#26](https://github.com/apache/jspwiki/pull/26), [#27](https://github.com/apache/jspwiki/pull/27), [#28](https://github.com/apache/jspwiki/pull/28), [#29](https://github.com/apache/jspwiki/pull/29) and [#30](https://github.com/apache/jspwiki/pull/30)), most notably
     * jsp-api to 2.3.3
     * Selenide to 5.17.2
 
