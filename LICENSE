@@ -222,8 +222,10 @@ commons-logging-1.0.4.jar                   LICENSE
 commons-text-1.9.jar                        LICENSE
 ehcache-2.10.9.2.jar                        LICENSE
 flexmark-0.62.2.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
-flexmark-ext-attributes-0.62.2.jar           ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-ext-attributes-0.62.2.jar          ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-ext-definition-0.62.2.jar          ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 flexmark-ext-footnotes-0.62.2.jar           ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
+flexmark-ext-tables-0.62.2.jar              ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 flexmark-ext-toc-0.62.2.jar                 ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 flexmark-util-0.62.2.jar                    ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 flexmark-util-ast-0.62.2.jar                ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
