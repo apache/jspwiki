@@ -100,6 +100,46 @@ public class MarkdownRendererTest {
     }
 
     @Test
+    public void testMarkupLinkWithCustomAttributes() throws Exception {
+        final String src = "This should be a [link with custom attributes](http://google.com){target=blank}";
+
+        Assertions.assertEquals( "<p>This should be a <a href=\"http://google.com\" class=\"external\" target=\"blank\">link with custom attributes</a></p>\n", translate( src ) );
+    }
+
+    @Test
+    public void testMarkupPWithCustomAttributes() throws Exception {
+        // {..} are separated from the link, so they apply to the nearest p or span containing them
+        final String src0 = "This should be a [link](http://google.com) {style='background-color:#ddd'}";
+        Assertions.assertEquals( "<p style=\"background-color:#ddd\">This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src0 ) );
+
+        final String src1 = "This should be a [link](http://google.com) {#a1}";
+        Assertions.assertEquals( "<p id=\"a1\">This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src1 ) );
+
+        final String src2 = "This should be a [link](http://google.com) {.warning}";
+        Assertions.assertEquals( "<p class=\"warning\">This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src2 ) );
+    }
+
+    @Test
+    public void testMarkupDefinitionList() throws Exception {
+        final String src = "Definition Term\n" +
+                           ": definition description";
+
+        Assertions.assertEquals( "<dl>\n<dt>Definition Term</dt>\n<dd>definition description</dd>\n</dl>\n", translate( src ) );
+    }
+
+    @Test
+    public void testMarkupTable() throws Exception {
+        final String src = "|  a  |  b  |  c  \n" +
+                           "|:--- |:---:|---  \n" +
+                           "| d   | e   | f   \n" +
+                           "||| g, h and f ";
+
+        Assertions.assertEquals( "<table>\n<thead>\n<tr><th align=\"left\">a</th><th align=\"center\">b</th><th>c</th></tr>\n</thead>\n" +
+                                 "<tbody>\n<tr><td align=\"left\">d</td><td align=\"center\">e</td><td>f</td></tr>\n" +
+                                 "<tr><td align=\"left\" colspan=\"2\"></td><td>g, h and f</td></tr>\n</tbody>\n</table>\n", translate( src ) );
+    }
+
+    @Test
     public void testMarkupExtensionACL() throws Exception {
         final String src = "[{ALLOW view PerryMason}]() This should be visible if the ACL allows you to see it";
         // text is seen because although ACL is added to the page, it is not applied while parsing / rendering
