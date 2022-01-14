@@ -18,6 +18,25 @@
  */
 package org.apache.wiki.attachment;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
+import java.security.Permission;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -45,24 +64,6 @@ import org.apache.wiki.ui.progress.ProgressItem;
 import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
-import java.security.Permission;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 
 /**
@@ -406,7 +407,9 @@ public class AttachmentServlet extends HttpServlet {
             final Context context = Wiki.context().create( m_engine, req, ContextEnum.PAGE_ATTACH.getRequestContext() );
             final UploadListener pl = new UploadListener();
 
-            m_engine.getManager( ProgressManager.class ).startProgress( pl, progressId );
+            if (progressId != null) {
+                m_engine.getManager( ProgressManager.class ).startProgress( pl, progressId );
+            }
 
             final ServletFileUpload upload = new ServletFileUpload( factory );
             upload.setHeaderEncoding( StandardCharsets.UTF_8.name() );
@@ -478,8 +481,10 @@ public class AttachmentServlet extends HttpServlet {
 
             throw new IOException( msg, e );
         } finally {
-            m_engine.getManager( ProgressManager.class ).stopProgress( progressId );
-            // FIXME: In case of exceptions should absolutely remove the uploaded file.
+            if (progressId != null) {
+                m_engine.getManager( ProgressManager.class ).stopProgress( progressId );
+                // FIXME: In case of exceptions should absolutely remove the uploaded file.
+            }
         }
 
         return nextPage;
