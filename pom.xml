@@ -73,7 +73,7 @@
     <nekohtml.version>1.9.22</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
-    <selenide.version>6.2.0</selenide.version>
+    <selenide.version>6.2.1</selenide.version>
     <slf4j.version>1.7.32</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>2.2.1</tika.version>
