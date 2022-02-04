@@ -51,7 +51,6 @@
 					<thead><%-- 5/45/15/15/20--%>
 					<th scope="col"><fmt:message key="workflow.id"/></th>
 					<th scope="col"><fmt:message key="workflow.item"/></th>
-					<th scope="col"><fmt:message key="workflow.requester"/></th>
 					<th scope="col"><fmt:message key="workflow.startTime"/></th>
 					<th scope="col"><fmt:message key="workflow.actions"/></th>
 					</thead>
@@ -60,19 +59,12 @@
 						<tr>
 
 								<%-- Workflow ID --%>
-							<td>${decision.workflow.id}</td>
+							<td>${decision.workflowId}</td>
 
 								<%-- Name of item --%>
 							<td>
-								<fmt:message key="${decision.messageKey}">
-									<c:forEach var="messageArg" items="${decision.messageArguments}">
-										<fmt:param>${messageArg}</fmt:param>
-									</c:forEach>
-								</fmt:message>
+								New user profile
 							</td>
-
-								<%-- Requester --%>
-							<td>${decision.owner.name}</td>
 
 								<%-- When did the actor start this step? --%>
 							<td>
