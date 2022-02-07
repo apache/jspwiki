@@ -27,3 +27,5 @@ nb-configuration.xml
 
 # Java
 *.class
+
+rebel.xml
