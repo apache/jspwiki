@@ -27,11 +27,11 @@ under the License.
 
 * Dependency updates
     * Mockito 4.3.1
-    * Selenide to 6.3.3
+    * Selenide to 6.3.3 - closes [#168](https://github.com/apache/jspwiki/pull/168)
     * SLF4J to 1.7.36
-    * Tika to 2.3.0
+    * Tika to 2.3.0 - closes [#170](https://github.com/apache/jspwiki/pull/170)
     * Tomcat to 9.0.58
-    * Maven compiler (3.10.0), project info reports (3.2.0), javadocs (3.3.2) and cargo-maven3 (1.9.10) plugins
+    * Maven compiler (3.10.0), project info reports (3.2.1 - closes [#169](https://github.com/apache/jspwiki/pull/169)), javadocs (3.3.2) and cargo-maven3 (1.9.10) plugins
 
 
 **2022-01-13  Juan Pablo Santos (juanpablo AT apache DOT org)**
