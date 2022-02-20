@@ -23,7 +23,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -32,11 +32,11 @@ import java.util.Stack;
 public abstract class PlainTextMonospaceDecorator {
 
     final protected PrintWriter out;
-    final protected Stack< String > preStack;
+    final protected Deque< String > preStack;
     final protected XHtmlElementToWikiTranslator chain;
     final protected PlainTextCssSpecialDecorator ptcsd;
 
-    protected PlainTextMonospaceDecorator( final PlainTextCssSpecialDecorator ptcsd, final PrintWriter out, final Stack< String > preStack, final XHtmlElementToWikiTranslator chain ) {
+    protected PlainTextMonospaceDecorator( final PlainTextCssSpecialDecorator ptcsd, final PrintWriter out, final Deque< String > preStack, final XHtmlElementToWikiTranslator chain ) {
         this.out = out;
         this.preStack = preStack;
         this.chain = chain;
@@ -51,11 +51,11 @@ public abstract class PlainTextMonospaceDecorator {
     public void decorate( final XHtmlElementToWikiTranslator.ElementDecoratorData dto ) throws JDOMException {
         if( dto.monospace ) {
             out.print( markupMonospaceOpen() );
-            preStack.push( markupMonospaceOpen() );
+            preStack.addFirst( markupMonospaceOpen() );
         }
         ptcsd.decorate( dto );
         if( dto.monospace ) {
-            preStack.pop();
+            preStack.removeFirst();
             out.print( markupMonospaceClose() );
         }
     }

@@ -23,7 +23,7 @@ import org.apache.wiki.htmltowiki.syntax.PlainTextCssSpecialDecorator;
 import org.apache.wiki.htmltowiki.syntax.PlainTextMonospaceDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -31,7 +31,7 @@ import java.util.Stack;
  */
 class JSPWikiPlainTextMonospaceDecorator extends PlainTextMonospaceDecorator {
 
-    JSPWikiPlainTextMonospaceDecorator( final PlainTextCssSpecialDecorator ptcsd, final PrintWriter out, final Stack< String > preStack, final XHtmlElementToWikiTranslator chain ) {
+    JSPWikiPlainTextMonospaceDecorator( final PlainTextCssSpecialDecorator ptcsd, final PrintWriter out, final Deque< String > preStack, final XHtmlElementToWikiTranslator chain ) {
         super( ptcsd, out, preStack, chain );
     }
 

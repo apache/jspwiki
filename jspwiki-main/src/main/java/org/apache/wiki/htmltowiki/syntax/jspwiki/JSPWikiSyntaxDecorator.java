@@ -31,7 +31,7 @@ import org.apache.wiki.htmltowiki.syntax.TrDecorator;
 import org.apache.wiki.htmltowiki.syntax.WikiSyntaxDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -42,8 +42,8 @@ public class JSPWikiSyntaxDecorator extends WikiSyntaxDecorator {
     /** {@inheritDoc} */
     @Override
     public void init( final PrintWriter out,
-                      final Stack< String > liStack,
-                      final Stack< String > preStack,
+                      final Deque< String > liStack,
+                      final Deque< String > preStack,
                       final WhitespaceTrimWriter outTrimmer,
                       final XHtmlToWikiConfig config,
                       final XHtmlElementToWikiTranslator chain ) {
@@ -51,12 +51,12 @@ public class JSPWikiSyntaxDecorator extends WikiSyntaxDecorator {
         this.outTrimmer = outTrimmer;
         this.chain = chain;
 
-        this.cssStyle = new JSPWikiPlainTextCssSpecialDecorator( out, preStack, chain );
+        this.cssStyle = new JSPWikiPlainTextCssSpecialDecorator( out, chain );
         this.pre = new JSPWikiPlainTextMonospaceDecorator( cssStyle, out, preStack, chain );
-        this.em = new JSPWikiPlainTextItalicDecorator( pre, out, preStack, chain );
-        this.strong = new JSPWikiPlainTextBoldDecorator( em, out, preStack, chain );
-        this.css = new JSPWikiPlainTextCssDecorator( strong, out, preStack, chain );
-        this.plainText = new PlainTextDecorator( css, out, preStack, chain );
+        this.em = new JSPWikiPlainTextItalicDecorator( pre, out, chain );
+        this.strong = new JSPWikiPlainTextBoldDecorator( em, out, chain );
+        this.css = new JSPWikiPlainTextCssDecorator( strong, out, chain );
+        this.plainText = new PlainTextDecorator( css, out, chain );
 
         this.a = new JSPWikiADecorator( out, config, chain );
         this.br = new JSPWikiBrDecorator( out, preStack, chain );

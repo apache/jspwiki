@@ -23,7 +23,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -32,10 +32,10 @@ import java.util.Stack;
 public abstract class CodeDecorator {
 
     final protected PrintWriter out;
-    final protected Stack< String > preStack;
+    final protected Deque< String > preStack;
     final protected XHtmlElementToWikiTranslator chain;
 
-    protected CodeDecorator( final PrintWriter out, final Stack< String > preStack, final XHtmlElementToWikiTranslator chain ) {
+    protected CodeDecorator( final PrintWriter out, final Deque< String > preStack, final XHtmlElementToWikiTranslator chain ) {
         this.out = out;
         this.preStack = preStack;
         this.chain = chain;
@@ -48,9 +48,9 @@ public abstract class CodeDecorator {
      */
     public void decorate( final Element e ) throws JDOMException {
         out.print( markupCodeOpen() );
-        preStack.push( markupCodeOpen() );
+        preStack.addFirst( markupCodeOpen() );
         chain.translate( e );
-        preStack.pop();
+        preStack.removeFirst();
         out.print( markupCodeClose() );
         // NOTE: don't print a newline after the closing brackets because if the Text is inside
         // a table or list, it would break it if there was a subsequent row or list item.

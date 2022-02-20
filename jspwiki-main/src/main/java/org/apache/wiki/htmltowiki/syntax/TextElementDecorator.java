@@ -21,7 +21,7 @@ package org.apache.wiki.htmltowiki.syntax;
 import org.jdom2.Text;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -30,9 +30,9 @@ import java.util.Stack;
 public class TextElementDecorator {
 
     final protected PrintWriter out;
-    final protected Stack< String > preStack;
+    final protected Deque< String > preStack;
 
-    public TextElementDecorator( final PrintWriter out, final Stack< String > preStack ) {
+    public TextElementDecorator( final PrintWriter out, final Deque< String > preStack ) {
         this.out = out;
         this.preStack = preStack;
     }

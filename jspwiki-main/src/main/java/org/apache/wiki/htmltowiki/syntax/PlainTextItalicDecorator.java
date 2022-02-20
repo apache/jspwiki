@@ -23,7 +23,6 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
 import java.io.PrintWriter;
-import java.util.Stack;
 
 
 /**
@@ -32,13 +31,11 @@ import java.util.Stack;
 public abstract class PlainTextItalicDecorator {
 
     final protected PrintWriter out;
-    final protected Stack< String > preStack;
     final protected XHtmlElementToWikiTranslator chain;
     final protected PlainTextMonospaceDecorator ptmd;
 
-    protected PlainTextItalicDecorator( final PlainTextMonospaceDecorator ptmd, final PrintWriter out, final Stack< String > preStack, final XHtmlElementToWikiTranslator chain ) {
+    protected PlainTextItalicDecorator( final PlainTextMonospaceDecorator ptmd, final PrintWriter out, final XHtmlElementToWikiTranslator chain ) {
         this.out = out;
-        this.preStack = preStack;
         this.chain = chain;
         this.ptmd = ptmd;
     }

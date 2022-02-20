@@ -23,7 +23,6 @@ import org.apache.wiki.htmltowiki.syntax.PlainTextBoldDecorator;
 import org.apache.wiki.htmltowiki.syntax.PlainTextCssDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
 
 
 /**
@@ -31,8 +30,8 @@ import java.util.Stack;
  */
 class JSPWikiPlainTextCssDecorator extends PlainTextCssDecorator {
 
-    JSPWikiPlainTextCssDecorator( final PlainTextBoldDecorator ptbd, final PrintWriter out, final Stack< String > preStack, final XHtmlElementToWikiTranslator chain ) {
-        super( ptbd, out, preStack, chain );
+    JSPWikiPlainTextCssDecorator( final PlainTextBoldDecorator ptbd, final PrintWriter out, final XHtmlElementToWikiTranslator chain ) {
+        super( ptbd, out, chain );
     }
 
     /** {@inheritDoc} */

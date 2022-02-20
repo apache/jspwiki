@@ -23,7 +23,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -32,10 +32,10 @@ import java.util.Stack;
 public abstract class OlDecorator {
 
     final protected PrintWriter out;
-    final protected Stack< String > liStack;
+    final protected Deque< String > liStack;
     final protected XHtmlElementToWikiTranslator chain;
 
-    protected OlDecorator( final PrintWriter out, final Stack< String > liStack, final XHtmlElementToWikiTranslator chain ) {
+    protected OlDecorator( final PrintWriter out, final Deque< String > liStack, final XHtmlElementToWikiTranslator chain ) {
         this.out = out;
         this.liStack = liStack;
         this.chain = chain;
@@ -48,9 +48,9 @@ public abstract class OlDecorator {
      */
     public void decorate( final Element e ) throws JDOMException {
         out.println();
-        liStack.push( markupOl() );
+        liStack.addFirst( markupOl() );
         chain.translate( e );
-        liStack.pop();
+        liStack.removeFirst();
     }
 
     /**

@@ -24,7 +24,7 @@ import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.LiDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -34,13 +34,13 @@ class MarkdownLiDecorator extends LiDecorator {
 
     private static final String INDENTATION_UNIT = StringUtils.repeat( WhitespaceTrimWriter.NO_TRIMMED_SPACE, 4 );
 
-    MarkdownLiDecorator( final PrintWriter out, final Stack< String > liStack, final XHtmlElementToWikiTranslator chain ) {
+    MarkdownLiDecorator( final PrintWriter out, final Deque< String > liStack, final XHtmlElementToWikiTranslator chain ) {
         super( out, liStack, chain );
     }
 
     /** {@inheritDoc} */
     @Override
-    protected String markupLi( final Stack< String > liStack ) {
+    protected String markupLi( final Deque< String > liStack ) {
         final String liIndentation = StringUtils.repeat( INDENTATION_UNIT, liStack.size() - 1 );
         return liIndentation + liStack.peek() + " ";
     }

@@ -27,15 +27,15 @@ import org.jdom2.JDOMException;
 import org.jdom2.Text;
 
 import java.io.PrintWriter;
+import java.util.Deque;
 import java.util.Map;
-import java.util.Stack;
 
 
 /**
  * <p>Base Syntax decorator which translates to JSPWiki syntax. Delegates each kind of XHTML element to its specific
  * decorator.</p>
  * <p>This class is useful when developing a new wiki syntax decorator - just extend from it and provide the implementations of all
- * the needed Decorators on the {@link SyntaxDecorator#init(PrintWriter, Stack, Stack, WhitespaceTrimWriter, XHtmlToWikiConfig, XHtmlElementToWikiTranslator)} method</p>
+ * the needed Decorators on the {@link SyntaxDecorator#init(PrintWriter, Deque, Deque, WhitespaceTrimWriter, XHtmlToWikiConfig, XHtmlElementToWikiTranslator)} method</p>
  */
 public abstract class WikiSyntaxDecorator implements SyntaxDecorator {
 

@@ -22,7 +22,7 @@ import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.CodeDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -30,7 +30,7 @@ import java.util.Stack;
  */
 class JSPWikiCodeDecorator extends CodeDecorator {
 
-    JSPWikiCodeDecorator( final PrintWriter out, final Stack< String > preStack, final XHtmlElementToWikiTranslator chain ) {
+    JSPWikiCodeDecorator( final PrintWriter out, final Deque< String > preStack, final XHtmlElementToWikiTranslator chain ) {
         super( out, preStack, chain );
     }
 

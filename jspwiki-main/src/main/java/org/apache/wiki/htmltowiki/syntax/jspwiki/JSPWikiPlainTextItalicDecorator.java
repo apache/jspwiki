@@ -23,7 +23,6 @@ import org.apache.wiki.htmltowiki.syntax.PlainTextItalicDecorator;
 import org.apache.wiki.htmltowiki.syntax.PlainTextMonospaceDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
 
 
 /**
@@ -31,8 +30,8 @@ import java.util.Stack;
  */
 class JSPWikiPlainTextItalicDecorator extends PlainTextItalicDecorator {
 
-    JSPWikiPlainTextItalicDecorator( final PlainTextMonospaceDecorator ptmd, final PrintWriter out, final Stack< String > preStack, final XHtmlElementToWikiTranslator chain ) {
-        super( ptmd, out, preStack, chain );
+    JSPWikiPlainTextItalicDecorator( final PlainTextMonospaceDecorator ptmd, final PrintWriter out, final XHtmlElementToWikiTranslator chain ) {
+        super( ptmd, out, chain );
     }
 
     /** {@inheritDoc} */

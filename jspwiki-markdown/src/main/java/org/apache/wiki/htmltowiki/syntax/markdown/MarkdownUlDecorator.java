@@ -22,7 +22,7 @@ import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.UlDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -30,7 +30,7 @@ import java.util.Stack;
  */
 class MarkdownUlDecorator extends UlDecorator {
 
-    MarkdownUlDecorator( final PrintWriter out, final Stack< String > liStack, final XHtmlElementToWikiTranslator chain ) {
+    MarkdownUlDecorator( final PrintWriter out, final Deque< String > liStack, final XHtmlElementToWikiTranslator chain ) {
         super( out, liStack, chain );
     }
 

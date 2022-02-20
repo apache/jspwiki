@@ -22,7 +22,7 @@ import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.BrDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -30,7 +30,7 @@ import java.util.Stack;
  */
 class JSPWikiBrDecorator extends BrDecorator {
 
-    JSPWikiBrDecorator( final PrintWriter out, final Stack< String > preStack, final XHtmlElementToWikiTranslator chain ) {
+    JSPWikiBrDecorator( final PrintWriter out, final Deque< String > preStack, final XHtmlElementToWikiTranslator chain ) {
         super( out, preStack, chain );
     }
 

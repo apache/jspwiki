@@ -23,7 +23,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -32,10 +32,10 @@ import java.util.Stack;
 public abstract class LiDecorator {
 
     final protected PrintWriter out;
-    final protected Stack< String > liStack;
+    final protected Deque< String > liStack;
     final protected XHtmlElementToWikiTranslator chain;
 
-    protected LiDecorator( final PrintWriter out, final Stack< String > liStack, final XHtmlElementToWikiTranslator chain ) {
+    protected LiDecorator( final PrintWriter out, final Deque< String > liStack, final XHtmlElementToWikiTranslator chain ) {
         this.out = out;
         this.liStack = liStack;
         this.chain = chain;
@@ -67,6 +67,6 @@ public abstract class LiDecorator {
      *
      * @return Wiki markup for a {@code LI} element.
      */
-    protected abstract String markupLi( Stack< String > liStack );
+    protected abstract String markupLi( Deque< String > liStack );
 
 }

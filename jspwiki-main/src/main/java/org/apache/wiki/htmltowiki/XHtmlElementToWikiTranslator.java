@@ -32,10 +32,11 @@ import org.jdom2.Text;
 import org.jdom2.xpath.XPathFactory;
 
 import java.io.PrintWriter;
+import java.util.ArrayDeque;
 import java.util.Arrays;
+import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Stack;
 
 
 /**
@@ -73,8 +74,8 @@ public class XHtmlElementToWikiTranslator {
         this.config = config;
         syntax = getSyntaxDecorator();
         final PrintWriter out = new PrintWriter( outTrimmer );
-        final Stack< String > liStack = new Stack<>();
-        final Stack< String > preStack = new PreStack();
+        final Deque< String > liStack = new ArrayDeque<>();
+        final Deque< String > preStack = new PreDeque();
 
         syntax.init( out, liStack, preStack, outTrimmer, config, this );
         translate( base );
@@ -358,18 +359,17 @@ public class XHtmlElementToWikiTranslator {
         return dto;
     }
 
-    private class PreStack extends Stack< String > {
+    private class PreDeque extends ArrayDeque< String > {
 
         @Override
-        public String push( final String item ) {
-            final String push = super.push( item );
+        public void addFirst( final String item ) {
+            super.addFirst( item );
             outTrimmer.setWhitespaceTrimMode( isEmpty() );
-            return push;
         }
 
         @Override
-        public synchronized String pop() {
-            final String pop = super.pop();
+        public String removeFirst() {
+            final String pop = super.removeFirst();
             outTrimmer.setWhitespaceTrimMode( isEmpty() );
             return pop;
         }

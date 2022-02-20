@@ -24,7 +24,7 @@ import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.BrDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -34,7 +34,7 @@ class MarkdownBrDecorator extends BrDecorator {
 
     private static final String INDENTATION_UNIT = StringUtils.repeat( WhitespaceTrimWriter.NO_TRIMMED_SPACE, 2 );
 
-    MarkdownBrDecorator( final PrintWriter out, final Stack< String > preStack, final XHtmlElementToWikiTranslator chain ) {
+    MarkdownBrDecorator( final PrintWriter out, final Deque< String > preStack, final XHtmlElementToWikiTranslator chain ) {
         super( out, preStack, chain );
     }
 

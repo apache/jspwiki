@@ -22,7 +22,8 @@ import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.LiDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
+import java.util.Iterator;
 
 
 /**
@@ -30,14 +31,19 @@ import java.util.Stack;
  */
 class JSPWikiLiDecorator extends LiDecorator {
 
-    JSPWikiLiDecorator( final PrintWriter out, final Stack< String > liStack, final XHtmlElementToWikiTranslator chain ) {
+    JSPWikiLiDecorator( final PrintWriter out, final Deque< String > liStack, final XHtmlElementToWikiTranslator chain ) {
         super( out, liStack, chain );
     }
 
     /** {@inheritDoc} */
     @Override
-    protected String markupLi( final Stack< String > liStack ) {
-        return String.join( "", liStack ) + " ";
+    protected String markupLi( final Deque< String > liStack ) {
+        final StringBuilder li = new StringBuilder();
+        final Iterator< String > iterator = liStack.descendingIterator();
+        while( iterator.hasNext() ) {
+            li.append( iterator.next() );
+        }
+        return li + " ";
     }
 
 }

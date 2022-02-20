@@ -22,7 +22,7 @@ import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.OlDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -30,7 +30,7 @@ import java.util.Stack;
  */
 class JSPWikiOlDecorator extends OlDecorator {
 
-    JSPWikiOlDecorator( final PrintWriter out, final Stack< String > liStack, final XHtmlElementToWikiTranslator chain ) {
+    JSPWikiOlDecorator( final PrintWriter out, final Deque< String > liStack, final XHtmlElementToWikiTranslator chain ) {
         super( out, liStack, chain );
     }
 

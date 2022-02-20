@@ -22,7 +22,6 @@ import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.PlainTextCssSpecialDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
 
 
 /**
@@ -30,8 +29,8 @@ import java.util.Stack;
  */
 class MarkdownPlainTextCssSpecialDecorator extends PlainTextCssSpecialDecorator {
 
-    MarkdownPlainTextCssSpecialDecorator( final PrintWriter out, final Stack< String > preStack, final XHtmlElementToWikiTranslator chain ) {
-        super( out, preStack, chain );
+    MarkdownPlainTextCssSpecialDecorator( final PrintWriter out, final XHtmlElementToWikiTranslator chain ) {
+        super( out, chain );
     }
 
     /** {@inheritDoc} */

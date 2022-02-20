@@ -30,7 +30,7 @@ import org.apache.wiki.htmltowiki.syntax.TrDecorator;
 import org.apache.wiki.htmltowiki.syntax.WikiSyntaxDecorator;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.Deque;
 
 
 /**
@@ -41,8 +41,8 @@ public class MarkdownSyntaxDecorator extends WikiSyntaxDecorator {
     /** {@inheritDoc} */
     @Override
     public void init( final PrintWriter out,
-                      final Stack< String > liStack,
-                      final Stack< String > preStack,
+                      final Deque< String > liStack,
+                      final Deque< String > preStack,
                       final WhitespaceTrimWriter outTrimmer,
                       final XHtmlToWikiConfig config,
                       final XHtmlElementToWikiTranslator chain ) {
@@ -50,12 +50,12 @@ public class MarkdownSyntaxDecorator extends WikiSyntaxDecorator {
         this.outTrimmer = outTrimmer;
         this.chain = chain;
 
-        this.cssStyle = new MarkdownPlainTextCssSpecialDecorator( out, preStack, chain );
+        this.cssStyle = new MarkdownPlainTextCssSpecialDecorator( out, chain );
         this.pre = new MarkdownPlainTextMonospaceDecorator( cssStyle, out, preStack, chain );
-        this.em = new MarkdownPlainTextItalicDecorator( pre, out, preStack, chain );
-        this.strong = new MarkdownPlainTextBoldDecorator( em, out, preStack, chain );
-        this.css = new MarkdownPlainTextCssDecorator( strong, out, preStack, chain );
-        this.plainText = new PlainTextDecorator( css, out, preStack, chain );
+        this.em = new MarkdownPlainTextItalicDecorator( pre, out, chain );
+        this.strong = new MarkdownPlainTextBoldDecorator( em, out, chain );
+        this.css = new MarkdownPlainTextCssDecorator( strong, out, chain );
+        this.plainText = new PlainTextDecorator( css, out, chain );
 
         this.a = new MarkdownADecorator( out, config, chain );
         this.br = new MarkdownBrDecorator( out, preStack, chain );

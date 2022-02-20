@@ -22,7 +22,6 @@ import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.jdom2.JDOMException;
 
 import java.io.PrintWriter;
-import java.util.Stack;
 
 
 /**
@@ -38,13 +37,11 @@ import java.util.Stack;
 public class PlainTextDecorator {
 
     final protected PrintWriter out;
-    final protected Stack< String > preStack;
     final protected XHtmlElementToWikiTranslator chain;
     final protected PlainTextCssDecorator ptcd;
 
-    public PlainTextDecorator( final PlainTextCssDecorator ptcd, final PrintWriter out, final Stack< String > preStack, final XHtmlElementToWikiTranslator chain ) {
+    public PlainTextDecorator( final PlainTextCssDecorator ptcd, final PrintWriter out, final XHtmlElementToWikiTranslator chain ) {
         this.out = out;
-        this.preStack = preStack;
         this.chain = chain;
         this.ptcd = ptcd;
     }
