@@ -17,6 +17,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -143,7 +144,7 @@ public class ReferenceManagerTest  {
     }
 
     /**
-     *  Should Assertions.fail in 2.2.14-beta
+     *  Should Assertions.
      */
     @Test
     public void testSingularReferences() throws Exception {
@@ -191,9 +192,10 @@ public class ReferenceManagerTest  {
     @Test
     public void testUpdateBothExist() throws Exception {
         engine.saveText( "Foobars", "qwertz" );
+        Awaitility.await().until( () -> mgr.findReferrers( "Foobars" ).size() == 2 ); // might take a little on CI, let's wait
         final Collection< String > c = mgr.findReferrers( "Foobars" );
         Assertions.assertNotNull( c, "referrers expected" );
-        Assertions.assertEquals( 2, c.size(), "Foobars referrers" );
+        Assertions.assertEquals( 2, c.size(), "Foobars referrers: " + c );
         Assertions.assertTrue( c.contains( "TestPage" ) && c.contains("Foobar"), "Foobars referrer is not TestPage" );
     }
 
