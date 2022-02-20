@@ -17,6 +17,23 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-02-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.2-git-04_
+
+* [JSPWIKI-79](https://issues.apache.org/jira/browse/JSPWIKI-79) - Ounce Labs Security Finding: Authentication - Change Password
+
+* Refactored the `org.apache.wiki.htmltowiki` package, so it doesn't use `Stack` but instead a `Deque`. May split the package on the main module to its own module later on.
+
+* Dependency updates
+    * Mockito 4.3.1
+    * Selenide to 6.3.3
+    * SLF4J to 1.7.36
+    * Tika to 2.3.0
+    * Tomcat to 9.0.58
+    * Maven compiler (3.10.0), project info reports (3.2.0), javadocs (3.3.2) and cargo-maven3 (1.9.10) plugins
+
+
 **2022-01-13  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.2-git-03_
