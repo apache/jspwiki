@@ -49,7 +49,7 @@
     Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
     Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_PREFS.getRequestContext() );
-    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
+    if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     
     // Extract the user profile and action attributes
     UserManager userMgr = wiki.getManager( UserManager.class );
@@ -64,58 +64,46 @@
 */
 
     // Are we saving the profile?
-    if( "saveProfile".equals(request.getParameter("action")) )
-    {
+    if( "saveProfile".equals( request.getParameter( "action" ) ) ) {
         UserProfile profile = userMgr.parseProfile( wikiContext );
-         
+
         // Validate the profile
         userMgr.validateProfile( wikiContext, profile );
 
         // If no errors, save the profile now & refresh the principal set!
-        if ( wikiSession.getMessages( "profile" ).length == 0 )
-        {
-            try
-            {
+        if( wikiSession.getMessages( "profile" ).length == 0 ) {
+            try {
                 userMgr.setUserProfile( wikiContext, profile );
                 CookieAssertionLoginModule.setUserCookie( response, profile.getFullname() );
-            }
-            catch( DuplicateUserException due )
-            {
+            } catch( DuplicateUserException due ) {
                 // User collision! (full name or wiki name already taken)
                 wikiSession.addMessage( "profile", wiki.getManager( InternationalizationManager.class )
                                                        .get( InternationalizationManager.CORE_BUNDLE,
                                                     		 Preferences.getLocale( wikiContext ), 
                                                              due.getMessage(), due.getArgs() ) );
-            }
-            catch( DecisionRequiredException e )
-            {
+            } catch( DecisionRequiredException e ) {
                 String redirect = wiki.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), "ApprovalRequiredForUserProfiles", null );
                 response.sendRedirect( redirect );
                 return;
-            }
-            catch( WikiSecurityException e )
-            {
+            } catch( WikiSecurityException e ) {
                 // Something went horribly wrong! Maybe it's an I/O error...
                 wikiSession.addMessage( "profile", e.getMessage() );
             }
         }
-        if ( wikiSession.getMessages( "profile" ).length == 0 )
-        {
+        if( wikiSession.getMessages( "profile" ).length == 0 ) {
             String redirectPage = request.getParameter( "redirect" );
 
-            if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) )
-            {
+            if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) ) {
                redirectPage = wiki.getFrontPage();
             }
-            
+
             String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wikiContext.getViewURL( redirectPage );
-            log.info( "Redirecting user to " + viewUrl );
+            log.info( "Redirecting user to {}", viewUrl );
             response.sendRedirect( viewUrl );
             return;
         }
     }
-    if( "setAssertedName".equals( request.getParameter( "action" ) ) )
-    {
+    if( "setAssertedName".equals( request.getParameter( "action" ) ) ) {
         Preferences.reloadPreferences( pageContext );
         
         String assertedName = request.getParameter( "assertedName" );
@@ -128,12 +116,11 @@
         }
         String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wikiContext.getViewURL( redirectPage );
 
-        log.info( "Redirecting user to " + viewUrl );
+        log.info( "Redirecting user to {}", viewUrl );
         response.sendRedirect( viewUrl );
         return;
     }
-    if( "clearAssertedName".equals( request.getParameter( "action" ) ) )
-    {
+    if( "clearAssertedName".equals( request.getParameter( "action" ) ) ) {
         HttpUtil.clearCookie( response, Preferences.COOKIE_USER_PREFS_NAME );
         CookieAssertionLoginModule.clearUserCookie( response );
         Preferences.reloadPreferences( pageContext );
