@@ -189,7 +189,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      */
     @Override
     public boolean validatePassword( final String loginName, final String password ) {
-        String hashedPassword;
+        final String hashedPassword;
         try {
             final UserProfile profile = findByLoginName( loginName );
             String storedPassword = profile.getPassword();
@@ -252,14 +252,13 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      * calculates a <em>salted</em> hash rather than a plain hash.
      *
      * @param text the text to hash
-     * @param text the algorithm used for the hash
      * @return the result hash
      */
     protected String getHash( final String text ) {
         try {
             return CryptoUtil.getSaltedPassword( text.getBytes(StandardCharsets.UTF_8), SHA256_PREFIX );
         } catch( final NoSuchAlgorithmException e ) {
-            log.error( String.format( "Error creating salted password hash: %s", e.getMessage() ) );
+            log.error( "Error creating salted password hash: {}", e.getMessage() );
             return text;
         }
     }
@@ -269,7 +268,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      *
      * @param text the text to hash
      * @return the result hash
-     * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String, String)} instead
+     * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String)} instead
      */
     @Deprecated
     String getShaHash(final String text ) {

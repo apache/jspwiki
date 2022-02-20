@@ -42,7 +42,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * Constructs a new Command with a specified wiki context, URL pattern, content template and target. The URL pattern is used to derive
      * the JSP; if it is a "local" JSP (that is, it does not contain the <code>http://</code> or <code>https://</code> prefixes),
-     * then the JSP will be a cleansed version of the URL pattern; symbols (such as <code>%u</code>) will removed. If it the supplied
+     * then the JSP will be a cleansed version of the URL pattern; symbols (such as <code>%u</code>) will be removed. If the supplied
      * URL pattern points to a non-local destination, the JSP will be set to the value supplied, unmodified.
      *
      * @param requestContext the request context

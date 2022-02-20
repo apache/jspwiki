@@ -35,7 +35,7 @@ import java.security.Principal;
  *  object.</p>
  *  <p>Do not cache the WikiPage object that you get from the WikiContext; always use getPage()!</p>
  *
- *  @see org.apache.wiki.plugin.Counter
+ *  @see {@code org.apache.wiki.plugin.Counter}
  */
 public interface Context extends Cloneable, Command {
 
@@ -43,7 +43,7 @@ public interface Context extends Cloneable, Command {
 
     /**
      *  Variable name which tells whether plugins should be executed or not. Value can be either {@code Boolean.TRUE} or
-     *  {@code Boolean.FALSE}. While not set it's value is {@code null}.
+     *  {@code Boolean.FALSE}. While not set its value is {@code null}.
      */
     String VAR_EXECUTE_PLUGINS = "_PluginContent.execute";
 
@@ -75,8 +75,8 @@ public interface Context extends Cloneable, Command {
      *  the Main page.  However, getRealPage() will return "LeftMenu".
      *
      *  @return A reference to the real page.
-     *  @see org.apache.wiki.tags.InsertPageTag
-     *  @see org.apache.wiki.parser.JSPWikiMarkupParser
+     *  @see {@code org.apache.wiki.tags.InsertPageTag}
+     *  @see {@code org.apache.wiki.parser.JSPWikiMarkupParser}
      */
     Page getRealPage();
 
@@ -93,7 +93,7 @@ public interface Context extends Cloneable, Command {
      *  @param wikiPage  The real WikiPage which is being rendered.
      *  @return The previous real page
      *  @since 2.3.14
-     *  @see org.apache.wiki.tags.InsertPageTag
+     *  @see {@code org.apache.wiki.tags.InsertPageTag}
      */
     Page setRealPage( Page wikiPage );
 
@@ -140,7 +140,7 @@ public interface Context extends Cloneable, Command {
 
     /**
      *  This method will safely return any HTTP parameters that might have been defined.  You should use this method instead
-     *  of peeking directly into the result of getHttpRequest(), since this method is smart enough to do all of the right things,
+     *  of peeking directly into the result of getHttpRequest(), since this method is smart enough to do all the right things,
      *  figure out UTF-8 encoded parameters, etc.
      *
      *  @since 2.0.13.
@@ -150,8 +150,8 @@ public interface Context extends Cloneable, Command {
     String getHttpParameter( String paramName );
 
     /**
-     *  If the request did originate from a HTTP request, then the HTTP request can be fetched here.  However, it the request
-     *  did NOT originate from a HTTP request, then this method will return null, and YOU SHOULD CHECK FOR IT!
+     *  If the request did originate from an HTTP request, then the HTTP request can be fetched here.  However, if the request
+     *  did NOT originate from an HTTP request, then this method will return null, and YOU SHOULD CHECK FOR IT!
      *
      *  @return Null, if no HTTP request was done.
      *  @since 2.0.13.
@@ -203,7 +203,7 @@ public interface Context extends Cloneable, Command {
      *  A shortcut to generate a VIEW url.
      *
      *  @param WikiPage The WikiPage to which to link.
-     *  @return An URL to the page.  This honours the current absolute/relative setting.
+     *  @return A URL to the page.  This honours the current absolute/relative setting.
      */
     String getViewURL( String WikiPage );
 
@@ -223,25 +223,25 @@ public interface Context extends Cloneable, Command {
     Command getCommand();
 
     /**
-     *  Creates an URL for the given request context.
+     *  Creates a URL for the given request context.
      *
      *  @param context e.g. WikiContext.EDIT
      *  @param page The WikiPage to which to link
-     *  @return An URL to the page.
+     *  @return A URL to the page.
      */
     default String getURL( final String context, final String page ) {
         return getURL( context, page, null );
     }
 
     /**
-     *  Returns an URL from a page. It this Context instance was constructed with an actual HttpServletRequest, we will attempt to
+     *  Returns a URL from a page. It this Context instance was constructed with an actual HttpServletRequest, we will attempt to
      *  construct the URL using HttpUtil, which preserves the HTTPS portion if it was used.
      *
      *  @param context The request context (e.g. WikiContext.UPLOAD)
      *  @param page The WikiPage to which to link
      *  @param params A list of parameters, separated with "&amp;"
      *
-     *  @return An URL to the given context and page.
+     *  @return A URL to the given context and page.
      */
     default String getURL( final String context, final String page, final String params ) {
         // FIXME: is rather slow
