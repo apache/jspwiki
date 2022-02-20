@@ -98,11 +98,11 @@
      <!-- Password field; not displayed if container auth used -->
      <wiki:UserProfile property="canChangePassword">
      <div class="form-group">
-       <label class="control-label form-col-20" for="password"><fmt:message key="prefs.password"/></label>
-       <%--FIXME Enter Old PW to validate change flow, not yet treated by JSPWiki
-            <label class="control-label form-col-20" for="password0">Old</label>&nbsp;
-            <input type="password" name="password0" id="password0" size="20" value="" />
-       --%>
+       <label class="control-label form-col-20" for="password0"><fmt:message key="prefs.password0"/></label>&nbsp;
+       <input class="form-control form-col-50" type="password" name="password0" id="password0" size="20" value="" />
+     </div>
+     <div class="form-group">
+       <label class="control-label form-col-20" for="password"><fmt:message key="prefs.password1"/></label>
        <input class="form-control form-col-50" type="password" name="password" id="password" size="20" value="" required/>
      </div>
      <div class="form-group">

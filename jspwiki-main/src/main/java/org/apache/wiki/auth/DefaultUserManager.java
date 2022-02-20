@@ -313,7 +313,6 @@ public class DefaultUserManager implements UserManager {
     /** {@inheritDoc} */
     @Override
     public void validateProfile( final Context context, final UserProfile profile ) {
-        final boolean isNew = profile.isNew();
         final Session session = context.getWikiSession();
         final InputValidator validator = new InputValidator( SESSION_MESSAGES, context );
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
@@ -341,17 +340,21 @@ public class DefaultUserManager implements UserManager {
         validator.validateNotNull( profile.getFullname(), rb.getString("security.user.fullname") );
         validator.validate( profile.getEmail(), rb.getString("security.user.email"), InputValidator.EMAIL );
 
-        // If new profile, passwords must match and can't be null
         if( !m_engine.getManager( AuthenticationManager.class ).isContainerAuthenticated() ) {
             final String password = profile.getPassword();
             if( password == null ) {
-                if( isNew ) {
+                if( profile.isNew() ) {
+                    // If new profile, passwords must match and can't be null
                     session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.blankpassword" ) );
                 }
             } else {
                 final HttpServletRequest request = context.getHttpRequest();
+                final String password0 = ( request == null ) ? null : request.getParameter( "password0" );
                 final String password2 = ( request == null ) ? null : request.getParameter( "password2" );
                 if( !password.equals( password2 ) ) {
+                    session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
+                }
+                if( !profile.isNew() && !getUserDatabase().validatePassword( profile.getLoginName(), password0 ) ) {
                     session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
                 }
             }
