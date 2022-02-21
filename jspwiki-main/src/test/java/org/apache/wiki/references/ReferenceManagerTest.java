@@ -17,7 +17,6 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
-import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -191,12 +190,13 @@ public class ReferenceManagerTest  {
 
     @Test
     public void testUpdateBothExist() throws Exception {
-        engine.saveText( "Foobars", "qwertz" );
-        Awaitility.await().until( () -> mgr.findReferrers( "Foobars" ).size() == 2 ); // might take a little on CI, let's wait
-        final Collection< String > c = mgr.findReferrers( "Foobars" );
+        engine.saveText( "BooFars", "qwertz" );
+        engine.saveText( "Boo0", "Reference to [BooFars]" );
+        engine.saveText( "Boo1", "Another reference to [BooFars]" );
+        final Collection< String > c = mgr.findReferrers( "BooFars" );
         Assertions.assertNotNull( c, "referrers expected" );
-        Assertions.assertEquals( 2, c.size(), "Foobars referrers: " + c );
-        Assertions.assertTrue( c.contains( "TestPage" ) && c.contains("Foobar"), "Foobars referrer is not TestPage" );
+        Assertions.assertEquals( 2, c.size(), "BooFars referrers: " + c );
+        Assertions.assertTrue( c.contains( "Boo0" ) && c.contains("Boo1"), "BooFars referrers are not Boo*" );
     }
 
     @Test
