@@ -30,7 +30,7 @@
   <name>Apache JSPWiki bill of materials</name>
 
   <properties>
-    <jspwiki.version>2.11.2-SNAPSHOT</jspwiki.version>
+    <jspwiki.version>2.11.2</jspwiki.version>
   </properties>
 
   <dependencyManagement>
