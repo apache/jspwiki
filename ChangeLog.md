@@ -17,6 +17,14 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-03-05  Dirk Frederickx (brushed AT apache DOT org)**
+
+* _2.11.3-git-01_
+
+* Fix for Xss vulnerability on XHRHtml2Markup.jsp.  Adding additional protection against
+  malicious injection of invalid html/xml.
+
+
 **2022-02-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.2-git-04_

@@ -28,6 +28,7 @@ import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.jdom2.Verifier;
 import org.jdom2.Text;
 import org.jdom2.xpath.XPathFactory;
 
@@ -105,6 +106,13 @@ public class XHtmlElementToWikiTranslator {
             translateText( ( Text ) element );
         } else if( element instanceof Element ) {
             final Element base = ( Element )element;
+            final String n = base.getName().toLowerCase();
+            final String reason = Verifier.checkElementName(n);
+
+            if (reason != null)  return; /* invalid element name */
+
+            if( "script".equals( n ) ) return; /* nono, not a good idea*/
+
             if( "imageplugin".equals( base.getAttributeValue( "class" ) ) ) {
                 translateImage( base );
             } else if( "wikiform".equals( base.getAttributeValue( "class" ) ) ) {
