@@ -18,12 +18,14 @@
  */
 package org.apache.wiki.htmltowiki.syntax.markdown;
 
-import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.util.Properties;
 
 
 /**
@@ -31,11 +33,15 @@ import org.junit.jupiter.api.Test;
  */
 public class HtmlStringToMarkdownWikiTranslatorTest {
 
-    static Engine e = TestEngine.build( TestEngine.with( "jspwiki.syntax.decorator", MarkdownSyntaxDecorator.class.getName() ) );
-    HtmlStringToWikiTranslator html2wiki;
+    static Engine e;
+    static HtmlStringToWikiTranslator html2wiki;
 
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
+        e = Mockito.mock( Engine.class );
+        final Properties properties = new Properties();
+        properties.put( "jspwiki.syntax.decorator", MarkdownSyntaxDecorator.class.getName() );
+        Mockito.doReturn( properties ).when( e ).getWikiProperties();
         html2wiki = new HtmlStringToWikiTranslator( e );
     }
 
