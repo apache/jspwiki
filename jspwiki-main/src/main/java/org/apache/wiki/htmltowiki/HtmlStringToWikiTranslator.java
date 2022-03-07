@@ -20,6 +20,7 @@ package org.apache.wiki.htmltowiki;
 
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.codelibs.nekohtml.parsers.SAXParser;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -37,7 +38,7 @@ import java.io.StringReader;
  */
 public class HtmlStringToWikiTranslator {
 
-    private static final String CYBERNEKO_PARSER = "org.cyberneko.html.parsers.SAXParser";
+    private static final String CYBERNEKO_PARSER = SAXParser.class.getName();
     private final Engine e;
 
     /**
