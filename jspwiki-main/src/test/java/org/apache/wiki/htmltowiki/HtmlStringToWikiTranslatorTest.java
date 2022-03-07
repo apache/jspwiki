@@ -18,11 +18,13 @@
  */
 package org.apache.wiki.htmltowiki;
 
-import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Engine;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+import java.util.Properties;
 
 /**
  * JUnit test cases for Converting Html to Wiki Markup.
@@ -30,11 +32,13 @@ import org.junit.jupiter.api.Test;
  */
 public class HtmlStringToWikiTranslatorTest {
 
-    static Engine e = TestEngine.build();
-    HtmlStringToWikiTranslator html2wiki;
+    static Engine e;
+    static HtmlStringToWikiTranslator html2wiki;
 
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void setUp() {
+        e = Mockito.mock( Engine.class );
+        Mockito.doReturn( new Properties() ).when( e ).getWikiProperties();
         html2wiki = new HtmlStringToWikiTranslator( e );
     }
 
@@ -63,7 +67,6 @@ public class HtmlStringToWikiTranslatorTest {
         // footnote links
         Assertions.assertEquals( "[23]", html2wiki.translate( "<a class=\"footnoteref\" href=\"#ref-PageName-23\">[23]</a>" ) );
         Assertions.assertEquals( "[something|23]", html2wiki.translate( "<a class=\"footnoteref\" href=\"#ref-PageName-23\">[something]</a>" ) );
-
     }
 
     @Test
@@ -100,7 +103,6 @@ public class HtmlStringToWikiTranslatorTest {
     public void testRulers() throws Exception {
         Assertions.assertEquals( "a\n----\nb", html2wiki.translate( "a<hr/>b" ) );
         Assertions.assertEquals( "by\n" + "----\n" + "Dies", html2wiki.translate( "by\n" + "<hr>\n" + "Dies" ) );
-
     }
 
     @Test
