@@ -88,7 +88,7 @@ public class XHtmlElementToWikiTranslator {
             LOG.warn( "{} does not subclass {} reverting to default syntax decorator.", sdClass, SyntaxDecorator.class.getName() );
             sdClass = DEFAULT_SYNTAX_DECORATOR;
         }
-        LOG.info( "Using {} as markup parser.", sdClass );
+        LOG.debug( "Using {} as markup parser.", sdClass );
         return ClassUtil.buildInstance( sdClass );
     }
 
