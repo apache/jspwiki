@@ -74,10 +74,10 @@ public final class ClassUtil {
                 final String className = f.getChildText( "mappedClass" );
 
                 map.put( key, className );
-                log.debug( "Mapped class '" + key + "' to class '" + className + "'" );
+                log.debug( "Mapped class '{}' to class '{}'", key, className );
             }
         } else {
-            log.info( "Didn't find class mapping document in " + MAPPINGS );
+            log.info( "Didn't find class mapping document in {}", MAPPINGS );
         }
         return map;
     }
@@ -141,9 +141,9 @@ public final class ClassUtil {
                 final File jarFile = new File( externaljar );
                 final URL ucl = jarFile.toURI().toURL();
                 urls[ i++ ] = ucl;
-                log.info( "added " + ucl + " to list of external jars" );
+                log.info( "added {} to list of external jars", ucl );
             } catch( final MalformedURLException e ) {
-                log.error( "exception (" + e.getMessage() + ") while setting up classloaders for external jar:" + externaljar + ", continuing without external jars." );
+                log.error( "exception ({}) while setting up classloaders for external jar: {}, continuing without external jars.", e.getMessage(), externaljar );
             }
         }
         
@@ -216,7 +216,7 @@ public final class ClassUtil {
      * @param rootPackage base package.
      */
     static void fileEntriesUnder( final List< String > results, final File file, final String rootPackage ) {
-        log.debug( "scanning [" + file.getName() + "]" );
+        log.debug( "scanning [{}]", file.getName() );
         if( file.isDirectory() ) {
             final Iterator< File > files = FileUtils.iterateFiles( file, null, true );
             while( files.hasNext() ) {
@@ -239,7 +239,7 @@ public final class ClassUtil {
      */
     static void jarEntriesUnder( final List< String > results, final JarURLConnection jurlcon, final String rootPackage ) {
         try( final JarFile jar = jurlcon.getJarFile() ) {
-            log.debug( "scanning [" + jar.getName() +"]" );
+            log.debug( "scanning [{}]", jar.getName() );
             final Enumeration< JarEntry > entries = jar.entries();
             while( entries.hasMoreElements() ) {
                 final JarEntry entry = entries.nextElement();
