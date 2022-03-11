@@ -268,10 +268,10 @@ public class WikiEngine implements Engine {
 
         try {
             final File f = new File( m_workDir );
-            final boolean created = f.mkdirs();
+            f.mkdirs();
 
             //  A bunch of sanity checks
-            if( !created || !f.exists() ) {
+            if( !f.exists() ) {
                 throw new WikiException( "Work directory does not exist: " + m_workDir );
             }
             if( !f.canRead() ) {
