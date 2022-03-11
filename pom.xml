@@ -126,6 +126,7 @@
     <module>jspwiki-api</module>
     <module>jspwiki-bootstrap</module>
     <module>jspwiki-cache</module>
+    <module>jspwiki-wysiwyg</module>
     <module>jspwiki-main</module>
     <module>jspwiki-markdown</module>
     <module>jspwiki-tika-searchprovider</module>
