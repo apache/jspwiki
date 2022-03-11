@@ -46,7 +46,7 @@
 
     <akismet-java.version>1.02</akismet-java.version>
     <awaitility.version>4.1.1</awaitility.version>
-    <aws-java-sdk-kendra.version>1.12.59</aws-java-sdk-kendra.version>
+    <aws-java-sdk-kendra.version>1.12.176</aws-java-sdk-kendra.version>
     <commons-collections.version>4.4</commons-collections.version>
     <commons-fileupload.version>1.4</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
@@ -64,7 +64,7 @@
     <javax-jsp-api.version>2.3.3</javax-jsp-api.version>
     <javax-servlet-api.version>3.1.0</javax-servlet-api.version>
     <jdom2.version>2.0.6</jdom2.version>
-    <jetty.version>9.4.44.v20210927</jetty.version>
+    <jetty.version>9.4.45.v20220203</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.8.2</junit.version>
     <log4j2.version>2.17.2</log4j2.version>
@@ -84,7 +84,7 @@
     <plugin.antrun.version>3.0.0</plugin.antrun.version>
     <plugin.assembly.version>3.3.0</plugin.assembly.version>
     <plugin.clean.version>3.1.0</plugin.clean.version>
-    <plugin.compiler.version>3.10.0</plugin.compiler.version>
+    <plugin.compiler.version>3.10.1</plugin.compiler.version>
     <plugin.dependency.version>3.2.0</plugin.dependency.version>
     <plugin.enforcer.version>3.0.0</plugin.enforcer.version>
     <plugin.install.version>2.5.2</plugin.install.version>
@@ -716,15 +716,17 @@
               <exclude>**/src/main/config/doc/LICENSE.*</exclude>               <!-- 3rd party License files -->
               <exclude>**/src/main/config/wikipages/**</exclude>                <!-- Default wikipages -->
               <exclude>**/src/main/config/dev/OldChangeLog</exclude>            <!-- ChangeLog excluded by default, this is, well, an old ChangeLog -->
+              <exclude>**/src/main/resources/META-INF/services/*</exclude>      <!-- Java SPI implementations files -->
               <exclude>**/src/main/scripts/posteditor.js</exclude>              <!-- minified file -->
               <exclude>**/src/main/scripts/wiki-wysiwyg/**</exclude>            <!-- MooEditable src, MIT licensed -->
-              <exclude>**/src/main/webapp/scripts/mooeditable/**</exclude>      <!-- MooEditable src, MIT licensed -->
               <exclude>**/src/main/scripts/moo-extend/Request.File.js</exclude> <!-- MIT licensed -->
               <exclude>**/src/main/styles/haddock/fontjspwiki/**</exclude>      <!-- MIT/OFL licensed -->
               <exclude>**/src/main/webapp/templates/haddock/fonts/FontJspwiki.*</exclude><!-- MIT/OFL licensed -->
               <exclude>**/src/main/webapp/templates/reader/fonts/FontJspwiki.*</exclude> <!-- MIT/OFL licensed -->
+              <exclude>**/src/main/webapp/scripts/mooeditable/**</exclude>      <!-- MooEditable src, MIT licensed -->
               <exclude>**/src/main/webapp/scripts/*.js</exclude>                <!-- minified files -->
               <exclude>**/src/main/scripts/lib/*.js</exclude>                   <!-- 3rd party js files -->
+              <exclude>**/src/test/resources/META-INF/services/*</exclude>      <!-- Java SPI implementations files -->
               <exclude>**/src/test/resources/TextFormattingRules.txt</exclude>  <!-- test input data -->
               <exclude>**/src/test/resources/test-repo/*.txt</exclude>          <!-- web tests input data -->
               <exclude>**/src/main/webapp/templates/default/images/SilkIconSet-readme.txt</exclude> <!-- license, required by Silk Icon set cfr. NOTICE, LICENSE, etc. -->
