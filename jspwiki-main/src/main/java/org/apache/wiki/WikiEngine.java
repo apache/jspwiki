@@ -176,13 +176,23 @@ public class WikiEngine implements Engine {
         WikiEngine engine = ( WikiEngine )context.getAttribute( ATTR_WIKIENGINE );
         if( engine == null ) {
             final String appid = Integer.toString( context.hashCode() );
-            context.log(" Assigning new engine to "+appid);
+            context.log( " Assigning new engine to " + appid );
             try {
                 if( props == null ) {
                     props = PropertyReader.loadWebAppProps( context );
                 }
 
-                engine = new WikiEngine( context, appid, props );
+                engine = new WikiEngine( context, appid );
+                try {
+                    //  Note: May be null, if JSPWiki has been deployed in a WAR file.
+                    engine.start( props );
+                    LOG.info( "Root path for this Wiki is: '{}'", engine.getRootPath() );
+                } catch( final Exception e ) {
+                    final String msg = Release.APPNAME + ": Unable to load and setup properties from jspwiki.properties. " + e.getMessage();
+                    context.log( msg );
+                    LOG.error( msg, e );
+                    throw new WikiException( msg, e );
+                }
                 context.setAttribute( ATTR_WIKIENGINE, engine );
             } catch( final Exception e ) {
                 context.log( "ERROR: Failed to create a Wiki engine: " + e.getMessage() );
@@ -200,7 +210,7 @@ public class WikiEngine implements Engine {
      *  @throws WikiException If the initialization fails.
      */
     public WikiEngine( final Properties properties ) throws WikiException {
-        initialize( properties );
+        start( properties );
     }
 
     /**
@@ -209,44 +219,29 @@ public class WikiEngine implements Engine {
      *
      *  @param context A ServletContext.
      *  @param appid   An Application ID.  This application is a unique random string which is used to recognize this WikiEngine.
-     *  @param props   The WikiEngine configuration.
      *  @throws WikiException If the WikiEngine construction fails.
      */
-    protected WikiEngine( final ServletContext context, final String appid, final Properties props ) throws WikiException {
+    protected WikiEngine( final ServletContext context, final String appid ) throws WikiException {
         m_servletContext = context;
         m_appid          = appid;
 
         // Stash the WikiEngine in the servlet context
         if ( context != null ) {
             context.setAttribute( ATTR_WIKIENGINE,  this );
-            m_rootPath = context.getRealPath("/");
-        }
-
-        try {
-            //  Note: May be null, if JSPWiki has been deployed in a WAR file.
-            initialize( props );
-            LOG.info( "Root path for this Wiki is: '{}'", m_rootPath );
-        } catch( final Exception e ) {
-            final String msg = Release.APPNAME+": Unable to load and setup properties from jspwiki.properties. "+e.getMessage();
-            if ( context != null ) {
-                context.log( msg );
-            }
-            throw new WikiException( msg, e );
+            m_rootPath = context.getRealPath( "/" );
         }
     }
 
     /**
      *  Does all the real initialization.
      */
-    private void initialize( final Properties props ) throws WikiException {
+    @Override
+    public void initialize( final Properties props ) throws WikiException {
         m_startTime  = new Date();
         m_properties = props;
 
         LOG.info( "*******************************************" );
         LOG.info( "{} {} starting. Whee!", Release.APPNAME, Release.getVersionString() );
-
-        fireEvent( WikiEngineEvent.INITIALIZING ); // begin initialization
-
         LOG.debug( "Java version: {}", System.getProperty( "java.runtime.version" ) );
         LOG.debug( "Java vendor: {}", System.getProperty( "java.vm.vendor" ) );
         LOG.debug( "OS: {} {} {}", System.getProperty( "os.name" ), System.getProperty( "os.version" ), System.getProperty( "os.arch" ) );
@@ -260,24 +255,23 @@ public class WikiEngine implements Engine {
             }
         }
 
+        fireEvent( WikiEngineEvent.INITIALIZING ); // begin initialization
+
         LOG.debug( "Configuring WikiEngine..." );
 
         //  Create and find the default working directory.
         m_workDir = TextUtil.getStringProperty( props, PROP_WORKDIR, null );
 
         if( m_workDir == null ) {
-            m_workDir = System.getProperty( "java.io.tmpdir", "." );
-            m_workDir += File.separator + Release.APPNAME + "-" + m_appid;
+            m_workDir = System.getProperty( "java.io.tmpdir", "." ) +  File.separator + Release.APPNAME + "-" + m_appid;
         }
 
         try {
             final File f = new File( m_workDir );
-            f.mkdirs();
+            final boolean created = f.mkdirs();
 
-            //
             //  A bunch of sanity checks
-            //
-            if( !f.exists() ) {
+            if( !created || !f.exists() ) {
                 throw new WikiException( "Work directory does not exist: " + m_workDir );
             }
             if( !f.canRead() ) {
@@ -291,7 +285,7 @@ public class WikiEngine implements Engine {
             }
         } catch( final SecurityException e ) {
             LOG.fatal( "Unable to find or create the working directory: {}", m_workDir, e );
-            throw new IllegalArgumentException( "Unable to find or create the working dir: " + m_workDir, e );
+            throw new WikiException( "Unable to find or create the working dir: " + m_workDir, e );
         }
 
         LOG.info( "JSPWiki working directory is '{}'", m_workDir );
@@ -447,7 +441,7 @@ public class WikiEngine implements Engine {
     void enforceValidTemplateDirectory() {
         if( m_servletContext != null ) {
             final String viewTemplate = "templates" + File.separator + getTemplateDir() + File.separator + "ViewTemplate.jsp";
-            boolean exists = new File( m_servletContext.getRealPath("/") + viewTemplate ).exists();
+            boolean exists = new File( m_servletContext.getRealPath( "/" ) + viewTemplate ).exists();
             if( !exists ) {
                 try {
                     final URL url = m_servletContext.getResource( viewTemplate );
@@ -644,8 +638,8 @@ public class WikiEngine implements Engine {
      */
     @Override
     public void shutdown() {
-        getManager( CachingManager.class ).shutdown();
         fireEvent( WikiEngineEvent.SHUTDOWN );
+        getManager( CachingManager.class ).shutdown();
         getManager( FilterManager.class ).destroy();
         WikiEventManager.shutdown();
     }
