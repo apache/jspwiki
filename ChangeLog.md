@@ -17,6 +17,27 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-03-11  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.3-git-02_
+
+* Introduce [Engine Lifecycle Extensions](https://jspwiki-wiki.apache.org/Wiki.jsp?page=HowToWriteAnEngineLifecycleExtension) into JSPWiki's [public API](https://jspwiki-wiki.apache.org/Wiki.jsp?page=JSPWikiPublicAPI).
+
+* Extracted `org.apache.wiki.htmltowiki` to its own module, `jspwiki-wysiwyg`
+
+* Dependency updates
+    * Apache parent pom to 25 - closes [#172](https://github.com/apache/jspwiki/pull/172), thanks to dependabot
+    * AWS Kendra Java SDK to 1.12.176
+    * Flexmark to 0.64.0 - closes [#171](https://github.com/apache/jspwiki/pull/171), thanks to dependabot
+    * Gson to 2.9.0
+    * Jetty to 9.4.45.v20220203 - closes [#175](https://github.com/apache/jspwiki/pull/175), thanks to dependabot
+    * Log4J to 2.17.2
+    * Nekohtml migrated to [CodeLibs' fork](https://github.com/codelibs/nekohtml), version 2.0.2
+    * Selenide to 6.3.4
+    * Tomcat to 9.0.59
+    * Maven compiler plugin to 3.10.1, project info reports plugin to 3.2.2 - closes [#174](https://github.com/apache/jspwiki/pull/174), thanks to dependabot
+
+
 **2022-03-05  Dirk Frederickx (brushed AT apache DOT org)**
 
 * _2.11.3-git-01_
