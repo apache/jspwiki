@@ -19,7 +19,9 @@
 package org.apache.wiki.api.core;
 
 import org.apache.logging.log4j.LogManager;
+import org.apache.wiki.api.engine.EngineLifecycleExtension;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.util.TextUtil;
 
@@ -37,6 +39,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.ServiceLoader;
 
 
 /**
@@ -413,7 +416,43 @@ public interface Engine {
     < T > T removeAttribute( String key );
 
     /**
-     * Signals that the Engine will be shut down by the servlet container.
+     * Initializes the {@code Engine}, notifying all the {@link EngineLifecycleExtension}s.
+     *
+     * @param properties Wiki configuration properties.
+     * @throws WikiException if something happens while setting up the {@code Engine}.
+     */
+    default void start( final Properties properties ) throws WikiException {
+        final ServiceLoader< EngineLifecycleExtension > loader = ServiceLoader.load( EngineLifecycleExtension.class );
+        for( final EngineLifecycleExtension extension : loader ) {
+            extension.onInit( properties );
+        }
+        initialize( properties );
+        for( final EngineLifecycleExtension extension : loader ) {
+            extension.onStart( this, properties );
+        }
+    }
+
+    /**
+     * Shuts down the {@code Engine}, notifying all the {@link EngineLifecycleExtension}s.
+     */
+    default void stop() {
+        final ServiceLoader< EngineLifecycleExtension > loader = ServiceLoader.load( EngineLifecycleExtension.class );
+        for( final EngineLifecycleExtension extension : loader ) {
+            extension.onShutdown( this, getWikiProperties() );
+        }
+        shutdown();
+    }
+
+    /**
+     * Sets up the application's running {@code Engine}.
+     *
+     * @param properties Wiki configuration properties.
+     * @throws WikiException if something happens while setting up the {@code Engine}.
+     */
+    void initialize( Properties properties ) throws WikiException;
+
+    /**
+     * Signals that the {@code Engine} will be shut down by the servlet container.
      */
     void shutdown();
 
