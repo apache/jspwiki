@@ -43,7 +43,7 @@ public class MassiveRepositoryTest {
         final String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
         final File f = new File( files );
         TestEngine.deleteAll( f );
-        engine.shutdown();
+        engine.stop();
     }
 
     private String getName( final int i ) {

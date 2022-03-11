@@ -67,7 +67,7 @@ public class AttachmentManagerTest {
     public void tearDown() {
         m_engine.deleteTestPage( NAME1 );
         m_engine.deleteTestPage( NAMEU );
-        m_engine.shutdown();
+        m_engine.stop();
 
         TestEngine.deleteAttachments(NAME1);
         TestEngine.deleteAttachments(NAMEU);

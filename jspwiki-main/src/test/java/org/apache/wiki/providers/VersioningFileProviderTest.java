@@ -66,7 +66,7 @@ public class VersioningFileProviderTest {
         TestEngine.deleteAll( new File(files) );
 
         // clear the cache at the end of every test case to avoid polluting another test case
-        engine.shutdown();
+        engine.stop();
 
         // make sure that the reference manager cache is cleaned first
         TestEngine.emptyWorkDir(null);

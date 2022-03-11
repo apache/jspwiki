@@ -50,7 +50,7 @@ public class ReferenceManagerTest  {
         TestEngine.emptyWikiDir();
 
         // jspwiki always uses a singleton CacheManager, so clear the cache at the end of every test case to avoid polluting another test case
-        engine.shutdown();
+        engine.stop();
 
         // make sure that the reference manager cache is cleaned
         TestEngine.emptyWorkDir( null );

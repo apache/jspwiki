@@ -326,7 +326,7 @@ public class MarkdownRendererTest {
         }
 
         created.clear();
-        testEngine.shutdown();
+        testEngine.stop();
     }
 
     String translate( final String src ) throws Exception {

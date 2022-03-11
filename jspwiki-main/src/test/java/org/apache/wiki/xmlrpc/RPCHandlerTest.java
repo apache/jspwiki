@@ -54,7 +54,7 @@ public class RPCHandlerTest {
     @AfterEach
     public void tearDown() {
         m_engine.deleteTestPage( NAME1 );
-        m_engine.shutdown();
+        m_engine.stop();
         TestEngine.deleteAttachments( NAME1 );
         TestEngine.emptyWorkDir();
     }
@@ -107,7 +107,7 @@ public class RPCHandlerTest {
         final Page directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
 
         final Hashtable ht = m_handler.getPageInfo( NAME1 );
-        Assertions.assertEquals( ( String ) ht.get( "name" ), NAME1, "name" );
+        Assertions.assertEquals( ht.get( "name" ), NAME1, "name" );
 
         final Date d = ( Date ) ht.get( "lastModified" );
 

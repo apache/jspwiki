@@ -58,7 +58,7 @@ public class WorkflowManagerTest {
 
     @AfterEach
     public void tearDown() {
-        m_engine.shutdown();
+        m_engine.stop();
     }
 
     @Test

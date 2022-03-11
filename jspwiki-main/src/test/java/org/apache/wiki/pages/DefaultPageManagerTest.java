@@ -56,7 +56,7 @@ public class DefaultPageManagerTest {
         }
 
         TestEngine.emptyWorkDir();
-        engine.shutdown();
+        engine.stop();
     }
 
     /**

@@ -25,6 +25,7 @@ import net.sourceforge.stripes.mock.MockServletContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -175,11 +176,16 @@ public class TestEngine extends WikiEngine {
     }
 
     public TestEngine( final Properties props ) throws WikiException {
-        super( createServletContext( "test" ), "test", cleanTestProps( props ) );
+        super( createServletContext( "test" ), "test" );
+        try {
+            start( cleanTestProps( props ) );
+        } catch( final Exception e ) {
+            throw new WikiException( Release.APPNAME + ": Unable to load and setup properties from jspwiki.properties. " + e.getMessage(), e );
+        }
 
         // Stash the WikiEngine in the servlet context
         final ServletContext servletContext = this.getServletContext();
-        servletContext.setAttribute("org.apache.wiki.WikiEngine", this);
+        servletContext.setAttribute( "org.apache.wiki.WikiEngine", this );
     }
 
     public static MockServletContext createServletContext( final String contextName ) {
@@ -229,15 +235,15 @@ public class TestEngine extends WikiEngine {
     }
 
     public static void emptyWorkDir(Properties properties) {
-        if (properties == null) {
+        if( properties == null ) {
             properties = getTestProperties();
         }
 
         final String workdir = properties.getProperty( WikiEngine.PROP_WORKDIR );
-        if ( workdir != null ) {
+        if( workdir != null ) {
             final File f = new File( workdir );
 
-            if (f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists()) {
+            if( f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists() ) {
                 // System.out.println( "Deleting " + f.getAbsolutePath() );
                 deleteAll( f );
             }
@@ -248,67 +254,45 @@ public class TestEngine extends WikiEngine {
         emptyWikiDir( null );
     }
 
-    public static void emptyWikiDir(Properties properties) {
-        if (properties == null) {
+    public static void emptyWikiDir( Properties properties ) {
+        if( properties == null ) {
             properties = getTestProperties();
         }
-
         final String wikidir = properties.getProperty( AbstractFileProvider.PROP_PAGEDIR );
         if ( wikidir != null ) {
             final File f = new File( wikidir );
-
-            if (f.exists() && f.isDirectory()) {
+            if( f.exists() && f.isDirectory() ) {
                 deleteAll( f );
             }
         }
     }
 
     public static Properties getTestProperties() {
-        if (combinedProperties == null) {
+        if( combinedProperties == null ) {
             combinedProperties = PropertyReader.getCombinedProperties(PropertyReader.CUSTOM_JSPWIKI_CONFIG);
         }
         // better to make a copy via putAll instead of Properties(properties)
         // constructor, see http://stackoverflow.com/a/2004900
         final Properties propCopy = new Properties();
-        propCopy.putAll(combinedProperties);
+        propCopy.putAll( combinedProperties );
         return propCopy;
     }
 
-    public static Properties getTestProperties( final String customPropFile) {
-        return PropertyReader.getCombinedProperties(customPropFile);
-    }
-/*
-    public static final InputStream findTestProperties()
-    {
-        return findTestProperties( "/jspwiki.properties" );
+    public static Properties getTestProperties( final String customPropFile ) {
+        return PropertyReader.getCombinedProperties( customPropFile );
     }
 
-    public static final InputStream findTestProperties( String properties )
-    {
-        InputStream in = TestEngine.class.getResourceAsStream( properties );
-
-        if( in == null ) throw new InternalWikiException("Unable to locate test property resource: "+properties);
-
-        return in;
-    }
-*/
     /**
      *  Deletes all files under this directory, and does them recursively.
      */
-    public static void deleteAll( final File file )
-    {
-        if( file != null )
-        {
-            if( file.isDirectory() )
-            {
+    public static void deleteAll( final File file ) {
+        if( file != null ) {
+            if( file.isDirectory() ) {
                 final File[] files = file.listFiles();
-
-                if( files != null )
-                {
-                    for ( final File file2 : files) {
-                        if( file2.isDirectory() )
-                        {
-                            deleteAll(file2);
+                if( files != null ) {
+                    for( final File file2 : files ) {
+                        if( file2.isDirectory() ) {
+                            deleteAll( file2 );
                         }
 
                         file2.delete();

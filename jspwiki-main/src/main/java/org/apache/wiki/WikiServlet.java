@@ -21,6 +21,7 @@ package org.apache.wiki;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.engine.EngineLifecycleExtension;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.url.URLConstructor;
 
@@ -57,15 +58,15 @@ public class WikiServlet extends HttpServlet {
 
     /**
      * Destroys the WikiServlet; called by the servlet container when shutting down the webapp. This method calls the
-     * protected method {@link WikiEngine#shutdown()}, which sends {@link org.apache.wiki.event.WikiEngineEvent#SHUTDOWN}
-     * events to registered listeners.
+     * protected method {@link WikiEngine#stop()}, which sends {@link org.apache.wiki.event.WikiEngineEvent#SHUTDOWN}
+     * events to registered listeners, as well as notifying available {@link EngineLifecycleExtension EngineLifecycleExtension}s.
      *
      * @see javax.servlet.GenericServlet#destroy()
      */
     @Override
     public void destroy() {
         log.info( "WikiServlet shutdown." );
-        m_engine.shutdown();
+        m_engine.stop();
         super.destroy();
     }
 

@@ -62,7 +62,7 @@ public class PageRenamerTest {
         m_engine.deleteTestPage("Link two");
 
         TestEngine.emptyWorkDir();
-        m_engine.shutdown();
+        m_engine.stop();
     }
 
     @Test

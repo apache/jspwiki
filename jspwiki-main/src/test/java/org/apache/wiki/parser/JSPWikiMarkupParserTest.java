@@ -60,7 +60,7 @@ public class JSPWikiMarkupParserTest {
     @AfterEach
     public void tearDown() {
         deleteCreatedPages();
-        testEngine.shutdown();
+        testEngine.stop();
     }
 
     private void newPage( final String name ) throws WikiException {

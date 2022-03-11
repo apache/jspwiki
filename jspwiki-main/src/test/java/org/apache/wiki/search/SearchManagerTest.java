@@ -61,7 +61,7 @@ public class SearchManagerTest {
 
     @AfterEach
     public void tearDown() {
-        m_engine.shutdown();
+        m_engine.stop();
     	TestEngine.emptyWorkDir( props );
     }
 

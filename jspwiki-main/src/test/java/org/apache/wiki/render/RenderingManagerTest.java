@@ -38,7 +38,7 @@ public class RenderingManagerTest {
     @AfterEach
     public void tearDown() throws Exception {
         m_engine.getManager( PageManager.class ).deletePage( "TestPage" );
-        m_engine.shutdown();
+        m_engine.stop();
     }
 
     @Test

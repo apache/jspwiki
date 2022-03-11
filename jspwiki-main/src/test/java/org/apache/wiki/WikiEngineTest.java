@@ -66,7 +66,7 @@ public class WikiEngineTest {
         }
 
         TestEngine.emptyWorkDir();
-        m_engine.shutdown();
+        m_engine.stop();
     }
 
     @Test
