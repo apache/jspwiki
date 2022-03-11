@@ -28,7 +28,6 @@ under the License.
 * Dependency updates
     * Apache parent pom to 25 - closes [#172](https://github.com/apache/jspwiki/pull/172), thanks to dependabot
     * AWS Kendra Java SDK to 1.12.176
-    * Flexmark to 0.64.0 - closes [#171](https://github.com/apache/jspwiki/pull/171), thanks to dependabot
     * Gson to 2.9.0
     * Jetty to 9.4.45.v20220203 - closes [#175](https://github.com/apache/jspwiki/pull/175), thanks to dependabot
     * Log4J to 2.17.2
