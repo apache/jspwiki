@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-03-15  Dirk Frederickx (brushed AT apache DOT org)**
+
+* _2.11.3-git-03_
+
+* Denounce plugin: sanities the plugin attributes to protect against Xss attacks.
+
+
 **2022-03-11  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.3-git-02_

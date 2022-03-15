@@ -44,7 +44,7 @@
 
     <div class="form-inline form-group">
 
-    <input class="btn btn-primary" type="submit" name="ok" id="ok" value="<fmt:message key="find.submit.find"/>" />
+    <input class="btn active" type="submit" name="ok" id="ok" value="<fmt:message key="find.submit.find"/>" />
     <input class="btn btn-default" type="submit" name="go" id="go" value="<fmt:message key="find.submit.go"/>" />
     <input type="hidden" name="start" id="start" value="0" />
     <input type="hidden" name="maxitems" id="maxitems" value="20" />

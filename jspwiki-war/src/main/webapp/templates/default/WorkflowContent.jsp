@@ -35,8 +35,8 @@
 <%-- Pending Decisions --%>
 <div class="tabs">
 <h4>
-  <fmt:message key="workflow.decisions.heading" />
-  <span class="badge">${empty decisions ? "empty" : fn:length(decisions)}</span>
+  <fmt:message key="workflow.decisions.heading" />&nbsp;
+  <c:if test="${!empty decisions}"><span class="badge">${fn:length(decisions)}</span></c:if>
 </h4>
 
 <c:if test="${empty decisions}">
@@ -115,8 +115,8 @@
 
 <!-- Running workflows for which current user is the owner -->
 <h4>
-  <fmt:message key="workflow.workflows.heading" />
-  <span class="badge">${empty workflows ? "empty" : fn:length(workflows)}</span>
+  <fmt:message key="workflow.workflows.heading" />&nbsp;
+  <c:if test="${!empty workflows}"><span class="badge">${fn:length(workflows)}</span></c:if>
 </h4>
 
 <c:if test="${empty workflows}">

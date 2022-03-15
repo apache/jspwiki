@@ -124,7 +124,8 @@ public class Denounce implements Plugin {
      */
     @Override
     public String execute( final Context context, final Map<String, String> params ) throws PluginException {
-        final String link = params.get( PARAM_LINK );
+        final String link = TextUtil.replaceEntities( params.get( PARAM_LINK ) );
+        //final String link = params.get( PARAM_LINK );
         String text = params.get( PARAM_TEXT );
         boolean linkAllowed = true;
 

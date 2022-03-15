@@ -37,6 +37,6 @@
     </c:if>
     <wiki:InsertPage />
   </div>
-  <div data-resize=".comment-page" title="<fmt:message key='editor.plain.comment.resize'/>" ></div>
+  <div class="resizer" data-resize=".comment-page" title="<fmt:message key='editor.plain.comment.resize'/>" ></div>
   <wiki:Editor />
 </div>

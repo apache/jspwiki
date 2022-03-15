@@ -25,7 +25,7 @@
 <!doctype html>
 <html lang="<c:out value='${prefs.Language}' default='en'/>" name="top">
   <head>
-
+  <meta charset="<wiki:ContentEncoding />">
   <title>
     <fmt:message key="view.title.view">
       <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>

@@ -58,7 +58,7 @@
     <c:set var="sidebarCookie" value="" />
   </wiki:CheckRequestContext>
 
-  <div class="content ${sidebarState}" data-toggle="li#menu,.sidebar>.close"
+  <div class="content ${sidebarState}" data-toggle="li#menu"
                                        data-toggle-pref="${sidebarCookie}" >
     <div class="page" role="main">
       <wiki:Content/>
