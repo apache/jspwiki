@@ -76,7 +76,7 @@ textarea { white-space: pre-wrap; }
     //-ms-overflow-style: -ms-autohiding-scrollbar;
     //border: 2px dashed transparent;  //make space for the .loading effect
     border: 1px solid @input-border;
-    margin-left: -1px;
+    margin-top: -1px;
     //.transition(background 0.2s ease-in-out);
 
     &.loading {
@@ -128,6 +128,11 @@ VERTICAL VIEW
 .edit-area.livepreview.previewcolumn > div {
     width:50%;
     float:left;
+}
+
+.previewcolumn .ajaxpreview {
+    margin-left: -1px;
+    margin-top: 0;
 }
 
 //only show the .ajaxpreview area when the .livepreview is on
