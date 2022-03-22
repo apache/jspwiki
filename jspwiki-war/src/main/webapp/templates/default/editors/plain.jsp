@@ -42,6 +42,8 @@
    String usertext = EditorManager.getEditedText( pageContext );
 %>
 <wiki:RequestResource type="script" resource="scripts/haddock-edit.js" />
+<wiki:RequestResource type="script" resource="engine://jspwiki.syntax.plain" />
+<wiki:RequestResource type="script" resource="scripts/haddock-wiki-edit.js" />
 <c:set var='context'><wiki:Variable var='requestcontext' /></c:set>
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
