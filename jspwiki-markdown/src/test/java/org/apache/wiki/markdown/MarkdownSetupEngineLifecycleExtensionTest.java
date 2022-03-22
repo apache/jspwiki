@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
 
-public class MarkdownSetupEngineLifecycleExtensionTest {
+class MarkdownSetupEngineLifecycleExtensionTest {
 
     @Test
     void shouldSetUpMarkdownSupportIfJspwikiSyntaxPropertyIsGiven() {
@@ -31,7 +31,7 @@ public class MarkdownSetupEngineLifecycleExtensionTest {
         properties.put( "jspwiki.syntax", "markdown" );
         final MarkdownSetupEngineLifecycleExtension sut = new MarkdownSetupEngineLifecycleExtension();
         sut.onInit( properties );
-        Assertions.assertEquals( 5, properties.size() );
+        Assertions.assertEquals( 6, properties.size() );
         Assertions.assertEquals( "org.apache.wiki.parser.markdown.MarkdownParser", properties.getProperty( "jspwiki.renderingManager.markupParser" ) );
 
         properties.clear();
