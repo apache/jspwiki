@@ -21,12 +21,12 @@ under the License.
 
 * _2.11.3-git-04_
 
-* [JSPWIKI-802](https://issues.apache.org/jira/browse/JSPWIKI-802) - Markdown syntax Support: initial Markdown support for plain editor.
+* [JSPWIKI-802](https://issues.apache.org/jira/browse/JSPWIKI-802) - Markdown syntax Support: initial support for plain editor.
     * Currently, can be activated by setting the `jspwiki.syntax.plain` property to `plain/wiki-snips-markdown.js`.
     * Alternatively, as of 2.11.3-git-02, whole Markdown support configuration can be set up by setting the `jspwiki.syntax` property to `markdown`.
     * Details at [Markdown support page](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Markdown%20Support).
 
-* `TemplateManager` now understands resources beginning with `engine://` to be keys of `Engine`'s wiki properties. In those cases, if the key and its associated value exist, the latter will be used to as the requested resource.
+* `TemplateManager` now understands resources beginning with `engine://` to be keys of `Engine`'s wiki properties. In those cases, if the key and its associated value exist, the latter will be used as the requested resource.
 
 * Dependency updates
     * Mockito to 4.4.0 - closes [#176](https://github.com/apache/jspwiki/pull/176), thanks to dependabot
