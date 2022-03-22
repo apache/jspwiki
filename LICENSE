@@ -244,27 +244,27 @@ gson-2.9.0                                  LICENSE
 httpclient-4.5.13                           LICENSE
 httpcore-4.4.13                             LICENSE
 ion-java-1.0.2                              LICENSE
-jackson-annotations-2.12.3                  LICENSE
-jackson-core-2.12.3                         LICENSE
-jackson-databind-2.12.3                     LICENSE
-jackson-dataformat-cbor-2.12.3              LICENSE
+jackson-annotations-2.12.6                  LICENSE
+jackson-core-2.12.6                         LICENSE
+jackson-databind-2.12.6                     LICENSE
+jackson-dataformat-cbor-2.12.6              LICENSE
 jaxen-1.2.0.jar                             ./jspwiki-war/src/main/config/doc/LICENSE.jaxen
 jdom2-2.0.6.jar                             ./jspwiki-war/src/main/config/doc/LICENSE.jdom
-jmespath-java-1.12.59                       LICENSE
+jmespath-java-1.12.176                      LICENSE
 joda-time-2.8.1                             LICENSE
 jstl-1.2.jar                                LICENSE
 log4j-1.2-api-2.17.2.jar                    LICENSE
 log4j-api-2.17.2.jar                        LICENSE
 log4j-core-2.17.2.jar                       LICENSE
 log4j-slf4j-impl-2.17.2                     LICENSE
-lucene-analyzers-common-8.11.0.jar          LICENSE
-lucene-backward-codecs-8.11.0.jar           LICENSE
-lucene-core-8.11.0.jar                      LICENSE
-lucene-highlighter-8.11.0.jar               LICENSE
-lucene-memory-8.11.0.jar                    LICENSE
-lucene-queries-8.11.0.jar                   LICENSE
-lucene-queryparser-8.11.0.jar               LICENSE
-lucene-sandbox-8.11.0.jar                   LICENSE
+lucene-analyzers-common-8.11.1.jar          LICENSE
+lucene-backward-codecs-8.11.1.jar           LICENSE
+lucene-core-8.11.1.jar                      LICENSE
+lucene-highlighter-8.11.1.jar               LICENSE
+lucene-memory-8.11.1.jar                    LICENSE
+lucene-queries-8.11.1.jar                   LICENSE
+lucene-queryparser-8.11.1.jar               LICENSE
+lucene-sandbox-8.11.1.jar                   LICENSE
 mail-1.4.7.jar                              ./jspwiki-war/src/main/config/doc/LICENSE.cddl
 nekohtml-2.0.2.jar (codelibs fork)          LICENSE
 org.suigeneris.jrcs.diff-0.4.2              LICENSE
@@ -287,8 +287,8 @@ hsqldb-2.6.1.jar                            ./jspwiki-war/src/main/config/doc/LI
 sqltool-2.6.1.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 jetty-all-9.4.45.v20220203.jar              LICENSE
 junit-5.8.2                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
-mockito-core-4.3.1.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
-selenide-6.3.4.jar                          ./jspwiki-war/src/main/config/doc/LICENSE.mit
+mockito-core-4.4.0.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
+selenide-6.3.5.jar                          ./jspwiki-war/src/main/config/doc/LICENSE.mit
 stripes-1.7.0-async.jar                     LICENSE
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui
 
@@ -304,7 +304,7 @@ SlimBox                                     ./jspwiki-war/src/main/config/doc/LI
 
 RESOURCES                                   LICENSE FILE
 =============================================================================================================
-Apache Tomcat 9.0.59                        LICENSE
+Apache Tomcat 9.0.60                        LICENSE
 Font Awesome (CSS & LESS files)             ./jspwiki-war/src/main/config/doc/LICENSE.mit
 Font Awesome (Fonts)                        ./jspwiki-war/src/main/config/doc/LICENSE.ofl
 SilkIconSet                                 ./jspwiki-war/src/main/config/doc/LICENSE.SilkIconSet
