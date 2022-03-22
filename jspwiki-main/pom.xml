@@ -299,6 +299,25 @@
           </includes>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>ro.isdc.wro4j</groupId>
+        <artifactId>wro4j-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>buildPlainEditorSyntaxJS</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <extraConfigFile>${project.basedir}/src/main/javascript/wro.properties</extraConfigFile>
+              <jsDestinationFolder>${project.build.outputDirectory}/META-INF/resources/plain/</jsDestinationFolder>
+              <wroFile>src/main/javascript/wro.xml</wroFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>

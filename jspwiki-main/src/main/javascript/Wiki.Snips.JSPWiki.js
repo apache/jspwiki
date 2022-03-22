@@ -31,7 +31,7 @@ Wiki.DirectSnips = {
     "'" : {
         snippet: "'",
         scope: {
-            "[{" : "}]"  //plugin parameters
+            "[{" : "}]"  // plugin parameters
           }
         }
 };
@@ -138,8 +138,8 @@ Wiki.Snips = {
     fontDlg: {
         scope: { "%%(":")" },
         suggest: {
-        lback: "font-family:([^;\\)\\n\\r]*)$",
-        match:"^([^;\\)\\n\\r]*)"
+          lback: "font-family:([^;\\)\\n\\r]*)$",
+          match:"^([^;\\)\\n\\r]*)"
         },
         fontDlg: [Dialog.Font, {}]
     },
@@ -620,7 +620,7 @@ Wiki.Snips = {
                 "divider-code": "",
                     "\n{{{\n/* code block */\n{code block}\n}}}\n": "<span class='small' style='font-family:monospace;'>&lt;/&gt;</span>",
                     "\n%%prettify\n{{{\n{pretiffied code block}\n}}}/%\n": "<span class='small' style='font-family:monospace;color:green;'>&lt;/&gt;</span>",
-                    "\n%%scrollable\n{{{\n{code block}\n}}}/%\n": "&darr;&uarr;"
+                    "\n%%scrollable\n{{{\n{scrollable code block}\n}}}/%\n": "&darr;&uarr;"
                 });
             }
 

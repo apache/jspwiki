@@ -116,9 +116,10 @@
     <js>/scripts/wiki-edit/Snipe.Snips.js</js>
     <js>/scripts/wiki-edit/Snipe.Commands.js</js>
     <js>/scripts/wiki-edit/Snipe.Sections.js</js>
-    <js>/scripts/wiki-edit/Wiki.Snips.js</js>
-    <js>/scripts/wiki-edit/Wiki.Edit.js</js>
+  </group>
 
+  <group name="haddock-wiki-edit">
+    <js>/scripts/wiki-edit/Wiki.Edit.js</js>
   </group>
 
 </groups>
