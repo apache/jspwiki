@@ -17,6 +17,25 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-03-22  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.3-git-04_
+
+* [JSPWIKI-802](https://issues.apache.org/jira/browse/JSPWIKI-802) - Markdown syntax Support: initial Markdown support for plain editor.
+    * Currently, can be activated by setting the `jspwiki.syntax.plain` property to `plain/wiki-snips-markdown.js`.
+    * Alternatively, as of 2.11.3-git-02, whole Markdown support configuration can be set up by setting the `jspwiki.syntax` property to `markdown`.
+    * Details at [Markdown support page](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Markdown%20Support).
+
+* `TemplateManager` now understands resources beginning with `engine://` to be keys of `Engine`'s wiki properties. In those cases, if the key and its associated value exist, the latter will be used to as the requested resource.
+
+* Dependency updates
+    * Mockito to 4.4.0 - closes [#176](https://github.com/apache/jspwiki/pull/176), thanks to dependabot
+    * Selenide to 6.3.5
+    * Tomcat to 9.0.60
+    * XStream to 1.4.19 - closes [#177](https://github.com/apache/jspwiki/pull/177), thanks to dependabot
+    * Maven JXR plugin to 3.2.0, dependency plugin to 3.3.0 - closes [#178](https://github.com/apache/jspwiki/pull/178), thanks to dependabot
+
+
 **2022-03-15  Dirk Frederickx (brushed AT apache DOT org)**
 
 * _2.11.3-git-03_
