@@ -21,7 +21,7 @@
 /*
 Class: Wiki.Edit
     Wiki.Edit implements the JSPWiki plain editor, with support
-    for JSPWIki's markup, suggestion popups, ajax based page preview, etc...
+    for JSPWiki's markup, suggestion popups, ajax based page preview, etc...
 
     It uses [Snipe] to enhance the plain textarea.
 */
