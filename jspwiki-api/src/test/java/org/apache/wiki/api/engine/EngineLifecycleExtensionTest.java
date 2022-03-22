@@ -30,7 +30,7 @@ import java.util.Properties;
 
 
 @ExtendWith( MockitoExtension.class )
-public class EngineLifecycleExtensionTest {
+class EngineLifecycleExtensionTest {
 
     @Mock Engine engine;
 
