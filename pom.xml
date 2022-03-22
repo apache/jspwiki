@@ -69,15 +69,15 @@
     <junit.version>5.8.2</junit.version>
     <log4j2.version>2.17.2</log4j2.version>
     <lucene.version>8.11.1</lucene.version> <!-- 9.0.0 and above require JDK >= 11 to execute -->
-    <mockito.version>4.3.1</mockito.version>
+    <mockito.version>4.4.0</mockito.version>
     <nekohtml.version>2.0.2</nekohtml.version> <!-- 2.1.0 and above require JDK >= 11 to execute -->
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
-    <selenide.version>6.3.4</selenide.version>
+    <selenide.version>6.3.5</selenide.version>
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>2.3.0</tika.version>
-    <tomcat.version>9.0.59</tomcat.version>
+    <tomcat.version>9.0.60</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version> <!-- 1.9.0 and above require JDK >= 9 to execute -->
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
