@@ -41,6 +41,7 @@ public class MarkdownSetupEngineLifecycleExtension implements EngineLifecycleExt
             setWikiProperty( properties, "jspwiki.renderingManager.renderer", "org.apache.wiki.render.markdown.MarkdownRenderer" );
             setWikiProperty( properties, "jspwiki.renderingManager.renderer.wysiwyg", "org.apache.wiki.render.markdown.MarkdownRenderer" );
             setWikiProperty( properties, "jspwiki.syntax.decorator", "org.apache.wiki.htmltowiki.syntax.markdown.MarkdownSyntaxDecorator" );
+            setWikiProperty( properties, "jspwiki.syntax.plain", "plain/wiki-snips-markdown.js" );
         }
     }
 
