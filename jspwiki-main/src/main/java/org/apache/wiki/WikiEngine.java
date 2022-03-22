@@ -259,42 +259,13 @@ public class WikiEngine implements Engine {
 
         LOG.debug( "Configuring WikiEngine..." );
 
-        //  Create and find the default working directory.
-        m_workDir = TextUtil.getStringProperty( props, PROP_WORKDIR, null );
+        createAndFindWorkingDirectory( props );
 
-        if( m_workDir == null ) {
-            m_workDir = System.getProperty( "java.io.tmpdir", "." ) +  File.separator + Release.APPNAME + "-" + m_appid;
-        }
-
-        try {
-            final File f = new File( m_workDir );
-            f.mkdirs();
-
-            //  A bunch of sanity checks
-            if( !f.exists() ) {
-                throw new WikiException( "Work directory does not exist: " + m_workDir );
-            }
-            if( !f.canRead() ) {
-                throw new WikiException( "No permission to read work directory: " + m_workDir );
-            }
-            if( !f.canWrite() ) {
-                throw new WikiException( "No permission to write to work directory: " + m_workDir );
-            }
-            if( !f.isDirectory() ) {
-                throw new WikiException( "jspwiki.workDir does not point to a directory: " + m_workDir );
-            }
-        } catch( final SecurityException e ) {
-            LOG.fatal( "Unable to find or create the working directory: {}", m_workDir, e );
-            throw new WikiException( "Unable to find or create the working dir: " + m_workDir, e );
-        }
-
-        LOG.info( "JSPWiki working directory is '{}'", m_workDir );
-
-        m_saveUserInfo   = TextUtil.getBooleanProperty( props, PROP_STOREUSERNAME, m_saveUserInfo );
         m_useUTF8        = StandardCharsets.UTF_8.name().equals( TextUtil.getStringProperty( props, PROP_ENCODING, StandardCharsets.ISO_8859_1.name() ) );
+        m_saveUserInfo   = TextUtil.getBooleanProperty( props, PROP_STOREUSERNAME, m_saveUserInfo );
+        m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE, "Main" );
         m_templateDir    = TextUtil.getStringProperty( props, PROP_TEMPLATEDIR, "default" );
         enforceValidTemplateDirectory();
-        m_frontPage      = TextUtil.getStringProperty( props, PROP_FRONTPAGE,   "Main" );
 
         //
         //  Initialize the important modules.  Any exception thrown by the managers means that we will not start up.
@@ -373,6 +344,35 @@ public class WikiEngine implements Engine {
 
         LOG.info( "WikiEngine configured." );
         m_isConfigured = true;
+    }
+
+    void createAndFindWorkingDirectory( final Properties props ) throws WikiException {
+        m_workDir = TextUtil.getStringProperty( props, PROP_WORKDIR, null );
+        if( StringUtils.isBlank( m_workDir ) ) {
+            m_workDir = System.getProperty( "java.io.tmpdir", "." ) +  File.separator + Release.APPNAME + "-" + m_appid;
+        }
+
+        final File f = new File( m_workDir );
+        try {
+            f.mkdirs();
+        } catch( final SecurityException e ) {
+            LOG.fatal( "Unable to find or create the working directory: {}", m_workDir, e );
+            throw new WikiException( "Unable to find or create the working dir: " + m_workDir, e );
+        }
+
+        //  A bunch of sanity checks
+        checkWorkingDirectory( !f.exists(), "Work directory does not exist: " + m_workDir );
+        checkWorkingDirectory( !f.canRead(), "No permission to read work directory: " + m_workDir );
+        checkWorkingDirectory( !f.canWrite(), "No permission to write to work directory: " + m_workDir );
+        checkWorkingDirectory( !f.isDirectory(), "jspwiki.workDir does not point to a directory: " + m_workDir );
+
+        LOG.info( "JSPWiki working directory is '{}'", m_workDir );
+    }
+
+    void checkWorkingDirectory( final boolean condition, final String errMsg ) throws WikiException {
+        if( condition ) {
+            throw new WikiException( errMsg );
+        }
     }
 
     void initExtraComponents( final Map< String, String > extraComponents ) {
