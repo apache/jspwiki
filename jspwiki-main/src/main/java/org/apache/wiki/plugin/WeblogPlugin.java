@@ -223,7 +223,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
                 startTime.setTime( d );
                 stopTime.setTime( d );
             } catch( final ParseException e ) {
-                return "Illegal time format: "+startDay;
+                return "Illegal time format: "+ TextUtil.replaceEntities(startDay);
             }
         }
 

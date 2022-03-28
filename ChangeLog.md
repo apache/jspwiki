@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-03-28  Dirk Frederickx (brushed AT apache DOT org)**
+
+* _2.11.3-git-05_
+
+* Weblog plugin: sanities the plugin output to protect against Xss attacks.
+
+
 **2022-03-22  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.3-git-04_
