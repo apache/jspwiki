@@ -77,13 +77,13 @@
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>2.3.0</tika.version>
-    <tomcat.version>9.0.60</tomcat.version>
+    <tomcat.version>9.0.62</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version> <!-- 1.9.0 and above require JDK >= 9 to execute -->
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
     <plugin.antrun.version>3.0.0</plugin.antrun.version>
     <plugin.assembly.version>3.3.0</plugin.assembly.version>
-    <plugin.clean.version>3.1.0</plugin.clean.version>
+    <plugin.clean.version>3.2.0</plugin.clean.version>
     <plugin.compiler.version>3.10.1</plugin.compiler.version>
     <plugin.dependency.version>3.3.0</plugin.dependency.version>
     <plugin.enforcer.version>3.0.0</plugin.enforcer.version>
