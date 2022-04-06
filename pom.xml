@@ -95,7 +95,8 @@
     <plugin.release.version>3.0.0-M5</plugin.release.version>
     <plugin.resources.version>3.2.0</plugin.resources.version>
     <plugin.source.version>3.2.1</plugin.source.version>
-    <plugin.surefire.version>3.0.0-M5</plugin.surefire.version>
+    <plugin.surefire.version>3.0.0-M6</plugin.surefire.version>
+    <plugin.surefire.junit5-tree-reporter.version>0.1.0</plugin.surefire.junit5-tree-reporter.version>
     <plugin.war.version>3.3.2</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>3.2.0</plugin.jspc.version>
@@ -603,10 +604,22 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${plugin.surefire.version}</version>
           <configuration>
+            <consoleOutputReporter>
+              <disable>true</disable>
+            </consoleOutputReporter>
+            <reportFormat>plain</reportFormat>
+            <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter"/>
             <systemPropertyVariables>
               <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
             </systemPropertyVariables>
           </configuration>
+          <dependencies>
+            <dependency>
+              <groupId>me.fabriciorby</groupId>
+              <artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+              <version>${plugin.surefire.junit5-tree-reporter.version}</version>
+            </dependency>
+          </dependencies>
         </plugin>
 
         <plugin>
