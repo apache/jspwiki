@@ -17,6 +17,19 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-03-28  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.3-git-06_
+
+* `DefaultUserManager#validateProfile`: requires always a non-null password in order to avoid CSRF attacks
+
+* Fixing italian locale - PR [#173](https://github.com/apache/jspwiki/pull/173), provided by [Thiago Coutinho](https://github.com/selialkile), thanks!
+
+* Dependency updates
+    * Tomcat to 9.0.62
+    * Maven clean plugin to 3.2.0 
+    * Maven surefire plugin to 3.0.0-M6, now with JUnit 5 tree reporter - closes [#180](https://github.com/apache/jspwiki/pull/180), thanks to dependabot
+
 **2022-03-28  Dirk Frederickx (brushed AT apache DOT org)**
 
 * _2.11.3-git-05_
