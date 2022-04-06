@@ -341,12 +341,10 @@ public class DefaultUserManager implements UserManager {
         validator.validate( profile.getEmail(), rb.getString("security.user.email"), InputValidator.EMAIL );
 
         if( !m_engine.getManager( AuthenticationManager.class ).isContainerAuthenticated() ) {
+            // passwords must match and can't be null
             final String password = profile.getPassword();
             if( password == null ) {
-                if( profile.isNew() ) {
-                    // If new profile, passwords must match and can't be null
-                    session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.blankpassword" ) );
-                }
+                session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.blankpassword" ) );
             } else {
                 final HttpServletRequest request = context.getHttpRequest();
                 final String password0 = ( request == null ) ? null : request.getParameter( "password0" );
