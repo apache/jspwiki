@@ -304,7 +304,7 @@ SlimBox                                     ./jspwiki-war/src/main/config/doc/LI
 
 RESOURCES                                   LICENSE FILE
 =============================================================================================================
-Apache Tomcat 9.0.60                        LICENSE
+Apache Tomcat 9.0.62                        LICENSE
 Font Awesome (CSS & LESS files)             ./jspwiki-war/src/main/config/doc/LICENSE.mit
 Font Awesome (Fonts)                        ./jspwiki-war/src/main/config/doc/LICENSE.ofl
 SilkIconSet                                 ./jspwiki-war/src/main/config/doc/LICENSE.SilkIconSet
