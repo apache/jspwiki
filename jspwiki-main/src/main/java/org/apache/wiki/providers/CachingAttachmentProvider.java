@@ -26,6 +26,7 @@ import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.AttachmentProvider;
+import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.api.search.QueryItem;
 import org.apache.wiki.attachment.AttachmentManager;
@@ -43,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 /**
@@ -55,9 +57,10 @@ public class CachingAttachmentProvider implements AttachmentProvider {
 
     private static final Logger LOG = LogManager.getLogger( CachingAttachmentProvider.class );
 
-    private AttachmentProvider m_provider;
+    private AttachmentProvider provider;
     private CachingManager cachingManager;
-    private boolean m_gotall;
+    private boolean allRequested;
+    private final AtomicLong attachments = new AtomicLong( 0L );
 
     /**
      * {@inheritDoc}
@@ -76,9 +79,9 @@ public class CachingAttachmentProvider implements AttachmentProvider {
         }
 
         try {
-            m_provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
-            LOG.debug( "Initializing real provider class {}", m_provider );
-            m_provider.initialize( engine, properties );
+            provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
+            LOG.debug( "Initializing real provider class {}", provider );
+            provider.initialize( engine, properties );
         } catch( final ReflectiveOperationException e ) {
             LOG.error( "Unable to instantiate provider class {}", classname, e );
             throw new IllegalArgumentException( "illegal provider class", e );
@@ -90,10 +93,11 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      */
     @Override
     public void putAttachmentData( final Attachment att, final InputStream data ) throws ProviderException, IOException {
-        m_provider.putAttachmentData( att, data );
+        provider.putAttachmentData( att, data );
         cachingManager.remove( CachingManager.CACHE_ATTACHMENTS_COLLECTION, att.getParentName() );
         att.setLastModified( new Date() );
         cachingManager.put( CachingManager.CACHE_ATTACHMENTS, att.getName(), att );
+        attachments.incrementAndGet();
     }
 
     /**
@@ -101,7 +105,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      */
     @Override
     public InputStream getAttachmentData( final Attachment att ) throws ProviderException, IOException {
-        return m_provider.getAttachmentData( att );
+        return provider.getAttachmentData( att );
     }
 
     /**
@@ -111,7 +115,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     public List< Attachment > listAttachments( final Page page ) throws ProviderException {
         LOG.debug( "Listing attachments for {}", page );
         final List< Attachment > atts = cachingManager.get( CachingManager.CACHE_ATTACHMENTS_COLLECTION, page.getName(),
-                                                            () -> m_provider.listAttachments( page ) );
+                                                            () -> provider.listAttachments( page ) );
         return cloneCollection( atts );
     }
 
@@ -124,7 +128,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      */
     @Override
     public Collection< Attachment > findAttachments( final QueryItem[] query ) {
-        return m_provider.findAttachments( query );
+        return provider.findAttachments( query );
     }
 
     /**
@@ -133,15 +137,18 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     @Override
     public List< Attachment > listAllChanged( final Date timestamp ) throws ProviderException {
         final List< Attachment > all;
-        if ( !m_gotall ) {
-            all = m_provider.listAllChanged( timestamp );
+        if ( !allRequested ) {
+            all = provider.listAllChanged( timestamp );
 
             // Make sure that all attachments are in the cache.
             synchronized( this ) {
                 for( final Attachment att : all ) {
                     cachingManager.put( CachingManager.CACHE_ATTACHMENTS, att.getName(), att );
                 }
-                m_gotall = true;
+                if( timestamp.getTime() == 0L ) { // all attachments requested
+                    allRequested = true;
+                    attachments.set( all.size() );
+                }
             }
         } else {
             final List< String > keys = cachingManager.keys( CachingManager.CACHE_ATTACHMENTS );
@@ -155,11 +162,11 @@ public class CachingAttachmentProvider implements AttachmentProvider {
         }
 
         if( cachingManager.enabled( CachingManager.CACHE_ATTACHMENTS )
-                && all.size() >= cachingManager.info( CachingManager.CACHE_ATTACHMENTS ).getMaxElementsAllowed() ) {
+                && attachments.get() >= cachingManager.info( CachingManager.CACHE_ATTACHMENTS ).getMaxElementsAllowed() ) {
             LOG.warn( "seems {} can't hold all attachments from your page repository, " +
                     "so we're delegating on the underlying provider instead. Please consider increasing " +
                     "your cache sizes on the ehcache configuration file to avoid this behaviour", CachingManager.CACHE_ATTACHMENTS );
-            return m_provider.listAllChanged( timestamp );
+            return provider.listAllChanged( timestamp );
         }
 
         return all;
@@ -192,10 +199,10 @@ public class CachingAttachmentProvider implements AttachmentProvider {
         //  We don't cache previous versions
         if( version != WikiProvider.LATEST_VERSION ) {
             LOG.debug( "...we don't cache old versions" );
-            return m_provider.getAttachmentInfo( page, name, version );
+            return provider.getAttachmentInfo( page, name, version );
         }
         final Collection< Attachment > c = cachingManager.get( CachingManager.CACHE_ATTACHMENTS_COLLECTION, page.getName(),
-                                                               ()-> m_provider.listAttachments( page ) );
+                                                               ()-> provider.listAttachments( page ) );
         return findAttachmentFromCollection( c, name );
     }
 
@@ -204,7 +211,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      */
     @Override
     public List< Attachment > getVersionHistory( final Attachment att ) {
-        return m_provider.getVersionHistory( att );
+        return provider.getVersionHistory( att );
     }
 
     /**
@@ -214,7 +221,10 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     public void deleteVersion( final Attachment att ) throws ProviderException {
         // This isn't strictly speaking correct, but it does not really matter
         cachingManager.remove( CachingManager.CACHE_ATTACHMENTS_COLLECTION, att.getParentName() );
-        m_provider.deleteVersion( att );
+        provider.deleteVersion( att );
+        if( att.getVersion() == PageProvider.LATEST_VERSION ) {
+            attachments.decrementAndGet();
+        }
     }
 
     /**
@@ -224,7 +234,8 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     public void deleteAttachment( final Attachment att ) throws ProviderException {
         cachingManager.remove( CachingManager.CACHE_ATTACHMENTS_COLLECTION, att.getParentName() );
         cachingManager.remove( CachingManager.CACHE_ATTACHMENTS, att.getName() );
-        m_provider.deleteAttachment( att );
+        provider.deleteAttachment( att );
+        attachments.decrementAndGet();
     }
 
     /**
@@ -236,7 +247,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     public synchronized String getProviderInfo() {
         final CacheInfo attCacheInfo = cachingManager.info( CachingManager.CACHE_ATTACHMENTS );
         final CacheInfo attColCacheInfo = cachingManager.info( CachingManager.CACHE_ATTACHMENTS_COLLECTION );
-        return "Real provider: " + m_provider.getClass().getName() +
+        return "Real provider: " + provider.getClass().getName() +
                 ". Attachment cache hits: " + attCacheInfo.getHits() +
                 ". Attachment cache misses: " + attCacheInfo.getMisses() +
                 ". Attachment collection cache hits: " + attColCacheInfo.getHits() +
@@ -249,7 +260,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      *  @return The real provider underneath this one.
      */
     public AttachmentProvider getRealProvider() {
-        return m_provider;
+        return provider;
     }
 
     /**
@@ -257,7 +268,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      */
     @Override
     public void moveAttachmentsForPage( final String oldParent, final String newParent ) throws ProviderException {
-        m_provider.moveAttachmentsForPage( oldParent, newParent );
+        provider.moveAttachmentsForPage( oldParent, newParent );
         cachingManager.remove( CachingManager.CACHE_ATTACHMENTS_COLLECTION, newParent );
         cachingManager.remove( CachingManager.CACHE_ATTACHMENTS_COLLECTION, oldParent );
 

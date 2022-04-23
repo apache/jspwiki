@@ -35,13 +35,11 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.util.Properties;
 
-public class CachingProviderTest {
-
-    protected TestEngine testEngine = TestEngine.build();
+class CachingProviderTest {
 
     @AfterEach
-    public void tearDown() {
-        testEngine.deleteTestPage("Testi");
+    void tearDown() {
+        TestEngine.emptyWikiDir();
         TestEngine.emptyWorkDir();
     }
 
@@ -49,13 +47,13 @@ public class CachingProviderTest {
      *  Checks that at startup we call the provider once, and once only.
      */
     @Test
-    public void testInitialization() {
+    void testInitialization() {
         final Properties props = TestEngine.getTestProperties();
         props.setProperty( CachingManager.PROP_CACHE_ENABLE, "true" );
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.CounterProvider" );
 
         final TestEngine engine = TestEngine.build( props );
-        final CounterProvider p = (CounterProvider)((CachingProvider)engine.getManager( PageManager.class ).getProvider()).getRealProvider();
+        final CounterProvider p = ( CounterProvider )( ( CachingProvider )engine.getManager( PageManager.class ).getProvider() ).getRealProvider();
 
         Assertions.assertEquals( 1, p.m_initCalls, "init" );
         Assertions.assertEquals( 1, p.m_getAllPagesCalls, "getAllPages" );
@@ -64,10 +62,12 @@ public class CachingProviderTest {
 
         engine.getManager( PageManager.class ).getPage( "Foo" );
         Assertions.assertEquals( 0, p.m_pageExistsCalls, "pageExists2" );
+
+        engine.shutdown();
     }
 
     @Test
-    public void testSneakyAdd() throws Exception {
+    void testSneakyAdd() throws Exception {
         final TestEngine engine = TestEngine.build();
         final String dir = engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
         final File f = new File( dir, "Testi.txt" );
@@ -83,8 +83,34 @@ public class CachingProviderTest {
 
         final String text = engine.getManager( PageManager.class ).getText( "Testi");
         Assertions.assertEquals( "[fuufaa]", text, "text" );
+        engine.shutdown();
+    }
 
-        // TODO: ReferenceManager check as well
+    @Test
+    void testGetAllWithCacheTooSmallDelegatesToRealProvider() throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+        props.setProperty( CachingManager.PROP_CACHE_ENABLE, "true" );
+        props.setProperty( "jspwiki.cache.config-file", "ehcache-jspwiki-small.xml" );
+
+        final TestEngine engine = TestEngine.build( props );
+        engine.saveText( "page1", "page that should be cached" );
+        engine.saveText( "page2", "page that should not be cached" );
+
+        Assertions.assertEquals( 2, engine.getManager( PageManager.class ).getAllPages().size() );
+        engine.shutdown();
+    }
+
+    @Test
+    void testGetAllWithCacheTooSmallDelegatesToRealProviderWithInitialPageLoad() throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+        props.setProperty( CachingManager.PROP_CACHE_ENABLE, "true" );
+        props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.CounterProvider" );
+        props.setProperty( "jspwiki.cache.config-file", "ehcache-jspwiki-small.xml" );
+
+        final TestEngine engine = TestEngine.build( props );
+
+        Assertions.assertEquals( 4, engine.getManager( PageManager.class ).getAllPages().size() );
+        engine.shutdown();
     }
 
 }

@@ -282,7 +282,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
 
     /** {@inheritDoc} */
     @Override
-    public Collection<Attachment> getAllAttachments() throws ProviderException {
+    public Collection< Attachment > getAllAttachments() throws ProviderException {
         if( attachmentsEnabled() ) {
             return m_provider.listAllChanged( new Date( 0L ) );
         }

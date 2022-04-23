@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicLong;
 
 
 /**
@@ -63,11 +64,11 @@ public class CachingProvider implements PageProvider {
     private static final Logger LOG = LogManager.getLogger( CachingProvider.class );
 
     private CachingManager cachingManager;
-    private PageProvider m_provider;
-    private Engine m_engine;
+    private PageProvider provider;
+    private Engine engine;
 
-    // FIXME: This MUST be cached somehow.
-    private boolean m_gotall;
+    private boolean allRequested;
+    private final AtomicLong pages = new AtomicLong( 0L );
 
     /**
      *  {@inheritDoc}
@@ -77,8 +78,8 @@ public class CachingProvider implements PageProvider {
         LOG.debug( "Initing CachingProvider" );
 
         // engine is used for getting the search engine
-        m_engine = engine;
-        cachingManager = m_engine.getManager( CachingManager.class );
+        this.engine = engine;
+        cachingManager = this.engine.getManager( CachingManager.class );
 
         //  Find and initialize real provider.
         final String classname;
@@ -89,9 +90,9 @@ public class CachingProvider implements PageProvider {
         }
 
         try {
-            m_provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
-            LOG.debug( "Initializing real provider class {}", m_provider );
-            m_provider.initialize( engine, properties );
+            provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
+            LOG.debug( "Initializing real provider class {}", provider );
+            provider.initialize( engine, properties );
         } catch( final ReflectiveOperationException e ) {
             LOG.error( "Unable to instantiate provider class {}", classname, e );
             throw new IllegalArgumentException( "illegal provider class", e );
@@ -103,7 +104,7 @@ public class CachingProvider implements PageProvider {
         if( name == null ) {
             return null;
         }
-        return cachingManager.get( CachingManager.CACHE_PAGES, name, () -> m_provider.getPageInfo( name, PageProvider.LATEST_VERSION ) );
+        return cachingManager.get( CachingManager.CACHE_PAGES, name, () -> provider.getPageInfo( name, PageProvider.LATEST_VERSION ) );
     }
 
 
@@ -130,12 +131,13 @@ public class CachingProvider implements PageProvider {
                 return true;
             }
 
-            return m_provider.pageExists( pageName, version );
+            return provider.pageExists( pageName, version );
         }
 
         try {
             return getPageInfo( pageName, version ) != null;
         } catch( final ProviderException e ) {
+            LOG.info( "Provider failed while retrieving {}", pageName );
         }
 
         return false;
@@ -164,14 +166,14 @@ public class CachingProvider implements PageProvider {
         }
 
         //  If we have a list of all pages in memory, then any page not in the cache must be non-existent.
-        if( m_gotall ) {
+        if( pages.get() < cachingManager.info( CachingManager.CACHE_PAGES ).getMaxElementsAllowed() ) {
             return false;
         }
 
         //  We could add the page to the cache here as well, but in order to understand whether that is a good thing or not we would
         //  need to analyze the JSPWiki calling patterns extensively.  Presumably it would be a good thing if pageExists() is called
         //  many times before the first getPageText() is called, and the whole page is cached.
-        return m_provider.pageExists( pageName );
+        return provider.pageExists( pageName );
     }
 
     /**
@@ -193,7 +195,7 @@ public class CachingProvider implements PageProvider {
             if( p != null && p.getVersion() == version ) {
                 result = getTextFromCache( pageName );
             } else {
-                result = m_provider.getPageText( pageName, version );
+                result = provider.getPageText( pageName, version );
             }
         }
 
@@ -207,7 +209,7 @@ public class CachingProvider implements PageProvider {
 
         return cachingManager.get( CachingManager.CACHE_PAGES_TEXT, pageName, () -> {
             if( pageExists( pageName ) ) {
-                return m_provider.getPageText( pageName, PageProvider.LATEST_VERSION );
+                return provider.getPageText( pageName, PageProvider.LATEST_VERSION );
             }
             return null;
         } );
@@ -219,7 +221,7 @@ public class CachingProvider implements PageProvider {
     @Override
     public void putPageText( final Page page, final String text ) throws ProviderException {
         synchronized( this ) {
-            m_provider.putPageText( page, text );
+            provider.putPageText( page, text );
             page.setLastModified( new Date() );
 
             // Refresh caches properly
@@ -229,6 +231,7 @@ public class CachingProvider implements PageProvider {
 
             getPageInfoFromCache( page.getName() );
         }
+        pages.incrementAndGet();
     }
 
     /**
@@ -237,15 +240,16 @@ public class CachingProvider implements PageProvider {
     @Override
     public Collection< Page > getAllPages() throws ProviderException {
         final Collection< Page > all;
-        if ( !m_gotall ) {
-            all = m_provider.getAllPages();
+        if ( !allRequested ) {
+            all = provider.getAllPages();
             // Make sure that all pages are in the cache.
             synchronized( this ) {
                 for( final Page p : all ) {
                     cachingManager.put( CachingManager.CACHE_PAGES,  p.getName(), p );
                 }
-                m_gotall = true;
+                allRequested = true;
             }
+            pages.set( all.size() );
         } else {
             final List< String > keys = cachingManager.keys( CachingManager.CACHE_PAGES );
             all = new TreeSet<>();
@@ -258,11 +262,11 @@ public class CachingProvider implements PageProvider {
         }
 
         if( cachingManager.enabled( CachingManager.CACHE_PAGES )
-                && all.size() >= cachingManager.info( CachingManager.CACHE_PAGES ).getMaxElementsAllowed() ) {
+                && pages.get() >= cachingManager.info( CachingManager.CACHE_PAGES ).getMaxElementsAllowed() ) {
             LOG.warn( "seems {} can't hold all pages from your page repository, " +
                     "so we're delegating on the underlying provider instead. Please consider increasing " +
                     "your cache sizes on the ehcache configuration file to avoid this behaviour", CachingManager.CACHE_PAGES );
-            return m_provider.getAllPages();
+            return provider.getAllPages();
         }
 
         return all;
@@ -273,7 +277,7 @@ public class CachingProvider implements PageProvider {
      */
     @Override
     public Collection< Page > getAllChangedSince( final Date date ) {
-        return m_provider.getAllChangedSince( date );
+        return provider.getAllChangedSince( date );
     }
 
     /**
@@ -281,7 +285,7 @@ public class CachingProvider implements PageProvider {
      */
     @Override
     public int getPageCount() throws ProviderException {
-        return m_provider.getPageCount();
+        return provider.getPageCount();
     }
 
     /**
@@ -290,17 +294,17 @@ public class CachingProvider implements PageProvider {
     @Override
     public Collection< SearchResult > findPages( final QueryItem[] query ) {
         //  If the provider is a fast searcher, then just pass this request through.
-        return m_provider.findPages( query );
+        return provider.findPages( query );
         // FIXME: Does not implement fast searching
     }
 
     //  FIXME: Kludge: make sure that the page is also parsed and it gets all the necessary variables.
     private void refreshMetadata( final Page page ) {
         if( page != null && !page.hasMetadata() ) {
-            final RenderingManager mgr = m_engine.getManager( RenderingManager.class );
+            final RenderingManager mgr = engine.getManager( RenderingManager.class );
             try {
-                final String data = m_provider.getPageText( page.getName(), page.getVersion() );
-                final Context ctx = Wiki.context().create( m_engine, page );
+                final String data = provider.getPageText( page.getName(), page.getVersion() );
+                final Context ctx = Wiki.context().create( engine, page );
                 final MarkupParser parser = mgr.getParser( ctx, data );
 
                 parser.parse();
@@ -322,7 +326,7 @@ public class CachingProvider implements PageProvider {
             page = cached;
         } else {
             // We do not cache old versions.
-            page = m_provider.getPageInfo( pageName, version );
+            page = provider.getPageInfo( pageName, version );
         }
         refreshMetadata( page );
         return page;
@@ -336,7 +340,7 @@ public class CachingProvider implements PageProvider {
         if( pageName == null ) {
             return null;
         }
-        return cachingManager.get( CachingManager.CACHE_PAGES_HISTORY, pageName, () -> m_provider.getVersionHistory( pageName ) );
+        return cachingManager.get( CachingManager.CACHE_PAGES_HISTORY, pageName, () -> provider.getVersionHistory( pageName ) );
     }
 
     /**
@@ -348,7 +352,7 @@ public class CachingProvider implements PageProvider {
     public synchronized String getProviderInfo() {
         final CacheInfo pageCacheInfo = cachingManager.info( CachingManager.CACHE_PAGES );
         final CacheInfo pageHistoryCacheInfo = cachingManager.info( CachingManager.CACHE_PAGES_HISTORY );
-        return "Real provider: " + m_provider.getClass().getName()+
+        return "Real provider: " + provider.getClass().getName()+
                 ". Page cache hits: " + pageCacheInfo.getHits() +
                 ". Page cache misses: " + pageCacheInfo.getMisses() +
                 ". History cache hits: " + pageHistoryCacheInfo.getHits() +
@@ -371,8 +375,11 @@ public class CachingProvider implements PageProvider {
                 cachingManager.remove( CachingManager.CACHE_PAGES_TEXT, pageName );
             }
 
-            m_provider.deleteVersion( pageName, version );
+            provider.deleteVersion( pageName, version );
             cachingManager.remove( CachingManager.CACHE_PAGES_HISTORY, pageName );
+        }
+        if( version == PageProvider.LATEST_VERSION ) {
+            pages.decrementAndGet();
         }
     }
 
@@ -386,8 +393,9 @@ public class CachingProvider implements PageProvider {
             cachingManager.put( CachingManager.CACHE_PAGES, pageName, null );
             cachingManager.put( CachingManager.CACHE_PAGES_TEXT, pageName, null );
             cachingManager.put( CachingManager.CACHE_PAGES_HISTORY, pageName, null );
-            m_provider.deletePage( pageName );
+            provider.deletePage( pageName );
         }
+        pages.decrementAndGet();
     }
 
     /**
@@ -395,7 +403,7 @@ public class CachingProvider implements PageProvider {
      */
     @Override
     public void movePage( final String from, final String to ) throws ProviderException {
-        m_provider.movePage( from, to );
+        provider.movePage( from, to );
         synchronized( this ) {
             // Clear any cached version of the old page and new page
             cachingManager.remove( CachingManager.CACHE_PAGES, from );
@@ -415,7 +423,7 @@ public class CachingProvider implements PageProvider {
      *  @return The real provider.
      */
     public PageProvider getRealProvider() {
-        return m_provider;
+        return provider;
     }
 
 }
