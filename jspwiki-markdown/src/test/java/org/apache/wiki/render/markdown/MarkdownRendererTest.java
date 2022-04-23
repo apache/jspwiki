@@ -30,24 +30,24 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.markdown.MarkdownParser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 
 public class MarkdownRendererTest {
 
-    Properties props = TestEngine.getTestProperties();
-    List<String> created = new ArrayList<>();
+    List< String > created = new ArrayList<>();
 
     static final String PAGE_NAME = "testpage";
 
-    TestEngine testEngine;
+    TestEngine testEngine = TestEngine.build( TestEngine.with( "jspwiki.translatorReader.matchEnglishPlurals", "true" ),
+                                              TestEngine.with( "jspwiki.fileSystemProvider.pageDir", "./target/md-pageDir" ),
+                                              TestEngine.with( "jspwiki.renderingManager.markupParser", MarkdownParser.class.getName() ),
+                                              TestEngine.with( "jspwiki.renderingManager.renderer", MarkdownRenderer.class.getName() ) );
 
     @Test
     public void testMarkupSimpleMarkdown() throws Exception {
@@ -307,15 +307,6 @@ public class MarkdownRendererTest {
         Assertions.assertEquals( "<h3 id=\"awesome-h3\">Awesome H3</h3>\n" +
                                  "<h3 id=\"awesome-h3-1\">Awesome H3</h3>\n",
                                  translate( src ) );
-    }
-
-    @BeforeEach
-    public void setUp() {
-        props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true" );
-        props.setProperty( "jspwiki.fileSystemProvider.pageDir", "./target/md-pageDir" );
-        props.setProperty( "jspwiki.renderingManager.markupParser", MarkdownParser.class.getName() );
-        props.setProperty( "jspwiki.renderingManager.renderer", MarkdownRenderer.class.getName() );
-        testEngine = TestEngine.build( props );
     }
 
     @AfterEach
