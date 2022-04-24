@@ -17,6 +17,21 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-04-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.3-git-07_
+
+* Ensure Lucene indexes all pages and attachments, even when they don't fit in the cache. Should fix [JSPWIKI-1171](https://issues.apache.org/jira/browse/JSPWIKI-1171)
+
+* Add a memory profiling test, so it can be used to estimate the cache configuration & other memory requirements. To run it just `mvn test -Dtest=MemoryProfiling` on the `jspwiki-main` module
+
+* Dependency updates
+    * Awaitility to 4.2.0
+    * Apache parent pom to 26 - closes [#182](https://github.com/apache/jspwiki/pull/182), thanks to dependabot
+    * Maven javadoc plugin to 3.4.0
+    * Mockito to 4.5.0
+    * Selenide to 6.4.0 - closes [#183](https://github.com/apache/jspwiki/pull/183), thanks to dependabot
+
 **2022-03-28  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.3-git-06_
