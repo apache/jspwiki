@@ -42,6 +42,7 @@ under the License.
 | mvn wro4j:run -Dminimize=false                                  | only merge the js & css files (no compression)                                                                                      |
 | mvn clean install -Dmaven.test.skip -Dminimize=false            | performs a build, skipping the tests and skip compression                                                                           |
 | mvn clean install -Dgenerate-native-launchers=true              | (from portable module) performs a build, regenerating the native executables on the portable build                                  |
+| mvn test -Dtest=MemoryProfiling                                 | (from jspwiki-main module) runs a memory profiling test                                                                             |
 
 (1) `-T 1C` can be added to any of these commands in order to run a parallel build, thus decreasing build time, i.e., `mvn clean install -T 1C`.
 

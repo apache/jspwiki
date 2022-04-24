@@ -188,6 +188,12 @@
     </dependency>
 
     <dependency>
+      <groupId>com.github.jbellis</groupId>
+      <artifactId>jamm</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>net.sourceforge.stripes</groupId>
       <artifactId>stripes</artifactId>
       <scope>test</scope>
