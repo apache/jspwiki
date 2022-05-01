@@ -2,7 +2,6 @@ package org.apache.wiki.plugin;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,11 +9,11 @@ import org.junit.jupiter.api.Test;
 
 public class WeblogPluginTest {
 
-    static TestEngine testEngine = TestEngine.build();
+    TestEngine testEngine = TestEngine.build();
 
     @AfterEach
     public void tearDown() throws Exception {
-        testEngine.getManager( PageManager.class ).deletePage( "Test" );
+        testEngine.stop();
     }
 
     @Test
