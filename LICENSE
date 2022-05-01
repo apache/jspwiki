@@ -280,15 +280,15 @@ xpp3-1.1.3.4-RC3                            ./jspwiki-war/src/main/config/doc/LI
 
 TEST LIBRARY                                LICENSE FILE
 =============================================================================================================
-awaitility-4.1.1.jar                        LICENSE
+awaitility-4.2.0.jar                        LICENSE
 commons-el-1.0.jar                          LICENSE
 custom_rhino-0.4.3.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mpl
 hsqldb-2.6.1.jar                            ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 sqltool-2.6.1.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
-jetty-all-9.4.45.v20220203.jar              LICENSE
+jetty-all-9.4.46.v20220331.jar              LICENSE
 junit-5.8.2                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
-mockito-core-4.4.0.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
-selenide-6.3.5.jar                          ./jspwiki-war/src/main/config/doc/LICENSE.mit
+mockito-core-4.5.1.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
+selenide-6.4.0.jar                          ./jspwiki-war/src/main/config/doc/LICENSE.mit
 stripes-1.7.0-async.jar                     LICENSE
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui
 
