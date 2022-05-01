@@ -17,6 +17,18 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-05-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.3-git-08_
+
+* `TestEngine#shutdown` now cleans cache, wiki pages dir and their associated attachments, if any. This allows cleaning up a handful of tests
+    * `TestEngine#emptyWikiDir` deletes both page and attachment directories
+
+* Dependency updates
+    * Jetty to 9.4.46.v20220331 - closes [#181](https://github.com/apache/jspwiki/pull/181), thanks to dependabot
+    * Mockito to 4.5.1 - closes [#185](https://github.com/apache/jspwiki/pull/185), thanks to dependabot
+    * Maven project info reports plugin to 3.3.0 - closes [#186](https://github.com/apache/jspwiki/pull/186), thanks to dependabot
+
 **2022-04-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.3-git-07_
