@@ -27,6 +27,7 @@ import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.WorkflowManager;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -39,10 +40,17 @@ import static org.apache.wiki.TestEngine.with;
 
 public class SaveWikiPageTaskTest {
 
+    TestEngine engine;
+
+    @AfterEach
+    void tearDown() {
+        engine.stop();
+    }
+
     @Test
     public void testSaveWikiPageTask() throws Exception {
-        final TestEngine engine = TestEngine.build( with( "jspwiki.lucene.initialdelay", "0" ),
-                                                    with( "jspwiki.lucene.indexdelay", "1" ) );
+        engine = TestEngine.build( with( "jspwiki.lucene.initialdelay", "0" ),
+                                   with( "jspwiki.lucene.indexdelay", "1" ) );
         final String pageName = "TestSaveWikiPageTestPage";
         final Page page = Wiki.contents().page( engine, pageName );
         engine.saveText( pageName, "initial text on first revision" );
@@ -60,9 +68,9 @@ public class SaveWikiPageTaskTest {
 
     @Test
     public void testSaveWikiPageTaskWithVersioningFileProvider() throws Exception {
-        final TestEngine engine = TestEngine.build( with( "jspwiki.pageProvider", "VersioningFileProvider" ),
-                                                    with( "jspwiki.lucene.initialdelay", "0" ),
-                                                    with( "jspwiki.lucene.indexdelay", "1" ) );
+        engine = TestEngine.build( with( "jspwiki.pageProvider", "VersioningFileProvider" ),
+                                   with( "jspwiki.lucene.initialdelay", "0" ),
+                                   with( "jspwiki.lucene.indexdelay", "1" ) );
         final String pageName = "TestSaveWikiPageTestPageWithVersioningFileProvider";
         final Page page = Wiki.contents().page( engine, pageName );
         engine.saveText( pageName, "initial text on first revision" );
