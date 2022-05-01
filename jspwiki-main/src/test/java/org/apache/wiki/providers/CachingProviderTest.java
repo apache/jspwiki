@@ -37,10 +37,11 @@ import java.util.Properties;
 
 class CachingProviderTest {
 
+    TestEngine engine;
+
     @AfterEach
     void tearDown() {
-        TestEngine.emptyWikiDir();
-        TestEngine.emptyWorkDir();
+        engine.stop();
     }
 
     /**
@@ -52,7 +53,7 @@ class CachingProviderTest {
         props.setProperty( CachingManager.PROP_CACHE_ENABLE, "true" );
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.CounterProvider" );
 
-        final TestEngine engine = TestEngine.build( props );
+        engine = TestEngine.build( props );
         final CounterProvider p = ( CounterProvider )( ( CachingProvider )engine.getManager( PageManager.class ).getProvider() ).getRealProvider();
 
         Assertions.assertEquals( 1, p.m_initCalls, "init" );
@@ -62,13 +63,11 @@ class CachingProviderTest {
 
         engine.getManager( PageManager.class ).getPage( "Foo" );
         Assertions.assertEquals( 0, p.m_pageExistsCalls, "pageExists2" );
-
-        engine.shutdown();
     }
 
     @Test
     void testSneakyAdd() throws Exception {
-        final TestEngine engine = TestEngine.build();
+        engine = TestEngine.build();
         final String dir = engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
         final File f = new File( dir, "Testi.txt" );
         final String content = "[fuufaa]";
@@ -83,7 +82,6 @@ class CachingProviderTest {
 
         final String text = engine.getManager( PageManager.class ).getText( "Testi");
         Assertions.assertEquals( "[fuufaa]", text, "text" );
-        engine.shutdown();
     }
 
     @Test
@@ -92,12 +90,11 @@ class CachingProviderTest {
         props.setProperty( CachingManager.PROP_CACHE_ENABLE, "true" );
         props.setProperty( "jspwiki.cache.config-file", "ehcache-jspwiki-small.xml" );
 
-        final TestEngine engine = TestEngine.build( props );
+        engine = TestEngine.build( props );
         engine.saveText( "page1", "page that should be cached" );
         engine.saveText( "page2", "page that should not be cached" );
 
-        Assertions.assertEquals( 2, engine.getManager( PageManager.class ).getAllPages().size() );
-        engine.shutdown();
+        Assertions.assertEquals( 2, engine.getManager( PageManager.class ).getAllPages().size(), engine.getManager( PageManager.class ).getAllPages().toString() );
     }
 
     @Test
@@ -107,10 +104,9 @@ class CachingProviderTest {
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.CounterProvider" );
         props.setProperty( "jspwiki.cache.config-file", "ehcache-jspwiki-small.xml" );
 
-        final TestEngine engine = TestEngine.build( props );
+        engine = TestEngine.build( props );
 
         Assertions.assertEquals( 4, engine.getManager( PageManager.class ).getAllPages().size() );
-        engine.shutdown();
     }
 
 }

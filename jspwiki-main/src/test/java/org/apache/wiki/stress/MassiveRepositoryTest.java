@@ -22,14 +22,12 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.pages.PageManager;
-import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.util.Properties;
 import java.util.Random;
 
@@ -40,9 +38,6 @@ public class MassiveRepositoryTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        final String files = props.getProperty( FileSystemProvider.PROP_PAGEDIR );
-        final File f = new File( files );
-        TestEngine.deleteAll( f );
         engine.stop();
     }
 

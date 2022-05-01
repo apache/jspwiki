@@ -34,7 +34,8 @@ import static org.apache.wiki.TestEngine.with;
 
 public class ReferringPagesPluginTest  {
 
-    static TestEngine engine = TestEngine.build( with( "jspwiki.breakTitleWithSpaces", "false" ) );
+    static TestEngine engine = TestEngine.build( with( "jspwiki.breakTitleWithSpaces", "false" ),
+                                                 with( "jspwiki.cache.enable", "false" ) );
     static PluginManager manager = engine.getManager( PluginManager.class );
     Context context;
 

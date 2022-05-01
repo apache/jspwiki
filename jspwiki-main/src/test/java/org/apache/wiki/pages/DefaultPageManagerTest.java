@@ -49,13 +49,6 @@ public class DefaultPageManagerTest {
 
     @AfterEach
     public void tearDown() {
-        final String files = engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
-        if( files != null ) {
-            final File f = new File( files );
-            TestEngine.deleteAll( f );
-        }
-
-        TestEngine.emptyWorkDir();
         engine.stop();
     }
 

@@ -311,11 +311,6 @@ public class MarkdownRendererTest {
 
     @AfterEach
     public void tearDown() {
-        for( final String name : created ) {
-            testEngine.deleteTestPage( name );
-            TestEngine.deleteAttachments( name );
-        }
-
         created.clear();
         testEngine.stop();
     }

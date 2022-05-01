@@ -39,16 +39,13 @@ public class AttachmentManagerTest {
     public static final String NAME1 = "TestPage";
     public static final String NAMEU = "TestPage\u00e6";
 
-    TestEngine m_engine;
-    AttachmentManager m_manager;
+    TestEngine m_engine = TestEngine.build();
+    AttachmentManager m_manager = m_engine.getManager( AttachmentManager.class );
 
     static String c_fileContents = "ABCDEFGHIJKLMNOPQRSTUVWxyz";
 
     @BeforeEach
     public void setUp() throws Exception {
-        m_engine  = TestEngine.build();
-        m_manager = m_engine.getManager( AttachmentManager.class );
-
         m_engine.saveText( NAME1, "Foobar" );
         m_engine.saveText( NAMEU, "Foobar" );
     }
@@ -65,14 +62,7 @@ public class AttachmentManagerTest {
 
     @AfterEach
     public void tearDown() {
-        m_engine.deleteTestPage( NAME1 );
-        m_engine.deleteTestPage( NAMEU );
         m_engine.stop();
-
-        TestEngine.deleteAttachments(NAME1);
-        TestEngine.deleteAttachments(NAMEU);
-
-        TestEngine.emptyWorkDir();
     }
 
     @Test

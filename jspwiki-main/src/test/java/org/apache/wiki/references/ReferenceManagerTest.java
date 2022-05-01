@@ -46,14 +46,7 @@ public class ReferenceManagerTest  {
 
     @AfterEach
     public void tearDown() {
-        // any wiki page that was created must be deleted!
-        TestEngine.emptyWikiDir();
-
-        // jspwiki always uses a singleton CacheManager, so clear the cache at the end of every test case to avoid polluting another test case
         engine.stop();
-
-        // make sure that the reference manager cache is cleaned
-        TestEngine.emptyWorkDir( null );
     }
 
     @Test

@@ -53,10 +53,7 @@ public class RPCHandlerTest {
 
     @AfterEach
     public void tearDown() {
-        m_engine.deleteTestPage( NAME1 );
         m_engine.stop();
-        TestEngine.deleteAttachments( NAME1 );
-        TestEngine.emptyWorkDir();
     }
 
     @Test
@@ -73,12 +70,12 @@ public class RPCHandlerTest {
     public void testRecentChanges()
             throws Exception {
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
-        final Vector previousChanges = m_handler.getRecentChanges( time );
+        final Vector< Hashtable< String, Object > > previousChanges = m_handler.getRecentChanges( time );
 
         m_engine.saveText( NAME1, "Foo" );
         final Page directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
         time = getCalendarTime( directInfo.getLastModified() );
-        final Vector recentChanges = m_handler.getRecentChanges( time );
+        final Vector< Hashtable< String, Object > > recentChanges = m_handler.getRecentChanges( time );
 
         Assertions.assertEquals( 1, recentChanges.size() - previousChanges.size(), "wrong number of changes" );
     }
@@ -87,7 +84,7 @@ public class RPCHandlerTest {
     public void testRecentChangesWithAttachments()
             throws Exception {
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
-        final Vector previousChanges = m_handler.getRecentChanges( time );
+        final Vector< Hashtable< String, Object > > previousChanges = m_handler.getRecentChanges( time );
 
         m_engine.saveText( NAME1, "Foo" );
         final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "TestAtt.txt" );
@@ -95,7 +92,7 @@ public class RPCHandlerTest {
         m_engine.getManager( AttachmentManager.class ).storeAttachment( att, m_engine.makeAttachmentFile() );
         final Page directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
         time = getCalendarTime( directInfo.getLastModified() );
-        final Vector recentChanges = m_handler.getRecentChanges( time );
+        final Vector< Hashtable< String, Object > > recentChanges = m_handler.getRecentChanges( time );
 
         Assertions.assertEquals( 1, recentChanges.size() - previousChanges.size(), "wrong number of changes" );
     }
@@ -106,7 +103,7 @@ public class RPCHandlerTest {
         m_engine.saveText( NAME1, "Foobar.[{ALLOW view Anonymous}]" );
         final Page directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
 
-        final Hashtable ht = m_handler.getPageInfo( NAME1 );
+        final Hashtable< String, Object > ht = m_handler.getPageInfo( NAME1 );
         Assertions.assertEquals( ht.get( "name" ), NAME1, "name" );
 
         final Date d = ( Date ) ht.get( "lastModified" );
@@ -138,11 +135,11 @@ public class RPCHandlerTest {
 
         m_engine.saveText( pageName, text );
 
-        final Vector links = m_handler.listLinks( pageName );
+        final Vector< Hashtable< String, String > > links = m_handler.listLinks( pageName );
 
         Assertions.assertEquals( 1, links.size(), "link count" );
 
-        final Hashtable linkinfo = ( Hashtable ) links.elementAt( 0 );
+        final Hashtable< String, String > linkinfo = links.elementAt( 0 );
 
         Assertions.assertEquals( "Foobar", linkinfo.get( "page" ), "name" );
         Assertions.assertEquals( "local", linkinfo.get( "type" ), "type" );
@@ -164,17 +161,17 @@ public class RPCHandlerTest {
 
         // Test.
 
-        final Vector links = m_handler.listLinks( pageName );
+        final Vector< Hashtable< String, String > > links = m_handler.listLinks( pageName );
 
         Assertions.assertEquals( 2, links.size(), "link count" );
 
-        Hashtable linkinfo = ( Hashtable ) links.elementAt( 0 );
+        Hashtable< String, String > linkinfo = links.elementAt( 0 );
 
         Assertions.assertEquals( "Foobar", linkinfo.get( "page" ), "edit name" );
         Assertions.assertEquals( "local", linkinfo.get( "type" ), "edit type" );
         Assertions.assertEquals( "/test/Edit.jsp?page=Foobar", linkinfo.get( "href" ), "edit href" );
 
-        linkinfo = ( Hashtable ) links.elementAt( 1 );
+        linkinfo = links.elementAt( 1 );
 
         Assertions.assertEquals( NAME1 + "/TestAtt.txt", linkinfo.get( "page" ), "att name" );
         Assertions.assertEquals( "local", linkinfo.get( "type" ), "att type" );

@@ -59,22 +59,13 @@ public class JSPWikiMarkupParserTest {
 
     @AfterEach
     public void tearDown() {
-        deleteCreatedPages();
+        created.clear();
         testEngine.stop();
     }
 
     private void newPage( final String name ) throws WikiException {
         testEngine.saveText( name, "<test>" );
         created.addElement( name );
-    }
-
-    private void deleteCreatedPages() {
-        for ( final String name : created ) {
-            testEngine.deleteTestPage( name );
-            TestEngine.deleteAttachments( name );
-        }
-
-        created.clear();
     }
 
     private String translate( final String src ) throws IOException {
@@ -96,7 +87,7 @@ public class JSPWikiMarkupParserTest {
         return conv.getString();
     }
 
-    private String translate_nofollow( final String src ) throws IOException, WikiException {
+    private String translate_nofollow( final String src ) throws IOException {
         final TestEngine testEngine2 = TestEngine.build( with( "jspwiki.translatorReader.useRelNofollow", "true" ) );
         final WikiContext context = new WikiContext( testEngine2, Wiki.contents().page( testEngine2, PAGE_NAME ) );
         final JSPWikiMarkupParser r = new JSPWikiMarkupParser( context, new BufferedReader( new StringReader( src ) ) );

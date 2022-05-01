@@ -54,29 +54,19 @@ class WikiEngineTest {
 
     @AfterEach
     void tearDown() {
-        final String files = m_engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
-
-        if( files != null ) {
-            final File f = new File( files );
-            TestEngine.deleteAll( f );
-        }
-
-        TestEngine.emptyWorkDir();
         m_engine.stop();
     }
 
     @Test
-    void testNonExistentDirectory() throws Exception {
+    void testNonExistentDirectory() {
         final String newdir = "." + File.separator + "target" + File.separator + "non-existent-directory";
 
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, newdir );
-        m_engine = new TestEngine( props );
+        m_engine = TestEngine.build( props );
 
         final File f = new File( m_engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR ) );
         Assertions.assertTrue( f.exists(), "didn't create it" );
         Assertions.assertTrue( f.isDirectory(), "isn't a dir" );
-
-        f.delete();
     }
 
     @Test

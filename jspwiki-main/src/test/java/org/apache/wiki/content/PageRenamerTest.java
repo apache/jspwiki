@@ -44,24 +44,6 @@ public class PageRenamerTest {
 
     @AfterEach
     public void tearDown() {
-        m_engine.deleteTestPage("TestPage");
-        m_engine.deleteTestPage("TestPage2");
-        m_engine.deleteTestPage("FooTest");
-        m_engine.deleteTestPage("Test");
-        m_engine.deleteTestPage("CdauthNew");
-        m_engine.deleteTestPage("Cdauth");
-        m_engine.deleteTestPage("TestPageReferring");
-        m_engine.deleteTestPage("TestPageReferredNew");
-        m_engine.deleteTestPage("Main");
-        m_engine.deleteTestPage("Main8887");
-        m_engine.deleteTestPage("TestPage1234");
-        m_engine.deleteTestPage("TestPageReferred");
-        m_engine.deleteTestPage("RenameTest");
-        m_engine.deleteTestPage("Link one");
-        m_engine.deleteTestPage("Link uno");
-        m_engine.deleteTestPage("Link two");
-
-        TestEngine.emptyWorkDir();
         m_engine.stop();
     }
 

@@ -62,14 +62,7 @@ public class VersioningFileProviderTest {
 
     @AfterEach
     public void tearDown() {
-        // Remove all/any files and subdirs left in test page directory
-        TestEngine.deleteAll( new File(files) );
-
-        // clear the cache at the end of every test case to avoid polluting another test case
         engine.stop();
-
-        // make sure that the reference manager cache is cleaned first
-        TestEngine.emptyWorkDir(null);
     }
 
     /*

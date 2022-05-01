@@ -53,8 +53,7 @@ import java.util.Map;
  * hard-coded port {@link #HTTP_PORT}. The server can be shut down by sending a
  * request containing the hard-coded string {@link #SHUTDOWN_CMD}.
  */
-public class TestContainer
-{
+public class TestContainer {
     private final Server server;
 
     /**
@@ -85,12 +84,10 @@ public class TestContainer
      * @param args the command-line arguments
      * @throws Exception - you know, just in case.
      */
-    public static void main(final String[] args ) throws Exception
-    {
+    public static void main(final String[] args ) throws Exception {
         // Extract key-value pairs that represent test contexts and directories
         final Map<String, String> apps = extractApps( args );
-        if( apps.size() == 0 )
-        {
+        if( apps.size() == 0 ) {
             throw new IllegalArgumentException( "No apps supplied!" );
         }
 
@@ -98,8 +95,7 @@ public class TestContainer
 
         // Create a new server and load up the webapps
         final TestContainer container = new TestContainer();
-        for( final Map.Entry<String, String> app : apps.entrySet() )
-        {
+        for( final Map.Entry<String, String> app : apps.entrySet() ) {
             final String context = app.getKey();
             final String path = app.getValue();
             log.error( "Adding context " + context + " at path " + path );
@@ -108,7 +104,7 @@ public class TestContainer
 
         handlerCollection.addHandler( new DefaultHandler() );
 
-        // setup the hsqldb database engine
+        // set up the hsqldb database engine
         m_hu.setUp();
 
         // Create the connection pool
@@ -129,8 +125,7 @@ public class TestContainer
         userDB.bindToENC("jdbc/GroupDatabase");
         
         // Start the server
-        try
-        {
+        try {
             log.error( "Starting up test container." );
             container.server.setHandler( handlerCollection );
             final Handler[] currentHandlers = container.server.getHandlers();
@@ -147,9 +142,7 @@ public class TestContainer
                 }
             }
             container.start();
-        }
-        catch( final Throwable t )
-        {
+        } catch( final Throwable t ) {
             // userDB.unbindENC();
             // groupDB.unbindENC();
             t.printStackTrace();
@@ -161,32 +154,27 @@ public class TestContainer
     private static Map<String, String> extractApps(final String[] args )
     {
         final Map<String, String> apps = new HashMap<String, String>();
-        for( int i = 0; i < args.length; i++ )
-        {
-            final String[] pair = args[i].split( "=" );
+        for( final String arg : args ) {
+            final String[] pair = arg.split( "=" );
 
             // Right length?
-            if( pair.length != 2 )
-            {
-                throw new IllegalArgumentException( "Malformed argument '" + args[i] + "'; expected 'context=path' pattern." );
+            if( pair.length != 2 ) {
+                throw new IllegalArgumentException( "Malformed argument '" + arg + "'; expected 'context=path' pattern." );
             }
 
             // Extract and sanitize first arg
-            String context = pair[0].trim();
-            if( !context.startsWith( "/" ) )
-            {
+            String context = pair[ 0 ].trim();
+            if( !context.startsWith( "/" ) ) {
                 context = "/" + context;
             }
 
             // Extract and verify the path
-            final String path = pair[1].trim();
+            final String path = pair[ 1 ].trim();
             final File file = new File( path );
-            if( !file.exists() )
-            {
+            if( !file.exists() ) {
                 throw new IllegalArgumentException( "Path " + path + " does not exist." );
             }
-            if( !file.isDirectory() )
-            {
+            if( !file.isDirectory() ) {
                 throw new IllegalArgumentException( "Path " + path + " cannot be a file; it must be a directory." );
             }
 
@@ -197,18 +185,15 @@ public class TestContainer
     }
 
     /**
-     * Prepares a Jetty server with its HTTP and shutdown handlers. Callers must
-     * start the server by calling {@link #start()}.
+     * Prepares a Jetty server with its HTTP and shutdown handlers. Callers must start the server by calling {@link #start()}.
      * 
      * @throws Exception you know, just in case
      */
-    public TestContainer() throws Exception
-    {
+    public TestContainer() throws Exception {
         // Initialize JNDI for the server, using the Jetty JNDI packages if not set yet
         // Normally this is set at JVM startup by property -Djava.naming.factory.initial=classname
         String contextFactoryClass = System.getProperty( INITIAL_CONTEXT_FACTORY );
-        if ( contextFactoryClass == null )
-        {
+        if ( contextFactoryClass == null ) {
             System.setProperty( INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY_JETTY );
 //            ContextFactory.setNameParser( new InitialContextFactory.DefaultParser() );
             log.error( "No JNDI context factory found; using org.eclipse.jndi.InitialContextFactory." );
@@ -218,12 +203,9 @@ public class TestContainer
         
         // Bind the "java:comp/env" namespace if not bound already
         initCtx = new InitialContext();
-        try 
-        {
+        try {
             initCtx.lookup( JNDI_ENV_ROOT );
-        }
-        catch ( final NameNotFoundException e )
-        {
+        } catch( final NameNotFoundException e ) {
             initCtx.bind( JNDI_ENV_ROOT, new NamingContext(new Hashtable<String, Object>(), JNDI_ENV_ROOT, null, new InitialContextFactory.DefaultParser()) );
             log.error( "No JNDI " + JNDI_ENV_ROOT + " namespace found; creating it," );
         }
@@ -255,7 +237,6 @@ public class TestContainer
      * 
      * @param context the name of the web m_context; must start with "/"
      * @param path the file path for the WAR file, or expanded WAR directory
-     * @throws IOException
      */
     public void addWebApp( final String context, final String path ) {
         // Set the default users and roles for the realm (note that realm name *must* match web.xml <realm-name>
@@ -279,8 +260,7 @@ public class TestContainer
     /**
      * Starts the Jetty server
      */
-    public void start() throws Exception
-    {
+    public void start() throws Exception {
         System.setProperty( "org.eclipse.http.HttpRequest.maxFormContentSize", "0" );
         server.start();
         log.error("jetty server started");
@@ -289,34 +269,22 @@ public class TestContainer
     /**
      * Stops the Jetty server
      */
-    public void stop()
-    {
-        try
-        {
+    public void stop() {
+        try {
             server.stop();
             log.error("jetty server stopped");
-        }
-        catch( final Exception ex )
-        {
+        } catch( final Exception ex ) {
             throw new RuntimeException( ex );
         }
     }
     
-    
-    
     /**
      * Handler that shuts down the Jetty server if a request is received containing the shutdown string {@link TestContainer#SHUTDOWN_CMD} .
      */
+    public static final class ShutdownHandler extends AbstractHandler {
 
-    public static final class ShutdownHandler extends AbstractHandler
-    {
-
-        public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response )
-                                                                                                                          throws IOException,
-                                                                                                                              ServletException
-        {
-            if( request.getRequestURI().indexOf( SHUTDOWN_CMD ) != -1 )
-            {
+        public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response ) throws IOException, ServletException {
+            if( request.getRequestURI().contains( SHUTDOWN_CMD ) ) {
                 log.error( "stop cmd received, shutting down server" );
                 System.exit( 0 );
             } else {

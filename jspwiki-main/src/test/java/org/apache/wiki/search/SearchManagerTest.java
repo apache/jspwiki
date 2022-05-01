@@ -55,14 +55,13 @@ public class SearchManagerTest {
         props.setProperty( "jspwiki.workDir", workDir + System.currentTimeMillis() );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", workRepo + System.currentTimeMillis() );
 
-        m_engine = new TestEngine( props );
+        m_engine = TestEngine.build( props );
         m_mgr = m_engine.getManager( SearchManager.class );
     }
 
     @AfterEach
     public void tearDown() {
         m_engine.stop();
-    	TestEngine.emptyWorkDir( props );
     }
 
     @Test

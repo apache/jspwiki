@@ -37,7 +37,6 @@ public class RenderingManagerTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        m_engine.getManager( PageManager.class ).deletePage( "TestPage" );
         m_engine.stop();
     }
 
@@ -100,9 +99,7 @@ public class RenderingManagerTest {
      * Tests the relative speed of the DOM cache with respect to page being parsed every single time.
      */
     @Test
-    public void testCache()
-        throws Exception
-    {
+    public void testCache() throws Exception {
         m_engine.saveText( "TestPage", TEST_TEXT );
 
         final StopWatch sw = new StopWatch();
@@ -110,17 +107,12 @@ public class RenderingManagerTest {
         // System.out.println("DOM cache speed test:");
         sw.start();
 
-        for( int i = 0; i < 300; i++ )
-        {
+        for( int i = 0; i < 300; i++ ) {
             final Page page = m_engine.getManager( PageManager.class ).getPage( "TestPage" );
             final String pagedata = m_engine.getManager( PageManager.class ).getPureText( page );
-
             final Context context = Wiki.context().create( m_engine, page );
-
             final MarkupParser p = m_manager.getParser( context, pagedata );
-
             final WikiDocument d = p.parse();
-
             final String html = m_manager.getHTML( context, d );
             Assertions.assertNotNull( html, "noncached got null response" );
         }
