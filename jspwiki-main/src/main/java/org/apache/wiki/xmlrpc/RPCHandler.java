@@ -174,12 +174,12 @@ public class RPCHandler extends AbstractRPCHandler {
         return pagename;
     }
 
-    public Hashtable getPageInfo( String pagename ) throws XmlRpcException {
+    public Hashtable< String, Object > getPageInfo( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
         return encodeWikiPage( m_engine.getManager( PageManager.class ).getPage(pagename) );
     }
 
-    public Hashtable getPageInfoVersion( String pagename, final int version ) throws XmlRpcException {
+    public Hashtable< String, Object > getPageInfoVersion( String pagename, final int version ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
         return encodeWikiPage( m_engine.getManager( PageManager.class ).getPage( pagename, version ) );
