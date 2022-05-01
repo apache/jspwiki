@@ -230,6 +230,14 @@ public class TestEngine extends WikiEngine {
         return request;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void shutdown() {
+        super.shutdown();
+        TestEngine.emptyWikiDir( getWikiProperties() );
+        TestEngine.emptyWorkDir( getWikiProperties() );
+    }
+
     public static void emptyWorkDir() {
         emptyWorkDir( null );
     }
@@ -258,9 +266,13 @@ public class TestEngine extends WikiEngine {
         if( properties == null ) {
             properties = getTestProperties();
         }
-        final String wikidir = properties.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-        if ( wikidir != null ) {
-            final File f = new File( wikidir );
+        emptyDir( properties.getProperty( AbstractFileProvider.PROP_PAGEDIR ) );
+        emptyDir( properties.getProperty( AttachmentProvider.PROP_STORAGEDIR ) );
+    }
+
+    static void emptyDir( final String dir ) {
+        if ( dir != null ) {
+            final File f = new File( dir );
             if( f.exists() && f.isDirectory() ) {
                 deleteAll( f );
             }
