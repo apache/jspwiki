@@ -77,7 +77,7 @@
     <selenide.version>6.4.0</selenide.version>
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
-    <tika.version>2.3.0</tika.version>
+    <tika.version>2.4.0</tika.version>
     <tomcat.version>9.0.62</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version> <!-- 1.9.0 and above require JDK >= 9 to execute -->
     <xmlrpc.version>2.0.1</xmlrpc.version>
