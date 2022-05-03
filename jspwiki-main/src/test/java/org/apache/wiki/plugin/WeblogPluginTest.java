@@ -2,17 +2,17 @@ package org.apache.wiki.plugin;
 
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 
 public class WeblogPluginTest {
 
-    TestEngine testEngine = TestEngine.build();
+    static TestEngine testEngine = TestEngine.build();
 
-    @AfterEach
-    public void tearDown() throws Exception {
+    @AfterAll
+    public static void tearDown() throws Exception {
         testEngine.stop();
     }
 
