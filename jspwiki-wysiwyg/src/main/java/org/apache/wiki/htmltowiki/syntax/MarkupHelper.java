@@ -41,7 +41,7 @@ public class MarkupHelper {
      * Checks if the link points to a footnote.
      */
     public static boolean isFootnoteLink( final String ref ) {
-        return ref.startsWith( "#" );
+        return ref.startsWith( "#ref-" );
     }
 
     /**
