@@ -84,7 +84,7 @@ public class TableOfContents implements Plugin, HeadingListener {
      */
     @Override
     public void headingAdded( final Context context, final Heading hd ) {
-        log.debug( "HD: " + hd.m_level + ", " + hd.m_titleText + ", " + hd.m_titleAnchor );
+        log.debug( "HD: {}, {}, {}", hd.m_level, hd.m_titleText, hd.m_titleAnchor );
 
         switch( hd.m_level ) {
           case Heading.HEADING_SMALL:
@@ -148,7 +148,7 @@ public class TableOfContents implements Plugin, HeadingListener {
      *  {@inheritDoc}
      */
     @Override
-    public String execute( final Context context, final Map<String, String> params ) throws PluginException {
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         final Engine engine = context.getEngine();
         final Page page = context.getPage();
         final ResourceBundle rb = Preferences.getBundle( context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
