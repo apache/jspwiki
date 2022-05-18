@@ -82,7 +82,7 @@
     <wro4j.version>1.8.0</wro4j.version> <!-- 1.9.0 and above require JDK >= 9 to execute -->
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
-    <plugin.antrun.version>3.0.0</plugin.antrun.version>
+    <plugin.antrun.version>3.1.0</plugin.antrun.version>
     <plugin.assembly.version>3.3.0</plugin.assembly.version>
     <plugin.clean.version>3.2.0</plugin.clean.version>
     <plugin.compiler.version>3.10.1</plugin.compiler.version>
