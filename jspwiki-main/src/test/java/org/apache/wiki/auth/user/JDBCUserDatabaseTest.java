@@ -49,7 +49,7 @@ import java.util.Properties;
 public class JDBCUserDatabaseTest {
     private final HsqlDbUtils m_hu = new HsqlDbUtils();
 
-    private JDBCUserDatabase m_db = null;
+    private JDBCUserDatabase m_db;
 
     private static final String TEST_ATTRIBUTES = "rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAx3CAAAABAAAAACdAAKYXR0cmlidXRlMXQAEXNvbWUgcmFuZG9tIHZhbHVldAAKYXR0cmlidXRlMnQADWFub3RoZXIgdmFsdWV4";
 

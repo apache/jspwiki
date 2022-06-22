@@ -1458,7 +1458,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private Element handleHeading()
         throws IOException
     {
-        Element el = null;
+        Element el;
 
         final int ch  = nextToken();
 
@@ -2028,7 +2028,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private Element handleBar( final boolean newLine )
         throws IOException
     {
-        Element el = null;
+        Element el;
 
         if( !m_istable && !newLine )
         {

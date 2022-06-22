@@ -69,12 +69,12 @@ import java.util.Properties;
 public class TestEngine extends WikiEngine {
     private static final Logger log = LogManager.getLogger( TestEngine.class );
 
-    private Session m_adminWikiSession = null;
-    private Session m_janneWikiSession = null;
-    private Session m_guestWikiSession = null;
+    private Session m_adminWikiSession;
+    private Session m_janneWikiSession;
+    private Session m_guestWikiSession;
 
     // combined properties file (jspwiki.properties + custom override, if any)
-    private static Properties combinedProperties = null;
+    private static Properties combinedProperties;
 
     /**
      * Creates WikiSession with the privileges of the administrative user. For testing purposes, obviously.

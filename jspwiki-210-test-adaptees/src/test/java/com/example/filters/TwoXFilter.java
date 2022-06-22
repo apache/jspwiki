@@ -29,7 +29,7 @@ import java.util.Properties;
 public class TwoXFilter extends BasicPageFilter {
 
     String newContent = "";
-    int invocations = 0;
+    int invocations;
 
     /** {@inheritDoc} */
     @Override

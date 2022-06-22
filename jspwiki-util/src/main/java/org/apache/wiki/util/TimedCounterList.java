@@ -90,7 +90,7 @@ public class TimedCounterList<T> extends AbstractList<T>
     public int size()
     {
         m_lock.readLock().lock();
-        int size = 0;
+        int size;
 
         try
         {
@@ -213,7 +213,7 @@ public class TimedCounterList<T> extends AbstractList<T>
     public long getAddTime(final int index )
     {
         m_lock.readLock().lock();
-        long res = 0;
+        long res;
         
         try
         {

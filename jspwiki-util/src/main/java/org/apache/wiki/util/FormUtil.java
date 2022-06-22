@@ -97,7 +97,7 @@ public final class FormUtil
             keyPrefix.isEmpty() )
             return rval;
 
-        String fullPrefix = null;
+        String fullPrefix;
         if( keyPrefix.charAt( keyPrefix.length() - 1 ) == '.' )
             fullPrefix = keyPrefix;
         else

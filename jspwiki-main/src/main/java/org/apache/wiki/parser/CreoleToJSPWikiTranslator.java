@@ -185,7 +185,7 @@ public class CreoleToJSPWikiTranslator
             dateFormat = DEFAULT_DATEFORMAT;
         }
 
-        SimpleDateFormat df = null;
+        SimpleDateFormat df;
         try
         {
             df = new SimpleDateFormat(dateFormat);

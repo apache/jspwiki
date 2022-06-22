@@ -66,7 +66,7 @@ public class ReferredPagesPlugin implements Plugin {
     private final PatternMatcher m_matcher = new Perl5Matcher();
     private Pattern m_includePattern;
     private Pattern m_excludePattern;
-    private int items = 0;
+    private int items;
     private boolean m_formatCompact = true;
     private boolean m_formatSort;
 

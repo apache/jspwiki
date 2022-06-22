@@ -154,7 +154,7 @@ public class BreadcrumbsTag extends WikiTagBase
         final JspWriter out     = pageContext.getOut();
         final int queueSize     = trail.size();
         final String linkclass  = "wikipage";
-        String curPage    = null;
+        String curPage;
 
         for( int i = 0; i < queueSize - 1; i++ ) {
             curPage = trail.get(i);

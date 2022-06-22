@@ -74,7 +74,7 @@ public class ParamTag
     @Override
     public int doEndTag()
     {
-        Tag t = null;
+        Tag t;
         do
         {
             t = getParent();

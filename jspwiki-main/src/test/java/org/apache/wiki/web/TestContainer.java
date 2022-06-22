@@ -72,8 +72,8 @@ public class TestContainer {
     private static final Logger log = LogManager.getLogger( TestContainer.class );
 
     private static Context initCtx ;
-    private static Resource userDB = null;        
-    private static Resource groupDB = null;        
+    private static Resource userDB;
+    private static Resource groupDB;
 
     private static final ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
     

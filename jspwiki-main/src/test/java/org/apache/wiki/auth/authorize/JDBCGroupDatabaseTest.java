@@ -43,9 +43,9 @@ public class JDBCGroupDatabaseTest
 {
     private final HsqlDbUtils       m_hu   = new HsqlDbUtils();
 
-    private Connection        m_conn = null;
+    private Connection        m_conn;
 
-    private JDBCGroupDatabase m_db   = null;
+    private JDBCGroupDatabase m_db;
 
     private String            m_wiki;
 
