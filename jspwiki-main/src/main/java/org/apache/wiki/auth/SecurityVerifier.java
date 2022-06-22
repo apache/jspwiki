@@ -585,7 +585,7 @@ public final class SecurityVerifier {
      */
     File getFileFromProperty( final String property )
     {
-        String propertyValue = null;
+        String propertyValue;
         try
         {
             propertyValue = System.getProperty( property );

@@ -39,7 +39,7 @@ import java.util.Vector;
 public class VerySimpleProvider implements PageProvider {
 
     /** The last request is stored here. */
-    public String m_latestReq = null;
+    public String m_latestReq;
     /** The version number of the last request is stored here. */
     public int    m_latestVers = -123989;
 

@@ -57,8 +57,8 @@ public class HsqlDbUtils
     
     private static final Logger LOG = LogManager.getLogger( HsqlDbUtils.class );
     
-    Server hsqlServer = null;
-    int localPort = 0;
+    Server hsqlServer;
+    int localPort;
     
     /**
      * Convenience Hypersonic startup method for unit tests.

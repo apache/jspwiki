@@ -129,7 +129,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
     protected String m_before = ""; // null not blank
     protected String m_separator = ""; // null not blank
     protected String m_after = "\\\\";
-    protected int items = 0;
+    protected int items;
 
     protected Pattern[]  m_exclude;
     protected Pattern[]  m_include;

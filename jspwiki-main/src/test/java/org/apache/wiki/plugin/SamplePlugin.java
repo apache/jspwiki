@@ -33,7 +33,7 @@ import java.util.Map;
  */
 public class SamplePlugin implements Plugin, ParserStagePlugin {
 	
-    protected static boolean c_rendered = false;
+    protected static boolean c_rendered;
     
     @Override
     public String execute( final Context context, final Map< String, String > params ) {

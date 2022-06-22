@@ -39,11 +39,11 @@ import java.util.Vector;
  */
 public class CounterProvider implements PageProvider {
 
-    public int m_getPageCalls     = 0;
-    public int m_pageExistsCalls  = 0;
-    public int m_getPageTextCalls = 0;
-    public int m_getAllPagesCalls = 0;
-    public int m_initCalls        = 0;
+    public int m_getPageCalls;
+    public int m_pageExistsCalls;
+    public int m_getPageTextCalls;
+    public int m_getAllPagesCalls;
+    public int m_initCalls;
 
     Page[]    m_pages         = new Page[0];
     

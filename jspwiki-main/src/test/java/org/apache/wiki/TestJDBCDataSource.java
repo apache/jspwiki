@@ -53,15 +53,15 @@ public class TestJDBCDataSource implements DataSource
 
     protected static final String PROPERTY_USER_PASSWORD = "jdbc.user.password";
 
-    protected String              m_jdbcPassword         = null;
+    protected String              m_jdbcPassword;
 
-    protected String              m_jdbcURL              = null;
+    protected String              m_jdbcURL;
 
-    protected String              m_jdbcUser             = null;
+    protected String              m_jdbcUser;
 
-    protected int                 m_timeout              = 0;
+    protected int                 m_timeout;
 
-    protected PrintWriter         m_writer               = null;
+    protected PrintWriter         m_writer;
     
    /**
      * Constructs a new instance of this class, using a supplied properties
