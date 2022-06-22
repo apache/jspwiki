@@ -228,7 +228,7 @@ public class Group {
      * Returns <code>true</code> if a Principal is a member of the group. Specifically, the Principal's <code>getName()</code> method must
      * return the same value as one of the Principals in the group member list. The Principal's type does <em>not</em> need to match.
      *
-     * @param principal the principal about whom membeship status is sought
+     * @param principal the principal about whom membership status is sought
      * @return the result of the operation
      */
     public boolean isMember( final Principal principal ) {

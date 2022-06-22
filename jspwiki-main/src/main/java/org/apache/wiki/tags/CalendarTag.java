@@ -90,7 +90,7 @@ public class CalendarTag extends WikiTagBase {
      *  Sets the page format.  If a page corresponding to the format is found when
      *  the calendar is being rendered, a link to that page is created.  E.g. if the
      *  format is set to <tt>'Main_blogentry_'ddMMyy</tt>, it works nicely in
-     *  conjuction to the WeblogPlugin.
+     *  conjunction to the WeblogPlugin.
      *  
      *  @param format The format in the SimpleDateFormat fashion.
      *  

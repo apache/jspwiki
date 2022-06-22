@@ -28,7 +28,7 @@ import java.util.Locale;
 
 
 /**
- * <p>Represents a long-running wiki session, with an associated user Principal, user Subject, and authentication status. The sesion
+ * <p>Represents a long-running wiki session, with an associated user Principal, user Subject, and authentication status. The session
  * is initialized with minimal, default-deny values: authentication is set to <code>false</code>, and the user principal is set to
  * <code>null</code>.</p>
  * <p>The Session allows callers to:</p>
@@ -42,7 +42,7 @@ import java.util.Locale;
  *     {@link #addMessage(String)}, {@link #getMessages(String)}
  *     and {@link #clearMessages(String)}</li>
  * </ul>
- * <p>To keep track of the Principals each user posseses, each Session stores a JAAS Subject. Various login processes add or
+ * <p>To keep track of the Principals each user possesses, each Session stores a JAAS Subject. Various login processes add or
  * remove Principals when users authenticate or log out.</p>
  * <p>Session extends the {@link org.apache.wiki.event.WikiEventListener} interface and listens for group add/change/delete
  * events fired by event sources the Session is registered with: {@link org.apache.wiki.auth.AuthenticationManager},
@@ -233,7 +233,7 @@ public interface Session extends WikiEventListener {
 
     /**
      * Wrapper for {@link Subject#doAsPrivileged(Subject, PrivilegedAction, java.security.AccessControlContext)}
-     * that executes an action with the privileges posssessed by a Session's Subject. The action executes with a <code>null</code>
+     * that executes an action with the privileges possessed by a Session's Subject. The action executes with a <code>null</code>
      * AccessControlContext, which has the effect of running it "cleanly" without the AccessControlContexts of the caller.
      *
      * @param session the wiki session

@@ -102,7 +102,7 @@ public interface Command {
     String getRequestContext();
 
     /**
-     * Returns the Permission required to successfully execute this Command. If no Permission is requred, this method returns
+     * Returns the Permission required to successfully execute this Command. If no Permission is required, this method returns
      * <code>null</code>. For example, the static command {@code org.apache.wiki.ui.PageCommand#VIEW} doesn't require a permission because
      * it isn't referring to a particular WikiPage. However, if this command targets a WikiPage called <code>Main</code>(via
      * {@code org.apache.wiki.ui.PageCommand#targetedCommand(Object)}, the resulting Command would require the permission

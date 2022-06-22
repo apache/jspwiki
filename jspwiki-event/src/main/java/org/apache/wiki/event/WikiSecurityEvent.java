@@ -164,7 +164,7 @@ public final class WikiSecurityEvent extends WikiEvent {
     }
 
     /**
-     * Returns the principal to whom the opeation applied, if supplied. This method may return <code>null</code>
+     * Returns the principal to whom the operation applied, if supplied. This method may return <code>null</code>
      * <em>&#8212; and calling methods should check for this condition</em>.
      *
      * @return the changed object
@@ -196,7 +196,7 @@ public final class WikiSecurityEvent extends WikiEvent {
         final Object obj = getSrc(); // cfr. https://forums.oracle.com/forums/thread.jspa?threadID=1184115
         msg.append( " [source=" ).append( obj.toString() );
         if( m_principal != null ) {
-            msg.append( ", princpal=" ).append( m_principal.getClass().getName() );
+            msg.append( ", principal=" ).append( m_principal.getClass().getName() );
             msg.append( " " ).append( m_principal.getName() );
         }
         msg.append( ", target=" ).append( m_target );

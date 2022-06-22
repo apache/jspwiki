@@ -40,7 +40,7 @@ public interface SyntaxDecorator {
      * @param preStack stack containing the amount of nested {@code pre}s.
      * @param outTrimmer writer capable of trimming whitespaces and of checking if it's currently writing a line start.
      * @param config xhtml to wiki configuration object.
-     * @param chain chain (in the chain of responsabilities pattern) that is expected to be called by the different xhtml decorations.
+     * @param chain chain (in the chain of responsibilities patterns) that is expected to be called by the different xhtml decorations.
      */
     void init( PrintWriter out, Deque< String > liStack, Deque< String > preStack, WhitespaceTrimWriter outTrimmer, XHtmlToWikiConfig config, XHtmlElementToWikiTranslator chain );
 

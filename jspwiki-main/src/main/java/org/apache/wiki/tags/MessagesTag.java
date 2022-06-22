@@ -26,13 +26,13 @@ import java.io.IOException;
 /**
  * Returns or clears the current messages associated with the user's wiki
  * session. This tag accepts four attributes: <ul> <li><code>action</code> -
- * if "clear", the messsages will be cleared. Otherwise, this tag will always
+ * if "clear", the messages will be cleared. Otherwise, this tag will always
  * print the set of current messages as either a single &lt;p&gt; tag (if there
  * is only one message) or a bulleted list (if there is more than one).</li>
  * <li><code>prefix</code> - the string to prepend to the list of errors, if
  * there are any; default is empty string</li> <li><code>topic</code> - a
  * collection for messages, for example those associated with a particular web
- * form. If not suppled, defaults to a generic (non-specific) collection</li>
+ * form. If not supplied, defaults to a generic (non-specific) collection</li>
  * <li><code>div</code> - the <code>div</code> class to wrap the
  * messages in; if not supplied, <code>information</code> is assumed</li></ul>
  * @since 2.3.54
