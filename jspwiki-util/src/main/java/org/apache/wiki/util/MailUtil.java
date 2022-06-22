@@ -44,7 +44,7 @@ import java.util.Properties;
  * <code>jspwiki.properties</code>.</p>
  * <p>To enable e-mail functions within JSPWiki, administrators must do three things:
  * ensure that the required JavaMail JARs are on the runtime classpath, configure
- * JavaMail appropriately, and (recommdended) configure the JNDI JavaMail session factory.</p>
+ * JavaMail appropriately, and (recommended) configure the JNDI JavaMail session factory.</p>
  * <strong>JavaMail runtime JARs</strong>
  * <p>The first step is easy: JSPWiki bundles
  * recent versions of the required JavaMail <code>mail.jar</code> and

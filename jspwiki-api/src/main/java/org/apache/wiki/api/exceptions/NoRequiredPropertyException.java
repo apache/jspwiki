@@ -21,7 +21,7 @@ package org.apache.wiki.api.exceptions;
 
 
 /**
- *  Marks an erroneus jspwiki.properties file.  Certain properties have been marked as "required", and if you 
+ *  Marks an erroneous jspwiki.properties file.  Certain properties have been marked as "required", and if you
  *  do not provide a good value for a property, you'll see this exception.
  *  <P>
  *  Check <TT>jspwiki.properties</TT> for the required properties.

@@ -25,7 +25,7 @@ import java.util.Comparator;
 
 /**
  * A comparator that sorts Strings using "human" ordering, including decimal
- * ordering. Only works for languages where every character is lexigraphically
+ * ordering. Only works for languages where every character is lexicographically
  * distinct and correctly unicode ordered (e.g. English). Other languages should use
  * <code>CollatedHumanComparator</code>. Pretty efficient but still slower than
  * String.compareTo().

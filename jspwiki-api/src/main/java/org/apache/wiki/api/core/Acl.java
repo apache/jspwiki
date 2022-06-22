@@ -39,7 +39,7 @@ import java.util.Enumeration;
  * This interface is a highly stripped-down derivation of the java.security.acl.Acl interface. In particular, the notion of an Acl "owner"
  * has been eliminated, since JSPWiki pages do not have owners. An additional simplification compared to the standard Java package is that
  * negative permissions have been eliminated. Instead, JSPWiki assumes a "default-deny" security stance: principals are granted no 
- * permissions by default, and posesses only those that have been explicitly granted to them. And finally, the getPermissions() and 
+ * permissions by default, and possesses only those that have been explicitly granted to them. And finally, the getPermissions() and
  * checkPermission() methods have been eliminated due to the complexities associated with resolving Role principal membership.
  * </p>
  * @since 2.3
@@ -73,12 +73,12 @@ public interface Acl {
     boolean isEmpty();
 
     /**
-     * Returns all Principal objects assigned a given Permission in the access control list. The Princiapls returned are those that
+     * Returns all Principal objects assigned a given Permission in the access control list. The Principals returned are those that
      * have been granted either the supplied permission, or a permission implied by the supplied permission. Principals are not
      * "expanded" if they are a role or group.
      *
      * @param permission the permission to search for
-     * @return an array of Principals posessing the permission
+     * @return an array of Principals possessing the permission
      */
     Principal[] findPrincipals( Permission permission );
 

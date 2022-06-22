@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * </p>
  * {@inheritDoc}
  * @since 2.3
- * @deprecated use {@link org.apache.wiki.api.core.Acl} insteaad
+ * @deprecated use {@link org.apache.wiki.api.core.Acl} instead
  * @see org.apache.wiki.api.core.Acl
  */
 @Deprecated
