@@ -1937,7 +1937,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     {
                         // Fail quietly
                     }
-                    else if( isSpan.booleanValue() )
+                    else if(isSpan)
                     {
                         el = popElement( "span" );
                     }
@@ -1962,7 +1962,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             try
             {
                 style = StringEscapeUtils.unescapeHtml4(style);
-                if( style != null && style.indexOf("javascript:") != -1 )
+                if( style != null && style.contains("javascript:"))
                 {
                     log.debug("Attempt to output javascript within CSS:"+style);
                     final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
@@ -2541,10 +2541,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             {
                 final Element newel = new Element("p");
 
-                for( final Iterator< Content > i = ls.iterator(); i.hasNext(); )
-                {
-                    final Content c = i.next();
-
+                for (final Content c : ls) {
                     c.detach();
                     newel.addContent(c);
                 }

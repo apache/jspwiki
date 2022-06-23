@@ -128,10 +128,9 @@ public class CommentedProperties extends Properties
     public synchronized void putAll(final Map< ? , ? > arg0 )
     {
         // Shove all of the entries into the property string
-        for(final Iterator< ? > it = arg0.entrySet().iterator(); it.hasNext(); )
-        {
-            @SuppressWarnings("unchecked") final Entry< Object, Object > entry = ( Entry< Object, Object > )it.next();
-            writeProperty( entry.getKey(), entry.getValue() );
+        for (final Entry<?, ?> value : arg0.entrySet()) {
+            @SuppressWarnings("unchecked") final Entry<Object, Object> entry = (Entry<Object, Object>) value;
+            writeProperty(entry.getKey(), entry.getValue());
         }
 
         // Call the superclass method
