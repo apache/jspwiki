@@ -140,8 +140,8 @@ public class HumanComparator implements Comparator< String > {
                 // If they're not digits, use character to character comparison
                 if( type1 != CharType.TYPE_DIGIT )
                 {
-                    final Character ch1 = Character.valueOf( c1 );
-                    final Character ch2 = Character.valueOf( c2 );
+                    final Character ch1 = c1;
+                    final Character ch2 = c2;
                     return ch1.compareTo( ch2 );
                 }
 
@@ -226,7 +226,7 @@ public class HumanComparator implements Comparator< String > {
         	idx++;
         }
         final int leftLen = idx - offset;
-        final int leftValue = Integer.valueOf( new String( left, offset, leftLen ) );
+        final int leftValue = Integer.parseInt( new String( left, offset, leftLen ) );
 
         // Calculate the integer value of the right hand side
         idx = offset;
@@ -234,7 +234,7 @@ public class HumanComparator implements Comparator< String > {
         	idx++;
         }
         final int rightLen = idx - offset;
-        final int rightValue = Integer.valueOf( new String( right, offset, rightLen ) );
+        final int rightValue = Integer.parseInt( new String( right, offset, rightLen ) );
 
         if( leftValue == rightValue ) {
             return leftLen - rightLen; // Same value so use the lengths

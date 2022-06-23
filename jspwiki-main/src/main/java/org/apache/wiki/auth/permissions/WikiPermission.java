@@ -238,32 +238,19 @@ public final class WikiPermission extends Permission implements Serializable
         }
         int mask = 0;
         final String[] actionList = actions.split( "," );
-        for( int i = 0; i < actionList.length; i++ )
-        {
-            final String action = actionList[i];
-            if ( action.equalsIgnoreCase( CREATE_GROUPS_ACTION ) )
-            {
+        for (final String action : actionList) {
+            if (action.equalsIgnoreCase(CREATE_GROUPS_ACTION)) {
                 mask |= CREATE_GROUPS_MASK;
-            }
-            else if ( action.equalsIgnoreCase( CREATE_PAGES_ACTION ) )
-            {
+            } else if (action.equalsIgnoreCase(CREATE_PAGES_ACTION)) {
                 mask |= CREATE_PAGES_MASK;
-            }
-            else if ( action.equalsIgnoreCase( LOGIN_ACTION ) )
-            {
+            } else if (action.equalsIgnoreCase(LOGIN_ACTION)) {
                 mask |= LOGIN_MASK;
-            }
-            else if ( action.equalsIgnoreCase( EDIT_PREFERENCES_ACTION ) )
-            {
+            } else if (action.equalsIgnoreCase(EDIT_PREFERENCES_ACTION)) {
                 mask |= EDIT_PREFERENCES_MASK;
-            }
-            else if ( action.equalsIgnoreCase( EDIT_PROFILE_ACTION ) )
-            {
+            } else if (action.equalsIgnoreCase(EDIT_PROFILE_ACTION)) {
                 mask |= EDIT_PROFILE_MASK;
-            }
-            else
-            {
-                throw new IllegalArgumentException( "Unrecognized action: " + action );
+            } else {
+                throw new IllegalArgumentException("Unrecognized action: " + action);
             }
         }
         return mask;
