@@ -36,7 +36,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class TimedCounterList<T> extends AbstractList<T>
 {
-    private final ArrayList<CounterItem<T>> m_list = new ArrayList<CounterItem<T>>();
+    private final ArrayList<CounterItem<T>> m_list = new ArrayList<>();
     private final ReadWriteLock             m_lock = new ReentrantReadWriteLock();
     
     /**
@@ -51,7 +51,7 @@ public class TimedCounterList<T> extends AbstractList<T>
         
         try
         {
-            t = m_list.set(index,new CounterItem<T>(element)).m_obj;
+            t = m_list.set(index, new CounterItem<>( element )).m_obj;
         }
         finally
         {
@@ -114,7 +114,7 @@ public class TimedCounterList<T> extends AbstractList<T>
         
         try
         {
-            m_list.add(index, new CounterItem<T>(element));
+            m_list.add(index, new CounterItem<>( element ));
         }
         finally
         {

@@ -327,7 +327,7 @@ public class CookieTag
      */
     private Map<String, String> parseCookieValues(final String s )
     {
-        final Map< String, String > rval = new HashMap< String, String >();
+        final Map< String, String > rval = new HashMap<>();
         if( s == null ) {
             return rval;
         }
@@ -335,11 +335,10 @@ public class CookieTag
         if( nvps.length == 0 ) {
             return rval;
         }
-        for( int i = 0; i < nvps.length; i++ ) {
-            final String nvp = decode( nvps[i] );
+        for ( final String value : nvps ) {
+            final String nvp = decode( value );
             final String[] nv = nvp.split( "=" );
-            if( nv[0] != null && !nv[0].trim().isEmpty() )
-            {
+            if ( nv[0] != null && !nv[0].trim().isEmpty() ) {
                 rval.put( nv[0], nv[1] );
             }
         }
@@ -422,11 +421,9 @@ public class CookieTag
             final Cookie[] cookies = req.getCookies();
             if( cookies != null )
             {
-                for( int i = 0; i < cookies.length; i++ )
-                {
-                    if( cookies[i].getName().equals( cname ) )
-                    {
-                        return cookies[i];
+                for ( final Cookie cookie : cookies ) {
+                    if ( cookie.getName().equals( cname ) ) {
+                        return cookie;
                     }
                 }
             }

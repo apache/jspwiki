@@ -163,9 +163,9 @@ public class CreoleToJSPWikiTranslator
 
     private static final String ESCAPE_PROTECTED = "~(\\*\\*|~|//|-|#|\\{\\{|}}|\\\\|~\\[~~[|]]|----|=|\\|)";
 
-    private static final Map<String, String> c_protectionMap = new HashMap<String, String>();
+    private static final Map<String, String> c_protectionMap = new HashMap<>();
 
-    private        ArrayList<String> m_hashList = new ArrayList<String>();
+    private        ArrayList<String> m_hashList = new ArrayList<>();
 
     /**
      *  I have no idea what this method does.  Could someone please tell me?
@@ -383,7 +383,7 @@ public class CreoleToJSPWikiTranslator
     private String protectMarkup(String content)
     {
         c_protectionMap.clear();
-        m_hashList = new ArrayList<String>();
+        m_hashList = new ArrayList<>();
         content = protectMarkup(content, PREFORMATTED_PROTECTED, "", "");
         content = protectMarkup(content, URL_PROTECTED, "", "");
         content = protectMarkup(content, ESCAPE_PROTECTED, "", "");
@@ -398,14 +398,12 @@ public class CreoleToJSPWikiTranslator
     {
         final Set< Object > keySet = wikiProps.keySet();
         final Object[] keys = keySet.toArray();
-        final ArrayList<String[]> result = new ArrayList<String[]>();
+        final ArrayList<String[]> result = new ArrayList<>();
 
-        for( int i = 0; i < keys.length; i++ )
-        {
-            final String key = keys[i] + "";
-            final String value = wikiProps.getProperty( keys[i] + "" );
-            if( key.indexOf( "creole.imagePlugin.para.%" ) > -1 )
-            {
+        for ( final Object o : keys ) {
+            final String key = o + "";
+            final String value = wikiProps.getProperty( o + "" );
+            if ( key.contains( "creole.imagePlugin.para.%" ) ) {
                 final String[] pair = new String[2];
                 pair[0] = key.replaceAll( "creole.imagePlugin.para.%", "" );
                 pair[1] = value;
@@ -433,35 +431,29 @@ public class CreoleToJSPWikiTranslator
             {
                 final String[] params = paramsField.split(",");
 
-                for (int i = 0; i < params.length; i++)
-                {
-                    final String param = params[i].replaceAll("\\||\\s", "").toUpperCase();
+                for ( final String s : params ) {
+                    final String param = s.replaceAll( "\\||\\s", "" ).toUpperCase();
 
                     // Replace placeholder params
-                    for (int j = 0; j < plProperties.size(); j++)
-                    {
-                        final String[] pair = plProperties.get(j);
+                    for ( final String[] pair : plProperties ) {
                         final String key = pair[0];
                         final String value = pair[1];
-                        String code = param.replaceAll("(?i)([0-9]+)" + key, value + "<check>" + "$1" + "</check>");
-                        code = code.replaceAll("(.*?)%(.*?)<check>(.*?)</check>", "$1$3$2");
-                        if (!code.equals(param)) {
-                            paramsString.append(code);
+                        String code = param.replaceAll( "(?i)([0-9]+)" + key, value + "<check>" + "$1" + "</check>" );
+                        code = code.replaceAll( "(.*?)%(.*?)<check>(.*?)</check>", "$1$3$2" );
+                        if ( !code.equals( param ) ) {
+                            paramsString.append( code );
                         }
                     }
 
                     // Check if it is a number
-                    try
-                    {
-                        Integer.parseInt(param);
-                        paramsString.append(" width='").append(param).append("px'");
-                    }
-                    catch (final Exception e)
-                    {
+                    try {
+                        Integer.parseInt( param );
+                        paramsString.append( " width='" ).append( param ).append( "px'" );
+                    } catch ( final Exception e ) {
 
-                        if (wikiProps.getProperty("creole.imagePlugin.para." + param) != null)
-                            paramsString.append(" ").append(wikiProps.getProperty("creole.imagePlugin.para." + param)
-                                    .replaceAll("^(\"|')(.*)(\"|')$", "$2"));
+                        if ( wikiProps.getProperty( "creole.imagePlugin.para." + param ) != null )
+                            paramsString.append( " " ).append( wikiProps.getProperty( "creole.imagePlugin.para." + param )
+                                    .replaceAll( "^(\"|')(.*)(\"|')$", "$2" ) );
                     }
                 }
             }
@@ -538,9 +530,8 @@ public class CreoleToJSPWikiTranslator
     private String bytesToHash(final byte[] b)
     {
         final StringBuilder hash = new StringBuilder();
-        for (int i = 0; i < b.length; i++)
-        {
-            hash.append(Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1));
+        for ( final byte value : b ) {
+            hash.append( Integer.toString( ( value & 0xff ) + 0x100, 16 ).substring( 1 ) );
         }
         return hash.toString();
     }

@@ -232,7 +232,7 @@ public class LinkParser
 
             // parse attributes
             // contains "='" that looks like attrib spec
-            if( attribs.indexOf(EQSQUO) != -1 )
+            if( attribs.contains( EQSQUO ) )
             {
                 try
                 {

@@ -412,9 +412,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
             // Insert group member records
             ps = conn.prepareStatement( m_insertGroupMembers );
             final Principal[] members = group.members();
-            for( int i = 0; i < members.length; i++ )
-            {
-                final Principal member = members[i];
+            for ( final Principal member : members ) {
                 ps.setString( 1, group.getName() );
                 ps.setString( 2, member.getName() );
                 ps.execute();
