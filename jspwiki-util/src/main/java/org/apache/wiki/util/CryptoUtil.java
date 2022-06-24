@@ -177,7 +177,7 @@ public final class CryptoUtil
         //The term SSHA is used as a password prefix for backwards compatibility, but we use SHA-1 when fetching an instance
         //of MessageDigest, as it is the guaranteed option. We also need to remove curly braces surrounding the string for
         //backwards compatibility.
-        String algorithmToUse = algorithm.equals(SSHA) ? SHA1 : algorithm;
+        final String algorithmToUse = algorithm.equals(SSHA) ? SHA1 : algorithm;
         final MessageDigest digest = MessageDigest.getInstance( algorithmToUse.substring( 1, algorithmToUse.length() -1 ) );
         digest.update( password );
         final byte[] hash = digest.digest( salt );
@@ -205,7 +205,7 @@ public final class CryptoUtil
         {
             throw new IllegalArgumentException( "Hash not prefixed by expected algorithm; is it really a salted hash?" );
         }
-        String algorithm = entry.startsWith( SSHA ) ? SSHA : SHA256;
+        final String algorithm = entry.startsWith( SSHA ) ? SSHA : SHA256;
 
         final byte[] challenge = Base64.getDecoder().decode( entry.substring( algorithm.length() )
                 .getBytes( StandardCharsets.UTF_8 ) );
@@ -218,7 +218,7 @@ public final class CryptoUtil
         // The term SSHA is used as a password prefix for backwards compatibility, but we use SHA-1 when fetching an instance
         // of MessageDigest, as it is the guaranteed option. We also need to remove curly braces surrounding the string for
         // backwards compatibility.
-        String algorithmToUse = algorithm.equals(SSHA) ? SHA1 : algorithm;
+        final String algorithmToUse = algorithm.equals(SSHA) ? SHA1 : algorithm;
         final MessageDigest digest = MessageDigest.getInstance( algorithmToUse.substring( 1, algorithmToUse.length() -1 ) );
         digest.update( password );
         final byte[] hash = digest.digest( salt );
