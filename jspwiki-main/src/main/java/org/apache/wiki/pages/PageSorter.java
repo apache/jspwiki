@@ -95,7 +95,7 @@ public class PageSorter implements Comparator< String > {
         if( className != null && !className.isEmpty() ) {
             try {
                 final Class< Comparator< String > > cl = ClassUtil.findClass( "org.apache.wiki.util.comparators", className );
-                m_comparator = ClassUtil.buildInstance( cl );;
+                m_comparator = ClassUtil.buildInstance( cl );
             } catch( final Exception e ) {
                 LOG.error( "Falling back to default \"natural\" comparator", e );
             }
