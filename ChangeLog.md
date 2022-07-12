@@ -17,6 +17,34 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-07-12  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.3-git-09_
+
+* New `CsrfProtectionFilter` to protect POST requests from CSRF attacks
+    * `org.apache.wiki.api.core.Session` gains new `String antiCsrfToken()` method 
+
+* [`org.apache.wiki.markdown.migration.WikiSyntaxConverter`] to convert from JSPWiki syntax to markdown
+    * does not keep pages' history nor attachments (yet), but it's enough to generate the basic set of wikipages from jspwiki-wikipages artifacts
+
+* Fixed logout modal dialog not showing up
+
+* `TestEngine` is able to not clean up directories / ensure they have unique names if `jspwiki.test.disable-clean-props` wiki property is set to `true` 
+
+* Fixed integration tests
+    * Upgrade to cargo-maven3 broke the launch configuration
+    * Latest Selenide upgrades broke SearchIT, which wasn't hovering on search form
+
+* Merged PRs [#192](https://github.com/apache/jspwiki/pull/192), [#193](https://github.com/apache/jspwiki/pull/193), [#195](https://github.com/apache/jspwiki/pull/195) and [#196](https://github.com/apache/jspwiki/pull/196), provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
+
+* Dependency updates
+    * Log4J to 2.18.0
+    * Lucene to 8.11.2
+    * Selenide to 6.6.6
+    * Tika to 2.4.1 - closes [#187](https://github.com/apache/jspwiki/pull/187)
+    * Tomcat to 9.0.64 - closes [#189](https://github.com/apache/jspwiki/pull/189)
+    * Maven plugins: antrun to 3.1.0  (closes [#190](https://github.com/apache/jspwiki/pull/190), thanks to dependabot), assembly to 3.4.1, enforcer to 3.1.0, surefire to 3.0.0-M7, cargo-maven3 to 1.9.13 (closes [#197](https://github.com/apache/jspwiki/pull/197), thanks to dependabot)
+
 **2022-05-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.3-git-08_
