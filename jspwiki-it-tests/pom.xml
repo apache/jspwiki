@@ -168,6 +168,7 @@
                   <groupId>org.hsqldb</groupId>
                   <artifactId>hsqldb</artifactId>
                   <version>${hsqldb.version}</version>
+                  <classifier>jdk8</classifier>
                 </dependency>
                 <dependency>
                   <groupId>org.hsqldb</groupId>
@@ -236,6 +237,7 @@
                       <groupId>org.hsqldb</groupId>
                       <artifactId>hsqldb</artifactId>
                       <classpath>shared</classpath>
+                      <classifier>jdk8</classifier>
                     </dependency>
                   </dependencies>
                 </container>
