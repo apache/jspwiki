@@ -68,26 +68,26 @@
     <jetty.version>9.4.46.v20220331</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.8.2</junit.version>
-    <log4j2.version>2.17.2</log4j2.version>
-    <lucene.version>8.11.1</lucene.version> <!-- 9.0.0 and above require JDK >= 11 to execute -->
+    <log4j2.version>2.18.0</log4j2.version>
+    <lucene.version>8.11.2</lucene.version> <!-- 9.0.0 and above require JDK >= 11 to execute -->
     <mockito.version>4.5.1</mockito.version>
     <nekohtml.version>2.0.2</nekohtml.version> <!-- 2.1.0 and above require JDK >= 11 to execute -->
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
-    <selenide.version>6.4.0</selenide.version>
+    <selenide.version>6.6.6</selenide.version>
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
-    <tika.version>2.3.0</tika.version>
-    <tomcat.version>9.0.62</tomcat.version>
+    <tika.version>2.4.1</tika.version>
+    <tomcat.version>9.0.64</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version> <!-- 1.9.0 and above require JDK >= 9 to execute -->
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
-    <plugin.antrun.version>3.0.0</plugin.antrun.version>
-    <plugin.assembly.version>3.3.0</plugin.assembly.version>
+    <plugin.antrun.version>3.1.0</plugin.antrun.version>
+    <plugin.assembly.version>3.4.1</plugin.assembly.version>
     <plugin.clean.version>3.2.0</plugin.clean.version>
     <plugin.compiler.version>3.10.1</plugin.compiler.version>
     <plugin.dependency.version>3.3.0</plugin.dependency.version>
-    <plugin.enforcer.version>3.0.0</plugin.enforcer.version>
+    <plugin.enforcer.version>3.1.0</plugin.enforcer.version>
     <plugin.install.version>2.5.2</plugin.install.version>
     <plugin.jar.version>3.2.2</plugin.jar.version>
     <plugin.javadoc.version>3.4.0</plugin.javadoc.version>
@@ -96,14 +96,14 @@
     <plugin.release.version>3.0.0-M5</plugin.release.version>
     <plugin.resources.version>3.2.0</plugin.resources.version>
     <plugin.source.version>3.2.1</plugin.source.version>
-    <plugin.surefire.version>3.0.0-M6</plugin.surefire.version>
-    <plugin.surefire.junit5-tree-reporter.version>0.1.0</plugin.surefire.junit5-tree-reporter.version>
+    <plugin.surefire.version>3.0.0-M7</plugin.surefire.version>
+    <plugin.surefire.junit5-tree-reporter.version>1.0.1</plugin.surefire.junit5-tree-reporter.version>
     <plugin.war.version>3.3.2</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>3.2.0</plugin.jspc.version>
     <plugin.checksum.version>1.11</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
-    <plugin.cargo.version>1.9.10</plugin.cargo.version>
+    <plugin.cargo.version>1.9.13</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
     <plugin.cobertura.version>2.7</plugin.cobertura.version>
     <plugin.sonar.version>3.9.1.2184</plugin.sonar.version>
@@ -128,6 +128,7 @@
     <module>jspwiki-api</module>
     <module>jspwiki-bootstrap</module>
     <module>jspwiki-cache</module>
+    <module>jspwiki-http</module>
     <module>jspwiki-wysiwyg</module>
     <module>jspwiki-main</module>
     <module>jspwiki-markdown</module>
