@@ -23,18 +23,28 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
 import org.apache.wiki.WatchDog;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 
 
@@ -95,7 +105,7 @@ public class WikiJSPFilter extends WikiServletFilter {
 
             try {
                 w.enterState( "Delivering response", 30 );
-                final WikiContext wikiContext = getWikiContext( request );
+                final Context wikiContext = getWikiContext( request );
                 final String r = filter( wikiContext, responseWrapper );
 
                 if( useEncoding ) {
@@ -132,7 +142,7 @@ public class WikiJSPFilter extends WikiServletFilter {
      * @param response The source string
      * @return The modified string with all the insertions in place.
      */
-    private String filter( final WikiContext wikiContext, final HttpServletResponse response ) {
+    private String filter( final Context wikiContext, final HttpServletResponse response ) {
         String string = response.toString();
 
         if( wikiContext != null ) {
@@ -168,7 +178,7 @@ public class WikiJSPFilter extends WikiServletFilter {
      *  @param type Type identifier for insertion
      *  @return The filtered string.
      */
-    private String insertResources( final WikiContext wikiContext, final String string, final String type ) {
+    private String insertResources( final Context wikiContext, final String string, final String type ) {
         if( wikiContext == null ) {
             return string;
         }

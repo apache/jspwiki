@@ -21,7 +21,6 @@ package org.apache.wiki.ui;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.ThreadContext;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
@@ -30,7 +29,13 @@ import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiSecurityException;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
@@ -142,7 +147,6 @@ public class WikiServletFilter implements Filter {
             ThreadContext.pop();
             ThreadContext.remove( m_engine.getApplicationName() + ":" + httpRequest.getRequestURL() );
         }
-
     }
 
     /**
@@ -151,9 +155,9 @@ public class WikiServletFilter implements Filter {
      *  @param request The request to examine
      *  @return A valid WikiContext value (or null, if the context could not be located).
      */
-    protected WikiContext getWikiContext( final ServletRequest request ) {
+    protected Context getWikiContext( final ServletRequest request ) {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
-        return ( WikiContext )httpRequest.getAttribute( Context.ATTR_CONTEXT );
+        return ( Context )httpRequest.getAttribute( Context.ATTR_CONTEXT );
     }
 
     /** 
