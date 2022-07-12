@@ -75,6 +75,12 @@
 
       <dependency>
         <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-http</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
         <artifactId>jspwiki-kendra-searchprovider</artifactId>
         <version>${jspwiki.version}</version>
       </dependency>
