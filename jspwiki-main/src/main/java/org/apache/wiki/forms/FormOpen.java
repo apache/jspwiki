@@ -24,6 +24,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
+import org.apache.wiki.http.filter.CsrfProtectionFilter;
 import org.apache.wiki.preferences.Preferences;
 
 import java.text.MessageFormat;
@@ -90,7 +91,9 @@ public class FormOpen extends FormElement {
             submitServlet = ctx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), sourcePage );
 
         String method = params.get( PARAM_METHOD );
-        if( method == null ) method="post";
+        if( method == null ) {
+            method="post";
+        }
 
         if( !( method.equalsIgnoreCase( "get" ) || method.equalsIgnoreCase( "post" ) ) ) {
             throw new PluginException( rb.getString( "formopen.postorgetonly" ) );
@@ -125,7 +128,8 @@ public class FormOpen extends FormElement {
                   "<form action=\"" + submitServlet + "\" name=\"" + formName + "\" " +
                         "accept-charset=\"" + ctx.getEngine().getContentEncoding() + "\" " +
                         "method=\"" + method + "\" enctype=\"application/x-www-form-urlencoded\">\n" +
-                  "  <input type=\"hidden\" name=\"" + PARAM_FORMNAMEHIDDEN + "\" value=\"" + formName + "\"/>\n";
+                  "  <input type=\"hidden\" name=\"" + PARAM_FORMNAMEHIDDEN + "\" value=\"" + formName + "\"/>\n" +
+                  "  <input type=\"hidden\" name=\"" + CsrfProtectionFilter.ANTICSRF_PARAM + "\" value=\"" + ctx.getWikiSession().antiCsrfToken() + "\"/>\n";
     }
 
 }
