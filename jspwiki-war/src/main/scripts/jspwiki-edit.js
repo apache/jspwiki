@@ -507,7 +507,7 @@ var EditTools =
 		$('previewSpin').show();
 		new Ajax( Wiki.TemplateUrl + "/AJAXPreview.jsp?page="+Wiki.PageName, {
 		    method:'get',   //use "get" to avoid mootools bug on XHR header "CONNECTION:CLOSE"
-			data: 'wikimarkup=' + encodeURIComponent(this.textarea.value),
+			data: 'X-XSRF-TOKEN=' + $('X-XSRF-TOKEN').get('value') + '&wikimarkup=' + encodeURIComponent(this.textarea.value),
 			update: preview,
 			onComplete: function(){
 				$('previewSpin').hide();

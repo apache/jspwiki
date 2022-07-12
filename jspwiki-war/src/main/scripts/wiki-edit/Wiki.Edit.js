@@ -209,7 +209,8 @@ function livepreview(content, preview, previewToggle){
             url: wiki.XHRPreview,
             data: {
                 page: wiki.PageName,
-                wikimarkup: content
+                wikimarkup: content,
+                'X-XSRF-TOKEN': wiki.CsrfProtection
             },
             update: preview,
             onRequest: renderPreview,

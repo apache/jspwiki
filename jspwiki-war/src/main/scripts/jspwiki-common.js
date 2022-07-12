@@ -528,7 +528,7 @@ var Wiki = {
 		xmlHttpRequest.onreadystatechange = getReadyStateHandler(xmlHttpRequest,responseId,loading);
 		xmlHttpRequest.open('post', url, true);
 		xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		xmlHttpRequest.send("params="+params);
+		xmlHttpRequest.send("X-XSRF-TOKEN=" + Wiki.CsrfProtection + "&params="+params);
 	},
 
 	ajaxJsonCall: function (url, params, callback) {
@@ -537,7 +537,7 @@ var Wiki = {
 		xmlHttpRequest.onreadystatechange = getReadyStateHandler(xmlHttpRequest,null,null,callback);
 		xmlHttpRequest.open('post', url, true);
 		xmlHttpRequest.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		xmlHttpRequest.send("params="+params);
+		xmlHttpRequest.send("X-XSRF-TOKEN=" + Wiki.CsrfProtection + "&params="+params);
 	}
 }
 
