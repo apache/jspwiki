@@ -28,6 +28,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jspwiki-bom</artifactId>
   <name>Apache JSPWiki bill of materials</name>
+  <packaging>pom</packaging>
 
   <properties>
     <jspwiki.version>2.11.3-SNAPSHOT</jspwiki.version>
