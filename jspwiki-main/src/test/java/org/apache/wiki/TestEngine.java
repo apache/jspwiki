@@ -451,10 +451,13 @@ public class TestEngine extends WikiEngine {
      */
     private static Properties cleanTestProps( final Properties props ) {
         final long millis = System.currentTimeMillis();
-        props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
-        props.setProperty( "jspwiki.fileSystemProvider.pageDir", cleanNewDirFrom( props.getProperty( "jspwiki.fileSystemProvider.pageDir" ), millis ) );
-        props.setProperty( "jspwiki.basicAttachmentProvider.storageDir", cleanNewDirFrom( props.getProperty( "jspwiki.basicAttachmentProvider.storageDir" ), millis ) );
-        props.setProperty( "jspwiki.workDir", cleanNewDirFrom( props.getProperty( "jspwiki.workDir" ), millis ) );
+        if( !"true".equalsIgnoreCase( props.getProperty( "jspwiki.test.disable-clean-props" ) ) ) {
+            props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
+            props.setProperty( "jspwiki.fileSystemProvider.pageDir", cleanNewDirFrom( props.getProperty( "jspwiki.fileSystemProvider.pageDir" ), millis ) );
+            props.setProperty( "jspwiki.basicAttachmentProvider.storageDir", cleanNewDirFrom( props.getProperty( "jspwiki.basicAttachmentProvider.storageDir" ), millis ) );
+            props.setProperty( "jspwiki.workDir", cleanNewDirFrom( props.getProperty( "jspwiki.workDir" ), millis ) );
+        }
+
         return props;
     }
 
