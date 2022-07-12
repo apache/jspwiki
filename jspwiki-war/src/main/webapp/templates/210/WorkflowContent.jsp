@@ -84,6 +84,7 @@
           <td align="left">
             <form id="<c:out value='decision.${decision.id}'/>"
               action="<wiki:Link jsp='Workflow.jsp' format='url'/>" method="POST" accept-charset="UTF-8">
+              <wiki:CsrfProtection/>
               <input type="hidden" name="action" value="decide" />
               <input type="hidden" name="id" value="<c:out value='${decision.id}' />" />
               <select name="outcome" onchange="SubmitOutcomeIfSelected(this)">
@@ -163,6 +164,7 @@
           <!-- Actions -->
           <td align="left">
             <form id="<c:out value='workflow.${workflow.id}'/>" action="<wiki:Link jsp='Workflow.jsp' format='url'/>" method="POST" accept-charset="UTF-8">
+              <wiki:CsrfProtection/>
               <input type="submit" name="submit" value="<fmt:message key="outcome.step.abort" />" />
               <input type="hidden" name="action" value="abort" />
               <input type="hidden" name="id" value="<c:out value="${workflow.id}" />" />

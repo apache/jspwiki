@@ -45,7 +45,7 @@
           id="editform"
      enctype="application/x-www-form-urlencoded">
 
-  
+    <wiki:CsrfProtection/>
     <%-- Edit.jsp & Comment.jsp rely on these being found.  So be careful, if you make changes. --%>
     <input type="hidden" name="author" value="${author}" />
     <input type="hidden" name="link" value="${link}" />

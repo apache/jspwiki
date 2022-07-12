@@ -29,18 +29,19 @@
 <%
   int MAXATTACHNAMELENGTH = 30;
   Context c = Context.findContext(pageContext);
-  String progressId = c.getEngine().getManager( ProgressManager.class ).getNewProgressIdentifier();
 %>
+<c:set var="progressId" value="<%= c.getEngine().getManager( ProgressManager.class ).getNewProgressIdentifier() %>" />
+<c:set var="csrfProtection" value="<%= c.getWikiSession().antiCsrfToken() %>" />
 
 <div id="addattachment">
 <h3><fmt:message key="attach.add"/></h3>
 <wiki:Permission permission="upload">
-  <form action="<wiki:Link jsp='attach' format='url'><wiki:Param name='progressid' value='<%=progressId%>'/></wiki:Link>"
+  <form action="<wiki:Link jsp='attach' format='url'><wiki:Param name='progressid' value='${progressId}'/><wiki:Param name='X-XSRF-TOKEN' value='${csrfProtection}'/></wiki:Link>"
          class="wikiform"
             id="uploadform"
         method="post"
        enctype="multipart/form-data" accept-charset="<wiki:ContentEncoding/>"
-      onsubmit="return Wiki.submitUpload(this, '<%=progressId%>');" >
+      onsubmit="return Wiki.submitUpload(this, '${progressId}');" >
     <table>
     <tr>
       <td colspan="2"><div class="formhelp"><fmt:message key="attach.add.info" /></div></td>
@@ -55,7 +56,7 @@
     <input type="hidden" name="nextpage" value="<wiki:UploadLink format="url"/>" /></td>
     </tr>
 
-   <tr>
+    <tr>
       <td></td>
       <td>
         <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
@@ -66,6 +67,7 @@
     </tr>
 
     </table>
+    <wiki:CsrfProtection/>
   </form>
 
   <wiki:Messages div="error" />
@@ -89,9 +91,8 @@
               id="deleteForm" style="display:none;"
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return(confirm('<fmt:message key="attach.deleteconfirm"/>') && Wiki.submitOnce(this) );" >
-
+      <wiki:CsrfProtection/>
       <input id="delete-all" name="delete-all" type="submit" value="Delete" />
-
     </form>
   </wiki:Permission>
 

@@ -41,6 +41,7 @@
     placeholder="<fmt:message key="find.input" />"
       autofocus="autofocus"
            size="32" />
+    <wiki:CsrfProtection/>
 
     <div class="form-inline form-group">
 

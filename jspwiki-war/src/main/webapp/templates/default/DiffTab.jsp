@@ -37,6 +37,7 @@
        class="diffbody form-inline"
       method="get" accept-charset="UTF-8">
   <input type="hidden" name="page" value="<wiki:PageName />" />
+  <wiki:CsrfProtection/>
 
   <p class="btn btn-default btn-block">
        <fmt:message key="diff.difference">

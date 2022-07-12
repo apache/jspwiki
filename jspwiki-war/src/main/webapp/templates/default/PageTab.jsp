@@ -48,6 +48,7 @@
         method="get"  accept-charset='UTF-8'>
 
     <input type="hidden" name="page" value="${param.page}" />
+    <wiki:CsrfProtection/>
     <div class="error center">
       <label>
       <fmt:message key="view.oldversion">

@@ -109,7 +109,7 @@ if ( !installer.adminExists() )
 <div class="formcontainer">
 
 <form action="Install.jsp" method="post">
-
+  <wiki:CsrfProtection/>
   <!-- Page directory -->
   <h3><fmt:message key="install.jsp.basics.title" /></h3>
 

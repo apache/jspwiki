@@ -69,7 +69,7 @@
          class="wikiform"
             id="editGroup"
         method="POST" accept-charset="UTF-8">
-
+    <wiki:CsrfProtection/>
     <!-- Members -->
     <%
       StringBuffer s = new StringBuffer();
@@ -116,6 +116,7 @@
         onsubmit="return( confirm('<fmt:message key="grp.deletegroup.confirm"/>')
         && Wiki.submitOnce(this) );"
         method="POST" accept-charset="UTF-8">
+      <wiki:CsrfProtection/>
       <input type="submit" name="ok" value="<fmt:message key="actions.deletegroup"/>" />
       <input type="hidden" name="group" value="${param.group}" />
   </form>

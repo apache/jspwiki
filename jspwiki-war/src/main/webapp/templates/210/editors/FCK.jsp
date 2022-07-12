@@ -104,6 +104,7 @@
       name="editform" id="editform"
       enctype="application/x-www-form-urlencoded">
     <p>
+        <wiki:CsrfProtection/>
         <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
         <input name="page" type="hidden" value="<wiki:Variable var="pagename"/>" />
         <input name="action" type="hidden" value="save" />

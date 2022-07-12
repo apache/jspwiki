@@ -55,6 +55,7 @@
           id="setCookie"
       method="post" accept-charset="<wiki:ContentEncoding />"
     onsubmit="WikiPreferences.savePrefs(); return Wiki.submitOnce(this);" >
+    <wiki:CsrfProtection/>
 <table>
 
   <tr>
@@ -210,6 +211,7 @@
     onsubmit="Wiki.prefs.empty(); return Wiki.submitOnce( this );"
       method="post" accept-charset="<wiki:ContentEncoding />" >
   <div>
+  <wiki:CsrfProtection/>
   <input type="submit" name="ok" value="<fmt:message key='prefs.clear.submit'/>" />
   <input type="hidden" name="action" value="clearAssertedName" />
   </div>

@@ -33,16 +33,18 @@
   Context c = Context.findContext(pageContext);
 %>
 <c:set var="progressId" value="<%= c.getEngine().getManager( ProgressManager.class ).getNewProgressIdentifier() %>" />
+<c:set var="csrfProtection" value="<%= c.getWikiSession().antiCsrfToken() %>" />
 <div class="page-content">
 <wiki:Permission permission="upload">
 
-  <form action="<wiki:Link jsp='attach' format='url'><wiki:Param name='progressid' value='${progressId}'/></wiki:Link>"
+  <form action="<wiki:Link jsp='attach' format='url'><wiki:Param name='progressid' value='${progressId}'/><wiki:Param name='X-XSRF-TOKEN' value='${csrfProtection}'/></wiki:Link>"
          class="accordion<wiki:HasAttachments></wiki:HasAttachments>"
             id="uploadform"
         method="post"
        enctype="multipart/form-data" accept-charset="<wiki:ContentEncoding/>" >
 
     <h4><span class="icon-paper-clip"></span> <fmt:message key="attach.add"/></h4>
+    <wiki:CsrfProtection/>
     <input type="hidden" name="nextpage" value="<wiki:Link context='upload' format='url'/>" />
     <input type="hidden" name="page" value="<wiki:Variable var="pagename"/>" />
     <input type="hidden" name="action" value="upload" />
@@ -92,6 +94,7 @@
 
       <%--TODO: "nextpage" is not yet implemented in Delete.jsp
       --%>
+      <wiki:CsrfProtection/>
       <input type="hidden" name="nextpage" value="<wiki:Link context='upload' format='url'/>" />
       <input id="delete-all" name="delete-all" type="submit"
         data-modal="+ .modal"

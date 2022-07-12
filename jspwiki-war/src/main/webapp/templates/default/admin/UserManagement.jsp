@@ -76,6 +76,7 @@ function addNew()
           id="adminuserform"
       method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
+     <wiki:CsrfProtection/>
      <input type="hidden" name='bean' value='org.apache.wiki.ui.admin.beans.UserBean'/>
      <input type="hidden" id="loginid" name="loginid" value="" />
      <table>
@@ -131,7 +132,7 @@ function addNew()
 
      </table>
    <div id="useractions">
-     <input type="submit" name="action" value="Remove" data-modal="#useractions > .modal" />
+     <input type="submit" name="action" value="Remove" data-modal="+ .modal" />
      <div class="modal">
        <p>Are you sure you wish to remove this user?</p>
      </div>

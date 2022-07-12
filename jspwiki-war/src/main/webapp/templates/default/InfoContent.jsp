@@ -120,6 +120,7 @@
               id="renameform"
           method="post" accept-charset="<wiki:ContentEncoding />" >
 
+      <wiki:CsrfProtection/>
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
       <input class="btn btn-success" type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
       <input class="form-control form-col-50" type="text" name="renameto"
@@ -142,6 +143,7 @@
       <input class="btn btn-danger" type="submit" name="delete-all" id="delete-all"
         data-modal="+ .modal"
             value="<fmt:message key='info.delete.submit'/>" />
+      <wiki:CsrfProtection/>
       <div class="modal"><fmt:message key='info.confirmdelete'/></div>
     </form>
   </wiki:Permission>
@@ -262,7 +264,7 @@
 
   <%-- Do NOT change the order of wikiname and content, otherwise the
        servlet won't find its parts. --%>
-
+  <wiki:CsrfProtection/>
   <h4><span class="icon-paper-clip"></span> <fmt:message key="info.uploadnew"/></h4>
 
     <div class="form-group">
@@ -310,6 +312,7 @@
     </fmt:message>
   </a>
 --%>
+  <wiki:CsrfProtection/>
   <wiki:Permission permission="delete">
     <input class="btn btn-danger" type="submit" name="delete-all" id="delete-all"
       data-modal="+ .modal"

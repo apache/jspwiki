@@ -43,6 +43,7 @@
           id="editProfile">
 
   <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
+  <wiki:CsrfProtection/>
 
   <div class="form-group">
     <span class="form-col-20 control-label"></span>

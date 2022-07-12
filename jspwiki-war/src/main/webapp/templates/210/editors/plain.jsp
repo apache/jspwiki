@@ -88,6 +88,7 @@
       method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
 
+  <wiki:CsrfProtection/>
   <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
   <p id="submitbuttons">
   <input name="page" type="hidden" value="<wiki:Variable var='pagename' />" />

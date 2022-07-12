@@ -110,6 +110,7 @@
    <p><fmt:message key="captcha.description" /></p>
 
    <form action="<wiki:Link jsp='Captcha.jsp' format='url'/>" method="post" id="mainForm" style="display: none;">
+      <wiki:CsrfProtection/>
       <input type="hidden" value="foo" name="text" />
       <input type="hidden" value='<%=reqPage%>' name='page'/>
       <script type="text/javascript" src="http://challenge.asirra.com/js/AsirraClientSide.js"></script>

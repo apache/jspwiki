@@ -47,6 +47,7 @@
   <form action="<wiki:Link format='url' jsp='Wiki.jsp'/>" 
         method="get"  accept-charset='UTF-8'>
 
+    <wiki:CsrfProtection/>
     <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />     
     <div class="warning">
       <fmt:message key="view.oldversion">

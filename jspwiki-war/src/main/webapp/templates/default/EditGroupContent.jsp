@@ -64,6 +64,7 @@
         method="POST" accept-charset="UTF-8">
 
     <input type="hidden" name="group" value="${name}" />
+    <wiki:CsrfProtection/>
 
     <div class="form-group">
       <button class="btn btn-success" type="submit" name="action" value="save">

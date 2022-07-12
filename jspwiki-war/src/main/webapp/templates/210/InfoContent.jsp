@@ -140,6 +140,7 @@
         onsubmit="return Wiki.submitOnce(this);"
           method="post" accept-charset="<wiki:ContentEncoding />" >
       <p>
+      <wiki:CsrfProtection/>
       <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
       <input type="submit" name="rename" value="<fmt:message key='info.rename.submit' />" />
       <input type="text" name="renameto"
@@ -161,6 +162,7 @@
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );">
       <p>
+      <wiki:CsrfProtection/>
       <input type="submit" name="delete-all" id="delete-all"
             value="<fmt:message key='info.delete.submit'/>" />
       </p>
@@ -291,7 +293,7 @@
 
   <%-- Do NOT change the order of wikiname and content, otherwise the
        servlet won't find its parts. --%>
-
+  <wiki:CsrfProtection/>
   <table>
   <tr>
     <td colspan="2"><div class="formhelp"><fmt:message key="info.uploadnew.help" /></div></td>
@@ -331,6 +333,7 @@
           method="post" accept-charset="<wiki:ContentEncoding />"
         onsubmit="return( confirm('<fmt:message key="info.confirmdelete"/>') && Wiki.submitOnce(this) );" >
      <div>
+     <wiki:CsrfProtection/>
      <input type="submit" name="delete-all" id="delete-all"
            value="<fmt:message key='info.deleteattachment.submit' />" />
      </div>
