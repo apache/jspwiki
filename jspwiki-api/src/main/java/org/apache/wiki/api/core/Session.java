@@ -124,6 +124,12 @@ public interface Session extends WikiEventListener {
     Principal getUserPrincipal();
 
     /**
+     * Returns the CSRF protection Token associated with this wiki session.
+     * @return the CSRF protection Token associated with this wiki session.
+     */
+    String antiCsrfToken();
+
+    /**
      *  Returns a cached Locale object for this user.  It's better to use WikiContext's corresponding getBundle() method, since that
      *  will actually react if the user changes the locale in the middle, but if that's not available (or, for some reason, you need
      *  the speed), this method can also be used.  The Locale expires when the Session expires, and currently there is no way to

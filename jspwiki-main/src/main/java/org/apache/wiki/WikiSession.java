@@ -49,6 +49,7 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 
@@ -73,6 +74,7 @@ public class WikiSession implements Session {
     /** The Engine that created this session. */
     private Engine m_engine;
 
+    private String antiCsrfToken;
     private String m_status            = ANONYMOUS;
 
     private Principal m_userPrincipal  = WikiPrincipal.GUEST;
@@ -145,6 +147,12 @@ public class WikiSession implements Session {
     @Override
     public Principal getUserPrincipal() {
         return m_userPrincipal;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String antiCsrfToken() {
+        return antiCsrfToken;
     }
 
     /** {@inheritDoc} */
@@ -513,6 +521,7 @@ public class WikiSession implements Session {
         final WikiSession session = new WikiSession();
         session.m_engine = engine;
         session.invalidate();
+        session.antiCsrfToken = UUID.randomUUID().toString();
 
         // Add the session as listener for GroupManager, AuthManager, UserManager events
         final GroupManager groupMgr = engine.getManager( GroupManager.class );
