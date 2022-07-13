@@ -24,7 +24,7 @@ under the License.
 * New `CsrfProtectionFilter` to protect POST requests from CSRF attacks
     * `org.apache.wiki.api.core.Session` gains new `String antiCsrfToken()` method 
 
-* [`org.apache.wiki.markdown.migration.WikiSyntaxConverter`] to convert from JSPWiki syntax to markdown
+* [`org.apache.wiki.markdown.migration.WikiSyntaxConverter`](https://github.com/apache/jspwiki/blob/master/jspwiki-markdown/src/test/java/org/apache/wiki/markdown/migration/WikiSyntaxConverter.java) to convert from JSPWiki syntax to markdown
     * does not keep pages' history nor attachments (yet), but it's enough to generate the basic set of wikipages from jspwiki-wikipages artifacts
 
 * Fixed logout modal dialog not showing up
