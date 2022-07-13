@@ -50,7 +50,7 @@ ENV jspwiki_xmlGroupDatabaseFile /var/jspwiki/etc/groupdatabase.xml
 RUN set -x \
  && export DEBIAN_FRONTEND=noninteractive \
  && apt update \
- && apt upgrade \
+ && apt upgrade -y \
  && apt install --fix-missing --quiet --yes unzip
 
 #
