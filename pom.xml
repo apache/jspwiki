@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>26</version>
+    <version>27</version>
   </parent>
 
   <groupId>org.apache.jspwiki</groupId>
@@ -65,12 +65,12 @@
     <javax-jsp-api.version>2.3.3</javax-jsp-api.version>
     <javax-servlet-api.version>3.1.0</javax-servlet-api.version>
     <jdom2.version>2.0.6</jdom2.version>
-    <jetty.version>9.4.46.v20220331</jetty.version>
+    <jetty.version>9.4.48.v20220622</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.8.2</junit.version>
     <log4j2.version>2.18.0</log4j2.version>
     <lucene.version>8.11.2</lucene.version> <!-- 9.0.0 and above require JDK >= 11 to execute -->
-    <mockito.version>4.5.1</mockito.version>
+    <mockito.version>4.6.1</mockito.version>
     <nekohtml.version>2.0.2</nekohtml.version> <!-- 2.1.0 and above require JDK >= 11 to execute -->
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
@@ -93,11 +93,11 @@
     <plugin.javadoc.version>3.4.0</plugin.javadoc.version>
     <plugin.jxr.version>3.2.0</plugin.jxr.version>
     <plugin.project-info-reports.version>3.3.0</plugin.project-info-reports.version>
-    <plugin.release.version>3.0.0-M5</plugin.release.version>
+    <plugin.release.version>3.0.0-M6</plugin.release.version>
     <plugin.resources.version>3.2.0</plugin.resources.version>
     <plugin.source.version>3.2.1</plugin.source.version>
     <plugin.surefire.version>3.0.0-M7</plugin.surefire.version>
-    <plugin.surefire.junit5-tree-reporter.version>0.1.0</plugin.surefire.junit5-tree-reporter.version>
+    <plugin.surefire.junit5-tree-reporter.version>1.0.1</plugin.surefire.junit5-tree-reporter.version>
     <plugin.war.version>3.3.2</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>3.2.0</plugin.jspc.version>
