@@ -38,10 +38,6 @@
 %>
 
 <%
-    if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
-        response.sendRedirect( "/error/Forbidden.html" );
-        return;
-    }
     Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
     Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_CREATE_GROUP.getRequestContext() );
@@ -62,6 +58,10 @@
     
     // Are we saving the group?
     if( "save".equals( request.getParameter( "action" ) ) ) {
+        if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+            response.sendRedirect( "/error/Forbidden.html" );
+            return;
+        }
         // Validate the group
         groupMgr.validateGroup( wikiContext, group );
         
