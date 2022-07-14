@@ -24,7 +24,7 @@
 <%@ page import="org.apache.wiki.api.core.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
-<c:set var="frontpage"><wiki:Variable var="jspwiki.frontPage" /></c:set>
+<c:set var="frontpage"><wiki:Variable var="jspwiki.frontPage" default="Main" /></c:set>
 
 <div class="header">
 
