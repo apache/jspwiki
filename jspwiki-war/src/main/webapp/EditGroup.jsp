@@ -25,6 +25,7 @@
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -43,20 +44,20 @@
     Session wikiSession = wikiContext.getWikiSession();
     GroupManager groupMgr = wiki.getManager( GroupManager.class );
     Group group = null;
-    try 
-    {
+    try {
         group = groupMgr.parseGroup( wikiContext, false );
         pageContext.setAttribute ( "Group", group, PageContext.REQUEST_SCOPE );
-    }
-    catch ( WikiSecurityException e )
-    {
+    } catch ( WikiSecurityException e ) {
         wikiSession.addMessage( GroupManager.MESSAGES_KEY, e.getMessage() );
         response.sendRedirect( "Group.jsp" );
     }
     
     // Are we saving the group?
-    if( "save".equals(request.getParameter("action")) )
-    {
+    if( "save".equals( request.getParameter( "action" ) ) ) {
+        if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+            response.sendRedirect( "/error/Forbidden.html" );
+            return;
+        }
         // Validate the group
         groupMgr.validateGroup( wikiContext, group );
 

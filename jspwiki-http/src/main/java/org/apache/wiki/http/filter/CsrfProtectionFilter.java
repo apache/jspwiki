@@ -13,8 +13,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 
 /**
@@ -36,23 +36,34 @@ public class CsrfProtectionFilter implements Filter {
     /** {@inheritDoc} */
     @Override
     public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
-        if( "POST".equalsIgnoreCase( ( ( HttpServletRequest ) request ).getMethod() ) ) {
+        if( isPost( ( HttpServletRequest ) request ) ) {
             final Engine engine = Wiki.engine().find( request.getServletContext(), null );
             final Session session = Wiki.session().find( engine, ( HttpServletRequest ) request );
-            if( !session.antiCsrfToken().equals( request.getParameter( ANTICSRF_PARAM ) ) ) {
+            if( !requestContainsValidCsrfToken( request, session ) ) {
                 LOG.error( "Incorrect {} param with value '{}' received for {}",
                            ANTICSRF_PARAM, request.getParameter( ANTICSRF_PARAM ), ( ( HttpServletRequest ) request ).getPathInfo() );
-                final PrintWriter out = response.getWriter();
-                out.print("<!DOCTYPE html><html lang=\"en\"><head><title>Fatal problem with JSPWiki</title></head>");
-                out.print("<body>");
-                out.print("<h1>CSRF injection detected</h1>");
-                out.print("<p>A CSRF injection has been detected, so the request has been stopped</p>");
-                out.print("<p>Please check your system logs to pinpoint the request origin, someone's trying to mess with your installation.</p>");
-                out.print("</body></html>");
+                ( ( HttpServletResponse ) response ).sendRedirect( "/error/Forbidden.html" );
                 return;
             }
         }
         chain.doFilter( request, response );
+    }
+
+    public static boolean isCsrfProtectedPost( final HttpServletRequest request ) {
+        if( isPost( request ) ) {
+            final Engine engine = Wiki.engine().find( request.getServletContext(), null );
+            final Session session = Wiki.session().find( engine, request );
+            return requestContainsValidCsrfToken( request, session );
+        }
+        return false;
+    }
+
+    private static boolean requestContainsValidCsrfToken( final ServletRequest request, final Session session ) {
+        return session.antiCsrfToken().equals( request.getParameter( ANTICSRF_PARAM ) );
+    }
+
+    static boolean isPost( final HttpServletRequest request ) {
+        return "POST".equalsIgnoreCase( request.getMethod() );
     }
 
     /** {@inheritDoc} */
