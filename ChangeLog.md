@@ -17,6 +17,20 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-07-14  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.3-git-10_
+
+* Bring CSRF protection to group management JSPs
+
+* Add default application name on `<title>` elements to templates' templates, and `Main` as default frontpage is none is defined on default template
+
+* Dependency updates
+  * Parent to Apache Parent 27
+  * Jetty to 9.4.48.v20220622 - closes [#199](https://github.com/apache/jspwiki/pull/199)
+  * Mockito to 4.6.1 - closes [#198](https://github.com/apache/jspwiki/pull/198)
+  * Maven plugins: release to 3.0.0-M6 (closes [#201](https://github.com/apache/jspwiki/pull/201), thanks to dependabot), junit5-tree-reporter to 1.0.1 (closes [#200](https://github.com/apache/jspwiki/pull/200), thanks to dependabot)
+
 **2022-07-12  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.3-git-09_
