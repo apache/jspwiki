@@ -75,7 +75,7 @@
 <html lang="<c:out value='${prefs.Language}' default='en'/>" name="top">
 
 <head>
-  <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
+  <title><wiki:Variable var="applicationname" default="Apache JSPWiki" />: <wiki:PageName /></title>
   <%-- <wiki:Include page="commonheader.jsp"/> --%>
   <meta name="robots" content="noindex,nofollow" />
   <script type="text/javascript">

@@ -70,7 +70,7 @@
 <!doctype html>
 <html lang="<c:out value='${prefs.Language}' default='en'/>" name="top">
   <head>
-    <title><wiki:Variable var="applicationname" />: ERROR Page</title>
+    <title><wiki:Variable var="applicationname" default="Apache JSPWiki" />: ERROR Page</title>
   </head>
 
   <body>
