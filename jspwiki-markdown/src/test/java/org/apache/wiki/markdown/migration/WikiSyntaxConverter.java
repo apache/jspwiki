@@ -19,11 +19,13 @@
 package org.apache.wiki.markdown.migration;
 
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.spi.Wiki;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator;
 import org.apache.wiki.markdown.migration.parser.JSPWikiToMarkdownMarkupParser;
 import org.apache.wiki.pages.PageManager;
@@ -31,7 +33,9 @@ import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.Test;
 
+import java.io.InputStream;
 import java.util.Collection;
+import java.util.List;
 
 import static org.apache.wiki.TestEngine.with;
 
@@ -54,6 +58,11 @@ public class WikiSyntaxConverter {
             final String syntax = new HtmlStringToWikiTranslator( md ).translate( html );
             final Context contextMD = Wiki.context().create( md, p );
             md.getManager( PageManager.class ).saveText( contextMD, clean( syntax ) );
+            final List< Attachment > attachments = jspw.getManager( AttachmentManager.class ).listAttachments( p );
+            for( final Attachment attachment : attachments ) {
+                final InputStream bytes = jspw.getManager( AttachmentManager.class ).getAttachmentStream( context, attachment );
+                md.getManager( AttachmentManager.class ).storeAttachment( attachment, bytes );
+            }
         }
     }
 
