@@ -47,7 +47,7 @@ import java.util.jar.JarFile;
  */
 public final class ClassUtil {
 
-    private static final Logger log = LogManager.getLogger(ClassUtil.class);
+    private static final Logger LOG = LogManager.getLogger(ClassUtil.class);
 
     /** The location of the classmappings.xml document. It will be searched for in the classpath. Its value is "{@value}". */
     public  static final String MAPPINGS = "ini/classmappings.xml";
@@ -74,10 +74,10 @@ public final class ClassUtil {
                 final String className = f.getChildText( "mappedClass" );
 
                 map.put( key, className );
-                log.debug( "Mapped class '{}' to class '{}'", key, className );
+                LOG.debug( "Mapped class '{}' to class '{}'", key, className );
             }
         } else {
-            log.info( "Didn't find class mapping document in {}", MAPPINGS );
+            LOG.info( "Didn't find class mapping document in {}", MAPPINGS );
         }
         return map;
     }
@@ -129,9 +129,9 @@ public final class ClassUtil {
      */
     private static ClassLoader setupClassLoader( final List< String > externaljars) {
         classLoaderSetup = true;
-        log.info( "setting up classloaders for external (plugin) jars" );
+        LOG.info( "setting up classloaders for external (plugin) jars" );
         if( externaljars.size() == 0 ) {
-            log.info( "no external jars configured, using standard classloading" );
+            LOG.info( "no external jars configured, using standard classloading" );
             return ClassUtil.class.getClassLoader();
         }
         final URL[] urls = new URL[externaljars.size()];
@@ -141,14 +141,14 @@ public final class ClassUtil {
                 final File jarFile = new File( externaljar );
                 final URL ucl = jarFile.toURI().toURL();
                 urls[ i++ ] = ucl;
-                log.info( "added {} to list of external jars", ucl );
+                LOG.info( "added {} to list of external jars", ucl );
             } catch( final MalformedURLException e ) {
-                log.error( "exception ({}) while setting up classloaders for external jar: {}, continuing without external jars.", e.getMessage(), externaljar );
+                LOG.error( "exception ({}) while setting up classloaders for external jar: {}, continuing without external jars.", e.getMessage(), externaljar );
             }
         }
         
         if( i == 0 ) {
-            log.error( "all external jars threw an exception while setting up classloaders for them, continuing with standard classloading. " + 
+            LOG.error( "all external jars threw an exception while setting up classloaders for them, continuing with standard classloading. " + 
                        "See https://jspwiki-wiki.apache.org/Wiki.jsp?page=InstallingPlugins for help on how to install custom plugins." );
             return ClassUtil.class.getClassLoader();
         }
@@ -186,7 +186,7 @@ public final class ClassUtil {
             try {
                 en = ClassUtil.class.getClassLoader().getResources( rootPackage );
             } catch( final IOException e ) {
-                log.error( e.getMessage(), e );
+                LOG.error( e.getMessage(), e );
             }
         }
         
@@ -200,7 +200,7 @@ public final class ClassUtil {
                 }
                 
             } catch( final IOException ioe ) {
-                log.error( ioe.getMessage(), ioe );
+                LOG.error( ioe.getMessage(), ioe );
             }
         }
         return results;
@@ -216,7 +216,7 @@ public final class ClassUtil {
      * @param rootPackage base package.
      */
     static void fileEntriesUnder( final List< String > results, final File file, final String rootPackage ) {
-        log.debug( "scanning [{}]", file.getName() );
+        LOG.debug( "scanning [{}]", file.getName() );
         if( file.isDirectory() ) {
             final Iterator< File > files = FileUtils.iterateFiles( file, null, true );
             while( files.hasNext() ) {
@@ -239,7 +239,7 @@ public final class ClassUtil {
      */
     static void jarEntriesUnder( final List< String > results, final JarURLConnection jurlcon, final String rootPackage ) {
         try( final JarFile jar = jurlcon.getJarFile() ) {
-            log.debug( "scanning [{}]", jar.getName() );
+            LOG.debug( "scanning [{}]", jar.getName() );
             final Enumeration< JarEntry > entries = jar.entries();
             while( entries.hasMoreElements() ) {
                 final JarEntry entry = entries.nextElement();
@@ -248,7 +248,7 @@ public final class ClassUtil {
                 }
             }
         } catch( final IOException ioe ) {
-            log.error( ioe.getMessage(), ioe );
+            LOG.error( ioe.getMessage(), ioe );
         }
     }
     
@@ -328,7 +328,7 @@ public final class ClassUtil {
             final Class< ? > parent = Class.forName( parentClassName );
             return parent.isAssignableFrom( src );
         } catch( final Exception e ) {
-            log.error( e.getMessage(), e );
+            LOG.error( e.getMessage(), e );
         }
         return false;
     }

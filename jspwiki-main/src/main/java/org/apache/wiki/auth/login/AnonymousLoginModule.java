@@ -59,7 +59,7 @@ public class AnonymousLoginModule extends AbstractLoginModule
      */
     public static final String PROMPT = "User name";
 
-    protected static final Logger log = LogManager.getLogger( AnonymousLoginModule.class );
+    protected static final Logger LOG = LogManager.getLogger( AnonymousLoginModule.class );
 
     /**
      * {@inheritDoc}
@@ -82,16 +82,16 @@ public class AnonymousLoginModule extends AbstractLoginModule
             final WikiPrincipal ipAddr = new WikiPrincipal( HttpUtil.getRemoteAddress(request) );
             final HttpSession session = request.getSession( false );
             final String sid = (session == null) ? NULL : session.getId();
-            log.debug("Logged in session ID={}; IP={}", sid, ipAddr);
+            LOG.debug("Logged in session ID={}; IP={}", sid, ipAddr);
             // If login succeeds, commit these principals/roles
             m_principals.add( ipAddr );
             return true;
         } catch( final IOException e ) {
-            log.error("IOException: " + e.getMessage());
+            LOG.error("IOException: " + e.getMessage());
             return false;
         } catch( final UnsupportedCallbackException e ) {
             final String message = "Unable to handle callback, disallowing login.";
-            log.error( message, e );
+            LOG.error( message, e );
             throw new LoginException( message );
         }
     }

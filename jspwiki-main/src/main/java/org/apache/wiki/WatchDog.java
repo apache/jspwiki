@@ -52,7 +52,7 @@ public final class WatchDog {
     private boolean m_enabled = true;
     private final Engine m_engine;
 
-    private static final Logger log = LogManager.getLogger( WatchDog.class );
+    private static final Logger LOG = LogManager.getLogger( WatchDog.class );
 
     private static final Map< Integer, WeakReference< WatchDog > > c_kennel = new ConcurrentHashMap<>();
     private static WikiBackgroundThread c_watcherThread;
@@ -185,7 +185,7 @@ public final class WatchDog {
      *  @param expectedCompletionTime The timeout in seconds.
      */
     public void enterState( final String state, final int expectedCompletionTime ) {
-        log.debug(  "{}: Entering state {}, expected completion in {} s", m_watchable.getName(), state, expectedCompletionTime );
+        LOG.debug(  "{}: Entering state {}, expected completion in {} s", m_watchable.getName(), state, expectedCompletionTime );
         synchronized( m_stateStack ) {
             final State st = new State( state, expectedCompletionTime );
             m_stateStack.push( st );
@@ -213,14 +213,14 @@ public final class WatchDog {
                 if( state == null || st.getState().equals( state ) ) {
                     m_stateStack.pop();
 
-                    log.debug( "{}: Exiting state {}", m_watchable.getName(), st.getState() );
+                    LOG.debug( "{}: Exiting state {}", m_watchable.getName(), st.getState() );
                 } else {
                     // FIXME: should actually go and fix things for that
-                    log.error( "exitState() called before enterState()" );
+                    LOG.error( "exitState() called before enterState()" );
                 }
             }
         } else {
-            log.warn( "Stack for " + m_watchable.getName() + " is empty!" );
+            LOG.warn( "Stack for " + m_watchable.getName() + " is empty!" );
         }
     }
 
@@ -243,7 +243,7 @@ public final class WatchDog {
     }
 
     private void check() {
-        log.debug( "Checking watchdog '{}'", m_watchable.getName() );
+        LOG.debug( "Checking watchdog '{}'", m_watchable.getName() );
 
         synchronized( m_stateStack ) {
             if( !m_stateStack.empty() ) {
@@ -251,15 +251,15 @@ public final class WatchDog {
                 final long now = System.currentTimeMillis();
 
                 if( now > st.getExpiryTime() ) {
-                    log.info( "Watchable '" + m_watchable.getName() + "' exceeded timeout in state '" + st.getState() +
+                    LOG.info( "Watchable '" + m_watchable.getName() + "' exceeded timeout in state '" + st.getState() +
                               "' by " + (now - st.getExpiryTime()) / 1000 + " seconds" +
-                             ( log.isDebugEnabled() ? "" : "Enable DEBUG-level logging to see stack traces." ) );
+                             ( LOG.isDebugEnabled() ? "" : "Enable DEBUG-level logging to see stack traces." ) );
                     dumpStackTraceForWatchable();
 
                     m_watchable.timeoutExceeded( st.getState() );
                 }
             } else {
-                log.warn( "Stack for " + m_watchable.getName() + " is empty!" );
+                LOG.warn( "Stack for " + m_watchable.getName() + " is empty!" );
             }
         }
     }
@@ -268,7 +268,7 @@ public final class WatchDog {
      *  Dumps the stack traces as DEBUG level events.
      */
     private void dumpStackTraceForWatchable() {
-        if( !log.isDebugEnabled() ) {
+        if( !LOG.isDebugEnabled() ) {
             return;
         }
 
@@ -292,7 +292,7 @@ public final class WatchDog {
             }
         }
 
-        log.debug( stacktrace.toString() );
+        LOG.debug( stacktrace.toString() );
     }
 
     /**

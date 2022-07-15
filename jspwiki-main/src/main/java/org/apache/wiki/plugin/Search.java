@@ -52,7 +52,7 @@ import java.util.Map;
  */
 public class Search implements Plugin {
 
-    private static final Logger log = LogManager.getLogger(Search.class);
+    private static final Logger LOG = LogManager.getLogger(Search.class);
 
     /** Parameter name for setting the query string.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_QUERY = "query";
@@ -102,7 +102,7 @@ public class Search implements Plugin {
     }
 
     private Collection<SearchResult> doBasicQuery( final Context context, final String query ) throws ProviderException, IOException {
-        log.debug( "Searching for string " + query );
+        LOG.debug( "Searching for string " + query );
         return context.getEngine().getManager( SearchManager.class ).findPages( query, context );
     }
 

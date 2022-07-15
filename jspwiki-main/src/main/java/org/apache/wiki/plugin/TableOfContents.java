@@ -54,7 +54,7 @@ import java.util.ResourceBundle;
  */
 public class TableOfContents implements Plugin, HeadingListener {
 
-    private static final Logger log = LogManager.getLogger( TableOfContents.class );
+    private static final Logger LOG = LogManager.getLogger( TableOfContents.class );
 
     /** Parameter name for setting the title. */
     public static final String PARAM_TITLE = "title";
@@ -84,7 +84,7 @@ public class TableOfContents implements Plugin, HeadingListener {
      */
     @Override
     public void headingAdded( final Context context, final Heading hd ) {
-        log.debug( "HD: {}, {}, {}", hd.m_level, hd.m_titleText, hd.m_titleAnchor );
+        LOG.debug( "HD: {}, {}, {}", hd.m_level, hd.m_titleText, hd.m_titleAnchor );
 
         switch( hd.m_level ) {
           case Heading.HEADING_SMALL:
@@ -212,7 +212,7 @@ public class TableOfContents implements Plugin, HeadingListener {
 					wikiText = fm.doPreTranslateFiltering(context, wikiText);
 
 				} catch( final Exception e ) {
-					log.error("Could not construct table of contents: Filter Error", e);
+					LOG.error("Could not construct table of contents: Filter Error", e);
 					throw new PluginException("Unable to construct table of contents (see logs)");
 				}
             }
@@ -225,7 +225,7 @@ public class TableOfContents implements Plugin, HeadingListener {
 
             sb.append( "<ul>\n" ).append( m_buf ).append( "</ul>\n" );
         } catch( final IOException e ) {
-            log.error("Could not construct table of contents", e);
+            LOG.error("Could not construct table of contents", e);
             throw new PluginException("Unable to construct table of contents (see logs)");
         }
 

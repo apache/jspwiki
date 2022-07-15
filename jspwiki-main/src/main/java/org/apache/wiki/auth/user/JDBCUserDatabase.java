@@ -396,7 +396,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
             while( rs.next() ) {
                 final String wikiName = rs.getString( m_wikiName );
                 if( StringUtils.isEmpty( wikiName ) ) {
-                    log.warn( "Detected null or empty wiki name for {} in JDBCUserDataBase. Check your user database.", rs.getString( m_loginName ) );
+                    LOG.warn( "Detected null or empty wiki name for {} in JDBCUserDataBase. Check your user database.", rs.getString( m_loginName ) );
                 } else {
                     final Principal principal = new WikiPrincipal( wikiName, WikiPrincipal.WIKI_NAME );
                     principals.add( principal );
@@ -483,17 +483,17 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                               + "=?";
             m_renameRoles = "UPDATE " + roleTable + " SET " + m_loginName + "=? WHERE " + m_loginName + "=?";
         } catch( final NamingException e ) {
-            log.error( "JDBCUserDatabase initialization error: " + e.getMessage() );
+            LOG.error( "JDBCUserDatabase initialization error: " + e.getMessage() );
             throw new NoRequiredPropertyException( PROP_DB_DATASOURCE, "JDBCUserDatabase initialization error: " + e.getMessage() );
         }
 
         // Test connection by doing a quickie select
         try( final Connection conn = m_ds.getConnection(); final PreparedStatement ps = conn.prepareStatement( m_findAll ) ) {
         } catch( final SQLException e ) {
-            log.error( "DB connectivity error: " + e.getMessage() );
+            LOG.error( "DB connectivity error: " + e.getMessage() );
             throw new WikiSecurityException("DB connectivity error: " + e.getMessage(), e );
         }
-        log.info( "JDBCUserDatabase initialized from JNDI DataSource: {}", jndiName );
+        LOG.info( "JDBCUserDatabase initialized from JNDI DataSource: {}", jndiName );
 
         // Determine if the datasource supports commits
         try( final Connection conn = m_ds.getConnection() ) {
@@ -501,10 +501,10 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
             if( dmd.supportsTransactions() ) {
                 m_supportsCommits = true;
                 conn.setAutoCommit( false );
-                log.info( "JDBCUserDatabase supports transactions. Good; we will use them." );
+                LOG.info( "JDBCUserDatabase supports transactions. Good; we will use them." );
             }
         } catch( final SQLException e ) {
-            log.warn( "JDBCUserDatabase warning: user database doesn't seem to support transactions. Reason: {}", e.getMessage() );
+            LOG.warn( "JDBCUserDatabase warning: user database doesn't seem to support transactions. Reason: {}", e.getMessage() );
         }
     }
 
@@ -727,7 +727,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                             final Map<String,? extends Serializable> attributes = Serializer.deserializeFromBase64( rawAttributes );
                             profile.getAttributes().putAll( attributes );
                         } catch ( final IOException e ) {
-                            log.error( "Could not parse user profile attributes!", e );
+                            LOG.error( "Could not parse user profile attributes!", e );
                         }
                     }
                     found = true;

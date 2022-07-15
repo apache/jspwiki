@@ -153,7 +153,7 @@ import org.jdom2.Attribute;
  */
 public class LinkParser
 {
-    private static final Logger log = LogManager.getLogger(LinkParser.class);
+    private static final Logger LOG = LogManager.getLogger(LinkParser.class);
 
     /** Permitted attributes on links.  Keep this sorted. */
     private static final String[] PERMITTED_ATTRIBUTES = new String[] {
@@ -296,18 +296,18 @@ public class LinkParser
                 }
                 catch( final ParseException pe )
                 {
-                    log.warn("syntax error parsing link attributes '"+attribs+"': " + pe.getMessage());
+                    LOG.warn("syntax error parsing link attributes '"+attribs+"': " + pe.getMessage());
                 }
                 catch( final NoSuchElementException nse )
                 {
-                    log.warn("expected more tokens while parsing link attributes '" + attribs + "'");
+                    LOG.warn("expected more tokens while parsing link attributes '" + attribs + "'");
                 }
             }
 
         }
         catch( final Exception e )
         {
-            log.warn( e.getClass().getName() + " thrown by link parser: " + e.getMessage() );
+            LOG.warn( e.getClass().getName() + " thrown by link parser: " + e.getMessage() );
         }
 
         return link;

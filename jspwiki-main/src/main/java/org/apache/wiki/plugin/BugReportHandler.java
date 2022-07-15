@@ -58,7 +58,7 @@ import java.util.StringTokenizer;
  */
 public class BugReportHandler implements Plugin {
 
-    private static final Logger log = LogManager.getLogger( BugReportHandler.class );
+    private static final Logger LOG = LogManager.getLogger( BugReportHandler.class );
     private static final String DEFAULT_DATEFORMAT = "dd-MMM-yyyy HH:mm:ss zzz";
 
     /** Parameter name for setting the title.  Value is <tt>{@value}</tt>. */
@@ -153,10 +153,10 @@ public class BugReportHandler implements Plugin {
 
             return formatter.format( args );
         } catch( final RedirectException e ) {
-            log.info("Saving not allowed, reason: '"+e.getMessage()+"', can't redirect to "+e.getRedirect());
+            LOG.info("Saving not allowed, reason: '"+e.getMessage()+"', can't redirect to "+e.getRedirect());
             throw new PluginException("Saving not allowed, reason: "+e.getMessage());
         } catch( final WikiException e ) {
-            log.error( "Unable to save page!", e );
+            LOG.error( "Unable to save page!", e );
             return rb.getString("bugreporthandler.unable" );
         }
     }

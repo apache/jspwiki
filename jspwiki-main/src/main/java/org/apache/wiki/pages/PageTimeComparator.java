@@ -34,14 +34,14 @@ import java.util.Date;
 public class PageTimeComparator implements Comparator< Page >, Serializable {
 	
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LogManager.getLogger( PageTimeComparator.class );
+    private static final Logger LOG = LogManager.getLogger( PageTimeComparator.class );
 
     /**
      *  {@inheritDoc}
      */
     public int compare( final Page p1, final Page p2 ) {
         if( p1 == null || p2 == null ) {
-            log.error( "W1 or W2 is NULL in PageTimeComparator!");
+            LOG.error( "W1 or W2 is NULL in PageTimeComparator!");
             return 0; // FIXME: Is this correct?
         }
 
@@ -49,10 +49,10 @@ public class PageTimeComparator implements Comparator< Page >, Serializable {
         final Date w2LastMod = p2.getLastModified();
 
         if( w1LastMod == null ) {
-            log.error( "NULL MODIFY DATE WITH " + p1.getName() );
+            LOG.error( "NULL MODIFY DATE WITH " + p1.getName() );
             return 0;
         } else if( w2LastMod == null ) {
-            log.error( "NULL MODIFY DATE WITH " + p2.getName() );
+            LOG.error( "NULL MODIFY DATE WITH " + p2.getName() );
             return 0;
         }
 

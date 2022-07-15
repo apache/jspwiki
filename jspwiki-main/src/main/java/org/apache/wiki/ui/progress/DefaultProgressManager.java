@@ -43,7 +43,7 @@ public class DefaultProgressManager implements ProgressManager {
 
     private final Map< String,ProgressItem > m_progressingTasks = new ConcurrentHashMap<>();
 
-    private static final Logger log = LogManager.getLogger( DefaultProgressManager.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultProgressManager.class );
 
     /**
      *  Creates a new ProgressManager.
@@ -70,7 +70,7 @@ public class DefaultProgressManager implements ProgressManager {
      *  @param id The progress identifier
      */
     public void startProgress( final ProgressItem pi, final String id ) {
-        log.debug( "Adding " + id + " to progress queue" );
+        LOG.debug( "Adding " + id + " to progress queue" );
         m_progressingTasks.put( id, pi );
         pi.setState( ProgressItem.STARTED );
     }
@@ -82,7 +82,7 @@ public class DefaultProgressManager implements ProgressManager {
      *  @param id The progress identifier
      */
     public void stopProgress( final String id ) {
-        log.debug( "Removed " + id + " from progress queue" );
+        LOG.debug( "Removed " + id + " from progress queue" );
         final ProgressItem pi = m_progressingTasks.remove( id );
         if( pi != null ) {
             pi.setState( ProgressItem.STOPPED );
@@ -129,21 +129,21 @@ public class DefaultProgressManager implements ProgressManager {
                              final HttpServletResponse resp,
                              final String actionName,
                              final List< String > params ) throws IOException {
-        	log.debug( "ProgressManager.doGet() START" );
+        	LOG.debug( "ProgressManager.doGet() START" );
         	if( params.size() < 1 ) {
         		return;
         	}
         	final String progressId = params.get(0);
-        	log.debug( "progressId=" + progressId );
+        	LOG.debug( "progressId=" + progressId );
         	String progressString = "";
         	try {
         		progressString = Integer.toString( getProgress( progressId ) );
         	} catch( final IllegalArgumentException e ) { // ignore
-        		log.debug( "progressId " + progressId + " is no longer valid" );
+        		LOG.debug( "progressId " + progressId + " is no longer valid" );
         	}
-        	log.debug( "progressString=" + progressString );
+        	LOG.debug( "progressString=" + progressString );
         	resp.getWriter().write( progressString );
-        	log.debug( "ProgressManager.doGet() DONE" );
+        	LOG.debug( "ProgressManager.doGet() DONE" );
         }
 
     }

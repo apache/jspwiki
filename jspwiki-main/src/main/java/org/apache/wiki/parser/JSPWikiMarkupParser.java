@@ -92,7 +92,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     protected static final int              IMAGEWIKILINK = 9;
     protected static final int              ATTACHMENT    = 10;
 
-    private static final Logger log = LogManager.getLogger( JSPWikiMarkupParser.class );
+    private static final Logger LOG = LogManager.getLogger( JSPWikiMarkupParser.class );
 
     private boolean        m_isbold;
     private boolean        m_isitalic;
@@ -176,7 +176,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             try {
                 m_camelCasePattern = m_compiler.compile( WIKIWORD_REGEX,Perl5Compiler.DEFAULT_MASK|Perl5Compiler.READ_ONLY_MASK );
             } catch( final MalformedPatternException e ) {
-                log.fatal("Internal error: Someone put in a faulty pattern.",e);
+                LOG.fatal("Internal error: Someone put in a faulty pattern.",e);
                 throw new InternalWikiException("Faulty camelcasepattern in TranslatorReader", e);
             }
             m_engine.setAttribute( CAMELCASE_PATTERN, m_camelCasePattern );
@@ -402,13 +402,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private String peekAheadLine() throws IOException {
         final String s = readUntilEOL().toString();
         if( s.length() > PUSHBACK_BUFFER_SIZE ) {
-            log.warn( "Line is longer than maximum allowed size (" + PUSHBACK_BUFFER_SIZE + " characters.  Attempting to recover..." );
+            LOG.warn( "Line is longer than maximum allowed size (" + PUSHBACK_BUFFER_SIZE + " characters.  Attempting to recover..." );
             pushBack( s.substring( 0, PUSHBACK_BUFFER_SIZE - 1 ) );
         } else {
             try {
                 pushBack( s );
             } catch( final IOException e ) {
-                log.warn( "Pushback failed: the line is probably too long.  Attempting to recover." );
+                LOG.warn( "Pushback failed: the line is probably too long.  Attempting to recover." );
             }
         }
         return s;
@@ -693,7 +693,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
             return XmlUtil.extractTextFromDocument( doc );
         } catch( final IOException e ) {
-            log.fatal("Title parsing not working", e );
+            LOG.fatal("Title parsing not working", e );
             throw new InternalWikiException( "Xml text extraction not working as expected when cleaning title" + e.getMessage() , e );
         }
     }
@@ -850,12 +850,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
             ruleLine = ruleLine.substring( 0, ruleLine.length() - 1 );
         }
 
-        log.debug("page={}, ACL = {}", page.getName(), ruleLine);
+        LOG.debug("page={}, ACL = {}", page.getName(), ruleLine);
 
         try {
             final Acl acl = m_engine.getManager( AclManager.class ).parseAcl( page, ruleLine );
             page.setAcl( acl );
-            log.debug( acl.toString() );
+            LOG.debug( acl.toString() );
         } catch( final WikiSecurityException wse ) {
             return makeError( wse.getMessage() );
         }
@@ -883,7 +883,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 val = val.substring( 0, val.length()-1 );
             }
 
-            // log.debug("SET name='"+name+"', value='"+val+"'.");
+            // LOG.debug("SET name='"+name+"', value='"+val+"'.");
 
             if( !name.isEmpty() && !val.isEmpty() ) {
                 val = m_engine.getManager( VariableManager.class ).expandVariables( m_context, val );
@@ -930,8 +930,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     pluginContent.executeParse( m_context );
                 }
             } catch( final PluginException e ) {
-                log.info( m_context.getRealPage().getWiki() + " : " + m_context.getRealPage().getName() + " - Failed to insert plugin: " + e.getMessage() );
-                //log.info( "Root cause:",e.getRootThrowable() );
+                LOG.info( m_context.getRealPage().getWiki() + " : " + m_context.getRealPage().getName() + " - Failed to insert plugin: " + e.getMessage() );
+                //LOG.info( "Root cause:",e.getRootThrowable() );
                 if( !m_wysiwygEditorMode ) {
                     final ResourceBundle rbPlugin = Preferences.getBundle( m_context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
                     return addElement( makeError( MessageFormat.format( rbPlugin.getString( "plugin.error.insertionfailed" ),
@@ -1043,7 +1043,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             }
 
         } catch( final ParseException e ) {
-            log.info( "Parser failure: ", e );
+            LOG.info( "Parser failure: ", e );
             final Object[] args = { e.getMessage() };
             addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.parserfailure" ), args ) ) );
         }
@@ -1445,7 +1445,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         //  If the link is never finished, do some tricks to display the rest of the line unchanged.
         if( ch == -1 ) {
-            log.debug( "Warning: unterminated link detected!" );
+            LOG.debug( "Warning: unterminated link detected!" );
             m_isEscaping = true;
             m_plainTextBuf.append( sb );
             flushPlainText();
@@ -1535,7 +1535,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                         el = popElement( "div" );
                     }
                 } catch( final EmptyStackException e ) {
-                    log.debug( "Page '" + m_context.getName() + "' closes a %%-block that has not been opened." );
+                    LOG.debug( "Page '" + m_context.getName() + "' closes a %%-block that has not been opened." );
                     return m_currentElement;
                 }
                 return el;
@@ -1545,7 +1545,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             try {
                 style = StringEscapeUtils.unescapeHtml4(style);
                 if( style != null && style.contains( "javascript:" ) ) {
-                    log.debug( "Attempt to output javascript within CSS: {}", style );
+                    LOG.debug( "Attempt to output javascript within CSS: {}", style );
                     final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
                     return addElement( makeError( rb.getString( "markupparser.error.javascriptattempt" ) ) );
                 }
@@ -1716,7 +1716,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             try {
                 skip = parseToken( ch );
             } catch( final IllegalDataException e ) {
-                log.info( "Page {} contains data which cannot be added to DOM tree: {}", m_context.getPage().getName(), e.getMessage() );
+                LOG.info( "Page {} contains data which cannot be added to DOM tree: {}", m_context.getPage().getName(), e.getMessage() );
                 makeError( "Error: " + cleanupSuspectData( e.getMessage() ) );
             }
 

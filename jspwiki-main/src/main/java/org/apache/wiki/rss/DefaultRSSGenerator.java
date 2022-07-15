@@ -52,7 +52,7 @@ import java.util.Set;
 // FIXME: Limit diff and page content size.
 public class DefaultRSSGenerator implements RSSGenerator {
 
-    private static final Logger log = LogManager.getLogger( DefaultRSSGenerator.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultRSSGenerator.class );
     private final Engine m_engine;
 
     /** The RSS file to generate. */
@@ -306,7 +306,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
     /** {@inheritDoc} */
     @Override
     public String generateBlogRSS( final Context wikiContext, final List< Page > changed, final Feed feed ) {
-        log.debug( "Generating RSS for blog, size={}", changed.size() );
+        LOG.debug( "Generating RSS for blog, size={}", changed.size() );
 
         final String ctitle = m_engine.getManager( VariableManager.class ).getVariable( wikiContext, PROP_CHANNEL_TITLE );
         if( ctitle != null ) {

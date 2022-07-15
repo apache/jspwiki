@@ -160,7 +160,7 @@ import java.util.StringTokenizer;
 public class DefaultPluginManager extends BaseModuleManager implements PluginManager {
 
     private static final String PLUGIN_INSERT_PATTERN = "\\{?(INSERT)?\\s*([\\w\\._]+)[ \\t]*(WHERE)?[ \\t]*";
-    private static final Logger log = LogManager.getLogger( DefaultPluginManager.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultPluginManager.class );
     private static final String DEFAULT_FORMS_PACKAGE = "org.apache.wiki.forms";
 
     private final ArrayList< String > m_searchPath = new ArrayList<>();
@@ -205,7 +205,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
         try {
             m_pluginPattern = compiler.compile( PLUGIN_INSERT_PATTERN );
         } catch( final MalformedPatternException e ) {
-            log.fatal( "Internal error: someone messed with pluginmanager patterns.", e );
+            LOG.fatal( "Internal error: someone messed with pluginmanager patterns.", e );
             throw new InternalWikiException( "PluginManager patterns are broken" , e );
         }
     }
@@ -286,7 +286,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
                 throw ( PluginException )e.fillInStackTrace();
             } catch( final Throwable t ) {
                 // But all others get captured here.
-                log.info( "Plugin failed while executing:", t );
+                LOG.info( "Plugin failed while executing:", t );
                 if( debug ) {
                     return stackTrace( params, t );
                 }
@@ -397,11 +397,11 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
             }
         } catch( final NoSuchElementException e ) {
             final String msg =  "Missing parameter in plugin definition: " + commandline;
-            log.warn( msg, e );
+            LOG.warn( msg, e );
             throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.missingparameter" ), commandline ) );
         } catch( final IOException e ) {
             final String msg = "Zyrf.  Problems with parsing arguments: " + commandline;
-            log.warn( msg, e );
+            LOG.warn( msg, e );
             throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.parsingarguments" ), commandline ) );
         }
 
@@ -417,21 +417,21 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
         // Register the plugin with the className without the package-part
         name = pluginClass.getName();
         if( name != null ) {
-            log.debug( "Registering plugin [name]: " + name );
+            LOG.debug( "Registering plugin [name]: " + name );
             m_pluginClassMap.put( name, pluginClass );
         }
 
         // Register the plugin with a short convenient name.
         name = pluginClass.getAlias();
         if( name != null ) {
-            log.debug( "Registering plugin [shortName]: " + name );
+            LOG.debug( "Registering plugin [shortName]: " + name );
             m_pluginClassMap.put( name, pluginClass );
         }
 
         // Register the plugin with the className with the package-part
         name = pluginClass.getClassName();
         if( name != null ) {
-            log.debug( "Registering plugin [className]: " + name );
+            LOG.debug( "Registering plugin [className]: " + name );
             m_pluginClassMap.put( name, pluginClass );
         }
 
@@ -440,7 +440,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
 
     private void registerPlugins() {
         // Register all plugins which have created a resource containing its properties.
-        log.info( "Registering plugins" );
+        LOG.info( "Registering plugins" );
         final List< Element > plugins = XmlUtil.parse( PLUGIN_RESOURCE_LOCATION, "/modules/plugin" );
 
         // Get all resources of all plugins.
@@ -512,7 +512,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
                     	}
                     }
                 } catch( final Exception e ) {
-                    log.info( "Cannot initialize plugin " + m_className, e );
+                    LOG.info( "Cannot initialize plugin " + m_className, e );
                 }
             }
         }
@@ -699,7 +699,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
 
             if( !checkCompatibility( pluginInfo ) ) {
                 final String msg = "Plugin '" + pluginInfo.getName() + "' not compatible with this version of JSPWiki";
-                log.info( msg );
+                LOG.info( msg );
             } else {
                 plugin = pluginInfo.newPluginInstance(m_searchPath, m_externalJars);
             }

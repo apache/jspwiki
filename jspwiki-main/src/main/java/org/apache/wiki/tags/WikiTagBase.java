@@ -39,7 +39,7 @@ import javax.servlet.jsp.tagext.TryCatchFinally;
 public abstract class WikiTagBase extends TagSupport implements TryCatchFinally {
 
     private static final long serialVersionUID = -1409836349293777141L;
-    private static final Logger log = LogManager.getLogger( WikiTagBase.class );
+    private static final Logger LOG = LogManager.getLogger( WikiTagBase.class );
 
     protected Context m_wikiContext;
 
@@ -70,7 +70,7 @@ public abstract class WikiTagBase extends TagSupport implements TryCatchFinally 
 
             return doWikiStartTag();
         } catch( final Exception e ) {
-            log.error( "Tag failed", e );
+            LOG.error( "Tag failed", e );
             throw new JspException( "Tag failed, check logs: "+e.getMessage() );
         }
     }
@@ -86,7 +86,7 @@ public abstract class WikiTagBase extends TagSupport implements TryCatchFinally 
     }
 
     public void doCatch( final Throwable th ) throws Throwable {
-    	log.error( th.getMessage(), th );
+    	LOG.error( th.getMessage(), th );
     }
 
     public void doFinally()

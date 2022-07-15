@@ -91,7 +91,7 @@ public class RSS20Feed extends Feed
                         item.addContent( attEl );
                     }
                 } catch( final ProviderException ex ) {
-                    // FIXME: log.info("Can't get attachment data",ex);
+                    // FIXME: LOG.info("Can't get attachment data",ex);
                 }
             }
 

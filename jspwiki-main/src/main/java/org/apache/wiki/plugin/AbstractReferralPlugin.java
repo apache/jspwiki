@@ -81,7 +81,7 @@ import java.util.stream.Collectors;
  */
 public abstract class AbstractReferralPlugin implements Plugin {
 
-    private static final Logger log = LogManager.getLogger( AbstractReferralPlugin.class );
+    private static final Logger LOG = LogManager.getLogger( AbstractReferralPlugin.class );
 
     /** Magic value for rendering all items. */
     public static final int    ALL_ITEMS              = -1;
@@ -210,7 +210,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
             }
         }
 
-        // log.debug( "Requested maximum width is "+m_maxwidth );
+        // LOG.debug( "Requested maximum width is "+m_maxwidth );
         s = params.get(PARAM_SHOW);
         if ( s != null ) {
             if ( s.equalsIgnoreCase( "count" ) ) {
@@ -285,7 +285,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
                     page = m_engine.getManager( PageManager.class ).getPage( pageName );
                     if( page != null ) {
                         final Date lastModPage = page.getLastModified();
-                        log.debug( "lastModified Date of page {} : {}", pageName, m_dateLastModified );
+                        LOG.debug( "lastModified Date of page {} : {}", pageName, m_dateLastModified );
                         if( lastModPage.after( m_dateLastModified ) ) {
                             m_dateLastModified = lastModPage;
                         }
@@ -375,7 +375,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
             final WikiDocument doc = parser.parse();
             result = mgr.getHTML( context, doc );
         } catch( final IOException e ) {
-            log.error("Failed to convert page data to HTML", e);
+            LOG.error("Failed to convert page data to HTML", e);
         }
 
         return result;
@@ -436,7 +436,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
                 collator.setStrength( Collator.PRIMARY );
                 m_sorter = new PageSorter( new CollatorComparator( collator ) );
             } catch( final ParseException pe ) {
-                log.info( "Failed to parse requested collator - using default ordering", pe );
+                LOG.info( "Failed to parse requested collator - using default ordering", pe );
                 m_sorter = context.getEngine().getManager( PageManager.class ).getPageSorter();
             }
         }

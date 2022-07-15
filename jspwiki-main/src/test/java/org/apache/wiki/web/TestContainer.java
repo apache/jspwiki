@@ -69,7 +69,7 @@ public class TestContainer {
 
     private static final HsqlDbUtils m_hu   = new HsqlDbUtils();
 
-    private static final Logger log = LogManager.getLogger( TestContainer.class );
+    private static final Logger LOG = LogManager.getLogger( TestContainer.class );
 
     private static Context initCtx ;
     private static Resource userDB;
@@ -98,7 +98,7 @@ public class TestContainer {
         for( final Map.Entry<String, String> app : apps.entrySet() ) {
             final String context = app.getKey();
             final String path = app.getValue();
-            log.error( "Adding context " + context + " at path " + path );
+            LOG.error( "Adding context " + context + " at path " + path );
             container.addWebApp( context, path );
         }
 
@@ -116,20 +116,20 @@ public class TestContainer {
 
         // Configure and bind DataSource to JNDI for user database
         userDB = new Resource( "jdbc/UserDatabase", cpds );
-        log.error( "Configured datasource " + userDB);
+        LOG.error( "Configured datasource " + userDB);
         userDB.bindToENC("jdbc/UserDatabase");
         
         // Configure and bind DataSource to JNDI for group database
         groupDB = new Resource( "jdbc/GroupDatabase", cpds );        
-        log.error( "Configured datasource " + groupDB);
+        LOG.error( "Configured datasource " + groupDB);
         userDB.bindToENC("jdbc/GroupDatabase");
         
         // Start the server
         try {
-            log.error( "Starting up test container." );
+            LOG.error( "Starting up test container." );
             container.server.setHandler( handlerCollection );
             final Handler[] currentHandlers = container.server.getHandlers();
-            log.error( "dumping current handlers" );
+            LOG.error( "dumping current handlers" );
             for( final Handler handler : currentHandlers )
             {
                 if( handler instanceof HandlerCollection )
@@ -137,7 +137,7 @@ public class TestContainer {
                     final Handler[] collection = ((HandlerCollection) handler).getHandlers();
                     for( final Handler h : collection )
                     {
-                        log.error( "handler: " + h );
+                        LOG.error( "handler: " + h );
                     }
                 }
             }
@@ -146,7 +146,7 @@ public class TestContainer {
             // userDB.unbindENC();
             // groupDB.unbindENC();
             t.printStackTrace();
-            log.error( t.getMessage() );
+            LOG.error( t.getMessage() );
             System.exit( 1 );
         }
     }
@@ -196,10 +196,10 @@ public class TestContainer {
         if ( contextFactoryClass == null ) {
             System.setProperty( INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY_JETTY );
 //            ContextFactory.setNameParser( new InitialContextFactory.DefaultParser() );
-            log.error( "No JNDI context factory found; using org.eclipse.jndi.InitialContextFactory." );
+            LOG.error( "No JNDI context factory found; using org.eclipse.jndi.InitialContextFactory." );
             contextFactoryClass = INITIAL_CONTEXT_FACTORY_JETTY;
         }
-        log.error( "Initialized JNDI with context factory class=" + contextFactoryClass + "." );
+        LOG.error( "Initialized JNDI with context factory class=" + contextFactoryClass + "." );
         
         // Bind the "java:comp/env" namespace if not bound already
         initCtx = new InitialContext();
@@ -207,12 +207,12 @@ public class TestContainer {
             initCtx.lookup( JNDI_ENV_ROOT );
         } catch( final NameNotFoundException e ) {
             initCtx.bind( JNDI_ENV_ROOT, new NamingContext(new Hashtable<String, Object>(), JNDI_ENV_ROOT, null, new InitialContextFactory.DefaultParser()) );
-            log.error( "No JNDI " + JNDI_ENV_ROOT + " namespace found; creating it," );
+            LOG.error( "No JNDI " + JNDI_ENV_ROOT + " namespace found; creating it," );
         }
-        log.info( "Initialized JNDI " + JNDI_ENV_ROOT + " namespace.=" + contextFactoryClass );
+        LOG.info( "Initialized JNDI " + JNDI_ENV_ROOT + " namespace.=" + contextFactoryClass );
         
         // Initialize new Jetty server
-        log.info( "Creating new test container." );
+        LOG.info( "Creating new test container." );
         System.setProperty( "org.eclipse.xml.XmlParser.NotValidating", "true" );
         server = new Server();
         server.setStopAtShutdown( true );
@@ -224,7 +224,7 @@ public class TestContainer {
         connector.setIdleTimeout( 60_000 );
 
         server.setConnectors( new Connector[] {connector} );
-        log.info( "added HTTP listener for port " + HTTP_PORT );
+        LOG.info( "added HTTP listener for port " + HTTP_PORT );
 
         // add the shutdown handler
         final ContextHandler shutDownContextHandler = new ContextHandler(SHUTDOWN_CMD);
@@ -253,7 +253,7 @@ public class TestContainer {
         csh.setLoginService( loginService );
         webAppContext.setSecurityHandler( csh );
 
-        log.error( "Adding webapp " + context + " for path " + path );
+        LOG.error( "Adding webapp " + context + " for path " + path );
         handlerCollection.addHandler( webAppContext );
     }
 
@@ -263,7 +263,7 @@ public class TestContainer {
     public void start() throws Exception {
         System.setProperty( "org.eclipse.http.HttpRequest.maxFormContentSize", "0" );
         server.start();
-        log.error("jetty server started");
+        LOG.error("jetty server started");
     }
 
     /**
@@ -272,7 +272,7 @@ public class TestContainer {
     public void stop() {
         try {
             server.stop();
-            log.error("jetty server stopped");
+            LOG.error("jetty server stopped");
         } catch( final Exception ex ) {
             throw new RuntimeException( ex );
         }
@@ -285,10 +285,10 @@ public class TestContainer {
 
         public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response ) throws IOException, ServletException {
             if( request.getRequestURI().contains( SHUTDOWN_CMD ) ) {
-                log.error( "stop cmd received, shutting down server" );
+                LOG.error( "stop cmd received, shutting down server" );
                 System.exit( 0 );
             } else {
-                log.error("ignoring request " + request.getRequestURI());
+                LOG.error("ignoring request " + request.getRequestURI());
             }
         }
     }

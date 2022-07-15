@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class ProfanityFilter extends BasePageFilter {
 	
-    private static final Logger log = LogManager.getLogger( ProfanityFilter.class );
+    private static final Logger LOG = LogManager.getLogger( ProfanityFilter.class );
     
     private static final String PROPERTYFILE = "org/apache/wiki/filters/profanity.properties";
     private static String[] c_profanities = new String[0];
@@ -63,9 +63,9 @@ public class ProfanityFilter extends BasePageFilter {
                 c_profanities = profs.toArray( new String[0] );
             }
         } catch( final IOException e ) {
-            log.error( "Unable to load profanities from " + PROPERTYFILE, e );
+            LOG.error( "Unable to load profanities from " + PROPERTYFILE, e );
         } catch( final Exception e ) {
-            log.error( "Unable to initialize Profanity Filter", e );
+            LOG.error( "Unable to initialize Profanity Filter", e );
         }
     }
 

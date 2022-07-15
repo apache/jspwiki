@@ -55,7 +55,7 @@ import java.util.TreeSet;
  */
 public class DefaultTemplateManager extends BaseModuleManager implements TemplateManager {
 
-    private static final Logger log = LogManager.getLogger( DefaultTemplateManager.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultTemplateManager.class );
 
     /**
      *  Creates a new TemplateManager.  There is typically one manager per engine.
@@ -77,7 +77,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
                 return true;
             }
         } catch( final IOException e ) {
-            log.error( e.getMessage(), e );
+            LOG.error( e.getMessage(), e );
         }
         return false;
     }
@@ -100,7 +100,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
                 }
             }
         } catch( final IOException e ) {
-            log.error( "unable to open " + name + " as resource stream", e );
+            LOG.error( "unable to open " + name + " as resource stream", e );
         }
         return resourceName;
     }
@@ -146,7 +146,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
             }
         }
 
-        log.debug( "Final name = {}", name );
+        LOG.debug( "Final name = {}", name );
         return name;
     }
 
@@ -165,7 +165,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
     @Override
     public String findJSP( final PageContext pageContext, final String template, final String name ) {
         if( name == null || template == null ) {
-            log.fatal("findJSP() was asked to find a null template or name (" + template + "," + name + ")." + " JSP page '" +
+            LOG.fatal("findJSP() was asked to find a null template or name (" + template + "," + name + ")." + " JSP page '" +
                       ( ( HttpServletRequest )pageContext.getRequest() ).getRequestURI() + "'" );
             throw new InternalWikiException( "Illegal arguments to findJSP(); please check logs." );
         }
@@ -198,7 +198,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
         final Set< String > skinSet = sContext.getResourcePaths( place );
         final Set< String > resultSet = new TreeSet<>();
 
-        log.debug( "Listings skins from {}", place );
+        LOG.debug( "Listings skins from {}", place );
         if( skinSet != null ) {
             final String[] skins = skinSet.toArray( new String[]{} );
             for( final String skin : skins ) {
@@ -206,7 +206,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
                 if( s.length > 2 && skin.endsWith( "/" ) ) {
                     final String skinName = s[ s.length - 1 ];
                     resultSet.add( skinName );
-                    log.debug( "...adding skin '{}'", skinName );
+                    LOG.debug( "...adding skin '{}'", skinName );
                 }
             }
         }

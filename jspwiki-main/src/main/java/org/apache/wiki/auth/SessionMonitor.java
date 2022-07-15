@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SessionMonitor implements HttpSessionListener {
 
-    private static final Logger log = LogManager.getLogger( SessionMonitor.class );
+    private static final Logger LOG = LogManager.getLogger( SessionMonitor.class );
 
     /** Map with Engines as keys, and SessionMonitors as values. */
     private static final ConcurrentHashMap< Engine, SessionMonitor > c_monitors = new ConcurrentHashMap<>();
@@ -114,7 +114,7 @@ public class SessionMonitor implements HttpSessionListener {
 
         // If the weak reference returns a wiki session, return it
         if( storedSession != null ) {
-            log.debug( "Looking up WikiSession for session ID={}... found it", sid );
+            LOG.debug( "Looking up WikiSession for session ID={}... found it", sid );
             wikiSession = storedSession;
         }
 
@@ -167,7 +167,7 @@ public class SessionMonitor implements HttpSessionListener {
      * @return a new guest session
      */
     private Session createGuestSessionFor( final String sessionId ) {
-        log.debug( "Session for session ID={}... not found. Creating guestSession()", sessionId );
+        LOG.debug( "Session for session ID={}... not found. Creating guestSession()", sessionId );
         final Session wikiSession = Wiki.session().guest( m_engine );
         synchronized( m_sessions ) {
             m_sessions.put( sessionId, wikiSession );
@@ -273,7 +273,7 @@ public class SessionMonitor implements HttpSessionListener {
     @Override
     public void sessionCreated( final HttpSessionEvent se ) {
         final HttpSession session = se.getSession();
-        log.debug( "Created session: " + session.getId() + "." );
+        LOG.debug( "Created session: " + session.getId() + "." );
     }
 
     /**
@@ -287,7 +287,7 @@ public class SessionMonitor implements HttpSessionListener {
         for( final SessionMonitor monitor : c_monitors.values() ) {
             final Session storedSession = monitor.findSession( session );
             monitor.remove( session );
-            log.debug( "Removed session " + session.getId() + "." );
+            LOG.debug( "Removed session " + session.getId() + "." );
             if( storedSession != null ) {
                 fireEvent( WikiSecurityEvent.SESSION_EXPIRED, storedSession.getLoginPrincipal(), storedSession );
             }

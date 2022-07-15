@@ -75,7 +75,7 @@ import java.util.UUID;
  */
 public class CookieAuthenticationLoginModule extends AbstractLoginModule {
 
-    private static final Logger log = LogManager.getLogger( CookieAuthenticationLoginModule.class );
+    private static final Logger LOG = LogManager.getLogger( CookieAuthenticationLoginModule.class );
     private static final String LOGIN_COOKIE_NAME = "JSPWikiUID";
 
     /** The directory name under which the cookies are stored.  The value is {@value}. */
@@ -122,7 +122,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
                 if( cookieFile != null && cookieFile.exists() && cookieFile.canRead() ) {
                     try( final Reader in = new BufferedReader( new InputStreamReader( Files.newInputStream( cookieFile.toPath() ), StandardCharsets.UTF_8 ) ) ) {
                         final String username = FileUtil.readContents( in );
-                        log.debug( "Logged in cookie authenticated name={}", username );
+                        LOG.debug( "Logged in cookie authenticated name={}", username );
 
                         // If login succeeds, commit these principals/roles
                         m_principals.add( new WikiPrincipal( username, WikiPrincipal.LOGIN_NAME ) );
@@ -137,11 +137,11 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
             }
         } catch( final IOException e ) {
             final String message = "IO exception; disallowing login.";
-            log.error( message, e );
+            LOG.error( message, e );
             throw new LoginException( message );
         } catch( final UnsupportedCallbackException e ) {
             final String message = "Unable to handle callback; disallowing login.";
-            log.error( message, e );
+            LOG.error( message, e );
             throw new LoginException( message );
         }
         return false;
@@ -160,11 +160,11 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
             cookieDir.mkdirs();
         }
         if( !cookieDir.canRead() ) {
-            log.error( "Cannot read from cookie directory! {}", cookieDir.getAbsolutePath() );
+            LOG.error( "Cannot read from cookie directory! {}", cookieDir.getAbsolutePath() );
             return null;
         }
         if( !cookieDir.canWrite() ) {
-            log.error( "Cannot write to cookie directory! {}", cookieDir.getAbsolutePath() );
+            LOG.error( "Cannot write to cookie directory! {}", cookieDir.getAbsolutePath() );
             return null;
         }
 
@@ -182,7 +182,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
                 return file;
             }
         } catch( final IOException e ) {
-            log.error( "Problem retrieving login cookie, returning null: {}", e.getMessage() );
+            LOG.error( "Problem retrieving login cookie, returning null: {}", e.getMessage() );
             return null;
         }
         return null;
@@ -218,9 +218,9 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
             //  Write the cookie content to the cookie store file.
             try( final Writer out = new BufferedWriter( new OutputStreamWriter( Files.newOutputStream( cf.toPath() ), StandardCharsets.UTF_8 ) ) ) {
                 FileUtil.copyContents( new StringReader( username ), out );
-                log.debug( "Created login cookie for user {} for {} days", username, days );
+                LOG.debug( "Created login cookie for user {} for {} days", username, days );
             } catch( final IOException ex ) {
-                log.error( "Unable to create cookie file to store user id: {}", uid );
+                LOG.error( "Unable to create cookie file to store user id: {}", uid );
             }
         }
     }
@@ -241,7 +241,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
             final File cf = getCookieFile( engine, uid );
             if( cf != null ) {
                 if( !cf.delete() ) {
-                    log.debug( "Error deleting cookie login {}", uid );
+                    LOG.debug( "Error deleting cookie login {}", uid );
                 }
             }
         }
@@ -269,7 +269,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
      * @param cookieDir cookie directory
      */
     private static synchronized void scrub( final int days, final File cookieDir ) {
-        log.debug( "Scrubbing cookieDir..." );
+        LOG.debug( "Scrubbing cookieDir..." );
         final File[] files = cookieDir.listFiles();
         final long obsoleteDateLimit = System.currentTimeMillis() - ( ( long )days + 1 ) * 24 * 60 * 60 * 1000L;
         int deleteCount = 0;
@@ -281,12 +281,12 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
                 if( f.delete() ) {
                     deleteCount++;
                 } else {
-                    log.debug( "Error deleting cookie login with index {}", i );
+                    LOG.debug( "Error deleting cookie login with index {}", i );
                 }
             }
         }
 
-        log.debug( "Removed {} obsolete cookie logins", deleteCount );
+        LOG.debug( "Removed {} obsolete cookie logins", deleteCount );
     }
 
 }

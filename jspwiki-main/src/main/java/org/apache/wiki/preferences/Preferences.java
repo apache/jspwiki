@@ -58,7 +58,7 @@ public class Preferences extends HashMap< String,String > {
 
     public static final String COOKIE_USER_PREFS_NAME = "JSPWikiUserPrefs";
 
-    private static final Logger log = LogManager.getLogger( Preferences.class );
+    private static final Logger LOG = LogManager.getLogger( Preferences.class );
 
     /**
      *  This is an utility method which is called to make sure that the
@@ -221,7 +221,7 @@ public class Preferences extends HashMap< String,String > {
             try {
                 loc = LocaleUtils.toLocale( locale );
             } catch( final IllegalArgumentException iae ) {
-                log.error( iae.getMessage() );
+                LOG.error( iae.getMessage() );
             }
         }
 
@@ -231,7 +231,7 @@ public class Preferences extends HashMap< String,String > {
             loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
         }
 
-        log.debug( "using locale " + loc.toString() );
+        LOG.debug( "using locale " + loc.toString() );
         return loc;
     }
 
@@ -266,14 +266,14 @@ public class Preferences extends HashMap< String,String > {
         final String prefTimeZone = getPreference( context, "TimeZone" );
         String prefDateFormat;
 
-        log.debug("Checking for preferences...");
+        LOG.debug("Checking for preferences...");
         switch( tf ) {
             case DATETIME:
                 prefDateFormat = getPreference( context, "DateFormat" );
-                log.debug("Preferences fmt = "+prefDateFormat);
+                LOG.debug("Preferences fmt = "+prefDateFormat);
                 if( prefDateFormat == null ) {
                     prefDateFormat = imgr.get( InternationalizationManager.CORE_BUNDLE, clientLocale,"common.datetimeformat" );
-                    log.debug("Using locale-format = "+prefDateFormat);
+                    LOG.debug("Using locale-format = "+prefDateFormat);
                 }
                 break;
 

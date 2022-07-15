@@ -44,7 +44,7 @@ public class PluginTag
     extends WikiBodyTag
 {
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LogManager.getLogger( PluginTag.class );
+    private static final Logger LOG = LogManager.getLogger( PluginTag.class );
     
     private String m_plugin;
     private String m_args;
@@ -123,7 +123,7 @@ public class PluginTag
             }
             catch( final Exception e )
             {
-                log.error( "Failed to insert plugin", e );
+                LOG.error( "Failed to insert plugin", e );
                 throw new JspException( "Tag failed, check logs: "+e.getMessage() );
             }
         }
@@ -145,7 +145,7 @@ public class PluginTag
         }
         catch( final Exception e )
         {
-            log.error( "Failed to insert plugin", e );
+            LOG.error( "Failed to insert plugin", e );
             throw new JspException( "Tag failed, check logs: "+e.getMessage() );
         }
         

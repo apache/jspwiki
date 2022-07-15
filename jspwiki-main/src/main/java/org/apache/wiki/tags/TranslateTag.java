@@ -38,7 +38,7 @@ public class TranslateTag
 {
     private static final long serialVersionUID = 0L;
     
-    private static final Logger log = LogManager.getLogger( TranslateTag.class );
+    private static final Logger LOG = LogManager.getLogger( TranslateTag.class );
 
     @Override
     public final int doAfterBody() throws JspException {
@@ -59,7 +59,7 @@ public class TranslateTag
                 getPreviousOut().write( result );
             }
         } catch( final Exception e ) {
-            log.error( "Tag failed", e );
+            LOG.error( "Tag failed", e );
             throw new JspException( "Tag failed, check logs: " + e.getMessage() );
         }
 

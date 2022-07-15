@@ -69,7 +69,7 @@ import java.util.ResourceBundle;
  */
 public class FormOpen extends FormElement {
 
-    private static final Logger log = LogManager.getLogger( FormOpen.class );
+    private static final Logger LOG = LogManager.getLogger( FormOpen.class );
 
     /** Parameter name for setting the method (GET or POST).  Value is <tt>{@value}</tt>. */
     public static final String PARAM_METHOD = "method";
@@ -105,7 +105,7 @@ public class FormOpen extends FormElement {
             // this form, or of a FormSet plugin, or both. If it
             // exists and is for this form, fine.
             if( formName.equals( info.getName() ) ) {
-                log.debug( "Previous FormInfo for this form was found in context." );
+                LOG.debug( "Previous FormInfo for this form was found in context." );
                 // If the FormInfo exists, and if we're supposed to display on error only, we need to exit now.
                 if( HIDE_SUCCESS.equals( hide ) && info.getStatus() == FormInfo.EXECUTED ) {
                     info.setHide( true );

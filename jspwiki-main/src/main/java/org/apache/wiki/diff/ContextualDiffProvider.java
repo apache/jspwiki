@@ -50,7 +50,7 @@ import java.util.StringTokenizer;
  */
 public class ContextualDiffProvider implements DiffProvider {
 
-    private static final Logger log = LogManager.getLogger( ContextualDiffProvider.class );
+    private static final Logger LOG = LogManager.getLogger( ContextualDiffProvider.class );
 
     /**
      *  A jspwiki.properties value to define how many characters are shown around the change context.
@@ -120,7 +120,7 @@ public class ContextualDiffProvider implements DiffProvider {
         try {
             limit = Integer.parseInt( configuredLimit );
         } catch( final NumberFormatException e ) {
-            log.warn("Failed to parseInt " + PROP_UNCHANGED_CONTEXT_LIMIT + "=" + configuredLimit + " Will use a huge number as limit.", e );
+            LOG.warn("Failed to parseInt " + PROP_UNCHANGED_CONTEXT_LIMIT + "=" + configuredLimit + " Will use a huge number as limit.", e );
         }
         m_unchangedContextLimit = limit;
     }
@@ -146,7 +146,7 @@ public class ContextualDiffProvider implements DiffProvider {
         try {
             rev = Diff.diff( alpha, beta, new MyersDiff() );
         } catch( final DifferentiationFailedException dfe ) {
-            log.error( "Diff generation failed", dfe );
+            LOG.error( "Diff generation failed", dfe );
             return "Error while creating version diff.";
         }
 

@@ -53,7 +53,7 @@ import java.util.ResourceBundle;
  */
 public class ReferringPagesPlugin extends AbstractReferralPlugin {
 
-    private static final Logger log = LogManager.getLogger( ReferringPagesPlugin.class );
+    private static final Logger LOG = LogManager.getLogger( ReferringPagesPlugin.class );
 
     /** Parameter name for setting the maximum items to show.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAX      = "max";
@@ -93,7 +93,7 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
                 extras = rb.getString( "referringpagesplugin.more" );
             }
 
-            log.debug( "Fetching referring pages for {} with a max of {}", page.getName(), items );
+            LOG.debug( "Fetching referring pages for {} with a max of {}", page.getName(), items );
 
             if( links != null && links.size() > 0 ) {
                 links = filterAndSortCollection( links );

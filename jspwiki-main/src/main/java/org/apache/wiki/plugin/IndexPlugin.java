@@ -59,7 +59,7 @@ import java.util.regex.Pattern;
  */
 public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
 
-    private static final Logger log = LogManager.getLogger(IndexPlugin.class);
+    private static final Logger LOG = LogManager.getLogger(IndexPlugin.class);
 
     private final Namespace xmlns_XHTML = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
     
@@ -96,7 +96,7 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
             }
             
         } catch( final ProviderException e ) {
-            log.warn("could not load page index",e);
+            LOG.warn("could not load page index",e);
             throw new PluginException( e.getMessage() );
         }
         // serialize to raw format string (no changes to whitespace)

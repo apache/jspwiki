@@ -60,17 +60,17 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
     private ArrayList< AdminBean > m_allBeans;
     private final MBeanServer m_mbeanServer;
 
-    private static final Logger log = LogManager.getLogger( DefaultAdminBeanManager.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultAdminBeanManager.class );
 
     public DefaultAdminBeanManager( final Engine engine ) {
-        log.info("Using JDK 1.5 Platform MBeanServer");
+        LOG.info("Using JDK 1.5 Platform MBeanServer");
         m_mbeanServer = MBeanServerFactory15.getServer();
 
         m_engine = engine;
 
         if( m_mbeanServer != null ) {
-            log.info( m_mbeanServer.getClass().getName() );
-            log.info( m_mbeanServer.getDefaultDomain() );
+            LOG.info( m_mbeanServer.getClass().getName() );
+            LOG.info( m_mbeanServer.getDefaultDomain() );
         }
 
         m_engine.addWikiEventListener( this );
@@ -114,17 +114,17 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
 
             m_allBeans.add( ab );
 
-            log.info( "Registered new admin bean " + ab.getTitle() );
+            LOG.info( "Registered new admin bean " + ab.getTitle() );
         } catch( final InstanceAlreadyExistsException e ) {
-            log.error( "Admin bean already registered to JMX", e );
+            LOG.error( "Admin bean already registered to JMX", e );
         } catch( final MBeanRegistrationException e ) {
-            log.error( "Admin bean cannot be registered to JMX", e );
+            LOG.error( "Admin bean cannot be registered to JMX", e );
         } catch( final NotCompliantMBeanException e ) {
-            log.error( "Your admin bean is not very good", e );
+            LOG.error( "Your admin bean is not very good", e );
         } catch( final MalformedObjectNameException e ) {
-            log.error( "Your admin bean name is not very good", e );
+            LOG.error( "Your admin bean name is not very good", e );
         } catch( final NullPointerException e ) {
-            log.error( "Evil NPE occurred", e );
+            LOG.error( "Evil NPE occurred", e );
         }
     }
 
@@ -149,7 +149,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
                     registerAdminBean( ab );
                 }
             } catch( final ReflectiveOperationException e ) {
-                log.error( e.getMessage(), e );
+                LOG.error( e.getMessage(), e );
             }
         }
 
@@ -166,7 +166,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
             registerAdminBean( new PluginBean( m_engine ) );
             registerAdminBean( new FilterBean( m_engine ) );
         } catch( final NotCompliantMBeanException e ) {
-            log.error( e.getMessage(), e );
+            LOG.error( e.getMessage(), e );
         }
         for( final ModuleManager moduleManager : m_engine.getManagers( ModuleManager.class ) ) {
             registerBeans( moduleManager.modules() );
@@ -241,14 +241,14 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
                         final ObjectName on = getObjectName( m_allBean );
                         if( m_mbeanServer.isRegistered( on ) ) {
                             m_mbeanServer.unregisterMBean( on );
-                            log.info( "Unregistered AdminBean " + m_allBean.getTitle() );
+                            LOG.info( "Unregistered AdminBean " + m_allBean.getTitle() );
                         }
                     } catch( final MalformedObjectNameException e ) {
-                        log.error( "Malformed object name when unregistering", e );
+                        LOG.error( "Malformed object name when unregistering", e );
                     } catch( final InstanceNotFoundException e ) {
-                        log.error( "Object was registered; yet claims that it's not there", e );
+                        LOG.error( "Object was registered; yet claims that it's not there", e );
                     } catch( final MBeanRegistrationException e ) {
-                        log.error( "Registration exception while unregistering", e );
+                        LOG.error( "Registration exception while unregistering", e );
                     }
                 }
             }

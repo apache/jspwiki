@@ -37,7 +37,7 @@ import java.util.Properties;
  */
 public class DefaultDifferenceManager implements DifferenceManager {
 
-    private static final Logger log = LogManager.getLogger( DefaultDifferenceManager.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultDifferenceManager.class );
 
     private DiffProvider m_provider;
 
@@ -51,7 +51,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
         loadProvider( props );
         initializeProvider( engine, props );
 
-        log.info( "Using difference provider: " + m_provider.getProviderInfo() );
+        LOG.info( "Using difference provider: " + m_provider.getProviderInfo() );
     }
 
     private void loadProvider( final Properties props ) {
@@ -59,7 +59,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
         try {
             m_provider = ClassUtil.buildInstance( "org.apache.wiki.diff", providerClassName );
         } catch( final ReflectiveOperationException e ) {
-            log.warn( "Failed loading DiffProvider, will use NullDiffProvider.", e );
+            LOG.warn( "Failed loading DiffProvider, will use NullDiffProvider.", e );
         }
 
         if( m_provider == null ) {
@@ -72,7 +72,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
         try {
             m_provider.initialize( engine, props );
         } catch( final NoRequiredPropertyException | IOException e ) {
-            log.warn( "Failed initializing DiffProvider, will use NullDiffProvider.", e );
+            LOG.warn( "Failed initializing DiffProvider, will use NullDiffProvider.", e );
             m_provider = new DiffProvider.NullDiffProvider(); //doesn't need init'd
         }
     }
@@ -96,7 +96,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
             }
         } catch( final Exception e ) {
             diff = "Failed to create a diff, check the logs.";
-            log.warn( diff, e );
+            LOG.warn( diff, e );
         }
         return diff;
     }

@@ -51,7 +51,7 @@ import java.util.ResourceBundle;
  */
 public class TraditionalDiffProvider implements DiffProvider {
 
-    private static final Logger log = LogManager.getLogger( TraditionalDiffProvider.class );
+    private static final Logger LOG = LogManager.getLogger( TraditionalDiffProvider.class );
     private static final String CSS_DIFF_ADDED = "<tr><td class=\"diffadd\">";
     private static final String CSS_DIFF_REMOVED = "<tr><td class=\"diffrem\">";
     private static final String CSS_DIFF_UNCHANGED = "<tr><td class=\"diff\">";
@@ -114,7 +114,7 @@ public class TraditionalDiffProvider implements DiffProvider {
             return ret.toString();
         } catch( final DifferentiationFailedException e ) {
             diffResult = "makeDiff failed with DifferentiationFailedException";
-            log.error( diffResult, e );
+            LOG.error( diffResult, e );
         }
 
         return diffResult;
