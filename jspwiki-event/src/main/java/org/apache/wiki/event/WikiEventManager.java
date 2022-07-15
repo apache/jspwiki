@@ -124,7 +124,7 @@ import java.util.Vector;
  */
 public final class WikiEventManager {
 
-    private static final Logger log = LogManager.getLogger(WikiEventManager.class);
+    private static final Logger LOG = LogManager.getLogger(WikiEventManager.class);
 
     /* If true, permits a WikiEventMonitor to be set. */
     private static final boolean c_permitMonitor = false;
@@ -144,7 +144,7 @@ public final class WikiEventManager {
     /** Constructor for a WikiEventManager. */
     private WikiEventManager() {
         c_instance = this;
-        log.debug( "instantiated WikiEventManager" );
+        LOG.debug( "instantiated WikiEventManager" );
     }
 
     /**
@@ -475,7 +475,7 @@ public final class WikiEventManager {
                 }
             } catch( final ConcurrentModificationException e ) {
                 //  We don't die, we just don't do notifications in that case.
-                log.info( "Concurrent modification of event list; please report this.", e );
+                LOG.info( "Concurrent modification of event list; please report this.", e );
             }
         }
     }

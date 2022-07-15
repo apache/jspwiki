@@ -69,7 +69,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     private static final long MAX_LOGIN_DELAY = 20 * 1_000L; // 20 seconds
 
-    private static final Logger log = LogManager.getLogger( DefaultAuthenticationManager.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultAuthenticationManager.class );
 
     /** Empty Map passed to JAAS {@link #doJAASLogin(Class, CallbackHandler, Map)} method. */
     protected static final Map< String, String > EMPTY_MAP = Collections.unmodifiableMap( new HashMap<>() );
@@ -125,7 +125,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         try {
             m_loginModuleClass = ClassUtil.findClass( "", loginModuleClassName );
         } catch( final ClassNotFoundException e ) {
-            log.error( e.getMessage(), e );
+            LOG.error( e.getMessage(), e );
             throw new WikiException( "Could not instantiate LoginModule class.", e );
         }
 
@@ -212,7 +212,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     @Override
     public boolean login( final Session session, final HttpServletRequest request, final String username, final String password ) throws WikiSecurityException {
         if ( session == null ) {
-            log.error( "No wiki session provided, cannot log in." );
+            LOG.error( "No wiki session provided, cannot log in." );
             return false;
         }
 
@@ -253,7 +253,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             final int count = m_lastLoginAttempts.count( username );
 
             final long delay = Math.min( 1L << count, MAX_LOGIN_DELAY );
-            log.debug( "Sleeping for " + delay + " ms to allow login." );
+            LOG.debug( "Sleeping for " + delay + " ms to allow login." );
             Thread.sleep( delay );
 
             m_lastLoginAttempts.add( username );
@@ -268,13 +268,13 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     @Override
     public void logout( final HttpServletRequest request ) {
         if( request == null ) {
-            log.error( "No HTTP reqest provided; cannot log out." );
+            LOG.error( "No HTTP reqest provided; cannot log out." );
             return;
         }
 
         final HttpSession session = request.getSession();
         final String sid = ( session == null ) ? "(null)" : session.getId();
-        log.debug( "Invalidating Session for session ID= {}", sid );
+        LOG.debug( "Invalidating Session for session ID= {}", sid );
         // Retrieve the associated Session and clear the Principal set
         final Session wikiSession = Wiki.session().find( m_engine, request );
         final Principal originalPrincipal = wikiSession.getLoginPrincipal();
@@ -409,13 +409,13 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             // Test the Authorizer
             if( authorizer.isUserInRole( session, role ) ) {
                 fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
-                log.debug( "Added authorizer role {}.", role.getName() );
+                LOG.debug( "Added authorizer role {}.", role.getName() );
             // If web authorizer, test the request.isInRole() method also
             } else if ( request != null && authorizer instanceof WebAuthorizer ) {
                 final WebAuthorizer wa = ( WebAuthorizer )authorizer;
                 if ( wa.isUserInRole( request, role ) ) {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
-                    log.debug( "Added container role {}.",role.getName() );
+                    LOG.debug( "Added container role {}.",role.getName() );
                 }
             }
         }

@@ -58,7 +58,7 @@ import java.util.Map;
  */
 public class ReferredPagesPlugin implements Plugin {
 
-    private static final Logger log = LogManager.getLogger( ReferredPagesPlugin.class );
+    private static final Logger LOG = LogManager.getLogger( ReferredPagesPlugin.class );
     private Engine m_engine;
     private int m_depth;
     private final HashSet< String > m_exists  = new HashSet<>();
@@ -145,7 +145,7 @@ public class ReferredPagesPlugin implements Plugin {
             items = TextUtil.parseIntParameter( columns, 0 );
         }
 
-        log.debug( "Fetching referred pages for "+ rootname +
+        LOG.debug( "Fetching referred pages for "+ rootname +
                    " with a depth of "+ m_depth +
                    " with include pattern of "+ includePattern +
                    " with exclude pattern of "+ excludePattern +

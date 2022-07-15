@@ -63,7 +63,7 @@ import java.util.StringTokenizer;
  */
 public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventListener {
 
-    private static final Logger log = LogManager.getLogger( DefaultGroupManager.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultGroupManager.class );
 
     protected Engine m_engine;
 
@@ -111,16 +111,16 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             if( dbClassName == null ) {
                 dbClassName = XMLGroupDatabase.class.getName();
             }
-            log.info( "Attempting to load group database class {}" + dbClassName );
+            LOG.info( "Attempting to load group database class {}" + dbClassName );
             m_groupDatabase = ClassUtil.buildInstance( "org.apache.wiki.auth.authorize", dbClassName );
             m_groupDatabase.initialize( m_engine, m_engine.getWikiProperties() );
-            log.info( "Group database initialized." );
+            LOG.info( "Group database initialized." );
         } catch( final ReflectiveOperationException e ) {
-            log.error( "UserDatabase {} cannot be instantiated", dbClassName, e );
+            LOG.error( "UserDatabase {} cannot be instantiated", dbClassName, e );
             dbInstantiationError = "Access GroupDatabase class " + dbClassName + " denied";
             cause = e;
         } catch( final NoRequiredPropertyException e ) {
-            log.error( "Missing property: " + e.getMessage() + "." );
+            LOG.error( "Missing property: " + e.getMessage() + "." );
             dbInstantiationError = "Missing property: " + e.getMessage();
             cause = e;
         }
@@ -163,7 +163,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         engine.getManager( UserManager.class ).addWikiEventListener( this );
 
         // Success!
-        log.info( "Authorizer GroupManager initialized successfully; loaded " + groups.length + " group(s)." );
+        LOG.info( "Authorizer GroupManager initialized successfully; loaded " + groups.length + " group(s)." );
     }
 
     /** {@inheritDoc} */
@@ -415,9 +415,9 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
                 }
             } catch( final WikiException e ) {
                 // Oooo! This is really bad...
-                log.error( "Could not change user name in Group lists because of GroupDatabase error:" + e.getMessage() );
+                LOG.error( "Could not change user name in Group lists because of GroupDatabase error:" + e.getMessage() );
             }
-            log.info( "Profile name change for '" + newPrincipal + "' caused " + groupsChanged + " groups to change also." );
+            LOG.info( "Profile name change for '" + newPrincipal + "' caused " + groupsChanged + " groups to change also." );
         }
     }
 

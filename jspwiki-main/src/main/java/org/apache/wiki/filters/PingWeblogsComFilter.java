@@ -42,7 +42,7 @@ import java.util.Vector;
 // FIXME: Weblog name has been set to stone
 public class PingWeblogsComFilter extends BasePageFilter {
 
-    private static final Logger log = LogManager.getLogger( PingWeblogsComFilter.class );
+    private static final Logger LOG = LogManager.getLogger( PingWeblogsComFilter.class );
 
     private String m_pingURL;
 
@@ -84,13 +84,13 @@ public class PingWeblogsComFilter extends BasePageFilter {
             params.addElement( "The Butt Ugly Weblog" ); // FIXME: Must be settable
             params.addElement( engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), blogName, null ) );
 
-            log.debug( "Pinging weblogs.com with URL: {}", engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), blogName, null ) );
+            LOG.debug( "Pinging weblogs.com with URL: {}", engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), blogName, null ) );
 
             xmlrpc.executeAsync("weblogUpdates.ping", params, 
                                 new AsyncCallback() {
                                     @Override
                                     public void handleError( final Exception ex, final URL url, final String method ) {
-                                        log.error( "Unable to execute weblogs.com ping to URL: " + url.toString(), ex );
+                                        LOG.error( "Unable to execute weblogs.com ping to URL: " + url.toString(), ex );
                                     }
 
                                     @Override
@@ -102,15 +102,15 @@ public class PingWeblogsComFilter extends BasePageFilter {
                                         final String  msg     = ( String )res.get( "message" );
 
                                         if( flerror ) {
-                                            log.error( "Failed to ping: " + msg );
+                                            LOG.error( "Failed to ping: " + msg );
                                         }
 
-                                        log.info( "Weblogs.com has been pinged." );
+                                        LOG.info( "Weblogs.com has been pinged." );
                                     }
                                 }
                                 );
         } catch( final MalformedURLException e ) {
-            log.error("Malformed URL",e);
+            LOG.error("Malformed URL",e);
         }
     }
 

@@ -44,7 +44,7 @@ public class WikiServlet extends HttpServlet {
 
     private static final long serialVersionUID = 3258410651167633973L;
     private Engine m_engine;
-    private static final Logger log = LogManager.getLogger( WikiServlet.class.getName() );
+    private static final Logger LOG = LogManager.getLogger( WikiServlet.class.getName() );
 
     /**
      * {@inheritDoc}
@@ -53,7 +53,7 @@ public class WikiServlet extends HttpServlet {
     public void init( final ServletConfig config ) throws ServletException {
         super.init( config );
         m_engine = Wiki.engine().find( config );
-        log.info( "WikiServlet initialized." );
+        LOG.info( "WikiServlet initialized." );
     }
 
     /**
@@ -65,7 +65,7 @@ public class WikiServlet extends HttpServlet {
      */
     @Override
     public void destroy() {
-        log.info( "WikiServlet shutdown." );
+        LOG.info( "WikiServlet shutdown." );
         m_engine.stop();
         super.destroy();
     }
@@ -85,7 +85,7 @@ public class WikiServlet extends HttpServlet {
     public void doGet( final HttpServletRequest req, final HttpServletResponse res ) throws IOException, ServletException {
         String pageName = URLConstructor.parsePageFromURL( req, m_engine.getContentEncoding() );
 
-        log.info( "Request for page: {}", pageName );
+        LOG.info( "Request for page: {}", pageName );
         if( pageName == null ) {
             pageName = m_engine.getFrontPage(); // FIXME: Add special pages as well
         }

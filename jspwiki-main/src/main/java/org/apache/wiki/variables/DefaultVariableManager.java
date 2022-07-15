@@ -51,7 +51,7 @@ import java.util.ResourceBundle;
  */
 public class DefaultVariableManager implements VariableManager {
 
-    private static final Logger log = LogManager.getLogger( DefaultVariableManager.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultVariableManager.class );
 
     /**
      *  Contains a list of those properties that shall never be shown. Put names here in lower case.
@@ -202,7 +202,7 @@ public class DefaultVariableManager implements VariableManager {
                         return s;
                     }
                 } catch( final ClassCastException e ) {
-                    log.debug( "Not a String: " + varName );
+                    LOG.debug( "Not a String: " + varName );
                 }
             }
 
@@ -251,7 +251,7 @@ public class DefaultVariableManager implements VariableManager {
 
             throw new NoSuchVariableException( "No variable " + varName + " defined." );
         } catch( final Exception e ) {
-            log.info("Interesting exception: cannot fetch variable value", e );
+            LOG.info("Interesting exception: cannot fetch variable value", e );
         }
         return "";
     }

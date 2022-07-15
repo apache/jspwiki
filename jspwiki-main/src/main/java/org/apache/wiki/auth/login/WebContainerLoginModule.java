@@ -60,7 +60,7 @@ import java.security.Principal;
  */
 public class WebContainerLoginModule extends AbstractLoginModule {
 
-    protected static final Logger log = LogManager.getLogger( WebContainerLoginModule.class );
+    protected static final Logger LOG = LogManager.getLogger( WebContainerLoginModule.class );
 
     /**
      * Logs in the user.
@@ -89,23 +89,23 @@ public class WebContainerLoginModule extends AbstractLoginModule {
             Principal principal = request.getUserPrincipal();
             if ( principal == null ) {
                 // If no Principal in request, try the remoteUser
-                log.debug( "No userPrincipal found for session ID={}", sid);
+                LOG.debug( "No userPrincipal found for session ID={}", sid);
                 userId = request.getRemoteUser();
                 if ( userId == null ) {
-                    log.debug( "No remoteUser found for session ID={}", sid);
+                    LOG.debug( "No remoteUser found for session ID={}", sid);
                     throw new FailedLoginException( "No remote user found" );
                 }
                 principal = new WikiPrincipal( userId, WikiPrincipal.LOGIN_NAME );
             }
-            log.debug("Logged in container principal {}.", principal.getName() );
+            LOG.debug("Logged in container principal {}.", principal.getName() );
             m_principals.add( principal );
 
             return true;
         } catch( final IOException e ) {
-            log.error( "IOException: {}", e.getMessage() );
+            LOG.error( "IOException: {}", e.getMessage() );
             return false;
         } catch( final UnsupportedCallbackException e ) {
-            log.error( "UnsupportedCallbackException: {}", e.getMessage() );
+            LOG.error( "UnsupportedCallbackException: {}", e.getMessage() );
             return false;
         }
     }

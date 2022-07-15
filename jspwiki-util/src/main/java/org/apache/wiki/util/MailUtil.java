@@ -197,7 +197,7 @@ public final class MailUtil {
 
     private static final String PROP_MAIL_AUTH = "mail.smtp.auth";
 
-    static final Logger log = LogManager.getLogger(MailUtil.class);
+    static final Logger LOG = LogManager.getLogger(MailUtil.class);
 
     static final String DEFAULT_MAIL_JNDI_NAME       = "mail/Session";
 
@@ -280,9 +280,9 @@ public final class MailUtil {
 
             // Send and log it
             Transport.send(msg);
-            log.info("Sent e-mail to={}, subject=\"{}\", used {} mail session.", to, subject, (c_useJndi ? "JNDI" : "standalone") );
+            LOG.info("Sent e-mail to={}, subject=\"{}\", used {} mail session.", to, subject, (c_useJndi ? "JNDI" : "standalone") );
         } catch (final MessagingException e) {
-            log.error(e);
+            LOG.error(e);
             throw e;
         }
     }
@@ -306,10 +306,10 @@ public final class MailUtil {
             // If unsuccessful, get the email address from the properties or default.
             if( c_fromAddress == null ) {
                 c_fromAddress = pProperties.getProperty( PROP_MAIL_SENDER, DEFAULT_SENDER ).trim();
-                log.debug( "Attempt to get the sender's mail address from the JNDI mail session failed, will use \"{}" +
+                LOG.debug( "Attempt to get the sender's mail address from the JNDI mail session failed, will use \"{}" +
                            "\" (configured via jspwiki.properties or the internal default).", c_fromAddress );
             } else {
-                log.debug( "Attempt to get the sender's mail address from the JNDI mail session was successful ({}).", c_fromAddress );
+                LOG.debug( "Attempt to get the sender's mail address from the JNDI mail session was successful ({}).", c_fromAddress );
             }
         }
         return c_fromAddress;
@@ -328,20 +328,20 @@ public final class MailUtil {
         if (c_useJndi)
         {
             // Try getting the Session from the JNDI factory first
-            log.debug("Try getting a mail session via JNDI name \"{}\".", jndiName);
+            LOG.debug("Try getting a mail session via JNDI name \"{}\".", jndiName);
             try {
                 result = getJNDIMailSession(jndiName);
             } catch (final NamingException e) {
                 // Oops! JNDI factory must not be set up
                 c_useJndi = false;
-                log.info("Unable to get a mail session via JNDI, will use custom settings at least until next startup.");
+                LOG.info("Unable to get a mail session via JNDI, will use custom settings at least until next startup.");
             }
         }
 
         // JNDI failed; so, get the Session from the standalone factory
         if (result == null)
         {
-            log.debug("Getting a standalone mail session configured by jspwiki.properties and/or internal default values.");
+            LOG.debug("Getting a standalone mail session configured by jspwiki.properties and/or internal default values.");
             result = getStandaloneMailSession(props);
         }
         return result;
@@ -392,7 +392,7 @@ public final class MailUtil {
         final String mailServer = host + ":" + port + ", account=" + account + ", password not displayed, timeout=" +
                                   timeout + ", connectiontimeout=" + conntimeout + ", starttls.enable=" + starttls +
                                   ", use authentication=" + ( useAuthentication ? TRUE : FALSE );
-        log.debug( "JavaMail session obtained from standalone mail factory: {}", mailServer );
+        LOG.debug( "JavaMail session obtained from standalone mail factory: {}", mailServer );
         return session;
     }
 
@@ -412,10 +412,10 @@ public final class MailUtil {
             final Context ctx = (Context) initCtx.lookup( JAVA_COMP_ENV );
             session = (Session) ctx.lookup( jndiName );
         } catch( final NamingException e ) {
-            log.warn( "JNDI mail session initialization error: {}" + e.getMessage() );
+            LOG.warn( "JNDI mail session initialization error: {}" + e.getMessage() );
             throw e;
         }
-        log.debug( "mail session obtained from JNDI mail factory: {}", jndiName );
+        LOG.debug( "mail session obtained from JNDI mail factory: {}", jndiName );
         return session;
     }
 

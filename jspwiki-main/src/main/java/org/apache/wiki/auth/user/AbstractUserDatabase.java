@@ -44,7 +44,7 @@ import java.util.UUID;
  */
 public abstract class AbstractUserDatabase implements UserDatabase {
 
-    protected static final Logger log = LogManager.getLogger( AbstractUserDatabase.class );
+    protected static final Logger LOG = LogManager.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String SSHA_PREFIX = "{SSHA}";
     protected static final String SHA256_PREFIX = "{SHA-256}";
@@ -216,9 +216,9 @@ public abstract class AbstractUserDatabase implements UserDatabase {
             return verified;
         } catch( final NoSuchPrincipalException e ) {
         } catch( final NoSuchAlgorithmException e ) {
-            log.error( "Unsupported algorithm: " + e.getMessage() );
+            LOG.error( "Unsupported algorithm: " + e.getMessage() );
         } catch( final WikiSecurityException e ) {
-            log.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage(), e );
+            LOG.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage(), e );
         }
         return false;
     }
@@ -258,7 +258,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
         try {
             return CryptoUtil.getSaltedPassword( text.getBytes(StandardCharsets.UTF_8), SHA256_PREFIX );
         } catch( final NoSuchAlgorithmException e ) {
-            log.error( "Error creating salted password hash: {}", e.getMessage() );
+            LOG.error( "Error creating salted password hash: {}", e.getMessage() );
             return text;
         }
     }
@@ -278,7 +278,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
             final byte[] digestedBytes = md.digest();
             return ByteUtils.bytes2hex( digestedBytes );
         } catch( final NoSuchAlgorithmException e ) {
-            log.error( "Error creating SHA password hash:" + e.getMessage() );
+            LOG.error( "Error creating SHA password hash:" + e.getMessage() );
             return text;
         }
     }

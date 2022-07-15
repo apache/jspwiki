@@ -160,7 +160,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             final Element user = ( Element )users.item( i );
             final String wikiName = user.getAttribute( WIKI_NAME );
             if( StringUtils.isEmpty( wikiName ) ) {
-                log.warn( "Detected null or empty wiki name for {} in XMLUserDataBase. Check your user database.", user.getAttribute( LOGIN_NAME ) );
+                LOG.warn( "Detected null or empty wiki name for {} in XMLUserDataBase. Check your user database.", user.getAttribute( LOGIN_NAME ) );
             } else {
                 final WikiPrincipal principal = new WikiPrincipal( wikiName, WikiPrincipal.WIKI_NAME );
                 principals.add( principal );
@@ -174,7 +174,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException {
         final File defaultFile;
         if( engine.getRootPath() == null ) {
-            log.warn( "Cannot identify JSPWiki root path" );
+            LOG.warn( "Cannot identify JSPWiki root path" );
             defaultFile = new File( "WEB-INF/" + DEFAULT_USERDATABASE ).getAbsoluteFile();
         } else {
             defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + DEFAULT_USERDATABASE );
@@ -183,13 +183,13 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         // Get database file location
         final String file = TextUtil.getStringProperty( props, PROP_USERDATABASE, defaultFile.getAbsolutePath() );
         if( file == null ) {
-            log.warn( "XML user database property " + PROP_USERDATABASE + " not found; trying " + defaultFile );
+            LOG.warn( "XML user database property " + PROP_USERDATABASE + " not found; trying " + defaultFile );
             c_file = defaultFile;
         } else {
             c_file = new File( file );
         }
 
-        log.info( "XML user database at " + c_file.getAbsolutePath() );
+        LOG.info( "XML user database at " + c_file.getAbsolutePath() );
 
         buildDOM();
         sanitizeDOM();
@@ -206,17 +206,17 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         //factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_SCHEMA, "" );
         try {
             c_dom = factory.newDocumentBuilder().parse( c_file );
-            log.debug( "Database successfully initialized" );
+            LOG.debug( "Database successfully initialized" );
             c_lastModified = c_file.lastModified();
             c_lastCheck = System.currentTimeMillis();
         } catch( final ParserConfigurationException e ) {
-            log.error( "Configuration error: {}", e.getMessage() );
+            LOG.error( "Configuration error: {}", e.getMessage() );
         } catch( final SAXException e ) {
-            log.error( "SAX error: {}", e.getMessage() );
+            LOG.error( "SAX error: {}", e.getMessage() );
         } catch( final FileNotFoundException e ) {
-            log.info( "User database not found; creating from scratch..." );
+            LOG.info( "User database not found; creating from scratch..." );
         } catch( final IOException e ) {
-            log.error( "IO error: {}", e.getMessage() );
+            LOG.error( "IO error: {}", e.getMessage() );
         }
         if( c_dom == null ) {
             try {
@@ -224,7 +224,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 c_dom = factory.newDocumentBuilder().newDocument();
                 c_dom.appendChild( c_dom.createElement( "users" ) );
             } catch( final ParserConfigurationException e ) {
-                log.fatal( "Could not create in-memory DOM" );
+                LOG.fatal( "Could not create in-memory DOM" );
             }
         }
     }
@@ -285,18 +285,18 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         final File backup = new File( c_file.getAbsolutePath() + ".old" );
         if( backup.exists() ) {
             if( !backup.delete() ) {
-                log.error( "Could not delete old user database backup: " + backup );
+                LOG.error( "Could not delete old user database backup: " + backup );
             }
         }
         if( !c_file.renameTo( backup ) ) {
-            log.error( "Could not create user database backup: " + backup );
+            LOG.error( "Could not create user database backup: " + backup );
         }
         if( !newFile.renameTo( c_file ) ) {
-            log.error( "Could not save database: " + backup + " restoring backup." );
+            LOG.error( "Could not save database: " + backup + " restoring backup." );
             if( !backup.renameTo( c_file ) ) {
-                log.error( "Restore failed. Check the file permissions." );
+                LOG.error( "Restore failed. Check the file permissions." );
             }
-            log.error( "Could not save database: " + c_file + ". Check the file permissions" );
+            LOG.error( "Could not save database: " + c_file + ". Check the file permissions" );
         }
     }
 
@@ -322,7 +322,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     @Override
     public synchronized void rename( final String loginName, final String newName) throws DuplicateUserException, WikiSecurityException {
         if( c_dom == null ) {
-            log.fatal( "Could not rename profile '" + loginName + "'; database does not exist" );
+            LOG.fatal( "Could not rename profile '" + loginName + "'; database does not exist" );
             throw new IllegalStateException( "FATAL: database does not exist" );
         }
         checkForRefresh();
@@ -363,7 +363,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     @Override
     public synchronized void save( final UserProfile profile ) throws WikiSecurityException {
         if ( c_dom == null ) {
-            log.fatal( "Could not save profile " + profile + " database does not exist" );
+            LOG.fatal( "Could not save profile " + profile + " database does not exist" );
             throw new IllegalStateException( "FATAL: database does not exist" );
         }
 
@@ -387,7 +387,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         if( user == null ) {
             // Create new user node
             profile.setCreated( modDate );
-            log.info( "Creating new user " + index );
+            LOG.info( "Creating new user " + index );
             user = c_dom.createElement( USER_TAG );
             c_dom.getDocumentElement().appendChild( user );
             setAttribute( user, CREATED, c_format.format( profile.getCreated() ) );
@@ -506,7 +506,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                         final Map< String, ? extends Serializable > map = Serializer.deserializeFromBase64( serializedMap );
                         profile.getAttributes().putAll( map );
                     } catch( final IOException e ) {
-                        log.error( "Could not parse user profile attributes!", e );
+                        LOG.error( "Could not parse user profile attributes!", e );
                     }
                 }
 
@@ -551,7 +551,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             try {
                 return DateFormat.getDateTimeInstance().parse( date );
             } catch( final ParseException e2 ) {
-                log.warn( "Could not parse 'created' or 'lastModified' attribute for profile '" + profile.getLoginName() + "'." +
+                LOG.warn( "Could not parse 'created' or 'lastModified' attribute for profile '" + profile.getLoginName() + "'." +
                           " It may have been tampered with.", e2 );
             }
         }
@@ -595,7 +595,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                     user.setAttribute( CREATED, created );
                     user.setAttribute( LAST_MODIFIED, modified );
                 } catch( final ParseException e2 ) {
-                    log.warn( "Could not parse 'created' or 'lastModified' attribute for profile '" + loginName + "'."
+                    LOG.warn( "Could not parse 'created' or 'lastModified' attribute for profile '" + loginName + "'."
                             + " It may have been tampered with." );
                 }
             }

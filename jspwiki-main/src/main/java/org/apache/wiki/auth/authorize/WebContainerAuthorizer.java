@@ -57,7 +57,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
 
     private static final String J2EE_SCHEMA_25_NAMESPACE = "http://xmlns.jcp.org/xml/ns/javaee";
 
-    private static final Logger log = LogManager.getLogger( WebContainerAuthorizer.class );
+    private static final Logger LOG = LogManager.getLogger( WebContainerAuthorizer.class );
 
     protected Engine m_engine;
 
@@ -105,15 +105,15 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
             }
             if( m_containerAuthorized ) {
                 m_containerRoles = getRoles( m_webxml );
-                log.info( "JSPWiki is using container-managed authentication." );
+                LOG.info( "JSPWiki is using container-managed authentication." );
             } else {
-                log.info( "JSPWiki is using custom authentication." );
+                LOG.info( "JSPWiki is using custom authentication." );
             }
         } catch( final IOException e ) {
-            log.error( "Initialization failed: ", e );
+            LOG.error( "Initialization failed: ", e );
             throw new InternalWikiException( e.getClass().getName() + ": " + e.getMessage(), e );
         } catch( final JDOMException e ) {
-            log.error( "Malformed XML in web.xml", e );
+            LOG.error( "Malformed XML in web.xml", e );
             throw new InternalWikiException( e.getClass().getName() + ": " + e.getMessage(), e );
         }
 
@@ -122,9 +122,9 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
             for( final Role containerRole : m_containerRoles ) {
                 roles.append(containerRole).append(" ");
             }
-            log.info( " JSPWiki determined the web container manages these roles: " + roles );
+            LOG.info( " JSPWiki determined the web container manages these roles: " + roles );
         }
-        log.info( "Authorizer WebContainerAuthorizer initialized successfully." );
+        LOG.info( "Authorizer WebContainerAuthorizer initialized successfully." );
     }
 
     /**
@@ -346,18 +346,18 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
             final ClassLoader cl = WebContainerAuthorizer.class.getClassLoader();
             url = cl.getResource( "WEB-INF/web.xml" );
             if( url != null ) {
-                log.info( "Examining {}", url.toExternalForm() );
+                LOG.info( "Examining {}", url.toExternalForm() );
             }
         } else {
             url = m_engine.getServletContext().getResource( "/WEB-INF/web.xml" );
             if( url != null )
-                log.info( "Examining " + url.toExternalForm() );
+                LOG.info( "Examining " + url.toExternalForm() );
         }
         if( url == null ) {
             throw new IOException("Unable to find web.xml for processing.");
         }
 
-        log.debug( "Processing web.xml at {}", url.toExternalForm() );
+        LOG.debug( "Processing web.xml at {}", url.toExternalForm() );
         doc = builder.build( url );
         return doc;
     }
@@ -397,7 +397,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
 
             if( url != null ) {
                 final InputSource is = new InputSource( url.openStream() );
-                log.debug( "Resolved systemID={} using local file {}", systemId, url );
+                LOG.debug( "Resolved systemID={} using local file {}", systemId, url );
                 return is;
             }
 
@@ -408,7 +408,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
             //
             //  The DTD needs to be resolved and read because it contains things like entity definitions...
             //
-            log.info("Please note: There are no local DTD references in /WEB-INF/dtd/{}; falling back to default" +
+            LOG.info("Please note: There are no local DTD references in /WEB-INF/dtd/{}; falling back to default" +
                      " behaviour. This may mean that the XML parser will attempt to connect to the internet to find the" +
                      " DTD. If you are running JSPWiki locally in an unconnected network, you might want to put the DTD " +
                      " files in place to avoid nasty UnknownHostExceptions.", file );

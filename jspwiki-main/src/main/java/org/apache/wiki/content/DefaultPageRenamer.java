@@ -51,7 +51,7 @@ import java.util.regex.Pattern;
  */
 public class DefaultPageRenamer implements PageRenamer {
 
-    private static final Logger log = LogManager.getLogger( DefaultPageRenamer.class );
+    private static final Logger LOG = LogManager.getLogger( DefaultPageRenamer.class );
     
     private boolean m_camelCase;
     
@@ -195,7 +195,7 @@ public class DefaultPageRenamer implements PageRenamer {
                     engine.getManager( ReferenceManager.class ).updateReferences( p );
                 } catch( final ProviderException e ) {
                     //  We fail with an error, but we will try to continue to rename other referrers as well.
-                    log.error("Unable to perform rename.",e);
+                    LOG.error("Unable to perform rename.",e);
                 }
             }
         }
@@ -218,7 +218,7 @@ public class DefaultPageRenamer implements PageRenamer {
             }
         } catch( final ProviderException e ) {
             // We will continue despite this error
-            log.error( "Provider error while fetching attachments for rename", e );
+            LOG.error( "Provider error while fetching attachments for rename", e );
         }
         return referrers;
     }

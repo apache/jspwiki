@@ -56,7 +56,7 @@ import java.util.Date;
 public class CalendarTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LogManager.getLogger( CalendarTag.class );
+    private static final Logger LOG = LogManager.getLogger( CalendarTag.class );
     
     private SimpleDateFormat m_pageFormat;
     private SimpleDateFormat m_urlFormat;
@@ -263,7 +263,7 @@ public class CalendarTag extends WikiTagBase {
                 prevCal.setTime( d );
                 nextCal.setTime( d );
             } catch( final ParseException e ) {
-                log.warn( "date format wrong: " + calendarDate );
+                LOG.warn( "date format wrong: " + calendarDate );
             }
         }
 

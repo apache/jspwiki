@@ -60,7 +60,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
     /** The name of the cookie that gets stored to the user browser. */
     public static final String PREFS_COOKIE_NAME = "JSPWikiAssertedName";
 
-    private static final Logger log = LogManager.getLogger( CookieAssertionLoginModule.class );
+    private static final Logger LOG = LogManager.getLogger( CookieAssertionLoginModule.class );
 
     /**
      * {@inheritDoc}
@@ -84,20 +84,20 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
             final String sid = ( session == null ) ? NULL : session.getId();
             final String name = (request != null) ? getUserCookie( request ) : null;
             if ( name == null ) {
-                log.debug( "No cookie {} present in session ID=:  {}", PREFS_COOKIE_NAME, sid );
+                LOG.debug( "No cookie {} present in session ID=:  {}", PREFS_COOKIE_NAME, sid );
                 throw new FailedLoginException( "The user cookie was not found." );
             }
 
-            log.debug( "Logged in session ID={}; asserted={}", sid, name );
+            LOG.debug( "Logged in session ID={}; asserted={}", sid, name );
             // If login succeeds, commit these principals/roles
             m_principals.add( new WikiPrincipal( name, WikiPrincipal.FULL_NAME ) );
             return true;
         } catch( final IOException e ) {
-            log.error( "IOException: " + e.getMessage() );
+            LOG.error( "IOException: " + e.getMessage() );
             return false;
         } catch( final UnsupportedCallbackException e ) {
             final String message = "Unable to handle callback, disallowing login.";
-            log.error( message, e );
+            LOG.error( message, e );
             throw new LoginException( message );
         }
     }

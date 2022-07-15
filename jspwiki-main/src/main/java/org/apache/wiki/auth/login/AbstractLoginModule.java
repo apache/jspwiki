@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public abstract class AbstractLoginModule implements LoginModule {
 
-    private static final Logger log = LogManager.getLogger( AbstractLoginModule.class );
+    private static final Logger LOG = LogManager.getLogger( AbstractLoginModule.class );
 
     protected CallbackHandler m_handler;
     protected Map< String, ? > m_options;
@@ -100,7 +100,7 @@ public abstract class AbstractLoginModule implements LoginModule {
         if ( succeeded() ) {
             for ( final Principal principal : m_principals ) {
                 m_subject.getPrincipals().add( principal );
-                log.debug("Committed Principal {}", principal.getName() );
+                LOG.debug("Committed Principal {}", principal.getName() );
             }
             return true;
         }
@@ -187,7 +187,7 @@ public abstract class AbstractLoginModule implements LoginModule {
         for( final Principal principal : principals ) {
             if ( m_subject.getPrincipals().contains( principal ) ) {
                 m_subject.getPrincipals().remove( principal );
-                log.debug("Removed Principal {}", principal.getName() );
+                LOG.debug("Removed Principal {}", principal.getName() );
             }
         }
     }

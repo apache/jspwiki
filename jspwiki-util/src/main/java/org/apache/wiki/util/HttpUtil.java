@@ -40,7 +40,7 @@ import java.util.Date;
  */
 public final class HttpUtil {
 
-    private static final Logger log = LogManager.getLogger( HttpUtil.class );
+    private static final Logger LOG = LogManager.getLogger( HttpUtil.class );
     private static final int    ONE                   = 48;
     private static final int    NINE                  = 57;
     private static final int    DOT                   = 46;
@@ -147,7 +147,7 @@ public final class HttpUtil {
                             }
                         }
                     } catch( final ParseException e ) {
-                        log.warn( e.getLocalizedMessage(), e );
+                        LOG.warn( e.getLocalizedMessage(), e );
                     }
                 }
             } catch( final IllegalArgumentException e ) {

@@ -71,7 +71,7 @@ import java.util.Properties;
  */
 public class VersioningFileProvider extends AbstractFileProvider {
 
-    private static final Logger log = LogManager.getLogger( VersioningFileProvider.class );
+    private static final Logger LOG = LogManager.getLogger( VersioningFileProvider.class );
 
     /** Name of the directory where the old versions are stored. */
     public static final String PAGEDIR = "OLD";
@@ -101,7 +101,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 throw new IOException( "Page version directory is not writable: " + oldpages.getAbsolutePath() );
             }
         }
-        log.info( "Using directory " + oldpages.getAbsolutePath() + " for storing old versions of pages" );
+        LOG.info( "Using directory " + oldpages.getAbsolutePath() + " for storing old versions of pages" );
     }
 
     /**
@@ -185,7 +185,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 }
             }
         } catch( final IOException e ) {
-            log.error( "Unable to figure out latest version - dying...", e );
+            LOG.error( "Unable to figure out latest version - dying...", e );
         }
 
         return version;
@@ -294,17 +294,17 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 try( final InputStream in = Files.newInputStream( pagedata.toPath() ) ) {
                     result = FileUtil.readContents( in, m_encoding );
                 } catch( final IOException e ) {
-                    log.error("Failed to read", e);
+                    LOG.error("Failed to read", e);
                     throw new ProviderException("I/O error: "+e.getMessage());
                 }
             } else {
-                log.warn("Failed to read page from '"+pagedata.getAbsolutePath()+"', possibly a permissions problem");
+                LOG.warn("Failed to read page from '"+pagedata.getAbsolutePath()+"', possibly a permissions problem");
                 throw new ProviderException("I cannot read the requested page.");
             }
         } else {
             // This is okay.
             // FIXME: is it?
-            log.info("New page");
+            LOG.info("New page");
         }
 
         return result;
@@ -392,7 +392,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
             getCustomProperties( page, props );
             putPageProperties( page.getName(), props );
         } catch( final IOException e ) {
-            log.error( "Saving failed", e );
+            LOG.error( "Saving failed", e );
             throw new ProviderException("Could not save page text: "+e.getMessage());
         }
     }
@@ -460,7 +460,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 // Set the props values to the page attributes
                 setCustomProperties( p, props );
             } catch( final IOException e ) {
-                log.error( "Cannot get author for page" + page + ": ", e );
+                LOG.error( "Cannot get author for page" + page + ": ", e );
             }
         }
 
@@ -585,7 +585,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 props.remove( ((latest > 0) ? latest : 1)+".author" );
                 putPageProperties( page, props );
             } catch( final IOException e ) {
-                log.error("Unable to modify page properties",e);
+                LOG.error("Unable to modify page properties",e);
                 throw new ProviderException("Could not modify page properties: " + e.getMessage());
             }
 
@@ -606,7 +606,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                     pageFile.setLastModified( previousFile.lastModified() );
                 }
             } catch( final IOException e ) {
-                log.fatal("Something wrong with the page directory - you may have just lost data!",e);
+                LOG.fatal("Something wrong with the page directory - you may have just lost data!",e);
             }
 
             return;
@@ -615,7 +615,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
         final File pageFile = new File( dir, ""+version+FILE_EXT );
         if( pageFile.exists() ) {
             if( !pageFile.delete() ) {
-                log.error("Unable to delete page." + pageFile.getPath() );
+                LOG.error("Unable to delete page." + pageFile.getPath() );
             }
         } else {
             throw new NoSuchVersionException("Page "+page+", version="+version);

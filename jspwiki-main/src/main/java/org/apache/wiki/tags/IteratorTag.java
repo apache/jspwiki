@@ -50,7 +50,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
     protected Iterator< ? > m_iterator;
     protected Context m_wikiContext;
 
-    private static final Logger log = LogManager.getLogger( IteratorTag.class );
+    private static final Logger LOG = LogManager.getLogger( IteratorTag.class );
 
     /**
      *  Sets the collection that is used to form the iteration.
@@ -135,7 +135,7 @@ public abstract class IteratorTag extends BodyTagSupport implements TryCatchFina
                 out.print( bodyContent.getString() );
                 bodyContent.clearBody();
             } catch( final IOException e ) {
-                log.error( "Unable to get inner tag text", e );
+                LOG.error( "Unable to get inner tag text", e );
                 // FIXME: throw something?
             }
         }

@@ -55,7 +55,7 @@ import java.io.IOException;
  */
 public class UserDatabaseLoginModule extends AbstractLoginModule {
 
-    private static final Logger log = LogManager.getLogger( UserDatabaseLoginModule.class );
+    private static final Logger LOG = LogManager.getLogger( UserDatabaseLoginModule.class );
 
     /**
      * @see javax.security.auth.spi.LoginModule#login()
@@ -83,7 +83,7 @@ public class UserDatabaseLoginModule extends AbstractLoginModule {
             final UserProfile profile = db.findByLoginName( username );
             final String storedPassword = profile.getPassword();
             if ( storedPassword != null && db.validatePassword( username, password ) ) {
-                log.debug( "Logged in user database user {}", username );
+                LOG.debug( "Logged in user database user {}", username );
 
                 // If login succeeds, commit these principals/roles
                 m_principals.add( new WikiPrincipal( username,  WikiPrincipal.LOGIN_NAME ) );
@@ -93,11 +93,11 @@ public class UserDatabaseLoginModule extends AbstractLoginModule {
             throw new FailedLoginException( "The username or password is incorrect." );
         } catch( final IOException e ) {
             final String message = "IO exception; disallowing login.";
-            log.error( message, e );
+            LOG.error( message, e );
             throw new LoginException( message );
         } catch( final UnsupportedCallbackException e ) {
             final String message = "Unable to handle callback; disallowing login.";
-            log.error( message, e );
+            LOG.error( message, e );
             throw new LoginException( message );
         } catch( final NoSuchPrincipalException e ) {
             throw new FailedLoginException( "The username or password is incorrect." );

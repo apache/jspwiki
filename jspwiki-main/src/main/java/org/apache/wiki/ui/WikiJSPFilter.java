@@ -73,7 +73,7 @@ import java.nio.charset.Charset;
  */
 public class WikiJSPFilter extends WikiServletFilter {
 
-    private static final Logger log = LogManager.getLogger( WikiJSPFilter.class );
+    private static final Logger LOG = LogManager.getLogger( WikiJSPFilter.class );
     private String m_wiki_encoding;
     private boolean useEncoding;
 
@@ -189,13 +189,13 @@ public class WikiJSPFilter extends WikiServletFilter {
             return string;
         }
 
-        log.debug("...Inserting...");
+        LOG.debug("...Inserting...");
 
         final String[] resources = TemplateManager.getResourceRequests( wikiContext, type );
         final StringBuilder concat = new StringBuilder( resources.length * 40 );
 
         for( final String resource : resources ) {
-            log.debug( "...:::" + resource );
+            LOG.debug( "...:::" + resource );
             concat.append( resource );
         }
 
@@ -279,7 +279,7 @@ public class WikiJSPFilter extends WikiServletFilter {
             try {
 				flushBuffer();
 			} catch( final IOException e ) {
-                log.error( e );
+                LOG.error( e );
                 return StringUtils.EMPTY;
 			}
 
@@ -290,7 +290,7 @@ public class WikiJSPFilter extends WikiServletFilter {
 
 				return m_output.toString();
 			} catch( final UnsupportedEncodingException e ) {
-                log.error( e );
+                LOG.error( e );
                 return StringUtils.EMPTY;
              }
         }

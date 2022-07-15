@@ -67,7 +67,7 @@ import java.util.Properties;
  *  Simple test engine that always assumes pages are found.
  */
 public class TestEngine extends WikiEngine {
-    private static final Logger log = LogManager.getLogger( TestEngine.class );
+    private static final Logger LOG = LogManager.getLogger( TestEngine.class );
 
     private Session m_adminWikiSession;
     private Session m_janneWikiSession;
@@ -351,7 +351,7 @@ public class TestEngine extends WikiEngine {
             deleteAttachments( name );
             firePageEvent( WikiPageEvent.PAGE_DELETED, name );
         } catch( final Exception e ) {
-            log.error("Couldn't delete "+name, e );
+            LOG.error("Couldn't delete "+name, e );
         }
     }
 
@@ -367,7 +367,7 @@ public class TestEngine extends WikiEngine {
 
             deleteAll( f );
         } catch( final Exception e ) {
-            log.error("Could not remove attachments.",e);
+            LOG.error("Could not remove attachments.",e);
         }
     }
 

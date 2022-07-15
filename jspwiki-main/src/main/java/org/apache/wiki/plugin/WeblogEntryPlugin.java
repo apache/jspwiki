@@ -52,7 +52,7 @@ import java.util.ResourceBundle;
  */
 public class WeblogEntryPlugin implements Plugin {
 
-    private static final Logger log = LogManager.getLogger(WeblogEntryPlugin.class);
+    private static final Logger LOG = LogManager.getLogger(WeblogEntryPlugin.class);
     private static final int MAX_BLOG_ENTRIES = 10_000; // Just a precaution.
 
     /**
@@ -123,7 +123,7 @@ public class WeblogEntryPlugin implements Plugin {
                         max = id;
                     }
                 } catch( final NumberFormatException e ) {
-                    log.debug( "Was not a log entry: " + p.getName() );
+                    LOG.debug( "Was not a log entry: " + p.getName() );
                 }
             }
         }

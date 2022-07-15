@@ -99,7 +99,7 @@ public class CookieTag
 {
     private static final long serialVersionUID = 0L;
 
-    private static final Logger log = LogManager.getLogger( CookieTag.class );
+    private static final Logger LOG = LogManager.getLogger( CookieTag.class );
 
     /** Name of the cookie value. Required. */
     private String m_name;
@@ -259,7 +259,7 @@ public class CookieTag
                 }
                 catch( final IOException ioe )
                 {
-                    log.warn( "Failed to write to JSP page: " + ioe.getMessage(), ioe );
+                    LOG.warn( "Failed to write to JSP page: " + ioe.getMessage(), ioe );
                 }
             }
         }
@@ -385,7 +385,7 @@ public class CookieTag
         catch( final UnsupportedEncodingException e )
         {
             /* never happens */
-            log.info( "Failed to encode UTF-8", e );
+            LOG.info( "Failed to encode UTF-8", e );
         }
         return coded.replaceAll( "\\+", "%20" );
     }
@@ -404,7 +404,7 @@ public class CookieTag
         }
         catch( final UnsupportedEncodingException e )
         {
-            log.error( "Failed to decode cookie", e );
+            LOG.error( "Failed to decode cookie", e );
             return envp;
         }
     }

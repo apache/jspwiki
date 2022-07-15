@@ -157,7 +157,7 @@ public class WikiContext implements Context, Command {
     /** User wants to view or administer workflows. */
     public static final String WORKFLOW = ContextEnum.WIKI_WORKFLOW.getRequestContext();
 
-    private static final Logger log = LogManager.getLogger( WikiContext.class );
+    private static final Logger LOG = LogManager.getLogger( WikiContext.class );
 
     private static final Permission DUMMY_PERMISSION = new PropertyPermission( "os.name", "read" );
 
@@ -219,7 +219,7 @@ public class WikiContext implements Context, Command {
         // Debugging...
         final HttpSession session = ( request == null ) ? null : request.getSession( false );
         final String sid = session == null ? "(null)" : session.getId();
-        log.debug( "Creating WikiContext for session ID={}; target={}", sid, getName() );
+        LOG.debug( "Creating WikiContext for session ID={}; target={}", sid, getName() );
 
         // Figure out what template to use
         setDefaultTemplate( request );

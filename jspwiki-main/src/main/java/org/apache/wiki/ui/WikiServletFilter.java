@@ -52,7 +52,7 @@ import java.io.PrintWriter;
  */
 public class WikiServletFilter implements Filter {
 
-    private static final Logger log = LogManager.getLogger( WikiServletFilter.class );
+    private static final Logger LOG = LogManager.getLogger( WikiServletFilter.class );
     protected Engine m_engine;
 
     /**
@@ -134,7 +134,7 @@ public class WikiServletFilter implements Filter {
                 m_engine.getManager( AuthenticationManager.class ).login( httpRequest );
                 final Session wikiSession = SessionMonitor.getInstance( m_engine ).find( httpRequest.getSession() );
                 httpRequest = new WikiRequestWrapper( m_engine, httpRequest );
-                log.debug( "Executed security filters for user={}, path={}",wikiSession.getLoginPrincipal().getName(), httpRequest.getRequestURI() );
+                LOG.debug( "Executed security filters for user={}, path={}",wikiSession.getLoginPrincipal().getName(), httpRequest.getRequestURI() );
             } catch( final WikiSecurityException e ) {
                 throw new ServletException( e );
             }

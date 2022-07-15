@@ -35,7 +35,7 @@ import java.io.IOException;
 public class PageSizeTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LogManager.getLogger( PageSizeTag.class );
+    private static final Logger LOG = LogManager.getLogger( PageSizeTag.class );
     
     @Override
     public final int doWikiStartTag() throws IOException {
@@ -54,7 +54,7 @@ public class PageSizeTag extends WikiTagBase {
                 pageContext.getOut().write( Long.toString(size) );
             }
         } catch( final ProviderException e ) {
-            log.warn("Providers did not work: ",e);
+            LOG.warn("Providers did not work: ",e);
             pageContext.getOut().write("Error determining page size: "+e.getMessage());
         }
 

@@ -40,7 +40,7 @@ import java.util.Properties;
  */
 public class ExternalDiffProvider implements DiffProvider {
 
-    private static final Logger log = LogManager.getLogger(ExternalDiffProvider.class);
+    private static final Logger LOG = LogManager.getLogger(ExternalDiffProvider.class);
 
     /**
      * Determines the command to be used for 'diff'. This program must be able
@@ -125,9 +125,9 @@ public class ExternalDiffProvider implements DiffProvider {
                 diff = htmlWikiDiff;
             }
         } catch( final IOException e ) {
-            log.error("Failed to do file diff", e );
+            LOG.error("Failed to do file diff", e );
         } catch( final InterruptedException e ) {
-            log.error("Interrupted", e );
+            LOG.error("Interrupted", e );
         } finally {
             if( f1 != null ) {
                 f1.delete();

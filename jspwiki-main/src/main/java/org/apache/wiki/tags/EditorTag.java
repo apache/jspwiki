@@ -41,7 +41,7 @@ import java.io.IOException;
 public class EditorTag extends WikiBodyTag {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LogManager.getLogger( EditorTag.class );
+    private static final Logger LOG = LogManager.getLogger( EditorTag.class );
     
     @Override
     public final int doWikiStartTag() throws IOException {
@@ -64,7 +64,7 @@ public class EditorTag extends WikiBodyTag {
                 pageContext.include( page );
             }
         } catch( final ServletException e ) {
-            log.error( "Failed to include editor", e );
+            LOG.error( "Failed to include editor", e );
             throw new JspException( "Failed to include editor: " + e.getMessage() );
         } catch( final IOException e ) {
             throw new JspException( "Could not print Editor tag: " + e.getMessage() );

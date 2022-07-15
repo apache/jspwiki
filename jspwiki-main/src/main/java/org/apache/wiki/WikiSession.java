@@ -61,7 +61,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class WikiSession implements Session {
 
-    private static final Logger log = LogManager.getLogger( WikiSession.class );
+    private static final Logger LOG = LogManager.getLogger( WikiSession.class );
 
     private static final String ALL = "*";
 
@@ -419,7 +419,7 @@ public class WikiSession implements Session {
         final String searchId = m_loginPrincipal.getName();
         if ( searchId == null ) {
             // Oh dear, this wasn't an authenticated user after all
-            log.info("Refresh principals failed because WikiSession had no user Principal; maybe not logged in?");
+            LOG.info("Refresh principals failed because WikiSession had no user Principal; maybe not logged in?");
             return;
         }
 
@@ -447,7 +447,7 @@ public class WikiSession implements Session {
         } catch ( final NoSuchPrincipalException e ) {
             // We will get here if the user has a principal but not a profile
             // For example, it's a container-managed user who hasn't set up a profile yet
-            log.warn("User profile '" + searchId + "' not found. This is normal for container-auth users who haven't set up a profile yet.");
+            LOG.warn("User profile '" + searchId + "' not found. This is normal for container-auth users who haven't set up a profile yet.");
         }
     }
 
@@ -494,7 +494,7 @@ public class WikiSession implements Session {
      */
     public static Session getWikiSession( final Engine engine, final HttpServletRequest request ) {
         if ( request == null ) {
-            log.debug( "Looking up WikiSession for NULL HttpRequest: returning guestSession()" );
+            LOG.debug( "Looking up WikiSession for NULL HttpRequest: returning guestSession()" );
             return staticGuestSession( engine );
         }
 

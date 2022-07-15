@@ -91,7 +91,7 @@ import java.util.concurrent.Executors;
  */
 public class LuceneSearchProvider implements SearchProvider {
 
-    protected static final Logger log = LogManager.getLogger( LuceneSearchProvider.class );
+    protected static final Logger LOG = LogManager.getLogger( LuceneSearchProvider.class );
 
     private Engine m_engine;
     private Executor searchExecutor;
@@ -145,14 +145,14 @@ public class LuceneSearchProvider implements SearchProvider {
         // FIXME: Just to be simple for now, we will do full reindex only if no files are in lucene directory.
 
         final File dir = new File( m_luceneDirectory );
-        log.info( "Lucene enabled, cache will be in: {}", dir.getAbsolutePath() );
+        LOG.info( "Lucene enabled, cache will be in: {}", dir.getAbsolutePath() );
         try {
             if( !dir.exists() ) {
                 dir.mkdirs();
             }
 
             if( !dir.exists() || !dir.canWrite() || !dir.canRead() ) {
-                log.error( "Cannot write to Lucene directory, disabling Lucene: {}", dir.getAbsolutePath() );
+                LOG.error( "Cannot write to Lucene directory, disabling Lucene: {}", dir.getAbsolutePath() );
                 throw new IOException( "Invalid Lucene directory." );
             }
 
@@ -161,7 +161,7 @@ public class LuceneSearchProvider implements SearchProvider {
                 throw new IOException( "Invalid Lucene directory: cannot produce listing: " + dir.getAbsolutePath() );
             }
         } catch( final IOException e ) {
-            log.error( "Problem while creating Lucene index - not using Lucene.", e );
+            LOG.error( "Problem while creating Lucene index - not using Lucene.", e );
         }
 
         // Start the Lucene update thread, which waits first for a little while before starting to go through
@@ -198,7 +198,7 @@ public class LuceneSearchProvider implements SearchProvider {
                 //
                 final Date start = new Date();
 
-                log.info( "Starting Lucene reindexing, this can take a couple of minutes..." );
+                LOG.info( "Starting Lucene reindexing, this can take a couple of minutes..." );
 
                 final Directory luceneDir = new NIOFSDirectory( dir.toPath() );
                 try( final IndexWriter writer = getIndexWriter( luceneDir ) ) {
@@ -210,10 +210,10 @@ public class LuceneSearchProvider implements SearchProvider {
                             luceneIndexPage( page, text, writer );
                             pagesIndexed++;
                         } catch( final IOException e ) {
-                            log.warn( "Unable to index page {}, continuing to next ", page.getName(), e );
+                            LOG.warn( "Unable to index page {}, continuing to next ", page.getName(), e );
                         }
                     }
-                    log.info( "Indexed {} pages", pagesIndexed );
+                    LOG.info( "Indexed {} pages", pagesIndexed );
 
                     long attachmentsIndexed = 0L;
                     final Collection< Attachment > allAttachments = m_engine.getManager( AttachmentManager.class ).getAllAttachments();
@@ -223,24 +223,24 @@ public class LuceneSearchProvider implements SearchProvider {
                             luceneIndexPage( att, text, writer );
                             attachmentsIndexed++;
                         } catch( final IOException e ) {
-                            log.warn( "Unable to index attachment {}, continuing to next", att.getName(), e );
+                            LOG.warn( "Unable to index attachment {}, continuing to next", att.getName(), e );
                         }
                     }
-                    log.info( "Indexed {} attachments", attachmentsIndexed );
+                    LOG.info( "Indexed {} attachments", attachmentsIndexed );
                 }
 
                 final Date end = new Date();
-                log.info( "Full Lucene index finished in {} milliseconds.", end.getTime() - start.getTime() );
+                LOG.info( "Full Lucene index finished in {} milliseconds.", end.getTime() - start.getTime() );
             } else {
-                log.info( "Files found in Lucene directory, not reindexing." );
+                LOG.info( "Files found in Lucene directory, not reindexing." );
             }
         } catch( final IOException e ) {
-            log.error( "Problem while creating Lucene index - not using Lucene.", e );
+            LOG.error( "Problem while creating Lucene index - not using Lucene.", e );
         } catch( final ProviderException e ) {
-            log.error( "Problem reading pages while creating Lucene index (JSPWiki won't start.)", e );
+            LOG.error( "Problem reading pages while creating Lucene index (JSPWiki won't start.)", e );
             throw new IllegalArgumentException( "unable to create Lucene index" );
         } catch( final Exception e ) {
-            log.error( "Unable to start lucene", e );
+            LOG.error( "Unable to start lucene", e );
         }
 
     }
@@ -262,7 +262,7 @@ public class LuceneSearchProvider implements SearchProvider {
                 return getAttachmentContent( att );
             }
         } catch( final ProviderException e ) {
-            log.error( "Attachment cannot be loaded", e );
+            LOG.error( "Attachment cannot be loaded", e );
         }
         return null;
     }
@@ -293,7 +293,7 @@ public class LuceneSearchProvider implements SearchProvider {
                 FileUtil.copyContents( new InputStreamReader( attStream ), sout );
                 out = out + " " + sout;
             } catch( final ProviderException | IOException e ) {
-                log.error( "Attachment cannot be loaded", e );
+                LOG.error( "Attachment cannot be loaded", e );
             }
         }
 
@@ -307,7 +307,7 @@ public class LuceneSearchProvider implements SearchProvider {
      * @param text The page text to index.
      */
     protected synchronized void updateLuceneIndex( final Page page, final String text ) {
-        log.debug( "Updating Lucene index for page '{}'...", page.getName() );
+        LOG.debug( "Updating Lucene index for page '{}'...", page.getName() );
         pageRemoved( page );
 
         // Now add back the new version.
@@ -315,14 +315,14 @@ public class LuceneSearchProvider implements SearchProvider {
              final IndexWriter writer = getIndexWriter( luceneDir ) ) {
             luceneIndexPage( page, text, writer );
         } catch( final IOException e ) {
-            log.error( "Unable to update page '{}' from Lucene index", page.getName(), e );
+            LOG.error( "Unable to update page '{}' from Lucene index", page.getName(), e );
             // reindexPage( page );
         } catch( final Exception e ) {
-            log.error( "Unexpected Lucene exception - please check configuration!", e );
+            LOG.error( "Unexpected Lucene exception - please check configuration!", e );
             // reindexPage( page );
         }
 
-        log.debug( "Done updating Lucene index for page '{}'.", page.getName() );
+        LOG.debug( "Done updating Lucene index for page '{}'.", page.getName() );
     }
 
     private Analyzer getLuceneAnalyzer() throws ProviderException {
@@ -330,7 +330,7 @@ public class LuceneSearchProvider implements SearchProvider {
             return ClassUtil.buildInstance( m_analyzerClass );
         } catch( final Exception e ) {
             final String msg = "Could not get LuceneAnalyzer class " + m_analyzerClass + ", reason: ";
-            log.error( msg, e );
+            LOG.error( msg, e );
             throw new ProviderException( msg + e );
         }
     }
@@ -345,7 +345,7 @@ public class LuceneSearchProvider implements SearchProvider {
      * @throws IOException If there's an indexing problem
      */
     protected Document luceneIndexPage( final Page page, final String text, final IndexWriter writer ) throws IOException {
-        log.debug( "Indexing {}...", page.getName() );
+        LOG.debug( "Indexing {}...", page.getName() );
 
         // make a new, empty document
         final Document doc = new Document();
@@ -387,7 +387,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
         } catch( final ProviderException e ) {
             // Unable to read attachments
-            log.error( "Failed to get attachments for page", e );
+            LOG.error( "Failed to get attachments for page", e );
         }
 
         // also index page keywords, if available
@@ -412,7 +412,7 @@ public class LuceneSearchProvider implements SearchProvider {
             final Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
             writer.deleteDocuments( query );
         } catch( final Exception e ) {
-            log.error( "Unable to remove page '{}' from Lucene index", page.getName(), e );
+            LOG.error( "Unable to remove page '{}' from Lucene index", page.getName(), e );
         }
     }
 
@@ -445,7 +445,7 @@ public class LuceneSearchProvider implements SearchProvider {
                 pair[ 0 ] = page;
                 pair[ 1 ] = text;
                 m_updates.add( pair );
-                log.debug( "Scheduling page {} for index update", page.getName() );
+                LOG.debug( "Scheduling page {} for index update", page.getName() );
             }
         }
     }
@@ -512,17 +512,17 @@ public class LuceneSearchProvider implements SearchProvider {
                         list.add( result );
                     }
                 } else {
-                    log.error( "Lucene found a result page '{}' that could not be loaded, removing from Lucene cache",  pageName );
+                    LOG.error( "Lucene found a result page '{}' that could not be loaded, removing from Lucene cache",  pageName );
                     pageRemoved( Wiki.contents().page( m_engine, pageName ) );
                 }
             }
         } catch( final IOException e ) {
-            log.error( "Failed during lucene search", e );
+            LOG.error( "Failed during lucene search", e );
         } catch( final ParseException e ) {
-            log.error( "Broken query; cannot parse query: {}", query, e );
+            LOG.error( "Broken query; cannot parse query: {}", query, e );
             throw new ProviderException( "You have entered a query Lucene cannot process [" + query + "]: " + e.getMessage() );
         } catch( final InvalidTokenOffsetsException e ) {
-            log.error( "Tokens are incompatible with provided text ", e );
+            LOG.error( "Tokens are incompatible with provided text ", e );
         }
 
         return list;

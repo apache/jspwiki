@@ -53,7 +53,7 @@ import java.io.IOException;
 public class InsertPageTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LogManager.getLogger( InsertPageTag.class );
+    private static final Logger LOG = LogManager.getLogger( InsertPageTag.class );
     
     public static final int HTML  = 0;
     public static final int PLAIN = 1;
@@ -108,7 +108,7 @@ public class InsertPageTag extends WikiTagBase {
             // FIXME: Do version setting later.
             // page.setVersion( WikiProvider.LATEST_VERSION );
 
-            log.debug("Inserting page "+insertedPage);
+            LOG.debug("Inserting page "+insertedPage);
 
             final JspWriter out = pageContext.getOut();
             final Page oldPage = m_wikiContext.setRealPage( insertedPage );

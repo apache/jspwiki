@@ -83,7 +83,7 @@ public class AttachmentServlet extends HttpServlet {
     private static final int BUFFER_SIZE = 8192;
 
     private Engine m_engine;
-    private static final Logger log = LogManager.getLogger( AttachmentServlet.class );
+    private static final Logger LOG = LogManager.getLogger( AttachmentServlet.class );
     private static final String HDR_VERSION = "version";
 
     /** The maximum size that an attachment can be. */
@@ -127,10 +127,10 @@ public class AttachmentServlet extends HttpServlet {
         if( !f.exists() ) {
             f.mkdirs();
         } else if( !f.isDirectory() ) {
-            log.fatal( "A file already exists where the temporary dir is supposed to be: {}. Please remove it.", tmpDir );
+            LOG.fatal( "A file already exists where the temporary dir is supposed to be: {}. Please remove it.", tmpDir );
         }
 
-        log.debug( "UploadServlet initialized. Using {} for temporary storage.", tmpDir );
+        LOG.debug( "UploadServlet initialized. Using {} for temporary storage.", tmpDir );
     }
 
     private boolean isTypeAllowed( String name )
@@ -182,13 +182,13 @@ public class AttachmentServlet extends HttpServlet {
         int ver = WikiProvider.LATEST_VERSION;
 
         if( page == null ) {
-            log.info( "Invalid attachment name." );
+            LOG.info( "Invalid attachment name." );
             res.sendError( HttpServletResponse.SC_BAD_REQUEST );
             return;
         }
 
         try( final OutputStream out = res.getOutputStream() ) {
-            log.debug("Attempting to download att "+page+", version "+version);
+            LOG.debug("Attempting to download att "+page+", version "+version);
             if( version != null ) {
                 ver = Integer.parseInt( version );
             }
@@ -201,7 +201,7 @@ public class AttachmentServlet extends HttpServlet {
 
                 final Permission permission = PermissionFactory.getPagePermission( att, "view" );
                 if( !authmgr.checkPermission( context.getWikiSession(), permission ) ) {
-                    log.debug("User does not have permission for this");
+                    LOG.debug("User does not have permission for this");
                     res.sendError( HttpServletResponse.SC_FORBIDDEN );
                     return;
                 }
@@ -210,7 +210,7 @@ public class AttachmentServlet extends HttpServlet {
                 //  Check if the client already has a version of this attachment.
                 //
                 if( HttpUtil.checkFor304( req, att.getName(), att.getLastModified() ) ) {
-                    log.debug( "Client has latest version already, sending 304..." );
+                    LOG.debug( "Client has latest version already, sending 304..." );
                     res.sendError( HttpServletResponse.SC_NOT_MODIFIED );
                     return;
                 }
@@ -232,7 +232,7 @@ public class AttachmentServlet extends HttpServlet {
 
                 // If a size is provided by the provider, report it.
                 if( att.getSize() >= 0 ) {
-                    // log.info("size:"+att.getSize());
+                    // LOG.info("size:"+att.getSize());
                     res.setContentLength( (int)att.getSize() );
                 }
 
@@ -244,7 +244,7 @@ public class AttachmentServlet extends HttpServlet {
                         out.write( buffer, 0, read );
                     }
                 }
-                log.debug( "Attachment {} sent to {} on {}", att.getFileName(), req.getRemoteUser(), HttpUtil.getRemoteAddress(req) );
+                LOG.debug( "Attachment {} sent to {} on {}", att.getFileName(), req.getRemoteUser(), HttpUtil.getRemoteAddress(req) );
                 if( nextPage != null ) {
                     res.sendRedirect(
                         validateNextPage(
@@ -256,32 +256,32 @@ public class AttachmentServlet extends HttpServlet {
 
             } else {
                 final String msg = "Attachment '" + page + "', version " + ver + " does not exist.";
-                log.info( msg );
+                LOG.info( msg );
                 res.sendError( HttpServletResponse.SC_NOT_FOUND, msg );
             }
         } catch( final ProviderException pe ) {
-            log.debug("Provider failed while reading", pe);
+            LOG.debug("Provider failed while reading", pe);
             //
             //  This might fail, if the response is already committed.  So in that
             //  case we just log it.
             //
             sendError( res, "Provider error: "+ pe.getMessage() );
         } catch( final NumberFormatException nfe ) {
-            log.warn( "Invalid version number: " + version );
+            LOG.warn( "Invalid version number: " + version );
             res.sendError( HttpServletResponse.SC_BAD_REQUEST, "Invalid version number" );
         } catch( final SocketException se ) {
             //
             //  These are very common in download situations due to aggressive
             //  clients.  No need to try and send an error.
             //
-            log.debug( "I/O exception during download", se );
+            LOG.debug( "I/O exception during download", se );
         } catch( final IOException ioe ) {
             //
             //  Client dropped the connection or something else happened.
             //  We don't know where the error came from, so we'll at least
             //  try to send an error and catch it quietly if it doesn't quite work.
             //
-            log.debug( "I/O exception during download", ioe );
+            LOG.debug( "I/O exception during download", ioe );
             sendError( res, "Error: " + ioe.getMessage() );
         }
     }
@@ -354,7 +354,7 @@ public class AttachmentServlet extends HttpServlet {
         if( nextPage.contains( "://" ) ) {
             // It's an absolute link, so unless it starts with our address, we'll log an error.
             if( !nextPage.startsWith( m_engine.getBaseURL() ) ) {
-                log.warn("Detected phishing attempt by redirecting to an unsecure location: "+nextPage);
+                LOG.warn("Detected phishing attempt by redirecting to an unsecure location: "+nextPage);
                 nextPage = errorPage;
             }
         }
@@ -445,19 +445,19 @@ public class AttachmentServlet extends HttpServlet {
 
         } catch( final ProviderException e ) {
             msg = "Upload failed because the provider failed: "+e.getMessage();
-            log.warn( msg + " (attachment: " + attName + ")", e );
+            LOG.warn( msg + " (attachment: " + attName + ")", e );
 
             throw new IOException( msg );
         } catch( final IOException e ) {
             // Show the submit page again, but with a bit more intimidating output.
             msg = "Upload failure: " + e.getMessage();
-            log.warn( msg + " (attachment: " + attName + ")", e );
+            LOG.warn( msg + " (attachment: " + attName + ")", e );
 
             throw e;
         } catch( final FileUploadException e ) {
             // Show the submit page again, but with a bit more intimidating output.
             msg = "Upload failure: " + e.getMessage();
-            log.warn( msg + " (attachment: " + attName + ")", e );
+            LOG.warn( msg + " (attachment: " + attName + ")", e );
 
             throw new IOException( msg, e );
         } finally {
@@ -519,10 +519,10 @@ public class AttachmentServlet extends HttpServlet {
         final Principal user    = context.getCurrentUser();
         final AttachmentManager mgr = m_engine.getManager( AttachmentManager.class );
 
-        log.debug("file="+filename);
+        LOG.debug("file="+filename);
 
         if( data == null ) {
-            log.error("File could not be opened.");
+            LOG.error("File could not be opened.");
             throw new RedirectException("File could not be opened.", errorPage);
         }
 
@@ -556,7 +556,7 @@ public class AttachmentServlet extends HttpServlet {
                 throw new ProviderException( Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE ).getString( pe.getMessage() ) );
             }
 
-            log.info( "User " + user + " uploaded attachment to " + parentPage + " called "+filename+", size " + att.getSize() );
+            LOG.info( "User " + user + " uploaded attachment to " + parentPage + " called "+filename+", size " + att.getSize() );
         } else {
             throw new RedirectException( "No permission to upload a file", errorPage );
         }

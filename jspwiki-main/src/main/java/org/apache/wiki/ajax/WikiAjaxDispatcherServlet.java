@@ -52,7 +52,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Map< String, AjaxServletContainer > ajaxServlets = new ConcurrentHashMap<>();
-    private static final Logger log = LogManager.getLogger( WikiAjaxDispatcherServlet.class.getName() );
+    private static final Logger LOG = LogManager.getLogger( WikiAjaxDispatcherServlet.class.getName() );
     private String PATH_AJAX = "/ajax/";
     private Engine m_engine;
 
@@ -67,7 +67,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
         super.init( config );
         m_engine = Wiki.engine().find( config );
         PATH_AJAX = "/" + TextUtil.getStringProperty( m_engine.getWikiProperties(), "jspwiki.ajax.url.prefix", "ajax" ) + "/";
-        log.info( "WikiAjaxDispatcherServlet initialized." );
+        LOG.info( "WikiAjaxDispatcherServlet initialized." );
     }
 
     /**
@@ -93,7 +93,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
      * @param perm the permission required to execute the servlet.
      */
     public static void registerServlet( final String alias, final WikiAjaxServlet servlet, final Permission perm ) {
-        log.info( "WikiAjaxDispatcherServlet registering " + alias + "=" + servlet + " perm=" + perm );
+        LOG.info( "WikiAjaxDispatcherServlet registering " + alias + "=" + servlet + " perm=" + perm );
         ajaxServlets.put( alias, new AjaxServletContainer( alias, servlet, perm ) );
     }
 
@@ -133,9 +133,9 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
                     req.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
                     res.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
                     final String actionName = AjaxUtil.getNextPathPart( req.getRequestURI(), servlet.getServletMapping() );
-                    log.debug( "actionName=" + actionName );
+                    LOG.debug( "actionName=" + actionName );
                     final String params = req.getParameter( "params" );
-                    log.debug( "params=" + params );
+                    LOG.debug( "params=" + params );
                     List< String > paramValues = new ArrayList<>();
                     if( params != null ) {
                         if( StringUtils.isNotBlank( params ) ) {
@@ -144,10 +144,10 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
                     }
                     servlet.service( req, res, actionName, paramValues );
                 } else {
-                    log.warn( "Servlet container " + container + " not authorised. Permission required." );
+                    LOG.warn( "Servlet container " + container + " not authorised. Permission required." );
                 }
             } else {
-                log.error( "No registered class for servletName=" + servletName + " in path=" + path );
+                LOG.error( "No registered class for servletName=" + servletName + " in path=" + path );
                 throw new ServletException( "No registered class for servletName=" + servletName );
             }
         }

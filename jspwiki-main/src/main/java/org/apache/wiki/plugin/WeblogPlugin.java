@@ -87,7 +87,7 @@ import java.util.regex.Pattern;
 
 public class WeblogPlugin implements Plugin, ParserStagePlugin {
 
-    private static final Logger log = LogManager.getLogger(WeblogPlugin.class);
+    private static final Logger LOG = LogManager.getLogger(WeblogPlugin.class);
     private static final Pattern HEADINGPATTERN;
 
     /** How many days are considered by default.  Default value is {@value} */
@@ -408,7 +408,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
                         result.add( firstVersion );
                     }
                 } catch( final Exception e ) {
-                    log.debug( "Page name :" + pageName + " was suspected as a blog entry but it isn't because of parsing errors", e );
+                    LOG.debug( "Page name :" + pageName + " was suspected as a blog entry but it isn't because of parsing errors", e );
                 }
             }
         }
