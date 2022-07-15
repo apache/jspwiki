@@ -49,7 +49,7 @@ import java.util.Map;
  */
 public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
 
-	static final long serialVersionUID = 0L;
+    private static final long serialVersionUID = 0L;
     private static final Logger LOG = LogManager.getLogger( LinkTag.class );
 
     private String m_version;
