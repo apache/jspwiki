@@ -92,7 +92,8 @@ public final class GroupCommand extends AbstractCommand {
      * @param target the GroupPrincipal to combine into the current Command
      * @return the new, targeted command
      */
-    public Command targetedCommand( final Object target ) {
+    @Override
+    public Command targetedCommand(final Object target ) {
         if( !( target instanceof GroupPrincipal ) ) {
             throw new IllegalArgumentException( "Target must non-null and of type GroupPrincipal." );
         }
@@ -105,6 +106,7 @@ public final class GroupCommand extends AbstractCommand {
      * @return the name
      * @see org.apache.wiki.api.core.Command#getName()
      */
+    @Override
     public String getName() {
         final Object target = getTarget();
         if ( target == null ) {
@@ -119,6 +121,7 @@ public final class GroupCommand extends AbstractCommand {
      * @return the permission
      * @see org.apache.wiki.api.core.Command#requiredPermission()
      */
+    @Override
     public Permission requiredPermission() {
         return m_permission;
     }

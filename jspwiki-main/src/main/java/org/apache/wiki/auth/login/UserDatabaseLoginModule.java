@@ -62,6 +62,7 @@ public class UserDatabaseLoginModule extends AbstractLoginModule {
      * 
      * {@inheritDoc}
      */
+    @Override
     public boolean login() throws LoginException
     {
         final UserDatabaseCallback ucb = new UserDatabaseCallback();

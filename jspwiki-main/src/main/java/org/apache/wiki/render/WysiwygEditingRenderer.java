@@ -132,6 +132,7 @@ public class WysiwygEditingRenderer extends WikiRenderer {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String getString() throws IOException {
         final Element rootElement = m_document.getRootElement();
         processChildren( rootElement );

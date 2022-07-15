@@ -29,6 +29,7 @@ import javax.servlet.jsp.tagext.VariableInfo;
  */
 public class EditorIteratorInfo extends TagExtraInfo
 {
+    @Override
     public VariableInfo[] getVariableInfo(final TagData data)
     {
 

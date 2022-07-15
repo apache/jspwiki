@@ -445,6 +445,7 @@ public final class MailUtil {
          * Returns the password used to authenticate to the SMTP server.
          * @return <code>PasswordAuthentication</code>
          */
+        @Override
         public PasswordAuthentication getPasswordAuthentication()
         {
             if ( BLANK.equals(m_pass) )

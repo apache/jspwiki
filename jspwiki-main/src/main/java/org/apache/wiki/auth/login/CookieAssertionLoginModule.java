@@ -73,6 +73,7 @@ public class CookieAssertionLoginModule extends AbstractLoginModule {
      * method throws a <code>FailedLoginException</code>.
      * @see javax.security.auth.spi.LoginModule#login()
      */
+    @Override
     public boolean login() throws LoginException {
         // Otherwise, let's go and look for the cookie!
         final HttpRequestCallback hcb = new HttpRequestCallback();

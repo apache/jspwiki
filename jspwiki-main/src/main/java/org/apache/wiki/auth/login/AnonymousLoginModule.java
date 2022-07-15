@@ -71,6 +71,7 @@ public class AnonymousLoginModule extends AbstractLoginModule
      * @see javax.security.auth.spi.LoginModule#login()
      * @throws LoginException if unable to handle callback
      */
+    @Override
     public boolean login() throws LoginException
     {
         // Let's go and make a Principal based on the IP address

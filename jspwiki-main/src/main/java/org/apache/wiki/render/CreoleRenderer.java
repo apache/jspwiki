@@ -156,6 +156,7 @@ public class CreoleRenderer extends WikiRenderer {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String getString() {
     	final StringBuilder sb = new StringBuilder(1000);
         final Element ce = m_document.getRootElement();

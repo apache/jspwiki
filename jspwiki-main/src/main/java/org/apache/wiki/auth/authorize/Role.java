@@ -118,6 +118,7 @@ public final class Role implements Principal, Serializable
      *  Returns the name of the Principal.
      * @return the name of the Role
      */
+    @Override
     public String getName()
     {
         return m_name;

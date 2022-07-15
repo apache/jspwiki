@@ -34,6 +34,7 @@ public class IncludeResourcesTag extends WikiTagBase
         
     private String m_type;
 
+    @Override
     public void initTag()
     {
         super.initTag();
@@ -45,6 +46,7 @@ public class IncludeResourcesTag extends WikiTagBase
         m_type = type;
     }
     
+    @Override
     public int doWikiStartTag() throws Exception
     {
         //String marker = m_wikiContext.getEngine().getTemplateManager().getMarker(m_wikiContext, m_type);

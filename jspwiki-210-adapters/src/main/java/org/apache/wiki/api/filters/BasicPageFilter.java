@@ -52,7 +52,8 @@ public class BasicPageFilter extends BasePageFilter {
         return content;
     }
 
-    public String preTranslate( final Context wikiContext, final String content ) throws FilterException {
+    @Override
+    public String preTranslate(final Context wikiContext, final String content ) throws FilterException {
         final Method m = methodOfNonPublicAPI( this, "preTranslate", "org.apache.wiki.WikiContext", "java.lang.String" );
         return executePageFilterPhase( () -> content, m, this, wikiContext, content );
         // return content;
@@ -62,7 +63,8 @@ public class BasicPageFilter extends BasePageFilter {
         return htmlContent;
     }
 
-    public String postTranslate( final Context wikiContext, final String htmlContent ) throws FilterException {
+    @Override
+    public String postTranslate(final Context wikiContext, final String htmlContent ) throws FilterException {
         final Method m = methodOfNonPublicAPI( this, "postTranslate", "org.apache.wiki.WikiContext", "java.lang.String" );
         return executePageFilterPhase( () -> htmlContent, m, this, wikiContext, htmlContent );
         // return htmlContent;
@@ -72,7 +74,8 @@ public class BasicPageFilter extends BasePageFilter {
         return content;
     }
 
-    public String preSave( final Context wikiContext, final String content ) throws FilterException {
+    @Override
+    public String preSave(final Context wikiContext, final String content ) throws FilterException {
         final Method m = methodOfNonPublicAPI( this, "preSave", "org.apache.wiki.WikiContext", "java.lang.String" );
         return executePageFilterPhase( () -> content, m, this, wikiContext, content );
         // return content;
@@ -81,7 +84,8 @@ public class BasicPageFilter extends BasePageFilter {
     public void postSave( final WikiContext wikiContext, final String content ) throws FilterException {
     }
 
-    public void postSave( final Context wikiContext, final String content ) throws FilterException {
+    @Override
+    public void postSave(final Context wikiContext, final String content ) throws FilterException {
         final Method m = methodOfNonPublicAPI( this, "postSave", "org.apache.wiki.WikiContext", "java.lang.String" );
         executePageFilterPhase( () -> null, m, this, wikiContext, content );
         // empty method
@@ -90,7 +94,8 @@ public class BasicPageFilter extends BasePageFilter {
     public void destroy( final WikiEngine engine ) {
     }
 
-    public void destroy( final Engine engine ) {
+    @Override
+    public void destroy(final Engine engine ) {
         final Method m = methodOfNonPublicAPI( this, "destroy", "org.apache.wiki.WikiEngine" );
         executePageFilterPhase( () -> null, m, this, engine );
         // empty method

@@ -92,13 +92,15 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
-    public final void addSuccessor( final Outcome outcome, final Step step ) {
+    @Override
+    public final void addSuccessor(final Outcome outcome, final Step step ) {
         m_successors.put( outcome, step );
     }
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public final Collection< Outcome > getAvailableOutcomes() {
         final Set< Outcome > outcomes = m_successors.keySet();
         return Collections.unmodifiableCollection( outcomes );
@@ -107,6 +109,7 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final List< String > getErrors() {
         return Collections.unmodifiableList( m_errors );
     }
@@ -114,16 +117,19 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
-    public abstract Outcome execute( Context ctx ) throws WikiException;
+    @Override
+    public abstract Outcome execute(Context ctx ) throws WikiException;
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public abstract Principal getActor();
 
     /**
      * {@inheritDoc}
      */
+    @Override
     public final Date getEndTime() {
         return m_end;
     }
@@ -131,6 +137,7 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final String getMessageKey() {
         return m_key;
     }
@@ -138,6 +145,7 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final synchronized Outcome getOutcome() {
         return m_outcome;
     }
@@ -145,6 +153,7 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final Date getStartTime() {
         return m_start;
     }
@@ -152,6 +161,7 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean isCompleted() {
         return m_completed;
     }
@@ -159,6 +169,7 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final boolean isStarted() {
         return m_started;
     }
@@ -166,7 +177,8 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
-    public final synchronized void setOutcome( final Outcome outcome ) {
+    @Override
+    public final synchronized void setOutcome(final Outcome outcome ) {
         // Is this an allowed Outcome?
         if( !m_successors.containsKey( outcome ) ) {
             if( !Outcome.STEP_CONTINUE.equals( outcome ) && !Outcome.STEP_ABORT.equals( outcome ) ) {
@@ -188,6 +200,7 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
+    @Override
     public final synchronized void start() throws WikiException {
         if( m_started ) {
             throw new IllegalStateException( "Step already started." );
@@ -199,7 +212,8 @@ public abstract class AbstractStep implements Step {
     /**
      * {@inheritDoc}
      */
-    public final Step getSuccessor( final Outcome outcome ) {
+    @Override
+    public final Step getSuccessor(final Outcome outcome ) {
         return m_successors.get( outcome );
     }
 
@@ -211,7 +225,8 @@ public abstract class AbstractStep implements Step {
      * @param workflowId the parent workflow id to set
      * @param workflowContext the parent workflow context to set
      */
-    public final synchronized void setWorkflow( final int workflowId, final Map< String, Serializable > workflowContext ) {
+    @Override
+    public final synchronized void setWorkflow(final int workflowId, final Map< String, Serializable > workflowContext ) {
         this.workflowId = workflowId;
         this.workflowContext = workflowContext;
     }

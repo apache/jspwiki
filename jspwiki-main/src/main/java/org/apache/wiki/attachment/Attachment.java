@@ -73,6 +73,7 @@ public class Attachment extends WikiPage implements org.apache.wiki.api.core.Att
      *
      * @return A String with the file name.
      */
+    @Override
     public String getFileName() {
         return m_fileName;
     }
@@ -82,7 +83,8 @@ public class Attachment extends WikiPage implements org.apache.wiki.api.core.Att
      *
      * @param name The name of the attachment.  Must be a legal file name without  the path.
      */
-    public void setFileName( final String name ) {
+    @Override
+    public void setFileName(final String name ) {
         m_fileName = name;
     }
 
@@ -91,6 +93,7 @@ public class Attachment extends WikiPage implements org.apache.wiki.api.core.Att
      *
      * @return String depicting the parent of the attachment.
      */
+    @Override
     public String getParentName() {
         return m_parentName;
     }
@@ -101,6 +104,7 @@ public class Attachment extends WikiPage implements org.apache.wiki.api.core.Att
      * @return False, if the attachment should not be cached by the user agent.
      * @since 2.5.34
      */
+    @Override
     public boolean isCacheable() {
         return m_cacheable;
     }
@@ -112,7 +116,8 @@ public class Attachment extends WikiPage implements org.apache.wiki.api.core.Att
      * @param value True or false, depending on whether you want this attachment to be cacheable or not.
      * @since 2.5.34
      */
-    public void setCacheable( final boolean value ) {
+    @Override
+    public void setCacheable(final boolean value ) {
         m_cacheable = value;
     }
 

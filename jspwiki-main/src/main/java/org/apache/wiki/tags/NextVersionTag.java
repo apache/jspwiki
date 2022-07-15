@@ -33,6 +33,7 @@ public class NextVersionTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
 
+    @Override
     public final int doWikiStartTag() throws IOException {
         final Page page = m_wikiContext.getPage();
         int version = page.getVersion();

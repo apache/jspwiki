@@ -32,6 +32,7 @@ public class PageVersionTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
 
+    @Override
     public final int doWikiStartTag() throws IOException {
         final Page page = m_wikiContext.getPage();
         if( page != null ) {

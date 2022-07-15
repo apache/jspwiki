@@ -47,6 +47,7 @@ public abstract class WikiTagBase extends TagSupport implements TryCatchFinally 
      * This method calls the parent setPageContext() but it also provides a way for a tag to initialize itself before
      * any of the setXXX() methods are called.
      */
+    @Override
     public void setPageContext( final PageContext arg0 ) {
         super.setPageContext( arg0 );
         initTag();
@@ -85,6 +86,7 @@ public abstract class WikiTagBase extends TagSupport implements TryCatchFinally 
         return EVAL_PAGE;
     }
 
+    @Override
     public void doCatch( final Throwable th ) throws Throwable {
     	LOG.error( th.getMessage(), th );
     }

@@ -47,7 +47,8 @@ public class TaskTest {
             super( workflow.getId(), workflow.getAttributes(), "task.normal" );
         }
 
-        public Outcome execute( final Context context ) {
+        @Override
+        public Outcome execute(final Context context ) {
             return Outcome.STEP_COMPLETE;
         }
 
@@ -62,7 +63,8 @@ public class TaskTest {
             super( workflow.getId(), workflow.getAttributes(), "task.error" );
         }
 
-        public Outcome execute( final Context context ) {
+        @Override
+        public Outcome execute(final Context context ) {
             addError( "Found an error." );
             addError( "Found a second one!" );
             return Outcome.STEP_ABORT;

@@ -592,6 +592,7 @@ public class WikiContext implements Context, Command {
      *
      * @return the command
      */
+    @Override
     public Command getCommand() {
         return m_command;
     }
@@ -631,6 +632,7 @@ public class WikiContext implements Context, Command {
      *  @since  2.8.0
      *  @return A deep clone of the WikiContext.
      */
+    @Override
     @SuppressWarnings("unchecked")
     public WikiContext deepClone() {
         try {

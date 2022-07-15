@@ -36,7 +36,8 @@ public class SamplePlugin3 implements Plugin {
     public void initialize( final Engine engine ) throws PluginException {
     }
 
-    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
+    @Override
+    public String execute(final Context context, final Map< String, String > params ) throws PluginException {
         return params.get( "text" );
     }
 

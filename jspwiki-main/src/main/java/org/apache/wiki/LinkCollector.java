@@ -42,7 +42,8 @@ public class LinkCollector implements StringTransmutator {
     /**
      * {@inheritDoc}
      */
-    public String mutate( final Context context, final String in ) {
+    @Override
+    public String mutate(final Context context, final String in ) {
         m_items.add( in );
         return in;
     }
