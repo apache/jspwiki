@@ -53,6 +53,7 @@ public final class PrincipalWrapper implements Principal
      * 
      * @return The name of the wrapped principal.
      */
+    @Override
     public String getName()
     {
         return m_principal.getName();

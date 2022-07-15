@@ -102,11 +102,13 @@ public abstract class AbstractCommand implements Command {
     /**
      * @see org.apache.wiki.api.core.Command#targetedCommand(Object)
      */
-    public abstract Command targetedCommand( final Object target );
+    @Override
+    public abstract Command targetedCommand(final Object target );
 
     /**
      * @see org.apache.wiki.api.core.Command#getContentTemplate()
      */
+    @Override
     public final String getContentTemplate() {
         return m_contentTemplate;
     }
@@ -114,6 +116,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * @see org.apache.wiki.api.core.Command#getJSP()
      */
+    @Override
     public final String getJSP() {
         return m_jsp;
     }
@@ -121,11 +124,13 @@ public abstract class AbstractCommand implements Command {
     /**
      * @see org.apache.wiki.api.core.Command#getName()
      */
+    @Override
     public abstract String getName();
 
     /**
      * @see org.apache.wiki.api.core.Command#getRequestContext()
      */
+    @Override
     public final String getRequestContext() {
         return m_requestContext;
     }
@@ -133,6 +138,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * @see org.apache.wiki.api.core.Command#getTarget()
      */
+    @Override
     public final Object getTarget() {
         return m_target;
     }
@@ -140,6 +146,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * @see org.apache.wiki.api.core.Command#getURLPattern()
      */
+    @Override
     public final String getURLPattern() {
         return m_urlPattern;
     }

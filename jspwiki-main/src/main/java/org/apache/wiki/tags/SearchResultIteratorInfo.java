@@ -30,7 +30,8 @@ import javax.servlet.jsp.tagext.VariableInfo;
  */
 public class SearchResultIteratorInfo extends TagExtraInfo {
 
-    public VariableInfo[] getVariableInfo( final TagData data ) {
+    @Override
+    public VariableInfo[] getVariableInfo(final TagData data ) {
 
         return new VariableInfo[]{ new VariableInfo( data.getAttributeString( "id" ),
                                                       "org.apache.wiki.api.search.SearchResult",

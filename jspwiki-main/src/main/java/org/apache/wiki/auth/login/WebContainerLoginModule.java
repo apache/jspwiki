@@ -69,6 +69,7 @@ public class WebContainerLoginModule extends AbstractLoginModule {
      * @return {@inheritDoc}
      * @throws LoginException {@inheritDoc}
      */
+    @Override
     public boolean login() throws LoginException
     {
         final HttpRequestCallback rcb = new HttpRequestCallback();

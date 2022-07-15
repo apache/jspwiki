@@ -40,6 +40,7 @@ public abstract class WikiBodyTag extends BodyTagSupport implements TryCatchFina
 	protected WikiContext m_wikiContext;
     private static final Logger LOG = LogManager.getLogger( WikiBodyTag.class );
 
+    @Override
     public int doStartTag() throws JspException {
         try {
             m_wikiContext = (WikiContext) pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
@@ -63,9 +64,11 @@ public abstract class WikiBodyTag extends BodyTagSupport implements TryCatchFina
      */
     public abstract int doWikiStartTag() throws JspException, IOException;
 
-    public void doCatch( final Throwable arg0) throws Throwable {
+    @Override
+    public void doCatch(final Throwable arg0) throws Throwable {
     }
 
+    @Override
     public void doFinally()
     {
         m_wikiContext = null;

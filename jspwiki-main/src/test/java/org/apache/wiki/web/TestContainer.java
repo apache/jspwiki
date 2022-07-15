@@ -283,6 +283,7 @@ public class TestContainer {
      */
     public static final class ShutdownHandler extends AbstractHandler {
 
+        @Override
         public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response ) throws IOException, ServletException {
             if( request.getRequestURI().contains( SHUTDOWN_CMD ) ) {
                 LOG.error( "stop cmd received, shutting down server" );

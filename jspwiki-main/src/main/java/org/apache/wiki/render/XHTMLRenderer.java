@@ -50,6 +50,7 @@ public class XHTMLRenderer extends WikiRenderer {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String getString() throws IOException {
         m_document.setContext( m_context );
 

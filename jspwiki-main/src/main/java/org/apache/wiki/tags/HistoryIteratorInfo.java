@@ -29,7 +29,8 @@ import javax.servlet.jsp.tagext.VariableInfo;
  */
 public class HistoryIteratorInfo extends TagExtraInfo
 {
-    public VariableInfo[] getVariableInfo( final TagData data)
+    @Override
+    public VariableInfo[] getVariableInfo(final TagData data)
     {
 
         return new VariableInfo[]{ new VariableInfo( data.getAttributeString("id"),

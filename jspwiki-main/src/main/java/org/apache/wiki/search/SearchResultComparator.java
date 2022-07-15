@@ -36,7 +36,8 @@ public class SearchResultComparator implements Comparator< SearchResult >, Seria
      *  
      *  {@inheritDoc}
      */
-    public int compare( final SearchResult s1, final SearchResult s2 ) {
+    @Override
+    public int compare(final SearchResult s1, final SearchResult s2 ) {
         // Bigger scores are first.
         int res = s2.getScore() - s1.getScore();
         if( res == 0 ) {

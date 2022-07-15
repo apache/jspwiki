@@ -39,7 +39,8 @@ public class PageTimeComparator implements Comparator< Page >, Serializable {
     /**
      *  {@inheritDoc}
      */
-    public int compare( final Page p1, final Page p2 ) {
+    @Override
+    public int compare(final Page p1, final Page p2 ) {
         if( p1 == null || p2 == null ) {
             LOG.error( "W1 or W2 is NULL in PageTimeComparator!");
             return 0; // FIXME: Is this correct?

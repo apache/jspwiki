@@ -75,6 +75,7 @@ public class PriorityList<E>
      *  @param o Object to add.
      *  @return true, as per the general Collections.add contract.
      */
+    @Override
     public boolean add(final E o )
     {
         add( o, DEFAULT_PRIORITY );
@@ -88,6 +89,7 @@ public class PriorityList<E>
      *  @param index The index.
      *  @return The object at the list at the position "index".
      */
+    @Override
     public E get(final int index )
     {
         return m_elements.get( index ).m_object;
@@ -98,6 +100,7 @@ public class PriorityList<E>
      *  
      *  @return size of the list.
      */
+    @Override
     public int size()
     {
         return m_elements.size();

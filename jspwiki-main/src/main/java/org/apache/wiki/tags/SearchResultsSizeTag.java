@@ -33,6 +33,7 @@ public class SearchResultsSizeTag
 {
     private static final long serialVersionUID = 0L;
     
+    @Override
     public final int doWikiStartTag() throws IOException {
         final Collection< ? > list = ( Collection< ? > )pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
         if( list != null ) {

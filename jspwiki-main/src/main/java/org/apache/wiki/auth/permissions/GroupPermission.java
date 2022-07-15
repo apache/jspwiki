@@ -208,6 +208,7 @@ public final class GroupPermission extends Permission implements Serializable
      * @return the actions
      * @see java.security.Permission#getActions()
      */
+    @Override
     public String getActions()
     {
         return m_actionString;
@@ -269,6 +270,7 @@ public final class GroupPermission extends Permission implements Serializable
      * supplied Permission; <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
+    @Override
     public boolean implies(final Permission permission )
     {
         // Permission must be a GroupPermission

@@ -202,6 +202,7 @@ public class WikiPage implements Page {
      *
      * @return The access control list.  May return null, if there is no acl.
      */
+    @Override
     public Acl getAcl() {
         return m_accessList;
     }
@@ -227,7 +228,8 @@ public class WikiPage implements Page {
      *
      * @param acl The Acl to set
      */
-    public void setAcl( final org.apache.wiki.api.core.Acl acl ) {
+    @Override
+    public void setAcl(final org.apache.wiki.api.core.Acl acl ) {
         m_accessList = ( Acl )acl;
     }
 

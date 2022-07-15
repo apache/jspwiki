@@ -25,17 +25,20 @@ import java.util.Properties;
 public class EngineLifecycleExtensionTestImpl implements EngineLifecycleExtension {
 
     /** {@inheritDoc */
-    public void onInit( final Properties properties ) {
+    @Override
+    public void onInit(final Properties properties ) {
         properties.put( "test", "onInit" );
     }
 
     /** {@inheritDoc */
-    public void onStart( final Engine e, final Properties properties ) {
+    @Override
+    public void onStart(final Engine e, final Properties properties ) {
         properties.put( "test", "onStart" );
     }
 
     /** {@inheritDoc */
-    public void onShutdown( final Engine e, final Properties properties ) {
+    @Override
+    public void onShutdown(final Engine e, final Properties properties ) {
         properties.put( "test", "onShutdown" );
     }
     

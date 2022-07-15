@@ -73,6 +73,7 @@ public final class AllPermission extends Permission implements Serializable {
      * @return Always null.
      * @see java.security.Permission#getActions()
      */
+    @Override
     public String getActions() {
         return null;
     }
@@ -109,7 +110,8 @@ public final class AllPermission extends Permission implements Serializable {
      * <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
-    public boolean implies( final Permission permission ) {
+    @Override
+    public boolean implies(final Permission permission ) {
         // Permission must be a JSPWiki permission, PagePermission or AllPermission
         if( !PermissionChecks.isJSPWikiPermission( permission ) ) {
             return false;
@@ -137,6 +139,7 @@ public final class AllPermission extends Permission implements Serializable {
      * @return {@inheritDoc}
      * @see java.security.Permission#newPermissionCollection()
      */
+    @Override
     public PermissionCollection newPermissionCollection() {
         return new AllPermissionCollection();
     }

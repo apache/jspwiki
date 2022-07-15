@@ -99,7 +99,8 @@ public final class PageCommand extends AbstractCommand {
      * @return the new targeted command
      * @throws IllegalArgumentException if the target is not of the correct type
      */
-    public Command targetedCommand( final Object target ) {
+    @Override
+    public Command targetedCommand(final Object target ) {
         if( !( target instanceof Page ) ) {
             throw new IllegalArgumentException( "Target must non-null and of type Page." );
         }
@@ -109,6 +110,7 @@ public final class PageCommand extends AbstractCommand {
     /**
      * @see org.apache.wiki.api.core.Command#getName()
      */
+    @Override
     public String getName() {
         final Object target = getTarget();
         if( target == null ) {
@@ -120,6 +122,7 @@ public final class PageCommand extends AbstractCommand {
     /**
      * @see org.apache.wiki.api.core.Command#requiredPermission()
      */
+    @Override
     public Permission requiredPermission() {
         return m_permission;
     }

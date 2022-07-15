@@ -137,6 +137,7 @@ public final class WikiPermission extends Permission implements Serializable
      * @return the actions
      * @see java.security.Permission#getActions()
      */
+    @Override
     public String getActions()
     {
         return m_actionString;
@@ -172,6 +173,7 @@ public final class WikiPermission extends Permission implements Serializable
      * <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
+    @Override
     public boolean implies(final Permission permission )
     {
         // Permission must be a WikiPermission
@@ -195,6 +197,7 @@ public final class WikiPermission extends Permission implements Serializable
      * Returns a new {@link AllPermissionCollection}.
      * @return {@inheritDoc}
      */
+    @Override
     public PermissionCollection newPermissionCollection()
     {
         return new AllPermissionCollection();

@@ -52,6 +52,7 @@ public final class UnresolvedPrincipal implements Principal, Serializable
      * @return the name
      * @see java.security.Principal#getName()
      */
+    @Override
     public String getName()
     {
         return m_name;

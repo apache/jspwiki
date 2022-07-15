@@ -63,6 +63,7 @@ public final class SimpleNotification extends Decision {
      *
      * @return <code>false</code> always.
      */
+    @Override
     public boolean isReassignable() {
         return false;
     }

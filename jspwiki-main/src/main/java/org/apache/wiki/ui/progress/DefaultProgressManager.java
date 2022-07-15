@@ -69,6 +69,7 @@ public class DefaultProgressManager implements ProgressManager {
      *  @param pi ProgressItem to start
      *  @param id The progress identifier
      */
+    @Override
     public void startProgress( final ProgressItem pi, final String id ) {
         LOG.debug( "Adding " + id + " to progress queue" );
         m_progressingTasks.put( id, pi );
@@ -81,6 +82,7 @@ public class DefaultProgressManager implements ProgressManager {
      *
      *  @param id The progress identifier
      */
+    @Override
     public void stopProgress( final String id ) {
         LOG.debug( "Removed " + id + " from progress queue" );
         final ProgressItem pi = m_progressingTasks.remove( id );
@@ -96,6 +98,7 @@ public class DefaultProgressManager implements ProgressManager {
      *  @return a value between 0 to 100 indicating the progress
      *  @throws IllegalArgumentException If no such progress item exists.
      */
+    @Override
     public int getProgress( final String id ) throws IllegalArgumentException {
         final ProgressItem pi = m_progressingTasks.get( id );
         if( pi != null ) {
@@ -120,11 +123,13 @@ public class DefaultProgressManager implements ProgressManager {
         {
             return DefaultProgressManager.this.getProgress( progressId );
         }
-        
+
+        @Override
         public String getServletMapping() {
         	return JSON_PROGRESSTRACKER;
         }
-        
+
+        @Override
         public void service( final HttpServletRequest req,
                              final HttpServletResponse resp,
                              final String actionName,

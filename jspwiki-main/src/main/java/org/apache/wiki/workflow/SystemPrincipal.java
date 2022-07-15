@@ -43,6 +43,7 @@ public final class SystemPrincipal implements Principal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return m_name;
     }

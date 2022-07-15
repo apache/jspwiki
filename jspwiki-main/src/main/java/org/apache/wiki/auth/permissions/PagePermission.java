@@ -235,6 +235,7 @@ public final class PagePermission extends Permission implements Serializable
      *
      * @return {@inheritDoc}
      */
+    @Override
     public String getActions()
     {
         return m_actionString;
@@ -294,7 +295,8 @@ public final class PagePermission extends Permission implements Serializable
      * @param permission {@inheritDoc}
      * @return {@inheritDoc}
      */
-    public boolean implies( final Permission permission )
+    @Override
+    public boolean implies(final Permission permission )
     {
         // Permission must be a PagePermission
         if ( !( permission instanceof PagePermission ) )

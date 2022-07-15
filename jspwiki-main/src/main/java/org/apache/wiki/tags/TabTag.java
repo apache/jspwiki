@@ -56,6 +56,7 @@ public class TabTag extends WikiTagBase
     /**
      * {@inheritDoc}
      */
+    @Override
     public void doFinally()
     {
         super.doFinally();
@@ -109,6 +110,7 @@ public class TabTag extends WikiTagBase
     /**
      * {@inheritDoc}
      */
+    @Override
     public int doWikiStartTag() throws JspTagException
     {
         final TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
@@ -156,6 +158,7 @@ public class TabTag extends WikiTagBase
     /**
      * {@inheritDoc}
      */
+    @Override
     public int doEndTag() throws JspTagException
     {
         final TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );

@@ -35,6 +35,7 @@ public class PageExistsTag
 {
     private static final long serialVersionUID = 0L;
     
+    @Override
     public final int doWikiStartTag()
         throws IOException,
                ProviderException
