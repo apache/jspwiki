@@ -185,7 +185,7 @@ public final class CryptoUtil
         // Create an array with the hash plus the salt
         final byte[] all = new byte[hash.length + salt.length];
         System.arraycopy(hash, 0, all, 0, hash.length);
-        System.arraycopy(salt, 0, all, hash.length + 0, salt.length);
+        System.arraycopy(salt, 0, all, hash.length, salt.length);
         final byte[] base64 = Base64.getEncoder().encode( all );
         
         return algorithm + new String( base64, StandardCharsets.UTF_8 );
