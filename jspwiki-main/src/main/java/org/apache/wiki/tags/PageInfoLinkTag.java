@@ -69,12 +69,17 @@ public class PageInfoLinkTag extends WikiLinkTag {
         }
 
         if( engine.getManager( PageManager.class ).wikiPageExists(pageName) ) {
-            final JspWriter out = pageContext.getOut();
-            final String url = m_wikiContext.getURL( ContextEnum.PAGE_INFO.getRequestContext(), pageName );
+            try (JspWriter out = pageContext.getOut()) {
+                final String url = m_wikiContext.getURL(ContextEnum.PAGE_INFO.getRequestContext(), pageName);
 
-            switch( m_format ) {
-              case ANCHOR: out.print("<a class=\"pageinfo\" href=\""+url+"\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\">"); break;
-              case URL: out.print( url ); break;
+                switch (m_format) {
+                    case ANCHOR:
+                        out.print("<a class=\"pageinfo\" href=\"" + url + "\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\">");
+                        break;
+                    case URL:
+                        out.print(url);
+                        break;
+                }
             }
             return EVAL_BODY_INCLUDE;
         }

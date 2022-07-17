@@ -93,52 +93,53 @@ public class DiffLinkTag extends WikiLinkTag {
             }
         }
 
-        final JspWriter out = pageContext.getOut();
+        try (JspWriter out = pageContext.getOut()) {
 
-        int r1;
-        int r2;
+            int r1;
+            int r2;
 
-        //  In case the page does not exist, we fail silently.
-        if( !engine.getManager( PageManager.class ).wikiPageExists( pageName ) ) {
-            return SKIP_BODY;
-        }
-
-        if( VER_LATEST.equals( getVersion() ) ) {
-            final Page latest = engine.getManager( PageManager.class ).getPage( pageName, WikiProvider.LATEST_VERSION );
-            if( latest == null ) {
-                // This may occur if matchEnglishPlurals is on, and we access the wrong page name
+            //  In case the page does not exist, we fail silently.
+            if (!engine.getManager(PageManager.class).wikiPageExists(pageName)) {
                 return SKIP_BODY;
             }
-            r1 = latest.getVersion();
-        } else if( VER_PREVIOUS.equals( getVersion() ) ) {
-            r1 = m_wikiContext.getPage().getVersion() - 1;
-            r1 = Math.max( r1, 1 );
-        } else if( VER_CURRENT.equals( getVersion() ) ) {
-            r1 = m_wikiContext.getPage().getVersion();
-        } else {
-            r1 = Integer.parseInt( getVersion() );
-        }
 
-        if( VER_LATEST.equals( getNewVersion() ) ) {
-            final Page latest = engine.getManager( PageManager.class ).getPage( pageName, WikiProvider.LATEST_VERSION );
-            r2 = latest.getVersion();
-        } else if( VER_PREVIOUS.equals( getNewVersion() ) ) {
-            r2 = m_wikiContext.getPage().getVersion() - 1;
-            r2 = Math.max( r2, 1 );
-        } else if( VER_CURRENT.equals( getNewVersion() ) ) {
-            r2 = m_wikiContext.getPage().getVersion();
-        } else {
-            r2 = Integer.parseInt( getNewVersion() );
-        }
+            if (VER_LATEST.equals(getVersion())) {
+                final Page latest = engine.getManager(PageManager.class).getPage(pageName, WikiProvider.LATEST_VERSION);
+                if (latest == null) {
+                    // This may occur if matchEnglishPlurals is on, and we access the wrong page name
+                    return SKIP_BODY;
+                }
+                r1 = latest.getVersion();
+            } else if (VER_PREVIOUS.equals(getVersion())) {
+                r1 = m_wikiContext.getPage().getVersion() - 1;
+                r1 = Math.max(r1, 1);
+            } else if (VER_CURRENT.equals(getVersion())) {
+                r1 = m_wikiContext.getPage().getVersion();
+            } else {
+                r1 = Integer.parseInt(getVersion());
+            }
 
-        final String url = m_wikiContext.getURL( ContextEnum.PAGE_DIFF.getRequestContext(), pageName, "r1="+r1+"&amp;r2="+r2 );
-        switch( m_format ) {
-          case ANCHOR:
-            out.print("<a href=\""+url+"\">");
-            break;
-          case URL:
-            out.print( url );
-            break;
+            if (VER_LATEST.equals(getNewVersion())) {
+                final Page latest = engine.getManager(PageManager.class).getPage(pageName, WikiProvider.LATEST_VERSION);
+                r2 = latest.getVersion();
+            } else if (VER_PREVIOUS.equals(getNewVersion())) {
+                r2 = m_wikiContext.getPage().getVersion() - 1;
+                r2 = Math.max(r2, 1);
+            } else if (VER_CURRENT.equals(getNewVersion())) {
+                r2 = m_wikiContext.getPage().getVersion();
+            } else {
+                r2 = Integer.parseInt(getNewVersion());
+            }
+
+            final String url = m_wikiContext.getURL(ContextEnum.PAGE_DIFF.getRequestContext(), pageName, "r1=" + r1 + "&amp;r2=" + r2);
+            switch (m_format) {
+                case ANCHOR:
+                    out.print("<a href=\"" + url + "\">");
+                    break;
+                case URL:
+                    out.print(url);
+                    break;
+            }
         }
 
         return EVAL_BODY_INCLUDE;

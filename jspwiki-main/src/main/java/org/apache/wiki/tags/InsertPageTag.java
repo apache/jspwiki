@@ -110,14 +110,20 @@ public class InsertPageTag extends WikiTagBase {
 
             LOG.debug("Inserting page "+insertedPage);
 
-            final JspWriter out = pageContext.getOut();
-            final Page oldPage = m_wikiContext.setRealPage( insertedPage );
-            
-            switch( m_mode ) {
-              case HTML: out.print( engine.getManager( RenderingManager.class ).getHTML( m_wikiContext, insertedPage ) ); break;
-              case PLAIN: out.print( engine.getManager( PageManager.class ).getText( insertedPage ) ); break;
+            final Page oldPage;
+            try (JspWriter out = pageContext.getOut()) {
+                oldPage = m_wikiContext.setRealPage(insertedPage);
+
+                switch (m_mode) {
+                    case HTML:
+                        out.print(engine.getManager(RenderingManager.class).getHTML(m_wikiContext, insertedPage));
+                        break;
+                    case PLAIN:
+                        out.print(engine.getManager(PageManager.class).getText(insertedPage));
+                        break;
+                }
             }
-            
+
             m_wikiContext.setRealPage( oldPage );
         }
 

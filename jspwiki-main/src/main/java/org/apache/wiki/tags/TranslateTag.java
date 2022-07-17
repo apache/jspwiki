@@ -49,9 +49,11 @@ public class TranslateTag
             context = context.deepClone();
             
             //  Get the page data.
-            final BodyContent bc = getBodyContent();
-            String wikiText = bc.getString();
-            bc.clearBody();
+            String wikiText;
+            try (BodyContent bc = getBodyContent()) {
+                wikiText = bc.getString();
+                bc.clearBody();
+            }
 
             if( wikiText != null ) {
                 wikiText = wikiText.trim();
