@@ -17,15 +17,26 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-07-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.3-git-11_
+
+* Bring explicit CSRF protection to user management JSPs
+
+* Merged PRs with several code improvements [#202](https://github.com/apache/jspwiki/pull/202), [#203](https://github.com/apache/jspwiki/pull/203) and [#204](https://github.com/apache/jspwiki/pull/204), provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
+
+* Dependency updates
+    * Maven plugins: project-info-reports to 3.4.0 (closes [#208](https://github.com/apache/jspwiki/pull/208), thanks to dependabot)
+
 **2022-07-14  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.3-git-10_
 
-* Bring CSRF protection to group management JSPs
+* Bring explicit CSRF protection to group management JSPs
 
 * Add default application name on `<title>` elements to templates' templates, and `Main` as default frontpage is none is defined on default template
 
-[`org.apache.wiki.markdown.migration.WikiSyntaxConverter`](https://github.com/apache/jspwiki/blob/master/jspwiki-markdown/src/test/java/org/apache/wiki/markdown/migration/WikiSyntaxConverter.java) now also brings pages' attachments when converting to markdown
+* [`org.apache.wiki.markdown.migration.WikiSyntaxConverter`](https://github.com/apache/jspwiki/blob/master/jspwiki-markdown/src/test/java/org/apache/wiki/markdown/migration/WikiSyntaxConverter.java) now also brings pages' attachments when converting to markdown
 
 * Dependency updates
     * Parent to Apache Parent 27
@@ -51,7 +62,7 @@ under the License.
     * Upgrade to cargo-maven3 broke the launch configuration
     * Latest Selenide upgrades broke SearchIT, which wasn't hovering on search form
 
-* Merged PRs [#192](https://github.com/apache/jspwiki/pull/192), [#193](https://github.com/apache/jspwiki/pull/193), [#195](https://github.com/apache/jspwiki/pull/195) and [#196](https://github.com/apache/jspwiki/pull/196), provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
+* Merged PRs with several code improvements [#192](https://github.com/apache/jspwiki/pull/192), [#193](https://github.com/apache/jspwiki/pull/193), [#195](https://github.com/apache/jspwiki/pull/195) and [#196](https://github.com/apache/jspwiki/pull/196), provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
 
 * Dependency updates
     * Log4J to 2.18.0
