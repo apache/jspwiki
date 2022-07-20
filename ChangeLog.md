@@ -23,7 +23,7 @@ under the License.
 
 * Bring explicit CSRF protection to user management JSPs
 
-* Merged PRs with several code improvements [#202](https://github.com/apache/jspwiki/pull/202), [#203](https://github.com/apache/jspwiki/pull/203) and [#204](https://github.com/apache/jspwiki/pull/204), provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
+* Merged PRs with several code improvements [#202](https://github.com/apache/jspwiki/pull/202), [#203](https://github.com/apache/jspwiki/pull/203), [#204](https://github.com/apache/jspwiki/pull/204), [#205](https://github.com/apache/jspwiki/pull/205) and [#206](https://github.com/apache/jspwiki/pull/206) provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
 
 * Dependency updates
     * Maven plugins: project-info-reports to 3.4.0 (closes [#208](https://github.com/apache/jspwiki/pull/208), thanks to dependabot)
