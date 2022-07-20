@@ -28,6 +28,7 @@
 <%@ page import="org.apache.wiki.auth.login.CookieAuthenticationLoginModule" %>
 <%@ page import="org.apache.wiki.auth.user.DuplicateUserException" %>
 <%@ page import="org.apache.wiki.auth.user.UserProfile" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
@@ -53,7 +54,12 @@
     }
 
     // Are we saving the profile?
-    if( "saveProfile".equals(request.getParameter("action")) ) {
+    if( "saveProfile".equals( request.getParameter( "action" ) ) ) {
+        if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+            response.sendRedirect( "/error/Forbidden.html" );
+            return;
+        }
+
         UserManager userMgr = wiki.getManager( UserManager.class );
         UserProfile profile = userMgr.parseProfile( wikiContext );
          

@@ -30,6 +30,7 @@
 <%@ page import="org.apache.wiki.auth.login.CookieAssertionLoginModule" %>
 <%@ page import="org.apache.wiki.auth.user.DuplicateUserException" %>
 <%@ page import="org.apache.wiki.auth.user.UserProfile" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
@@ -65,6 +66,10 @@
 
     // Are we saving the profile?
     if( "saveProfile".equals( request.getParameter( "action" ) ) ) {
+        if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+            response.sendRedirect( "/error/Forbidden.html" );
+            return;
+        }
         UserProfile profile = userMgr.parseProfile( wikiContext );
 
         // Validate the profile
@@ -110,8 +115,7 @@
         CookieAssertionLoginModule.setUserCookie( response, assertedName );
 
         String redirectPage = request.getParameter( "redirect" );
-        if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) )
-        {
+        if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) ) {
           redirectPage = wiki.getFrontPage();
         }
         String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wikiContext.getViewURL( redirectPage );
@@ -126,8 +130,7 @@
         Preferences.reloadPreferences( pageContext );
 
         String redirectPage = request.getParameter( "redirect" );
-        if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) )
-        {
+        if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) ) {
           redirectPage = wiki.getFrontPage();
         }
         String viewUrl = ( "UserPreferences".equals( redirectPage ) ) ? "Wiki.jsp" : wikiContext.getViewURL( redirectPage );
@@ -139,4 +142,3 @@
     response.setContentType( "text/html; charset=" + wiki.getContentEncoding() );
     String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
-
