@@ -107,7 +107,7 @@ import java.util.stream.Collectors;
 // FIXME: The way that we save attributes is now a major booboo, and must be
 //        replaced forthwith.  However, this is a workaround for the great deal
 //        of problems that occur here...
-public class DefaultReferenceManager extends BasePageFilter implements ReferenceManager {
+public class DefaultReferenceManager extends BasePageFilter implements ReferenceManager, Serializable {
 
     /**
      *  Maps page wikiname to a Collection of pages it refers to. The Collection must contain Strings. The Collection may contain
