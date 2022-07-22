@@ -47,7 +47,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * users or groups expected to approve particular Workflows.
  * </p>
  */
-public class DefaultWorkflowManager implements WorkflowManager {
+public class DefaultWorkflowManager implements WorkflowManager, Serializable {
 
     private static final Logger LOG = LogManager.getLogger( DefaultWorkflowManager.class );
     static final String SERIALIZATION_FILE = "wkflmgr.ser";
