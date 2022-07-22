@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.security.auth.Subject;
 import javax.security.auth.SubjectDomainCombiner;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.auth.GroupPrincipal;
 
 /**
@@ -126,7 +127,7 @@ public final class GroupPermission extends Permission implements Serializable
     /** For serialization purposes */
     GroupPermission()
     {
-        this("");
+        this(StringUtils.EMPTY);
     }
     
     /**
@@ -318,7 +319,7 @@ public final class GroupPermission extends Permission implements Serializable
      */
     public String toString()
     {
-        final String wiki = ( m_wiki == null ) ? "" : m_wiki;
+        final String wiki = ( m_wiki == null ) ? StringUtils.EMPTY : m_wiki;
         return "(\"" + this.getClass().getName() + "\",\"" + wiki + WIKI_SEPARATOR + m_group + "\",\"" + getActions()
                 + "\")";
     }

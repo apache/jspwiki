@@ -18,6 +18,7 @@
  */
 package com.example.filters;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.FilterException;
@@ -28,7 +29,7 @@ import java.util.Properties;
 
 public class TwoXFilter extends BasicPageFilter {
 
-    String newContent = "";
+    String newContent = StringUtils.EMPTY;
     int invocations;
 
     /** {@inheritDoc} */

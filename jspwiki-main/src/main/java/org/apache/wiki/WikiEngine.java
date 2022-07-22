@@ -127,7 +127,7 @@ public class WikiEngine implements Engine {
     private String           m_workDir;
 
     /** Each engine has their own application id. */
-    private String           m_appid = "";
+    private String           m_appid = StringUtils.EMPTY;
 
     /** engine is up and running or not */
     private boolean          m_isConfigured;

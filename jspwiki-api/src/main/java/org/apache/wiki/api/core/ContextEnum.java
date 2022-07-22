@@ -19,6 +19,8 @@
 package org.apache.wiki.api.core;
 
 
+import org.apache.commons.lang3.StringUtils;
+
 public enum ContextEnum {
 
     GROUP_DELETE( "deleteGroup", "%uDeleteGroup.jsp?group=%n", null ),
@@ -32,14 +34,14 @@ public enum ContextEnum {
     PAGE_DIFF( "diff", "%uDiff.jsp?page=%n", "DiffContent.jsp" ),
     PAGE_EDIT( "edit", "%uEdit.jsp?page=%n", "EditContent.jsp" ),
     PAGE_INFO( "info", "%uPageInfo.jsp?page=%n", "InfoContent.jsp" ),
-    PAGE_NONE( "", "%u%n", null ),
+    PAGE_NONE( StringUtils.EMPTY, "%u%n", null ),
     PAGE_PREVIEW( "preview", "%uPreview.jsp?page=%n", "PreviewContent.jsp" ),
     PAGE_RENAME( "rename", "%uRename.jsp?page=%n", "InfoContent.jsp" ),
     PAGE_RSS( "rss", "%urss.jsp", null ),
     PAGE_UPLOAD( "upload", "%uUpload.jsp?page=%n", null ),
     PAGE_VIEW( "view", "%uWiki.jsp?page=%n", "PageContent.jsp" ),
 
-    REDIRECT( "", "%u%n", null ),
+    REDIRECT( StringUtils.EMPTY, "%u%n", null ),
 
     WIKI_ADMIN( "admin", "%uadmin/Admin.jsp", "AdminContent.jsp" ),
     WIKI_CREATE_GROUP( "createGroup", "%uNewGroup.jsp", "NewGroupContent.jsp" ),

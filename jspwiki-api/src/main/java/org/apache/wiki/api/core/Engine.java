@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.api.core;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.wiki.api.engine.EngineLifecycleExtension;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -263,7 +264,7 @@ public interface Engine {
         if( getServletContext() != null ) {
             final File tmpFile;
             try {
-                tmpFile = File.createTempFile( "temp." + name, "" );
+                tmpFile = File.createTempFile( "temp." + name, StringUtils.EMPTY );
             } catch( final IOException e ) {
                 LogManager.getLogger( Engine.class ).error( "unable to create a temp file to load onto the policy", e );
                 return null;

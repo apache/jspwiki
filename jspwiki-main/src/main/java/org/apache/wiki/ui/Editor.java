@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Context;
 
 
@@ -48,12 +49,12 @@ public class Editor {
      */
     public String isSelected( )
     {
-        return isSelected( "selected='selected'", "" );
+        return isSelected( "selected='selected'", StringUtils.EMPTY );
     }
 
     public String isSelected( final String ifSelected )
     {
-        return isSelected( ifSelected, "" );
+        return isSelected( ifSelected, StringUtils.EMPTY );
     }
 
     public String isSelected( final String ifSelected, final String ifNotSelected ) {

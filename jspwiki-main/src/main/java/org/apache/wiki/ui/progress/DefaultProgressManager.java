@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.ui.progress;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
@@ -140,7 +141,7 @@ public class DefaultProgressManager implements ProgressManager {
         	}
         	final String progressId = params.get(0);
         	LOG.debug( "progressId=" + progressId );
-        	String progressString = "";
+        	String progressString = StringUtils.EMPTY;
         	try {
         		progressString = Integer.toString( getProgress( progressId ) );
         	} catch( final IllegalArgumentException e ) { // ignore

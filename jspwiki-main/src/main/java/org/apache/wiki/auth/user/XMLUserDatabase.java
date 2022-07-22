@@ -407,11 +407,11 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         setAttribute( user, WIKI_NAME, profile.getWikiName() );
         setAttribute( user, EMAIL, profile.getEmail() );
         final Date lockExpiry = profile.getLockExpiry();
-        setAttribute( user, LOCK_EXPIRY, lockExpiry == null ? "" : c_format.format( lockExpiry ) );
+        setAttribute( user, LOCK_EXPIRY, lockExpiry == null ? StringUtils.EMPTY : c_format.format( lockExpiry ) );
 
         // Hash and save the new password if it's different from old one
         final String newPassword = profile.getPassword();
-        if( newPassword != null && !newPassword.equals( "" ) ) {
+        if( newPassword != null && !newPassword.equals( StringUtils.EMPTY ) ) {
             final String oldPassword = user.getAttribute( PASSWORD );
             if( !oldPassword.equals( newPassword ) ) {
                 setAttribute( user, PASSWORD, getHash( newPassword ) );

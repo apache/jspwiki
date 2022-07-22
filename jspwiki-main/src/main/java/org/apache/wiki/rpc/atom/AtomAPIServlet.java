@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.rpc.atom;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
@@ -181,7 +182,7 @@ public class AtomAPIServlet extends HttpServlet {
         final String pageText = m_engine.getManager( PageManager.class ).getText(page.getName());
         final int firstLine = pageText.indexOf('\n');
 
-        String title = "";
+        String title = StringUtils.EMPTY;
         if( firstLine > 0 ) {
             title = pageText.substring( 0, firstLine );
         }

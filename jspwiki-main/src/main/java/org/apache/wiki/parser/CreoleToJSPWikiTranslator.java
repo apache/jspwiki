@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.parser;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -232,8 +234,8 @@ public class CreoleToJSPWikiTranslator
         //
         // Breaks on OSX.  It is never a good idea to tamper with the linebreaks.  JSPWiki always
         // stores linebreaks as \r\n, regardless of the platform.
-        //result = result.replace("\r\n", "\n");
-        //result = result.replace("\r", "\n");
+        //result = result.replace("\r\n", StringUtils.LF);
+        //result = result.replace("\r", StringUtils.LF);
 
         /* Now protect the rest */
         result = protectMarkup(result);
@@ -271,14 +273,14 @@ public class CreoleToJSPWikiTranslator
         result = unprotectMarkup(result, true);
 
         result = translateVariables(result, blogLineBreaks);
-        //result = result.replace("\n", System.getProperty("line.separator"));
+        //result = result.replace(StringUtils.LF, System.getProperty("line.separator"));
         return result;
     }
 
     /** Translates lists. */
     private static String translateLists(final String content, final String sourceSymbol, final String targetSymbol, final String sourceSymbol2)
     {
-        final String[] lines = content.split("\n");
+        final String[] lines = content.split(StringUtils.LF);
         final StringBuilder result = new StringBuilder();
         int counter = 0;
         int inList = -1;
@@ -319,13 +321,13 @@ public class CreoleToJSPWikiTranslator
             result.append(line);
             if (i < lines.length - 1)
             {
-                result.append("\n");
+                result.append(StringUtils.LF);
             }
             counter = 0;
         }
 
         // Fixes testExtensions5
-        if( content.endsWith( "\n" ) && result.charAt( result.length()-1 ) != '\n' )
+        if( content.endsWith( StringUtils.LF ) && result.charAt( result.length()-1 ) != '\n' )
         {
             result.append( '\n' );
         }

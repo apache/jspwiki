@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.management.SimpleMBean;
@@ -56,7 +57,7 @@ public class PlainEditorAdminBean extends SimpleMBean implements AdminBean {
         }
         String base = TEMPLATE;
         base = TextUtil.replaceString( base, "%checked", "checked='checked'" );
-        base = TextUtil.replaceString( base, "%messages", "" );
+        base = TextUtil.replaceString( base, "%messages", StringUtils.EMPTY );
         return base;
     }
 
@@ -67,7 +68,7 @@ public class PlainEditorAdminBean extends SimpleMBean implements AdminBean {
         
         // Make changes
         String base = TEMPLATE;
-        base = TextUtil.replaceString( base, "%checked", checked ? "checked='checked'" : "" );
+        base = TextUtil.replaceString( base, "%checked", checked ? "checked='checked'" : StringUtils.EMPTY );
         base = TextUtil.replaceString( base, "%messages", "<br /><font color='red'>Your settings have been saved</font>" );
         return base;
     }

@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.providers.AttachmentProvider;
@@ -157,7 +158,7 @@ public class Installer {
         final StringBuilder result = new StringBuilder();
         final Set< String > keys = m_props.stringPropertyNames();
         for( final String key : keys ) {
-            result.append(key ).append( " = " ).append( m_props.getProperty( key ) ).append( "\n" );
+            result.append(key ).append( " = " ).append( m_props.getProperty( key ) ).append( StringUtils.LF );
         }
         return result.toString();
     }

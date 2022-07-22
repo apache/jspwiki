@@ -349,7 +349,7 @@ public final class PropertyReader {
         }
 
         // if not found - try with the current class loader and the given name
-        currResourceLocation = createResourceLocation( "", resourceName );
+        currResourceLocation = createResourceLocation( StringUtils.EMPTY, resourceName );
         result = PropertyReader.class.getResourceAsStream( currResourceLocation );
         if( result != null ) {
             LOG.debug( " Successfully located the following classpath resource : " + currResourceLocation );

@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.htmltowiki.syntax.markdown;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.PlainTextBoldDecorator;
 import org.apache.wiki.htmltowiki.syntax.PlainTextCssDecorator;
@@ -37,7 +38,7 @@ class MarkdownPlainTextCssDecorator extends PlainTextCssDecorator {
     /** {@inheritDoc} */
     @Override
     protected String markupCssDivOpen( final String cssClass ) {
-        return "\n";
+        return StringUtils.LF;
     }
 
     /** {@inheritDoc} */
@@ -49,7 +50,7 @@ class MarkdownPlainTextCssDecorator extends PlainTextCssDecorator {
     /** {@inheritDoc} */
     @Override
     protected String markupCssSpanOpen( final String cssClass ) {
-        return "";
+        return StringUtils.EMPTY;
     }
 
     /** {@inheritDoc} */

@@ -1259,7 +1259,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         if( m_isOpenParagraph ) {
             m_isOpenParagraph = false;
             popElement( "p" );
-            m_plainTextBuf.append( "\n" ); // Just small beautification
+            m_plainTextBuf.append( StringUtils.LF ); // Just small beautification
         }
         m_restartitalic = m_isitalic;
         m_restartbold   = m_isbold;

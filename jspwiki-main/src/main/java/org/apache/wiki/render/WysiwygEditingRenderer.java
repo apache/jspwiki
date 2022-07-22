@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.render;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
 import org.apache.wiki.parser.MarkupParser;
@@ -44,7 +45,6 @@ public class WysiwygEditingRenderer extends WikiRenderer {
     private static final String CLASS_ATTRIBUTE = "class";
     private static final String HREF_ATTRIBUTE = "href";
     private static final String TITLE_ATTRIBUTE = "title";
-    private static final String LINEBREAK = "\n";
 
     /**
      *  Creates a WYSIWYG editing renderer.
@@ -144,7 +144,7 @@ public class WysiwygEditingRenderer extends WikiRenderer {
         final StringWriter out = new StringWriter();
         final Format fmt = Format.getRawFormat();
         fmt.setExpandEmptyElements( false );
-        fmt.setLineSeparator( LINEBREAK );
+        fmt.setLineSeparator( StringUtils.LF );
 
         output.setFormat( fmt );
         output.outputElementContent( m_document.getRootElement(), out );

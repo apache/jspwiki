@@ -18,6 +18,7 @@
  */
 package org.apache.wiki;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Attachment;
@@ -60,7 +61,7 @@ class MemoryProfiling {
         final long aclBytes = meter.measureDeep( acl );
         final long aclEntryBytes = meter.measureDeep( aclEntry );
 
-        System.out.println( "" );
+        System.out.println( StringUtils.EMPTY );
         System.out.println( "===========================================================================================" );
         System.out.println( "Plain Engine, without pages/attachments, search indexes, references, etc.: " + format( engineBytes ) );
         System.out.println( "Engine, with default set of wiki pages: .................................. " + format( engineWithDefaultPagesBytes ) );
@@ -70,7 +71,7 @@ class MemoryProfiling {
         System.out.println( "Acl: ..................................................................... " + format( aclBytes ) );
         System.out.println( "Acl entry: ............................................................... " + format( aclEntryBytes ) );
         System.out.println( "-------------------------------------------------------------------------------------------" );
-        System.out.println( "" );
+        System.out.println( StringUtils.EMPTY );
     }
 
     String format( final long bytes ) {

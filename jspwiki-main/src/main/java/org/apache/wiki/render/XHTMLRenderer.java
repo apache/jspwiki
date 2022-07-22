@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.render;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.parser.WikiDocument;
 import org.jdom2.output.Format;
@@ -33,8 +34,6 @@ import java.io.StringWriter;
  *  @since  2.4
  */
 public class XHTMLRenderer extends WikiRenderer {
-
-    private static final String LINEBREAK = "\n";
 
     /**
      *  Creates an XHTML 1.0 renderer.
@@ -59,7 +58,7 @@ public class XHTMLRenderer extends WikiRenderer {
         final StringWriter out = new StringWriter();
         final Format fmt = Format.getRawFormat();
         fmt.setExpandEmptyElements( false );
-        fmt.setLineSeparator( LINEBREAK );
+        fmt.setLineSeparator( StringUtils.LF );
 
         output.setFormat( fmt );
         output.outputElementContent( m_document.getRootElement(), out );

@@ -19,6 +19,7 @@
 package org.apache.wiki.plugin;
 
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiSession;
@@ -87,7 +88,7 @@ public class IfPluginTest {
     public void testIfPluginUserNotAllowed() throws WikiException
     {
         final String src = "[{IfPlugin user='!Janne Jalkanen'\n\nContent NOT visible for Janne Jalkanen}]";
-        final String expected = "\n";
+        final String expected = StringUtils.LF;
 
         testEngine.saveText( "Test", src );
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
@@ -123,7 +124,7 @@ public class IfPluginTest {
     @Test
     public void testIfPluginIPNotAllowed() throws WikiException {
         final String src = "[{IfPlugin ip='!127.0.0.1'\n\nContent NOT visible for 127.0.0.1}]";
-        final String expected = "\n";
+        final String expected = StringUtils.LF;
 
         testEngine.saveText( "Test", src );
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );

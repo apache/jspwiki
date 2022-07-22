@@ -147,7 +147,7 @@ public final class TextUtil {
     public static String urlEncodeUTF8( final String text ) {
         // If text is null, just return an empty string
         if ( text == null ) {
-            return "";
+            return StringUtils.EMPTY;
         }
 
         return urlEncode( text.getBytes( StandardCharsets.UTF_8 ) );
@@ -592,7 +592,7 @@ public final class TextUtil {
      */
     public static String beautifyString( final String s, final String space ) {
         if( s == null || s.isEmpty() ) {
-        	return "";
+        	return StringUtils.EMPTY;
         }
 
         final StringBuilder result = new StringBuilder();

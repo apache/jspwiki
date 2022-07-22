@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.htmltowiki.syntax.markdown;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
 import org.apache.wiki.htmltowiki.syntax.ImageDecorator;
 
@@ -50,7 +51,7 @@ class MarkdownImageDecorator extends ImageDecorator {
     protected void markupImageWithAttributes( final String src, final Map< String, Object > imageAttrs ) {
         out.print( "[{Image src='" + src + "'" );
         for( final Map.Entry< String, Object > objectObjectEntry : imageAttrs.entrySet() ) {
-            if ( !objectObjectEntry.getValue().equals( "" ) ) {
+            if ( !objectObjectEntry.getValue().equals( StringUtils.EMPTY ) ) {
                 out.print( " " + objectObjectEntry.getKey() + "='" + objectObjectEntry.getValue() + "'" );
             }
         }

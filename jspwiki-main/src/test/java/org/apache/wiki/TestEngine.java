@@ -226,7 +226,7 @@ public class TestEngine extends WikiEngine {
             }
         };
         request.setSession( new MockHttpSession( this.getServletContext() ) );
-        request.addLocale( new Locale( "" ) );
+        request.addLocale( new Locale( StringUtils.EMPTY ) );
         return request;
     }
 
@@ -482,8 +482,8 @@ public class TestEngine extends WikiEngine {
         for( final StackTraceElement trace : Thread.currentThread().getStackTrace() ) {
             if( !( trace.getClassName().contains( TestEngine.class.getSimpleName() ) ||
                    trace.getClassName().contains( Thread.class.getSimpleName() ) ) ) {
-                return trace.getClassName() + "-" + trace.getMethodName().replace( "<", "" ) // <init> -> init
-                                                                         .replace( ">", "" );
+                return trace.getClassName() + "-" + trace.getMethodName().replace( "<", StringUtils.EMPTY ) // <init> -> init
+                                                                         .replace( ">", StringUtils.EMPTY );
             }
         }
         return "Unable to locate TestEngine creation";

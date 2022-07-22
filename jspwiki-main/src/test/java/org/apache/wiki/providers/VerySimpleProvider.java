@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.providers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
@@ -148,7 +149,7 @@ public class VerySimpleProvider implements PageProvider {
         m_latestReq  = page;
         m_latestVers = version;
 
-        return "";
+        return StringUtils.EMPTY;
     }
 
     @Override

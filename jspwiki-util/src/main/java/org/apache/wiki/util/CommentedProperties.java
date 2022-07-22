@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -171,7 +173,7 @@ public class CommentedProperties extends Properties
         int idx = 0;
         while( ( idx < m_propertyString.length() ) && ( ( idx = m_propertyString.indexOf( key, idx ) ) != -1 ) )
         {
-            final int prevret = m_propertyString.lastIndexOf( "\n", idx );
+            final int prevret = m_propertyString.lastIndexOf( StringUtils.LF, idx );
             if ( prevret != -1 )
             {
                 // Commented lines are skipped
@@ -186,8 +188,8 @@ public class CommentedProperties extends Properties
             final int eqsign = m_propertyString.indexOf( "=", idx );
             if ( eqsign != -1 )
             {
-                final int ret = m_propertyString.indexOf( "\n", eqsign );
-                m_propertyString = TextUtil.replaceString( m_propertyString, prevret, ret, "" );
+                final int ret = m_propertyString.indexOf( StringUtils.LF, eqsign );
+                m_propertyString = TextUtil.replaceString( m_propertyString, prevret, ret, StringUtils.EMPTY );
                 return;
             }
         }
@@ -202,7 +204,7 @@ public class CommentedProperties extends Properties
         }
         if ( arg1 == null )
         {
-            arg1 = "";
+            arg1 = StringUtils.EMPTY;
         }
         final String key = arg0.toString();
         final String value = TextUtil.native2Ascii( arg1.toString() );
@@ -211,7 +213,7 @@ public class CommentedProperties extends Properties
         int idx = 0;
         while( ( idx < m_propertyString.length() ) && ( ( idx = m_propertyString.indexOf( key, idx ) ) != -1 ) )
         {
-            final int prevret = m_propertyString.lastIndexOf( "\n", idx );
+            final int prevret = m_propertyString.lastIndexOf( StringUtils.LF, idx );
             if ( prevret != -1 )
             {
                 // Commented lines are skipped
@@ -226,7 +228,7 @@ public class CommentedProperties extends Properties
             final int eqsign = m_propertyString.indexOf( "=", idx );
             if ( eqsign != -1 )
             {
-                int ret = m_propertyString.indexOf( "\n", eqsign );
+                int ret = m_propertyString.indexOf( StringUtils.LF, eqsign );
                 if ( ret == -1 )
                 {
                     ret = m_propertyString.length();
@@ -237,7 +239,7 @@ public class CommentedProperties extends Properties
         }
 
         // If it was not found, we'll add it to the end.
-        m_propertyString += "\n" + key + " = " + value + "\n";
+        m_propertyString += StringUtils.LF + key + " = " + value + StringUtils.LF;
     }
 
 }

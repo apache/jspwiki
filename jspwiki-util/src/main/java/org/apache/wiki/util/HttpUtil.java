@@ -193,7 +193,7 @@ public final class HttpUtil {
      */
     public static String safeGetQueryString( final HttpServletRequest request, final Charset contentEncoding ) {
         if( request == null ) {
-            return "";
+            return StringUtils.EMPTY;
         }
 
         String res = request.getQueryString();
@@ -256,7 +256,7 @@ public final class HttpUtil {
     }
 
     public static void clearCookie( final HttpServletResponse response, final String cookieName ) {
-        final Cookie cookie = new Cookie( cookieName, "" );
+        final Cookie cookie = new Cookie( cookieName, StringUtils.EMPTY );
         cookie.setMaxAge( 0 );
         response.addCookie( cookie );
     }

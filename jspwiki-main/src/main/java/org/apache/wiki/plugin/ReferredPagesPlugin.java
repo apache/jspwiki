@@ -18,6 +18,7 @@
 */
 package org.apache.wiki.plugin;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.oro.text.regex.MalformedPatternException;
@@ -260,7 +261,7 @@ public class ReferredPagesPlugin implements Plugin {
                     }
 
                     //See https://www.w3.org/wiki/HTML_lists  for proper nesting of UL and LI
-                    m_result.append( "<li> " ).append( TextUtil.replaceEntities( link ) ).append( "\n" );
+                    m_result.append( "<li> " ).append( TextUtil.replaceEntities( link ) ).append( StringUtils.LF );
                     getReferredPages( context, link, depth );  // added recursive call - on general request
                     m_result.append( "\n</li>\n" );
                 }

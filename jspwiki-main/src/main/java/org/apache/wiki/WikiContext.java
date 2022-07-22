@@ -18,6 +18,7 @@
  */
 package org.apache.wiki;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Command;
@@ -758,7 +759,7 @@ public class WikiContext implements Context, Command {
             final String skin = request.getParameter( "skin" );
             if( skin != null )
             {
-                template = skin.replaceAll("\\p{Punct}", "");
+                template = skin.replaceAll("\\p{Punct}", StringUtils.EMPTY);
             }
 
         }

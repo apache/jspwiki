@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.api;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -70,7 +71,7 @@ public class ReleaseTest {
 
     @Test
     public void testNewer8() {
-        final String rel = Release.VERSION + "";
+        final String rel = Release.VERSION + StringUtils.EMPTY;
         Assertions.assertTrue( Release.isNewerOrEqual( rel ) );
     }
 
@@ -120,14 +121,13 @@ public class ReleaseTest {
 
     @Test
     public void testOlder8() {
-        final String rel = Release.VERSION + "";
+        final String rel = Release.VERSION + StringUtils.EMPTY;
         Assertions.assertTrue( Release.isOlderOrEqual( rel ) );
     }
 
     @Test
     public void testOlder9() {
-        final String rel = "";
-        Assertions.assertTrue( Release.isOlderOrEqual( rel ) );
+        Assertions.assertTrue( Release.isOlderOrEqual( StringUtils.EMPTY ) );
     }
 
 }

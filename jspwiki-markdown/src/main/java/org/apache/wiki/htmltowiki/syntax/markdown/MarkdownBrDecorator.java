@@ -41,7 +41,7 @@ class MarkdownBrDecorator extends BrDecorator {
     /** {@inheritDoc} */
     @Override
     protected String markupBr() {
-        return INDENTATION_UNIT + "\n";
+        return INDENTATION_UNIT + StringUtils.LF;
     }
 
 }

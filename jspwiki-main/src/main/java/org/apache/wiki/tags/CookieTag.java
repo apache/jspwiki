@@ -33,6 +33,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -379,7 +380,7 @@ public class CookieTag
      */
     private String encode(final String nvp )
     {
-        String coded = "";
+        String coded = StringUtils.EMPTY;
         try
         {
             coded = URLEncoder.encode( nvp, StandardCharsets.UTF_8.name() );

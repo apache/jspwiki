@@ -19,6 +19,7 @@
 
 package org.apache.wiki.diff;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
@@ -88,7 +89,7 @@ public class ExternalDiffProvider implements DiffProvider {
     @Override
     public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
         m_diffCommand = properties.getProperty( PROP_DIFFCOMMAND );
-        if( m_diffCommand == null || m_diffCommand.trim().equals( "" ) ) {
+        if( m_diffCommand == null || m_diffCommand.trim().equals( StringUtils.EMPTY ) ) {
             throw new NoRequiredPropertyException( "ExternalDiffProvider missing required property", PROP_DIFFCOMMAND );
         }
 
@@ -180,7 +181,7 @@ public class ExternalDiffProvider implements DiffProvider {
             out.append( start )
                .append( line.trim() )
                .append( stop )
-               .append( "\n" );
+               .append( StringUtils.LF );
         }
 
         out.append( "</table>\n" );

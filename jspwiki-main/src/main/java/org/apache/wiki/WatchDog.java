@@ -18,6 +18,7 @@
  */
 package org.apache.wiki;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
@@ -253,7 +254,7 @@ public final class WatchDog {
                 if( now > st.getExpiryTime() ) {
                     LOG.info( "Watchable '" + m_watchable.getName() + "' exceeded timeout in state '" + st.getState() +
                               "' by " + (now - st.getExpiryTime()) / 1000 + " seconds" +
-                             ( LOG.isDebugEnabled() ? "" : "Enable DEBUG-level logging to see stack traces." ) );
+                             ( LOG.isDebugEnabled() ? StringUtils.EMPTY : "Enable DEBUG-level logging to see stack traces." ) );
                     dumpStackTraceForWatchable();
 
                     m_watchable.timeoutExceeded( st.getState() );
@@ -287,7 +288,7 @@ public final class WatchDog {
                 }
                 final StackTraceElement[] ste = stackTraces.get( t );
                 for( final StackTraceElement stackTraceElement : ste ) {
-                    stacktrace.append( "\n" ).append( stackTraceElement );
+                    stacktrace.append( StringUtils.LF ).append( stackTraceElement );
                 }
             }
         }

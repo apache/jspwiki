@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.tags;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -42,8 +43,8 @@ import java.io.IOException;
 public class PageInfoLinkTag extends WikiLinkTag {
 
     private static final long serialVersionUID = 0L;
-    public String m_title = "";
-    public String m_accesskey = "";
+    public String m_title = StringUtils.EMPTY;
+    public String m_accesskey = StringUtils.EMPTY;
     
     public void setTitle( final String title )
     {

@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.auth.acl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Acl;
@@ -135,7 +136,7 @@ public class DefaultAclManager implements AclManager {
     public Acl getPermissions( final Page page ) {
         //  Does the page already have cached ACLs?
         Acl acl = page.getAcl();
-        LOG.debug( "page=" + page.getName() + "\n" + acl );
+        LOG.debug( "page=" + page.getName() + StringUtils.LF + acl );
 
         if( acl == null ) {
             //  If null, try the parent.

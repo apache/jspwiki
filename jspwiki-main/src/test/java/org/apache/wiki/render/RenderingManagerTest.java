@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.render;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
@@ -135,26 +136,26 @@ public class RenderingManagerTest {
 
     private static final String TEST_TEXT =
         "Please ''check [RecentChanges].\n" +
-        "\n" +
+        StringUtils.LF +
         "Testing. fewfwefe\n" +
-        "\n" +
+        StringUtils.LF +
         "CHeck [testpage]\n" +
-        "\n" +
+        StringUtils.LF +
         "More testing.\n" +
         "dsadsadsa''\n" +
         "Is this {{truetype}} or not?\n" +
         "What about {{{This}}}?\n" +
         "How about {{this?\n" +
-        "\n" +
+        StringUtils.LF +
         "{{{\n" +
         "{{text}}\n" +
         "}}}\n" +
         "goo\n" +
-        "\n" +
+        StringUtils.LF +
         "<b>Not bold</b>\n" +
-        "\n" +
+        StringUtils.LF +
         "motto\n" +
-        "\n" +
+        StringUtils.LF +
         "* This is a list which we\n" +
         "shall continue on a other line.\n" +
         "* There is a list item here.\n" +
@@ -164,42 +165,42 @@ public class RenderingManagerTest {
         "a third line as well.\n" +
         "And a fourth line.\n" +
         "* Third item.\n" +
-        "\n" +
+        StringUtils.LF +
         "Foobar.\n" +
-        "\n" +
+        StringUtils.LF +
         "----\n" +
-        "\n" +
+        StringUtils.LF +
         "!!!Really big heading\n" +
         "Text.\n" +
         "!! Just a normal heading [with a hyperlink|Main]\n" +
         "More text.\n" +
         "!Just a small heading.\n" +
-        "\n" +
+        StringUtils.LF +
         "This should be __bold__ text.\n" +
-        "\n" +
+        StringUtils.LF +
         "__more bold text continuing\n" +
         "on the next line.__\n" +
-        "\n" +
+        StringUtils.LF +
         "__more bold text continuing\n" +
-        "\n" +
+        StringUtils.LF +
         "on the next paragraph.__\n" +
-        "\n" +
-        "\n" +
+        StringUtils.LF +
+        StringUtils.LF +
         "This should be normal.\n" +
-        "\n" +
+        StringUtils.LF +
         "Now, let's try ''italic text''.\n" +
-        "\n" +
+        StringUtils.LF +
         "Bulleted lists:\n" +
         "* One\n" +
         "Or more.\n" +
         "* Two\n" +
-        "\n" +
+        StringUtils.LF +
         "** Two.One\n" +
-        "\n" +
+        StringUtils.LF +
         "*** Two.One.One\n" +
-        "\n" +
+        StringUtils.LF +
         "* Three\n" +
-        "\n" +
+        StringUtils.LF +
         "Numbered lists.\n" +
         "# One\n" +
         "# Two\n" +
@@ -209,13 +210,13 @@ public class RenderingManagerTest {
         "## Three.Three\n" +
         "### Three.Three.One\n" +
         "# Four\n" +
-        "\n" +
+        StringUtils.LF +
         "End?\n" +
-        "\n" +
+        StringUtils.LF +
         "No, let's {{break}} things.\\ {{{ {{{ {{text}} }}} }}}\n" +
-        "\n" +
+        StringUtils.LF +
         "More breaking.\n" +
-        "\n" +
+        StringUtils.LF +
         "{{{\n" +
         "code.}}\n" +
         "----\n" +

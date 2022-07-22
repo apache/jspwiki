@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.pages;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.core.Attachment;
@@ -182,7 +183,7 @@ public class DefaultPageManagerTest {
 
         final String content = engine.getManager( PageManager.class ).getText( NAME1, WikiProvider.LATEST_VERSION );
         Assertions.assertEquals( "Test3", content.trim(), "content" );
-        Assertions.assertEquals( "", engine.getManager( PageManager.class ).getText(NAME1, 1).trim(), "content1" );
+        Assertions.assertEquals( StringUtils.EMPTY, engine.getManager( PageManager.class ).getText(NAME1, 1).trim(), "content1" );
     }
 
     @Test
@@ -254,7 +255,7 @@ public class DefaultPageManagerTest {
 
     @Test
     public void testCreateEmptyPage() throws Exception {
-        final String text = "";
+        final String text = StringUtils.EMPTY;
         final String name = "mrmxyzptlk";
         Assertions.assertFalse( engine.getManager( PageManager.class ).wikiPageExists( name ), "page should not exist right now" );
 
@@ -305,8 +306,8 @@ public class DefaultPageManagerTest {
         // saveText uses normalizePostData to assure it conforms to certain rules
         Assertions.assertEquals( TextUtil.normalizePostData( text ), engine.getManager( PageManager.class ).getText( name ), "wrong content" );
 
-        engine.saveText( name, "" );
-        Assertions.assertEquals( TextUtil.normalizePostData( "" ), engine.getManager( PageManager.class ).getText( name ), "wrong content" );
+        engine.saveText( name, StringUtils.EMPTY );
+        Assertions.assertEquals( TextUtil.normalizePostData( StringUtils.EMPTY ), engine.getManager( PageManager.class ).getText( name ), "wrong content" );
     }
 
 }

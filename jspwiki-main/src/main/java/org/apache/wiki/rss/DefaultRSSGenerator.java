@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.rss;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
@@ -57,7 +58,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
 
     /** The RSS file to generate. */
     private final String m_rssFile;
-    private String m_channelDescription = "";
+    private String m_channelDescription = StringUtils.EMPTY;
     private String m_channelLanguage = "en-us";
     private boolean m_enabled = true;
 
@@ -349,7 +350,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
             //  Title
             String pageText = m_engine.getManager( PageManager.class ).getPureText( page.getName(), WikiProvider.LATEST_VERSION );
 
-            String title = "";
+            String title = StringUtils.EMPTY;
             final int firstLine = pageText.indexOf('\n');
 
             if( firstLine > 0 ) {

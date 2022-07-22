@@ -22,6 +22,7 @@
  */
 package org.apache.wiki.url;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -90,7 +91,7 @@ public class DefaultURLConstructorTest
     public void testViewURL5()
         throws Exception
     {
-        final URLConstructor c = getConstructor( "" );
+        final URLConstructor c = getConstructor( StringUtils.EMPTY );
 
         Assertions.assertEquals( "/test/Wiki.jsp?page=Main", c.makeURL(ContextEnum.PAGE_VIEW.getRequestContext(),"Main",null) );
     }
@@ -164,7 +165,7 @@ public class DefaultURLConstructorTest
     {
         final URLConstructor c = getConstructor( null );
 
-        Assertions.assertEquals( "/test/Wiki.jsp?page=", c.makeURL(ContextEnum.PAGE_VIEW.getRequestContext(),"",null) );
+        Assertions.assertEquals( "/test/Wiki.jsp?page=", c.makeURL(ContextEnum.PAGE_VIEW.getRequestContext(), StringUtils.EMPTY,null) );
     }
 
 }

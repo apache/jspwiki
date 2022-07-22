@@ -29,6 +29,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,7 +60,7 @@ public class CommentedPropertiesTest
         Assertions.assertEquals( 5, m_props.keySet().size() );
         Assertions.assertEquals( "Foo", m_props.get( "testProp1" ) );
         Assertions.assertEquals( "Bar", m_props.get( "testProp2" ) );
-        Assertions.assertEquals( "", m_props.get( "testProp3" ) );
+        Assertions.assertEquals( StringUtils.EMPTY, m_props.get( "testProp3" ) );
         Assertions.assertEquals( "FooAgain", m_props.get( "testProp4" ) );
         Assertions.assertEquals( "BarAgain", m_props.get( "testProp5" ) );
         Assertions.assertNull( m_props.get( "testProp6" ) );

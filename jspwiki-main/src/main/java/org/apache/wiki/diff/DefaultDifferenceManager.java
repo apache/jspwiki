@@ -19,6 +19,7 @@
 
 package org.apache.wiki.diff;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
@@ -92,7 +93,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
             diff = m_provider.makeDiffHtml( context, firstWikiText, secondWikiText );
 
             if( diff == null ) {
-                diff = "";
+                diff = StringUtils.EMPTY;
             }
         } catch( final Exception e ) {
             diff = "Failed to create a diff, check the logs.";
@@ -120,7 +121,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
 
         // Kludge to make diffs for new pages to work this way.
         if( version1 == PageProvider.LATEST_VERSION ) {
-            page1 = "";
+            page1 = StringUtils.EMPTY;
         }
 
         return makeDiff( context, page1, page2 );

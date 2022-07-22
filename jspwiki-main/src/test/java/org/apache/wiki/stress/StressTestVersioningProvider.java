@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.stress;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
@@ -40,7 +41,7 @@ public class StressTestVersioningProvider {
     }
 
     public void testMillionChanges() throws Exception {
-        String text = "";
+        String text = StringUtils.EMPTY;
         final int maxver = 2000; // Save 2000 versions.
         final Benchmark mark = new Benchmark();
 

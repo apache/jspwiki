@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.auth;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
@@ -123,7 +124,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         // Look up the LoginModule class
         final String loginModuleClassName = TextUtil.getStringProperty( props, PROP_LOGIN_MODULE, DEFAULT_LOGIN_MODULE );
         try {
-            m_loginModuleClass = ClassUtil.findClass( "", loginModuleClassName );
+            m_loginModuleClass = ClassUtil.findClass( StringUtils.EMPTY, loginModuleClassName );
         } catch( final ClassNotFoundException e ) {
             LOG.error( e.getMessage(), e );
             throw new WikiException( "Could not instantiate LoginModule class.", e );

@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.render;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.parser.PluginContent;
 import org.apache.wiki.parser.WikiDocument;
@@ -49,8 +50,6 @@ public class CreoleRenderer extends WikiRenderer {
     private static final String PARAM_SRC = "src";
     private static final String HREF_ATTRIBUTE = "href";
     private static final String ONE_SPACE = " ";
-    private static final String EMPTY_STRING = "";
-    private static final String LINEBREAK = "\n";
     private static final String LI = "li";
     private static final String UL = "ul";
     private static final String OL = "ol";
@@ -67,7 +66,7 @@ public class CreoleRenderer extends WikiRenderer {
        "h2", "== "   , " ==",
        "h3", "=== "  , " ===",
        "h4", "==== " , " ====",
-       "hr", "----"  , EMPTY_STRING,
+       "hr", "----"  , StringUtils.EMPTY,
        "tt", "<<{{>>", "<<}}>>"
     };
 
@@ -90,7 +89,7 @@ public class CreoleRenderer extends WikiRenderer {
      * @param sb stringbuilder holding the element render
      */
     private void renderElement( final Element ce, final StringBuilder sb ) {
-        String endEl = EMPTY_STRING;
+        String endEl = StringUtils.EMPTY;
         for( int i = 0; i < ELEMENTS.length; i+=3 ) {
             if( ELEMENTS[i].equals(ce.getName()) ) {
                 sb.append( ELEMENTS[i+1] );
@@ -147,7 +146,7 @@ public class CreoleRenderer extends WikiRenderer {
         if( UL.equals( ce.getName() ) || OL.equals( ce.getName() ) ) {
             m_listCount--;
         } else if( P.equals( ce.getName() ) ) {
-            sb.append( LINEBREAK );
+            sb.append( StringUtils.LF );
         }
 
         sb.append(endEl);

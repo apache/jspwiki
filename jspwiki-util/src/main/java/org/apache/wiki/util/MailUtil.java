@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -425,7 +426,7 @@ public final class MailUtil {
      */
     protected static class SmtpAuthenticator extends Authenticator {
 
-        private static final String BLANK = "";
+        private static final String BLANK = StringUtils.EMPTY;
         private final String m_pass;
         private final String m_login;
 

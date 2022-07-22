@@ -19,6 +19,7 @@
 package org.apache.wiki.auth;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSessionTest;
 import org.apache.wiki.api.core.Context;
@@ -109,7 +110,7 @@ public class UserManagerTest {
         final int oldPageCount = pageManager.getTotalPageCount();
 
         // Setup Step 1: create a new user with random name
-        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
+        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), StringUtils.EMPTY );
         final Session session = context.getWikiSession();
         final long now = System.currentTimeMillis();
         final String oldLogin = "TestLogin" + now;
@@ -131,7 +132,7 @@ public class UserManagerTest {
         Assertions.assertTrue( session.isAuthenticated() );
 
         // Setup Step 2: create a new group with our test user in it
-        Group group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
+        Group group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin + StringUtils.LF + oldName, true );
         groupManager.setGroup( session, group );
 
         // 2a. Make sure the group is created with the user in it, and the role is added to the Subject
@@ -200,7 +201,7 @@ public class UserManagerTest {
         m_engine.getManager( PageManager.class ).deletePage( pageName );
 
         // Setup Step 6: re-create the group with our old test user names in it
-        group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
+        group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin + StringUtils.LF + oldName, true );
         groupManager.setGroup( session, group );
 
         // Setup Step 7: Save a new page with the old login/wiki names in the ACL again
@@ -272,7 +273,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
+        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), StringUtils.EMPTY );
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
@@ -299,7 +300,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
+        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), StringUtils.EMPTY );
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
@@ -350,7 +351,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
+        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), StringUtils.EMPTY );
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
@@ -395,7 +396,7 @@ public class UserManagerTest {
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
+        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), StringUtils.EMPTY );
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );

@@ -156,7 +156,7 @@ public class WikiJSPFilter extends WikiServletFilter {
 
             for( final String header : headers ) {
                 String key = header;
-                String value = "";
+                String value = StringUtils.EMPTY;
                 final int split = header.indexOf( ':' );
                 if( split > 0 && split < header.length() - 1 ) {
                     key = header.substring( 0, split );

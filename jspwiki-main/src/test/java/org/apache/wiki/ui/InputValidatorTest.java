@@ -21,6 +21,7 @@
  *
  */
 package org.apache.wiki.ui;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.spi.Wiki;
@@ -67,7 +68,7 @@ public class InputValidatorTest
         Assertions.assertFalse( val.validate( "Test @ string", "Name", InputValidator.STANDARD ) );
 
         // Null or blank fields should validate
-        Assertions.assertTrue( val.validate( "", "Name", InputValidator.STANDARD ) );
+        Assertions.assertTrue( val.validate( StringUtils.EMPTY, "Name", InputValidator.STANDARD ) );
         Assertions.assertTrue( val.validate( null, "Name", InputValidator.STANDARD ) );
     }
 
@@ -76,7 +77,7 @@ public class InputValidatorTest
     {
         Assertions.assertTrue( val.validateNotNull("Test string", "Name") );
         Assertions.assertFalse( val.validateNotNull("Test $tring", "Name") );
-        Assertions.assertFalse( val.validateNotNull("", "Name") );
+        Assertions.assertFalse( val.validateNotNull(StringUtils.EMPTY, "Name") );
         Assertions.assertFalse( val.validateNotNull(null, "Name") );
     }
 

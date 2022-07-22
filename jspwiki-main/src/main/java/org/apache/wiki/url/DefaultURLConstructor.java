@@ -41,7 +41,7 @@ public class DefaultURLConstructor implements URLConstructor {
     protected Engine m_engine;
 
     /** Contains the absolute path of the JSPWiki Web application without the actual servlet (which is the m_urlPrefix). */
-    protected String m_pathPrefix = "";
+    protected String m_pathPrefix = StringUtils.EMPTY;
 
     /**
      *
@@ -135,7 +135,7 @@ public class DefaultURLConstructor implements URLConstructor {
                 parameters = "&amp;" + parameters;
             }
         } else {
-            parameters = "";
+            parameters = StringUtils.EMPTY;
         }
         return makeURL( context, name ) + parameters;
     }

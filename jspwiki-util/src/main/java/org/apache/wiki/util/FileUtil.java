@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -113,12 +114,12 @@ public final class FileUtil {
             String line;
 
             while( (line = stdout.readLine()) != null ) {
-                result.append( line ).append( "\n" );
+                result.append( line ).append( StringUtils.LF );
             }
 
             final StringBuilder error = new StringBuilder();
             while( (line = stderr.readLine()) != null ) {
-                error.append( line ).append( "\n" );
+                error.append( line ).append( StringUtils.LF );
             }
 
             if( error.length() > 0 ) {
@@ -266,7 +267,7 @@ public final class FileUtil {
         }
         else
         {
-            sb.append( trace[0].isNativeMethod() ? "native method" : "" );
+            sb.append( trace[0].isNativeMethod() ? "native method" : StringUtils.EMPTY );
             sb.append( trace[0].getClassName() );
             sb.append(".");
             sb.append( trace[0].getMethodName() ).append( "(), line " ).append( trace[0].getLineNumber() );

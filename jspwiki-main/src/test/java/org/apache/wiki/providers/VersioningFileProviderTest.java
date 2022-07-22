@@ -19,6 +19,7 @@
 
 package org.apache.wiki.providers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Context;
@@ -50,9 +51,9 @@ public class VersioningFileProviderTest {
     public static final String NAME1 = "Test1";
     private static final String OLD_AUTHOR = "brian";
     private static final String FAKE_HISTORY =
-                "#JSPWiki page properties for page " + NAME1 + "\n"
-                + "#Wed Jan 01 12:27:57 GMT 2012" + "\n"
-                + "author=" + OLD_AUTHOR + "\n";
+                "#JSPWiki page properties for page " + NAME1 + StringUtils.LF
+                + "#Wed Jan 01 12:27:57 GMT 2012" + StringUtils.LF
+                + "author=" + OLD_AUTHOR + StringUtils.LF;
 
     private final Properties PROPS = TestEngine.getTestProperties( "/jspwiki-vers-custom.properties" );
     private TestEngine engine = TestEngine.build( PROPS );
@@ -302,7 +303,7 @@ public class VersioningFileProviderTest {
 
     @Test
     public void testMillionChanges() throws Exception {
-        String text = "";
+        String text = StringUtils.EMPTY;
         final int maxver = 100;           // Save 100 versions.
         for( int i = 0; i < maxver; i++ ) {
             text = text + ".";

@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -141,7 +143,7 @@ public final class FormUtil
     {
         final HashMap<String,String> params = new HashMap<>();
         
-        if( filterPrefix == null ) filterPrefix = "";
+        if( filterPrefix == null ) filterPrefix = StringUtils.EMPTY;
         
         final Enumeration< String > en = req.getParameterNames();
         while( en.hasMoreElements() )

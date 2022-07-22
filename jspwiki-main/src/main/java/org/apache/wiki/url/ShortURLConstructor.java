@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.url;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
@@ -41,7 +42,7 @@ public class ShortURLConstructor extends DefaultURLConstructor {
     private static final Logger LOG = LogManager.getLogger( ShortURLConstructor.class );
     
     /** Contains the path part after the JSPWiki base URL */
-    protected String m_urlPrefix = "";
+    protected String m_urlPrefix = StringUtils.EMPTY;
     
     /**
      *  This corresponds to your WikiServlet path.  By default, it is assumed to be "wiki/", but you can set it to whatever you
@@ -71,12 +72,12 @@ public class ShortURLConstructor extends DefaultURLConstructor {
 
         if( context.equals( ContextEnum.PAGE_VIEW.getRequestContext() ) ) {
             if( name == null ) {
-                return doReplacement("%u","" );
+                return doReplacement("%u",StringUtils.EMPTY );
             }
             return doReplacement( viewurl, name );
         } else if( context.equals( ContextEnum.PAGE_PREVIEW.getRequestContext() ) ) {
             if( name == null ) {
-                return doReplacement("%u","" );
+                return doReplacement("%u", StringUtils.EMPTY );
             }
             return doReplacement( viewurl + "?do=Preview", name );
         } else if( context.equals( ContextEnum.PAGE_EDIT.getRequestContext() ) ) {
@@ -133,7 +134,7 @@ public class ShortURLConstructor extends DefaultURLConstructor {
                 parameters = "&amp;"+parameters;
             }
         } else {
-            parameters = "";
+            parameters = StringUtils.EMPTY;
         }
         return makeURL( context, name )+parameters;
     }

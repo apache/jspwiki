@@ -18,6 +18,7 @@
 */
 package org.apache.wiki.parser;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.oro.text.regex.MatchResult;
@@ -59,7 +60,6 @@ public class PluginContent extends Text implements PluginElement {
     private static final String CMDLINE = "_cmdline";
     private static final String ELEMENT_BR = "<br/>";
     private static final String EMITTABLE_PLUGINS = "Image|FormOpen|FormClose|FormInput|FormTextarea|FormSelect";
-    private static final String LINEBREAK = "\n";
     private static final String PLUGIN_START = "[{";
     private static final String PLUGIN_END = "}]";
     private static final String SPACE = " ";
@@ -148,7 +148,7 @@ public class PluginContent extends Text implements PluginElement {
                 result = PLUGIN_START + m_pluginName + SPACE;
 
                 // convert newlines to <br> in case the plugin has a body.
-                final String cmdLine = m_params.get( CMDLINE ).replaceAll( LINEBREAK, ELEMENT_BR );
+                final String cmdLine = m_params.get( CMDLINE ).replaceAll( StringUtils.LF, ELEMENT_BR );
                 result = result + cmdLine + PLUGIN_END;
             } else {
                 final Boolean b = context.getVariable( Context.VAR_EXECUTE_PLUGINS );

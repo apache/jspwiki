@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.tags;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
@@ -220,7 +221,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                     reallink = MarkupParser.cleanLink( reallink );
 
                     String matchedLink;
-                    String sectref = "";
+                    String sectref = StringUtils.EMPTY;
                     if( ( matchedLink = engine.getFinalPageName( reallink ) ) != null ) {
                         sectref = "section-" + engine.encodeName( matchedLink ) + "-" + namedSection;
                         sectref = "#" + sectref.replace( '%', '_' );

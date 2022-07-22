@@ -19,6 +19,7 @@
 package org.apache.wiki.auth.authorize;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
@@ -207,7 +208,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
         // Normalize the member line
         if( InputValidator.isBlank( memberLine ) ) {
-            memberLine = "";
+            memberLine = StringUtils.EMPTY;
         }
         memberLine = memberLine.trim();
 
@@ -356,7 +357,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
     protected String[] extractMembers( final String memberLine ) {
         final Set< String > members = new HashSet<>();
         if( memberLine != null ) {
-            final StringTokenizer tok = new StringTokenizer( memberLine, "\n" );
+            final StringTokenizer tok = new StringTokenizer( memberLine, StringUtils.LF );
             while( tok.hasMoreTokens() ) {
                 final String uid = tok.nextToken().trim();
                 if( !uid.isEmpty() ) {

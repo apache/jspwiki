@@ -188,7 +188,6 @@ import java.util.Set;
  */
 public class JDBCUserDatabase extends AbstractUserDatabase {
 
-    private static final String NOTHING = "";
 
     public static final String DEFAULT_DB_ATTRIBUTES = "attributes";
 
@@ -581,7 +580,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
         // Blank password is the same as null, which means we re-use the existing one.
         String password = profile.getPassword();
         final String existingPassword = (existingProfile == null) ? null : existingProfile.getPassword();
-        if( NOTHING.equals( password ) ) {
+        if( StringUtils.EMPTY.equals( password ) ) {
             password = null;
         }
         if( password == null ) {

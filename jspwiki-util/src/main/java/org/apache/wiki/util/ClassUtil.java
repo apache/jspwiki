@@ -361,7 +361,7 @@ public final class ClassUtil {
      * @since 2.11.1
      */
     public static < T > T buildInstance( final String className ) throws ReflectiveOperationException {
-        return buildInstance( "", className );
+        return buildInstance( StringUtils.EMPTY, className );
     }
 
     /**

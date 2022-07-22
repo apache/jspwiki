@@ -170,8 +170,8 @@ public interface TemplateManager extends ModuleManager {
                 } else {
                     name = name.substring( I18NRESOURCE_PREFIX.length(), name.lastIndexOf( I18NRESOURCE_SUFFIX ) );
                 }
-                final Locale locale = new Locale( name.substring( 0, 2 ), !name.contains( "_" ) ? "" : name.substring( 3, 5 ) );
-                String defaultLanguage = "";
+                final Locale locale = new Locale( name.substring( 0, 2 ), !name.contains( "_" ) ? StringUtils.EMPTY : name.substring( 3, 5 ) );
+                String defaultLanguage = StringUtils.EMPTY;
                 if( clientLanguage.startsWith( name ) ) {
                     defaultLanguage = LocaleSupport.getLocalizedMessage( pageContext, I18NDEFAULT_LOCALE );
                 }
@@ -237,7 +237,7 @@ public interface TemplateManager extends ModuleManager {
         for( final String[] strings : tzs ) {
             String tzID = strings[ 0 ];
             final TimeZone tz = TimeZone.getTimeZone( tzID );
-            String serverTimeZone = "";
+            String serverTimeZone = StringUtils.EMPTY;
             if( servertz.getRawOffset() == tz.getRawOffset() ) {
                 serverTimeZone = LocaleSupport.getLocalizedMessage( pageContext, I18NSERVER_TIMEZONE );
                 tzID = servertz.getID();

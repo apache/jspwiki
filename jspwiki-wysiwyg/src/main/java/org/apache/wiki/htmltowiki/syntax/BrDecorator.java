@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.htmltowiki.syntax;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -58,7 +59,7 @@ public abstract class BrDecorator {
             // element is a table cell or list item, a newline character would break the markup.
             // We also check that this isn't being done inside a plugin body.
             if ( parentElementName.matches( "p|div" ) && !base.getText().matches( "(?s).*\\[\\{.*}].*" ) ) {
-                out.print( " " + markupBr() + "\n" );
+                out.print( " " + markupBr() + StringUtils.LF );
             } else {
                 out.print( " " + markupBr() );
             }

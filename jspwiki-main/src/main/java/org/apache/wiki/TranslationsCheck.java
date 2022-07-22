@@ -13,6 +13,8 @@
  */
 package org.apache.wiki;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,7 +93,7 @@ public class TranslationsCheck {
         // System.out.println( "Using code base " + Release.VERSTR );
         System.out.println( "Internationalization property file differences between 'default en' and '" + suffix + "' following:\n" );
 
-        final String fileSuffix = ( "en".equals( suffix ) ) ? "" : "_" + suffix;
+        final String fileSuffix = ( "en".equals( suffix ) ) ? StringUtils.EMPTY : "_" + suffix;
         final Map< String, Integer > coreMetrics = checkFile( "/CoreResources.properties", "/CoreResources" + fileSuffix + ".properties" );
         final Map< String, Integer > templateMetrics = checkFile( "/templates/default.properties", "/templates/default" + fileSuffix + ".properties" );
         final Map< String, Integer > pluginMetrics = checkFile( "/plugin/PluginResources.properties", "/plugin/PluginResources" + fileSuffix + ".properties" );
@@ -101,11 +103,11 @@ public class TranslationsCheck {
             final int missing = coreMetrics.get( "missing" ) + templateMetrics.get( "missing" ) + pluginMetrics.get( "missing" );
             final int completed = 100 * ( expected - missing ) / expected;
             final int outdated = coreMetrics.get( "outdated" ) + templateMetrics.get( "outdated" ) + pluginMetrics.get( "outdated" );
-            final String odd = lang %2 == 0 ? " class=\"odd\"" : ""; // 0 first row
+            final String odd = lang %2 == 0 ? " class=\"odd\"" : StringUtils.EMPTY; // 0 first row
 
             return String.format( SITE_I18N_ROW, odd, suffix, suffix, suffix, completed, missing, outdated );
         }
-        return "";
+        return StringUtils.EMPTY;
     }
 
     Map< String, Integer > checkFile( final String en, final String lang ) throws IOException {

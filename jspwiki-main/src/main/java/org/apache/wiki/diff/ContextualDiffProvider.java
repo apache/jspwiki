@@ -19,6 +19,7 @@
 
 package org.apache.wiki.diff;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
@@ -64,8 +65,8 @@ public class ContextualDiffProvider implements DiffProvider {
     public boolean m_emitChangeNextPreviousHyperlinks = true;
 
     //Don't use spans here the deletion and insertions are nested in this...
-    public static String CHANGE_START_HTML = ""; //This could be a image '>' for a start marker
-    public static String CHANGE_END_HTML = ""; //and an image for an end '<' marker
+    public static String CHANGE_START_HTML = StringUtils.EMPTY; //This could be a image '>' for a start marker
+    public static String CHANGE_END_HTML = StringUtils.EMPTY; //and an image for an end '<' marker
     public static String DIFF_START = "<div class=\"diff-wikitext\">";
     public static String DIFF_END = "</div>";
 

@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.ui.admin;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.render.RenderingManager;
@@ -39,7 +40,7 @@ public abstract class WikiFormAdminBean implements AdminBean {
 
     @Override
     public String doGet( final Context context ) {
-        String result = "";
+        String result = StringUtils.EMPTY;
         final String wikiMarkup = getForm( context );
         final RenderingManager mgr = context.getEngine().getManager( RenderingManager.class );
         final WikiDocument doc;

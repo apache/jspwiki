@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.diff;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -45,8 +46,8 @@ public class ContextualDiffProviderTest {
         diff.DELETION_END_HTML = "-";
         diff.DELETION_START_HTML = "-";
 
-        diff.DIFF_END = "";
-        diff.DIFF_START = "";
+        diff.DIFF_END = StringUtils.EMPTY;
+        diff.DIFF_START = StringUtils.EMPTY;
 
         diff.ELIDED_HEAD_INDICATOR_HTML = "...";
         diff.ELIDED_TAIL_INDICATOR_HTML = "...";
@@ -56,13 +57,13 @@ public class ContextualDiffProviderTest {
         diff.INSERTION_END_HTML = "^";
         diff.INSERTION_START_HTML = "^";
 
-        diff.LINE_BREAK_HTML = "";
+        diff.LINE_BREAK_HTML = StringUtils.EMPTY;
         diff.ALTERNATING_SPACE_HTML = "_";
     }
 
     @Test
     public void testNoChanges() throws IOException, WikiException {
-        diffTest( null, "", "", "" );
+        diffTest( null, StringUtils.EMPTY, StringUtils.EMPTY, StringUtils.EMPTY );
         diffTest( null, "A", "A", "A" );
         diffTest( null, "A B", "A B", "A B" );
 

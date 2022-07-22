@@ -35,7 +35,6 @@ import java.util.Map;
 public final class DefaultUserProfile implements UserProfile {
 
     private static final long serialVersionUID = -5600466893735300647L;
-    private static final String EMPTY_STRING = "";
     private static final String WHITESPACE = "\\s";
 
     private final Map< String, Serializable > attributes = new HashMap<>();
@@ -204,7 +203,7 @@ public final class DefaultUserProfile implements UserProfile {
 
         // Compute wiki name
         if ( fullname != null ) {
-            wikiname = fullname.replaceAll( WHITESPACE, EMPTY_STRING );
+            wikiname = fullname.replaceAll( WHITESPACE, StringUtils.EMPTY );
         }
     }
 

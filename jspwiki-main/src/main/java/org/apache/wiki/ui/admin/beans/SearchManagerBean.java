@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -141,7 +142,7 @@ public class SearchManagerBean extends SimpleAdminBean {
         if( val != null ) {
             reload();
             context.getWikiSession().addMessage( "Started reload of all indexed pages..." );
-            return "";
+            return StringUtils.EMPTY;
         }
 
         return doGet( context );

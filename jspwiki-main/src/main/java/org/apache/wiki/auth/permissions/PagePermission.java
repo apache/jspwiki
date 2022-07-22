@@ -141,7 +141,7 @@ public final class PagePermission extends Permission implements Serializable
     /** For serialization purposes. */
     PagePermission()
     {
-        this("");
+        this(StringUtils.EMPTY);
     }
     
     /**
@@ -343,7 +343,7 @@ public final class PagePermission extends Permission implements Serializable
      */
     public String toString()
     {
-        final String wiki = ( m_wiki == null ) ? "" : m_wiki;
+        final String wiki = ( m_wiki == null ) ? StringUtils.EMPTY : m_wiki;
         return "(\"" + this.getClass().getName() + "\",\"" + wiki + WIKI_SEPARATOR + m_page + "\",\"" + getActions() + "\")";
     }
 

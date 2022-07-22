@@ -19,6 +19,7 @@
 
 package org.apache.wiki.diff;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
@@ -102,7 +103,7 @@ public class TraditionalDiffProvider implements DiffProvider {
 
             if( rev == null || rev.size() == 0 ) {
                 // No difference
-                return "";
+                return StringUtils.EMPTY;
             }
 
             final StringBuffer ret = new StringBuffer(rev.size() * 20); // Guessing how big it will become...
@@ -169,7 +170,7 @@ public class TraditionalDiffProvider implements DiffProvider {
             };
             final double[] choiceLimits = { 1, 2 };
 
-            final MessageFormat fmt = new MessageFormat("");
+            final MessageFormat fmt = new MessageFormat(StringUtils.EMPTY);
             fmt.setLocale( Preferences.getLocale(m_context) );
             final ChoiceFormat cfmt = new ChoiceFormat( choiceLimits, choiceString );
             fmt.applyPattern( type );

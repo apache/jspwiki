@@ -19,6 +19,7 @@
 
 package org.apache.wiki.variables;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
@@ -44,7 +45,7 @@ public class DefaultVariableManagerTest {
 
     @Test
     public void testIllegalInsert1() {
-        Assertions.assertThrows( IllegalArgumentException.class, () -> m_variableManager.parseAndGetValue( m_context, "" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> m_variableManager.parseAndGetValue( m_context, StringUtils.EMPTY ) );
     }
 
     @Test

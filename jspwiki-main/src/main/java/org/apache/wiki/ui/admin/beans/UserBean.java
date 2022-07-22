@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.ui.admin.beans;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
@@ -73,12 +74,12 @@ public class UserBean extends SimpleAdminBean {
             } catch( final WikiSecurityException e ) {
                 session.addMessage( "Security problem: " + e );
             }
-            return "";
+            return StringUtils.EMPTY;
         }
 
         if( password != null && password.length() > 0 && !password.equals( password2 ) ) {
             session.addMessage( "Passwords do not match!" );
-            return "";
+            return StringUtils.EMPTY;
         }
 
         final UserProfile p;
@@ -93,7 +94,7 @@ public class UserBean extends SimpleAdminBean {
                 p = mgr.getUserDatabase().findByLoginName( loginid );
             } catch( final NoSuchPrincipalException e ) {
                 session.addMessage( "I could not find user profile " + loginid );
-                return "";
+                return StringUtils.EMPTY;
             }
         }
 
@@ -112,7 +113,7 @@ public class UserBean extends SimpleAdminBean {
 
         session.addMessage("User profile has been updated");
 
-        return "";
+        return StringUtils.EMPTY;
     }
 
     @Override

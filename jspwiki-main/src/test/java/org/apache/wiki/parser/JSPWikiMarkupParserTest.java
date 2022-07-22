@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.parser;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -935,7 +936,7 @@ public class JSPWikiMarkupParserTest {
         final String src = "*Item A\n##Numbered 1\n##Numbered 2\n*Item B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
-        result = TextUtil.replaceString( result, "\n", "" );
+        result = TextUtil.replaceString( result, StringUtils.LF, StringUtils.EMPTY );
         Assertions.assertEquals( "<ul><li>Item A" +
                         "<ol><li>Numbered 1</li>" +
                         "<li>Numbered 2</li>" +
@@ -951,7 +952,7 @@ public class JSPWikiMarkupParserTest {
         final String src = "#Item A\n**Numbered 1\n**Numbered 2\n#Item B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
-        result = TextUtil.replaceString( result, "\n", "" );
+        result = TextUtil.replaceString( result, StringUtils.LF, StringUtils.EMPTY );
         Assertions.assertEquals( "<ol><li>Item A" +
                         "<ul><li>Numbered 1</li>" +
                         "<li>Numbered 2</li>" +
@@ -988,7 +989,7 @@ public class JSPWikiMarkupParserTest {
         final String src = "* bullet A\n** bullet A_1\n*# number A_1\n* bullet B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
-        result = TextUtil.replaceString( result, "\n", "" );
+        result = TextUtil.replaceString( result, StringUtils.LF, StringUtils.EMPTY );
         Assertions.assertEquals( "<ul>" +
                         "<li>bullet A" +
                         "<ul>" +
@@ -1030,7 +1031,7 @@ public class JSPWikiMarkupParserTest {
         final String src = "* bullet A\n** bullet A_1\n## number A_1\n* bullet B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
-        result = TextUtil.replaceString( result, "\n", "" );
+        result = TextUtil.replaceString( result, StringUtils.LF, StringUtils.EMPTY );
         Assertions.assertEquals( "<ul>" +
                         "<li>bullet A" +
                         "<ul>" +
@@ -1070,7 +1071,7 @@ public class JSPWikiMarkupParserTest {
         final String src = "* bullet 1\n## number 2\n** bullet 3\n## number 4\n* bullet 5\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
-        result = TextUtil.replaceString( result, "\n", "" );
+        result = TextUtil.replaceString( result, StringUtils.LF, StringUtils.EMPTY );
         Assertions.assertEquals( "<ul>" +
                         "<li>bullet 1" +
                         "<ol><li>number 2</li></ol>" +
@@ -1107,7 +1108,7 @@ public class JSPWikiMarkupParserTest {
         final String src = "# number 1\n** bullet 2\n## number 3\n** bullet 4\n# number 5\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
-        result = TextUtil.replaceString( result, "\n", "" );
+        result = TextUtil.replaceString( result, StringUtils.LF, StringUtils.EMPTY );
         Assertions.assertEquals( "<ol>" +
                         "<li>number 1" +
                         "<ul><li>bullet 2</li></ul>" +
@@ -1124,7 +1125,7 @@ public class JSPWikiMarkupParserTest {
         final String src = "*Item A\n**Numbered 1\n**Numbered 2\n*Item B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
-        result = TextUtil.replaceString( result, "\n", "" );
+        result = TextUtil.replaceString( result, StringUtils.LF, StringUtils.EMPTY );
         Assertions.assertEquals( "<ul><li>Item A" +
                         "<ul><li>Numbered 1</li>" +
                         "<li>Numbered 2</li>" +
@@ -1139,7 +1140,7 @@ public class JSPWikiMarkupParserTest {
         final String src = "*Item A\n**Numbered 1\n**Numbered 2\n***Numbered3\n*Item B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
-        result = TextUtil.replaceString( result, "\n", "" );
+        result = TextUtil.replaceString( result, StringUtils.LF, StringUtils.EMPTY );
         Assertions.assertEquals( "<ul><li>Item A" +
                         "<ul><li>Numbered 1</li>" +
                         "<li>Numbered 2" +
@@ -1320,7 +1321,7 @@ public class JSPWikiMarkupParserTest {
     @Test
     public void testVariableInsert() throws Exception {
         final String src = "[{$pagename}]";
-        Assertions.assertEquals( PAGE_NAME + "", translate( src ) );
+        Assertions.assertEquals( PAGE_NAME + StringUtils.EMPTY, translate( src ) );
     }
 
     @Test
@@ -1861,26 +1862,26 @@ public class JSPWikiMarkupParserTest {
     // This is a random find: the following page text caused an eternal loop in V2.0.x.
     private static final String brokenPageText =
             "Please ''check [RecentChanges].\n" +
-                    "\n" +
+                    StringUtils.LF +
                     "Testing. fewfwefe\n" +
-                    "\n" +
+                    StringUtils.LF +
                     "CHeck [testpage]\n" +
-                    "\n" +
+                    StringUtils.LF +
                     "More testing.\n" +
                     "dsadsadsa''\n" +
                     "Is this {{truetype}} or not?\n" +
                     "What about {{{This}}}?\n" +
                     "How about {{this?\n" +
-                    "\n" +
+                    StringUtils.LF +
                     "{{{\n" +
                     "{{text}}\n" +
                     "}}}\n" +
                     "goo\n" +
-                    "\n" +
+                    StringUtils.LF +
                     "<b>Not bold</b>\n" +
-                    "\n" +
+                    StringUtils.LF +
                     "motto\n" +
-                    "\n" +
+                    StringUtils.LF +
                     "* This is a list which we\n" +
                     "shall continue on a other line.\n" +
                     "* There is a list item here.\n" +
@@ -1890,17 +1891,17 @@ public class JSPWikiMarkupParserTest {
                     "a third line as well.\n" +
                     "And a fourth line.\n" +
                     "* Third item.\n" +
-                    "\n" +
+                    StringUtils.LF +
                     "Foobar.\n" +
-                    "\n" +
+                    StringUtils.LF +
                     "----\n" +
-                    "\n" +
+                    StringUtils.LF +
                     "!!!Really big heading\n" +
                     "Text.\n" +
                     "!! Just a normal heading [with a hyperlink|Main]\n" +
                     "More text.\n" +
                     "!Just a small heading.\n" +
-                    "\n" +
+                    StringUtils.LF +
                     "This should be __bold__ text.\n" +
                     "\n" +
                     "__more bold text continuing\n" +

@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.ui;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.util.TextUtil;
 
@@ -86,7 +87,7 @@ public abstract class AbstractCommand implements Command {
     //  This is just *so* much faster than doing String.replaceAll().  It would, in fact, be worth to cache this value.
     //
     private String removeSubstitutions( final String jsp ) {
-        //return jsp.replaceAll( "\u0025[a-z|A-Z]", "" );
+        //return jsp.replaceAll( "\u0025[a-z|A-Z]", StringUtils.EMPTY );
         final StringBuilder newjsp = new StringBuilder( jsp.length() );
         for( int i = 0; i < jsp.length(); i++ ) {
             final char c = jsp.charAt(i);
@@ -170,7 +171,7 @@ public abstract class AbstractCommand implements Command {
                "[context=" + m_requestContext + "," +
                "urlPattern=" + m_urlPattern + "," +
                "jsp=" +  m_jsp +
-               ( m_target == null ? "" : ",target=" + m_target + m_target ) +
+               ( m_target == null ? StringUtils.EMPTY : ",target=" + m_target + m_target ) +
                "]";
     }
 

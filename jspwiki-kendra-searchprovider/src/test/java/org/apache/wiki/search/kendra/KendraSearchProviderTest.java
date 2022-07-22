@@ -142,7 +142,7 @@ public class KendraSearchProviderTest {
     }
 
     @Test
-    @WithKendra( indexName = "JSPWikiIndex", dataSourceName = "" )
+    @WithKendra( indexName = "JSPWikiIndex", dataSourceName = org.apache.commons.lang3.StringUtils.EMPTY )
     public void testInvalidDataSourceName() {
         // IndexName is invalid...
         Assertions.assertThrows( IllegalArgumentException.class, () -> searchProvider.initializeIndexAndDataSource() );

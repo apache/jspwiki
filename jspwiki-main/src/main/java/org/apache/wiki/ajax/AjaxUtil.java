@@ -43,7 +43,7 @@ public class AjaxUtil extends HttpServlet {
 		if( input != null ) {
 			return gson.toJson( input );
 		}
-		return "";
+		return StringUtils.EMPTY;
 	}
 	
 	/**

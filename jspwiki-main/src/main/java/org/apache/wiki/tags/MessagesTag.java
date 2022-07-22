@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.tags;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.util.TextUtil;
 
@@ -42,7 +43,7 @@ public class MessagesTag extends WikiTagBase {
     private static final long   serialVersionUID = 0L;
 
     private String              m_action;
-    private String              m_prefix         = "";
+    private String              m_prefix         = StringUtils.EMPTY;
     private String              m_topic;
     private String              m_div            = "information";
 
@@ -52,7 +53,7 @@ public class MessagesTag extends WikiTagBase {
     public void initTag() {
         super.initTag();
         m_action = m_topic = null;
-        m_prefix = "";
+        m_prefix = StringUtils.EMPTY;
         m_div = "information";
     }
 

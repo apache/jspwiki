@@ -19,6 +19,7 @@
 package org.apache.wiki.auth;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSessionTest;
 import org.apache.wiki.api.core.Attachment;
@@ -180,8 +181,8 @@ public class AuthorizationManagerTest
         final Session session = WikiSessionTest.assertedSession( m_engine, Users.ALICE, new Principal[] { it, engineering, admin } );
 
         // Create two groups: Alice should be part of group Bar, but not Foo
-        final Group fooGroup = m_groupMgr.parseGroup( "Foo", "", true );
-        final Group barGroup = m_groupMgr.parseGroup( "Bar", "", true );
+        final Group fooGroup = m_groupMgr.parseGroup( "Foo", StringUtils.EMPTY, true );
+        final Group barGroup = m_groupMgr.parseGroup( "Bar", StringUtils.EMPTY, true );
         barGroup.add( alice );
         m_groupMgr.setGroup( m_session, fooGroup );
         m_groupMgr.setGroup( m_session, barGroup );
@@ -225,8 +226,8 @@ public class AuthorizationManagerTest
         final Session session = WikiSessionTest.containerAuthenticatedSession( m_engine, Users.ALICE, new Principal[] { it, engineering, admin } );
 
         // Create two groups: Alice should be part of group Bar, but not Foo
-        final Group fooGroup = m_groupMgr.parseGroup( "Foo", "", true );
-        final Group barGroup = m_groupMgr.parseGroup( "Bar", "", true );
+        final Group fooGroup = m_groupMgr.parseGroup( "Foo", StringUtils.EMPTY, true );
+        final Group barGroup = m_groupMgr.parseGroup( "Bar", StringUtils.EMPTY, true );
         barGroup.add( alice );
         m_groupMgr.setGroup( m_session, fooGroup );
         m_groupMgr.setGroup( m_session, barGroup );
@@ -490,7 +491,7 @@ public class AuthorizationManagerTest
     @Test
     public void testResolveGroups() throws WikiException
     {
-        final Group group1 = m_groupMgr.parseGroup( "SampleGroup", "", true );
+        final Group group1 = m_groupMgr.parseGroup( "SampleGroup", StringUtils.EMPTY, true );
         m_groupMgr.setGroup( m_session, group1 );
 
         Assertions.assertEquals( group1.getPrincipal(), m_auth.resolvePrincipal( "SampleGroup" ) );
@@ -499,7 +500,7 @@ public class AuthorizationManagerTest
         // We shouldn't be able to spoof a built-in role
         try
         {
-            final Group group2 = m_groupMgr.parseGroup( "Authenticated", "", true );
+            final Group group2 = m_groupMgr.parseGroup( "Authenticated", StringUtils.EMPTY, true );
             Assertions.assertNotSame( group2.getPrincipal(), m_auth.resolvePrincipal( "Authenticated" ) );
         }
         catch ( final WikiSecurityException e )
@@ -539,7 +540,7 @@ public class AuthorizationManagerTest
 
 
         // A wiki group should resolve to itself
-        final Group group1 = m_groupMgr.parseGroup( "SampleGroup", "", true );
+        final Group group1 = m_groupMgr.parseGroup( "SampleGroup", StringUtils.EMPTY, true );
         m_groupMgr.setGroup( m_session, group1 );
         Assertions.assertEquals( group1.getPrincipal(), m_auth.resolvePrincipal( "SampleGroup" ) );
         m_groupMgr.removeGroup( "SampleGroup" );

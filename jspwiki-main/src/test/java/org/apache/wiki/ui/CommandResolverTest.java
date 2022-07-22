@@ -23,6 +23,7 @@
 package org.apache.wiki.ui;
 
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.ContextEnum;
@@ -81,7 +82,7 @@ public class CommandResolverTest {
 
     @Test
     public void testFindWikiActionNoParams() {
-        MockHttpServletRequest request = m_engine.newHttpRequest( "" );
+        MockHttpServletRequest request = m_engine.newHttpRequest( StringUtils.EMPTY );
 
         // Passing an EDIT request with no explicit page params means the EDIT action
         Command a = resolver.findCommand( request, ContextEnum.PAGE_EDIT.getRequestContext() );
@@ -101,7 +102,7 @@ public class CommandResolverTest {
         Assertions.assertEquals( GroupCommand.VIEW_GROUP, a );
         Assertions.assertNull( a.getTarget() );
 
-        Assertions.assertThrows( IllegalArgumentException.class, () -> resolver.findCommand( m_engine.newHttpRequest( "" ), "nonExistentContext" ) );
+        Assertions.assertThrows( IllegalArgumentException.class, () -> resolver.findCommand( m_engine.newHttpRequest( StringUtils.EMPTY ), "nonExistentContext" ) );
 
         // Request for "UserPreference.jsp" should resolve to PREFS action
         request = m_engine.newHttpRequest( "/UserPreferences.jsp" );

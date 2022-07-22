@@ -13,6 +13,7 @@
  */
 package org.apache.wiki.references;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.spi.Wiki;
@@ -329,7 +330,7 @@ public class ReferenceManagerTest  {
                 for( final String aRef : refs ) {
                     buf.append( aRef ).append( " " );
                 }
-                buf.append( "\n" );
+                buf.append( StringUtils.LF );
             }
 
 
@@ -343,14 +344,14 @@ public class ReferenceManagerTest  {
                     for( final String aRef : refs ) {
                         buf.append( aRef ).append( " " );
                     }
-                    buf.append( "\n" );
+                    buf.append( StringUtils.LF );
                 } else {
                     buf.append("(no references)\n");
                 }
             }
             buf.append( "================================================================\n" );
         } catch( final Exception e ) {
-            buf.append("Problem in dump(): " ).append( e ).append( "\n" );
+            buf.append("Problem in dump(): " ).append( e ).append( StringUtils.LF );
         }
 
         return( buf.toString() );
