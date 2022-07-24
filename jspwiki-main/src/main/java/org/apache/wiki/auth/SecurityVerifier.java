@@ -36,6 +36,7 @@ import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.auth.user.DummyUserDatabase;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.util.TextUtil;
 import org.freshcookies.security.policy.PolicyReader;
 
 import javax.security.auth.Subject;
@@ -319,12 +320,12 @@ public final class SecurityVerifier {
                 s.append( permission.getActions() );
                 s.append( "&quot;" );
             }
-            s.append( " " );
+            s.append( TextUtil.SPACE );
             s.append( principal.getClass().getName() );
             s.append( " &quot;" );
             s.append( principal.getName() );
             s.append( "&quot;" );
-            s.append( "\"" );
+            s.append( TextUtil.BACKSLASH );
             s.append( allowed ? BG_GREEN + ">" : BG_RED + ">" );
             s.append( "&nbsp;</td>\n" );
         }
@@ -383,7 +384,7 @@ public final class SecurityVerifier {
             s.append( allowsAnonymous ? "ALLOW: " : "DENY: " );
             s.append( jsp );
             s.append( " Anonymous" );
-            s.append( "\"" );
+            s.append( TextUtil.BACKSLASH );
             s.append( allowsAnonymous ? BG_GREEN + ">" : BG_RED + ">" );
             s.append( "&nbsp;</td>\n" );
             for( final Principal role : roles )
@@ -392,12 +393,12 @@ public final class SecurityVerifier {
                 s.append( "    <td title=\"" );
                 s.append( allowed ? "ALLOW: " : "DENY: " );
                 s.append( jsp );
-                s.append( " " );
+                s.append( TextUtil.SPACE );
                 s.append( role.getClass().getName() );
                 s.append( " &quot;" );
                 s.append( role.getName() );
                 s.append( "&quot;" );
-                s.append( "\"" );
+                s.append( TextUtil.BACKSLASH );
                 s.append( allowed ? BG_GREEN + ">" : BG_RED + ">" );
                 s.append( "&nbsp;</td>\n" );
             }
@@ -508,7 +509,7 @@ public final class SecurityVerifier {
         final Group group;
         try {
             // Create dummy test group
-            group = mgr.parseGroup( name, "", true );
+            group = mgr.parseGroup( name, TextUtil.EMPTY, true );
             final Principal user = new WikiPrincipal( "TestUser" );
             group.add( user );
             db.save( group, new WikiPrincipal( "SecurityVerifier" ) );

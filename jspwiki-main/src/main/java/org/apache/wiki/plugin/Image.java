@@ -136,7 +136,7 @@ public class Image implements Plugin {
         result.append( "<table border=\"0\" class=\"imageplugin\"" );
 
         if( title != null ) {
-            result.append( " title=\"" ).append( title ).append( "\"" );
+            result.append( " title=\"" ).append( title ).append( TextUtil.BACKSLASH );
         }
 
         if( align != null ) {
@@ -157,7 +157,7 @@ public class Image implements Plugin {
         result.append( "<tr><td" );
 
         if( cssclass != null ) {
-            result.append( " class=\"" ).append( cssclass ).append( "\"" );
+            result.append( " class=\"" ).append( cssclass ).append( TextUtil.BACKSLASH );
         }
 
         if( style != null ) {
@@ -166,32 +166,32 @@ public class Image implements Plugin {
             // Make sure that we add a ";" to the end of the style string
             if( result.charAt( result.length()-1 ) != ';' ) result.append(";");
 
-            result.append("\"");
+            result.append(TextUtil.BACKSLASH);
         }
 
         result.append( ">" );
 
         if( link != null ) {
-            result.append( "<a href=\"" ).append( link ).append( "\"" );
+            result.append( "<a href=\"" ).append( link ).append( TextUtil.BACKSLASH );
             if( target != null ) {
-                result.append( " target=\"" ).append( target ).append( "\"" );
+                result.append( " target=\"" ).append( target ).append( TextUtil.BACKSLASH );
             }
             result.append(">");
         }
 
-        result.append( "<img src=\"" ).append( src ).append( "\"" );
+        result.append( "<img src=\"" ).append( src ).append( TextUtil.BACKSLASH );
 
         if( ht != null ) {
-            result.append( " height=\"" ).append( ht ).append( "\"" );
+            result.append( " height=\"" ).append( ht ).append( TextUtil.BACKSLASH );
         }
         if( wt != null ) {
-            result.append( " width=\"" ).append( wt ).append( "\"" );
+            result.append( " width=\"" ).append( wt ).append( TextUtil.BACKSLASH );
         }
         if( alt != null ) {
-            result.append( " alt=\"" ).append( alt ).append( "\"" );
+            result.append( " alt=\"" ).append( alt ).append( TextUtil.BACKSLASH );
         }
         if( border != null ) {
-            result.append( " border=\"" ).append( border ).append( "\"" );
+            result.append( " border=\"" ).append( border ).append( TextUtil.BACKSLASH );
         }
         // if( map != null )    result.append(" map=\""+map+"\"");
 

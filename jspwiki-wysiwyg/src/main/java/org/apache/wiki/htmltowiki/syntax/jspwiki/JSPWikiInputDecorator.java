@@ -20,6 +20,7 @@ package org.apache.wiki.htmltowiki.syntax.jspwiki;
 
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.InputDecorator;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 
@@ -36,7 +37,7 @@ class JSPWikiInputDecorator extends InputDecorator {
     /** {@inheritDoc} */
     @Override
     protected String markupForInputAttribute( final String attr, final String value ) {
-        return  " " + attr + "='" + value + "'";
+        return TextUtil.SPACE + attr + "='" + value + "'";
     }
 
     /** {@inheritDoc} */

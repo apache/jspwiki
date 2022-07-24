@@ -19,6 +19,7 @@
 package org.apache.wiki.htmltowiki.syntax;
 
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
+import org.apache.wiki.util.TextUtil;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
@@ -66,14 +67,14 @@ public abstract class PlainTextMonospaceDecorator {
      * @param e XHTML element being translated.
      */
     public void decorate( final Element e ) throws JDOMException {
-        out.print( "\n" + markupMonospaceOpen() ); // start wiki "code blocks" on its own line
+        out.print( TextUtil.LF + markupMonospaceOpen() ); // start wiki "code blocks" on its own line
 
-        preStack.push( "\n" + markupMonospaceOpen() );
+        preStack.push( TextUtil.LF + markupMonospaceOpen() );
         chain.translate( e );
         preStack.pop();
 
         // print a newline after the closing braces to avoid breaking any subsequent wiki markup that follows.
-        out.print( markupMonospaceClose() + "\n" );
+        out.print( markupMonospaceClose() + TextUtil.LF );
     }
 
     /**

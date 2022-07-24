@@ -27,6 +27,7 @@ import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -92,7 +93,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
             diff = m_provider.makeDiffHtml( context, firstWikiText, secondWikiText );
 
             if( diff == null ) {
-                diff = "";
+                diff = TextUtil.EMPTY;
             }
         } catch( final Exception e ) {
             diff = "Failed to create a diff, check the logs.";
@@ -120,7 +121,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
 
         // Kludge to make diffs for new pages to work this way.
         if( version1 == PageProvider.LATEST_VERSION ) {
-            page1 = "";
+            page1 = TextUtil.EMPTY;
         }
 
         return makeDiff( context, page1, page2 );

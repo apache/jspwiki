@@ -339,7 +339,7 @@ public class DefaultPageRenamer implements PageRenamer {
         if( realLink.equals( from ) || original.equals( from ) || oldStyleRealLink.equals( from ) ) {
             //
             //  if the original contains blanks, then we should introduce a link, for example:  [My Page]  =>  [My Page|My Renamed Page]
-            final int blank = realLink.indexOf( " ");
+            final int blank = realLink.indexOf( TextUtil.SPACE);
             
             if( blank != -1 ) {
                 return original + "|" + newlink;

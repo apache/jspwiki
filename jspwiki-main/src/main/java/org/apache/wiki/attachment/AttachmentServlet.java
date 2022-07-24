@@ -410,7 +410,7 @@ public class AttachmentServlet extends HttpServlet {
                     case "page":
                         // FIXME: Kludge alert.  We must end up with the parent page name, if this is an upload of a new revision
                         wikipage = item.getString( StandardCharsets.UTF_8.name() );
-                        final int x = wikipage.indexOf( "/" );
+                        final int x = wikipage.indexOf( TextUtil.SLASH );
                         if( x != -1 ) {
                             wikipage = wikipage.substring( 0, x );
                         }

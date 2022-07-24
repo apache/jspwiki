@@ -27,6 +27,7 @@ import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.ui.admin.AdminBean;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
+import org.apache.wiki.util.TextUtil;
 
 import javax.management.NotCompliantMBeanException;
 import javax.servlet.http.HttpServletRequest;
@@ -73,12 +74,12 @@ public class UserBean extends SimpleAdminBean {
             } catch( final WikiSecurityException e ) {
                 session.addMessage( "Security problem: " + e );
             }
-            return "";
+            return TextUtil.EMPTY;
         }
 
         if( password != null && password.length() > 0 && !password.equals( password2 ) ) {
             session.addMessage( "Passwords do not match!" );
-            return "";
+            return TextUtil.EMPTY;
         }
 
         final UserProfile p;
@@ -93,7 +94,7 @@ public class UserBean extends SimpleAdminBean {
                 p = mgr.getUserDatabase().findByLoginName( loginid );
             } catch( final NoSuchPrincipalException e ) {
                 session.addMessage( "I could not find user profile " + loginid );
-                return "";
+                return TextUtil.EMPTY;
             }
         }
 
@@ -112,7 +113,7 @@ public class UserBean extends SimpleAdminBean {
 
         session.addMessage("User profile has been updated");
 
-        return "";
+        return TextUtil.EMPTY;
     }
 
     @Override

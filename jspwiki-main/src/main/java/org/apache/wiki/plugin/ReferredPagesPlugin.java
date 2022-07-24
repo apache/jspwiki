@@ -260,7 +260,7 @@ public class ReferredPagesPlugin implements Plugin {
                     }
 
                     //See https://www.w3.org/wiki/HTML_lists  for proper nesting of UL and LI
-                    m_result.append( "<li> " ).append( TextUtil.replaceEntities( link ) ).append( "\n" );
+                    m_result.append( "<li> " ).append( TextUtil.replaceEntities( link ) ).append( TextUtil.LF );
                     getReferredPages( context, link, depth );  // added recursive call - on general request
                     m_result.append( "\n</li>\n" );
                 }

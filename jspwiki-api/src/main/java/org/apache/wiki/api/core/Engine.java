@@ -263,7 +263,7 @@ public interface Engine {
         if( getServletContext() != null ) {
             final File tmpFile;
             try {
-                tmpFile = File.createTempFile( "temp." + name, "" );
+                tmpFile = File.createTempFile( "temp." + name, TextUtil.EMPTY );
             } catch( final IOException e ) {
                 LogManager.getLogger( Engine.class ).error( "unable to create a temp file to load onto the policy", e );
                 return null;
@@ -271,7 +271,7 @@ public interface Engine {
             tmpFile.deleteOnExit();
             LogManager.getLogger( Engine.class ).info( "looking for /" + name + " on classpath" );
             //  create a tmp file of the policy loaded as an InputStream and return the URL to it
-            try( final InputStream is = Engine.class.getResourceAsStream( "/" + name );
+            try( final InputStream is = Engine.class.getResourceAsStream( TextUtil.SLASH + name );
                 final OutputStream os = Files.newOutputStream( tmpFile.toPath() ) ) {
                 if( is == null ) {
                     throw new FileNotFoundException( name + " not found" );

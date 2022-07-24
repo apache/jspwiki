@@ -23,6 +23,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.spi.Wiki;
+import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -155,7 +156,7 @@ public class ReferringPagesPluginTest  {
         Assertions.assertEquals("6",result);
 
         result = manager.execute(context, "{ReferringPagesPlugin,exclude='*7',show=count,showLastModified=true}");
-        final String numberResult=result.substring(0,result.indexOf(" "));
+        final String numberResult=result.substring(0,result.indexOf(TextUtil.SPACE));
         Assertions.assertEquals("6",numberResult);
 
         final String dateString = result.substring(result.indexOf("(")+1,result.indexOf(")"));

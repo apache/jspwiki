@@ -40,6 +40,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 
 import java.security.Principal;
 import java.util.HashMap;
@@ -207,7 +208,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
         // Normalize the member line
         if( InputValidator.isBlank( memberLine ) ) {
-            memberLine = "";
+            memberLine = TextUtil.EMPTY;
         }
         memberLine = memberLine.trim();
 
@@ -356,7 +357,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
     protected String[] extractMembers( final String memberLine ) {
         final Set< String > members = new HashSet<>();
         if( memberLine != null ) {
-            final StringTokenizer tok = new StringTokenizer( memberLine, "\n" );
+            final StringTokenizer tok = new StringTokenizer( memberLine, TextUtil.LF );
             while( tok.hasMoreTokens() ) {
                 final String uid = tok.nextToken().trim();
                 if( !uid.isEmpty() ) {

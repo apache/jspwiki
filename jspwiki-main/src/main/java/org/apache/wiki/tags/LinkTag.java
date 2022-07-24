@@ -182,7 +182,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
         if( m_templatefile != null ) {
             final String params = addParamsForRecipient( null, m_containedParams );
             final String template = engine.getTemplateDir();
-            url = engine.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "templates/"+template+"/"+m_templatefile, params );
+            url = engine.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "templates/"+template+TextUtil.SLASH+m_templatefile, params );
         } else if( m_jsp != null ) {
             final String params = addParamsForRecipient( null, m_containedParams );
             //url = m_wikiContext.getURL( ContextEnum.PAGE_NONE.getRequestContext(), m_jsp, params );
@@ -199,7 +199,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                 if( url != null ) {
                     url = TextUtil.replaceString( url, "%s", wikiPage );
                 }
-            } else if( m_ref.startsWith("#") ) {
+            } else if( m_ref.startsWith(TextUtil.COMMENT) ) {
                 // Local link
             } else if( TextUtil.isNumber(m_ref) ) {
                 // Reference
@@ -220,10 +220,10 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
                     reallink = MarkupParser.cleanLink( reallink );
 
                     String matchedLink;
-                    String sectref = "";
+                    String sectref = TextUtil.EMPTY;
                     if( ( matchedLink = engine.getFinalPageName( reallink ) ) != null ) {
                         sectref = "section-" + engine.encodeName( matchedLink ) + "-" + namedSection;
-                        sectref = "#" + sectref.replace( '%', '_' );
+                        sectref = TextUtil.COMMENT + sectref.replace( '%', '_' );
                     } else {
                         matchedLink = reallink;
                     }

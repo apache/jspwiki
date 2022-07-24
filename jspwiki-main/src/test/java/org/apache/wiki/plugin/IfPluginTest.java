@@ -32,6 +32,7 @@ import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.Users;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -87,7 +88,7 @@ public class IfPluginTest {
     public void testIfPluginUserNotAllowed() throws WikiException
     {
         final String src = "[{IfPlugin user='!Janne Jalkanen'\n\nContent NOT visible for Janne Jalkanen}]";
-        final String expected = "\n";
+        final String expected = TextUtil.LF;
 
         testEngine.saveText( "Test", src );
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
@@ -123,7 +124,7 @@ public class IfPluginTest {
     @Test
     public void testIfPluginIPNotAllowed() throws WikiException {
         final String src = "[{IfPlugin ip='!127.0.0.1'\n\nContent NOT visible for 127.0.0.1}]";
-        final String expected = "\n";
+        final String expected = TextUtil.LF;
 
         testEngine.saveText( "Test", src );
         final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );

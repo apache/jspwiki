@@ -21,6 +21,7 @@ package org.apache.wiki.htmltowiki.syntax;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
+import org.apache.wiki.util.TextUtil;
 import org.jdom2.Element;
 
 import java.io.PrintWriter;
@@ -68,7 +69,7 @@ public class MarkupHelper {
         final String cssClass = a.getAttributeValue( "class" );
         if( StringUtils.isNotEmpty( cssClass )
                 && !cssClass.matches( "wikipage|createpage|external|interwiki|attachment" ) ) {
-            attributesMap.put( "class", cssClass.replace( "'", "\"" ) );
+            attributesMap.put( "class", cssClass.replace( "'", TextUtil.BACKSLASH ) );
         }
         addAttributeIfPresent( a, attributesMap, "accesskey" );
         addAttributeIfPresent( a, attributesMap, "charset" );
@@ -89,7 +90,7 @@ public class MarkupHelper {
     static void addAttributeIfPresent( final Element a, final Map< String, String > attributesMap, final String attribute ) {
         final String attr = a.getAttributeValue( attribute );
         if( StringUtils.isNotEmpty( attr ) ) {
-            attributesMap.put( attribute, attr.replace( "'", "\"" ) );
+            attributesMap.put( attribute, attr.replace( "'", TextUtil.BACKSLASH ) );
         }
     }
 
@@ -102,7 +103,7 @@ public class MarkupHelper {
             final String attributeName = entry.getKey();
             final String attributeValue = entry.getValue();
 
-            sb.append( " " ).append( attributeName ).append( "='" ).append( attributeValue ).append( "'" );
+            sb.append( TextUtil.SPACE ).append( attributeName ).append( "='" ).append( attributeValue ).append( "'" );
         }
 
         return sb.toString().trim();

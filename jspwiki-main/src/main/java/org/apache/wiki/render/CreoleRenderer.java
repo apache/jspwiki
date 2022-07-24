@@ -21,6 +21,7 @@ package org.apache.wiki.render;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.parser.PluginContent;
 import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.util.TextUtil;
 import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Text;
@@ -48,9 +49,7 @@ public class CreoleRenderer extends WikiRenderer {
     private static final String PLUGIN_IMAGE = "Image";
     private static final String PARAM_SRC = "src";
     private static final String HREF_ATTRIBUTE = "href";
-    private static final String ONE_SPACE = " ";
     private static final String EMPTY_STRING = "";
-    private static final String LINEBREAK = "\n";
     private static final String LI = "li";
     private static final String UL = "ul";
     private static final String OL = "ol";
@@ -106,7 +105,7 @@ public class CreoleRenderer extends WikiRenderer {
             m_listChar = '#';
         } else if( LI.equals(ce.getName()) ) {
             for(int i = 0; i < m_listCount; i++ ) sb.append( m_listChar );
-            sb.append( ONE_SPACE );
+            sb.append(TextUtil.SPACE );
         } else if( A.equals( ce.getName() ) ) {
             final String href = ce.getAttributeValue( HREF_ATTRIBUTE );
             final String text = ce.getText();
@@ -135,7 +134,7 @@ public class CreoleRenderer extends WikiRenderer {
                     sb.append( IMG_START ).append( pc.getParameter( PARAM_SRC ) ).append( IMG_END );
                 } else {
                     m_plugins.add(pc);
-                    sb.append( PLUGIN_START ).append( pc.getPluginName() ).append( ONE_SPACE ).append( m_plugins.size() ).append( PLUGIN_END );
+                    sb.append( PLUGIN_START ).append( pc.getPluginName() ).append( TextUtil.SPACE ).append( m_plugins.size() ).append( PLUGIN_END );
                 }
             } else if( c instanceof Text ) {
                 sb.append( ( ( Text )c ).getText() );
@@ -147,7 +146,7 @@ public class CreoleRenderer extends WikiRenderer {
         if( UL.equals( ce.getName() ) || OL.equals( ce.getName() ) ) {
             m_listCount--;
         } else if( P.equals( ce.getName() ) ) {
-            sb.append( LINEBREAK );
+            sb.append( TextUtil.LF );
         }
 
         sb.append(endEl);

@@ -67,7 +67,7 @@ public class JSPWikiLinkAttributeProvider implements AttributeProvider {
                 linkState = new ExternalLinkAttributeProviderState( wikiContext, link.hasRef(), isImageInlining, inlineImagePatterns );
             } else if( linkOperations.isInterWikiLink( link.getWikiLink() ) ) {
                 linkState = new InterWikiLinkAttributeProviderState( wikiContext, link.hasRef(), isImageInlining, inlineImagePatterns );
-            } else if( StringUtils.startsWith( link.getWikiLink(), "#" ) ) {
+            } else if( StringUtils.startsWith( link.getWikiLink(), TextUtil.COMMENT ) ) {
                 linkState = new LocalFootnoteLinkAttributeProviderState( wikiContext );
             } else if( TextUtil.isNumber( link.getWikiLink() ) ) {
                 linkState = new LocalFootnoteRefLinkAttributeProviderState( wikiContext );

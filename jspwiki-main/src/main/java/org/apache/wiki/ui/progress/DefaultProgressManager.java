@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -140,7 +141,7 @@ public class DefaultProgressManager implements ProgressManager {
         	}
         	final String progressId = params.get(0);
         	LOG.debug( "progressId=" + progressId );
-        	String progressString = "";
+        	String progressString = TextUtil.EMPTY;
         	try {
         		progressString = Integer.toString( getProgress( progressId ) );
         	} catch( final IllegalArgumentException e ) { // ignore

@@ -25,6 +25,7 @@ import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.api.spi.Wiki;
+import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.util.StringUtils;
@@ -142,7 +143,7 @@ public class KendraSearchProviderTest {
     }
 
     @Test
-    @WithKendra( indexName = "JSPWikiIndex", dataSourceName = "" )
+    @WithKendra( indexName = "JSPWikiIndex", dataSourceName = TextUtil.EMPTY )
     public void testInvalidDataSourceName() {
         // IndexName is invalid...
         Assertions.assertThrows( IllegalArgumentException.class, () -> searchProvider.initializeIndexAndDataSource() );

@@ -22,6 +22,7 @@ import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
@@ -46,8 +47,8 @@ public class EditLinkTag extends WikiLinkTag {
     private static final long serialVersionUID = 0L;
     
     public String m_version;
-    public String m_title = "";
-    public String m_accesskey = "";
+    public String m_title = TextUtil.EMPTY;
+    public String m_accesskey = TextUtil.EMPTY;
     
     @Override
     public void initTag() {
@@ -74,7 +75,7 @@ public class EditLinkTag extends WikiLinkTag {
     public final int doWikiStartTag() throws IOException {
         final Engine engine   = m_wikiContext.getEngine();
         Page page = null;
-        String versionString = "";
+        String versionString = TextUtil.EMPTY;
         final String pageName;
         
         //  Determine the page and the link.

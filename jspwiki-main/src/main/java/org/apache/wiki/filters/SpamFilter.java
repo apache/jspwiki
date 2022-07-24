@@ -285,7 +285,7 @@ public class SpamFilter extends BasePageFilter {
 
     private static String log( final Context ctx, final int type, final String source, String message ) {
         message = TextUtil.replaceString( message, "\r\n", "\\r\\n" );
-        message = TextUtil.replaceString( message, "\"", "\\\"" );
+        message = TextUtil.replaceString( message, TextUtil.BACKSLASH, "\\\"" );
 
         final String uid = getUniqueID();
         final String page   = ctx.getPage().getName();
@@ -300,7 +300,7 @@ public class SpamFilter extends BasePageFilter {
                 break;
             default: throw new InternalWikiException( "Illegal type " + type );
         }
-        C_SPAMLOG.info( reason + " " + source + " " + uid + " " + addr + " \"" + page + "\" " + message );
+        C_SPAMLOG.info( reason + TextUtil.SPACE + source + TextUtil.SPACE + uid + TextUtil.SPACE + addr + " \"" + page + "\" " + message );
 
         return uid;
     }
@@ -408,7 +408,7 @@ public class SpamFilter extends BasePageFilter {
                 while( (line = in.readLine() ) != null ) {
                     line = line.trim();
                     if( line.isEmpty() ) continue; // Empty line
-                    if( line.startsWith("#") ) continue; // It's a comment
+                    if( line.startsWith(TextUtil.COMMENT) ) continue; // It's a comment
 
                     int ws = line.indexOf( ' ' );
                     if( ws == -1 ) ws = line.indexOf( '\t' );

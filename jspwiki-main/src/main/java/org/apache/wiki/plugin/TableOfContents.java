@@ -127,13 +127,13 @@ public class TableOfContents implements Plugin, HeadingListener {
             switch( hd.m_level )
             {
             case Heading.HEADING_SMALL:
-                m_buf.append( m_prefix ).append( m_level1Index ).append( "." ).append( m_level2Index ).append( "." ).append( m_level3Index ).append( " " );
+                m_buf.append( m_prefix ).append( m_level1Index ).append( "." ).append( m_level2Index ).append( "." ).append( m_level3Index ).append( TextUtil.SPACE );
                 break;
             case Heading.HEADING_MEDIUM:
-                m_buf.append( m_prefix ).append( m_level1Index ).append( "." ).append( m_level2Index ).append( " " );
+                m_buf.append( m_prefix ).append( m_level1Index ).append( "." ).append( m_level2Index ).append( TextUtil.SPACE );
                 break;
             case Heading.HEADING_LARGE:
-                m_buf.append( m_prefix ).append( m_level1Index ).append( " " );
+                m_buf.append( m_prefix ).append( m_level1Index ).append( TextUtil.SPACE );
                 break;
             default:
                 throw new InternalWikiException("Unknown depth in toc! (Please submit a bug report.)");

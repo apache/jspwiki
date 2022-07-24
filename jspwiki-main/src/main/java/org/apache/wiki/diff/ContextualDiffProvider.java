@@ -64,8 +64,8 @@ public class ContextualDiffProvider implements DiffProvider {
     public boolean m_emitChangeNextPreviousHyperlinks = true;
 
     //Don't use spans here the deletion and insertions are nested in this...
-    public static String CHANGE_START_HTML = ""; //This could be a image '>' for a start marker
-    public static String CHANGE_END_HTML = ""; //and an image for an end '<' marker
+    public static String CHANGE_START_HTML = TextUtil.EMPTY; //This could be a image '>' for a start marker
+    public static String CHANGE_END_HTML = TextUtil.EMPTY; //and an image for an end '<' marker
     public static String DIFF_START = "<div class=\"diff-wikitext\">";
     public static String DIFF_END = "</div>";
 
@@ -182,10 +182,10 @@ public class ContextualDiffProvider implements DiffProvider {
             String lastToken = null;
             String token;
             // StringTokenizer might be discouraged but it still is perfect here...
-            for( final StringTokenizer st = new StringTokenizer( line, " ", true ); st.hasMoreTokens(); ) {
+            for( final StringTokenizer st = new StringTokenizer( line, TextUtil.SPACE, true ); st.hasMoreTokens(); ) {
                 token = st.nextToken();
 
-                if( " ".equals( lastToken ) && " ".equals( token ) ) {
+                if( TextUtil.SPACE.equals( lastToken ) && TextUtil.SPACE.equals( token ) ) {
                     token = ALTERNATING_SPACE_HTML;
                 }
 

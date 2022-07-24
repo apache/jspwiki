@@ -38,7 +38,7 @@ import java.io.IOException;
 public class AuthorTag extends WikiTagBase {
     private static final long serialVersionUID = 0L;
 
-    public String m_format = "";
+    public String m_format = TextUtil.EMPTY;
 
     public void setFormat( final String format )
     {

@@ -66,7 +66,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
     public void init( final ServletConfig config ) throws ServletException {
         super.init( config );
         m_engine = Wiki.engine().find( config );
-        PATH_AJAX = "/" + TextUtil.getStringProperty( m_engine.getWikiProperties(), "jspwiki.ajax.url.prefix", "ajax" ) + "/";
+        PATH_AJAX = TextUtil.SLASH + TextUtil.getStringProperty( m_engine.getWikiProperties(), "jspwiki.ajax.url.prefix", "ajax" ) + TextUtil.SLASH;
         LOG.info( "WikiAjaxDispatcherServlet initialized." );
     }
 
@@ -139,7 +139,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
                     List< String > paramValues = new ArrayList<>();
                     if( params != null ) {
                         if( StringUtils.isNotBlank( params ) ) {
-                            paramValues = Arrays.asList( params.trim().split( "," ) );
+                            paramValues = Arrays.asList( params.trim().split( TextUtil.COMMA ) );
                         }
                     }
                     servlet.service( req, res, actionName, paramValues );
@@ -218,7 +218,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
 
         @Override
         public String toString() {
-            return getClass().getSimpleName() + " " + alias + "=" + servlet.getClass().getSimpleName() + " permission=" + permission;
+            return getClass().getSimpleName() + TextUtil.SPACE + alias + "=" + servlet.getClass().getSimpleName() + " permission=" + permission;
         }
 
     }

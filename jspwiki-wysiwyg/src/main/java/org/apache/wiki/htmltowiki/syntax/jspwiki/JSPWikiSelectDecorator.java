@@ -20,6 +20,7 @@ package org.apache.wiki.htmltowiki.syntax.jspwiki;
 
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.SelectDecorator;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 
@@ -36,7 +37,7 @@ class JSPWikiSelectDecorator extends SelectDecorator {
     /** {@inheritDoc} */
     @Override
     protected String markupForSelectAttributeOpen( final String attr ) {
-        return " " + attr + "='";
+        return TextUtil.SPACE + attr + "='";
     }
 
     /** {@inheritDoc} */

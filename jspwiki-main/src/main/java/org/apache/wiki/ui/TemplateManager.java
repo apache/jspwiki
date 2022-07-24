@@ -25,6 +25,7 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.fmt.LocaleSupport;
@@ -170,12 +171,12 @@ public interface TemplateManager extends ModuleManager {
                 } else {
                     name = name.substring( I18NRESOURCE_PREFIX.length(), name.lastIndexOf( I18NRESOURCE_SUFFIX ) );
                 }
-                final Locale locale = new Locale( name.substring( 0, 2 ), !name.contains( "_" ) ? "" : name.substring( 3, 5 ) );
-                String defaultLanguage = "";
+                final Locale locale = new Locale( name.substring( 0, 2 ), !name.contains( "_" ) ? TextUtil.EMPTY : name.substring( 3, 5 ) );
+                String defaultLanguage = TextUtil.EMPTY;
                 if( clientLanguage.startsWith( name ) ) {
                     defaultLanguage = LocaleSupport.getLocalizedMessage( pageContext, I18NDEFAULT_LOCALE );
                 }
-                resultMap.put( name, locale.getDisplayName( locale ) + " " + defaultLanguage );
+                resultMap.put( name, locale.getDisplayName( locale ) + TextUtil.SPACE + defaultLanguage );
             }
         }
 
@@ -237,13 +238,13 @@ public interface TemplateManager extends ModuleManager {
         for( final String[] strings : tzs ) {
             String tzID = strings[ 0 ];
             final TimeZone tz = TimeZone.getTimeZone( tzID );
-            String serverTimeZone = "";
+            String serverTimeZone = TextUtil.EMPTY;
             if( servertz.getRawOffset() == tz.getRawOffset() ) {
                 serverTimeZone = LocaleSupport.getLocalizedMessage( pageContext, I18NSERVER_TIMEZONE );
                 tzID = servertz.getID();
             }
 
-            resultMap.put( tzID, "(" + strings[ 0 ] + ") " + strings[ 1 ] + " " + serverTimeZone );
+            resultMap.put( tzID, "(" + strings[ 0 ] + ") " + strings[ 1 ] + TextUtil.SPACE + serverTimeZone );
         }
 
         return resultMap;
@@ -287,7 +288,7 @@ public interface TemplateManager extends ModuleManager {
                 } else {
                     sb.append( ",\n" );
                 }
-                sb.append( "\"" ).append( key ).append( "\":\"" ).append( rb.getString( key ) ).append( "\"" );
+                sb.append( TextUtil.BACKSLASH ).append( key ).append( "\":\"" ).append( rb.getString( key ) ).append( TextUtil.BACKSLASH );
             }
         }
         sb.append("\n};\n");

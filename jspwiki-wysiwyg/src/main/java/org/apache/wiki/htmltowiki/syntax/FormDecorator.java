@@ -19,6 +19,7 @@
 package org.apache.wiki.htmltowiki.syntax;
 
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -52,9 +53,9 @@ public abstract class FormDecorator {
         }
 
         final String name = e.getAttributeValue( "name" );
-        out.print( "\n" + markupFormOpen( name ) + "\n" );
+        out.print( TextUtil.LF + markupFormOpen( name ) + TextUtil.LF );
         chain.translate( e );
-        out.print( "\n" + markupFormClose() + "\n" );
+        out.print( TextUtil.LF + markupFormClose() + TextUtil.LF );
     }
 
     /**

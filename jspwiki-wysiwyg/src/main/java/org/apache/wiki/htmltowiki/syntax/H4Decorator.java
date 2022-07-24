@@ -19,6 +19,7 @@
 package org.apache.wiki.htmltowiki.syntax;
 
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
+import org.apache.wiki.util.TextUtil;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
@@ -44,7 +45,7 @@ public abstract class H4Decorator {
      * @param e XHTML element being translated.
      */
     public void decorate( final Element e ) throws JDOMException {
-        out.print( "\n" + markupH4() + " " );
+        out.print( TextUtil.LF + markupH4() + TextUtil.SPACE );
         chain.translate( e );
         out.println();
     }

@@ -66,7 +66,7 @@ public class EhcacheCachingManager implements CachingManager, Initializable {
     public void initialize( final Engine engine, final Properties props ) throws WikiException {
         final String cacheEnabled = TextUtil.getStringProperty( props, PROP_CACHE_ENABLE, PROP_USECACHE_DEPRECATED, "true" );
         final boolean useCache = "true".equalsIgnoreCase( cacheEnabled );
-        final String confLocation = "/" + TextUtil.getStringProperty( props, PROP_CACHE_CONF_FILE, "ehcache-jspwiki.xml" );
+        final String confLocation = TextUtil.SLASH + TextUtil.getStringProperty( props, PROP_CACHE_CONF_FILE, "ehcache-jspwiki.xml" );
         if( useCache ) {
             final URL location = this.getClass().getResource( confLocation );
             LOG.info( "Reading ehcache configuration file from classpath on /{}", location );

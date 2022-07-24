@@ -147,7 +147,7 @@ public class DefaultRenderingManager implements RenderingManager {
                 }
 
                 final String parent = TextUtil.beautifyString( att.getParentName() );
-                return parent + "/" + att.getFileName();
+                return parent + TextUtil.SLASH + att.getFileName();
             } catch( final ProviderException e ) {
                 return title;
             }

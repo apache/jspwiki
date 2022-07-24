@@ -20,6 +20,7 @@ package org.apache.wiki.htmltowiki.syntax.jspwiki;
 
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.LiDecorator;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 import java.util.Deque;
@@ -43,7 +44,7 @@ class JSPWikiLiDecorator extends LiDecorator {
         while( iterator.hasNext() ) {
             li.append( iterator.next() );
         }
-        return li + " ";
+        return li + TextUtil.SPACE;
     }
 
 }

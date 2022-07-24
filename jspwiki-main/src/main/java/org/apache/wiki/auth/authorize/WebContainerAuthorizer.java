@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.util.TextUtil;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -120,7 +121,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         if( m_containerRoles.length > 0 ) {
             final StringBuilder roles = new StringBuilder();
             for( final Role containerRole : m_containerRoles ) {
-                roles.append(containerRole).append(" ");
+                roles.append(containerRole).append(TextUtil.SPACE);
             }
             LOG.info( " JSPWiki determined the web container manages these roles: " + roles );
         }

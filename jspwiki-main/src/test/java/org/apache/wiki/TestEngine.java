@@ -324,7 +324,7 @@ public class TestEngine extends WikiEngine {
         final String m_encoding = properties.getProperty( WikiEngine.PROP_ENCODING, AbstractFileProvider.DEFAULT_ENCODING );
 
         pagename = TextUtil.urlEncode( pagename, m_encoding );
-        pagename = TextUtil.replaceString( pagename, "/", "%2F" );
+        pagename = TextUtil.replaceString( pagename, TextUtil.SLASH, "%2F" );
         return pagename;
     }
 

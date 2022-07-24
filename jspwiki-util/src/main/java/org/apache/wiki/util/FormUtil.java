@@ -141,7 +141,7 @@ public final class FormUtil
     {
         final HashMap<String,String> params = new HashMap<>();
         
-        if( filterPrefix == null ) filterPrefix = "";
+        if( filterPrefix == null ) filterPrefix = TextUtil.EMPTY;
         
         final Enumeration< String > en = req.getParameterNames();
         while( en.hasMoreElements() )

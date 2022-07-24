@@ -120,7 +120,7 @@ public final class XmlUtil  {
 	 */
 	public static String extractTextFromDocument( final Document doc ) {
 		if( doc == null ) {
-			return "";
+			return TextUtil.EMPTY;
 		}
 		final StringBuilder sb = new StringBuilder();
 		final List< ? > nodes = XPathFactory.instance().compile( ALL_TEXT_NODES ).evaluate( doc );

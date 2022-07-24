@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.HsqlDbUtils;
 import org.apache.wiki.auth.Users;
+import org.apache.wiki.util.TextUtil;
 import org.eclipse.jetty.jndi.InitialContextFactory;
 import org.eclipse.jetty.jndi.NamingContext;
 import org.eclipse.jetty.plus.jndi.Resource;
@@ -164,8 +165,8 @@ public class TestContainer {
 
             // Extract and sanitize first arg
             String context = pair[ 0 ].trim();
-            if( !context.startsWith( "/" ) ) {
-                context = "/" + context;
+            if( !context.startsWith( TextUtil.SLASH ) ) {
+                context = TextUtil.SLASH + context;
             }
 
             // Extract and verify the path

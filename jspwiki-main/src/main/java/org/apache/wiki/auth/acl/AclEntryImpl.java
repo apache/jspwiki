@@ -19,6 +19,7 @@
 package org.apache.wiki.auth.acl;
 
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.Serializable;
 import java.security.Permission;
@@ -138,11 +139,11 @@ public class AclEntryImpl implements AclEntry, Serializable {
         final StringBuilder sb = new StringBuilder();
         sb.append( "[AclEntry ALLOW " )
           .append( p != null ? p.getName() : "null" )
-          .append( " " );
+          .append( TextUtil.SPACE );
 
         for( final Permission pp : m_permissions ) {
             sb.append( pp.toString() );
-            sb.append( "," );
+            sb.append( TextUtil.COMMA );
         }
 
         sb.append( "]" );

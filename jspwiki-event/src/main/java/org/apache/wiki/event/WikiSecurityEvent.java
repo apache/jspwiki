@@ -22,6 +22,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.wiki.util.TextUtil;
 
 import java.security.Principal;
 
@@ -197,7 +198,7 @@ public final class WikiSecurityEvent extends WikiEvent {
         msg.append( " [source=" ).append( obj.toString() );
         if( m_principal != null ) {
             msg.append( ", principal=" ).append( m_principal.getClass().getName() );
-            msg.append( " " ).append( m_principal.getName() );
+            msg.append( TextUtil.SPACE ).append( m_principal.getName() );
         }
         msg.append( ", target=" ).append( m_target );
         msg.append( "]" );

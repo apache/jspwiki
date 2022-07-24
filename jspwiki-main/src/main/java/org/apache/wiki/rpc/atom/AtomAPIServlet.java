@@ -181,7 +181,7 @@ public class AtomAPIServlet extends HttpServlet {
         final String pageText = m_engine.getManager( PageManager.class ).getText(page.getName());
         final int firstLine = pageText.indexOf('\n');
 
-        String title = "";
+        String title = TextUtil.EMPTY;
         if( firstLine > 0 ) {
             title = pageText.substring( 0, firstLine );
         }

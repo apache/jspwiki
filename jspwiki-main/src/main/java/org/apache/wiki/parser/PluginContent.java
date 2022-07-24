@@ -32,6 +32,7 @@ import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.plugin.PluginElement;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
 import org.jdom2.Text;
 
@@ -59,10 +60,8 @@ public class PluginContent extends Text implements PluginElement {
     private static final String CMDLINE = "_cmdline";
     private static final String ELEMENT_BR = "<br/>";
     private static final String EMITTABLE_PLUGINS = "Image|FormOpen|FormClose|FormInput|FormTextarea|FormSelect";
-    private static final String LINEBREAK = "\n";
     private static final String PLUGIN_START = "[{";
     private static final String PLUGIN_END = "}]";
-    private static final String SPACE = " ";
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LogManager.getLogger(PluginContent.class);
@@ -145,10 +144,10 @@ public class PluginContent extends Text implements PluginElement {
             //
             // FIXME: The plugin name matching should not be done here, but in a per-editor resource
             if( wysiwygEditorMode && !m_pluginName.matches( EMITTABLE_PLUGINS ) ) {
-                result = PLUGIN_START + m_pluginName + SPACE;
+                result = PLUGIN_START + m_pluginName + TextUtil.SPACE;
 
                 // convert newlines to <br> in case the plugin has a body.
-                final String cmdLine = m_params.get( CMDLINE ).replaceAll( LINEBREAK, ELEMENT_BR );
+                final String cmdLine = m_params.get( CMDLINE ).replaceAll( TextUtil.LF, ELEMENT_BR );
                 result = result + cmdLine + PLUGIN_END;
             } else {
                 final Boolean b = context.getVariable( Context.VAR_EXECUTE_PLUGINS );

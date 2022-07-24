@@ -30,7 +30,7 @@ public class HttpUtilTest {
     @Test
     public void testIsIPV4Address() {
         Assertions.assertFalse( HttpUtil.isIPV4Address( null ) );
-        Assertions.assertFalse( HttpUtil.isIPV4Address( "" ) );
+        Assertions.assertFalse( HttpUtil.isIPV4Address( TextUtil.EMPTY ) );
         Assertions.assertFalse( HttpUtil.isIPV4Address( ".123.123.123.123" ) );
         Assertions.assertFalse( HttpUtil.isIPV4Address( "123.123.123.123." ) );
         Assertions.assertFalse( HttpUtil.isIPV4Address( "123.123.123" ) );
@@ -54,7 +54,7 @@ public class HttpUtilTest {
     public void testRetrieveCookieValue() {
         final Cookie[] cookies = new Cookie[] { new Cookie( "cookie1", "value1" ),
                                                 new Cookie( "cookie2", "\"value2\"" ),
-                                                new Cookie( "cookie3", "" ),
+                                                new Cookie( "cookie3", TextUtil.EMPTY ),
                                                 new Cookie( "cookie4", null ) };
         final MockHttpServletRequest req = new MockHttpServletRequest( "/wiki", "/example" );
         req.setCookies( cookies );

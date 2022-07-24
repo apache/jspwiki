@@ -29,6 +29,7 @@ import org.apache.wiki.auth.Users;
 import org.apache.wiki.cache.CachingManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -50,9 +51,9 @@ public class VersioningFileProviderTest {
     public static final String NAME1 = "Test1";
     private static final String OLD_AUTHOR = "brian";
     private static final String FAKE_HISTORY =
-                "#JSPWiki page properties for page " + NAME1 + "\n"
-                + "#Wed Jan 01 12:27:57 GMT 2012" + "\n"
-                + "author=" + OLD_AUTHOR + "\n";
+                "#JSPWiki page properties for page " + NAME1 + TextUtil.LF
+                + "#Wed Jan 01 12:27:57 GMT 2012" +TextUtil.LF
+                + "author=" + OLD_AUTHOR +TextUtil.LF;
 
     private final Properties PROPS = TestEngine.getTestProperties( "/jspwiki-vers-custom.properties" );
     private TestEngine engine = TestEngine.build( PROPS );

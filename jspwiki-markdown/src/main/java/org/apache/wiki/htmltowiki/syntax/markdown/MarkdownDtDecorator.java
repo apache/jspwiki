@@ -20,6 +20,7 @@ package org.apache.wiki.htmltowiki.syntax.markdown;
 
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.DtDecorator;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 
@@ -36,7 +37,7 @@ class MarkdownDtDecorator extends DtDecorator {
     /** {@inheritDoc} */
     @Override
     protected String markupDt() {
-        return "";
+        return TextUtil.EMPTY;
     }
 
 }

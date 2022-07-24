@@ -25,6 +25,7 @@ import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.util.TextUtil;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -473,12 +474,12 @@ public class JDBCGroupDatabase implements GroupDatabase {
             m_findMembers = "SELECT * FROM " + memberTable + " WHERE " + m_name + "=?";
 
             // Prepare the group insert/update SQL
-            m_insertGroup = "INSERT INTO " + table + " (" + m_name + "," + m_modified + "," + m_modifier + "," + m_created + ","
+            m_insertGroup = "INSERT INTO " + table + " (" + m_name + TextUtil.COMMA + m_modified + TextUtil.COMMA + m_modifier + TextUtil.COMMA + m_created + TextUtil.COMMA
                             + m_creator + ") VALUES (?,?,?,?,?)";
             m_updateGroup = "UPDATE " + table + " SET " + m_modified + "=?," + m_modifier + "=? WHERE " + m_name + "=?";
 
             // Prepare the group member insert SQL
-            m_insertGroupMembers = "INSERT INTO " + memberTable + " (" + m_name + "," + m_member + ") VALUES (?,?)";
+            m_insertGroupMembers = "INSERT INTO " + memberTable + " (" + m_name + TextUtil.COMMA + m_member + ") VALUES (?,?)";
 
             // Prepare the group delete SQL
             m_deleteGroup = "DELETE FROM " + table + " WHERE " + m_name + "=?";

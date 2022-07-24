@@ -349,7 +349,7 @@ public final class PropertyReader {
         }
 
         // if not found - try with the current class loader and the given name
-        currResourceLocation = createResourceLocation( "", resourceName );
+        currResourceLocation = createResourceLocation( TextUtil.EMPTY, resourceName );
         result = PropertyReader.class.getResourceAsStream( currResourceLocation );
         if( result != null ) {
             LOG.debug( " Successfully located the following classpath resource : " + currResourceLocation );
@@ -373,19 +373,19 @@ public final class PropertyReader {
         final StringBuilder result = new StringBuilder();
 
         // strip an ending "/"
-        final String sanitizedPath = ( path != null && !path.isEmpty() && path.endsWith( "/" ) ? path.substring( 0, path.length() - 1 ) : path );
+        final String sanitizedPath = ( path != null && !path.isEmpty() && path.endsWith( TextUtil.SLASH ) ? path.substring( 0, path.length() - 1 ) : path );
 
         // strip leading "/"
-        final String sanitizedName = ( name.startsWith( "/" ) ? name.substring( 1 ) : name );
+        final String sanitizedName = ( name.startsWith( TextUtil.SLASH ) ? name.substring( 1 ) : name );
 
         // append the optional path
         if( sanitizedPath != null && !sanitizedPath.isEmpty() ) {
-            if( !sanitizedPath.startsWith( "/" ) ) {
-                result.append( "/" );
+            if( !sanitizedPath.startsWith( TextUtil.SLASH ) ) {
+                result.append( TextUtil.SLASH );
             }
             result.append( sanitizedPath );
         }
-        result.append( "/" );
+        result.append( TextUtil.SLASH );
 
         // append the name
         result.append( sanitizedName );

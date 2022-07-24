@@ -20,6 +20,7 @@ package org.apache.wiki.htmltowiki.syntax.markdown;
 
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator;
+import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -125,9 +126,9 @@ public class HtmlStringToMarkdownWikiTranslatorTest {
 
     @Test
     public void testWhitespace() throws Exception {
-        Assertions.assertEquals( "", html2wiki.translate( "" ) );
-        Assertions.assertEquals( "", html2wiki.translate( "   " ) );
-        Assertions.assertEquals( "", html2wiki.translate( "<div>\n\n\n</div>" ) );
+        Assertions.assertEquals( TextUtil.EMPTY, html2wiki.translate( TextUtil.EMPTY ) );
+        Assertions.assertEquals( TextUtil.EMPTY, html2wiki.translate( "   " ) );
+        Assertions.assertEquals( TextUtil.EMPTY, html2wiki.translate( "<div>\n\n\n</div>" ) );
         Assertions.assertEquals( "a ", html2wiki.translate( "a\n  \n\n \t\r\n" ) );
     }
 

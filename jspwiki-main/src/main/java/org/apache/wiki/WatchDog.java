@@ -21,6 +21,7 @@ package org.apache.wiki;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.util.TextUtil;
 
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
@@ -287,7 +288,7 @@ public final class WatchDog {
                 }
                 final StackTraceElement[] ste = stackTraces.get( t );
                 for( final StackTraceElement stackTraceElement : ste ) {
-                    stacktrace.append( "\n" ).append( stackTraceElement );
+                    stacktrace.append( TextUtil.LF ).append( stackTraceElement );
                 }
             }
         }

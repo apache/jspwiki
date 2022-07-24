@@ -37,6 +37,7 @@ import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.search.LuceneSearchProvider;
+import org.apache.wiki.util.TextUtil;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
@@ -108,7 +109,7 @@ public class TikaSearchProvider extends LuceneSearchProvider {
             final String[] names = metadata.names();
             for( final String name : names ) {
                 if( textualMetadataFields.contains( name ) ) {
-                    out.append( " " ).append( metadata.get( name ) );
+                    out.append( TextUtil.SPACE ).append( metadata.get( name ) );
                 }
             }
         } catch( final TikaException | SAXException e ) {

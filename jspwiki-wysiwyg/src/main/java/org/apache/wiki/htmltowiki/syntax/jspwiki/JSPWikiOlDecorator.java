@@ -20,6 +20,7 @@ package org.apache.wiki.htmltowiki.syntax.jspwiki;
 
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.OlDecorator;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 import java.util.Deque;
@@ -37,7 +38,7 @@ class JSPWikiOlDecorator extends OlDecorator {
     /** {@inheritDoc} */
     @Override
     protected String markupOl() {
-        return "#";
+        return TextUtil.COMMENT;
     }
 
 }

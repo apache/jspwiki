@@ -20,6 +20,7 @@ package org.apache.wiki.ajax;
 
 import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -43,7 +44,7 @@ public class AjaxUtil extends HttpServlet {
 		if( input != null ) {
 			return gson.toJson( input );
 		}
-		return "";
+		return TextUtil.EMPTY;
 	}
 	
 	/**
@@ -62,8 +63,8 @@ public class AjaxUtil extends HttpServlet {
         if( StringUtils.isBlank( path ) ) {
 			return null;
 		}
-		if( !lastPart.endsWith( "/" ) ) {
-			lastPart += "/";
+		if( !lastPart.endsWith( TextUtil.SLASH ) ) {
+			lastPart += TextUtil.SLASH;
 		}
 		final int lastPartLength =  lastPart.length();
 		int index = path.indexOf( lastPart );
@@ -75,9 +76,9 @@ public class AjaxUtil extends HttpServlet {
 			}
 		}
 		path = path.substring( index + lastPartLength );
-		index = path.indexOf( "/" );
+		index = path.indexOf( TextUtil.SLASH );
 		if( index == -1 ) {
-			index = path.indexOf( "#" );
+			index = path.indexOf( TextUtil.COMMENT );
 			if( index == -1 ) {
 				index = path.indexOf( "?" );
 			}

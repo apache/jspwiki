@@ -233,7 +233,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
      * @param response Servlet response
      */
     public static void clearLoginCookie( final Engine engine, final HttpServletRequest request, final HttpServletResponse response ) {
-        final Cookie userId = getLoginCookie( "" );
+        final Cookie userId = getLoginCookie( TextUtil.EMPTY );
         userId.setMaxAge( 0 );
         response.addCookie( userId );
         final String uid = getLoginCookie( request );

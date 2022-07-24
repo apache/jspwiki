@@ -21,6 +21,7 @@ package org.apache.wiki.htmltowiki.syntax.jspwiki;
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.PlainTextBoldDecorator;
 import org.apache.wiki.htmltowiki.syntax.PlainTextCssDecorator;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 
@@ -49,7 +50,7 @@ class JSPWikiPlainTextCssDecorator extends PlainTextCssDecorator {
     /** {@inheritDoc} */
     @Override
     protected String markupCssSpanOpen( final String cssClass ) {
-        return "%%" + cssClass + " ";
+        return "%%" + cssClass + TextUtil.SPACE;
     }
 
     /** {@inheritDoc} */

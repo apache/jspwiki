@@ -20,6 +20,7 @@ package org.apache.wiki.url;
 
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Properties;
@@ -42,7 +43,7 @@ public class ShortViewURLConstructor extends ShortURLConstructor {
         final String viewurl = "%p" + m_urlPrefix + "%n";
         if( context.equals( ContextEnum.PAGE_VIEW.getRequestContext() ) ) {
             if( name == null ) {
-                return doReplacement("%u","" );
+                return doReplacement("%u", TextUtil.EMPTY );
             }
             return doReplacement( viewurl, name );
         }
@@ -64,7 +65,7 @@ public class ShortViewURLConstructor extends ShortURLConstructor {
                 parameters = "&amp;" + parameters;
             }
         } else {
-            parameters = "";
+            parameters = TextUtil.EMPTY;
         }
         return makeURL( context, name ) + parameters;
     }

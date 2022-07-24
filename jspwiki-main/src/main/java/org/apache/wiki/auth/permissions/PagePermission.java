@@ -20,6 +20,7 @@ package org.apache.wiki.auth.permissions;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.Serializable;
 import java.security.Permission;
@@ -122,13 +123,9 @@ public final class PagePermission extends Permission implements Serializable
     /** A static instance of the view permission. */
     public static final PagePermission VIEW           = new PagePermission( VIEW_ACTION );
 
-    private static final String        ACTION_SEPARATOR = ",";
-
     private static final String        WILDCARD       = "*";
 
     private static final String        WIKI_SEPARATOR = ":";
-
-    private static final String        ATTACHMENT_SEPARATOR = "/";
 
     private final String               m_actionString;
 
@@ -141,7 +138,7 @@ public final class PagePermission extends Permission implements Serializable
     /** For serialization purposes. */
     PagePermission()
     {
-        this("");
+        this(TextUtil.EMPTY);
     }
     
     /**
@@ -183,11 +180,11 @@ public final class PagePermission extends Permission implements Serializable
             m_wiki = null;
             pageName = pathParams[0];
         }
-        final int pos = pageName.indexOf( ATTACHMENT_SEPARATOR );
+        final int pos = pageName.indexOf( TextUtil.SLASH );
         m_page = ( pos == -1 ) ? pageName : pageName.substring( 0, pos );
 
         // Parse actions
-        final String[] pageActions = StringUtils.split( actions.toLowerCase(), ACTION_SEPARATOR );
+        final String[] pageActions = StringUtils.split( actions.toLowerCase(), TextUtil.COMMA );
         Arrays.sort( pageActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
         final  int pageActionsLength = pageActions.length;
@@ -197,7 +194,7 @@ public final class PagePermission extends Permission implements Serializable
             buffer.append( pageActions[i] );
             if ( i < ( pageActionsLength - 1 ) )
             {
-                buffer.append( ACTION_SEPARATOR );
+                buffer.append( TextUtil.COMMA );
             }
         }
         m_actionString = buffer.toString();
@@ -343,7 +340,7 @@ public final class PagePermission extends Permission implements Serializable
      */
     public String toString()
     {
-        final String wiki = ( m_wiki == null ) ? "" : m_wiki;
+        final String wiki = ( m_wiki == null ) ? TextUtil.EMPTY : m_wiki;
         return "(\"" + this.getClass().getName() + "\",\"" + wiki + WIKI_SEPARATOR + m_page + "\",\"" + getActions() + "\")";
     }
 
@@ -439,7 +436,7 @@ public final class PagePermission extends Permission implements Serializable
             throw new IllegalArgumentException( "Actions cannot be blank or null" );
         }
         int mask = 0;
-        final String[] actionList = StringUtils.split( actions, ACTION_SEPARATOR );
+        final String[] actionList = StringUtils.split( actions, TextUtil.COMMA );
         for( final String action : actionList )
         {
             if ( action.equalsIgnoreCase( VIEW_ACTION ) )

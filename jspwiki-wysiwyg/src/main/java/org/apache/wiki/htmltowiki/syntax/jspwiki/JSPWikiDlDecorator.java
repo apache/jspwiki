@@ -20,6 +20,7 @@ package org.apache.wiki.htmltowiki.syntax.jspwiki;
 
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.DlDecorator;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 
@@ -36,13 +37,13 @@ class JSPWikiDlDecorator extends DlDecorator {
     /** {@inheritDoc} */
     @Override
     protected String markupDlOpen() {
-        return "\n";
+        return TextUtil.LF;
     }
 
     /** {@inheritDoc} */
     @Override
     protected String markupDlClose() {
-        return "\n";
+        return TextUtil.LF;
     }
 
 }

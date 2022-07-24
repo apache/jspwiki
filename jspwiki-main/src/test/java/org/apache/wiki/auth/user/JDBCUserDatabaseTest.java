@@ -24,6 +24,7 @@ import org.apache.wiki.TestJNDIContext;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.util.CryptoUtil;
+import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,13 +55,13 @@ public class JDBCUserDatabaseTest {
     private static final String TEST_ATTRIBUTES = "rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAx3CAAAABAAAAACdAAKYXR0cmlidXRlMXQAEXNvbWUgcmFuZG9tIHZhbHVldAAKYXR0cmlidXRlMnQADWFub3RoZXIgdmFsdWV4";
 
     private static final String INSERT_JANNE = "INSERT INTO users (" +
-            JDBCUserDatabase.DEFAULT_DB_UID + "," +
-            JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
-            JDBCUserDatabase.DEFAULT_DB_FULL_NAME + "," +
-            JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
-            JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," +
-            JDBCUserDatabase.DEFAULT_DB_WIKI_NAME + "," +
-            JDBCUserDatabase.DEFAULT_DB_CREATED + "," +
+            JDBCUserDatabase.DEFAULT_DB_UID + TextUtil.COMMA +
+            JDBCUserDatabase.DEFAULT_DB_EMAIL + TextUtil.COMMA +
+            JDBCUserDatabase.DEFAULT_DB_FULL_NAME + TextUtil.COMMA +
+            JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + TextUtil.COMMA +
+            JDBCUserDatabase.DEFAULT_DB_PASSWORD + TextUtil.COMMA +
+            JDBCUserDatabase.DEFAULT_DB_WIKI_NAME + TextUtil.COMMA +
+            JDBCUserDatabase.DEFAULT_DB_CREATED + TextUtil.COMMA +
             JDBCUserDatabase.DEFAULT_DB_ATTRIBUTES + ") VALUES (" +
             "'-7739839977499061014'," + "'janne@ecyrd.com'," + "'Janne Jalkanen'," + "'janne'," +
             "'{SHA}457b08e825da547c3b77fbc1ff906a1d00a7daee'," +
@@ -69,10 +70,10 @@ public class JDBCUserDatabaseTest {
             "'" + TEST_ATTRIBUTES + "'" + ");";
 
     private static final String INSERT_USER = "INSERT INTO users (" +
-            JDBCUserDatabase.DEFAULT_DB_UID + "," +
-            JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
-            JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
-            JDBCUserDatabase.DEFAULT_DB_PASSWORD + "," +
+            JDBCUserDatabase.DEFAULT_DB_UID + TextUtil.COMMA +
+            JDBCUserDatabase.DEFAULT_DB_EMAIL + TextUtil.COMMA +
+            JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + TextUtil.COMMA +
+            JDBCUserDatabase.DEFAULT_DB_PASSWORD + TextUtil.COMMA +
             JDBCUserDatabase.DEFAULT_DB_CREATED + ") VALUES (" +
             "'-8629747547991531672'," + "'jspwiki.tests@mailinator.com'," + "'user'," +
             "'{SHA}5baa61e4c9b93f3f0682250b6cf8331b7ee68fd8'," +

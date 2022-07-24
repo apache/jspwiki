@@ -25,6 +25,7 @@ import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.util.Serializer;
+import org.apache.wiki.util.TextUtil;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -187,8 +188,6 @@ import java.util.Set;
  * @since 2.3
  */
 public class JDBCUserDatabase extends AbstractUserDatabase {
-
-    private static final String NOTHING = "";
 
     public static final String DEFAULT_DB_ATTRIBUTES = "attributes";
 
@@ -442,14 +441,14 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
 
             // The user insert SQL prepared statement
             m_insertProfile = "INSERT INTO " + userTable + " ("
-                              + m_uid + ","
-                              + m_email + ","
-                              + m_fullName + ","
-                              + m_password + ","
-                              + m_wikiName + ","
-                              + m_modified + ","
-                              + m_loginName + ","
-                              + m_attributes + ","
+                              + m_uid + TextUtil.COMMA
+                              + m_email + TextUtil.COMMA
+                              + m_fullName + TextUtil.COMMA
+                              + m_password + TextUtil.COMMA
+                              + m_wikiName + TextUtil.COMMA
+                              + m_modified + TextUtil.COMMA
+                              + m_loginName + TextUtil.COMMA
+                              + m_attributes + TextUtil.COMMA
                               + m_created
                               + ") VALUES (?,?,?,?,?,?,?,?,?)";
             
@@ -469,7 +468,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
             // Prepare the role insert SQL
             final String roleTable = props.getProperty( PROP_DB_ROLE_TABLE, DEFAULT_DB_ROLE_TABLE );
             final String role = props.getProperty( PROP_DB_ROLE, DEFAULT_DB_ROLE );
-            m_insertRole = "INSERT INTO " + roleTable + " (" + m_loginName + "," + role + ") VALUES (?,?)";
+            m_insertRole = "INSERT INTO " + roleTable + " (" + m_loginName + TextUtil.COMMA + role + ") VALUES (?,?)";
             m_findRoles = "SELECT * FROM " + roleTable + " WHERE " + m_loginName + "=?";
 
             // Prepare the user delete SQL
@@ -581,7 +580,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
         // Blank password is the same as null, which means we re-use the existing one.
         String password = profile.getPassword();
         final String existingPassword = (existingProfile == null) ? null : existingProfile.getPassword();
-        if( NOTHING.equals( password ) ) {
+        if( TextUtil.EMPTY.equals( password ) ) {
             password = null;
         }
         if( password == null ) {

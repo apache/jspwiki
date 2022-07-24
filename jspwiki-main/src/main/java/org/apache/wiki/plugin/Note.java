@@ -81,7 +81,7 @@ public class Note implements Plugin {
         String resource = engine.getManager( TemplateManager.class ).findResource( ctx, engine.getTemplateDir(), commentImage );
         
         // JSPWIKI-876 Fixed error with Note Plugin. Only one preceding "/" is needed.
-        if( resource != null && resource.startsWith( "/" ) ) {
+        if( resource != null && resource.startsWith( TextUtil.SLASH ) ) {
         	resource = resource.substring(1);
         }
         return ctx.getURL( ContextEnum.PAGE_NONE.getRequestContext(), resource );

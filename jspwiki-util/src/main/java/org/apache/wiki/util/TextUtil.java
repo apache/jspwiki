@@ -54,6 +54,69 @@ public final class TextUtil {
     /** Lists all punctuation characters allowed in page names. */
     public static final String PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
 
+    /**
+     * A String for a space character.
+     *
+     * @since 2.11.3
+     */
+    public static final String SPACE = " ";
+
+    /**
+     * The empty String {@code ""}.
+     *
+     * @since 2.11.3
+     */
+    public static final String EMPTY = "";
+
+    /**
+     * The slash String {@code "/"}.
+     *
+     * @since 2.11.3
+     */
+    public static final String SLASH = "/";
+
+    /**
+     * The backslash String {@code "\" \u005c}.
+     *
+     * @since 2.11.3
+     */
+    public static final String BACKSLASH = "\"";
+
+    /**
+     * The comma String {@code ","}.
+     *
+     * @since 2.11.3
+     */
+    public static final String COMMA = ",";
+
+
+    /**
+     * The comment String {@code ","}.
+     *
+     * @since 2.11.3
+     */
+    public static final String COMMENT = "#";
+
+    /**
+     * A String for linefeed LF ("\n").
+     *
+     * @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6">JLF: Escape Sequences
+     *      for Character and String Literals</a>
+     *
+     * @since 2.11.3
+     */
+    public static final String LF = "\n";
+
+    /**
+     * A String for carriage return CR ("\r").
+     *
+     * @see <a href="http://docs.oracle.com/javase/specs/jls/se7/html/jls-3.html#jls-3.10.6">JLF: Escape Sequences
+     *      for Character and String Literals</a>
+     *
+     * @since 2.11.3
+     */
+    public static final String CR = "\r";
+
     /** Private constructor prevents instantiation. */
     private TextUtil() {}
 
@@ -147,7 +210,7 @@ public final class TextUtil {
     public static String urlEncodeUTF8( final String text ) {
         // If text is null, just return an empty string
         if ( text == null ) {
-            return "";
+            return TextUtil.EMPTY;
         }
 
         return urlEncode( text.getBytes( StandardCharsets.UTF_8 ) );
@@ -215,7 +278,7 @@ public final class TextUtil {
         src = replaceString( src, "&", "&amp;" );
         src = replaceString( src, "<", "&lt;" );
         src = replaceString( src, ">", "&gt;" );
-        src = replaceString( src, "\"", "&quot;" );
+        src = replaceString( src, TextUtil.BACKSLASH, "&quot;" );
 
         return src;
     }
@@ -579,7 +642,7 @@ public final class TextUtil {
      *  @return A beautified string.
      */
     public static String beautifyString( final String s ) {
-        return beautifyString( s, " " );
+        return beautifyString( s, TextUtil.SPACE );
     }
 
     /**
@@ -592,7 +655,7 @@ public final class TextUtil {
      */
     public static String beautifyString( final String s, final String space ) {
         if( s == null || s.isEmpty() ) {
-        	return "";
+        	return TextUtil.EMPTY;
         }
 
         final StringBuilder result = new StringBuilder();

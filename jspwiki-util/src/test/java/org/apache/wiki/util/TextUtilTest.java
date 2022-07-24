@@ -201,14 +201,14 @@ public class TextUtilTest {
     // Empty.
     @Test
     public void testNormalizePostdata6() {
-        final String text = "";
+        final String text = TextUtil.EMPTY;
         Assertions.assertEquals( "\r\n", TextUtil.normalizePostData( text ) );
     }
 
     // Just a newline.
     @Test
     public void testNormalizePostdata7() {
-        final String text = "\n";
+        final String text = TextUtil.LF;
         Assertions.assertEquals( "\r\n", TextUtil.normalizePostData( text ) );
     }
 
@@ -255,9 +255,9 @@ public class TextUtilTest {
     public void testGetSection3() {
         final String src = "----\nSecond section\n----";
 
-        Assertions.assertEquals( "", TextUtil.getSection(src,1), "section 1" );
+        Assertions.assertEquals( TextUtil.EMPTY, TextUtil.getSection(src,1), "section 1" );
         Assertions.assertEquals( "\nSecond section\n", TextUtil.getSection(src,2), "section 2" );
-        Assertions.assertEquals( "", TextUtil.getSection(src,3), "section 3" );
+        Assertions.assertEquals( TextUtil.EMPTY, TextUtil.getSection(src,3), "section 3" );
         Assertions.assertThrows( IllegalArgumentException.class, () -> TextUtil.getSection( src, 4 ) );
     }
 
@@ -280,7 +280,7 @@ public class TextUtilTest {
         final String[] vals = { "foo", " this is a property ", "bar", "60" };
         final Properties props = TextUtil.createProperties(vals);
 
-        Assertions.assertEquals( "this is a property", TextUtil.getStringProperty(props,"foo",""), "foo" );
+        Assertions.assertEquals( "this is a property", TextUtil.getStringProperty(props,"foo",TextUtil.EMPTY), "foo" );
         Assertions.assertEquals( 60, TextUtil.getIntegerProperty(props,"bar",0), "bar" );
     }
 

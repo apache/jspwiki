@@ -22,6 +22,7 @@ import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
@@ -46,8 +47,8 @@ public class LinkToTag extends WikiLinkTag {
     private static final long serialVersionUID = 0L;
 
     private String m_version;
-    public String m_title = "";
-    public String m_accesskey = "";
+    public String m_title = TextUtil.EMPTY;
+    public String m_accesskey = TextUtil.EMPTY;
 
     @Override
     public void initTag() {
@@ -91,7 +92,7 @@ public class LinkToTag extends WikiLinkTag {
         final JspWriter out = pageContext.getOut();
         final String url;
         final String linkclass;
-        String forceDownload = "";
+        String forceDownload = TextUtil.EMPTY;
 
         if( isattachment ) {
             url = m_wikiContext.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), pageName, ( getVersion() != null ) ? "version=" + getVersion() : null );
@@ -107,7 +108,7 @@ public class LinkToTag extends WikiLinkTag {
                 params.append( "version=" ).append( getVersion() );
             }
             if( getTemplate() != null ) {
-                params.append( params.length() > 0 ? "&amp;" : "" ).append( "skin=" ).append( getTemplate() );
+                params.append( params.length() > 0 ? "&amp;" : TextUtil.EMPTY ).append( "skin=" ).append( getTemplate() );
             }
 
             url = m_wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), pageName, params.toString() );

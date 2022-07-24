@@ -84,7 +84,7 @@ public class JSPWikiLinkNodePostProcessor extends NodePostProcessor {
                 linkPostProcessor = new ExternalLinkNodePostProcessorState( m_context, isImageInlining, inlineImagePatterns );
             } else if( linkOperations.isInterWikiLink( link.getUrl().toString() ) ) {
                 linkPostProcessor = new InterWikiLinkNodePostProcessorState( m_context, document, isImageInlining, inlineImagePatterns );
-            } else if( StringUtils.startsWith( link.getUrl().toString(), "#" ) ) {
+            } else if( StringUtils.startsWith( link.getUrl().toString(), TextUtil.COMMENT ) ) {
                 linkPostProcessor = new LocalFootnoteLinkNodePostProcessorState( m_context );
             } else if( TextUtil.isNumber( link.getUrl().toString() ) ) {
                 linkPostProcessor = new LocalFootnoteRefLinkNodePostProcessorState( m_context );

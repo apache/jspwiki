@@ -33,6 +33,7 @@ import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -132,7 +133,7 @@ public class BasicSearchProvider implements SearchProvider {
                 final Attachment att = it.next();
                 attachmentNames.append( att.getName() );
                 if( it.hasNext() ) {
-                    attachmentNames.append( " " );
+                    attachmentNames.append( TextUtil.SPACE );
                 }
             }
             return attachmentNames.toString();

@@ -128,7 +128,7 @@ public class LuceneSearchProvider implements SearchProvider {
     /** The maximum number of hits to return from searches. */
     public static final int MAX_SEARCH_HITS = 99_999;
 
-    private static final String PUNCTUATION_TO_SPACES = StringUtils.repeat( " ", TextUtil.PUNCTUATION_CHARS_ALLOWED.length() );
+    private static final String PUNCTUATION_TO_SPACES = StringUtils.repeat( TextUtil.SPACE, TextUtil.PUNCTUATION_CHARS_ALLOWED.length() );
 
     /** {@inheritDoc} */
     @Override
@@ -291,7 +291,7 @@ public class LuceneSearchProvider implements SearchProvider {
         if( searchSuffix ) {
             try( final InputStream attStream = mgr.getAttachmentStream( att ); final StringWriter sout = new StringWriter() ) {
                 FileUtil.copyContents( new InputStreamReader( attStream ), sout );
-                out = out + " " + sout;
+                out = out + TextUtil.SPACE + sout;
             } catch( final ProviderException | IOException e ) {
                 LOG.error( "Attachment cannot be loaded", e );
             }
@@ -353,7 +353,7 @@ public class LuceneSearchProvider implements SearchProvider {
             return doc;
         }
 
-        final String indexedText = text.replace( "__", " " ); // be nice to Language Analyzers - cfr. JSPWIKI-893
+        final String indexedText = text.replace( "__", TextUtil.SPACE ); // be nice to Language Analyzers - cfr. JSPWIKI-893
 
         // Raw name is the keyword we'll use to refer to this document for updates.
         Field field = new Field( LUCENE_ID, page.getName(), StringField.TYPE_STORED );
@@ -365,7 +365,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
         // Allow searching by page name. Both beautified and raw
         final String unTokenizedTitle = StringUtils.replaceChars( page.getName(), TextUtil.PUNCTUATION_CHARS_ALLOWED, PUNCTUATION_TO_SPACES );
-        field = new Field( LUCENE_PAGE_NAME, TextUtil.beautifyString( page.getName() ) + " " + unTokenizedTitle, TextField.TYPE_STORED );
+        field = new Field( LUCENE_PAGE_NAME, TextUtil.beautifyString( page.getName() ) + TextUtil.SPACE + unTokenizedTitle, TextField.TYPE_STORED );
         doc.add( field );
 
         // Allow searching by authorname

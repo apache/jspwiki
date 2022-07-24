@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.htmltowiki.WhitespaceTrimWriter;
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.BrDecorator;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 import java.util.Deque;
@@ -41,7 +42,7 @@ class MarkdownBrDecorator extends BrDecorator {
     /** {@inheritDoc} */
     @Override
     protected String markupBr() {
-        return INDENTATION_UNIT + "\n";
+        return INDENTATION_UNIT + TextUtil.LF;
     }
 
 }

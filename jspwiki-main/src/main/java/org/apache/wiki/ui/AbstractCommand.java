@@ -170,7 +170,7 @@ public abstract class AbstractCommand implements Command {
                "[context=" + m_requestContext + "," +
                "urlPattern=" + m_urlPattern + "," +
                "jsp=" +  m_jsp +
-               ( m_target == null ? "" : ",target=" + m_target + m_target ) +
+               ( m_target == null ? TextUtil.EMPTY : ",target=" + m_target + m_target ) +
                "]";
     }
 

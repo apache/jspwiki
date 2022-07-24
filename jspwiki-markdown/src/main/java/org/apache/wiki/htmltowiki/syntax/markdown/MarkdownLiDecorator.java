@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.htmltowiki.WhitespaceTrimWriter;
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
 import org.apache.wiki.htmltowiki.syntax.LiDecorator;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 import java.util.Deque;
@@ -42,7 +43,7 @@ class MarkdownLiDecorator extends LiDecorator {
     @Override
     protected String markupLi( final Deque< String > liStack ) {
         final String liIndentation = StringUtils.repeat( INDENTATION_UNIT, liStack.size() - 1 );
-        return liIndentation + liStack.peek() + " ";
+        return liIndentation + liStack.peek() + TextUtil.SPACE;
     }
 
 }

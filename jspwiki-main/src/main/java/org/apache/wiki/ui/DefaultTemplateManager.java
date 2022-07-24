@@ -28,6 +28,7 @@ import org.apache.wiki.modules.BaseModuleManager;
 import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -134,7 +135,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
      */
     private static String removeTemplatePart( String name ) {
         int idx = 0;
-        if( name.startsWith( "/" ) ) {
+        if( name.startsWith( TextUtil.SLASH ) ) {
             idx = 1;
         }
 
@@ -158,7 +159,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
      * @return The full name for a template.
      */
     private static String makeFullJSPName( final String template, final String name ) {
-        return "/" + DIRECTORY + "/" + template + "/" + name;
+        return TextUtil.SLASH + DIRECTORY + TextUtil.SLASH + template + TextUtil.SLASH + name;
     }
 
     /** {@inheritDoc} */
@@ -180,14 +181,14 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
             return findResource( m_engine.getServletContext(), template, name );
         }
 
-        return getPath( template ) + "/" + name;
+        return getPath( template ) + TextUtil.SLASH + name;
     }
 
     /**
      *  Returns an absolute path to a given template.
      */
     private static String getPath( final String template ) {
-        return "/" + DIRECTORY + "/" + template + "/";
+        return TextUtil.SLASH + DIRECTORY + TextUtil.SLASH + template + TextUtil.SLASH;
     }
 
     /** {@inheritDoc} */
@@ -202,8 +203,8 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
         if( skinSet != null ) {
             final String[] skins = skinSet.toArray( new String[]{} );
             for( final String skin : skins ) {
-                final String[] s = StringUtils.split( skin, "/" );
-                if( s.length > 2 && skin.endsWith( "/" ) ) {
+                final String[] s = StringUtils.split( skin, TextUtil.SLASH );
+                if( s.length > 2 && skin.endsWith( TextUtil.SLASH ) ) {
                     final String skinName = s[ s.length - 1 ];
                     resultSet.add( skinName );
                     LOG.debug( "...adding skin '{}'", skinName );

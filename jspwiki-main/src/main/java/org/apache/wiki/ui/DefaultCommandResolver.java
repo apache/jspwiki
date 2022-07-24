@@ -243,7 +243,7 @@ public class DefaultCommandResolver implements CommandResolver {
         if ( questionMark != -1 ) {
             jsp = jsp.substring( 0, questionMark );
         }
-        if ( jsp.startsWith( "/" ) ) {
+        if ( jsp.startsWith( TextUtil.SLASH ) ) {
             jsp = jsp.substring( 1 );
         }
 

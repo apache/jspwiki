@@ -117,9 +117,6 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
     /** Constant for Wiki markup separator. */
     private static final String STR_SEPARATOR = "----";
 
-    /** Constant for comma-separated list separator. */
-    private static final String STR_COMMA = ",";
-
     /** Constant for no-op glob expression. */
     private static final String STR_GLOBSTAR = "*";
 
@@ -464,7 +461,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
             if( value != null && 0 < value.length() && !STR_GLOBSTAR.equals( value ) ) {
                 try {
                     final PatternCompiler pc = new GlobCompiler();
-                    final String[] ptrns = StringUtils.split( value, STR_COMMA );
+                    final String[] ptrns = StringUtils.split( value, TextUtil.COMMA );
                     result = new Pattern[ ptrns.length ];
 
                     for( int n = 0; n < ptrns.length; n++ ) {

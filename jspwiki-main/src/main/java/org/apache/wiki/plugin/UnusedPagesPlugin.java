@@ -53,7 +53,7 @@ public class UnusedPagesPlugin extends AbstractReferralPlugin {
         final String prop = params.get( PARAM_EXCLUDEATTS );
         if( TextUtil.isPositive( prop ) ) {
             // remove links to attachments (recognizable by a slash in it)
-            links.removeIf( link -> link.contains( "/" ) );
+            links.removeIf( link -> link.contains( TextUtil.SLASH ) );
         }
 
         super.initialize( context, params );

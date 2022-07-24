@@ -519,7 +519,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
         final File dir = findAttachmentDir( att );
         final String[] files = dir.list();
         for( final String s : files ) {
-            final File file = new File( dir.getAbsolutePath() + "/" + s );
+            final File file = new File( dir.getAbsolutePath() + TextUtil.SLASH + s );
             file.delete();
         }
         dir.delete();

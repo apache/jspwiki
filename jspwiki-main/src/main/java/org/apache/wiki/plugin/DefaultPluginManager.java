@@ -181,7 +181,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
         super( engine );
         final String packageNames = props.getProperty( Engine.PROP_SEARCHPATH );
         if ( packageNames != null ) {
-            final StringTokenizer tok = new StringTokenizer( packageNames, "," );
+            final StringTokenizer tok = new StringTokenizer( packageNames, TextUtil.COMMA );
             while( tok.hasMoreTokens() ) {
                 m_searchPath.add( tok.nextToken().trim() );
             }
@@ -189,7 +189,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
 
         final String externalJars = props.getProperty( PROP_EXTERNALJARS );
         if( externalJars != null ) {
-            final StringTokenizer tok = new StringTokenizer( externalJars, "," );
+            final StringTokenizer tok = new StringTokenizer( externalJars, TextUtil.COMMA );
             while( tok.hasMoreTokens() ) {
                 m_externalJars.add( tok.nextToken().trim() );
             }

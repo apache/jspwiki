@@ -228,7 +228,7 @@ public class WikiEngine implements Engine {
         // Stash the WikiEngine in the servlet context
         if ( context != null ) {
             context.setAttribute( ATTR_WIKIENGINE,  this );
-            m_rootPath = context.getRealPath( "/" );
+            m_rootPath = context.getRealPath( TextUtil.SLASH );
         }
     }
 
@@ -441,7 +441,7 @@ public class WikiEngine implements Engine {
     void enforceValidTemplateDirectory() {
         if( m_servletContext != null ) {
             final String viewTemplate = "templates" + File.separator + getTemplateDir() + File.separator + "ViewTemplate.jsp";
-            boolean exists = new File( m_servletContext.getRealPath( "/" ) + viewTemplate ).exists();
+            boolean exists = new File( m_servletContext.getRealPath( TextUtil.SLASH ) + viewTemplate ).exists();
             if( !exists ) {
                 try {
                     final URL url = m_servletContext.getResource( viewTemplate );
@@ -517,7 +517,7 @@ public class WikiEngine implements Engine {
     public String getGlobalRSSURL() {
         final RSSGenerator rssGenerator = getManager( RSSGenerator.class );
         if( rssGenerator != null && rssGenerator.isEnabled() ) {
-            return getBaseURL() + "/" + rssGenerator.getRssFile();
+            return getBaseURL() + TextUtil.SLASH + rssGenerator.getRssFile();
         }
 
         return null;

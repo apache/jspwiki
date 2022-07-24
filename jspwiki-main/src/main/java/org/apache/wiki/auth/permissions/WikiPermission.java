@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.auth.permissions;
 
+import org.apache.wiki.util.TextUtil;
+
 import java.io.Serializable;
 import java.security.Permission;
 import java.security.PermissionCollection;
@@ -96,7 +98,7 @@ public final class WikiPermission extends Permission implements Serializable
     public WikiPermission(final String wiki, final String actions )
     {
         super( wiki );
-        final String[] pageActions = actions.toLowerCase().split( "," );
+        final String[] pageActions = actions.toLowerCase().split( TextUtil.COMMA );
         Arrays.sort( pageActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
         final StringBuilder buffer = new StringBuilder();
@@ -105,7 +107,7 @@ public final class WikiPermission extends Permission implements Serializable
             buffer.append( pageActions[i] );
             if ( i < ( pageActions.length - 1 ) )
             {
-                buffer.append( "," );
+                buffer.append( TextUtil.COMMA );
             }
         }
         m_actionString = buffer.toString();
@@ -240,7 +242,7 @@ public final class WikiPermission extends Permission implements Serializable
             throw new IllegalArgumentException( "Actions cannot be blank or null" );
         }
         int mask = 0;
-        final String[] actionList = actions.split( "," );
+        final String[] actionList = actions.split( TextUtil.COMMA );
         for (final String action : actionList) {
             if (action.equalsIgnoreCase(CREATE_GROUPS_ACTION)) {
                 mask |= CREATE_GROUPS_MASK;

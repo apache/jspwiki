@@ -349,7 +349,7 @@ public class XMLGroupDatabase implements GroupDatabase {
 
             // Write each profile as a <group> node
             for( final Group group : m_groups.values() ) {
-                io.write( "  <" + GROUP_TAG + " " );
+                io.write( "  <" + GROUP_TAG + TextUtil.SPACE );
                 io.write( GROUP_NAME );
                 io.write( "=\"" + StringEscapeUtils.escapeXml11( group.getName() )+ "\" " );
                 io.write( CREATOR );
@@ -359,12 +359,12 @@ public class XMLGroupDatabase implements GroupDatabase {
                 io.write( MODIFIER );
                 io.write( "=\"" + group.getModifier() + "\" " );
                 io.write( LAST_MODIFIED );
-                io.write( "=\"" + new SimpleDateFormat( DATE_FORMAT ).format( group.getLastModified() ) + "\"" );
+                io.write( "=\"" + new SimpleDateFormat( DATE_FORMAT ).format( group.getLastModified() ) + TextUtil.BACKSLASH );
                 io.write( ">\n" );
 
                 // Write each member as a <member> node
                 for( final Principal member : group.members() ) {
-                    io.write( "    <" + MEMBER_TAG + " " );
+                    io.write( "    <" + MEMBER_TAG + TextUtil.SPACE );
                     io.write( PRINCIPAL );
                     io.write( "=\"" + StringEscapeUtils.escapeXml11(member.getName()) + "\" " );
                     io.write( "/>\n" );

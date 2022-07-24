@@ -84,12 +84,12 @@ public class XmlUtilTest {
 
     @Test
     public void testExtractTestFrom() throws Exception {
-        Assertions.assertEquals( "", XmlUtil.extractTextFromDocument( null ) );
+        Assertions.assertEquals( TextUtil.EMPTY, XmlUtil.extractTextFromDocument( null ) );
         final SAXBuilder builder = new SAXBuilder();
         try( final InputStream is = new FileInputStream( new File ("./src/test/resources/ini/classmappings.xml" ) ) ) {
             final Document doc = builder.build( is );
             final String text = XmlUtil.extractTextFromDocument( doc );
-            Assertions.assertEquals( "\n" +
+            Assertions.assertEquals( TextUtil.LF +
                                      "  \n" +
                                      "    java.util.List\n" +
                                      "    java.util.ArrayList\n" +

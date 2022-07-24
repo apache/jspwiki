@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.parser;
 
+import org.apache.wiki.util.TextUtil;
+
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -257,7 +259,7 @@ public class CreoleToJSPWikiTranslator
         result = translateElement(result, CREOLE_HEADER_1, JSPWIKI_HEADER_1);
         result = translateElement(result, CREOLE_HEADER_0, JSPWIKI_HEADER_0);
         result = translateElement(result, CREOLE_IMAGE, JSPWIKI_IMAGE);
-        result = translateLists(result, "-", "*", "#");
+        result = translateLists(result, "-", "*", TextUtil.COMMENT);
         result = translateElement(result, CREOLE_SIMPLEIMAGE, JSPWIKI_SIMPLEIMAGE);
         result = translateElement(result, CREOLE_TABLE, JSPWIKI_TABLE);
         result = replaceArea(result, TABLE_HEADER_PROTECTED, "\\|=([^\\|]*)=|\\|=([^\\|]*)", "||$1$2");
@@ -278,7 +280,7 @@ public class CreoleToJSPWikiTranslator
     /** Translates lists. */
     private static String translateLists(final String content, final String sourceSymbol, final String targetSymbol, final String sourceSymbol2)
     {
-        final String[] lines = content.split("\n");
+        final String[] lines = content.split( TextUtil.LF);
         final StringBuilder result = new StringBuilder();
         int counter = 0;
         int inList = -1;
@@ -319,13 +321,13 @@ public class CreoleToJSPWikiTranslator
             result.append(line);
             if (i < lines.length - 1)
             {
-                result.append("\n");
+                result.append( TextUtil.LF);
             }
             counter = 0;
         }
 
         // Fixes testExtensions5
-        if( content.endsWith( "\n" ) && result.charAt( result.length()-1 ) != '\n' )
+        if( content.endsWith( TextUtil.LF ) && result.charAt( result.length()-1 ) != '\n' )
         {
             result.append( '\n' );
         }
@@ -429,7 +431,7 @@ public class CreoleToJSPWikiTranslator
 
             if (paramsField != null)
             {
-                final String[] params = paramsField.split(",");
+                final String[] params = paramsField.split(TextUtil.COMMA);
 
                 for (final String s : params) {
                     final String param = s.replaceAll("\\||\\s", "").toUpperCase();
@@ -452,7 +454,7 @@ public class CreoleToJSPWikiTranslator
                     } catch (final Exception e) {
 
                         if (wikiProps.getProperty("creole.imagePlugin.para." + param) != null)
-                            paramsString.append(" ").append(wikiProps.getProperty("creole.imagePlugin.para." + param)
+                            paramsString.append(TextUtil.SPACE).append(wikiProps.getProperty("creole.imagePlugin.para." + param)
                                     .replaceAll("^(\"|')(.*)(\"|')$", "$2"));
                     }
                 }
@@ -463,7 +465,7 @@ public class CreoleToJSPWikiTranslator
             protectedMarkup = protectedMarkup.replaceAll("\u2015", paramsString.toString());
             protectedMarkup = protectedMarkup.replaceAll("\u2016", imagePlugin);
             protectedMarkup = protectedMarkup.replaceAll("caption=''", "");
-            protectedMarkup = protectedMarkup.replaceAll("\\s+", " ");
+            protectedMarkup = protectedMarkup.replaceAll("\\s+", TextUtil.SPACE);
 
             final int pos = contentCopy.indexOf(temp);
             contentCopy = contentCopy.substring(0, pos) + protectedMarkup

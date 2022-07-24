@@ -27,6 +27,7 @@ import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 import org.apache.wiki.ui.progress.ProgressItem;
 import org.apache.wiki.ui.progress.ProgressManager;
+import org.apache.wiki.util.TextUtil;
 
 import javax.management.NotCompliantMBeanException;
 import java.util.Collection;
@@ -141,7 +142,7 @@ public class SearchManagerBean extends SimpleAdminBean {
         if( val != null ) {
             reload();
             context.getWikiSession().addMessage( "Started reload of all indexed pages..." );
-            return "";
+            return TextUtil.EMPTY;
         }
 
         return doGet( context );

@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.htmltowiki.syntax.MarkupHelper;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Content;
 import org.jdom2.Element;
@@ -232,7 +233,7 @@ public class XHtmlElementToWikiTranslator {
     private String propsToStyleString( final Map< Object, Object >  styleProps ) {
         final StringBuilder style = new StringBuilder();
         for( final Map.Entry< Object, Object > entry : styleProps.entrySet() ) {
-            style.append( " " ).append( entry.getKey() ).append( ": " ).append( entry.getValue() ).append( ";" );
+            style.append( TextUtil.SPACE ).append( entry.getKey() ).append( ": " ).append( entry.getValue() ).append( ";" );
         }
         return style.toString();
     }

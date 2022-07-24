@@ -35,6 +35,7 @@ import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.comparators.PrincipalComparator;
 
 import java.security.Permission;
@@ -100,7 +101,7 @@ public class DefaultAclManager implements AclManager {
             final String actions = fieldToks.nextToken();
 
             while( fieldToks.hasMoreTokens() ) {
-                final String principalName = fieldToks.nextToken(",").trim();
+                final String principalName = fieldToks.nextToken(TextUtil.COMMA).trim();
                 final Principal principal = m_auth.resolvePrincipal(principalName);
                 final AclEntry oldEntry = acl.getAclEntry(principal);
 
@@ -135,7 +136,7 @@ public class DefaultAclManager implements AclManager {
     public Acl getPermissions( final Page page ) {
         //  Does the page already have cached ACLs?
         Acl acl = page.getAcl();
-        LOG.debug( "page=" + page.getName() + "\n" + acl );
+        LOG.debug( "page=" + page.getName() + TextUtil.LF + acl );
 
         if( acl == null ) {
             //  If null, try the parent.
@@ -172,7 +173,7 @@ public class DefaultAclManager implements AclManager {
         // Remove all of the existing ACLs.
         final String pageText = m_engine.getManager( PageManager.class ).getPureText( page );
         final Matcher matcher = DefaultAclManager.ACL_PATTERN.matcher( pageText );
-        final String cleansedText = matcher.replaceAll("" );
+        final String cleansedText = matcher.replaceAll(TextUtil.EMPTY );
         final String newText = DefaultAclManager.printAcl( page.getAcl() ) + cleansedText;
         try {
             pageManager.putPageText( page, newText );
@@ -217,12 +218,12 @@ public class DefaultAclManager implements AclManager {
             final String action = entry.getKey();
             final List< Principal > principals = entry.getValue();
             principals.sort( new PrincipalComparator() );
-            s.append( "[{ALLOW " ).append( action ).append( " " );
+            s.append( "[{ALLOW " ).append( action ).append( TextUtil.SPACE );
             for( int i = 0; i < principals.size(); i++ ) {
                 final Principal principal = principals.get( i );
                 s.append( principal.getName() );
                 if( i < ( principals.size() - 1 ) ) {
-                    s.append( "," );
+                    s.append( TextUtil.COMMA );
                 }
             }
             s.append( "}]\n" );

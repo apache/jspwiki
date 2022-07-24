@@ -19,6 +19,7 @@
 package org.apache.wiki.htmltowiki.syntax;
 
 import org.apache.wiki.htmltowiki.XHtmlElementToWikiTranslator;
+import org.apache.wiki.util.TextUtil;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
@@ -50,7 +51,7 @@ public abstract class TdDecorator {
         out.print( markupTd() );
         chain.translate( element );
         if( preStack.isEmpty() ) {
-            out.print( " " );
+            out.print( TextUtil.SPACE );
         }
     }
 

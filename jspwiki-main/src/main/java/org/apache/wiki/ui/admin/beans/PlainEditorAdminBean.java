@@ -56,7 +56,7 @@ public class PlainEditorAdminBean extends SimpleMBean implements AdminBean {
         }
         String base = TEMPLATE;
         base = TextUtil.replaceString( base, "%checked", "checked='checked'" );
-        base = TextUtil.replaceString( base, "%messages", "" );
+        base = TextUtil.replaceString( base, "%messages", TextUtil.EMPTY );
         return base;
     }
 
@@ -67,7 +67,7 @@ public class PlainEditorAdminBean extends SimpleMBean implements AdminBean {
         
         // Make changes
         String base = TEMPLATE;
-        base = TextUtil.replaceString( base, "%checked", checked ? "checked='checked'" : "" );
+        base = TextUtil.replaceString( base, "%checked", checked ? "checked='checked'" : TextUtil.EMPTY );
         base = TextUtil.replaceString( base, "%messages", "<br /><font color='red'>Your settings have been saved</font>" );
         return base;
     }

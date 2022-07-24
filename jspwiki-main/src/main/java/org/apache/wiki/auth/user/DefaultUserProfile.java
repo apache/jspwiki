@@ -19,6 +19,7 @@
 package org.apache.wiki.auth.user;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
@@ -35,7 +36,6 @@ import java.util.Map;
 public final class DefaultUserProfile implements UserProfile {
 
     private static final long serialVersionUID = -5600466893735300647L;
-    private static final String EMPTY_STRING = "";
     private static final String WHITESPACE = "\\s";
 
     private final Map< String, Serializable > attributes = new HashMap<>();
@@ -204,7 +204,7 @@ public final class DefaultUserProfile implements UserProfile {
 
         // Compute wiki name
         if ( fullname != null ) {
-            wikiname = fullname.replaceAll( WHITESPACE, EMPTY_STRING );
+            wikiname = fullname.replaceAll( WHITESPACE, TextUtil.EMPTY);
         }
     }
 

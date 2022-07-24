@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.htmltowiki;
 
+import org.apache.wiki.util.TextUtil;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.util.regex.Matcher;
@@ -50,15 +52,15 @@ public class WhitespaceTrimWriter extends Writer {
         if( m_buffer.length() > 0 )
         {
             String s = m_buffer.toString();
-            s = s.replaceAll( "\r\n", "\n" );
+            s = s.replaceAll( "\r\n", TextUtil.LF );
             if( m_trimMode )
             {
                 s = s.replaceAll( "(\\w+) \\[\\?\\|Edit\\.jsp\\?page=\\1\\]", "[$1]" );
                 s = s.replaceAll( "\n{2,}", "\n\n" );
-                s = s.replaceAll( "\\p{Blank}+", " " );
-                s = s.replaceAll( "[ ]*\n[ ]*", "\n" );
+                s = s.replaceAll( "\\p{Blank}+", TextUtil.SPACE );
+                s = s.replaceAll( "[ ]*\n[ ]*", TextUtil.LF );
                 s = replacePluginNewlineBackslashes( s );
-                s = s.replace( NO_TRIMMED_SPACE, " " );
+                s = s.replace( NO_TRIMMED_SPACE, TextUtil.SPACE );
             }
             m_result.append( s );
             m_buffer = new StringBuffer();
@@ -76,7 +78,7 @@ public class WhitespaceTrimWriter extends Writer {
             final String groupEscaped = m.group().replaceAll( "\\\\|\\$", "\\\\$0" );
             if( m.group( 3 ) != null )
             {
-                m.appendReplacement( sb, groupEscaped.replaceAll( "\\\\\\\\\\\\\\\\", "\n" ) );
+                m.appendReplacement( sb, groupEscaped.replaceAll( "\\\\\\\\\\\\\\\\", TextUtil.LF ) );
             }
             else
             {

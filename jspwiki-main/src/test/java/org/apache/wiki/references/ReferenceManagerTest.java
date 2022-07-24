@@ -17,6 +17,7 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -327,9 +328,9 @@ public class ReferenceManagerTest  {
                 buf.append( key ).append( " referred by: " );
                 final Set< String > refs = drm.getReferredBy().get( key );
                 for( final String aRef : refs ) {
-                    buf.append( aRef ).append( " " );
+                    buf.append( aRef ).append( TextUtil.SPACE );
                 }
-                buf.append( "\n" );
+                buf.append( TextUtil.LF );
             }
 
 
@@ -341,16 +342,16 @@ public class ReferenceManagerTest  {
                 final Collection< String > refs = drm.getRefersTo().get( key );
                 if(refs != null) {
                     for( final String aRef : refs ) {
-                        buf.append( aRef ).append( " " );
+                        buf.append( aRef ).append( TextUtil.SPACE );
                     }
-                    buf.append( "\n" );
+                    buf.append( TextUtil.LF );
                 } else {
                     buf.append("(no references)\n");
                 }
             }
             buf.append( "================================================================\n" );
         } catch( final Exception e ) {
-            buf.append("Problem in dump(): " ).append( e ).append( "\n" );
+            buf.append("Problem in dump(): " ).append( e ).append( TextUtil.LF );
         }
 
         return( buf.toString() );

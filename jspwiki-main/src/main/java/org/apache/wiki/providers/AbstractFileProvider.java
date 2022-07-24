@@ -167,7 +167,7 @@ public abstract class AbstractFileProvider implements PageProvider {
      */
     protected String mangleName( String pagename ) {
         pagename = TextUtil.urlEncode( pagename, m_encoding );
-        pagename = TextUtil.replaceString( pagename, "/", "%2F" );
+        pagename = TextUtil.replaceString( pagename, TextUtil.SLASH, "%2F" );
 
         //  Names which start with a dot must be escaped to prevent problems. Since we use URL encoding, this is invisible in our unescaping.
         if( pagename.startsWith( "." ) ) {

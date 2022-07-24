@@ -31,6 +31,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.SubjectDomainCombiner;
 
 import org.apache.wiki.auth.GroupPrincipal;
+import org.apache.wiki.util.TextUtil;
 
 /**
  * <p>
@@ -109,8 +110,6 @@ public final class GroupPermission extends Permission implements Serializable
     /** Convenience constant that denotes <code>GroupPermission( "*:*, "view" )</code>. */
     public static final GroupPermission VIEW             = new GroupPermission( VIEW_ACTION );
 
-    private static final String         ACTION_SEPARATOR = ",";
-
     private static final String         WILDCARD         = "*";
 
     private static final String         WIKI_SEPARATOR   = ":";
@@ -126,7 +125,7 @@ public final class GroupPermission extends Permission implements Serializable
     /** For serialization purposes */
     GroupPermission()
     {
-        this("");
+        this(TextUtil.EMPTY);
     }
     
     /**
@@ -168,7 +167,7 @@ public final class GroupPermission extends Permission implements Serializable
         m_group = groupName;
 
         // Parse actions
-        final String[] groupActions = actions.toLowerCase().split( ACTION_SEPARATOR );
+        final String[] groupActions = actions.toLowerCase().split( TextUtil.COMMA );
         Arrays.sort( groupActions, String.CASE_INSENSITIVE_ORDER );
         m_mask = createMask( actions );
         final StringBuilder buffer = new StringBuilder();
@@ -178,7 +177,7 @@ public final class GroupPermission extends Permission implements Serializable
             buffer.append( groupActions[i] );
             if ( i < ( groupActionsLength - 1 ) )
             {
-                buffer.append( ACTION_SEPARATOR );
+                buffer.append( TextUtil.COMMA );
             }
         }
         m_actionString = buffer.toString();
@@ -318,7 +317,7 @@ public final class GroupPermission extends Permission implements Serializable
      */
     public String toString()
     {
-        final String wiki = ( m_wiki == null ) ? "" : m_wiki;
+        final String wiki = ( m_wiki == null ) ? TextUtil.EMPTY : m_wiki;
         return "(\"" + this.getClass().getName() + "\",\"" + wiki + WIKI_SEPARATOR + m_group + "\",\"" + getActions()
                 + "\")";
     }
@@ -355,7 +354,7 @@ public final class GroupPermission extends Permission implements Serializable
             throw new IllegalArgumentException( "Actions cannot be blank or null" );
         }
         int mask = 0;
-        final String[] actionList = actions.split( ACTION_SEPARATOR );
+        final String[] actionList = actions.split( TextUtil.COMMA );
         for( final String action : actionList )
         {
             if ( action.equalsIgnoreCase( VIEW_ACTION ) )

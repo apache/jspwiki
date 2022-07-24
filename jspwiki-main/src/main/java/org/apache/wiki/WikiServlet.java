@@ -24,6 +24,7 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.engine.EngineLifecycleExtension;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.url.URLConstructor;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -91,7 +92,7 @@ public class WikiServlet extends HttpServlet {
         }
 
         final String jspPage = m_engine.getManager( URLConstructor.class ).getForwardPage( req );
-        final RequestDispatcher dispatcher = req.getRequestDispatcher( "/" + jspPage + "?page=" +
+        final RequestDispatcher dispatcher = req.getRequestDispatcher( TextUtil.SLASH + jspPage + "?page=" +
                                                                        m_engine.encodeName( pageName ) + "&" + req.getQueryString() );
 
         dispatcher.forward( req, res );

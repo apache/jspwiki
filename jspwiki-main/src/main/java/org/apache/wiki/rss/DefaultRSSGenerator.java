@@ -57,7 +57,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
 
     /** The RSS file to generate. */
     private final String m_rssFile;
-    private String m_channelDescription = "";
+    private String m_channelDescription = TextUtil.EMPTY;
     private String m_channelLanguage = "en-us";
     private boolean m_enabled = true;
 
@@ -349,7 +349,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
             //  Title
             String pageText = m_engine.getManager( PageManager.class ).getPureText( page.getName(), WikiProvider.LATEST_VERSION );
 
-            String title = "";
+            String title = TextUtil.EMPTY;
             final int firstLine = pageText.indexOf('\n');
 
             if( firstLine > 0 ) {

@@ -26,6 +26,7 @@ import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
+import org.apache.wiki.util.TextUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -135,26 +136,26 @@ public class RenderingManagerTest {
 
     private static final String TEST_TEXT =
         "Please ''check [RecentChanges].\n" +
-        "\n" +
+       TextUtil.LF +
         "Testing. fewfwefe\n" +
-        "\n" +
+       TextUtil.LF +
         "CHeck [testpage]\n" +
-        "\n" +
+       TextUtil.LF +
         "More testing.\n" +
         "dsadsadsa''\n" +
         "Is this {{truetype}} or not?\n" +
         "What about {{{This}}}?\n" +
         "How about {{this?\n" +
-        "\n" +
+       TextUtil.LF +
         "{{{\n" +
         "{{text}}\n" +
         "}}}\n" +
         "goo\n" +
-        "\n" +
+       TextUtil.LF +
         "<b>Not bold</b>\n" +
-        "\n" +
+       TextUtil.LF +
         "motto\n" +
-        "\n" +
+       TextUtil.LF +
         "* This is a list which we\n" +
         "shall continue on a other line.\n" +
         "* There is a list item here.\n" +
@@ -164,42 +165,42 @@ public class RenderingManagerTest {
         "a third line as well.\n" +
         "And a fourth line.\n" +
         "* Third item.\n" +
-        "\n" +
+       TextUtil.LF +
         "Foobar.\n" +
-        "\n" +
+       TextUtil.LF +
         "----\n" +
-        "\n" +
+       TextUtil.LF +
         "!!!Really big heading\n" +
         "Text.\n" +
         "!! Just a normal heading [with a hyperlink|Main]\n" +
         "More text.\n" +
         "!Just a small heading.\n" +
-        "\n" +
+       TextUtil.LF +
         "This should be __bold__ text.\n" +
-        "\n" +
+       TextUtil.LF +
         "__more bold text continuing\n" +
         "on the next line.__\n" +
-        "\n" +
+       TextUtil.LF +
         "__more bold text continuing\n" +
-        "\n" +
+       TextUtil.LF +
         "on the next paragraph.__\n" +
-        "\n" +
-        "\n" +
+       TextUtil.LF +
+       TextUtil.LF +
         "This should be normal.\n" +
-        "\n" +
+       TextUtil.LF +
         "Now, let's try ''italic text''.\n" +
-        "\n" +
+       TextUtil.LF +
         "Bulleted lists:\n" +
         "* One\n" +
         "Or more.\n" +
         "* Two\n" +
-        "\n" +
+       TextUtil.LF +
         "** Two.One\n" +
-        "\n" +
+       TextUtil.LF +
         "*** Two.One.One\n" +
-        "\n" +
+       TextUtil.LF +
         "* Three\n" +
-        "\n" +
+       TextUtil.LF +
         "Numbered lists.\n" +
         "# One\n" +
         "# Two\n" +
@@ -209,13 +210,13 @@ public class RenderingManagerTest {
         "## Three.Three\n" +
         "### Three.Three.One\n" +
         "# Four\n" +
-        "\n" +
+       TextUtil.LF +
         "End?\n" +
-        "\n" +
+       TextUtil.LF +
         "No, let's {{break}} things.\\ {{{ {{{ {{text}} }}} }}}\n" +
-        "\n" +
+       TextUtil.LF +
         "More breaking.\n" +
-        "\n" +
+       TextUtil.LF +
         "{{{\n" +
         "code.}}\n" +
         "----\n" +

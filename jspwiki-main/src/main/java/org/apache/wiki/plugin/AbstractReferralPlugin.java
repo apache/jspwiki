@@ -185,7 +185,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
         if ( s != null ) {
             try {
                 final PatternCompiler pc = new GlobCompiler();
-                final String[] ptrns = StringUtils.split( s, "," );
+                final String[] ptrns = StringUtils.split( s, TextUtil.COMMA );
                 m_exclude = new Pattern[ ptrns.length ];
                 for ( int i = 0; i < ptrns.length; i++ ) {
                     m_exclude[ i ] = pc.compile( ptrns[ i ] );
@@ -200,7 +200,7 @@ public abstract class AbstractReferralPlugin implements Plugin {
         if ( s != null ) {
             try {
                 final PatternCompiler pc = new GlobCompiler();
-                final String[] ptrns = StringUtils.split( s, "," );
+                final String[] ptrns = StringUtils.split( s, TextUtil.COMMA );
                 m_include = new Pattern[ ptrns.length ];
                 for ( int i = 0; i < ptrns.length; i++ ) {
                     m_include[ i ] = pc.compile( ptrns[ i ] );

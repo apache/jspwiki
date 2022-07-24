@@ -19,6 +19,7 @@
 package org.apache.wiki.auth.permissions;
 
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.util.TextUtil;
 
 import java.util.WeakHashMap;
 
@@ -64,7 +65,7 @@ public final class PermissionFactory
      */
     public static PagePermission getPagePermission( final String page, final String actions )
     {
-        return getPagePermission( "", page, actions );
+        return getPagePermission( TextUtil.EMPTY, page, actions );
     }
 
     /**

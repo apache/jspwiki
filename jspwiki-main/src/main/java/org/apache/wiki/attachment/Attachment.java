@@ -21,6 +21,7 @@ package org.apache.wiki.attachment;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.util.TextUtil;
 
 
 /**
@@ -40,7 +41,7 @@ public class Attachment extends WikiPage implements org.apache.wiki.api.core.Att
      * @param fileName   The file name for the attachment.
      */
     public Attachment( final Engine engine, final String parentPage, final String fileName ) {
-        super( engine, parentPage + "/" + fileName );
+        super( engine, parentPage + TextUtil.SLASH + fileName );
         m_parentName = parentPage;
         m_fileName = fileName;
     }

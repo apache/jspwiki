@@ -29,6 +29,7 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.references.ReferenceManager;
+import org.apache.wiki.util.TextUtil;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.output.Format;
@@ -88,7 +89,7 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
                     masterDiv.addContent(makeHeader(String.valueOf(initialChar)));
                     currentDiv = getElement("div","body");
                     masterDiv.addContent(currentDiv);
-                    indexDiv.addContent(getLink("#"+initialChar,String.valueOf(initialChar)));
+                    indexDiv.addContent(getLink(TextUtil.COMMENT+initialChar,String.valueOf(initialChar)));
                 } else {
                     currentDiv.addContent(", ");
                 }

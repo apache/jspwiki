@@ -223,7 +223,7 @@ public final class ClassUtil {
                 final File subfile = files.next();
                 // store an entry similar to the jarSearch(..) below ones
                 final String entry = StringUtils.replace( subfile.getAbsolutePath(), file.getAbsolutePath() + File.separatorChar, StringUtils.EMPTY );
-                results.add( rootPackage + "/" + entry );
+                results.add( rootPackage + TextUtil.SLASH + entry );
             }
         } else {
             results.add( file.getName() );
@@ -361,7 +361,7 @@ public final class ClassUtil {
      * @since 2.11.1
      */
     public static < T > T buildInstance( final String className ) throws ReflectiveOperationException {
-        return buildInstance( "", className );
+        return buildInstance( TextUtil.EMPTY, className );
     }
 
     /**

@@ -59,7 +59,7 @@ public class CommentedPropertiesTest
         Assertions.assertEquals( 5, m_props.keySet().size() );
         Assertions.assertEquals( "Foo", m_props.get( "testProp1" ) );
         Assertions.assertEquals( "Bar", m_props.get( "testProp2" ) );
-        Assertions.assertEquals( "", m_props.get( "testProp3" ) );
+        Assertions.assertEquals( TextUtil.EMPTY, m_props.get( "testProp3" ) );
         Assertions.assertEquals( "FooAgain", m_props.get( "testProp4" ) );
         Assertions.assertEquals( "BarAgain", m_props.get( "testProp5" ) );
         Assertions.assertNull( m_props.get( "testProp6" ) );

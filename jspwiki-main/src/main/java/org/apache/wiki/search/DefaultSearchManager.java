@@ -151,7 +151,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
             if( !wikiName.isEmpty() ) {
                 // split pagename and attachment filename
                 String filename = "";
-                final int pos = wikiName.indexOf("/");
+                final int pos = wikiName.indexOf(TextUtil.SLASH);
                 if( pos >= 0 ) {
                     filename = wikiName.substring( pos ).toLowerCase();
                     wikiName = wikiName.substring( 0, pos );

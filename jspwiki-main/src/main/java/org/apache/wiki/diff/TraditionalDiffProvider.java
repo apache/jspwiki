@@ -102,7 +102,7 @@ public class TraditionalDiffProvider implements DiffProvider {
 
             if( rev == null || rev.size() == 0 ) {
                 // No difference
-                return "";
+                return TextUtil.EMPTY;
             }
 
             final StringBuffer ret = new StringBuffer(rev.size() * 20); // Guessing how big it will become...
@@ -169,7 +169,7 @@ public class TraditionalDiffProvider implements DiffProvider {
             };
             final double[] choiceLimits = { 1, 2 };
 
-            final MessageFormat fmt = new MessageFormat("");
+            final MessageFormat fmt = new MessageFormat(TextUtil.EMPTY);
             fmt.setLocale( Preferences.getLocale(m_context) );
             final ChoiceFormat cfmt = new ChoiceFormat( choiceLimits, choiceString );
             fmt.applyPattern( type );

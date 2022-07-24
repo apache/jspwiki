@@ -425,7 +425,7 @@ public final class MailUtil {
      */
     protected static class SmtpAuthenticator extends Authenticator {
 
-        private static final String BLANK = "";
+        private static final String BLANK = TextUtil.EMPTY;
         private final String m_pass;
         private final String m_login;
 

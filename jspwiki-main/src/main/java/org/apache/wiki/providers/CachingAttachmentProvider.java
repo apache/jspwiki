@@ -273,7 +273,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
         cachingManager.remove( CachingManager.CACHE_ATTACHMENTS_COLLECTION, oldParent );
 
         // This is a kludge to make sure that the pages are removed from the other cache as well.
-        final String checkName = oldParent + "/";
+        final String checkName = oldParent + TextUtil.SLASH;
         final List< String > names = cachingManager.keys( CachingManager.CACHE_ATTACHMENTS_COLLECTION );
         for( final String name : names ) {
             if( name.startsWith( checkName ) ) {

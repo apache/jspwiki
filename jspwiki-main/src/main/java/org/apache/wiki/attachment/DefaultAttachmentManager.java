@@ -176,7 +176,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
         }
 
         //  Finally, figure out whether this is a real attachment or a generated attachment.
-        Attachment att = getDynamicAttachment( currentPage.getName() + "/" + attachmentname );
+        Attachment att = getDynamicAttachment( currentPage.getName() + TextUtil.SLASH + attachmentname );
         if( att == null ) {
             att = m_provider.getAttachmentInfo( currentPage, attachmentname, version );
         }

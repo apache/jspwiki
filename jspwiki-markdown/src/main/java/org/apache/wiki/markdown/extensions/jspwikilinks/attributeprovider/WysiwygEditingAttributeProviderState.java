@@ -24,6 +24,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.render.WikiRenderer;
+import org.apache.wiki.util.TextUtil;
 
 
 /**
@@ -72,7 +73,7 @@ public class WysiwygEditingAttributeProviderState implements NodeAttributeProvid
                     final String title = attributes.getValue( "title" );
                     if( title != null ) {
                         // remove the title since we don't want to eventually save the default undefined page title.
-                        attributes.replaceValue( "title", "" );
+                        attributes.replaceValue( "title", TextUtil.EMPTY );
                     }
 
                     String newHref = href.substring( editPageLinkUrl.length() );

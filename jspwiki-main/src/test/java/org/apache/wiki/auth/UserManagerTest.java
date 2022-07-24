@@ -33,6 +33,7 @@ import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.auth.user.XMLUserDatabase;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionQueue;
 import org.apache.wiki.workflow.DecisionRequiredException;
@@ -131,7 +132,7 @@ public class UserManagerTest {
         Assertions.assertTrue( session.isAuthenticated() );
 
         // Setup Step 2: create a new group with our test user in it
-        Group group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
+        Group group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin + TextUtil.LF + oldName, true );
         groupManager.setGroup( session, group );
 
         // 2a. Make sure the group is created with the user in it, and the role is added to the Subject
@@ -200,7 +201,7 @@ public class UserManagerTest {
         m_engine.getManager( PageManager.class ).deletePage( pageName );
 
         // Setup Step 6: re-create the group with our old test user names in it
-        group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin + "\n" + oldName, true );
+        group = groupManager.parseGroup( m_groupName, "Alice \n Bob \n Charlie \n " + oldLogin +TextUtil.LF + oldName, true );
         groupManager.setGroup( session, group );
 
         // Setup Step 7: Save a new page with the old login/wiki names in the ACL again

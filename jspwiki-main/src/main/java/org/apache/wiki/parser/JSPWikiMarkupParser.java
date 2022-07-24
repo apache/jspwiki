@@ -267,7 +267,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             text = link;
         }
         text = callMutatorChain( m_linkMutators, text );
-        section = (section != null) ? ("#"+section) : "";
+        section = (section != null) ? (TextUtil.COMMENT+section) : TextUtil.EMPTY;
 
         // Make sure we make a link name that can be accepted  as a valid URL.
         if( link.isEmpty() ) {
@@ -281,7 +281,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 break;
 
             case EDIT:
-                el = createAnchor( EDIT, m_context.getURL( ContextEnum.PAGE_EDIT.getRequestContext(),link), text, "" );
+                el = createAnchor( EDIT, m_context.getURL( ContextEnum.PAGE_EDIT.getRequestContext(),link), text, TextUtil.EMPTY );
                 el.setAttribute("title", MessageFormat.format( rb.getString( "markupparser.link.create" ), link ) );
                 break;
 
@@ -292,7 +292,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             // These two are for local references - footnotes and references to footnotes.
             // We embed the page name (or whatever WikiContext gives us) to make sure the links are unique across Wiki.
             case LOCALREF:
-                el = createAnchor( LOCALREF, "#ref-"+m_context.getName()+"-"+link, "["+text+"]", "" );
+                el = createAnchor( LOCALREF, "#ref-"+m_context.getName()+"-"+link, "["+text+"]", TextUtil.EMPTY );
                 break;
 
             case LOCAL:
@@ -314,7 +314,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 el = new Element( "img" ).setAttribute( "class", "inline" );
                 el.setAttribute( "src", link );
                 el.setAttribute( "alt", text );
-                el = createAnchor( IMAGELINK, text, "", "" ).addContent( el );
+                el = createAnchor( IMAGELINK, text, TextUtil.EMPTY, TextUtil.EMPTY ).addContent( el );
                 break;
 
             case IMAGEWIKILINK:
@@ -322,7 +322,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 el = new Element( "img" ).setAttribute( "class", "inline" );
                 el.setAttribute( "src", link );
                 el.setAttribute( "alt", text );
-                el = createAnchor( IMAGEWIKILINK, pagelink, "", "" ).addContent( el );
+                el = createAnchor( IMAGEWIKILINK, pagelink, TextUtil.EMPTY, TextUtil.EMPTY ).addContent( el );
                 break;
 
             case EXTERNAL:
@@ -340,9 +340,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 final String attlink = m_context.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), link );
                 final String infolink = m_context.getURL( ContextEnum.PAGE_INFO.getRequestContext(), link );
                 final String imglink = m_context.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "images/attachment_small.png" );
-                el = createAnchor( ATTACHMENT, attlink, text, "" );
+                el = createAnchor( ATTACHMENT, attlink, text, TextUtil.EMPTY );
                 if(  m_engine.getManager( AttachmentManager.class ).forceDownload( attlink ) ) {
-                    el.setAttribute("download", "");
+                    el.setAttribute("download", TextUtil.EMPTY);
                 }
 
                 pushElement( el );
@@ -435,7 +435,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                         final String firstPart = buf.substring( 0, result.beginOffset( 0 ) );
                         String prefix = result.group( 1 );
                         if( prefix == null ) {
-                            prefix = "";
+                            prefix = TextUtil.EMPTY;
                         }
 
                         final String camelCase = result.group(2);
@@ -585,7 +585,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //  by putting an empty string between the tags.  Yes, it's a kludge
                 //  but what'cha gonna do about it. :-)
                 if( flushedBytes == 0 && Arrays.binarySearch( EMPTY_ELEMENTS, s ) < 0 ) {
-                    currEl.addContent( "" );
+                    currEl.addContent( TextUtil.EMPTY );
                 }
                 return m_currentElement;
             }
@@ -767,7 +767,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
             el = new Element( "img" ).setAttribute( "class", OUTLINK );
             el.setAttribute( "src", m_outlinkImageURL );
-            el.setAttribute( "alt","" );
+            el.setAttribute( "alt",TextUtil.EMPTY );
         }
 
         return el;
@@ -787,7 +787,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         final Element result;
         String last = null;
 
-        if( url.endsWith( "," ) || url.endsWith( "." ) ) {
+        if( url.endsWith( TextUtil.COMMA ) || url.endsWith( "." ) ) {
             last = url.substring( url.length() - 1 );
             url = url.substring( 0, url.length() - 1 );
         }
@@ -902,7 +902,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  very useful if you want to emit HTML directly into the stream.
      */
     private void disableOutputEscaping() {
-        addElement( new ProcessingInstruction( Result.PI_DISABLE_OUTPUT_ESCAPING, "" ) );
+        addElement( new ProcessingInstruction( Result.PI_DISABLE_OUTPUT_ESCAPING, TextUtil.EMPTY ) );
     }
 
     /**
@@ -996,7 +996,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                         addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.nointerwikiref" ), args ) ) );
                     }
                 }
-            } else if( linkref.startsWith( "#" ) ) {
+            } else if( linkref.startsWith( TextUtil.COMMENT ) ) {
                 // It defines a local footnote
                 makeLink( LOCAL, linkref, linktext, null, link.getAttributes() );
             } else if( TextUtil.isNumber( linkref ) ) {
@@ -1259,7 +1259,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         if( m_isOpenParagraph ) {
             m_isOpenParagraph = false;
             popElement( "p" );
-            m_plainTextBuf.append( "\n" ); // Just small beautification
+            m_plainTextBuf.append( TextUtil.LF ); // Just small beautification
         }
         m_restartitalic = m_isitalic;
         m_restartbold   = m_isbold;
@@ -1293,7 +1293,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             if( !( strBullets.substring( 0, Math.min( numBullets, m_genlistlevel ) ).equals( m_genlistBulletBuffer.substring( 0, Math.min( numBullets, m_genlistlevel ) ) ) ) ) {
                 if( numBullets <= m_genlistlevel ) {
                     // Substitute all but the last character (keep the expressed bullet preference)
-                    strBullets = ( numBullets > 1 ? m_genlistBulletBuffer.substring( 0, numBullets - 1 ) : "" ) +
+                    strBullets = ( numBullets > 1 ? m_genlistBulletBuffer.substring( 0, numBullets - 1 ) : TextUtil.EMPTY ) +
                                  strBullets.charAt( numBullets - 1 );
                 } else {
                     strBullets = m_genlistBulletBuffer + strBullets.substring( m_genlistlevel, numBullets );
@@ -1362,7 +1362,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
          // Push a new list item, and eat away any extra whitespace
         pushElement( new Element( "li" ) );
-        readWhile( " " );
+        readWhile( TextUtil.SPACE );
 
         // work done, remember the new bullet list (in place of old one)
         m_genlistBulletBuffer.setLength( 0 );
@@ -1511,7 +1511,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 //(2) remove any invalid character
                 if( clazz != null ) {
                     clazz = clazz.replace( '.', ' ' )
-                                 .replaceAll( "[^\\s-_\\w\\x200-\\x377]+", "" );
+                                 .replaceAll( "[^\\s-_\\w\\x200-\\x377]+", TextUtil.EMPTY );
                 }
                 ch = nextToken();
 
@@ -1648,7 +1648,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 m_plainTextBuf.append( '~' );
             }
             m_plainTextBuf.append( ( char ) ch );
-            m_plainTextBuf.append( readWhile( "" + ( char ) ch ) );
+            m_plainTextBuf.append( readWhile( TextUtil.EMPTY + ( char ) ch ) );
             return m_currentElement;
         }
         // No escape.
@@ -1822,7 +1822,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     }
                 }
             } else {
-                m_plainTextBuf.append("\n");
+                m_plainTextBuf.append( TextUtil.LF);
                 m_newLine = true;
             }
             return IGNORE;
@@ -1918,8 +1918,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
         if( m_lastHeading != null && !m_wysiwygEditorMode ) {
             // Add the hash anchor element at the end of the heading
             addElement( new Element("a").setAttribute( "class",HASHLINK )
-                                              .setAttribute( "href","#" + m_lastHeading.m_titleAnchor )
-                                              .setText( "#" ) );
+                                              .setAttribute( "href",TextUtil.COMMENT + m_lastHeading.m_titleAnchor )
+                                              .setText( TextUtil.COMMENT ) );
             m_lastHeading = null;
         }
         popElement( "h2" );

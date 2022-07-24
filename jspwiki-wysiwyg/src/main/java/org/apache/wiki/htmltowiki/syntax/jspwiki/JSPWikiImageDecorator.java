@@ -20,6 +20,7 @@ package org.apache.wiki.htmltowiki.syntax.jspwiki;
 
 import org.apache.wiki.htmltowiki.XHtmlToWikiConfig;
 import org.apache.wiki.htmltowiki.syntax.ImageDecorator;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 import java.util.Map;
@@ -51,7 +52,7 @@ class JSPWikiImageDecorator extends ImageDecorator {
         out.print( "[{Image src='" + src + "'" );
         for( final Map.Entry< String, Object > objectObjectEntry : imageAttrs.entrySet() ) {
             if ( !objectObjectEntry.getValue().equals( "" ) ) {
-                out.print( " " + objectObjectEntry.getKey() + "='" + objectObjectEntry.getValue() + "'" );
+                out.print( TextUtil.SPACE + objectObjectEntry.getKey() + "='" + objectObjectEntry.getValue() + "'" );
             }
         }
         out.print( "}]" );

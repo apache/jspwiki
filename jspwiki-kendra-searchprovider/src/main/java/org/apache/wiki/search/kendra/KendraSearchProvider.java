@@ -236,7 +236,7 @@ public class KendraSearchProvider implements SearchProvider {
     private String getIndexId( final String indexName ) {
         ListIndicesRequest request = new ListIndicesRequest();
         ListIndicesResult result = getKendra().listIndices( request );
-        String nextToken = "";
+        String nextToken = TextUtil.EMPTY;
         while ( nextToken != null ) {
             final List< IndexConfigurationSummary > items = result.getIndexConfigurationSummaryItems();
             if ( items == null || items.isEmpty() ) {
@@ -264,7 +264,7 @@ public class KendraSearchProvider implements SearchProvider {
     private String getDatasourceId( final String indexId, final String dataSourceName ) {
         ListDataSourcesRequest request = new ListDataSourcesRequest().withIndexId( indexId );
         ListDataSourcesResult result = getKendra().listDataSources( request );
-        String nextToken = "";
+        String nextToken = TextUtil.EMPTY;
         while ( nextToken != null ) {
             final List< DataSourceSummary > items = result.getSummaryItems();
             if ( items == null || items.isEmpty() ) {
