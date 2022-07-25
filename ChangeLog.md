@@ -17,6 +17,14 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-07-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.11.3-git-12_
+
+* Dependency updates
+    * Tomcat to 9.0.65 (closes [#210](https://github.com/apache/jspwiki/pull/210)), thanks to dependabot 
+    * Maven plugins: install to 3.0.1 (closes [#214](https://github.com/apache/jspwiki/pull/214)), assembly to 3.4.2 (closes [#215](https://github.com/apache/jspwiki/pull/215)), surefire junit5 tree reporter to 1.1.0 (closes [#216](https://github.com/apache/jspwiki/pull/216)), thanks to dependabot
+
 **2022-07-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.3-git-11_
