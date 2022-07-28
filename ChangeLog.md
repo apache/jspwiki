@@ -22,6 +22,8 @@ under the License.
 * _2.11.3-git-12_
 
 * Dependency updates
+    * JUnit to 5.9.0 (closes [#218](https://github.com/apache/jspwiki/pull/218)), thanks to dependabot
+    * HSQLDB to 2.7.0 (closes [#217](https://github.com/apache/jspwiki/pull/217)), thanks to dependabot
     * Tomcat to 9.0.65 (closes [#210](https://github.com/apache/jspwiki/pull/210)), thanks to dependabot 
     * Maven plugins: install to 3.0.1 (closes [#214](https://github.com/apache/jspwiki/pull/214)), assembly to 3.4.2 (closes [#215](https://github.com/apache/jspwiki/pull/215)), surefire junit5 tree reporter to 1.1.0 (closes [#216](https://github.com/apache/jspwiki/pull/216)), thanks to dependabot
 
