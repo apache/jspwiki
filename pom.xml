@@ -756,6 +756,14 @@
               <exclude>**/src/main/webapp/templates/default/images/SilkIconSet-readme.txt</exclude> <!-- license, required by Silk Icon set cfr. NOTICE, LICENSE, etc. -->
               <exclude>**/PkgInfo</exclude>  <!-- PkgInfo files, per http://docs.oracle.com/cd/E19683-01/816-0219/6m6njqbat/index.html doesn't seem to accept comments -->
               <exclude>jspwiki-kendra-searchprovider/src/main/resources/org/apache/wiki/search/kendra/content_types.json</exclude> <!-- Json File -->
+              <exclude>**src/main/styles/haddock/bootstrap/**</exclude>
+              <exclude>**src/main/styles/haddock/default/*.crunch</exclude>
+              <exclude>**/src/main/webapp/templates/default/fonts/*.svg</exclude>
+              <exclude>**/src/main/webapp/templates/210/images/SilkIconSet-readme.txt</exclude>
+              <exclude>**/src/main/webapp/favicons/*.svg</exclude>
+              <exclude>**/src/overlay/launchers/tomcat/woas.app/Contents/*.plist</exclude>
+              <exclude>**/src/overlay/launchers/tomcat/woas.app/Contents/Resources/*.none</exclude>
+
             </excludes>
           </configuration>
         </plugin>
