@@ -178,7 +178,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
         //  Find the cookie file
         final File file = new File( cookieDir, uid );
         try {
-            if( file.getCanonicalPath().startsWith( cookieDir.getCanonicalPath() ) ) {
+            if( file.getCanonicalFile().toPath().startsWith(cookieDir.getCanonicalFile().toPath()) ) {
                 return file;
             }
         } catch( final IOException e ) {
