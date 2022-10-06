@@ -446,7 +446,7 @@ public class DefaultUserManager implements UserManager {
         @Override
         public void service( final HttpServletRequest req, final HttpServletResponse resp, final String actionName, final List<String> params) throws ServletException, IOException {
         	try {
-            	if( params.size() < 1 ) {
+            	if( params.isEmpty() ) {
             		return;
             	}
         		final String uid = params.get(0);

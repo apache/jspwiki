@@ -135,7 +135,7 @@ public class DefaultProgressManager implements ProgressManager {
                              final String actionName,
                              final List< String > params ) throws IOException {
         	LOG.debug( "ProgressManager.doGet() START" );
-        	if( params.size() < 1 ) {
+        	if( params.isEmpty() ) {
         		return;
         	}
         	final String progressId = params.get(0);

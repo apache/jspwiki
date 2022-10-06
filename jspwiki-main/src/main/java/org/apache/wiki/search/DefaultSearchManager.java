@@ -106,7 +106,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                              final List< String > params ) throws IOException {
             String result = "";
             if( StringUtils.isNotBlank( actionName ) ) {
-                if( params.size() < 1 ) {
+                if( params.isEmpty() ) {
                     return;
                 }
                 final String itemId = params.get( 0 );
