@@ -49,6 +49,11 @@ public class ExternalDiffProvider implements DiffProvider {
     public static final String PROP_DIFFCOMMAND    = "jspwiki.diffCommand";
 
     private String m_diffCommand;
+
+    /**
+     * The character set encoding used by this object. This is obtained from {@link org.apache.wiki.WikiEngine#getContentEncoding()},
+     * which returns the content encoding of the engine, either UTF-8 or ISO-8859-1.
+     */
     private Charset m_encoding;
 
     private static final char DIFF_ADDED_SYMBOL    = '+';
@@ -113,7 +118,7 @@ public class ExternalDiffProvider implements DiffProvider {
             String cmd = TextUtil.replaceString(m_diffCommand, "%s1", f1.getPath());
             cmd = TextUtil.replaceString(cmd, "%s2", f2.getPath());
 
-            final String output = FileUtil.runSimpleCommand(cmd, f1.getParent());
+            final String output = FileUtil.runSimpleCommand(cmd, f1.getParent(), m_encoding != null ? m_encoding : Charset.defaultCharset());
 
             // FIXME: Should this rely on the system default encoding?
             final String rawWikiDiff = new String( output.getBytes( StandardCharsets.ISO_8859_1 ), m_encoding );

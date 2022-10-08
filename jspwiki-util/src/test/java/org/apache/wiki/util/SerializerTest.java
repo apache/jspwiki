@@ -19,6 +19,7 @@
 package org.apache.wiki.util;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public class SerializerTest {
         final Map<String, Serializable> map = new HashMap<String, Serializable>();
         map.put( "attribute1", "some random value" );
         map.put( "attribute2", "another value" );
-        final String serializedForm = Serializer.serializeToBase64( map );
+        final String serializedForm = Serializer.serializeToBase64( map , Charset.defaultCharset());
 
         final Map<String, ? extends Serializable> newMap = Serializer.deserializeFromBase64( serializedForm );
         Assertions.assertEquals( 2, newMap.size() );
