@@ -25,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContext;
 import java.io.*;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.nio.file.Files;
@@ -256,7 +257,7 @@ public final class PropertyReader {
                 break;
             }
 
-            try( final InputStream propertyStream = new FileInputStream( propertyFile ) ) {
+            try( final InputStream propertyStream = Files.newInputStream(Paths.get(( propertyFile ) ))) {
                 LOG.info( " Reading additional properties from " + propertyFile + " and merge to cascade." );
                 final Properties additionalProps = new Properties();
                 additionalProps.load( propertyStream );
