@@ -234,8 +234,11 @@ public final class TextUtil {
         if ( orig == null ) {
             return null;
         }
-        if ( src == null || dest == null ) {
-            throw new NullPointerException();
+        if ( src == null ) {
+            throw new IllegalArgumentException ( "src must not be null!" );
+        }
+        if ( dest == null ) {
+            throw new IllegalArgumentException ( "dest must not be null!" );
         }
         if ( src.isEmpty() ) {
             return orig;

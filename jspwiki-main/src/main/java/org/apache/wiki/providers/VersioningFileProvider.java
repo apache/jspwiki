@@ -685,11 +685,11 @@ public class VersioningFileProvider extends AbstractFileProvider {
          */
         public CachedProperties( final String pageName, final Properties props, final long lastModified ) {
             if ( pageName == null ) {
-                throw new NullPointerException ( "pageName must not be null!" );
+                throw new IllegalArgumentException ( "pageName must not be null!" );
             }
             this.m_page = pageName;
             if ( props == null ) {
-                throw new NullPointerException ( "properties must not be null!" );
+                throw new IllegalArgumentException ( "properties must not be null!" );
             }
             m_props = props;
             this.m_lastModified = lastModified;
