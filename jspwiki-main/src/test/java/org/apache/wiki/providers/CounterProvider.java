@@ -32,7 +32,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 /**
  *  A provider who counts the hits to different parts.
@@ -136,7 +135,7 @@ public class CounterProvider implements PageProvider {
     @Override
     public List< Page > getVersionHistory( final String page )
     {
-        return new Vector<>();
+        return new ArrayList<>();
     }
 
     @Override

@@ -29,10 +29,10 @@ import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
 
 /**
  *  A singleton class that manages the addition and removal of WikiEvent listeners to a event source, as well as the firing of events
@@ -135,8 +135,8 @@ public final class WikiEventManager {
     /* The Map of client object to WikiEventDelegate. */
     private final Map< Object, WikiEventDelegate > m_delegates = new HashMap<>();
 
-    /* The Vector containing any preloaded WikiEventDelegates. */
-    private final Vector< WikiEventDelegate > m_preloadCache = new Vector<>();
+    /* The List containing any preloaded WikiEventDelegates. */
+    private final List< WikiEventDelegate > m_preloadCache = Collections.synchronizedList( new ArrayList<>() );
 
     /* Singleton instance of the WikiEventManager. */
     private static WikiEventManager c_instance;
@@ -324,7 +324,7 @@ public final class WikiEventManager {
             } else if( !m_preloadCache.isEmpty() ) {
                 // then see if any of the cached delegates match the class of the incoming client
                 for( int i = m_preloadCache.size()-1 ; i >= 0 ; i-- ) { // start with most-recently added
-                    final WikiEventDelegate delegate = m_preloadCache.elementAt( i );
+                    final WikiEventDelegate delegate = m_preloadCache.get( i );
                     if( delegate.getClientClass() == null || delegate.getClientClass().equals( client.getClass() ) ) {
                         // we have a hit, so use it, but only on a client we haven't seen before
                         if( !m_delegates.containsKey( client ) ) {

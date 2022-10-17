@@ -28,11 +28,12 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.xmlrpc.AuthenticationFailed;
 
 import java.security.Permission;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 /**
  *  Provides definitions for RPC handler routines.
@@ -69,16 +70,16 @@ public abstract class AbstractRPCHandler implements WikiRPCHandler {
 
     protected abstract Hashtable encodeWikiPage( Page p );
 
-    public Vector getRecentChanges( final Date since ) {
+    public List<?> geRecentChanges(final Date since ){
         checkPermission( PagePermission.VIEW );
         final Set< Page > pages = m_engine.getManager( PageManager.class ).getRecentChanges();
-        final Vector< Hashtable< ?, ? > > result = new Vector<>();
+        final List< Hashtable< ?, ? > > result = new ArrayList<>();
 
         // Transform UTC into local time.
         final Calendar cal = Calendar.getInstance();
         cal.setTime( since );
         cal.add( Calendar.MILLISECOND, cal.get( Calendar.ZONE_OFFSET ) +
-                  (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) );
+                (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) );
 
         for( final Page page : pages ) {
             if( page.getLastModified().after( cal.getTime() ) ) {
@@ -113,4 +114,5 @@ public abstract class AbstractRPCHandler implements WikiRPCHandler {
         return RPC_VERSION;
     }
 
+    public abstract List< Hashtable< String, Object > > getRecentChanges(Date since);
 }
