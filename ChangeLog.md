@@ -17,6 +17,27 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-10-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.0-git-01_
+
+* Require at least Java 11 to build & run
+
+* Add missing licenses PR [#220](https://github.com/apache/jspwiki/pull/206) provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
+
+* Dependency updates
+  * commons-text to 1.10.0
+  * Flexmark to 0.64.0
+  * Gson to 2.9.1 (closes [#219](https://github.com/apache/jspwiki/pull/219)), thanks to dependabot
+  * JUnit to 5.9.1
+  * Log4J to 2.19.0
+  * Lucene to 9.4.0
+  * NekoHTML to 2.1.2
+  * Selenide to 6.9.0 (closes [#233](https://github.com/apache/jspwiki/pull/233)), thanks to dependabot
+  * Tika to 2.5.0
+  * Tomcat to 9.0.68
+  * Maven plugins: jar to 3.3.0, javadoc to 3.4.1, jxr to 3.3.0, project-info-reports to 3.4.1 (closes [#224](https://github.com/apache/jspwiki/pull/224), thanks to dependabot), wro4j to 1.10.1
+
 **2022-07-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.11.3-git-12_
