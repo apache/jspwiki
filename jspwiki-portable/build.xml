@@ -26,7 +26,7 @@
   <property environment="env"/>
 
   <!-- the build version if not overwritten by the caller -->
-  <property name="jspwiki.woas.version" value="2.11.0" />
+  <property name="jspwiki.woas.version" value="2.12.0" />
   
   <!-- define the temporary build directory -->
   <property name="jspwiki.woas.target.dir" value="${basedir}/target" />
@@ -159,7 +159,7 @@
           <cp>${basedir}/target/unpack/tomcat/${jspwiki.tomcat.distribution}/bin/tomcat-juli.jar</cp>
         </classPath>
         <singleInstance mutexName="org.apache.jspwiki.jspwiki-portable" />
-        <jre minVersion="1.8.0" />
+        <jre minVersion="11.0.0" />
         <versionInfo
           fileVersion="${jspwiki.woas.version}.0"
           txtFileVersion="JSPWiki ${jspwiki.woas.version}"

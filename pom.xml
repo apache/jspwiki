@@ -40,8 +40,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.outputTimestamp>2022-07-30T11:42:48Z</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
-    <jdk.version>1.8</jdk.version>
-    <jdk.javadoc.doclet.version>1.1.4</jdk.javadoc.doclet.version>
+    <jdk.version>11</jdk.version>
+    <jdk.javadoc.doclet.version>2.0.19</jdk.javadoc.doclet.version>
     <maven.version>3.5</maven.version>
 
     <akismet-java.version>1.02</akismet-java.version>

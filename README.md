@@ -1,4 +1,4 @@
-# Apache JSPWiki 2.11 - Documentation
+# Apache JSPWiki 2.12 - Documentation
 
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -45,7 +45,7 @@ REQUIRED:
 
 * And of course, a server to run the JSP engine on.
 
-* JDK 8+
+* JDK 11+
 
 
 OPTIONAL:

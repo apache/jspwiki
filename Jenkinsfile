@@ -18,9 +18,9 @@
  */
 
 buildRepo = 'https://github.com/apache/jspwiki'
-buildJdk8 = 'jdk_1.8_latest'
 buildJdk11 = 'jdk_11_latest'
 buildJdk17 = 'jdk_17_latest'
+buildJdk19 = 'jdk_19_latest'
 buildMvn = 'maven_3_latest'
 errMsg = ''
 
@@ -30,11 +30,14 @@ try {
         parallel jdk11Build: {
             buildAndSonarWith( buildJdk11 )
         },
-        jdk8Build: {
-            buildWith( buildJdk8 )
-        },
         jdk17Build: {
             buildWith( buildJdk17 )
+        },
+        jdk19Build: {
+            // don't fail build if jdk-19 build doesn't succeed
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                buildWith( buildJdk19 )
+            }
         }
     }
 

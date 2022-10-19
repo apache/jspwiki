@@ -1,5 +1,5 @@
 
-Apache JSPWiki 2.11.0 - Upgrading Notes
+Apache JSPWiki 2.12.0 - Upgrading Notes
 ==================================================
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -20,6 +20,16 @@ Apache JSPWiki 2.11.0 - Upgrading Notes
     under the License.  
 
 The license file can be found in LICENSE.
+
+Upgrading JSPWiki to 2.12.0
+---------------------------
+
+Please see https://jspwiki-wiki.apache.org/Wiki.jsp?page=NewIn2.12 for details
+
+1. New requirements
+  * Java 11 needed to run JSPWiki
+
+2. Backwards API incompatible changes: https://jspwiki.apache.org/japicmp/2.12.0/
 
 Upgrading JSPWiki to 2.11.0
 ---------------------------
