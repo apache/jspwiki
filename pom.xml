@@ -52,11 +52,11 @@
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.11.0</commons-io.version>
     <commons-lang.version>3.12.0</commons-lang.version>
-    <commons-text.version>1.9</commons-text.version>
+    <commons-text.version>1.10.0</commons-text.version>
     <ehcache.version>2.10.9.2</ehcache.version>
-    <flexmark.version>0.62.2</flexmark.version> <!-- 0.64.0 and above require JDK >= 11 to execute -->
+    <flexmark.version>0.64.0</flexmark.version> <!-- 0.64.0 and above require JDK >= 11 to execute -->
     <freshcookies-security.version>0.60</freshcookies-security.version>
-    <gson.version>2.9.0</gson.version>
+    <gson.version>2.9.1</gson.version>
     <hsqldb.version>2.7.0</hsqldb.version>
     <jamm.version>0.3.3</jamm.version>
     <jaxen.version>1.2.0</jaxen.version>
@@ -67,19 +67,19 @@
     <jdom2.version>2.0.6</jdom2.version>
     <jetty.version>9.4.48.v20220622</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
-    <junit.version>5.9.0</junit.version>
-    <log4j2.version>2.18.0</log4j2.version>
-    <lucene.version>8.11.2</lucene.version> <!-- 9.0.0 and above require JDK >= 11 to execute -->
+    <junit.version>5.9.1</junit.version>
+    <log4j2.version>2.19.0</log4j2.version>
+    <lucene.version>8.11.2</lucene.version>
     <mockito.version>4.6.1</mockito.version>
-    <nekohtml.version>2.0.2</nekohtml.version> <!-- 2.1.0 and above require JDK >= 11 to execute -->
+    <nekohtml.version>2.1.2</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
-    <selenide.version>6.6.6</selenide.version>
+    <selenide.version>6.9.0</selenide.version>
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
-    <tika.version>2.4.1</tika.version>
-    <tomcat.version>9.0.65</tomcat.version>
-    <wro4j.version>1.8.0</wro4j.version> <!-- 1.9.0 and above require JDK >= 9 to execute -->
+    <tika.version>2.5.0</tika.version>
+    <tomcat.version>9.0.68</tomcat.version>
+    <wro4j.version>1.10.1</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
     <plugin.antrun.version>3.1.0</plugin.antrun.version>
@@ -89,10 +89,10 @@
     <plugin.dependency.version>3.3.0</plugin.dependency.version>
     <plugin.enforcer.version>3.1.0</plugin.enforcer.version>
     <plugin.install.version>3.0.1</plugin.install.version>
-    <plugin.jar.version>3.2.2</plugin.jar.version>
-    <plugin.javadoc.version>3.4.0</plugin.javadoc.version>
-    <plugin.jxr.version>3.2.0</plugin.jxr.version>
-    <plugin.project-info-reports.version>3.4.0</plugin.project-info-reports.version>
+    <plugin.jar.version>3.3.0</plugin.jar.version>
+    <plugin.javadoc.version>3.4.1</plugin.javadoc.version>
+    <plugin.jxr.version>3.3.0</plugin.jxr.version>
+    <plugin.project-info-reports.version>3.4.1</plugin.project-info-reports.version>
     <plugin.release.version>3.0.0-M6</plugin.release.version>
     <plugin.remote-resources.version>3.0.0</plugin.remote-resources.version>
     <plugin.resources.version>3.3.0</plugin.resources.version>
@@ -716,11 +716,11 @@
             <jsDestinationFolder>${project.build.directory}/generated-sources/wro/scripts</jsDestinationFolder>
             <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
           </configuration>
-          <dependencies><!-- https://github.com/wro4j/wro4j/issues/1039#issuecomment-382474533 -->
+          <dependencies><!-- https://github.com/wro4j/wro4j/issues/1129 -->
             <dependency>
-              <groupId>org.mockito</groupId>
-              <artifactId>mockito-core</artifactId>
-              <version>${mockito.version}</version>
+              <groupId>org.webjars.npm</groupId>
+              <artifactId>glob</artifactId>
+              <version>7.2.0</version>
             </dependency>
           </dependencies>
         </plugin>
