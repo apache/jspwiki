@@ -32,6 +32,7 @@ under the License.
   * JUnit to 5.9.1
   * Log4J to 2.19.0
   * Lucene to 9.4.0
+  * Mockito to 4.8.1 (closes/superseeds [#225](https://github.com/apache/jspwiki/pull/225))
   * NekoHTML to 2.1.2
   * Selenide to 6.9.0 (closes [#233](https://github.com/apache/jspwiki/pull/233)), thanks to dependabot
   * Tika to 2.5.0
