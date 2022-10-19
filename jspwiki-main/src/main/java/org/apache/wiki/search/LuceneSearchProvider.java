@@ -23,6 +23,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.classic.ClassicAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -103,7 +104,7 @@ public class LuceneSearchProvider implements SearchProvider {
     private static final String PROP_LUCENE_INDEXDELAY   = "jspwiki.lucene.indexdelay";
     private static final String PROP_LUCENE_INITIALDELAY = "jspwiki.lucene.initialdelay";
 
-    private String m_analyzerClass = "org.apache.lucene.analysis.standard.ClassicAnalyzer";
+    private String m_analyzerClass = ClassicAnalyzer.class.getName();
 
     private static final String LUCENE_DIR = "lucene";
 
