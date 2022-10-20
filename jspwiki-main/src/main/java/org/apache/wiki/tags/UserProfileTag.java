@@ -35,8 +35,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -170,14 +172,10 @@ public class UserProfileTag extends WikiTagBase {
      */
     public static String printGroups( final Context context ) {
         final Principal[] roles = context.getWikiSession().getRoles();
-        final List< String > tempRoles = new ArrayList<>();
+        final List< String > tempRoles;
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
 
-        for( final Principal role : roles ) {
-            if( role instanceof GroupPrincipal ) {
-                tempRoles.add( role.getName() );
-            }
-        }
+        tempRoles = Arrays.stream(roles).filter(role -> role instanceof GroupPrincipal).map(Principal::getName).collect(Collectors.toList());
         if( tempRoles.size() == 0 ) {
             return rb.getString( "userprofile.nogroups" );
         }
@@ -205,14 +203,10 @@ public class UserProfileTag extends WikiTagBase {
      */
     public static String printRoles( final Context context ) {
         final Principal[] roles = context.getWikiSession().getRoles();
-        final List< String > tempRoles = new ArrayList<>();
+        final List< String > tempRoles;
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
 
-        for( final Principal role : roles ) {
-            if( role instanceof Role ) {
-                tempRoles.add( role.getName() );
-            }
-        }
+        tempRoles = Arrays.stream(roles).filter(role -> role instanceof Role).map(Principal::getName).collect(Collectors.toList());
         if( tempRoles.size() == 0 ) {
             return rb.getString( "userprofile.noroles" );
         }

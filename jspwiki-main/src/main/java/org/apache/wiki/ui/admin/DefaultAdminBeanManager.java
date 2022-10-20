@@ -190,13 +190,8 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
 	 */
     @Override
 	public AdminBean findBean( final String id ) {
-        for( final AdminBean ab : m_allBeans ) {
-            if( ab.getId().equals( id ) ) {
-                return ab;
-            }
-        }
+        return m_allBeans.stream().filter(ab -> ab.getId().equals(id)).findFirst().orElse(null);
 
-        return null;
     }
 
     /**

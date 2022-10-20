@@ -42,6 +42,7 @@ import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -181,12 +182,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         }
 
         // Check each user principal to see if it belongs to the group
-        for( final Principal principal : session.getPrincipals() ) {
-            if( AuthenticationManager.isUserPrincipal( principal ) && group.isMember( principal ) ) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(session.getPrincipals()).anyMatch(principal -> AuthenticationManager.isUserPrincipal(principal) && group.isMember(principal));
     }
 
     /** {@inheritDoc} */

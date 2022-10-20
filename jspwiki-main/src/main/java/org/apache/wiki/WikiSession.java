@@ -91,12 +91,7 @@ public class WikiSession implements Session {
      * @return the result
      */
     protected boolean isInGroup( final Group group ) {
-        for( final Principal principal : getPrincipals() ) {
-            if( isAuthenticated() && group.isMember( principal ) ) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(getPrincipals()).anyMatch(principal -> isAuthenticated() && group.isMember(principal));
     }
 
     /**
@@ -211,16 +206,10 @@ public class WikiSession implements Session {
     /** {@inheritDoc} */
     @Override
     public Principal[] getPrincipals() {
-        final ArrayList< Principal > principals = new ArrayList<>();
 
         // Take the first non Role as the main Principal
-        for( final Principal principal : m_subject.getPrincipals() ) {
-            if ( AuthenticationManager.isUserPrincipal( principal ) ) {
-                principals.add( principal );
-            }
-        }
 
-        return principals.toArray( new Principal[0] );
+        return m_subject.getPrincipals().stream().filter(AuthenticationManager::isUserPrincipal).toArray(Principal[]::new);
     }
 
     /** {@inheritDoc} */

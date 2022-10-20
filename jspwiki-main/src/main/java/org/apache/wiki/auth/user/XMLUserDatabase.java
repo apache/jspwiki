@@ -52,6 +52,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * <p>Manages {@link DefaultUserProfile} objects using XML files for persistence. Passwords are hashed using SHA1. User entries are simple
@@ -372,14 +374,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         final DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
         final String index = profile.getLoginName();
         final NodeList users = c_dom.getElementsByTagName( USER_TAG );
-        Element user = null;
-        for( int i = 0; i < users.getLength(); i++ ) {
-            final Element currentUser = ( Element )users.item( i );
-            if( currentUser.getAttribute( LOGIN_NAME ).equals( index ) ) {
-                user = currentUser;
-                break;
-            }
-        }
+        Element user = IntStream.range(0, users.getLength()).mapToObj(i -> (Element) users.item(i)).filter(currentUser -> currentUser.getAttribute(LOGIN_NAME).equals(index)).findFirst().orElse(null);
 
         boolean isNew = false;
 
@@ -523,17 +518,12 @@ public class XMLUserDatabase extends AbstractUserDatabase {
      * @return the text nodes that are immediate children of the base element, concatenated together
      */
     private String extractText( final Element element ) {
-        final StringBuilder text = new StringBuilder();
+        final String text = "";
         if( element.getChildNodes().getLength() > 0 ) {
             final NodeList children = element.getChildNodes();
-            for( int k = 0; k < children.getLength(); k++ ) {
-                final Node child = children.item( k );
-                if( child.getNodeType() == Node.TEXT_NODE ) {
-                    text.append(((Text) child).getData());
-                }
-            }
+            text = IntStream.range(0, children.getLength()).mapToObj(children::item).filter(child -> child.getNodeType() == Node.TEXT_NODE).map(child -> ((Text) child).getData()).collect(Collectors.joining());
         }
-        return text.toString();
+        return text;
     }
 
     /**

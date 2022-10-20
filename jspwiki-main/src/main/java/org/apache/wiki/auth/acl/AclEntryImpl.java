@@ -25,6 +25,7 @@ import java.security.Permission;
 import java.security.Principal;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 
 /**
@@ -135,19 +136,8 @@ public class AclEntryImpl implements AclEntry, Serializable {
      */
     public String toString() {
         final Principal p = getPrincipal();
-        final StringBuilder sb = new StringBuilder();
-        sb.append( "[AclEntry ALLOW " )
-          .append( p != null ? p.getName() : "null" )
-          .append( " " );
 
-        for( final Permission pp : m_permissions ) {
-            sb.append( pp.toString() );
-            sb.append( "," );
-        }
-
-        sb.append( "]" );
-
-        return sb.toString();
+        return m_permissions.stream().map(pp -> pp.toString() + ",").collect(Collectors.joining("", "[AclEntry ALLOW " + (p != null ? p.getName() : "null") + " ", "]"));
     }
 
     /**
@@ -155,12 +145,7 @@ public class AclEntryImpl implements AclEntry, Serializable {
      * permission.
      */
     private Permission findPermission( final Permission p ) {
-        for( final Permission pp : m_permissions ) {
-            if( pp.implies( p ) ) {
-                return pp;
-            }
-        }
-        return null;
+        return m_permissions.stream().filter(pp -> pp.implies(p)).findFirst().orElse(null);
     }
 
 }

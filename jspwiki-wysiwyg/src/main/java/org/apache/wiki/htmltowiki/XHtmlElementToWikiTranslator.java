@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -230,11 +231,7 @@ public class XHtmlElementToWikiTranslator {
     }
 
     private String propsToStyleString( final Map< Object, Object >  styleProps ) {
-        final StringBuilder style = new StringBuilder();
-        for( final Map.Entry< Object, Object > entry : styleProps.entrySet() ) {
-            style.append( " " ).append( entry.getKey() ).append( ": " ).append( entry.getValue() ).append( ";" );
-        }
-        return style.toString();
+        return styleProps.entrySet().stream().map(entry -> " " + entry.getKey() + ": " + entry.getValue() + ";").collect(Collectors.joining());
     }
 
     public void translateChildren( final Element base ) throws JDOMException {

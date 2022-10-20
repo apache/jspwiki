@@ -30,6 +30,8 @@ import java.security.SecureRandom;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /**
@@ -777,12 +779,8 @@ public final class TextUtil {
      *  @since 2.1.98.
      */
     public static String repeatString( final String what, final int times ) {
-        final StringBuilder sb = new StringBuilder();
-        for( int i = 0; i < times; i++ ) {
-            sb.append( what );
-        }
 
-        return sb.toString();
+        return IntStream.range(0, times).mapToObj(i -> what).collect(Collectors.joining());
     }
 
     /**
@@ -869,12 +867,7 @@ public final class TextUtil {
      * @since 2.4
      */
     public static String generateRandomPassword() {
-        final StringBuilder pw = new StringBuilder();
-        for( int i = 0; i < PASSWORD_LENGTH; i++ ) {
-            final int index = ( int )( RANDOM.nextDouble() * PWD_BASE.length() );
-            pw.append(PWD_BASE.charAt( index ));
-        }
-        return pw.toString();
+        return IntStream.range(0, PASSWORD_LENGTH).map(i -> (int) (RANDOM.nextDouble() * PWD_BASE.length())).mapToObj(index -> String.valueOf(PWD_BASE.charAt(index))).collect(Collectors.joining());
     }
 
 }

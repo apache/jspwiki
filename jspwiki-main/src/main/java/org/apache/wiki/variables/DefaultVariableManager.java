@@ -42,6 +42,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 
 /**
@@ -323,30 +324,13 @@ public class DefaultVariableManager implements VariableManager {
         }
 
         public String getInterwikilinks() {
-            final StringBuilder res = new StringBuilder();
 
-            for( final String link : m_context.getEngine().getAllInterWikiLinks() ) {
-                if( res.length() > 0 ) {
-                    res.append( ", " );
-                }
-                res.append( link );
-                res.append( " --> " );
-                res.append( m_context.getEngine().getInterWikiURL( link ) );
-            }
-            return res.toString();
+            return m_context.getEngine().getAllInterWikiLinks().stream().map(link -> link + " --> " + m_context.getEngine().getInterWikiURL(link)).collect(Collectors.joining(", "));
         }
 
         public String getInlinedimages() {
-            final StringBuilder res = new StringBuilder();
-            for( final String ptrn : m_context.getEngine().getAllInlinedImagePatterns() ) {
-                if( res.length() > 0 ) {
-                    res.append( ", " );
-                }
 
-                res.append( ptrn );
-            }
-
-            return res.toString();
+            return m_context.getEngine().getAllInlinedImagePatterns().stream().collect(Collectors.joining(", "));
         }
 
         public String getPluginpath() {

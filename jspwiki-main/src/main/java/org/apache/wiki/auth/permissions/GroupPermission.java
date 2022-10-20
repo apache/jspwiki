@@ -488,13 +488,7 @@ public final class GroupPermission extends Permission implements Serializable
             // GroupPrincipal with same name as target
             final Subject subject = ( (SubjectDomainCombiner) dc ).getSubject();
             final Set<GroupPrincipal> principals = subject.getPrincipals( GroupPrincipal.class );
-            for( final Principal principal : principals )
-            {
-                if ( principal.getName().equals( gp.m_group ) )
-                {
-                    return true;
-                }
-            }
+            return principals.stream().anyMatch(principal -> principal.getName().equals(gp.m_group));
         }
         return false;
     }

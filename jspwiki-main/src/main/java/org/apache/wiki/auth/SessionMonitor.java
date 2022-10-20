@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  *  <p>Manages Sessions for different Engines.</p>
@@ -220,11 +221,9 @@ public class SessionMonitor implements HttpSessionListener {
      * @return the array of user principals
      */
     public final Principal[] userPrincipals() {
-        final Collection<Principal> principals = new ArrayList<>();
+        final Collection<Principal> principals;
         synchronized ( m_sessions ) {
-            for ( final Session session : m_sessions.values()) {
-                principals.add( session.getUserPrincipal() );
-            }
+            principals = m_sessions.values().stream().map(Session::getUserPrincipal).collect(Collectors.toList());
         }
         final Principal[] p = principals.toArray( new Principal[0] );
         Arrays.sort( p, m_comparator );

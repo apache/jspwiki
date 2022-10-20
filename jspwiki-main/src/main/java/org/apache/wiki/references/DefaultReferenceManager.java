@@ -47,6 +47,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /*
   BUGS
@@ -530,11 +531,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
         final Collection< String > oldRefTo = m_refersTo.get( page );
         m_refersTo.remove( page );
 
-        final TreeSet< String > cleanedRefs = new TreeSet<>();
-        for( final String ref : references ) {
-            final String reference = getFinalPageName( ref );
-            cleanedRefs.add( reference );
-        }
+        final TreeSet< String > cleanedRefs = references.stream().map(this::getFinalPageName).collect(Collectors.toCollection(TreeSet::new));
 
         m_refersTo.put( page, cleanedRefs );
 
@@ -714,20 +711,12 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      */
     @Override
     public Collection< String > findUncreated() {
-        final TreeSet< String > uncreated = new TreeSet<>();
+        final TreeSet< String > uncreated;
 
         // Go through m_refersTo values and check that m_refersTo has the corresponding keys.
         // We want to reread the code to make sure our HashMaps are in sync...
         final Collection< Collection< String > > allReferences = m_refersTo.values();
-        for( final Collection<String> refs : allReferences ) {
-            if( refs != null ) {
-                for( final String aReference : refs ) {
-                    if( !m_engine.getManager( PageManager.class ).wikiPageExists( aReference ) ) {
-                        uncreated.add( aReference );
-                    }
-                }
-            }
-        }
+        uncreated = allReferences.stream().filter(Objects::nonNull).flatMap(Collection::stream).filter(aReference -> !m_engine.getManager(PageManager.class).wikiPageExists(aReference)).collect(Collectors.toCollection(TreeSet::new));
 
         return uncreated;
     }

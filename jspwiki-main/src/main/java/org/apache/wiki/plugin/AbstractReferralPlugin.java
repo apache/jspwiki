@@ -52,6 +52,7 @@ import java.text.ParseException;
 import java.text.RuleBasedCollator;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -260,20 +261,13 @@ public abstract class AbstractReferralPlugin implements Plugin {
             boolean includeThis = m_include == null;
 
             if( m_include != null ) {
-                for( final Pattern pattern : m_include ) {
-                    if( pm.matches( pageName, pattern ) ) {
-                        includeThis = true;
-                        break;
-                    }
-                }
+                includeThis = Arrays.stream(m_include).anyMatch(pattern -> pm.matches(pageName, pattern)) ? true : m_include == null;
             }
 
             if( m_exclude != null ) {
-                for( final Pattern pattern : m_exclude ) {
-                    if( pm.matches( pageName, pattern ) ) {
-                        includeThis = false;
-                        break; // The inner loop, continue on the next item
-                    }
+                // The inner loop, continue on the next item
+                if (Arrays.stream(m_exclude).anyMatch(pattern -> pm.matches(pageName, pattern))) {
+                    includeThis = false;
                 }
             }
 

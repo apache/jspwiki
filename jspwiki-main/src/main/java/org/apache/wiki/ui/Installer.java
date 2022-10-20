@@ -45,6 +45,7 @@ import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Manages JSPWiki installation on behalf of <code>admin/Install.jsp</code>. The contents of this class were previously part of
@@ -154,12 +155,10 @@ public class Installer {
      * @return the string
      */
     public String getPropertiesList() {
-        final StringBuilder result = new StringBuilder();
+        final String result;
         final Set< String > keys = m_props.stringPropertyNames();
-        for( final String key : keys ) {
-            result.append(key ).append( " = " ).append( m_props.getProperty( key ) ).append( "\n" );
-        }
-        return result.toString();
+        result = keys.stream().map(key -> key + " = " + m_props.getProperty(key) + "\n").collect(Collectors.joining());
+        return result;
     }
 
     public String getPropertiesPath() {

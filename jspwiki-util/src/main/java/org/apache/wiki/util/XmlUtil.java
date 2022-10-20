@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *  Utility class to parse XML files.
@@ -122,15 +123,11 @@ public final class XmlUtil  {
 		if( doc == null ) {
 			return "";
 		}
-		final StringBuilder sb = new StringBuilder();
+		final String sb;
 		final List< ? > nodes = XPathFactory.instance().compile( ALL_TEXT_NODES ).evaluate( doc );
-		for( final Object el : nodes ) {
-			if( el instanceof Text ) {
-				sb.append( ( ( Text )el ).getValue() );
-			}
-		}
+        sb = nodes.stream().filter(el -> el instanceof Text).map(el -> ((Text) el).getValue()).collect(Collectors.joining());
 
-		return sb.toString();
+		return sb;
 	}
 
 	public static Element getXPathElement( final Element base, final String expression ) {

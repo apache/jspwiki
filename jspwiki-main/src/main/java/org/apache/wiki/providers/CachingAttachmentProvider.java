@@ -180,11 +180,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      */
     private Attachment findAttachmentFromCollection( final Collection< Attachment > c, final String name ) {
         if( c != null ) {
-            for( final Attachment att : c ) {
-                if( name.equals( att.getFileName() ) ) {
-                    return att;
-                }
-            }
+            return c.stream().filter(att -> name.equals(att.getFileName())).findFirst().orElse(null);
         }
 
         return null;

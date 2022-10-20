@@ -35,6 +35,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  *  Provides handlers for all RPC routines.  These routines are used by
@@ -54,15 +55,8 @@ public class RPCHandlerUTF8 extends AbstractRPCHandler {
         checkPermission( PagePermission.VIEW );
 
         final Set< Page > pages = m_engine.getManager( PageManager.class ).getRecentChanges();
-        final Vector< String > result = new Vector<>();
 
-        for( final Page p : pages ) {
-            if( !( p instanceof Attachment ) ) {
-                result.add( p.getName() );
-            }
-        }
-
-        return result;
+        return pages.stream().filter(p -> !(p instanceof Attachment)).map(Page::getName).collect(Collectors.toCollection(Vector::new));
     }
 
     /**

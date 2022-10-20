@@ -52,15 +52,9 @@ public class ProfanityFilter extends BasePageFilter {
                 throw new IOException( "No property file found! (Check the installation, it should be there.)" );
             }
             try( final BufferedReader br =  new BufferedReader( new InputStreamReader( in ) ) ) {
-                final List< String > profs = new ArrayList<>();
 
-                String str;
-                while ( ( str = br.readLine() ) != null ) {
-                    if( !str.isEmpty() && !str.startsWith( "#" ) ) { // allow comments on profanities file
-                        profs.add( str );
-                    }
-                }
-                c_profanities = profs.toArray( new String[0] );
+                // allow comments on profanities file
+                c_profanities = br.lines().filter(str -> !str.isEmpty() && !str.startsWith("#")).toArray(String[]::new);
             }
         } catch( final IOException e ) {
             LOG.error( "Unable to load profanities from " + PROPERTYFILE, e );
