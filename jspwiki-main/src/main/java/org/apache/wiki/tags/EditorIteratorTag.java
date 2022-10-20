@@ -24,7 +24,9 @@ import org.apache.wiki.ui.Editor;
 import org.apache.wiki.ui.EditorManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  *  Iterates through editors.
@@ -43,11 +45,8 @@ public class EditorIteratorTag extends IteratorTag  {
         final Engine engine = m_wikiContext.getEngine();
         final EditorManager mgr = engine.getManager( EditorManager.class );
         final String[] editorList = mgr.getEditorList();
-        final Collection< Editor > editors = new ArrayList<>();
+        final Collection< Editor > editors = Arrays.stream(editorList).map(editor -> new Editor(m_wikiContext, editor)).collect(Collectors.toList());
 
-        for( final String editor : editorList ) {
-            editors.add( new Editor( m_wikiContext, editor ) );
-        }
         setList( editors );
 
         return super.doStartTag();

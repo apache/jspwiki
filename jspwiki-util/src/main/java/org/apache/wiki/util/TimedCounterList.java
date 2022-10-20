@@ -152,18 +152,12 @@ public class TimedCounterList<T> extends AbstractList<T>
      */
     public int count(final T obj )
     {
-        int c = 0;
+        int c;
         m_lock.readLock().lock();
         
         try
         {
-            for( final CounterItem< T > i : m_list )
-            {
-                if( i.m_obj.equals( obj ) )
-                {
-                    c++;
-                }
-            }
+            c = (int) m_list.stream().filter(i -> i.m_obj.equals(obj)).count();
         }
         finally
         {

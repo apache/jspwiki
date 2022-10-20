@@ -27,6 +27,8 @@ import org.jdom2.Text;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  *  Implements DOM-to-Creole rendering.
@@ -105,8 +107,7 @@ public class CreoleRenderer extends WikiRenderer {
             m_listCount++;
             m_listChar = '#';
         } else if( LI.equals(ce.getName()) ) {
-            for(int i = 0; i < m_listCount; i++ ) sb.append( m_listChar );
-            sb.append( ONE_SPACE );
+            sb.append(IntStream.range(0, m_listCount).mapToObj(i -> String.valueOf(m_listChar)).collect(Collectors.joining("", "", ONE_SPACE)));
         } else if( A.equals( ce.getName() ) ) {
             final String href = ce.getAttributeValue( HREF_ATTRIBUTE );
             final String text = ce.getText();

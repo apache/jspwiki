@@ -138,13 +138,7 @@ public class Group {
             return false;
         }
 
-        for( final Principal principal : m_members ) {
-            if( !g.isMember( principal ) ) {
-                return false;
-            }
-        }
-
-        return true;
+        return m_members.stream().allMatch(g::isMember);
     }
 
     /**
@@ -154,11 +148,7 @@ public class Group {
      */
     @Override
     public int hashCode() {
-        int hc = 0;
-        for( final Principal member : m_members ) {
-            hc ^= member.hashCode();
-        }
-        return hc;
+        return m_members.stream().mapToInt(Principal::hashCode).reduce(0, (a, b) -> a ^ b);
     }
     
     /**
@@ -307,13 +297,8 @@ public class Group {
     }
 
     private Principal findMember( final String name ) {
-        for( final Principal member : m_members ) {
-            if( member.getName().equals( name ) ) {
-                return member;
-            }
-        }
+        return m_members.stream().filter(member -> member.getName().equals(name)).findFirst().orElse(null);
 
-        return null;
     }
 
 }

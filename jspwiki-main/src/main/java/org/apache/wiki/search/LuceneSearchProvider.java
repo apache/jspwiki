@@ -76,6 +76,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -83,6 +84,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 
 /**
@@ -280,13 +282,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
         final String filename = att.getFileName();
 
-        boolean searchSuffix = false;
-        for( final String suffix : SEARCHABLE_FILE_SUFFIXES ) {
-            if( filename.endsWith( suffix ) ) {
-                searchSuffix = true;
-                break;
-            }
-        }
+        boolean searchSuffix = Arrays.stream(SEARCHABLE_FILE_SUFFIXES).anyMatch(filename::endsWith);
 
         String out = filename;
         if( searchSuffix ) {
@@ -378,12 +374,9 @@ public class LuceneSearchProvider implements SearchProvider {
         // Now add the names of the attachments of this page
         try {
             final List< Attachment > attachments = m_engine.getManager( AttachmentManager.class ).listAttachments( page );
-            final StringBuilder attachmentNames = new StringBuilder();
+            final String attachmentNames = attachments.stream().map(att -> att.getName() + ";").collect(Collectors.joining());
 
-            for( final Attachment att : attachments ) {
-                attachmentNames.append( att.getName() ).append( ";" );
-            }
-            field = new Field( LUCENE_ATTACHMENTS, attachmentNames.toString(), TextField.TYPE_STORED );
+            field = new Field( LUCENE_ATTACHMENTS, attachmentNames, TextField.TYPE_STORED );
             doc.add( field );
 
         } catch( final ProviderException e ) {

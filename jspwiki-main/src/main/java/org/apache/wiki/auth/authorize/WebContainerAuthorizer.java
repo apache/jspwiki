@@ -39,10 +39,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -118,10 +120,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         }
 
         if( m_containerRoles.length > 0 ) {
-            final StringBuilder roles = new StringBuilder();
-            for( final Role containerRole : m_containerRoles ) {
-                roles.append(containerRole).append(" ");
-            }
+            final String roles = Arrays.stream(m_containerRoles).map(containerRole -> containerRole + " ").collect(Collectors.joining());
             LOG.info( " JSPWiki determined the web container manages these roles: " + roles );
         }
         LOG.info( "Authorizer WebContainerAuthorizer initialized successfully." );
@@ -181,12 +180,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      */
     @Override
     public Principal findRole( final String role ) {
-        for( final Role containerRole : m_containerRoles ) {
-            if ( containerRole.getName().equals( role ) ) {
-                return containerRole;
-            }
-        }
-        return null;
+        return Arrays.stream(m_containerRoles).filter(containerRole -> containerRole.getName().equals(role)).findFirst().map(containerRole -> containerRole).orElse(null);
     }
 
     /**
@@ -243,14 +237,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         }
 
         // If a constraint is contained in both lists, we must be constrained
-        for( final Element constraint : constraints ) {
-            for( final Element roleConstraint : roles ) {
-                if( constraint.equals( roleConstraint ) ) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return constraints.stream().anyMatch(constraint -> roles.stream().anyMatch(constraint::equals));
     }
 
     /**
@@ -297,7 +284,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * @return an array of Role objects
      */
     protected Role[] getRoles( final Document webxml ) {
-        final Set<Role> roles = new HashSet<>();
+        final Set<Role> roles;
         final Element root = webxml.getRootElement();
         final Namespace jeeNs = Namespace.getNamespace( "j", J2EE_SCHEMA_25_NAMESPACE );
 
@@ -306,10 +293,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         final List< Element > constraints = XPathFactory.instance()
                                                         .compile( constrainsSelector, Filters.element(), null, jeeNs )
                                                         .evaluate( root );
-        for( final Element constraint : constraints ) {
-            final String role = constraint.getTextTrim();
-            roles.add( new Role( role ) );
-        }
+        roles = constraints.stream().map(Element::getTextTrim).map(Role::new).collect(Collectors.toSet());
 
         // Get all defined roles
         final String rolesSelector = "//j:web-app/j:security-role/j:role-name";

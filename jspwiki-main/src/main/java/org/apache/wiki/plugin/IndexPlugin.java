@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  *  A Plugin that creates an index of pages according to a certain pattern.
@@ -138,16 +139,9 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
     private List<String> listPages( final Context context, final String include, final String exclude ) throws ProviderException {
         final Pattern includePtrn = include != null ? Pattern.compile( include ) : Pattern.compile(".*");
         final Pattern excludePtrn = exclude != null ? Pattern.compile( exclude ) : Pattern.compile("\\p{Cntrl}"); // there are no control characters in page names
-        final List< String > result = new ArrayList<>();
+        final List< String > result;
         final Set< String > pages = context.getEngine().getManager( ReferenceManager.class ).findCreated();
-        for( final String pageName : pages ) {
-            if( excludePtrn.matcher( pageName ).matches() ) {
-                continue;
-            }
-            if( includePtrn.matcher( pageName ).matches() ) {
-                result.add( pageName );
-            }
-        }
+        result = pages.stream().filter(pageName -> !excludePtrn.matcher(pageName).matches()).filter(pageName -> includePtrn.matcher(pageName).matches()).collect(Collectors.toList());
         return result;
     }
 

@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import java.util.stream.IntStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -335,11 +336,7 @@ public class LinkParser
      */
     public static final boolean isSpace(final String s )
     {
-        for( int i = 0 ; i < s.length() ; i++ )
-        {
-            if( !isSpace( s.charAt(i)) ) return false;
-        }
-        return true;
+        return IntStream.range(0, s.length()).allMatch(i -> isSpace(s.charAt(i)));
     }
 
 

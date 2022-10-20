@@ -189,11 +189,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         if( session.isAuthenticated() && AuthenticationManager.isUserPrincipal( principal ) ) {
             final String principalName = principal.getName();
             final Principal[] userPrincipals = session.getPrincipals();
-            for( final Principal userPrincipal : userPrincipals ) {
-                if( userPrincipal.getName().equals( principalName ) ) {
-                    return true;
-                }
-            }
+            return Arrays.stream(userPrincipals).anyMatch(userPrincipal -> userPrincipal.getName().equals(principalName));
         }
         return false;
     }

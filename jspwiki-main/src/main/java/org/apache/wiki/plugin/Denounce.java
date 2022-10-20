@@ -167,12 +167,7 @@ public class Denounce implements Plugin {
      */
     private boolean matchPattern( final List< Pattern > list, final String path ) {
         final PatternMatcher matcher = new Perl5Matcher();
-        for( final Pattern pattern : list ) {
-            if( matcher.matches( path, pattern ) ) {
-                return true;
-            }
-        }
-        return false;
+        return list.stream().anyMatch(pattern -> matcher.matches(path, pattern));
     }
 
     private boolean matchHeaders( final HttpServletRequest request ) {

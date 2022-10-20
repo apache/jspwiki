@@ -241,11 +241,8 @@ public class DefaultWorkflowManager implements WorkflowManager {
             final Principal[] sessionPrincipals = session.getPrincipals();
             for( final Workflow w : m_workflows ) {
                 final Principal owner = w.getOwner();
-                for ( final Principal sessionPrincipal : sessionPrincipals ) {
-                    if ( sessionPrincipal.equals( owner ) ) {
-                        workflows.add( w );
-                        break;
-                    }
+                if (Arrays.stream(sessionPrincipals).anyMatch(sessionPrincipal -> sessionPrincipal.equals(owner))) {
+                    workflows.add(w);
                 }
             }
         }
