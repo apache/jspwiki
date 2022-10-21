@@ -462,6 +462,7 @@
   </dependencyManagement>
 
   <build>
+    <defaultGoal>clean verify apache-rat:check</defaultGoal>
     <plugins>  <!-- plugins executed with every build -->
       <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>

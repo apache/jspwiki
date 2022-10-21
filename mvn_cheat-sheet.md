@@ -29,6 +29,7 @@ under the License.
 
 | Maven Command (1)                                               | Description                                                                                                                         |
 |-----------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------|
+| mvn                                                             | performs a default build ´clean verify apache-rat:check´                                                                            |
 | mvn clean install                                               | performs a build                                                                                                                    |
 | mvn clean install -Dmaven.test.skip                             | performs a build, skipping the tests (not recommended)                                                                              |
 | mvn clean test                                                  | compiles the source and executes the tests                                                                                          |
