@@ -113,6 +113,8 @@
     <maven.compiler.source>${jdk.version}</maven.compiler.source> <!-- override values from parent pom -->
     <maven.compiler.target>${jdk.version}</maven.compiler.target>
     <minimize>true</minimize> <!-- wro4j compression -->
+
+    <plugin.pmd.version>3.19.0</plugin.pmd.version>
   </properties>
 
   <scm>
@@ -471,6 +473,21 @@
             <goals><goal>enforce</goal></goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${plugin.pmd.version}</version> <!-- or use version from pluginManagement -->
+        <configuration>
+          <!-- disabled as a workaround -->
+          <failOnViolation>true</failOnViolation>
+          <!-- disabled as a workaround -->
+          <printFailingErrors>true</printFailingErrors>
+
+          <excludeFromFailureFile>conf/exclude-pmd.properties</excludeFromFailureFile>
+
+        </configuration>
       </plugin>
       
       <plugin>

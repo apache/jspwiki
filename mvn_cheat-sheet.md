@@ -54,4 +54,4 @@ under the License.
 | mvn cobertura:cobertura                                 | generates a cobertura maven report. See: http://mojo.codehaus.org/cobertura-maven-plugin/usage.html |
 | mvn javadoc:javadoc                                     | creates javadocs adding some UML class/package level diagrams (requires JDK<= 8)                    |
 | mvn javadoc:javadoc -Djdk.javadoc.doclet.version=2.0.18 | same as above, but with JDK >= 9                                                                    |
-| mvn sonar:sonar                                         | generates a Sonar report. Expects a Sonar server running at http://localhost:9000/                  |
+| mvn pmd:check                                           | Check for any PMD violations in the source code.                                                    |
