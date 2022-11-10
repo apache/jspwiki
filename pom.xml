@@ -37,7 +37,7 @@
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.11.0</commons-io.version>
     <commons-lang.version>3.12.0</commons-lang.version>
-    <commons-text.version>1.9</commons-text.version>
+    <commons-text.version>1.10.0</commons-text.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.62.2</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
