@@ -55,10 +55,10 @@
 
         <c:choose>
           <c:when test="${not empty fn:substringBefore(param.page,'_blogentry_')}">
-            <wiki:Link>${fn:replace(fn:replace(param.page,'_blogentry_',' ['),'_','#')}]</wiki:Link>
+            <wiki:Link><c:out value="${fn:replace(fn:replace(param.page,'_blogentry_',' ['),'_','#')}"/>]</wiki:Link>
           </c:when>
           <c:when test="${not empty fn:substringBefore(param.page,'_comments_')}">
-            <wiki:Link>${fn:replace(fn:replace(param.page,'_comments_',' ['),'_','#')}]</wiki:Link>
+            <wiki:Link><c:out value="${fn:replace(fn:replace(param.page,'_comments_',' ['),'_','#')}"/>"]</wiki:Link>
           </c:when>
           <c:otherwise><a href="#top" tabindex="-1"><wiki:PageName /></a></c:otherwise>
         </c:choose>
