@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -31,6 +31,7 @@ import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -141,7 +142,7 @@ public class BugReportHandler implements Plugin {
             out.close();
 
             //  Now create a new page for this bug report
-            final String pageName = findNextPage( context, title, params.get( PARAM_PAGE ) );
+            final String pageName = findNextPage( context, title, TextUtil.replaceEntities(params.get( PARAM_PAGE )) );
             final Page newPage = Wiki.contents().page( context.getEngine(), pageName );
             final Context newContext = context.clone();
             newContext.setPage( newPage );
