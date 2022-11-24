@@ -17,6 +17,14 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2022-11-24  Dirk Frederickx (brushed AT apache DOT org)**
+
+* _2.12.0-git-02_
+
+* Fixing a number of XSS vulnerabilities reported by Eugene Lim and Sng Jay Kai.
+  (sanitizing various plugin parameters)
+
+
 **2022-10-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.0-git-01_
