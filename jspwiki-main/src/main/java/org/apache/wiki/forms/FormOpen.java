@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.forms;
 
@@ -26,6 +26,7 @@ import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.http.filter.CsrfProtectionFilter;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.util.TextUtil;
 
 import java.text.MessageFormat;
 import java.util.Map;
@@ -80,13 +81,13 @@ public class FormOpen extends FormElement {
     @Override
     public String execute( final Context ctx, final Map< String, String > params ) throws PluginException {
         final ResourceBundle rb = Preferences.getBundle( ctx, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
-        final String formName = params.get( PARAM_FORM );
+        final String formName = TextUtil.replaceEntities( params.get( PARAM_FORM ) );
         if( formName == null ) {
             throw new PluginException( MessageFormat.format( rb.getString( "formopen.missingparam" ), PARAM_FORM ) );
         }
         final String hide     = params.get( PARAM_HIDEFORM );
         final String sourcePage = ctx.getPage().getName();
-        String submitServlet = params.get( PARAM_SUBMITHANDLER );
+        String submitServlet = TextUtil.replaceEntities( params.get( PARAM_SUBMITHANDLER ) );
         if( submitServlet == null )
             submitServlet = ctx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), sourcePage );
 
