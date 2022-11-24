@@ -29,6 +29,7 @@ import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.SearchManager;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
@@ -88,7 +89,7 @@ public class Search implements Plugin {
                 results = doBasicQuery( context, queryString );
                 context.setVariable( set, results );
             } catch( final Exception e ) {
-                return "<div class='error'>" + e.getMessage() + "</div>\n";
+                return "<div class='error'>" + TextUtil.replaceEntities(e.getMessage()) + "</div>\n";
             }
         }
 
