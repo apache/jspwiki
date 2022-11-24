@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -23,6 +23,7 @@ import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
+import org.apache.wiki.util.TextUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,7 +33,7 @@ import java.util.ResourceBundle;
 /**
  *  Just displays the current date and time.
  *  The time format is exactly like in the java.text.SimpleDateFormat class.
- *  
+ *
  *  <p>Parameters : </p>
  *  NONE
  *  @since 1.7.8
@@ -59,7 +60,8 @@ public class CurrentTimePlugin implements Plugin {
 
             final Date d = new Date();  // Now.
 
-            return fmt.format( d );
+            return TextUtil.replaceEntities( fmt.format( d ) );
+
         } catch( final IllegalArgumentException e ) {
             final ResourceBundle rb = Preferences.getBundle( context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
             throw new PluginException( rb.getString( "currenttimeplugin.badformat" ) + e.getMessage() );
