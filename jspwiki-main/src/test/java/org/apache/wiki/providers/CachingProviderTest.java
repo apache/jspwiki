@@ -19,6 +19,7 @@
 
 package org.apache.wiki.providers;
 
+import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.cache.CachingManager;
@@ -27,6 +28,7 @@ import org.apache.wiki.util.FileUtil;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -38,6 +40,11 @@ import java.util.Properties;
 class CachingProviderTest {
 
     TestEngine engine;
+
+    @BeforeAll
+    static void ensureEhCacheFreshStart() {
+        CacheManager.getInstance().shutdown();
+    }
 
     @AfterEach
     void tearDown() {
