@@ -24,43 +24,45 @@ buildJdk19 = 'jdk_19_latest'
 buildMvn = 'maven_3_latest'
 errMsg = ''
 
-try {
+ansiColor( 'xterm' ) {
+    try {
 
-    stage( "build source" ) {
-        parallel jdk11Build: {
-            buildAndSonarWith( buildJdk11 )
-        },
-        jdk17Build: {
-            buildWith( buildJdk17 )
-        },
-        jdk19Build: {
-            // don't fail build if jdk-19 build doesn't succeed
-            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                buildWith( buildJdk19 )
+        stage( 'build source' ) {
+            parallel jdk11Build: {
+                buildAndSonarWith( buildJdk11 )
+            },
+            jdk17Build: {
+                buildWith( buildJdk17 )
+            },
+            jdk19Build: {
+                // don't fail build if jdk-19 build doesn't succeed
+                catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                    buildWith( buildJdk19 )
+                }
             }
         }
-    }
 
-    if( env.BRANCH_NAME == 'master' ) {
-        build wait: false, job: 'JSPWiki/site', parameters: [ text( name: 'version', value: 'master' ) ]
-    }
-
-    currentBuild.result = 'SUCCESS'
-
-} catch( Exception err ) {
-    currentBuild.result = 'FAILURE'
-    echo err.message
-    errMsg = '- ' + err.message
-} finally {
-    node( 'ubuntu' ) {
-        if( currentBuild.result == null ) {
-            currentBuild.result = 'ABORTED'
-        }
         if( env.BRANCH_NAME == 'master' ) {
-            emailext body: "See ${env.BUILD_URL} $errMsg",
-                     replyTo: 'dev@jspwiki.apache.org',
-                     to: 'commits@jspwiki.apache.org',
-                     subject: "[${env.JOB_NAME}] build ${env.BUILD_DISPLAY_NAME} - ${currentBuild.result}"
+            build wait: false, job: 'JSPWiki/site', parameters: [ text( name: 'version', value: 'master' ) ]
+        }
+
+        currentBuild.result = 'SUCCESS'
+
+    } catch( Exception err ) {
+        currentBuild.result = 'FAILURE'
+        echo err.message
+        errMsg = '- ' + err.message
+    } finally {
+        node( 'ubuntu' ) {
+            if( currentBuild.result == null ) {
+                currentBuild.result = 'ABORTED'
+            }
+            if( env.BRANCH_NAME == 'master' ) {
+                emailext body: "See ${env.BUILD_URL} $errMsg",
+                         replyTo: 'dev@jspwiki.apache.org',
+                         to: 'commits@jspwiki.apache.org',
+                         subject: "[${env.JOB_NAME}] build ${env.BUILD_DISPLAY_NAME} - ${currentBuild.result}"
+            }
         }
     }
 }
