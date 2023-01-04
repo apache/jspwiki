@@ -52,6 +52,5 @@ under the License.
 |---------------------------------------------------------|-----------------------------------------------------------------------------------------------------|
 | mvn apache-rat:check                                    | creates an Apache RAT report. See: http://creadur.apache.org/rat/apache-rat-plugin/plugin-info.html |
 | mvn cobertura:cobertura                                 | generates a cobertura maven report. See: http://mojo.codehaus.org/cobertura-maven-plugin/usage.html |
-| mvn javadoc:javadoc                                     | creates javadocs adding some UML class/package level diagrams (requires JDK<= 8)                    |
-| mvn javadoc:javadoc -Djdk.javadoc.doclet.version=2.0.18 | same as above, but with JDK >= 9                                                                    |
+| mvn javadoc:javadoc                                     | creates javadocs adding some UML class/package level diagrams                                       |
 | mvn sonar:sonar                                         | generates a Sonar report. Expects a Sonar server running at http://localhost:9000/                  |
