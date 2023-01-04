@@ -17,13 +17,28 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-01-04  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.0-git-03_
+
+* Fix flaky caching test, add some colouring to Jenkins console builds
+
+* Dependency updates
+    * Apache parent to 29
+    * Javadoc umldoclet to 2.1.0
+    * Lucene to 9.4.2
+    * Mockito to 4.11.0
+    * Selenide to 6.11.0
+    * Tika to 2.6.0
+    * Tomcat to 9.0.70
+    * Maven plugins: dependency to 3.4.0, install to 3.1.0, release to 3.0.0-M7
+
 **2022-11-24  Dirk Frederickx (brushed AT apache DOT org)**
 
 * _2.12.0-git-02_
 
-* Fixing a number of XSS vulnerabilities reported by Eugene Lim and Sng Jay Kai.
+* Fixing a number of XSS vulnerabilities reported by Eugene Lim and Sng Jay Kai, from Government Technology Agency of Singapore.
   (sanitizing various plugin parameters)
-
 
 **2022-10-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
