@@ -66,7 +66,7 @@ Html2Wiki
         substituteEachNode(dom, "sub", "%%sub {0}/%");
         forEachNode(dom, "a", replaceHtmlA);
         substituteEachNode(dom, "tt", "{{{0}}}" );
-        substituteEachNode(dom, "pre,code", "\n{{{\n{0}\n}}}\n" );
+        // substituteEachNode(dom, "pre,code", "\n{{{\n{0}\n}}}\n" );
 
         //block elements
         substituteEachNode(dom, "hr", "\n----\n");
@@ -128,8 +128,8 @@ Example:
     forEachNode( document, "p", "\n{0}\n");
 */
 function substituteEachNode(node, selector, pattern){
-
     return forEachNode(node, selector, function(n){
+        console.log("Html2Wiki: Recognized " + selector + ", applying pattern " + pattern);
         replaceNodeByText(n, pattern.xsubs(n.textContent) );
     });
 }
