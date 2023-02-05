@@ -546,7 +546,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
 
         //  Get all pages that used to be referred to by 'page' and remove that reference. (We don't want to try to figure out
         //  which particular references were removed...)
-        cleanReferredBy( page, oldRefTo, cleanedRefs );
+        cleanReferredBy( page, oldRefTo);
 
         //  Notify all referred pages of their referinesshoodicity.
         for( final String referredPageName : cleanedRefs ) {
@@ -584,8 +584,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      * We'll just try the first for now. Need to come back and optimize this a bit.
      */
     private void cleanReferredBy( final String referrer,
-                                  final Collection< String > oldReferred,
-                                  final Collection< String > newReferred ) {
+                                  final Collection< String > oldReferred ) {
         if( oldReferred == null ) {
             return;
         }
