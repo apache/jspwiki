@@ -179,11 +179,11 @@ public class DefaultPageRenamer implements PageRenamer {
             final Page p = engine.getManager( PageManager.class ).getPage( pageName );
 
             final String sourceText = engine.getManager( PageManager.class ).getPureText( p );
-            String newText = replaceReferrerString( context, sourceText, fromPage.getName(), toPage.getName() );
+            String newText = replaceReferrerString(sourceText, fromPage.getName(), toPage.getName() );
 
             m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), MarkupParser.PROP_CAMELCASELINKS, m_camelCase );
             if( m_camelCase ) {
-                newText = replaceCCReferrerString( context, newText, fromPage.getName(), toPage.getName() );
+                newText = replaceCCReferrerString(newText, fromPage.getName(), toPage.getName() );
             }
             
             if( !sourceText.equals( newText ) ) {
@@ -226,7 +226,7 @@ public class DefaultPageRenamer implements PageRenamer {
     /**
      *  Replaces camelcase links.
      */
-    private String replaceCCReferrerString( final Context context, final String sourceText, final String from, final String to ) {
+    private String replaceCCReferrerString( final String sourceText, final String from, final String to ) {
         final StringBuilder sb = new StringBuilder( sourceText.length()+32 );
         final Pattern linkPattern = Pattern.compile( "\\p{Lu}+\\p{Ll}+\\p{Lu}+[\\p{L}\\p{Digit}]*" );
         final Matcher matcher = linkPattern.matcher( sourceText );
@@ -252,7 +252,7 @@ public class DefaultPageRenamer implements PageRenamer {
         return sb.toString();
     }
 
-    private String replaceReferrerString( final Context context, final String sourceText, final String from, final String to ) {
+    private String replaceReferrerString(final String sourceText, final String from, final String to ) {
         final StringBuilder sb = new StringBuilder( sourceText.length()+32 );
         
         // This monstrosity just looks for a JSPWiki link pattern.  But it is pretty cool for a regexp, isn't it?  If you can
@@ -280,9 +280,9 @@ public class DefaultPageRenamer implements PageRenamer {
             final String attr = matcher.group(6);
              
             if( link.isEmpty() ) {
-                text = replaceSingleLink( context, text, from, to );
+                text = replaceSingleLink(text, from, to );
             } else {
-                link = replaceSingleLink( context, link, from, to );
+                link = replaceSingleLink(link, from, to );
                 
                 //  A very simple substitution, but should work for quite a few cases.
                 text = TextUtil.replaceString( text, from, to );
@@ -312,7 +312,7 @@ public class DefaultPageRenamer implements PageRenamer {
     /**
      *  This method does a correct replacement of a single link, taking into account anchors and attachments.
      */
-    private String replaceSingleLink( final Context context, final String original, final String from, final String newlink ) {
+    private String replaceSingleLink(final String original, final String from, final String newlink ) {
         final int hash = original.indexOf( '#' );
         final int slash = original.indexOf( '/' );
         String realLink = original;

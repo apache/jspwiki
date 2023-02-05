@@ -314,10 +314,10 @@ public class SpamFilter extends BasePageFilter {
 
         if( !ignoreThisUser( context ) ) {
             checkBanList( context, change );
-            checkSinglePageChange( context, content, change );
+            checkSinglePageChange( context, change );
             checkIPList( context );
-            checkPatternList( context, content, change );
-            checkPageName( context, content, change);
+            checkPatternList( context, change );
+            checkPageName( context);
         }
 
         if( !m_stopAtFirstMatch ) {
@@ -332,7 +332,7 @@ public class SpamFilter extends BasePageFilter {
         return content;
     }
 
-    private void checkPageName( final Context context, final String content, final Change change ) throws RedirectException {
+    private void checkPageName(final Context context ) throws RedirectException {
         final Page page = context.getPage();
         final String pageName = page.getName();
         final int maxlength = Integer.parseInt(m_pageNameMaxLength);
@@ -344,12 +344,12 @@ public class SpamFilter extends BasePageFilter {
             final String uid = log( context, REJECT, REASON_PAGENAME_TOO_LONG + "(" + m_pageNameMaxLength + ")" , pageName);
 
             LOG.info("SPAM:PageNameTooLong (" + uid + "). The length of the page name is too large (" + pageName.length() + " , limit is " + m_pageNameMaxLength + ")");
-            checkStrategy( context, REASON_PAGENAME_TOO_LONG, "Herb says '" + pageName + "' is a bad pageName and I trust Herb! (Incident code " + uid + ")" );
+            checkStrategy( context, "Herb says '" + pageName + "' is a bad pageName and I trust Herb! (Incident code " + uid + ")" );
 
         }
     }
 
-    private void checkStrategy( final Context context, final String error, final String message ) throws RedirectException {
+    private void checkStrategy(final Context context, final String message ) throws RedirectException {
         if( m_stopAtFirstMatch ) {
             throw new RedirectException( message, getRedirectPage( context ) );
         }
@@ -432,11 +432,10 @@ public class SpamFilter extends BasePageFilter {
      * Takes a single page change and performs a load of tests on the content change. An admin can modify anything.
      *
      * @param context page Context
-     * @param content page content
      * @param change page change
      * @throws RedirectException spam filter rejects the page change.
      */
-    private synchronized void checkSinglePageChange( final Context context, final String content, final Change change )
+    private synchronized void checkSinglePageChange(final Context context, final Change change )
     		throws RedirectException {
         final HttpServletRequest req = context.getHttpRequest();
 
@@ -477,7 +476,7 @@ public class SpamFilter extends BasePageFilter {
 
                 final String uid = log( context, REJECT, REASON_TOO_MANY_MODIFICATIONS, change.m_change );
                 LOG.info( "SPAM:TooManyModifications (" + uid + "). Added host " + addr + " to temporary ban list for doing too many modifications/minute" );
-                checkStrategy( context, REASON_TOO_MANY_MODIFICATIONS, "Herb says you look like a spammer, and I trust Herb! (Incident code " + uid + ")" );
+                checkStrategy( context, "Herb says you look like a spammer, and I trust Herb! (Incident code " + uid + ")" );
             }
 
             if( changeCounter >= m_limitSimilarChanges ) {
@@ -486,7 +485,7 @@ public class SpamFilter extends BasePageFilter {
 
                 final String uid = log( context, REJECT, REASON_SIMILAR_MODIFICATIONS, change.m_change );
                 LOG.info( "SPAM:SimilarModifications (" + uid + "). Added host " + addr + " to temporary ban list for doing too many similar modifications" );
-                checkStrategy( context, REASON_SIMILAR_MODIFICATIONS, "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")");
+                checkStrategy( context, "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")");
             }
 
             //  Calculate the number of links in the addition.
@@ -504,7 +503,7 @@ public class SpamFilter extends BasePageFilter {
 
                 final String uid = log( context, REJECT, REASON_TOO_MANY_URLS, change.toString() );
                 LOG.info( "SPAM:TooManyUrls (" + uid + "). Added host " + addr + " to temporary ban list for adding too many URLs" );
-                checkStrategy( context, REASON_TOO_MANY_URLS, "Herb says you look like a spammer, and I trust Herb! (Incident code " + uid + ")" );
+                checkStrategy( context, "Herb says you look like a spammer, and I trust Herb! (Incident code " + uid + ")" );
             }
 
             //  Check bot trap
@@ -582,7 +581,7 @@ public class SpamFilter extends BasePageFilter {
 
                     final String uid = log( context, REJECT, REASON_AKISMET, change.toString() );
                     LOG.info( "SPAM:Akismet (" + uid + "). Akismet thinks this change is spam; added host to temporary ban list." );
-                    checkStrategy( context, REASON_AKISMET, "Akismet tells Herb you're a spammer, Herb trusts Akismet, and I trust Herb! (Incident code " + uid + ")" );
+                    checkStrategy( context, "Akismet tells Herb you're a spammer, Herb trusts Akismet, and I trust Herb! (Incident code " + uid + ")" );
                 }
             }
         }
@@ -612,7 +611,7 @@ public class SpamFilter extends BasePageFilter {
                 final String uid = log( context, REJECT, REASON_BOT_TRAP, change.toString() );
 
                 LOG.info( "SPAM:BotTrap (" + uid + ").  Wildly behaving bot detected." );
-                checkStrategy( context, REASON_BOT_TRAP, "Spamming attempt detected. (Incident code " + uid + ")" );
+                checkStrategy( context, "Spamming attempt detected. (Incident code " + uid + ")" );
             }
         }
     }
@@ -625,7 +624,7 @@ public class SpamFilter extends BasePageFilter {
                 final String uid = log( context, REJECT, REASON_UTF8_TRAP, change.toString() );
 
                 LOG.info( "SPAM:UTF8Trap (" + uid + ").  Wildly posting dumb bot detected." );
-                checkStrategy( context, REASON_UTF8_TRAP, "Spamming attempt detected. (Incident code " + uid + ")" );
+                checkStrategy( context, "Spamming attempt detected. (Incident code " + uid + ")" );
             }
         }
     }
@@ -661,7 +660,7 @@ public class SpamFilter extends BasePageFilter {
                     final long timeleft = ( host.getReleaseTime() - now ) / 1000L;
 
                     log( context, REJECT, REASON_IP_BANNED_TEMPORARILY, change.m_change );
-                    checkStrategy( context, REASON_IP_BANNED_TEMPORARILY,
+                    checkStrategy( context,
                             "You have been temporarily banned from modifying this wiki. (" + timeleft + " seconds of ban left)" );
                 }
             }
@@ -729,11 +728,10 @@ public class SpamFilter extends BasePageFilter {
      * Does a check against a known pattern list.
      *
      * @param context page Context
-     * @param content page content
      * @param change page change
      * @throws RedirectException spam filter rejects the page change.
      */
-    private void checkPatternList( final Context context, final String content, final Change change ) throws RedirectException {
+    private void checkPatternList( final Context context, final Change change ) throws RedirectException {
         // If we have no spam patterns defined, or we're trying to save the page containing the patterns, just return.
         if( m_spamPatterns == null || context.getPage().getName().equals( m_forbiddenWordsPage ) ) {
             return;
@@ -752,7 +750,7 @@ public class SpamFilter extends BasePageFilter {
                 final String uid = log( context, REJECT, REASON_REGEXP + "(" + p.getPattern() + ")", ch );
 
                 LOG.info( "SPAM:Regexp (" + uid + "). Content matches the spam filter '" + p.getPattern() + "'" );
-                checkStrategy( context, REASON_REGEXP, "Herb says '" + p.getPattern() + "' is a bad spam word and I trust Herb! (Incident code " + uid + ")" );
+                checkStrategy( context, "Herb says '" + p.getPattern() + "' is a bad spam word and I trust Herb! (Incident code " + uid + ")" );
             }
         }
     }
@@ -783,15 +781,15 @@ public class SpamFilter extends BasePageFilter {
                 final String uid = log( context, REJECT, REASON_IP_BANNED_PERMANENTLY + "(" + p.getPattern() + ")", remoteIP );
 
                 LOG.info( "SPAM:IPBanList (" + uid + "). remoteIP matches the IP filter '" + p.getPattern() + "'" );
-                checkStrategy( context, REASON_IP_BANNED_PERMANENTLY, "Herb says '" + p.getPattern() + "' is a banned IP and I trust Herb! (Incident code " + uid + ")" );
+                checkStrategy( context, "Herb says '" + p.getPattern() + "' is a banned IP and I trust Herb! (Incident code " + uid + ")" );
             }
         }
     }
 
-    private void checkPatternList( final Context context, final String content, final String change ) throws RedirectException {
+    private void checkPatternList( final Context context, final String change ) throws RedirectException {
         final Change c = new Change();
         c.m_change = change;
-        checkPatternList( context, content, c );
+        checkPatternList( context, c );
     }
  
     /**
@@ -916,9 +914,9 @@ public class SpamFilter extends BasePageFilter {
      */
     public boolean isValidUserProfile( final Context context, final UserProfile profile ) {
         try {
-            checkPatternList( context, profile.getEmail(), profile.getEmail() );
-            checkPatternList( context, profile.getFullname(), profile.getFullname() );
-            checkPatternList( context, profile.getLoginName(), profile.getLoginName() );
+            checkPatternList( context, profile.getEmail() );
+            checkPatternList( context, profile.getFullname() );
+            checkPatternList( context, profile.getLoginName() );
         } catch( final RedirectException e ) {
             LOG.info("Detected attempt to create a spammer user account (see above for rejection reason)");
             return false;

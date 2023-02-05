@@ -1482,11 +1482,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     /**
      * Handles constructs of type %%(style) and %%class
-     * @param newLine
      * @return An Element containing the div or span, depending on the situation.
      * @throws IOException
      */
-    private Element handleDiv( final boolean newLine ) throws IOException {
+    private Element handleDiv( ) throws IOException {
         int ch = nextToken();
         Element el = null;
 
@@ -1577,11 +1576,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return el;
     }
 
-    private Element handleSlash( final boolean newLine ) throws IOException {
+    private Element handleSlash( ) throws IOException {
         final int ch = nextToken();
         pushBack( ch );
         if( ch == '%' && !m_styleStack.isEmpty() ) {
-            return handleDiv( newLine );
+            return handleDiv();
         }
 
         return null;
@@ -1900,11 +1899,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
             break;
 
           case '%':
-            el = handleDiv( m_newLine );
+            el = handleDiv();
             break;
 
           case '/':
-            el = handleSlash( m_newLine );
+            el = handleSlash();
             break;
 
           default:
