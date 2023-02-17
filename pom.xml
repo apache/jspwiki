@@ -67,6 +67,7 @@
     <tomcat.version>9.0.54</tomcat.version>
     <wro4j.version>1.9.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
+    <jackson.version>2.13.5</jackson.version>
 
     <plugin.antrun.version>3.0.0</plugin.antrun.version>
     <plugin.assembly.version>3.3.0</plugin.assembly.version>
@@ -144,6 +145,24 @@
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
         <version>${gson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-databind</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+        <version>${jackson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.fasterxml.jackson.dataformat</groupId>
+        <artifactId>jackson-dataformat-cbor</artifactId>
+        <version>${jackson.version}</version>
       </dependency>
 
       <dependency>
