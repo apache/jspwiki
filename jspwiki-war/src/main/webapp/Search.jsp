@@ -50,13 +50,14 @@
 
     if( query != null ) {
         log.info("Searching for string "+query);
-
+        long start = System.currentTimeMillis();
         try {
             list = wiki.getManager( SearchManager.class ).findPages( query, wikiContext );
             pageContext.setAttribute( "searchresults", list, PageContext.REQUEST_SCOPE );
         } catch( Exception e ) {
             wikiContext.getWikiSession().addMessage( e.getMessage() );
         }
+        if (list != null) log.info("Found " + list.size() + " results in " + (System.currentTimeMillis() - start) + "ms");
 
         query = TextUtil.replaceEntities( query );
 
