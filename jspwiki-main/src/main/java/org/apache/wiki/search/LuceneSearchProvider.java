@@ -93,7 +93,7 @@ public class LuceneSearchProvider implements SearchProvider {
 
     protected static final Logger log = LogManager.getLogger(LuceneSearchProvider.class);
 
-    private Engine m_engine;
+    protected Engine m_engine;
     private Executor searchExecutor;
 
     // Lucene properties.
@@ -119,7 +119,7 @@ public class LuceneSearchProvider implements SearchProvider {
     protected static final String LUCENE_PAGE_NAME     = "name";
     protected static final String LUCENE_PAGE_KEYWORDS = "keywords";
 
-    private String m_luceneDirectory;
+    protected String m_luceneDirectory;
     protected final List< Object[] > m_updates = Collections.synchronizedList( new ArrayList<>() );
 
     /** Maximum number of fragments from search matches. */
@@ -608,7 +608,7 @@ public class LuceneSearchProvider implements SearchProvider {
     }
 
     // FIXME: This class is dumb; needs to have a better implementation
-    private static class SearchResultImpl implements SearchResult {
+    protected static class SearchResultImpl implements SearchResult {
 
         private final Page m_page;
         private final int      m_score;
