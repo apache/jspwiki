@@ -329,7 +329,7 @@ public class LuceneSearchProvider implements SearchProvider {
         log.debug("Done updating Lucene index for page '" + page.getName() + "'.");
     }
 
-    private Analyzer getLuceneAnalyzer() throws ProviderException {
+    protected Analyzer getLuceneAnalyzer() throws ProviderException {
         try {
             final Class< ? > clazz = ClassUtil.findClass( "", m_analyzerClass );
             final Constructor< ? > constructor = clazz.getConstructor();
