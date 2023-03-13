@@ -128,7 +128,7 @@ public class LuceneSearchProvider implements SearchProvider {
     /** The maximum number of hits to return from searches. */
     public static final int MAX_SEARCH_HITS = 99_999;
     
-    private static final String PUNCTUATION_TO_SPACES = StringUtils.repeat(" ", TextUtil.PUNCTUATION_CHARS_ALLOWED.length() );
+    protected static final String PUNCTUATION_TO_SPACES = StringUtils.repeat(" ", TextUtil.PUNCTUATION_CHARS_ALLOWED.length() );
 
     /**
      *  {@inheritDoc}
