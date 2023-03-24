@@ -74,7 +74,7 @@ downloading them, set the `jspwiki.attachment.forceDownload` property to empty o
 
 * Require at least Java 11 to build & run
 
-* Add missing licenses PR [#220](https://github.com/apache/jspwiki/pull/206) provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
+* Add missing licenses PR [#220](https://github.com/apache/jspwiki/pull/220) provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
 
 * Dependency updates
     * commons-text to 1.10.0
