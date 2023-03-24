@@ -104,7 +104,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 // FIXME: The way that we save attributes is now a major booboo, and must be
-//        replace forthwith.  However, this is a workaround for the great deal
+//        replaced forthwith.  However, this is a workaround for the great deal
 //        of problems that occur here...
 public class DefaultReferenceManager extends BasePageFilter implements ReferenceManager {
 
