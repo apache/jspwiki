@@ -470,7 +470,9 @@ public class WikiEngine implements Engine {
                 final ArrayList< Page > pages = new ArrayList<>();
                 pages.addAll( getManager( PageManager.class ).getAllPages() );
                 pages.addAll( getManager( AttachmentManager.class ).getAllAttachments() );
-                initComponent( ReferenceManager.class, this );
+                final String refMgrClassName = m_properties.getProperty( PROP_REF_MANAGER_IMPL, ClassUtil.getMappedClass( ReferenceManager.class.getName() ).getName() );
+
+                initComponent( refMgrClassName, ReferenceManager.class, this );
 
                 getManager( ReferenceManager.class ).initialize( pages );
             }
