@@ -16,6 +16,34 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2023-03-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.0-git-04_
+
+* ReferenceManager implementation can be set via `jspwiki.refManager` property on your `jspwiki[-custom].properties` file
+    * The provided implementation is expected to have a constructor receiving only an `Engine`
+
+* `.html`, `.htm` and `.js` attachments are now forcibly downloaded by default, if you want to open them rather than 
+downloading them, set the `jspwiki.attachment.forceDownload` property to empty on your `jspwiki[-custom].properties` file
+
+* Fixed CSS file used by Install.jsp - now that's a pretty jsp to look at!
+
+* Merged PRs [#231](https://github.com/apache/jspwiki/pull/231) and [#235](https://github.com/apache/jspwiki/pull/235), provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
+
+* Dependency updates
+    * commons-fileupload to 1.5 (closes [#260](https://github.com/apache/jspwiki/pull/260)), thanks to dependabot
+    * JUnit to 5.9.2
+    * HSQLDB to 2.7.1 (closes [#244](https://github.com/apache/jspwiki/pull/244)), thanks to dependabot
+    * jetty-all to 9.4.51.v20230217 (closes [#261](https://github.com/apache/jspwiki/pull/261)), thanks to dependabot
+    * Log4j2 to 2.20.0
+    * Lucene to 9.5.0
+    * Mockito to 5.2.0
+    * Selenide to 6.12.4
+    * Tika to 2.7.0
+    * Tomcat to 9.0.73
+    * XStream on antrun plugin on portable module to 1.4.20 (closes [#256](https://github.com/apache/jspwiki/pull/256)), thanks to dependabot
+    * Maven plugins: assembly to 3.5.0, compiler to 3.11.0, dependency to 3.5.0, enforcer to 3.2.1, install to 3.1.1, javadoc to 3.5.0, 
+      project info reports to 3.4.2, release to 3.0.0, resources to 3.3.1, surefire to 3.0.0, cargo to 1.10.6, jspc to 3.2.2 (closes [#257](https://github.com/apache/jspwiki/pull/257), thanks to dependabot)
 
 **2023-01-04  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
