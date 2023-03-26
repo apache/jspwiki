@@ -102,7 +102,7 @@ public class CommentedProperties extends Properties
     @Override
     public synchronized void store(final OutputStream out, final String comments ) throws IOException
     {
-        final byte[] bytes = m_propertyString.getBytes(StandardCharsets.ISO_8859_1.name());
+        final byte[] bytes = m_propertyString.getBytes( StandardCharsets.ISO_8859_1 );
         FileUtil.copyContents( new ByteArrayInputStream( bytes ), out );
         out.flush();
     }

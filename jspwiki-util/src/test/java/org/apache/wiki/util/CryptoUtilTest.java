@@ -142,7 +142,7 @@ public class CryptoUtilTest {
     @Test
     public void verifySaltedPassword() throws Exception {
         // Verify with a known digest
-        byte[] password = "testing123".getBytes( StandardCharsets.UTF_8.name() );
+        byte[] password = "testing123".getBytes( StandardCharsets.UTF_8 );
         Assertions.assertTrue( CryptoUtil.verifySaltedPassword( password, "{SSHA}yfT8SRT/WoOuNuA6KbJeF10OznZmb28=" ) );
 
         // Verify with two more known digests
