@@ -17,6 +17,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-03-26  Dirk Frederickx (brushed AT apache DOT org)**
+
+* _2.12.0-git-04_
+
+* Remove files incorrectly added to the code base.
+
 **2023-01-04  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.0-git-03_
