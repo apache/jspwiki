@@ -87,7 +87,7 @@
     <plugin.clean.version>3.2.0</plugin.clean.version>
     <plugin.compiler.version>3.11.0</plugin.compiler.version>
     <plugin.dependency.version>3.5.0</plugin.dependency.version>
-    <plugin.enforcer.version>3.2.1</plugin.enforcer.version>
+    <plugin.enforcer.version>3.3.0</plugin.enforcer.version>
     <plugin.install.version>3.1.1</plugin.install.version>
     <plugin.jar.version>3.3.0</plugin.jar.version>
     <plugin.javadoc.version>3.5.0</plugin.javadoc.version>
