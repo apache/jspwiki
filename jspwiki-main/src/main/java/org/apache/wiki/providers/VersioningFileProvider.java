@@ -33,11 +33,14 @@ import org.apache.wiki.util.FileUtil;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -83,6 +86,9 @@ public class VersioningFileProvider extends AbstractFileProvider {
     /** Name of the property file which stores the metadata. */
     public static final String PROPERTYFILE = "page.properties";
 
+    public static final String VERSIONING_PROPERTIES_FILE = "versioning.properties";
+    private static final String DATE_PROPERTY_WRITTEN = "date.property.written";
+
     private CachedProperties m_cachedProperties;
 
     /**
@@ -92,7 +98,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
     public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
         super.initialize( engine, properties );
         // some additional sanity checks :
-        final File oldpages = new File( getPageDirectory(), PAGEDIR );
+        final File oldpages = getOldDir();
         if( !oldpages.exists() ) {
             if( !oldpages.mkdirs() ) {
                 throw new IOException( "Failed to create page version directory " + oldpages.getAbsolutePath() );
@@ -105,7 +111,64 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 throw new IOException( "Page version directory is not writable: " + oldpages.getAbsolutePath() );
             }
         }
+		try {
+        	lazyWriteDateProperties();
+		} catch (Throwable e) {
+			// don't prevent wiki from starting for this optional process
+			log.error("Unable to write date properties, skipping...", e);
+		}
         log.info( "Using directory " + oldpages.getAbsolutePath() + " for storing old versions of pages" );
+    }
+
+    private void lazyWriteDateProperties() throws IOException, ProviderException {
+        final Properties oldProps = getVersioningProperties();
+        boolean datesWritten = Boolean.parseBoolean((String) oldProps.getOrDefault(DATE_PROPERTY_WRITTEN, "false"));
+        if (!datesWritten) {
+            writeDateProperties();
+            oldProps.put(DATE_PROPERTY_WRITTEN, "true");
+            writeOldProperties(oldProps);
+        }
+    }
+
+	private void writeDateProperties() throws IOException, ProviderException {
+		long start = System.currentTimeMillis();
+		for (Page page : getAllPages()) {
+			List<Page> versionHistory = getVersionHistory(page.getName());
+			if (versionHistory.size() < 2) continue;
+			final Properties pageProps = getPageProperties(page.getName());
+			for (Page pageVersion : versionHistory) {
+				String datePropertyKey = getDatePropertyKey(pageVersion.getVersion());
+				if (pageProps.get(datePropertyKey) == null) {
+					ZonedDateTime date = ZonedDateTime
+							.ofInstant(pageVersion.getLastModified().toInstant(), ZoneId.systemDefault());
+					addVersionDate(date, pageVersion.getVersion(), pageProps);
+				}
+			}
+			putPageProperties(page.getName(), pageProps);
+		}
+		log.info("Written date properties in " + (System.currentTimeMillis() - start) + "ms");
+	}
+
+    private Properties getVersioningProperties() throws IOException {
+		final File versioningPropsFile = new File(getOldDir(), VERSIONING_PROPERTIES_FILE);
+        if (!versioningPropsFile.exists()) return new Properties();
+		final Properties props;
+		try (final InputStream in = new FileInputStream(versioningPropsFile)) {
+			props = new Properties();
+			props.load(in);
+		}
+		return props;
+	}
+
+	private void writeOldProperties(Properties properties) throws IOException {
+		final File oldPropertiesFile = new File(getOldDir(), VERSIONING_PROPERTIES_FILE);
+		try( final OutputStream out = new FileOutputStream( oldPropertiesFile ) ) {
+			properties.store( out, "JSPWiki versioning properties for" );
+		}
+	}
+
+	private File getOldDir() {
+        return new File(getPageDirectory(), PAGEDIR);
     }
 
     /**
@@ -116,7 +179,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
         if( page == null ) {
             throw new InternalWikiException( "Page may NOT be null in the provider!" );
         }
-        final File oldpages = new File( getPageDirectory(), PAGEDIR );
+        final File oldpages = getOldDir();
         return new File( oldpages, mangleName( page ) );
     }
 
@@ -392,7 +455,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 props.setProperty(getChangeNotePropertyKey(versionNumber), changeNote );
             }
 
-            props.put(getDatePropertyKey(versionNumber), ZonedDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+            addVersionDate(ZonedDateTime.now(), versionNumber, props);
 
             // Get additional custom properties from page and add to props
             getCustomProperties( page, props );
@@ -401,6 +464,10 @@ public class VersioningFileProvider extends AbstractFileProvider {
             log.error( "Saving failed", e );
             throw new ProviderException("Could not save page text: "+e.getMessage());
         }
+    }
+
+    private void addVersionDate(ZonedDateTime date, int versionNumber, Properties props) {
+        props.put(getDatePropertyKey(versionNumber), date.format(DateTimeFormatter.ISO_DATE_TIME));
     }
 
     private String getAuthorPropertyKey(int versionNumber) {
