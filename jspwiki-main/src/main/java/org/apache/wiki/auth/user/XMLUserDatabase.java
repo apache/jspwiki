@@ -518,7 +518,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
      * @return the text nodes that are immediate children of the base element, concatenated together
      */
     private String extractText( final Element element ) {
-        final String text = "";
+        String text = "";
         if( element.getChildNodes().getLength() > 0 ) {
             final NodeList children = element.getChildNodes();
             text = IntStream.range(0, children.getLength()).mapToObj(children::item).filter(child -> child.getNodeType() == Node.TEXT_NODE).map(child -> ((Text) child).getData()).collect(Collectors.joining());

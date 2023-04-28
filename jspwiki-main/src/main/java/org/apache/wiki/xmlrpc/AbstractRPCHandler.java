@@ -33,7 +33,6 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.Vector;
-import java.util.stream.Collectors;
 
 /**
  *  Provides definitions for RPC handler routines.
@@ -73,7 +72,7 @@ public abstract class AbstractRPCHandler implements WikiRPCHandler {
     public Vector getRecentChanges( final Date since ) {
         checkPermission( PagePermission.VIEW );
         final Set< Page > pages = m_engine.getManager( PageManager.class ).getRecentChanges();
-        final Vector< Hashtable< ?, ? > > result;
+        final Vector< Hashtable< ?, ? > > result = new Vector<>();
 
         // Transform UTC into local time.
         final Calendar cal = Calendar.getInstance();
@@ -81,7 +80,11 @@ public abstract class AbstractRPCHandler implements WikiRPCHandler {
         cal.add( Calendar.MILLISECOND, cal.get( Calendar.ZONE_OFFSET ) +
                   (cal.getTimeZone().inDaylightTime( since ) ? cal.get( Calendar.DST_OFFSET ) : 0 ) );
 
-        result = pages.stream().filter(page -> page.getLastModified().after(cal.getTime())).map(this::encodeWikiPage).collect(Collectors.toCollection(Vector::new));
+        for( final Page page : pages ) {
+            if( page.getLastModified().after( cal.getTime() ) ) {
+                result.add( encodeWikiPage( page ) );
+            }
+        }
 
         return result;
     }
