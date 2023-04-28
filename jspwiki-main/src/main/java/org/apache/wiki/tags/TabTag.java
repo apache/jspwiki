@@ -19,15 +19,13 @@
 
 package org.apache.wiki.tags;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspTagException;
-
 import org.apache.wiki.util.TextUtil;
 
+import javax.servlet.jsp.JspTagException;
+import java.io.IOException;
+
 /**
- *  Generates single tabbed page layout.
- *  Works together with the tabbedSection javascript.  Note that if you do not
+ *  Generates single tabbed page layout. Works together with the tabbedSection javascript.  Note that if you do not
  *  specify an url, the body contents of the tag are loaded by the tag itself.
  *
  *  <P><B>Attributes</B></P>
@@ -45,9 +43,8 @@ import org.apache.wiki.util.TextUtil;
  *
  *  @since v2.3.63
  */
+public class TabTag extends WikiTagBase {
 
-public class TabTag extends WikiTagBase
-{
     private static final long serialVersionUID = -8534125226484616489L;
     private String m_accesskey;
     private String m_tabTitle;
@@ -57,8 +54,7 @@ public class TabTag extends WikiTagBase
      * {@inheritDoc}
      */
     @Override
-    public void doFinally()
-    {
+    public void doFinally() {
         super.doFinally();
 
         m_accesskey = null;
@@ -70,39 +66,36 @@ public class TabTag extends WikiTagBase
      * Sets the tab title.
      * @param aTabTitle the tab title
      */
-    public void setTitle(final String aTabTitle)
-    {
+    public void setTitle( final String aTabTitle ) {
         m_tabTitle = TextUtil.replaceEntities( aTabTitle );
     }
 
     /**
      * Sets the tab access key.
+     *
      * @param anAccesskey the access key
      */
-    public void setAccesskey(final String anAccesskey)
-    {
+    public void setAccesskey( final String anAccesskey ) {
         m_accesskey = TextUtil.replaceEntities( anAccesskey ); //take only the first char
     }
 
     /**
      * Sets the tab URL.
+     *
      * @param url the URL
      */
-    public void setUrl(final String url )
-    {
+    public void setUrl( final String url ) {
         m_url = TextUtil.replaceEntities( url );
     }
 
     // insert <u> ..accesskey.. </u> in title
-    private boolean handleAccesskey()
-    {
-        if( (m_tabTitle == null) || (m_accesskey == null) ) return false;
+    private boolean handleAccesskey() {
+        if( ( m_tabTitle == null ) || ( m_accesskey == null ) ) return false;
 
         final int pos = m_tabTitle.toLowerCase().indexOf( m_accesskey.toLowerCase() );
-        if( pos > -1 )
-        {
+        if( pos > -1 ) {
             m_tabTitle = m_tabTitle.substring( 0, pos ) + "<span class='accesskey'>"
-                       + m_tabTitle.charAt( pos ) + "</span>" + m_tabTitle.substring( pos+1 );
+                    + m_tabTitle.charAt( pos ) + "</span>" + m_tabTitle.substring( pos + 1 );
         }
         return true;
     }
@@ -111,44 +104,33 @@ public class TabTag extends WikiTagBase
      * {@inheritDoc}
      */
     @Override
-    public int doWikiStartTag() throws JspTagException
-    {
-        final TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
+    public int doWikiStartTag() throws JspTagException {
+        final TabbedSectionTag parent = ( TabbedSectionTag ) findAncestorWithClass( this, TabbedSectionTag.class );
 
-        //
         //  Sanity checks
-        //
-        if( getId() == null )
-        {
-            throw new JspTagException("Tab Tag without \"id\" attribute");
+        if( getId() == null ) {
+            throw new JspTagException( "Tab Tag without \"id\" attribute" );
         }
-        if( m_tabTitle == null )
-        {
-            throw new JspTagException("Tab Tag without \"tabTitle\" attribute");
+        if( m_tabTitle == null ) {
+            throw new JspTagException( "Tab Tag without \"tabTitle\" attribute" );
         }
-        if( parent == null )
-        {
-            throw new JspTagException("Tab Tag without parent \"TabbedSection\" Tag");
+        if( parent == null ) {
+            throw new JspTagException( "Tab Tag without parent \"TabbedSection\" Tag" );
+        }
+        if( !parent.isStateGenerateTabBody() ) {
+            return SKIP_BODY;
         }
 
-        if( !parent.isStateGenerateTabBody() ) return SKIP_BODY;
-
-        final StringBuilder sb = new StringBuilder(32);
-
+        final StringBuilder sb = new StringBuilder( 32 );
         sb.append( "<div id=\"" ).append( getId() ).append( "\"" );
-
-        if( !parent.validateDefaultTab( getId()) )
-        {
+        if( !parent.validateDefaultTab( getId() ) ) {
             sb.append( " class=\"hidetab\"" );
         }
         sb.append( " >\n" );
 
-        try
-        {
+        try {
             pageContext.getOut().write( sb.toString() );
-        }
-        catch( final java.io.IOException e )
-        {
+        } catch( final IOException e ) {
             throw new JspTagException( "IO Error: " + e.getMessage() );
         }
 
@@ -159,39 +141,27 @@ public class TabTag extends WikiTagBase
      * {@inheritDoc}
      */
     @Override
-    public int doEndTag() throws JspTagException
-    {
-        final TabbedSectionTag parent=(TabbedSectionTag)findAncestorWithClass( this, TabbedSectionTag.class );
-
+    public int doEndTag() throws JspTagException {
+        final TabbedSectionTag parent = ( TabbedSectionTag ) findAncestorWithClass( this, TabbedSectionTag.class );
         final StringBuilder sb = new StringBuilder();
-
-        if( parent.isStateFindDefaultTab() )
-        {
-            //inform the parent of each tab
+        if( parent.isStateFindDefaultTab() ) {
+            // inform the parent of each tab
             parent.validateDefaultTab( getId() );
-        }
-        else if( parent.isStateGenerateTabBody() )
-        {
+        } else if( parent.isStateGenerateTabBody() ) {
             sb.append( "</div>\n" );
-        }
-        else if( parent.isStateGenerateTabMenu() )
-        {
+        } else if( parent.isStateGenerateTabMenu() ) {
             sb.append( "<a" );
-
-            if( parent.validateDefaultTab( getId() ) )
-            {
+            if( parent.validateDefaultTab( getId() ) ) {
                 sb.append( " class=\"activetab\"" );
             }
 
             sb.append( " id=\"menu-" ).append( getId() ).append( "\"" );
 
-            if( m_url != null )
-            {
+            if( m_url != null ) {
                 sb.append( " href='" ).append( m_url ).append( "'" );
             }
 
-            if( handleAccesskey() )
-            {
+            if( handleAccesskey() ) {
                 sb.append( " accesskey=\"" ).append( m_accesskey ).append( "\"" );
             }
 
@@ -200,15 +170,13 @@ public class TabTag extends WikiTagBase
             sb.append( "</a>" );
         }
 
-        try
-        {
+        try {
             pageContext.getOut().write( sb.toString() );
-        }
-        catch( final IOException e )
-        {
+        } catch( final IOException e ) {
             throw new JspTagException( "IO Error: " + e.getMessage() );
         }
 
         return EVAL_PAGE;
     }
+
 }
