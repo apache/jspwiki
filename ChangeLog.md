@@ -17,6 +17,21 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-04-28  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.0-git-05_
+
+* Merged [#211](https://github.com/apache/jspwiki/pull/211), [#240](https://github.com/apache/jspwiki/pull/240) and [#258](https://github.com/apache/jspwiki/pull/258), provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
+
+* Dependency updates
+    * Gson to 2.10.1 (closes [#265](https://github.com/apache/jspwiki/pull/265)), thanks to dependabot
+    * Jaxen to 2.0.0 (closes [#264](https://github.com/apache/jspwiki/pull/264)), thanks to dependabot
+    * JUnit to 5.9.3
+    * Mockito to 5.3.1
+    * Selenide to 6.13.1
+    * Tomcat to 9.0.74
+    * Maven plugins: enforcer to 3.3.0 (closes [#266](https://github.com/apache/jspwiki/pull/266), thanks to dependabot), project-info-reports to 3.4.3
+
 **2023-03-26  Dirk Frederickx (brushed AT apache DOT org)**
 
 * Remove files incorrectly added to the code base.
