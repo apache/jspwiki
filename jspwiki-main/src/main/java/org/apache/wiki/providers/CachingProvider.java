@@ -352,6 +352,7 @@ public class CachingProvider implements PageProvider {
             all = new TreeSet<>();
             for( final String key : keys ) {
                 final Element element = m_cache.get( key );
+                if (element == null) continue;
                 final Page cachedPage = ( Page )element.getObjectValue();
                 if( cachedPage != null ) {
                     all.add( cachedPage );
