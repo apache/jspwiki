@@ -24,7 +24,7 @@ under the License.
 * Merged [#241](https://github.com/apache/jspwiki/pull/241), provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
 
 * Dependency updates
-    * Flexmark to 0.64.2 (closes [#270](https://github.com/apache/jspwiki/pull/270)), thanks to dependabot
+    * Flexmark to 0.64.4 (closes [#270](https://github.com/apache/jspwiki/pull/270) and [#271](https://github.com/apache/jspwiki/pull/271)), thanks to dependabot
     * Mockito to 5.3.1 (closes [#269](https://github.com/apache/jspwiki/pull/269)), thanks to dependabot
 
 **2023-04-28  Juan Pablo Santos (juanpablo AT apache DOT org)**
