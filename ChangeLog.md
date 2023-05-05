@@ -17,6 +17,16 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-05-05  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.0-git-06_
+
+* Merged [#241](https://github.com/apache/jspwiki/pull/241), provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
+
+* Dependency updates
+    * Flexmark to 0.64.2 (closes [#270](https://github.com/apache/jspwiki/pull/270)), thanks to dependabot
+    * Mockito to 5.3.1 (closes [#269](https://github.com/apache/jspwiki/pull/269)), thanks to dependabot
+
 **2023-04-28  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.0-git-05_
@@ -27,7 +37,6 @@ under the License.
     * Gson to 2.10.1 (closes [#265](https://github.com/apache/jspwiki/pull/265)), thanks to dependabot
     * Jaxen to 2.0.0 (closes [#264](https://github.com/apache/jspwiki/pull/264)), thanks to dependabot
     * JUnit to 5.9.3
-    * Mockito to 5.3.1
     * Selenide to 6.13.1
     * Tomcat to 9.0.74
     * Maven plugins: enforcer to 3.3.0 (closes [#266](https://github.com/apache/jspwiki/pull/266), thanks to dependabot), project-info-reports to 3.4.3
