@@ -238,9 +238,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
         } else {
             Collections.sort( tfArr );
 
-            for (int i = 0; i < tfArr.size(); i++) {
-                tfArr.set(i, props.getProperty(tfArr.get(i)));
-            }
+            tfArr.replaceAll(props::getProperty);
         }
 
         final String prefTimeZone = Preferences.getPreference( context, "TimeZone" );

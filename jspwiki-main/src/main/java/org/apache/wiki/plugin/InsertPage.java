@@ -36,6 +36,7 @@ import org.apache.wiki.util.TextUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 
@@ -109,11 +110,7 @@ public class InsertPage implements Plugin {
             final Page page;
             try {
                 final String pageName = engine.getFinalPageName( includedPage );
-                if( pageName != null ) {
-                    page = engine.getManager( PageManager.class ).getPage( pageName );
-                } else {
-                    page = engine.getManager( PageManager.class ).getPage( includedPage );
-                }
+                page = engine.getManager(PageManager.class).getPage(Objects.requireNonNullElse(pageName, includedPage));
             } catch( final ProviderException e ) {
                 res.append( "<span class=\"error\">Page could not be found by the page provider.</span>" );
                 return res.toString();
