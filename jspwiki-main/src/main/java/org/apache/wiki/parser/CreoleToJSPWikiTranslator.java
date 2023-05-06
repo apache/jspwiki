@@ -295,10 +295,7 @@ public class CreoleToJSPWikiTranslator
             }
             if ((inList == -1 && counter != 1) || (inList != -1 && inList + 1 < counter))
             {
-                for (int c = 0; c < counter; c++)
-                {
-                    result.append(actSourceSymbol);
-                }
+                result.append(actSourceSymbol.repeat(Math.max(0, counter)));
                 inList = -1;
             }
             else
