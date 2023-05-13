@@ -77,11 +77,6 @@
     </dependency>
 
     <dependency>
-      <groupId>commons-httpclient</groupId>
-      <artifactId>commons-httpclient</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>net.sourceforge</groupId>
       <artifactId>akismet-java</artifactId>
     </dependency>
