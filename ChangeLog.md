@@ -17,6 +17,21 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-05-13  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.0-git-07_
+
+* Rollback wro4j plugin version and configuration to 1.8.0, as current configuration was affected by [MDEP-863](https://issues.apache.org/jira/browse/MDEP-863), preventing Docker builds
+
+* jspwiki-util and jspwiki-main don't pull commons-httpclient, as they weren't using it anymore (it is still pulled transitively, though) 
+
+* Dependency updates
+    * AWS kendra java sdk to 1.12.468 
+    * Lucene to 9.6.0 (closes [#276](https://github.com/apache/jspwiki/pull/276)), thanks to dependabot
+    * Selenide to 6.14.0 (closes [#274](https://github.com/apache/jspwiki/pull/274)), thanks to dependabot
+    * Tomcat to 9.0.75 (closes [#275](https://github.com/apache/jspwiki/pull/275)), thanks to dependabot
+    * Maven plugins: remote-resources to 3.1.0, surefire to 3.1.0 (closes [#273](https://github.com/apache/jspwiki/pull/273), thanks to dependabot)
+
 **2023-05-05  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.0-git-06_
