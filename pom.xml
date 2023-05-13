@@ -79,7 +79,7 @@
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>2.7.0</tika.version>
     <tomcat.version>9.0.75</tomcat.version>
-    <wro4j.version>1.10.1</wro4j.version>
+    <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
     <plugin.antrun.version>3.1.0</plugin.antrun.version>
@@ -717,11 +717,11 @@
             <jsDestinationFolder>${project.build.directory}/generated-sources/wro/scripts</jsDestinationFolder>
             <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
           </configuration>
-          <dependencies><!-- https://github.com/wro4j/wro4j/issues/1129 -->
+          <dependencies><!-- https://github.com/wro4j/wro4j/issues/1039#issuecomment-382474533 -->
             <dependency>
-              <groupId>org.webjars.npm</groupId>
-              <artifactId>glob</artifactId>
-              <version>7.2.0</version>
+              <groupId>org.mockito</groupId>
+              <artifactId>mockito-core</artifactId>
+              <version>${mockito.version}</version>
             </dependency>
           </dependencies>
         </plugin>
