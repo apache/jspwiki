@@ -46,7 +46,7 @@
 
     <akismet-java.version>1.02</akismet-java.version>
     <awaitility.version>4.2.0</awaitility.version>
-    <aws-java-sdk-kendra.version>1.12.176</aws-java-sdk-kendra.version>
+    <aws-java-sdk-kendra.version>1.12.468</aws-java-sdk-kendra.version>
     <commons-collections.version>4.4</commons-collections.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
@@ -69,16 +69,16 @@
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.9.3</junit.version>
     <log4j2.version>2.20.0</log4j2.version>
-    <lucene.version>9.5.0</lucene.version>
+    <lucene.version>9.6.0</lucene.version>
     <mockito.version>5.3.1</mockito.version>
     <nekohtml.version>2.1.2</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
-    <selenide.version>6.13.1</selenide.version>
+    <selenide.version>6.14.0</selenide.version>
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>2.7.0</tika.version>
-    <tomcat.version>9.0.74</tomcat.version>
+    <tomcat.version>9.0.75</tomcat.version>
     <wro4j.version>1.10.1</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
@@ -94,10 +94,10 @@
     <plugin.jxr.version>3.3.0</plugin.jxr.version>
     <plugin.project-info-reports.version>3.4.3</plugin.project-info-reports.version>
     <plugin.release.version>3.0.0</plugin.release.version>
-    <plugin.remote-resources.version>3.0.0</plugin.remote-resources.version>
+    <plugin.remote-resources.version>3.1.0</plugin.remote-resources.version>
     <plugin.resources.version>3.3.1</plugin.resources.version>
     <plugin.source.version>3.2.1</plugin.source.version>
-    <plugin.surefire.version>3.0.0</plugin.surefire.version>
+    <plugin.surefire.version>3.1.0</plugin.surefire.version>
     <plugin.surefire.junit5-tree-reporter.version>1.1.0</plugin.surefire.junit5-tree-reporter.version>
     <plugin.war.version>3.3.2</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
