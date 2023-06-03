@@ -22,10 +22,15 @@ package org.apache.wiki.util;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
+import javax.servlet.ServletContext;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
+import static org.mockito.Mockito.mock;
 
 
 /**
@@ -120,6 +125,32 @@ public class PropertyReaderTest {
 
         Assertions.assertEquals( "Main", test.get( "jspwiki.frontPage" ) );
         Assertions.assertNull( test.get( "secretEnv" ) );
+    }
+
+    @Test
+    public void testSetWorkDir() {
+        final Properties properties = new Properties();
+        final ServletContext servletContext = mock(ServletContext.class);
+        Mockito.when(servletContext.getAttribute("javax.servlet.context.tempdir")).thenReturn(new File("/tmp"));
+
+        PropertyReader.setWorkDir(servletContext, properties);
+
+        // Test when the "jspwiki.workDir" is not set, it should get set to servlet's temporary directory
+        String workDir = properties.getProperty("jspwiki.workDir");
+        Assertions.assertEquals("/tmp", workDir);
+
+        // Test when the "jspwiki.workDir" is set, it should remain as it is
+        properties.setProperty("jspwiki.workDir", "/custom/dir");
+        PropertyReader.setWorkDir(servletContext, properties);
+        workDir = properties.getProperty("jspwiki.workDir");
+        Assertions.assertEquals("/custom/dir", workDir);
+
+        // Test when the servlet's temporary directory is null, it should get set to system's temporary directory
+        Mockito.when(servletContext.getAttribute("javax.servlet.context.tempdir")).thenReturn(null);
+        properties.remove("jspwiki.workDir");
+        PropertyReader.setWorkDir(servletContext, properties);
+        workDir = properties.getProperty("jspwiki.workDir");
+        Assertions.assertEquals(System.getProperty("java.io.tmpdir"), workDir);
     }
 
 }

@@ -43,7 +43,7 @@ public class WikiTest {
     public void testWikiInit() {
         Mockito.doReturn( sc ).when( conf ).getServletContext();
         final Properties properties = Wiki.init( sc );
-        Assertions.assertEquals( 5, properties.size() );
+        Assertions.assertEquals( 6, properties.size() );
 
         // verify SPIs are initialized and can be invoked
         Assertions.assertNull( Wiki.acls().acl() );

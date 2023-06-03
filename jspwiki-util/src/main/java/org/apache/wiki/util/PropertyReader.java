@@ -139,6 +139,9 @@ public final class PropertyReader {
             // now load the cascade (new in 2.5)
             loadWebAppPropsCascade( context, props );
 
+            // sets the JSPWiki working directory (jspwiki.workDir)
+            setWorkDir( context, props );
+
             // add system properties beginning with jspwiki...
             final Map< String, String > sysprops = collectPropertiesFrom( System.getProperties().entrySet().stream()
                                                                                 .collect( Collectors.toMap( Object::toString, Object::toString ) ) );
@@ -391,6 +394,35 @@ public final class PropertyReader {
         // append the name
         result.append( sanitizedName );
         return result.toString();
+    }
+
+    /**
+     * This method sets the JSPWiki working directory (jspwiki.workDir). It first checks if this property
+     * is already set. If it isn't, it attempts to use the servlet container's temporary directory
+     * (javax.servlet.context.tempdir). If that is also unavailable, it defaults to the system's temporary
+     * directory (java.io.tmpdir).
+     * <p>
+     * This method is package-private to allow for unit testing.
+     *
+     * @param properties     the JSPWiki properties
+     * @param servletContext the Servlet context from which to fetch the tempdir if needed
+     * @since JSPWiki 2.11.1
+     */
+    static void setWorkDir( final ServletContext servletContext, final Properties properties ) {
+        final String workDir = TextUtil.getStringProperty(properties, "jspwiki.workDir", null);
+        if (workDir == null) {
+            final File tempDir = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
+            if (tempDir != null) {
+                properties.setProperty("jspwiki.workDir", tempDir.getAbsolutePath());
+                LOG.info("Setting jspwiki.workDir to ServletContext's temporary directory: {}", tempDir.getAbsolutePath());
+            } else {
+                final String defaultTmpDir = System.getProperty("java.io.tmpdir");
+                properties.setProperty("jspwiki.workDir", defaultTmpDir);
+                LOG.info("ServletContext's temporary directory not found. Setting jspwiki.workDir to system's temporary directory: {}", defaultTmpDir);
+            }
+        } else {
+            LOG.info("jspwiki.workDir is already set to: {}", workDir);
+        }
     }
 
 }
