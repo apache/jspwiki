@@ -66,7 +66,7 @@ public class Installer {
     public static final String WORK_DIR = Engine.PROP_WORKDIR;
     public static final String ADMIN_GROUP = "Admin";
     public static final String PROPFILENAME = "jspwiki-custom.properties" ;
-    public static final String TMP_DIR = System.getProperty("java.io.tmpdir");
+    public static String TMP_DIR;
     private final Session m_session;
     private final File m_propertyFile;
     private final Properties m_props;
@@ -86,6 +86,7 @@ public class Installer {
         // Stash the request
         m_request = request;
         m_validated = false;
+        TMP_DIR = m_engine.getWikiProperties().getProperty( "jspwiki.workDir" );
     }
     
     /**

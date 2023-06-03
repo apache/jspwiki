@@ -27,10 +27,12 @@ import org.apache.logging.log4j.core.config.properties.PropertiesConfigurationFa
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.util.TextUtil;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -97,5 +99,4 @@ public class WikiBootstrapServletContextListener implements ServletContextListen
     @Override
     public void contextDestroyed( final ServletContextEvent sce ) {
     }
-
 }
