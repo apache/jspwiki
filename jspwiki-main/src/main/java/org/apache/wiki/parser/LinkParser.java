@@ -257,7 +257,7 @@ public class LinkParser
                         // eat closing delim
                         require( tok, SQUO );
 
-                        if( token != null && value != null )
+                        if(value != null)
                         {
                             if( Arrays.binarySearch( PERMITTED_ATTRIBUTES, token ) >= 0 )
                             {

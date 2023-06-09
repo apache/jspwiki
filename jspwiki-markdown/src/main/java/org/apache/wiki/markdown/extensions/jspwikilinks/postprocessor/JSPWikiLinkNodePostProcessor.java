@@ -58,7 +58,7 @@ public class JSPWikiLinkNodePostProcessor extends NodePostProcessor {
         linkOperations = new LinkParsingOperations( m_context );
         this.isImageInlining = isImageInlining;
         this.inlineImagePatterns = inlineImagePatterns;
-        m_useOutlinkImage = m_context.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
+        m_useOutlinkImage = m_context.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, true);
     }
 
     /**

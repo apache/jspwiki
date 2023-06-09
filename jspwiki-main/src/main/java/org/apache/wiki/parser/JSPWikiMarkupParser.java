@@ -1508,10 +1508,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                 //(1) replace '.' by spaces, allowing multiple classnames on a div or span
                 //(2) remove any invalid character
-                if( clazz != null ) {
-                    clazz = clazz.replace( '.', ' ' )
-                                 .replaceAll( "[^\\s-_\\w\\x200-\\x377]+", "" );
-                }
+                clazz = clazz.replace('.', ' ')
+                        .replaceAll("[^\\s-_\\w\\x200-\\x377]+", "");
                 ch = nextToken();
 
                 // check for %%class1.class2( style information )
@@ -1573,7 +1571,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             return pushElement( el );
         }
         pushBack( ch );
-        return el;
+        return null;
     }
 
     private Element handleSlash( ) throws IOException {
@@ -1660,7 +1658,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         m_newLine = true;
         boolean quitReading = false;
         disableOutputEscaping();
-        while( !quitReading ) {
+        while(true) {
             final int ch = nextToken();
             if( ch == -1 ) {
                 break;
@@ -1670,10 +1668,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             if( m_isEscaping ) {
                 if( ch == '}' ) {
                     if( handleClosebrace() == null ) m_plainTextBuf.append( (char) ch );
-                } else if( ch == -1 ) {
-                    quitReading = true;
-                }
-                else if( ch == '\r' ) {
+                } else if( ch == '\r' ) {
                     // DOS line feeds we ignore.
                 } else if( ch == '<' ) {
                     m_plainTextBuf.append( "&lt;" );
@@ -1800,12 +1795,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 startBlockLevel();
                 //  Figure out which elements cannot be enclosed inside a <p></p> pair according to XHTML rules.
                 final String nextLine = peekAheadLine();
-                if( nextLine.isEmpty() ||
-                     ( !nextLine.isEmpty() &&
-                       !nextLine.startsWith( "{{{" ) &&
-                       !nextLine.startsWith( "----" ) &&
-                       !nextLine.startsWith( "%%" ) &&
-                       "*#!;".indexOf( nextLine.charAt( 0 ) ) == -1 ) ) {
+                if(nextLine.isEmpty() || !nextLine.startsWith("{{{") && !nextLine.startsWith("----") && !nextLine.startsWith("%%") && "*#!;".indexOf(nextLine.charAt(0)) == -1) {
                     pushElement( new Element( "p" ) );
                     m_isOpenParagraph = true;
 

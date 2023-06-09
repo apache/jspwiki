@@ -359,7 +359,7 @@ public final class PropertyReader {
 
         LOG.debug( " Unable to resolve the following classpath resource : " + resourceName );
 
-        return result;
+        return null;
     }
 
     /**

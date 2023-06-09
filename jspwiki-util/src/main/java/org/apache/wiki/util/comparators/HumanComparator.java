@@ -147,7 +147,7 @@ public class HumanComparator implements Comparator< String > {
                 }
 
                 // The only way to get here is both characters are digits
-                assert( type1 == CharType.TYPE_DIGIT && type2 == CharType.TYPE_DIGIT );
+                assert type2 == CharType.TYPE_DIGIT;
                 result = compareDigits( s1, s2, idx - 1 );
                 if( result != 0 )
                 {
@@ -205,7 +205,6 @@ public class HumanComparator implements Comparator< String > {
         } else
         {
             // Can't possibly get here as that would mean they're both sortOrder[2]
-            assert( type1 != type2 );
             return 0;
         }
     }

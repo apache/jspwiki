@@ -61,7 +61,7 @@ public class InterWikiLinkNodePostProcessorState implements NodePostProcessorSta
         this.isImageInlining = isImageInlining;
         this.inlineImagePatterns = inlineImagePatterns;
         this.document = document;
-        this.m_useOutlinkImage = wikiContext.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, m_useOutlinkImage );
+        this.m_useOutlinkImage = wikiContext.getBooleanWikiProperty( MarkupParser.PROP_USEOUTLINKIMAGE, true);
         final Boolean wysiwygVariable = wikiContext.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         m_wysiwygEditorMode = wysiwygVariable != null ? wysiwygVariable : false;
     }

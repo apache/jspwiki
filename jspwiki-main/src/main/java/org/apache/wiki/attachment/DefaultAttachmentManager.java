@@ -82,10 +82,6 @@ public class DefaultAttachmentManager implements AttachmentManager {
         }
 
         //  If no class defined, then will just simply fail.
-        if( classname == null ) {
-            LOG.info( "No attachment provider defined - disabling attachment support." );
-            return;
-        }
 
         //  Create and initialize the provider.
         try {

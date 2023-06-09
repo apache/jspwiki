@@ -357,8 +357,7 @@ public class CreoleToJSPWikiTranslator
             final String hash = (String) it[i];
             final String protectedMarkup = c_protectionMap.get(hash);
             content = content.replace(hash, protectedMarkup);
-            if ((protectedMarkup.length() < 3 || (protectedMarkup.length() > 2 &&
-                !protectedMarkup.startsWith("{{{")))&&replacePlugins)
+            if ((protectedMarkup.length() < 3 || !protectedMarkup.startsWith("{{{")) && replacePlugins)
                 content = translateElement(content, CREOLE_PLUGIN, JSPWIKI_PLUGIN);
 
         }
