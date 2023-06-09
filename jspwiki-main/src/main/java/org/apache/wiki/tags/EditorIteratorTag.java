@@ -23,7 +23,6 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.ui.Editor;
 import org.apache.wiki.ui.EditorManager;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
