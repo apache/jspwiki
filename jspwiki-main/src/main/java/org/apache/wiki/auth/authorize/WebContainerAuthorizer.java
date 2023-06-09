@@ -40,7 +40,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;

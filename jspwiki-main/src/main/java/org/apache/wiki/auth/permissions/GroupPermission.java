@@ -23,7 +23,6 @@ import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.DomainCombiner;
 import java.security.Permission;
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.Set;
 
