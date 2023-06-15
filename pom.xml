@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>29</version>
+    <version>30</version>
   </parent>
 
   <groupId>org.apache.jspwiki</groupId>
@@ -50,11 +50,11 @@
     <commons-collections.version>4.4</commons-collections.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
-    <commons-io.version>2.11.0</commons-io.version>
+    <commons-io.version>2.13.0</commons-io.version>
     <commons-lang.version>3.12.0</commons-lang.version>
     <commons-text.version>1.10.0</commons-text.version>
     <ehcache.version>2.10.9.2</ehcache.version>
-    <flexmark.version>0.64.4</flexmark.version>
+    <flexmark.version>0.64.6</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
     <gson.version>2.10.1</gson.version>
     <hsqldb.version>2.7.1</hsqldb.version>
@@ -74,37 +74,37 @@
     <nekohtml.version>2.1.2</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
-    <selenide.version>6.14.0</selenide.version>
+    <selenide.version>6.15.0</selenide.version>
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
-    <tika.version>2.7.0</tika.version>
-    <tomcat.version>9.0.75</tomcat.version>
+    <tika.version>2.8.0</tika.version>
+    <tomcat.version>9.0.76</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
     <plugin.antrun.version>3.1.0</plugin.antrun.version>
-    <plugin.assembly.version>3.5.0</plugin.assembly.version>
+    <plugin.assembly.version>3.6.0</plugin.assembly.version>
     <plugin.clean.version>3.2.0</plugin.clean.version>
     <plugin.compiler.version>3.11.0</plugin.compiler.version>
-    <plugin.dependency.version>3.5.0</plugin.dependency.version>
+    <plugin.dependency.version>3.6.0</plugin.dependency.version>
     <plugin.enforcer.version>3.3.0</plugin.enforcer.version>
     <plugin.install.version>3.1.1</plugin.install.version>
     <plugin.jar.version>3.3.0</plugin.jar.version>
     <plugin.javadoc.version>3.5.0</plugin.javadoc.version>
     <plugin.jxr.version>3.3.0</plugin.jxr.version>
-    <plugin.project-info-reports.version>3.4.3</plugin.project-info-reports.version>
-    <plugin.release.version>3.0.0</plugin.release.version>
+    <plugin.project-info-reports.version>3.4.5</plugin.project-info-reports.version>
+    <plugin.release.version>3.0.1</plugin.release.version>
     <plugin.remote-resources.version>3.1.0</plugin.remote-resources.version>
     <plugin.resources.version>3.3.1</plugin.resources.version>
-    <plugin.source.version>3.2.1</plugin.source.version>
-    <plugin.surefire.version>3.1.0</plugin.surefire.version>
-    <plugin.surefire.junit5-tree-reporter.version>1.1.0</plugin.surefire.junit5-tree-reporter.version>
-    <plugin.war.version>3.3.2</plugin.war.version>
+    <plugin.source.version>3.3.0</plugin.source.version>
+    <plugin.surefire.version>3.1.2</plugin.surefire.version>
+    <plugin.surefire.junit5-tree-reporter.version>1.2.1</plugin.surefire.junit5-tree-reporter.version>
+    <plugin.war.version>3.4.0</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>3.2.2</plugin.jspc.version>
     <plugin.checksum.version>1.11</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
-    <plugin.cargo.version>1.10.6</plugin.cargo.version>
+    <plugin.cargo.version>1.10.7</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
     <plugin.cobertura.version>2.7</plugin.cobertura.version>
     <plugin.sonar.version>3.9.1.2184</plugin.sonar.version>

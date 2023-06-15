@@ -28,7 +28,7 @@ try {
 
     stage( 'build source' ) {
         parallel jdk11Build: {
-            buildAndSonarWith( buildJdk11 )
+            buildSonarAndDeployIfSnapshotWith( buildJdk11 )
         },
         jdk17Build: {
             buildWith( buildJdk17 )
@@ -65,7 +65,7 @@ try {
     }
 }
 
-def buildAndSonarWith( jdk ) {
+def buildSonarAndDeployIfSnapshotWith( jdk ) {
     node( 'ubuntu' ) {
         stage( jdk ) {
             cleanWs()
@@ -75,6 +75,10 @@ def buildAndSonarWith( jdk ) {
                     def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
                     echo 'Will use SonarQube instance at https://sonarcloud.io'
                     sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report sonar:sonar $sonarOptions -T 1C"
+                    def pom = readMavenPom( file: 'pom.xml' )
+                    if( pom.version.endsWith( '-SNAPSHOT' ) ) {
+                        sh 'mvn deploy'
+                    }
                 }
             }
         }
