@@ -101,11 +101,12 @@
     }
     
     // Stash the current decisions/workflows
-    request.setAttribute("decisions",   dq.getActorDecisions(wikiSession));
-    request.setAttribute("workflows",   wiki.getManager( WorkflowManager.class ).getOwnerWorkflows( wikiSession ) );
-    request.setAttribute("wikiSession", wikiSession);
+    request.setAttribute( "activeWorkflows", wiki.getManager( WorkflowManager.class ).getWorkflowsAsMap() );
+    request.setAttribute( "decisions", dq.getActorDecisions( wikiSession ) );
+    request.setAttribute( "workflows", wiki.getManager( WorkflowManager.class ).getOwnerWorkflows( wikiSession ) );
+    request.setAttribute( "wikiSession", wikiSession );
     
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+    response.setContentType( "text/html; charset=" + wiki.getContentEncoding() );
     String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
 %><wiki:Include page="<%=contentPage%>" />
 

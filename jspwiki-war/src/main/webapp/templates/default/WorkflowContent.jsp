@@ -60,19 +60,19 @@
         <tr>
 
           <%-- Workflow ID --%>
-          <td>${decision.workflow.id}</td>
+          <td>${decision.workflowId}</td>
 
           <%-- Name of item --%>
           <td>
             <fmt:message key="${decision.messageKey}">
-              <c:forEach var="messageArg" items="${decision.messageArguments}">
+              <c:forEach var="messageArg" items="${activeWorkflows[decision.workflowId].messageArguments}">
                 <fmt:param>${messageArg}</fmt:param>
               </c:forEach>
             </fmt:message>
           </td>
 
           <%-- Requester --%>
-          <td>${decision.owner.name}</td>
+          <td>${activeWorkflows[decision.workflowId].owner.name}</td>
 
           <%-- When did the actor start this step? --%>
           <td>

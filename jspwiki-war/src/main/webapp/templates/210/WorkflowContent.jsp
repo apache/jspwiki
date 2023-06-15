@@ -71,11 +71,11 @@
         <% evenOdd = (i % 2 == 0) ? "even" : "odd"; %>
         <tr class="<%=evenOdd%>">
           <!-- Workflow ID -->
-          <td align="center"><c:out value="${decision.workflow.id}"/></td>
+          <td align="center"><c:out value="${decision.workflowId}"/></td>
           <!-- Name of item -->
           <td align="left">
             <fmt:message key="${decision.messageKey}">
-              <c:forEach var="messageArg" items="${decision.messageArguments}">
+              <c:forEach var="messageArg" items="${activeWorkflows[decision.workflowId].messageArguments}">
                 <fmt:param><c:out value="${messageArg}"/></fmt:param>
               </c:forEach>
             </fmt:message>
@@ -95,7 +95,7 @@
             </form>
           </td>
           <!-- Requester -->
-          <td align="left"><c:out value="${decision.owner.name}"/></td>
+          <td align="left"><c:out value="${activeWorkflows[decision.workflowId].owner.name}"/></td>
           <!-- When did the actor start this step? -->
           <td align="left">
             <fmt:formatDate value="${decision.startTime}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />

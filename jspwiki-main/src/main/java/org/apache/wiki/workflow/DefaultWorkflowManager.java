@@ -86,6 +86,16 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
      * {@inheritDoc}
      */
     @Override
+    public Map< Integer, Workflow > getWorkflowsAsMap() {
+        final Map< Integer, Workflow > workflows = new ConcurrentHashMap<>();
+        m_workflows.forEach( w -> workflows.put( w.getId(), w ) );
+        return workflows;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List< Workflow > getCompletedWorkflows() {
         return new CopyOnWriteArrayList< >( m_completed );
     }
