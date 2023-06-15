@@ -17,6 +17,24 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-06-16  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.1-git-01_
+
+* Fix Workflow screen, which has been borked since 2.11.0.M5 :-/
+
+* Dependency updates
+    * Commons IO to 2.13.0
+    * Flexmark to 0.64.6 (closes [#279](https://github.com/apache/jspwiki/pull/279)), thanks to dependabot
+    * Selenide to 6.15.0 (closes [#281](https://github.com/apache/jspwiki/pull/281)), thanks to dependabot
+    * Tika to 2.8.0
+    * Tomcat to 9.0.76 (closes [#275](https://github.com/apache/jspwiki/pull/275)), thanks to dependabot
+    * Maven plugins: assembly to 3.6.0, dependency to 3.6.0, project-info-reports to 3.4.5, release to 3.0.1, source to 3.3.0, surefire to 3.1.2, war to 3.4.0, cargo-maven3-plugin to 1.10.7 (closes [#280](https://github.com/apache/jspwiki/pull/280), thanks to dependabot), maven-surefire-junit5-tree-reporter to 1.2.1 (closes [#277](https://github.com/apache/jspwiki/pull/277), thanks to dependabot)
+
+* Merged [#283](https://github.com/apache/jspwiki/pull/283), provided by [Arturo Bernal](https://github.com/arturobernalg), thanks!
+
+* Snapshots are automatically deployed as part of the `Jenkinsfile` build
+
 **2023-05-13  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.0-git-07_
