@@ -57,7 +57,7 @@
     <flexmark.version>0.64.6</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
     <gson.version>2.10.1</gson.version>
-    <hsqldb.version>2.7.1</hsqldb.version>
+    <hsqldb.version>2.7.2</hsqldb.version>
     <jamm.version>0.3.3</jamm.version>
     <jaxen.version>2.0.0</jaxen.version>
     <javax-jstl.version>1.2</javax-jstl.version>
