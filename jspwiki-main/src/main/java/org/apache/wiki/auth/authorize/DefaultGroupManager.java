@@ -112,7 +112,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             if( dbClassName == null ) {
                 dbClassName = XMLGroupDatabase.class.getName();
             }
-            LOG.info( "Attempting to load group database class {}" + dbClassName );
+            LOG.info( "Attempting to load group database class {}", dbClassName );
             m_groupDatabase = ClassUtil.buildInstance( "org.apache.wiki.auth.authorize", dbClassName );
             m_groupDatabase.initialize( m_engine, m_engine.getWikiProperties() );
             LOG.info( "Group database initialized." );

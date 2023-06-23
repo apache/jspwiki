@@ -412,7 +412,7 @@ public final class MailUtil {
             final Context ctx = (Context) initCtx.lookup( JAVA_COMP_ENV );
             session = (Session) ctx.lookup( jndiName );
         } catch( final NamingException e ) {
-            LOG.warn( "JNDI mail session initialization error: {}" + e.getMessage() );
+            LOG.warn( "JNDI mail session initialization error: {}", e.getMessage() );
             throw e;
         }
         LOG.debug( "mail session obtained from JNDI mail factory: {}", jndiName );
