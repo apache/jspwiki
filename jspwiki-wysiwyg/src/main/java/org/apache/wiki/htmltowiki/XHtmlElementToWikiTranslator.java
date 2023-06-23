@@ -366,6 +366,8 @@ public class XHtmlElementToWikiTranslator {
 
     private class PreDeque extends ArrayDeque< String > {
 
+        private static final long serialVersionUID = 2401529529970187649L;
+
         @Override
         public void addFirst( final String item ) {
             super.addFirst( item );

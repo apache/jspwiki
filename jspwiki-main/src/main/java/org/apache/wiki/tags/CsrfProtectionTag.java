@@ -26,6 +26,7 @@ import org.apache.wiki.http.filter.CsrfProtectionFilter;
  */
 public class CsrfProtectionTag extends WikiTagBase {
 
+    private static final long serialVersionUID = -6828306125406112417L;
     private boolean meta;
 
     public void setFormat( final String format ) {
