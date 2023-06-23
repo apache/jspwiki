@@ -186,30 +186,26 @@ public class XHtmlToWikiConfig {
         if( ref == null ) {
             return null;
         }
-        try {
-            ref = URLDecoder.decode( ref, StandardCharsets.UTF_8.name() );
-            ref = ref.trim();
-            if( ref.startsWith( getAttachPage() ) ) {
-                ref = ref.substring( getAttachPage().length() );
-            }
-            if( ref.startsWith( getWikiJspPage() ) ) {
-                ref = ref.substring( getWikiJspPage().length() );
+        ref = URLDecoder.decode( ref, StandardCharsets.UTF_8);
+        ref = ref.trim();
+        if( ref.startsWith( getAttachPage() ) ) {
+            ref = ref.substring( getAttachPage().length() );
+        }
+        if( ref.startsWith( getWikiJspPage() ) ) {
+            ref = ref.substring( getWikiJspPage().length() );
 
-                // Handle links with section anchors.
-                // For example, we need to translate the html string "TargetPage#section-TargetPage-Heading2"
-                // to this wiki string "TargetPage#Heading2".
-                ref = ref.replaceFirst( ".+#section-(.+)-(.+)", "$1#$2" );
+            // Handle links with section anchors.
+            // For example, we need to translate the html string "TargetPage#section-TargetPage-Heading2"
+            // to this wiki string "TargetPage#Heading2".
+            ref = ref.replaceFirst( ".+#section-(.+)-(.+)", "$1#$2" );
+        }
+        if( ref.startsWith( getEditJspPage() ) ) {
+            ref = ref.substring( getEditJspPage().length() );
+        }
+        if( getPageName() != null ) {
+            if( ref.startsWith( getPageName() ) ) {
+                ref = ref.substring( getPageName().length() );
             }
-            if( ref.startsWith( getEditJspPage() ) ) {
-                ref = ref.substring( getEditJspPage().length() );
-            }
-            if( getPageName() != null ) {
-                if( ref.startsWith( getPageName() ) ) {
-                    ref = ref.substring( getPageName().length() );
-                }
-            }
-        } catch ( final UnsupportedEncodingException e ) {
-            // Shouldn't happen...
         }
         return ref;
     }
