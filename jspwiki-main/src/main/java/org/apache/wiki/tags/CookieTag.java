@@ -379,16 +379,7 @@ public class CookieTag
      */
     private String encode(final String nvp )
     {
-        String coded = "";
-        try
-        {
-            coded = URLEncoder.encode( nvp, StandardCharsets.UTF_8.name() );
-        }
-        catch( final UnsupportedEncodingException e )
-        {
-            /* never happens */
-            LOG.info( "Failed to encode UTF-8", e );
-        }
+        final String coded = URLEncoder.encode( nvp, StandardCharsets.UTF_8 );
         return coded.replaceAll( "\\+", "%20" );
     }
 
@@ -399,16 +390,8 @@ public class CookieTag
     private String decode(final String envp )
     {
         final String rval;
-        try
-        {
-            rval = URLDecoder.decode( envp , StandardCharsets.UTF_8.name() );
-            return rval;
-        }
-        catch( final UnsupportedEncodingException e )
-        {
-            LOG.error( "Failed to decode cookie", e );
-            return envp;
-        }
+        rval = URLDecoder.decode( envp , StandardCharsets.UTF_8);
+        return rval;
     }
 
     /**

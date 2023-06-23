@@ -503,7 +503,7 @@ public class CreoleToJSPWikiTranslator
             {
                 final MessageDigest digest = MessageDigest.getInstance("MD5");
                 digest.reset();
-                digest.update(protectedMarkup.getBytes(StandardCharsets.UTF_8.name()));
+                digest.update(protectedMarkup.getBytes(StandardCharsets.UTF_8));
                 final String hash = bytesToHash(digest.digest());
                 matcher.appendReplacement(result, hash);
                 c_protectionMap.put(hash, protectedMarkup);
@@ -512,11 +512,6 @@ public class CreoleToJSPWikiTranslator
             catch (final NoSuchAlgorithmException e)
             {
                 // FIXME: Should log properly
-                e.printStackTrace();
-            }
-            catch (final UnsupportedEncodingException e)
-            {
-                // FIXME: Auto-generated catch block
                 e.printStackTrace();
             }
         }
