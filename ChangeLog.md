@@ -17,6 +17,28 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-07-29  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.1-git-02_
+
+* Merged a lot of PRs from Arturo Bernal - thanks!
+    * [#272](https://github.com/apache/jspwiki/pull/272): Java 11 improvements
+    * [#282](https://github.com/apache/jspwiki/pull/282): Set `jspwiki.workDir` default to servlet context temp directory (fixes [JSPWIKI-1172](https://issues.apache.org/jira/browse/JSPWIKI-1172))
+    * [#290](https://github.com/apache/jspwiki/pull/290): Constant charset String literal can be replaced with `StandardCharsets.UTF_8`
+    * [#291](https://github.com/apache/jspwiki/pull/291): Use placeholders in the logger message
+    * [#292](https://github.com/apache/jspwiki/pull/292): `Serializable` classes without `serialVersionUID`
+
+* Dependency updates
+    * Commons Lang to 3.13.0
+    * Flexmark to 0.64.8 (closes [#286](https://github.com/apache/jspwiki/pull/286)), thanks to dependabot
+    * Hslqdb to 2.7.2 (closes [#287](https://github.com/apache/jspwiki/pull/287)), thanks to dependabot
+    * JUnit to 5.10.0
+    * Lucene to 9.7.0
+    * Mockito to 5.4.0 (closes [#288](https://github.com/apache/jspwiki/pull/288)), thanks to dependabot
+    * Selenide to 6.16.1 (closes [#294](https://github.com/apache/jspwiki/pull/294)), thanks to dependabot
+    * Tomcat to 9.0.78
+    * Maven plugins: clean to 3.3.1
+
 **2023-06-16  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.1-git-01_
