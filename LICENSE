@@ -287,7 +287,7 @@ hsqldb-2.7.1.jar                            ./jspwiki-war/src/main/config/doc/LI
 sqltool-2.7.1.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 jetty-all-9.4.51.v20230217.jar              LICENSE
 junit-5.10.0                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
-mockito-core-5.4.0.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
+mockito-core-5.4.1.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
 selenide-6.16.1.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
 stripes-1.7.0-async.jar                     LICENSE
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui

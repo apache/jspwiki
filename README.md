@@ -22,6 +22,9 @@ The license file can be found in LICENSE.
 
 ## What is JSPWiki?
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
+
 JSPWiki is a simple (well, not anymore) WikiWiki clone, written in Java
 and JSP.  A WikiWiki is a website which allows anyone to participate
 in its development.  JSPWiki supports all the traditional wiki features,
