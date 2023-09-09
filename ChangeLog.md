@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-09-09  Dirk Frederickx (brushed AT apache DOT org)**
+
+* _2.12.2-git-01_
+
+* [JSPWIKI-1165](https://issues.apache.org/jira/browse/JSPWIKI-1165) - long text in monospace font inside {{}} is shown without scroll bar
+    Inline preformatted text will wrap as necessary, and stay within the width of the line boxes. 
+
 **2023-07-29  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.1-git-02_
