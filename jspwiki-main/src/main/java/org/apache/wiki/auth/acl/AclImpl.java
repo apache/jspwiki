@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -36,6 +37,16 @@ import java.util.Vector;
  */
 public class AclImpl implements Acl, Serializable {
 
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
     private static final long serialVersionUID = 1L;
     private final Vector< AclEntry > m_entries = new Vector<>();
 
@@ -43,6 +54,7 @@ public class AclImpl implements Acl, Serializable {
      * Constructs a new AclImpl instance.
      */
     public AclImpl() {
+        lock = new ReentrantLock();
     }
 
     /** {@inheritDoc} */
@@ -86,24 +98,34 @@ public class AclImpl implements Acl, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public synchronized boolean addEntry( final AclEntry entry ) {
-        if( entry.getPrincipal() == null ) {
-            throw new IllegalArgumentException( "Entry principal cannot be null" );
+    public boolean addEntry( final AclEntry entry ) {
+        lock.lock();
+        try {
+            if( entry.getPrincipal() == null ) {
+                throw new IllegalArgumentException( "Entry principal cannot be null" );
+            }
+
+            if( hasEntry( entry ) ) {
+                return false;
+            }
+
+            m_entries.add( entry );
+
+            return true;
+        } finally {
+            lock.unlock();
         }
-
-        if( hasEntry( entry ) ) {
-            return false;
-        }
-
-        m_entries.add( entry );
-
-        return true;
     }
 
     /** {@inheritDoc} */
     @Override
-    public synchronized boolean removeEntry( final AclEntry entry ) {
-        return m_entries.remove( entry );
+    public boolean removeEntry( final AclEntry entry ) {
+        lock.lock();
+        try {
+            return m_entries.remove( entry );
+        } finally {
+            lock.unlock();
+        }
     }
 
     /** {@inheritDoc} */

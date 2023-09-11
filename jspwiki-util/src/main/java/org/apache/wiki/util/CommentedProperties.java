@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Extends {@link java.util.Properties} by providing support for comment
@@ -41,11 +42,22 @@ public class CommentedProperties extends Properties
     private String m_propertyString;
 
     /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
+    /**
      * @see java.util.Properties#Properties()
      */
     public CommentedProperties()
     {
         super();
+        lock = new ReentrantLock();
     }
 
     /**
@@ -57,19 +69,25 @@ public class CommentedProperties extends Properties
     public CommentedProperties(final Properties defaultValues )
     {
         super( defaultValues );
+        lock = new ReentrantLock();
     }
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public synchronized void load(final InputStream inStream ) throws IOException
+    public void load(final InputStream inStream ) throws IOException
     {
-        // Load the file itself into a string
-        m_propertyString = FileUtil.readContents( inStream, StandardCharsets.ISO_8859_1.name() );
+        lock.lock();
+        try {
+            // Load the file itself into a string
+            m_propertyString = FileUtil.readContents( inStream, StandardCharsets.ISO_8859_1.name() );
 
-        // Now load it into the properties object as normal
-        super.load( new ByteArrayInputStream( m_propertyString.getBytes(StandardCharsets.ISO_8859_1) ) );
+            // Now load it into the properties object as normal
+            super.load( new ByteArrayInputStream( m_propertyString.getBytes(StandardCharsets.ISO_8859_1) ) );
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -79,83 +97,119 @@ public class CommentedProperties extends Properties
      *  @throws IOException in case something goes wrong.
      */
     @Override
-    public synchronized void load(final Reader in ) throws IOException
+    public void load(final Reader in ) throws IOException
     {
-        m_propertyString = FileUtil.readContents( in );
+        lock.lock();
+        try {
+            m_propertyString = FileUtil.readContents( in );
 
-        // Now load it into the properties object as normal
-        super.load( new ByteArrayInputStream( m_propertyString.getBytes(StandardCharsets.ISO_8859_1) ) );
+            // Now load it into the properties object as normal
+            super.load( new ByteArrayInputStream( m_propertyString.getBytes(StandardCharsets.ISO_8859_1) ) );
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized Object setProperty(final String key, final String value )
+    public Object setProperty(final String key, final String value )
     {
-        return put(key, value);
+        lock.lock();
+        try {
+            return put(key, value);
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void store(final OutputStream out, final String comments ) throws IOException
+    public void store(final OutputStream out, final String comments ) throws IOException
     {
-        final byte[] bytes = m_propertyString.getBytes( StandardCharsets.ISO_8859_1 );
-        FileUtil.copyContents( new ByteArrayInputStream( bytes ), out );
-        out.flush();
+        lock.lock();
+        try {
+            final byte[] bytes = m_propertyString.getBytes( StandardCharsets.ISO_8859_1 );
+            FileUtil.copyContents( new ByteArrayInputStream( bytes ), out );
+            out.flush();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized Object put(final Object arg0, final Object arg1 )
+    public Object put(final Object arg0, final Object arg1 )
     {
-        // Write the property to the stored string
-        writeProperty( arg0, arg1 );
+        lock.lock();
+        try {
+            // Write the property to the stored string
+            writeProperty( arg0, arg1 );
 
-        // Return the result of from the superclass properties object
-        return super.put(arg0, arg1);
+            // Return the result of from the superclass properties object
+            return super.put(arg0, arg1);
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void putAll(final Map< ? , ? > arg0 )
+    public void putAll(final Map< ? , ? > arg0 )
     {
-        // Shove all of the entries into the property string
-        for (final Entry<?, ?> value : arg0.entrySet()) {
-            @SuppressWarnings("unchecked") final Entry<Object, Object> entry = (Entry<Object, Object>) value;
-            writeProperty(entry.getKey(), entry.getValue());
+        lock.lock();
+        try {
+            // Shove all of the entries into the property string
+            for (final Entry<?, ?> value : arg0.entrySet()) {
+                @SuppressWarnings("unchecked") final Entry<Object, Object> entry = (Entry<Object, Object>) value;
+                writeProperty(entry.getKey(), entry.getValue());
+            }
+
+            // Call the superclass method
+            super.putAll(arg0);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object remove(final Object key )
+    {
+        lock.lock();
+        try {
+            // Remove from the property string
+            deleteProperty( key );
+
+            // Call the superclass method
+            return super.remove(key);
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString()
+    {
+        lock.lock();
+        try {
+            return m_propertyString;
+        } finally {
+            lock.unlock();
         }
 
-        // Call the superclass method
-        super.putAll(arg0);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized Object remove(final Object key )
-    {
-        // Remove from the property string
-        deleteProperty( key );
-
-        // Call the superclass method
-        return super.remove(key);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public synchronized String toString()
-    {
-        return m_propertyString;
     }
 
     private void deleteProperty(final Object arg0 )

@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -45,6 +46,16 @@ public class DecisionQueue implements Serializable {
 
     private final AtomicInteger next = new AtomicInteger( 1_000 );
 
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
+
     /** Constructs a new DecisionQueue. */
     public DecisionQueue() {
     }
@@ -54,9 +65,14 @@ public class DecisionQueue implements Serializable {
      *
      * @param decision the Decision to add
      */
-    protected synchronized void add( final Decision decision ) {
-        m_queue.addLast( decision );
-        decision.setId( next.getAndIncrement() );
+    protected void add( final Decision decision ) {
+        lock.lock();
+        try {
+            m_queue.addLast( decision );
+            decision.setId( next.getAndIncrement() );
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -74,8 +90,13 @@ public class DecisionQueue implements Serializable {
      *
      * @param decision the decision to remove
      */
-    protected synchronized void remove( final Decision decision ) {
-        m_queue.remove( decision );
+    protected void remove( final Decision decision ) {
+        lock.lock();
+        try {
+            m_queue.remove( decision );
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -133,14 +154,19 @@ public class DecisionQueue implements Serializable {
      * @param owner the new owner
      * @throws WikiException never
      */
-    public synchronized void reassign( final Decision decision, final Principal owner ) throws WikiException {
-        if( decision.isReassignable() ) {
-            decision.reassign( owner );
+    public void reassign( final Decision decision, final Principal owner ) throws WikiException {
+        lock.lock();
+        try {
+            if( decision.isReassignable() ) {
+                decision.reassign( owner );
 
-            WikiEventEmitter.fireWorkflowEvent( decision, WorkflowEvent.DQ_REASSIGN );
-            return;
+                WikiEventEmitter.fireWorkflowEvent( decision, WorkflowEvent.DQ_REASSIGN );
+                return;
+            }
+            throw new IllegalStateException( "Reassignments not allowed for this decision." );
+        } finally {
+            lock.unlock();
         }
-        throw new IllegalStateException( "Reassignments not allowed for this decision." );
     }
 
 }

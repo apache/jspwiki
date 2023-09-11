@@ -55,6 +55,7 @@ import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static java.lang.String.format;
 
@@ -87,7 +88,18 @@ public class KendraSearchProvider implements SearchProvider {
     private static final String PROP_KENDRA_INDEXDELAY = "jspwiki.kendra.indexdelay";
     private static final String PROP_KENDRA_INITIALDELAY = "jspwiki.kendra.initialdelay";
 
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
     public KendraSearchProvider() {
+         lock = new ReentrantLock();
     }
 
     /**
@@ -339,7 +351,8 @@ public class KendraSearchProvider implements SearchProvider {
         }
         LOG.debug( "Indexing updated pages. Please wait ..." );
         final String executionId = startExecution();
-        synchronized ( updates ) {
+        lock.lock();
+        try {
             try {
                 while (!updates.isEmpty()) {
                     indexOnePage( updates.remove( 0 ), executionId );
@@ -347,6 +360,8 @@ public class KendraSearchProvider implements SearchProvider {
             } finally {
                 stopExecution();
             }
+        } finally {
+            lock.unlock();
         }
     }
 

@@ -59,6 +59,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -130,6 +131,20 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
     private static final int STORAGE_INTERVAL = 60;
 
     /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
+    public PageViewPlugin() {
+        lock = new ReentrantLock();
+    }
+
+    /**
      * Initialize the PageViewPlugin and its singleton.
      * 
      * @param engine The wiki engine.
@@ -137,11 +152,14 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
     @Override
     public void initialize( final Engine engine ) {
         LOG.info( "initializing PageViewPlugin" );
-        synchronized( this ) {
+        lock.lock();
+        try {
             if( c_singleton == null ) {
                 c_singleton = new PageViewManager();
             }
             c_singleton.initialize( engine );
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -202,50 +220,60 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
          * 
          * @param engine The wiki engine.
          */
-        public synchronized void initialize( final Engine engine ) {
-            LOG.info( "initializing PageView Manager" );
-            m_workDir = engine.getWorkDir();
-            engine.addWikiEventListener( this );
-            if( m_counters == null ) {
-                // Load the counters into a collection
-                m_storage = new Properties();
-                m_counters = new TreeMap<>();
+        public void initialize( final Engine engine ) {
+            lock.lock();
+            try {
+                LOG.info( "initializing PageView Manager" );
+                m_workDir = engine.getWorkDir();
+                engine.addWikiEventListener( this );
+                if( m_counters == null ) {
+                    // Load the counters into a collection
+                    m_storage = new Properties();
+                    m_counters = new TreeMap<>();
 
-                loadCounters();
+                    loadCounters();
+                }
+
+                // backup counters every 5 minutes
+                if( m_pageCountSaveThread == null ) {
+                    m_pageCountSaveThread = new CounterSaveThread( engine, 5 * STORAGE_INTERVAL, this );
+                    m_pageCountSaveThread.start();
+                }
+
+                m_initialized = true;
+            } finally {
+                lock.unlock();
             }
-
-            // backup counters every 5 minutes
-            if( m_pageCountSaveThread == null ) {
-                m_pageCountSaveThread = new CounterSaveThread( engine, 5 * STORAGE_INTERVAL, this );
-                m_pageCountSaveThread.start();
-            }
-
-            m_initialized = true;
         }
 
         /**
          * Handle the shutdown event via the page counter thread.
          */
-        private synchronized void handleShutdown() {
-            LOG.info( "handleShutdown: The counter store thread was shut down." );
+        private void handleShutdown() {
+            lock.lock();
+            try {
+                LOG.info( "handleShutdown: The counter store thread was shut down." );
 
-            cleanup();
+                cleanup();
 
-            if( m_counters != null ) {
+                if( m_counters != null ) {
 
-                m_dirty = true;
-                storeCounters();
+                    m_dirty = true;
+                    storeCounters();
 
-                m_counters.clear();
-                m_counters = null;
+                    m_counters.clear();
+                    m_counters = null;
 
-                m_storage.clear();
-                m_storage = null;
+                    m_storage.clear();
+                    m_storage = null;
+                }
+
+                m_initialized = false;
+
+                m_pageCountSaveThread = null;
+            } finally {
+                lock.unlock();
             }
-
-            m_initialized = false;
-
-            m_pageCountSaveThread = null;
         }
 
         /**
@@ -342,7 +370,9 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                     }
                 }
 
-                synchronized( this ) {
+                lock.lock();
+                try {
+
                     Counter counter = m_counters.get( pagename );
 
                     // only count in view mode, keep storage values in sync
@@ -446,6 +476,8 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                         // let the engine render the list
                         result = engine.getManager( RenderingManager.class ).textToHTML( context, buf.toString() );
                     }
+                } finally {
+                    lock.unlock();
                 }
             }
             return result;
@@ -509,7 +541,8 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
         private void loadCounters() {
             if( m_counters != null && m_storage != null ) {
                 LOG.info( "Loading counters." );
-                synchronized( this ) {
+                lock.lock();
+                try {
                     try( final InputStream fis = Files.newInputStream( new File( m_workDir, COUNTER_PAGE ).toPath() ) ) {
                         m_storage.load( fis );
                     } catch( final IOException ioe ) {
@@ -520,8 +553,10 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                     for( final Entry< ?, ? > entry : m_storage.entrySet() ) {
                         m_counters.put( ( String )entry.getKey(), new Counter( ( String )entry.getValue() ) );
                     }
-                    
+
                     LOG.info( "Loaded " + m_counters.size() + " counter values." );
+                } finally {
+                    lock.unlock();
                 }
             }
         }
@@ -532,7 +567,8 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
         void storeCounters() {
             if( m_counters != null && m_storage != null && m_dirty ) {
                 LOG.info( "Storing " + m_counters.size() + " counter values." );
-                synchronized( this ) {
+                lock.lock();
+                try {
                     // Write out the collection of counters
                     try( final OutputStream fos = Files.newOutputStream( new File( m_workDir, COUNTER_PAGE ).toPath() ) ) {
                         m_storage.store( fos, "\n# The number of times each page has been viewed.\n# Do not modify.\n" );
@@ -542,6 +578,8 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                     } catch( final IOException ioe ) {
                         LOG.error( "Couldn't store counters values: " + ioe.getMessage() );
                     }
+                } finally {
+                    lock.unlock();
                 }
             }
         }
@@ -552,9 +590,15 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
          * @param thrd thread that can be the current background thread.
          * @return boolean <code>true</code> if the thread is still the current background thread.
          */
-        private synchronized boolean isRunning( final Thread thrd )
+        private boolean isRunning( final Thread thrd )
         {
-            return m_initialized && thrd == m_pageCountSaveThread;
+            lock.lock();
+            try {
+                return m_initialized && thrd == m_pageCountSaveThread;
+            } finally {
+                lock.unlock();
+            }
+
         }
 
     }

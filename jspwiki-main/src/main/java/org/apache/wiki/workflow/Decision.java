@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -61,6 +62,16 @@ public abstract class Decision extends AbstractStep {
     private final Outcome m_defaultOutcome;
 
     private final List<Fact> m_facts;
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * Constructs a new Decision for a required "actor" Principal, having a default Outcome.
@@ -186,11 +197,16 @@ public abstract class Decision extends AbstractStep {
      * 
      * @param actor the actor to reassign the Decision to
      */
-    public final synchronized void reassign( final Principal actor ) {
-        if( isReassignable() ) {
-            m_actor = actor;
-        } else {
-            throw new IllegalArgumentException( "Decision cannot be reassigned." );
+    public final void reassign( final Principal actor ) {
+        lock.lock();
+        try {
+            if( isReassignable() ) {
+                m_actor = actor;
+            } else {
+                throw new IllegalArgumentException( "Decision cannot be reassigned." );
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

@@ -47,6 +47,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /*
@@ -133,6 +134,16 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
     private static final long serialVersionUID = 4L;
 
     /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
+    /**
      *  Builds a new ReferenceManager.
      *
      *  @param engine The Engine to which this is managing references to.
@@ -148,6 +159,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
         //
         m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
         m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
+        lock = new ReentrantLock();
     }
 
     /**
@@ -233,53 +245,63 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  Reads the serialized data from the disk back to memory. Returns the date when the data was last written on disk
      */
     @SuppressWarnings("unchecked")
-    private synchronized long unserializeFromDisk() throws IOException, ClassNotFoundException {
-        final long saved;
+    private long unserializeFromDisk() throws IOException, ClassNotFoundException {
+        lock.lock();
+        try {
+            final long saved;
 
-        final File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
-        try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
-            final StopWatch sw = new StopWatch();
-            sw.start();
+            final File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
+            try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
+                final StopWatch sw = new StopWatch();
+                sw.start();
 
-            final long ver = in.readLong();
+                final long ver = in.readLong();
 
-            if( ver != serialVersionUID ) {
-                throw new IOException("File format has changed; I need to recalculate references.");
+                if( ver != serialVersionUID ) {
+                    throw new IOException("File format has changed; I need to recalculate references.");
+                }
+
+                saved        = in.readLong();
+                m_refersTo   = ( Map< String, Collection< String > > ) in.readObject();
+                m_referredBy = ( Map< String, Set< String > > ) in.readObject();
+
+                m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
+                m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
+
+                sw.stop();
+                LOG.debug( "Read serialized data successfully in {}", sw );
             }
 
-            saved        = in.readLong();
-            m_refersTo   = ( Map< String, Collection< String > > ) in.readObject();
-            m_referredBy = ( Map< String, Set< String > > ) in.readObject();
-
-            m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
-            m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
-
-            sw.stop();
-            LOG.debug( "Read serialized data successfully in {}", sw );
+            return saved;
+        } finally {
+            lock.unlock();
         }
-
-        return saved;
     }
 
     /**
      *  Serializes hashmaps to disk.  The format is private, don't touch it.
      */
-    private synchronized void serializeToDisk() {
-        final File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
-        try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
-            final StopWatch sw = new StopWatch();
-            sw.start();
+    private void serializeToDisk() {
+        lock.lock();
+        try {
+            final File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
+            try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
+                final StopWatch sw = new StopWatch();
+                sw.start();
 
-            out.writeLong( serialVersionUID );
-            out.writeLong( System.currentTimeMillis() ); // Timestamp
-            out.writeObject( m_refersTo );
-            out.writeObject( m_referredBy );
+                out.writeLong( serialVersionUID );
+                out.writeLong( System.currentTimeMillis() ); // Timestamp
+                out.writeObject( m_refersTo );
+                out.writeObject( m_referredBy );
 
-            sw.stop();
+                sw.stop();
 
-            LOG.debug( "serialization done - took {}", sw );
-        } catch( final IOException ioe ) {
-            LOG.error( "Unable to serialize!", ioe );
+                LOG.debug( "serialization done - took {}", sw );
+            } catch( final IOException ioe ) {
+                LOG.error( "Unable to serialize!", ioe );
+            }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -301,101 +323,110 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
     /**
      *  Reads the serialized data from the disk back to memory. Returns the date when the data was last written on disk
      */
-    private synchronized long unserializeAttrsFromDisk( final Page p ) throws IOException, ClassNotFoundException {
-        long saved = 0L;
+    private long unserializeAttrsFromDisk( final Page p ) throws IOException, ClassNotFoundException {
+        lock.lock();
+        try {
+            long saved = 0L;
 
-        //  Find attribute cache, and check if it exists
-        final String hashName = getHashFileName( p.getName() );
-        if( hashName != null ) {
-        	File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
-            f = new File( f, hashName );
-            if( !f.exists() ) {
-                return 0L;
-            }
-
-            try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
-                final StopWatch sw = new StopWatch();
-                sw.start();
-                LOG.debug( "Deserializing attributes for {}", p.getName() );
-
-                final long ver = in.readLong();
-                if( ver != serialVersionUID ) {
-                    LOG.debug( "File format has changed; cannot deserialize." );
+            //  Find attribute cache, and check if it exists
+            final String hashName = getHashFileName( p.getName() );
+            if( hashName != null ) {
+                File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
+                f = new File( f, hashName );
+                if( !f.exists() ) {
                     return 0L;
                 }
 
-                saved = in.readLong();
-                final String name  = in.readUTF();
-                if( !name.equals( p.getName() ) ) {
-                    LOG.debug( "File name does not match ({}), skipping...", name );
-                    return 0L; // Not here
-                }
+                try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
+                    final StopWatch sw = new StopWatch();
+                    sw.start();
+                    LOG.debug( "Deserializing attributes for {}", p.getName() );
 
-                final long entries = in.readLong();
-                for( int i = 0; i < entries; i++ ) {
-                    final String key   = in.readUTF();
-                    final Object value = in.readObject();
-                    p.setAttribute( key, value );
-                    LOG.debug( "   attr: {}={}", key, value );
-                }
+                    final long ver = in.readLong();
+                    if( ver != serialVersionUID ) {
+                        LOG.debug( "File format has changed; cannot deserialize." );
+                        return 0L;
+                    }
 
-                sw.stop();
-                LOG.debug( "Read serialized data for {} successfully in {}", name, sw );
-                p.setHasMetadata();
+                    saved = in.readLong();
+                    final String name  = in.readUTF();
+                    if( !name.equals( p.getName() ) ) {
+                        LOG.debug( "File name does not match ({}), skipping...", name );
+                        return 0L; // Not here
+                    }
+
+                    final long entries = in.readLong();
+                    for( int i = 0; i < entries; i++ ) {
+                        final String key   = in.readUTF();
+                        final Object value = in.readObject();
+                        p.setAttribute( key, value );
+                        LOG.debug( "   attr: {}={}", key, value );
+                    }
+
+                    sw.stop();
+                    LOG.debug( "Read serialized data for {} successfully in {}", name, sw );
+                    p.setHasMetadata();
+                }
             }
-        }
 
-        return saved;
+            return saved;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
      *  Serializes hashmaps to disk.  The format is private, don't touch it.
      */
-    private synchronized void serializeAttrsToDisk( final Page p ) {
-        final StopWatch sw = new StopWatch();
-        sw.start();
+    private void serializeAttrsToDisk( final Page p ) {
+        lock.lock();
+        try {
+            final StopWatch sw = new StopWatch();
+            sw.start();
 
-        final String hashName = getHashFileName( p.getName() );
-        if( hashName != null ) {
-        	File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
-            if( !f.exists() ) {
-                f.mkdirs();
-            }
-
-            //  Create a digest for the name
-            f = new File( f, hashName );
-
-            try( final ObjectOutputStream out =  new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
-                // new Set to avoid concurrency issues
-                final Set< Map.Entry < String, Object > > entries = new HashSet<>( p.getAttributes().entrySet() );
-
-                if(entries.isEmpty()) {
-                    //  Nothing to serialize, therefore we will just simply remove the serialization file so that the
-                    //  next time we boot, we don't deserialize old data.
-                    f.delete();
-                    return;
+            final String hashName = getHashFileName( p.getName() );
+            if( hashName != null ) {
+                File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
+                if( !f.exists() ) {
+                    f.mkdirs();
                 }
 
-                out.writeLong( serialVersionUID );
-                out.writeLong( System.currentTimeMillis() ); // Timestamp
-                out.writeUTF( p.getName() );
-                out.writeLong( entries.size() );
+                //  Create a digest for the name
+                f = new File( f, hashName );
 
-                for( final Map.Entry< String, Object > e : entries ) {
-                    if( e.getValue() instanceof Serializable ) {
-                        out.writeUTF( e.getKey() );
-                        out.writeObject( e.getValue() );
+                try( final ObjectOutputStream out =  new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
+                    // new Set to avoid concurrency issues
+                    final Set< Map.Entry < String, Object > > entries = new HashSet<>( p.getAttributes().entrySet() );
+
+                    if(entries.isEmpty()) {
+                        //  Nothing to serialize, therefore we will just simply remove the serialization file so that the
+                        //  next time we boot, we don't deserialize old data.
+                        f.delete();
+                        return;
                     }
+
+                    out.writeLong( serialVersionUID );
+                    out.writeLong( System.currentTimeMillis() ); // Timestamp
+                    out.writeUTF( p.getName() );
+                    out.writeLong( entries.size() );
+
+                    for( final Map.Entry< String, Object > e : entries ) {
+                        if( e.getValue() instanceof Serializable ) {
+                            out.writeUTF( e.getKey() );
+                            out.writeObject( e.getValue() );
+                        }
+                    }
+
+                } catch( final IOException e ) {
+                    LOG.error( "Unable to serialize!", e );
+                } finally {
+                    sw.stop();
+                    LOG.debug( "serialization for {} done - took {}", p.getName(), sw );
                 }
-
-            } catch( final IOException e ) {
-                LOG.error( "Unable to serialize!", e );
-            } finally {
-                sw.stop();
-                LOG.debug( "serialization for {} done - took {}", p.getName(), sw );
             }
+        } finally {
+            lock.unlock();
         }
-
     }
 
     /**

@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 
@@ -92,12 +93,24 @@ public class ContextualDiffProvider implements DiffProvider {
     private static final int LIMIT_MAX_VALUE = (Integer.MAX_VALUE /2) - 1;
     private int m_unchangedContextLimit = LIMIT_MAX_VALUE;
 
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
 
     /**
      *  Constructs this provider.
      */
     public ContextualDiffProvider()
-    {}
+    {
+        lock = new ReentrantLock();
+    }
 
     /**
      * @see org.apache.wiki.api.providers.WikiProvider#getProviderInfo()
@@ -137,35 +150,40 @@ public class ContextualDiffProvider implements DiffProvider {
      * {@inheritDoc}
      */
     @Override
-    public synchronized String makeDiffHtml( final Context ctx, final String wikiOld, final String wikiNew ) {
-        //
-        // Sequencing handles lineterminator to <br /> and every-other consequtive space to a &nbsp;
-        //
-        final String[] alpha = sequence( TextUtil.replaceEntities( wikiOld ) );
-        final String[] beta  = sequence( TextUtil.replaceEntities( wikiNew ) );
-
-        final Revision rev;
+    public String makeDiffHtml( final Context ctx, final String wikiOld, final String wikiNew ) {
+        lock.lock();
         try {
-            rev = Diff.diff( alpha, beta, new MyersDiff() );
-        } catch( final DifferentiationFailedException dfe ) {
-            LOG.error( "Diff generation failed", dfe );
-            return "Error while creating version diff.";
+            //
+            // Sequencing handles lineterminator to <br /> and every-other consequtive space to a &nbsp;
+            //
+            final String[] alpha = sequence( TextUtil.replaceEntities( wikiOld ) );
+            final String[] beta  = sequence( TextUtil.replaceEntities( wikiNew ) );
+
+            final Revision rev;
+            try {
+                rev = Diff.diff( alpha, beta, new MyersDiff() );
+            } catch( final DifferentiationFailedException dfe ) {
+                LOG.error( "Diff generation failed", dfe );
+                return "Error while creating version diff.";
+            }
+
+            final int revSize = rev.size();
+            final StringBuffer sb = new StringBuffer();
+
+            sb.append( DIFF_START );
+
+            //
+            // The MyersDiff is a bit dumb by converting a single line multi-word diff into a series
+            // of Changes. The ChangeMerger pulls them together again...
+            //
+            final ChangeMerger cm = new ChangeMerger( sb, alpha, revSize );
+            rev.accept( cm );
+            cm.shutdown();
+            sb.append( DIFF_END );
+            return sb.toString();
+        } finally {
+            lock.unlock();
         }
-
-        final int revSize = rev.size();
-        final StringBuffer sb = new StringBuffer();
-
-        sb.append( DIFF_START );
-
-        //
-        // The MyersDiff is a bit dumb by converting a single line multi-word diff into a series
-        // of Changes. The ChangeMerger pulls them together again...
-        //
-        final ChangeMerger cm = new ChangeMerger( sb, alpha, revSize );
-        rev.accept( cm );
-        cm.shutdown();
-        sb.append( DIFF_END );
-        return sb.toString();
     }
 
     /**

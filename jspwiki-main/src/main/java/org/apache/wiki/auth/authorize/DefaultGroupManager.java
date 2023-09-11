@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -74,6 +75,20 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
     /** Map with GroupPrincipals as keys, and Groups as values */
     private final Map< Principal, Group > m_groups = new HashMap<>();
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
+    public DefaultGroupManager() {
+        lock = new ReentrantLock();
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -152,12 +167,15 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
         // Load all groups from the database into the cache
         final Group[] groups = m_groupDatabase.groups();
-        synchronized( m_groups ) {
+        lock.lock();
+        try {
             for( final Group group : groups ) {
                 // Add new group to cache; fire GROUP_ADD event
                 m_groups.put( group.getPrincipal(), group );
                 fireEvent( WikiSecurityEvent.GROUP_ADD, group );
             }
+        } finally {
+            lock.unlock();
         }
 
         // Make the GroupManager listen for WikiEvents (WikiSecurityEvents for changed user profiles)
@@ -253,8 +271,11 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
         // Delete the group
         // TODO: need rollback procedure
-        synchronized( m_groups ) {
+        lock.lock();
+        try {
             m_groups.remove( group.getPrincipal() );
+        } finally {
+            lock.unlock();
         }
         m_groupDatabase.delete( group );
         fireEvent( WikiSecurityEvent.GROUP_REMOVE, group );
@@ -269,8 +290,11 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         final Group oldGroup = m_groups.get( group.getPrincipal() );
         if( oldGroup != null ) {
             fireEvent( WikiSecurityEvent.GROUP_REMOVE, oldGroup );
-            synchronized( m_groups ) {
+            lock.lock();
+            try {
                 m_groups.remove( oldGroup.getPrincipal() );
+            } finally {
+                lock.unlock();
             }
         }
 
@@ -283,8 +307,11 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         }
 
         // Add new group to cache; announce GROUP_ADD event
-        synchronized( m_groups ) {
+        lock.lock();
+        try {
             m_groups.put( group.getPrincipal(), group );
+        } finally {
+            lock.unlock();
         }
         fireEvent( WikiSecurityEvent.GROUP_ADD, group );
 
@@ -300,8 +327,11 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
                 // Restore previous version, re-throw...
                 fireEvent( WikiSecurityEvent.GROUP_REMOVE, group );
                 fireEvent( WikiSecurityEvent.GROUP_ADD, oldGroup );
-                synchronized( m_groups ) {
+                lock.lock();
+                try {
                     m_groups.put( oldGroup.getPrincipal(), oldGroup );
+                } finally {
+                    lock.unlock();
                 }
                 throw new WikiSecurityException( e.getMessage() + " (rolled back to previous version).", e );
             }
@@ -367,14 +397,24 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void addWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.addWikiEventListener( this, listener );
+    public void addWikiEventListener( final WikiEventListener listener ) {
+        lock.lock();
+        try {
+            WikiEventManager.addWikiEventListener( this, listener );
+        } finally {
+            lock.unlock();
+        }
     }
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void removeWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.removeWikiEventListener( this, listener );
+    public void removeWikiEventListener( final WikiEventListener listener ) {
+        lock.lock();
+        try {
+            WikiEventManager.removeWikiEventListener( this, listener );
+        } finally {
+            lock.unlock();
+        }
     }
 
     /** {@inheritDoc} */

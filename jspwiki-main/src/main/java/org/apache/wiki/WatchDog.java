@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -56,6 +57,16 @@ public final class WatchDog {
 
     private static final Map< Integer, WeakReference< WatchDog > > c_kennel = new ConcurrentHashMap<>();
     private static WikiBackgroundThread c_watcherThread;
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
 
     /**
      *  Returns the current watchdog for the current thread. This is the preferred method of getting you a Watchdog, since it
@@ -92,11 +103,16 @@ public final class WatchDog {
         m_engine    = engine;
         m_watchable = watch;
 
-        synchronized( WatchDog.class ) {
+        lock = new ReentrantLock();
+
+        lock.lock();
+        try {
             if( c_watcherThread == null ) {
                 c_watcherThread = new WatchDogThread( engine );
                 c_watcherThread.start();
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -136,12 +152,15 @@ public final class WatchDog {
      *  Can be used to enable the WatchDog.  Will cause a new Thread to be created, if none was existing previously.
      */
     public void enable() {
-        synchronized( WatchDog.class ) {
+        lock.lock();
+        try {
             if( !m_enabled ) {
                 m_enabled = true;
                 c_watcherThread = new WatchDogThread( m_engine );
                 c_watcherThread.start();
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -149,12 +168,15 @@ public final class WatchDog {
      *  Is used to disable a WatchDog.  The watchdog thread is shut down and resources released.
      */
     public void disable() {
-        synchronized( WatchDog.class ) {
+        lock.lock();
+        try {
             if( m_enabled ) {
                 m_enabled = false;
                 c_watcherThread.shutdown();
                 c_watcherThread = null;
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -186,9 +208,12 @@ public final class WatchDog {
      */
     public void enterState( final String state, final int expectedCompletionTime ) {
         LOG.debug(  "{}: Entering state {}, expected completion in {} s", m_watchable.getName(), state, expectedCompletionTime );
-        synchronized( m_stateStack ) {
+        lock.lock();
+        try {
             final State st = new State( state, expectedCompletionTime );
             m_stateStack.push( st );
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -208,7 +233,8 @@ public final class WatchDog {
      */
     public void exitState( final String state ) {
         if( !m_stateStack.empty() ) {
-            synchronized( m_stateStack ) {
+            lock.lock();
+            try {
                 final State st = m_stateStack.peek();
                 if( state == null || st.getState().equals( state ) ) {
                     m_stateStack.pop();
@@ -218,6 +244,8 @@ public final class WatchDog {
                     // FIXME: should actually go and fix things for that
                     LOG.error( "exitState() called before enterState()" );
                 }
+            } finally {
+                lock.unlock();
             }
         } else {
             LOG.warn( "Stack for " + m_watchable.getName() + " is empty!" );
@@ -244,8 +272,8 @@ public final class WatchDog {
 
     private void check() {
         LOG.debug( "Checking watchdog '{}'", m_watchable.getName() );
-
-        synchronized( m_stateStack ) {
+        lock.lock();
+        try {
             if( !m_stateStack.empty() ) {
                 final State st = m_stateStack.peek();
                 final long now = System.currentTimeMillis();
@@ -261,6 +289,8 @@ public final class WatchDog {
             } else {
                 LOG.warn( "Stack for " + m_watchable.getName() + " is empty!" );
             }
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -302,7 +332,8 @@ public final class WatchDog {
      */
     @Override
     public String toString() {
-        synchronized( m_stateStack ) {
+        lock.lock();
+        try {
             String state = "Idle";
 
             if( !m_stateStack.empty() ) {
@@ -310,6 +341,8 @@ public final class WatchDog {
                 state = st.getState();
             }
             return "WatchDog state=" + state;
+        } finally {
+            lock.unlock();
         }
     }
 

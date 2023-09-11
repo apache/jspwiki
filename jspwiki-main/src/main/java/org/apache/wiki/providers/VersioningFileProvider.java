@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *  Provides a simple directory based repository for Wiki pages.
@@ -80,6 +81,20 @@ public class VersioningFileProvider extends AbstractFileProvider {
     public static final String PROPERTYFILE = "page.properties";
 
     private CachedProperties m_cachedProperties;
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
+    public VersioningFileProvider() {
+        lock = new ReentrantLock();
+    }
 
     /**
      *  {@inheritDoc}
@@ -268,21 +283,26 @@ public class VersioningFileProvider extends AbstractFileProvider {
      *  {@inheritDoc}
      */
     @Override
-    public synchronized String getPageText( final String page, int version ) throws ProviderException {
-        final File dir = findOldPageDir( page );
+    public String getPageText( final String page, int version ) throws ProviderException {
+        lock.lock();
+        try {
+            final File dir = findOldPageDir( page );
 
-        version = realVersion( page, version );
-        if( version == -1 ) {
-            // We can let the FileSystemProvider take care of these requests.
-            return super.getPageText( page, PageProvider.LATEST_VERSION );
+            version = realVersion( page, version );
+            if( version == -1 ) {
+                // We can let the FileSystemProvider take care of these requests.
+                return super.getPageText( page, PageProvider.LATEST_VERSION );
+            }
+
+            final File pageFile = new File( dir, ""+version+FILE_EXT );
+            if( !pageFile.exists() ) {
+                throw new NoSuchVersionException("Version "+version+"does not exist.");
+            }
+
+            return readFile( pageFile );
+        } finally {
+            lock.unlock();
         }
-
-        final File pageFile = new File( dir, ""+version+FILE_EXT );
-        if( !pageFile.exists() ) {
-            throw new NoSuchVersionException("Version "+version+"does not exist.");
-        }
-
-        return readFile( pageFile );
     }
 
 
@@ -325,76 +345,82 @@ public class VersioningFileProvider extends AbstractFileProvider {
      *  {@inheritDoc}
      */
     @Override
-    public synchronized void putPageText( final Page page, final String text ) throws ProviderException {
-        // This is a bit complicated.  We'll first need to copy the old file to be the newest file.
-        final int  latest  = findLatestVersion( page.getName() );
-        final File pageDir = findOldPageDir( page.getName() );
-        if( !pageDir.exists() ) {
-            pageDir.mkdirs();
-        }
-
+    public void putPageText( final Page page, final String text ) throws ProviderException {
+        lock.lock();
         try {
-            // Copy old data to safety, if one exists.
-            final File oldFile = findPage( page.getName() );
+            // This is a bit complicated.  We'll first need to copy the old file to be the newest file.
+            final int  latest  = findLatestVersion( page.getName() );
+            final File pageDir = findOldPageDir( page.getName() );
+            if( !pageDir.exists() ) {
+                pageDir.mkdirs();
+            }
 
-            // Figure out which version should the old page be? Numbers should always start at 1.
-            // "most recent" = -1 ==> 1
-            // "first"       = 1  ==> 2
-            int versionNumber = (latest > 0) ? latest : 1;
-            final boolean firstUpdate = (versionNumber == 1);
+            try {
+                // Copy old data to safety, if one exists.
+                final File oldFile = findPage( page.getName() );
 
-            if( oldFile != null && oldFile.exists() ) {
-                final File pageFile = new File( pageDir, versionNumber + FILE_EXT );
-                try( final InputStream in = new BufferedInputStream( Files.newInputStream( oldFile.toPath() ) );
-                     final OutputStream out = new BufferedOutputStream( Files.newOutputStream( pageFile.toPath() ) ) ) {
-                    FileUtil.copyContents( in, out );
+                // Figure out which version should the old page be? Numbers should always start at 1.
+                // "most recent" = -1 ==> 1
+                // "first"       = 1  ==> 2
+                int versionNumber = (latest > 0) ? latest : 1;
+                final boolean firstUpdate = (versionNumber == 1);
 
-                    // We need also to set the date, since we rely on this.
-                    pageFile.setLastModified( oldFile.lastModified() );
+                if( oldFile != null && oldFile.exists() ) {
+                    final File pageFile = new File( pageDir, versionNumber + FILE_EXT );
+                    try( final InputStream in = new BufferedInputStream( Files.newInputStream( oldFile.toPath() ) );
+                         final OutputStream out = new BufferedOutputStream( Files.newOutputStream( pageFile.toPath() ) ) ) {
+                        FileUtil.copyContents( in, out );
 
-                    // Kludge to make the property code to work properly.
-                    versionNumber++;
+                        // We need also to set the date, since we rely on this.
+                        pageFile.setLastModified( oldFile.lastModified() );
+
+                        // Kludge to make the property code to work properly.
+                        versionNumber++;
+                    }
                 }
+
+                //  Let superclass handler writing data to a new version.
+                super.putPageText( page, text );
+
+                //  Finally, write page version data.
+                // FIXME: No rollback available.
+                final Properties props = getPageProperties( page.getName() );
+
+                String authorFirst = null;
+                // if the following file exists, we are NOT migrating from FileSystemProvider
+                final File pagePropFile = new File(getPageDirectory() + File.separator + PAGEDIR + File.separator + mangleName(page.getName()) + File.separator + "page" + FileSystemProvider.PROP_EXT);
+                if( firstUpdate && ! pagePropFile.exists() ) {
+                    // we might not yet have a versioned author because the old page was last maintained by FileSystemProvider
+                    final Properties props2 = getHeritagePageProperties( page.getName() );
+
+                    // remember the simulated original author (or something) in the new properties
+                    authorFirst = props2.getProperty( "1.author", "unknown" );
+                    props.setProperty( "1.author", authorFirst );
+                }
+
+                String newAuthor = page.getAuthor();
+                if ( newAuthor == null ) {
+                    newAuthor = ( authorFirst != null ) ? authorFirst : "unknown";
+                }
+                page.setAuthor(newAuthor);
+                props.setProperty( versionNumber + ".author", newAuthor );
+
+                final String changeNote = page.getAttribute( Page.CHANGENOTE );
+                if( changeNote != null ) {
+                    props.setProperty( versionNumber + ".changenote", changeNote );
+                }
+
+                // Get additional custom properties from page and add to props
+                getCustomProperties( page, props );
+                putPageProperties( page.getName(), props );
+            } catch( final IOException e ) {
+                LOG.error( "Saving failed", e );
+                throw new ProviderException("Could not save page text: "+e.getMessage());
             }
-
-            //  Let superclass handler writing data to a new version.
-            super.putPageText( page, text );
-
-            //  Finally, write page version data.
-            // FIXME: No rollback available.
-            final Properties props = getPageProperties( page.getName() );
-
-            String authorFirst = null;
-            // if the following file exists, we are NOT migrating from FileSystemProvider
-            final File pagePropFile = new File(getPageDirectory() + File.separator + PAGEDIR + File.separator + mangleName(page.getName()) + File.separator + "page" + FileSystemProvider.PROP_EXT);
-            if( firstUpdate && ! pagePropFile.exists() ) {
-                // we might not yet have a versioned author because the old page was last maintained by FileSystemProvider
-                final Properties props2 = getHeritagePageProperties( page.getName() );
-
-                // remember the simulated original author (or something) in the new properties
-                authorFirst = props2.getProperty( "1.author", "unknown" );
-                props.setProperty( "1.author", authorFirst );
-            }
-
-            String newAuthor = page.getAuthor();
-            if ( newAuthor == null ) {
-                newAuthor = ( authorFirst != null ) ? authorFirst : "unknown";
-            }
-            page.setAuthor(newAuthor);
-            props.setProperty( versionNumber + ".author", newAuthor );
-
-            final String changeNote = page.getAttribute( Page.CHANGENOTE );
-            if( changeNote != null ) {
-                props.setProperty( versionNumber + ".changenote", changeNote );
-            }
-
-            // Get additional custom properties from page and add to props
-            getCustomProperties( page, props );
-            putPageProperties( page.getName(), props );
-        } catch( final IOException e ) {
-            LOG.error( "Saving failed", e );
-            throw new ProviderException("Could not save page text: "+e.getMessage());
+        } finally {
+            lock.unlock();
         }
+
     }
 
     /**

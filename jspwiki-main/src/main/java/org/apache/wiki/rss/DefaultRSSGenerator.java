@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -65,6 +66,16 @@ public class DefaultRSSGenerator implements RSSGenerator {
     private static final int MAX_CHARACTERS = Integer.MAX_VALUE-1;
 
     /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
+    /**
      *  Builds the RSS generator for a given Engine.
      *
      *  @param engine The Engine.
@@ -75,6 +86,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
         m_channelDescription = properties.getProperty( PROP_CHANNEL_DESCRIPTION, m_channelDescription );
         m_channelLanguage = properties.getProperty( PROP_CHANNEL_LANGUAGE, m_channelLanguage );
         m_rssFile = TextUtil.getStringProperty( properties, DefaultRSSGenerator.PROP_RSSFILE, "rss.rdf" );
+        this.lock = new ReentrantLock();
     }
 
     /**
@@ -200,14 +212,24 @@ public class DefaultRSSGenerator implements RSSGenerator {
 
     /** {@inheritDoc} */
     @Override
-    public synchronized boolean isEnabled() {
-        return m_enabled;
+    public boolean isEnabled() {
+        lock.lock();
+        try {
+            return m_enabled;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void setEnabled( final boolean enabled ) {
-        m_enabled = enabled;
+    public void setEnabled( final boolean enabled ) {
+        lock.lock();
+        try {
+            m_enabled = enabled;
+        } finally {
+            lock.unlock();
+        }
     }
 
     /** {@inheritDoc} */

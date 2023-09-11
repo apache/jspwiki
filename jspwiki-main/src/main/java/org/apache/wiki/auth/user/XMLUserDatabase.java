@@ -52,6 +52,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -91,25 +92,44 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     private Document            c_dom;
     private File                c_file;
 
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
+    public XMLUserDatabase() {
+        lock = new ReentrantLock();
+    }
+
     /** {@inheritDoc} */
     @Override
-    public synchronized void deleteByLoginName( final String loginName ) throws WikiSecurityException {
-        if( c_dom == null ) {
-            throw new WikiSecurityException( "FATAL: database does not exist" );
-        }
-
-        final NodeList users = c_dom.getDocumentElement().getElementsByTagName( USER_TAG );
-        for( int i = 0; i < users.getLength(); i++ ) {
-            final Element user = ( Element )users.item( i );
-            if( user.getAttribute( LOGIN_NAME ).equals( loginName ) ) {
-                c_dom.getDocumentElement().removeChild( user );
-
-                // Commit to disk
-                saveDOM();
-                return;
+    public void deleteByLoginName( final String loginName ) throws WikiSecurityException {
+        lock.lock();
+        try {
+            if( c_dom == null ) {
+                throw new WikiSecurityException( "FATAL: database does not exist" );
             }
+
+            final NodeList users = c_dom.getDocumentElement().getElementsByTagName( USER_TAG );
+            for( int i = 0; i < users.getLength(); i++ ) {
+                final Element user = ( Element )users.item( i );
+                if( user.getAttribute( LOGIN_NAME ).equals( loginName ) ) {
+                    c_dom.getDocumentElement().removeChild( user );
+
+                    // Commit to disk
+                    saveDOM();
+                    return;
+                }
+            }
+            throw new NoSuchPrincipalException( "Not in database: " + loginName );
+        } finally {
+            lock.unlock();
         }
-        throw new NoSuchPrincipalException( "Not in database: " + loginName );
     }
 
     /** {@inheritDoc} */
@@ -322,118 +342,129 @@ public class XMLUserDatabase extends AbstractUserDatabase {
      * @see org.apache.wiki.auth.user.UserDatabase#rename(String, String)
      */
     @Override
-    public synchronized void rename( final String loginName, final String newName) throws DuplicateUserException, WikiSecurityException {
-        if( c_dom == null ) {
-            LOG.fatal( "Could not rename profile '" + loginName + "'; database does not exist" );
-            throw new IllegalStateException( "FATAL: database does not exist" );
-        }
-        checkForRefresh();
-
-        // Get the existing user; if not found, throws NoSuchPrincipalException
-        final UserProfile profile = findByLoginName( loginName );
-
-        // Get user with the proposed name; if found, it's a collision
+    public void rename( final String loginName, final String newName) throws DuplicateUserException, WikiSecurityException {
+        lock.lock();
         try {
-            final UserProfile otherProfile = findByLoginName( newName );
-            if( otherProfile != null ) {
-                throw new DuplicateUserException( "security.error.cannot.rename", newName );
+            if( c_dom == null ) {
+                LOG.fatal( "Could not rename profile '" + loginName + "'; database does not exist" );
+                throw new IllegalStateException( "FATAL: database does not exist" );
             }
-        } catch( final NoSuchPrincipalException e ) {
-            // Good! That means it's safe to save using the new name
+            checkForRefresh();
+
+            // Get the existing user; if not found, throws NoSuchPrincipalException
+            final UserProfile profile = findByLoginName( loginName );
+
+            // Get user with the proposed name; if found, it's a collision
+            try {
+                final UserProfile otherProfile = findByLoginName( newName );
+                if( otherProfile != null ) {
+                    throw new DuplicateUserException( "security.error.cannot.rename", newName );
+                }
+            } catch( final NoSuchPrincipalException e ) {
+                // Good! That means it's safe to save using the new name
+            }
+
+            // Find the user with the old login id attribute, and change it
+            final NodeList users = c_dom.getElementsByTagName( USER_TAG );
+            for( int i = 0; i < users.getLength(); i++ ) {
+                final Element user = ( Element )users.item( i );
+                if( user.getAttribute( LOGIN_NAME ).equals( loginName ) ) {
+                    final DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
+                    final Date modDate = new Date( System.currentTimeMillis() );
+                    setAttribute( user, LOGIN_NAME, newName );
+                    setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
+                    profile.setLoginName( newName );
+                    profile.setLastModified( modDate );
+                    break;
+                }
+            }
+
+            // Commit to disk
+            saveDOM();
+        } finally {
+            lock.unlock();
         }
 
-        // Find the user with the old login id attribute, and change it
-        final NodeList users = c_dom.getElementsByTagName( USER_TAG );
-        for( int i = 0; i < users.getLength(); i++ ) {
-            final Element user = ( Element )users.item( i );
-            if( user.getAttribute( LOGIN_NAME ).equals( loginName ) ) {
-                final DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
-                final Date modDate = new Date( System.currentTimeMillis() );
-                setAttribute( user, LOGIN_NAME, newName );
-                setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
-                profile.setLoginName( newName );
-                profile.setLastModified( modDate );
-                break;
-            }
-        }
-
-        // Commit to disk
-        saveDOM();
     }
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void save( final UserProfile profile ) throws WikiSecurityException {
-        if ( c_dom == null ) {
-            LOG.fatal( "Could not save profile " + profile + " database does not exist" );
-            throw new IllegalStateException( "FATAL: database does not exist" );
-        }
-
-        checkForRefresh();
-
-        final DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
-        final String index = profile.getLoginName();
-        final NodeList users = c_dom.getElementsByTagName( USER_TAG );
-        Element user = IntStream.range(0, users.getLength()).mapToObj(i -> (Element) users.item(i)).filter(currentUser -> currentUser.getAttribute(LOGIN_NAME).equals(index)).findFirst().orElse(null);
-
-        boolean isNew = false;
-
-        final Date modDate = new Date( System.currentTimeMillis() );
-        if( user == null ) {
-            // Create new user node
-            profile.setCreated( modDate );
-            LOG.info( "Creating new user " + index );
-            user = c_dom.createElement( USER_TAG );
-            c_dom.getDocumentElement().appendChild( user );
-            setAttribute( user, CREATED, c_format.format( profile.getCreated() ) );
-            isNew = true;
-        } else {
-            // To update existing user node, delete old attributes first...
-            final NodeList attributes = user.getElementsByTagName( ATTRIBUTES_TAG );
-            for( int i = 0; i < attributes.getLength(); i++ ) {
-                user.removeChild( attributes.item( i ) );
+    public void save( final UserProfile profile ) throws WikiSecurityException {
+        lock.lock();
+        try {
+            if ( c_dom == null ) {
+                LOG.fatal( "Could not save profile " + profile + " database does not exist" );
+                throw new IllegalStateException( "FATAL: database does not exist" );
             }
-        }
 
-        setAttribute( user, UID, profile.getUid() );
-        setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
-        setAttribute( user, LOGIN_NAME, profile.getLoginName() );
-        setAttribute( user, FULL_NAME, profile.getFullname() );
-        setAttribute( user, WIKI_NAME, profile.getWikiName() );
-        setAttribute( user, EMAIL, profile.getEmail() );
-        final Date lockExpiry = profile.getLockExpiry();
-        setAttribute( user, LOCK_EXPIRY, lockExpiry == null ? "" : c_format.format( lockExpiry ) );
+            checkForRefresh();
 
-        // Hash and save the new password if it's different from old one
-        final String newPassword = profile.getPassword();
-        if( newPassword != null && !newPassword.equals( "" ) ) {
-            final String oldPassword = user.getAttribute( PASSWORD );
-            if( !oldPassword.equals( newPassword ) ) {
-                setAttribute( user, PASSWORD, getHash( newPassword ) );
+            final DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
+            final String index = profile.getLoginName();
+            final NodeList users = c_dom.getElementsByTagName( USER_TAG );
+            Element user = IntStream.range(0, users.getLength()).mapToObj(i -> (Element) users.item(i)).filter(currentUser -> currentUser.getAttribute(LOGIN_NAME).equals(index)).findFirst().orElse(null);
+
+            boolean isNew = false;
+
+            final Date modDate = new Date( System.currentTimeMillis() );
+            if( user == null ) {
+                // Create new user node
+                profile.setCreated( modDate );
+                LOG.info( "Creating new user " + index );
+                user = c_dom.createElement( USER_TAG );
+                c_dom.getDocumentElement().appendChild( user );
+                setAttribute( user, CREATED, c_format.format( profile.getCreated() ) );
+                isNew = true;
+            } else {
+                // To update existing user node, delete old attributes first...
+                final NodeList attributes = user.getElementsByTagName( ATTRIBUTES_TAG );
+                for( int i = 0; i < attributes.getLength(); i++ ) {
+                    user.removeChild( attributes.item( i ) );
+                }
             }
-        }
 
-        // Save the attributes as Base64 string
-        if(!profile.getAttributes().isEmpty()) {
-            try {
-                final String encodedAttributes = Serializer.serializeToBase64( profile.getAttributes() );
-                final Element attributes = c_dom.createElement( ATTRIBUTES_TAG );
-                user.appendChild( attributes );
-                final Text value = c_dom.createTextNode( encodedAttributes );
-                attributes.appendChild( value );
-            } catch( final IOException e ) {
-                throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
+            setAttribute( user, UID, profile.getUid() );
+            setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
+            setAttribute( user, LOGIN_NAME, profile.getLoginName() );
+            setAttribute( user, FULL_NAME, profile.getFullname() );
+            setAttribute( user, WIKI_NAME, profile.getWikiName() );
+            setAttribute( user, EMAIL, profile.getEmail() );
+            final Date lockExpiry = profile.getLockExpiry();
+            setAttribute( user, LOCK_EXPIRY, lockExpiry == null ? "" : c_format.format( lockExpiry ) );
+
+            // Hash and save the new password if it's different from old one
+            final String newPassword = profile.getPassword();
+            if( newPassword != null && !newPassword.equals( "" ) ) {
+                final String oldPassword = user.getAttribute( PASSWORD );
+                if( !oldPassword.equals( newPassword ) ) {
+                    setAttribute( user, PASSWORD, getHash( newPassword ) );
+                }
             }
-        }
 
-        // Set the profile timestamps
-        if( isNew ) {
-            profile.setCreated( modDate );
-        }
-        profile.setLastModified( modDate );
+            // Save the attributes as Base64 string
+            if( profile.getAttributes().isEmpty()) {
+                try {
+                    final String encodedAttributes = Serializer.serializeToBase64( profile.getAttributes() );
+                    final Element attributes = c_dom.createElement( ATTRIBUTES_TAG );
+                    user.appendChild( attributes );
+                    final Text value = c_dom.createTextNode( encodedAttributes );
+                    attributes.appendChild( value );
+                } catch( final IOException e ) {
+                    throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
+                }
+            }
 
-        // Commit to disk
-        saveDOM();
+            // Set the profile timestamps
+            if( isNew ) {
+                profile.setCreated( modDate );
+            }
+            profile.setLastModified( modDate );
+
+            // Commit to disk
+            saveDOM();
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**

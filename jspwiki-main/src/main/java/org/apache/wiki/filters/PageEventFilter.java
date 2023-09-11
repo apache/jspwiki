@@ -28,6 +28,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
   * Fires WikiPageEvents for page events.
@@ -49,6 +50,20 @@ import java.util.Properties;
   * @see org.apache.wiki.event.WikiEventManager
   */
 public class PageEventFilter extends BasePageFilter {
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
+    public PageEventFilter() {
+        lock = new ReentrantLock();
+    }
 
     /**
      * Called whenever a new PageFilter is instantiated and reset.
@@ -112,8 +127,13 @@ public class PageEventFilter extends BasePageFilter {
      *
      * @param listener the event listener
      */
-    public final synchronized void addWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.addWikiEventListener( this, listener );
+    public final void addWikiEventListener( final WikiEventListener listener ) {
+        lock.lock();
+        try {
+            WikiEventManager.addWikiEventListener( this, listener );
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -121,8 +141,13 @@ public class PageEventFilter extends BasePageFilter {
      *
      * @param listener the event listener
      */
-    public final synchronized void removeWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.removeWikiEventListener( this, listener );
+    public final void removeWikiEventListener( final WikiEventListener listener ) {
+        lock.lock();
+        try {
+            WikiEventManager.removeWikiEventListener( this, listener );
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**

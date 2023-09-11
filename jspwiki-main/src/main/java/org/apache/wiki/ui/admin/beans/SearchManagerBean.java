@@ -30,6 +30,7 @@ import org.apache.wiki.ui.progress.ProgressManager;
 
 import javax.management.NotCompliantMBeanException;
 import java.util.Collection;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -46,9 +47,20 @@ public class SearchManagerBean extends SimpleAdminBean {
 
     private WikiBackgroundThread m_updater;
 
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock;
+
     public SearchManagerBean( final Engine engine ) throws NotCompliantMBeanException {
         super();
         initialize( engine );
+        this.lock = new ReentrantLock();
     }
 
     @Override
@@ -74,49 +86,54 @@ public class SearchManagerBean extends SimpleAdminBean {
      *  <p>
      *  This method prevents itself from being called twice.
      */
-    public synchronized void reload() {
-        if( m_updater == null ) {
-            m_updater = new WikiBackgroundThread( m_engine, 0 ) {
+    public void reload() {
+        lock.lock();
+        try {
+            if( m_updater == null ) {
+                m_updater = new WikiBackgroundThread( m_engine, 0 ) {
 
-                int m_count;
-                int m_max;
+                    int m_count;
+                    int m_max;
 
-                @Override
-                public void startupTask() throws Exception {
-                    super.startupTask();
+                    @Override
+                    public void startupTask() throws Exception {
+                        super.startupTask();
 
-                    setName( "Reindexer started" );
-                }
-
-                @Override
-                public void backgroundTask() throws Exception {
-                    final Collection< Page > allPages = m_engine.getManager( PageManager.class ).getAllPages();
-
-                    final SearchManager mgr = m_engine.getManager( SearchManager.class );
-                    m_max = allPages.size();
-
-                    final ProgressItem pi = new ProgressItem() {
-
-                        @Override
-                        public int getProgress() {
-                            return 100 * m_count / m_max;
-                        }
-                    };
-                    m_engine.getManager( ProgressManager.class ).startProgress( pi, PROGRESS_ID );
-
-                    for( final Page page : allPages ) {
-                        mgr.reindexPage( page );
-                        m_count++;
+                        setName( "Reindexer started" );
                     }
 
-                    m_engine.getManager( ProgressManager.class ).stopProgress( PROGRESS_ID );
-                    shutdown();
-                    m_updater = null;
-                }
+                    @Override
+                    public void backgroundTask() throws Exception {
+                        final Collection< Page > allPages = m_engine.getManager( PageManager.class ).getAllPages();
 
-            };
+                        final SearchManager mgr = m_engine.getManager( SearchManager.class );
+                        m_max = allPages.size();
 
-            m_updater.start();
+                        final ProgressItem pi = new ProgressItem() {
+
+                            @Override
+                            public int getProgress() {
+                                return 100 * m_count / m_max;
+                            }
+                        };
+                        m_engine.getManager( ProgressManager.class ).startProgress( pi, PROGRESS_ID );
+
+                        for( final Page page : allPages ) {
+                            mgr.reindexPage( page );
+                            m_count++;
+                        }
+
+                        m_engine.getManager( ProgressManager.class ).stopProgress( PROGRESS_ID );
+                        shutdown();
+                        m_updater = null;
+                    }
+
+                };
+
+                m_updater.start();
+            }
+        } finally {
+            lock.unlock();
         }
     }
 

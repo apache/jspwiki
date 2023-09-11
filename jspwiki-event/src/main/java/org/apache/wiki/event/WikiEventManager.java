@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *  A singleton class that manages the addition and removal of WikiEvent listeners to a event source, as well as the firing of events
@@ -141,6 +142,17 @@ public final class WikiEventManager {
     /* Singleton instance of the WikiEventManager. */
     private static WikiEventManager c_instance;
 
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private static final ReentrantLock lock = new ReentrantLock();
+
+
     /** Constructor for a WikiEventManager. */
     private WikiEventManager() {
         c_instance = this;
@@ -154,10 +166,15 @@ public final class WikiEventManager {
      *  @return A shared instance of the WikiEventManager
      */
     public static WikiEventManager getInstance() {
-        if( c_instance == null ) {
-            synchronized( WikiEventManager.class ) {
-                return new WikiEventManager();
-                // start up any post-instantiation services here
+        if (c_instance == null) {
+            lock.lock();
+            try {
+                if (c_instance == null) {
+                    c_instance = new WikiEventManager();
+                    // start up any post-instantiation services here
+                }
+            } finally {
+                lock.unlock();
             }
         }
         return c_instance;
@@ -242,7 +259,8 @@ public final class WikiEventManager {
         // get the Map.entry object for the entire Map, then check match on entry (listener)
         final WikiEventManager mgr = getInstance();
         final Map< Object, WikiEventDelegate > sources =  Collections.synchronizedMap( mgr.getDelegates() );
-        synchronized( sources ) {
+        lock.lock();
+        try {
             // get an iterator over the Map.Enty objects in the map
             for( final Map.Entry< Object, WikiEventDelegate > entry : sources.entrySet() ) {
                 // the entry value is the delegate
@@ -253,16 +271,24 @@ public final class WikiEventManager {
                     removed = true; // was removed
                 }
             }
+        } finally {
+            lock.unlock();
         }
         return removed;
     }
 
     private void removeDelegates() {
-        synchronized( m_delegates ) {
+        lock.lock();
+        try {
             m_delegates.clear();
+        } finally {
+            lock.unlock();
         }
-        synchronized( m_preloadCache ) {
+        lock.lock();
+        try {
             m_preloadCache.clear();
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -315,7 +341,8 @@ public final class WikiEventManager {
      * @return the WikiEventDelegate.
      */
     private WikiEventDelegate getDelegateFor( final Object client ) {
-        synchronized( m_delegates ) {
+        lock.lock();
+        try {
             if( client == null || client instanceof Class ) { // then preload the cache
                 final WikiEventDelegate delegate = new WikiEventDelegate( client );
                 m_preloadCache.add( delegate );
@@ -342,6 +369,8 @@ public final class WikiEventManager {
                 m_delegates.put( client, delegate );
             }
             return delegate;
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -386,7 +415,8 @@ public final class WikiEventManager {
          * @throws java.lang.UnsupportedOperationException  if any attempt is made to modify the Set
          */
         public Set< WikiEventListener > getWikiEventListeners() {
-            synchronized( m_listenerList ) {
+            lock.lock();
+            try {
                 final TreeSet< WikiEventListener > set = new TreeSet<>( new WikiEventListenerComparator() );
                 for( final WeakReference< WikiEventListener > wikiEventListenerWeakReference : m_listenerList ) {
                     final WikiEventListener l = wikiEventListenerWeakReference.get();
@@ -396,6 +426,8 @@ public final class WikiEventManager {
                 }
 
                 return Collections.unmodifiableSet( set );
+            } finally {
+                lock.unlock();
             }
         }
 
@@ -406,13 +438,16 @@ public final class WikiEventManager {
          * @return true if the listener was added (i.e., it was not already in the list and was added)
          */
         public boolean addWikiEventListener( final WikiEventListener listener ) {
-            synchronized( m_listenerList ) {
+            lock.lock();
+            try {
                 final boolean listenerAlreadyContained = m_listenerList.stream()
                                                                        .map( WeakReference::get )
                                                                        .anyMatch( ref -> ref == listener );
                 if( !listenerAlreadyContained ) {
                     return m_listenerList.add( new WeakReference<>( listener ) );
                 }
+            } finally {
+                lock.unlock();
             }
             return false;
         }
@@ -424,7 +459,8 @@ public final class WikiEventManager {
          * @return true if the listener was removed (i.e., it was actually in the list and was removed)
          */
         public boolean removeWikiEventListener( final WikiEventListener listener ) {
-            synchronized( m_listenerList ) {
+            lock.lock();
+            try {
                 for( final Iterator< WeakReference< WikiEventListener > > i = m_listenerList.iterator(); i.hasNext(); ) {
                     final WikiEventListener l = i.next().get();
                     if( l == listener ) {
@@ -432,6 +468,8 @@ public final class WikiEventManager {
                         return true;
                     }
                 }
+            } finally {
+                lock.unlock();
             }
 
             return false;
@@ -441,8 +479,11 @@ public final class WikiEventManager {
          *  Returns true if there are one or more listeners registered with this instance.
          */
         public boolean isListening() {
-            synchronized( m_listenerList ) {
+            lock.lock();
+            try {
                 return !m_listenerList.isEmpty();
+            } finally {
+                lock.unlock();
             }
         }
 
@@ -452,7 +493,8 @@ public final class WikiEventManager {
         public void fireEvent( final WikiEvent event ) {
             boolean needsCleanup = false;
             try {
-                synchronized( m_listenerList ) {
+                lock.lock();
+                try {
                     for( final WeakReference< WikiEventListener > wikiEventListenerWeakReference : m_listenerList ) {
                         final WikiEventListener listener = wikiEventListenerWeakReference.get();
                         if( listener != null ) {
@@ -472,6 +514,8 @@ public final class WikiEventManager {
                         }
                     }
 
+                } finally {
+                    lock.unlock();
                 }
             } catch( final ConcurrentModificationException e ) {
                 //  We don't die, we just don't do notifications in that case.
