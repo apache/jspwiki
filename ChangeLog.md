@@ -23,6 +23,7 @@ under the License.
 
 * [JSPWIKI-1167](https://issues.apache.org/jira/browse/JSPWIKI-1167) - prettify: line numbering is wrong with longer lines
     Prettified code lines should not wrap around, to avoid mismatch with line numbering.
+* [JSPWIKI-1181](https://issues.apache.org/jira/browse/JSPWIKI-1167) - Search popup does not handle attachments correctly.
     
 **2023-09-09  Dirk Frederickx (brushed AT apache DOT org)**
 
