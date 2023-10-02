@@ -394,7 +394,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 					final File f = new File(dir, attachment);
 					if (f.isDirectory()) {
 						final File[] files = f.listFiles();
-						if (files == null || files.length == 0) {
+						if (files == null || files.length == 0 || (files.length == 1 && PROPERTY_FILE.equals(files[0].getName()))) {
 							// can happen with git synced wiki contents, just clean up
 							log.warn("Cleaning up empty attachment folder: " + f.getPath());
 							f.delete();
