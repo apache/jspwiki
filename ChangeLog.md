@@ -17,6 +17,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+*2023-10-08  Arturo Bernal (abernal AT apache DOT org)**
+
+* _2.12.2-git-06_
+
+* [JSPWIKI-925](https://issues.apache.org/jira/browse/JSPWIKI-925) - Missing i18n resources
+
 **2023-10-02  Arturo Bernal (abernal AT apache DOT org)**
 
 * _2.12.2-git-05_
