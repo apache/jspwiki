@@ -17,6 +17,17 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-10-02  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-04_
+
+* Dependency updates
+    * AWS Java SDK Kendra to 1.12.565
+    * Commons IO to 2.14.0
+    * Lucene to 9.8.0
+    * Selenide to 6.19.0
+    * Tomcat to 9.0.80
+
 **2023-10-02  Arturo Bernal (abernal AT apache DOT org)**
 
 * _2.12.2-git-03_
