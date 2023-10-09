@@ -287,8 +287,8 @@ hsqldb-2.7.1.jar                            ./jspwiki-war/src/main/config/doc/LI
 sqltool-2.7.1.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 jetty-all-9.4.51.v20230217.jar              LICENSE
 junit-5.10.0                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
-mockito-core-5.4.0.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
-selenide-6.16.1.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
+mockito-core-5.5.0.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
+selenide-6.17.2.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
 stripes-1.7.0-async.jar                     LICENSE
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui
 
@@ -304,7 +304,7 @@ SlimBox                                     ./jspwiki-war/src/main/config/doc/LI
 
 RESOURCES                                   LICENSE FILE
 =============================================================================================================
-Apache Tomcat 9.0.78                        LICENSE
+Apache Tomcat 9.0.80                        LICENSE
 Font Awesome (CSS & LESS files)             ./jspwiki-war/src/main/config/doc/LICENSE.mit
 Font Awesome (Fonts)                        ./jspwiki-war/src/main/config/doc/LICENSE.ofl
 SilkIconSet                                 ./jspwiki-war/src/main/config/doc/LICENSE.SilkIconSet
@@ -312,4 +312,4 @@ SilkIconSet                                 ./jspwiki-war/src/main/config/doc/LI
 OTHER
 =============================================================================================================
 While not bundled by default, Apache Tika extracts content from a lot of different file formats using several
-OSS libraries, which can be consulted at https://tika.apache.org/2.1.0/formats.html
+OSS libraries, which can be consulted at https://tika.apache.org/2.8.0/formats.html
