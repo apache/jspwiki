@@ -131,26 +131,27 @@ public class PropertyReaderTest {
     public void testSetWorkDir() {
         final Properties properties = new Properties();
         final ServletContext servletContext = mock(ServletContext.class);
-        Mockito.when(servletContext.getAttribute("javax.servlet.context.tempdir")).thenReturn(new File("/tmp"));
+        final File tmp = new File( "/tmp" );
+        Mockito.when(servletContext.getAttribute( "javax.servlet.context.tempdir" ) ).thenReturn( tmp );
 
-        PropertyReader.setWorkDir(servletContext, properties);
+        PropertyReader.setWorkDir( servletContext, properties );
 
         // Test when the "jspwiki.workDir" is not set, it should get set to servlet's temporary directory
-        String workDir = properties.getProperty("jspwiki.workDir");
-        Assertions.assertEquals("/tmp", workDir);
+        String workDir = properties.getProperty( "jspwiki.workDir" );
+        Assertions.assertEquals( tmp.getAbsolutePath(), workDir );
 
         // Test when the "jspwiki.workDir" is set, it should remain as it is
-        properties.setProperty("jspwiki.workDir", "/custom/dir");
-        PropertyReader.setWorkDir(servletContext, properties);
-        workDir = properties.getProperty("jspwiki.workDir");
-        Assertions.assertEquals("/custom/dir", workDir);
+        properties.setProperty( "jspwiki.workDir", "/custom/dir" );
+        PropertyReader.setWorkDir( servletContext, properties );
+        workDir = properties.getProperty( "jspwiki.workDir" );
+        Assertions.assertEquals( "/custom/dir", workDir );
 
         // Test when the servlet's temporary directory is null, it should get set to system's temporary directory
-        Mockito.when(servletContext.getAttribute("javax.servlet.context.tempdir")).thenReturn(null);
-        properties.remove("jspwiki.workDir");
-        PropertyReader.setWorkDir(servletContext, properties);
-        workDir = properties.getProperty("jspwiki.workDir");
-        Assertions.assertEquals(System.getProperty("java.io.tmpdir"), workDir);
+        Mockito.when( servletContext.getAttribute( "javax.servlet.context.tempdir" ) ).thenReturn( null );
+        properties.remove( "jspwiki.workDir" );
+        PropertyReader.setWorkDir( servletContext, properties );
+        workDir = properties.getProperty( "jspwiki.workDir" );
+        Assertions.assertEquals( System.getProperty( "java.io.tmpdir" ), workDir );
     }
 
 }
