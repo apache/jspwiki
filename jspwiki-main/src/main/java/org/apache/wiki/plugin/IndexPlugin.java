@@ -78,7 +78,7 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
 		final Element indexDiv = getElement("div", "header");
 		masterDiv.addContent(indexDiv);
 		try {
-			final List<String> pages = listPages(context, include, exclude, ignorePrefix);
+			final List<String> pages = listPages(context, include, exclude, pattern);
 			char initialChar = ' ';
 			Element currentDiv = new Element("div", xmlns_XHTML);
 			for (final String name : pages) {
@@ -142,29 +142,28 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
 	/**
 	 * Grabs a list of all pages and filters them according to the include/exclude patterns.
 	 *
-	 * @param context      Provides engine and manager access. Non-null.
-	 * @param include      Regex to include pages. Null means 'include all'.
-	 * @param exclude      Regex to exclude pages. Null means 'exclude none'.
-	 * @param ignorePrefix Regex pattern specifying prefixes to ignore during sorting. Null indicates no prefixes are
-	 *                     ignored.
+	 * @param context Provides engine and manager access. Non-null.
+	 * @param include Regex to include pages. Null means 'include all'.
+	 * @param exclude Regex to exclude pages. Null means 'exclude none'.
+	 * @param pattern Regex pattern specifying prefixes to ignore during sorting. Null indicates no prefixes are
+	 *                ignored.
 	 * @return A list containing page names which matched the filters.
 	 * @throws ProviderException
 	 */
-	private List<String> listPages(final Context context, final String include, final String exclude, final String ignorePrefix) throws ProviderException {
+	private List<String> listPages(final Context context, final String include, final String exclude, final Pattern pattern) throws ProviderException {
 		final Pattern includePtrn = include != null ? Pattern.compile(include) : Pattern.compile(".*");
 		final Pattern excludePtrn = exclude != null ? Pattern.compile(exclude) : Pattern.compile("\\p{Cntrl}"); // there are no control characters in page names
 		final List<String> result = new ArrayList<>();
 		final Set<String> pages = context.getEngine().getManager(ReferenceManager.class).findCreated();
-		Pattern pattern = Pattern.compile("^(" + ignorePrefix + ")");
 		Map<String, String> pageNamePrefix = new HashMap<>();
 		for (final String pageName : pages) {
 			if (excludePtrn.matcher(pageName).matches()) {
 				continue;
 			}
 			if (includePtrn.matcher(pageName).matches()) {
-				if (ignorePrefix != null) {
+				String pageNameSortedAfter = pageName;
+				if (pattern != null) {
 					Matcher matcher = pattern.matcher(pageName);
-					String pageNameSortedAfter = pageName;
 					if (matcher.find()) {
 						pageNameSortedAfter = pageName.substring(matcher.end());
 						if (pageNameSortedAfter.isEmpty()) pageNameSortedAfter = pageName;
@@ -173,13 +172,13 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
 					}
 					pageNameSortedAfter = pageNameSortedAfter.substring(0, 1)
 							.toUpperCase() + pageNameSortedAfter.substring(1);
-					result.add(pageNameSortedAfter);
 				}
+				result.add(pageNameSortedAfter);
 			}
 		}
 		context.getEngine().getManager(PageManager.class).getPageSorter().sort(result);
 
-		if (ignorePrefix != null && ignorePrefix.isEmpty()) {
+		if (pattern == null) {
 			return result;
 		}
 		else {
