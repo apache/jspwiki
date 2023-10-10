@@ -20,6 +20,7 @@ package org.apache.wiki.workflow;
 
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.util.Synchronizer;
 
 import java.io.Serializable;
 import java.security.Principal;
@@ -158,12 +159,7 @@ public abstract class AbstractStep implements Step {
      */
     @Override
     public final Outcome getOutcome() {
-        lock.lock();
-        try {
-            return m_outcome;
-        } finally {
-            lock.unlock();
-        }
+       return Synchronizer.synchronize(lock, () -> m_outcome);
     }
 
     /**
@@ -195,8 +191,7 @@ public abstract class AbstractStep implements Step {
      */
     @Override
     public final void setOutcome(final Outcome outcome ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             // Is this an allowed Outcome?
             if( !m_successors.containsKey( outcome ) ) {
                 if( !Outcome.STEP_CONTINUE.equals( outcome ) && !Outcome.STEP_ABORT.equals( outcome ) ) {
@@ -213,9 +208,7 @@ public abstract class AbstractStep implements Step {
                 m_end = new Date( System.currentTimeMillis() );
             }
             m_outcome = outcome;
-        } finally {
-            lock.unlock();
-        }
+        });
 
     }
 
@@ -224,16 +217,13 @@ public abstract class AbstractStep implements Step {
      */
     @Override
     public final void start() throws WikiException {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             if( m_started ) {
                 throw new IllegalStateException( "Step already started." );
             }
             m_started = true;
             m_start = new Date( System.currentTimeMillis() );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -254,13 +244,10 @@ public abstract class AbstractStep implements Step {
      */
     @Override
     public final void setWorkflow(final int workflowId, final Map< String, Serializable > workflowContext ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             this.workflowId = workflowId;
             this.workflowContext = workflowContext;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     public int getWorkflowId() {
@@ -277,12 +264,9 @@ public abstract class AbstractStep implements Step {
      * @param message the error message
      */
     protected final void addError( final String message ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             m_errors.add( message );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
 }

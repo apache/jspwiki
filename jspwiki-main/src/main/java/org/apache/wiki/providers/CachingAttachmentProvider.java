@@ -33,6 +33,7 @@ import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.cache.CacheInfo;
 import org.apache.wiki.cache.CachingManager;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.IOException;
@@ -156,8 +157,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
             all = provider.listAllChanged( timestamp );
 
             // Make sure that all attachments are in the cache.
-            lock.lock();
-            try {
+            Synchronizer.synchronize(lock, () -> {
                 for( final Attachment att : all ) {
                     cachingManager.put( CachingManager.CACHE_ATTACHMENTS, att.getName(), att );
                 }
@@ -165,9 +165,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
                     allRequested = true;
                     attachments.set( all.size() );
                 }
-            } finally {
-                lock.unlock();
-            }
+            });
         } else {
             final List< String > keys = cachingManager.keys( CachingManager.CACHE_ATTACHMENTS );
             all = new ArrayList<>();
@@ -259,8 +257,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      */
     @Override
     public String getProviderInfo() {
-        lock.lock();
-        try {
+        return Synchronizer.synchronize(lock, () -> {
             final CacheInfo attCacheInfo = cachingManager.info( CachingManager.CACHE_ATTACHMENTS );
             final CacheInfo attColCacheInfo = cachingManager.info( CachingManager.CACHE_ATTACHMENTS_COLLECTION );
             return "Real provider: " + provider.getClass().getName() +
@@ -268,9 +265,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
                     ". Attachment cache misses: " + attCacheInfo.getMisses() +
                     ". Attachment collection cache hits: " + attColCacheInfo.getHits() +
                     ". Attachment collection cache misses: " + attColCacheInfo.getMisses();
-        } finally {
-            lock.unlock();
-        }
+        });
 
     }
 

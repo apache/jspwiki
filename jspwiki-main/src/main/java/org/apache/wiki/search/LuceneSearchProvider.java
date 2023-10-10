@@ -67,6 +67,7 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.File;
@@ -319,8 +320,7 @@ public class LuceneSearchProvider implements SearchProvider {
      * @param text The page text to index.
      */
     protected void updateLuceneIndex( final Page page, final String text ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             LOG.debug( "Updating Lucene index for page '{}'...", page.getName() );
             pageRemoved( page );
 
@@ -337,9 +337,7 @@ public class LuceneSearchProvider implements SearchProvider {
             }
 
             LOG.debug( "Done updating Lucene index for page '{}'.", page.getName() );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     private Analyzer getLuceneAnalyzer() throws ProviderException {
@@ -409,12 +407,9 @@ public class LuceneSearchProvider implements SearchProvider {
             field = new Field( LUCENE_PAGE_KEYWORDS, page.getAttribute( "keywords" ).toString(), TextField.TYPE_STORED );
             doc.add( field );
         }
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             writer.addDocument( doc );
-        } finally {
-            lock.unlock();
-        }
+        });
 
         return doc;
     }
@@ -424,8 +419,7 @@ public class LuceneSearchProvider implements SearchProvider {
      */
     @Override
     public void pageRemoved( final Page page ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             try( final Directory luceneDir = new NIOFSDirectory( new File( m_luceneDirectory ).toPath() );
                  final IndexWriter writer = getIndexWriter( luceneDir ) ) {
                 final Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
@@ -433,9 +427,7 @@ public class LuceneSearchProvider implements SearchProvider {
             } catch( final Exception e ) {
                 LOG.error( "Unable to remove page '{}' from Lucene index", page.getName(), e );
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     IndexWriter getIndexWriter( final Directory luceneDir ) throws IOException, ProviderException {
@@ -605,17 +597,14 @@ public class LuceneSearchProvider implements SearchProvider {
         @Override
         public void backgroundTask() {
             m_watchdog.enterState( "Emptying index queue", 60 );
-            lock.lock();
-            try {
+            Synchronizer.synchronize(lock, () -> {
                 while( m_provider.m_updates.isEmpty() ) {
                     final Object[] pair = m_provider.m_updates.remove( 0 );
                     final Page page = ( Page )pair[ 0 ];
                     final String text = ( String )pair[ 1 ];
                     m_provider.updateLuceneIndex( page, text );
                 }
-            } finally {
-                lock.unlock();
-            }
+            });
 
 
             m_watchdog.exitState();

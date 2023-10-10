@@ -24,6 +24,7 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import javax.security.auth.callback.Callback;
@@ -280,8 +281,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
      * @param cookieDir cookie directory
      */
     private static void scrub( final int days, final File cookieDir ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             LOG.debug( "Scrubbing cookieDir..." );
             final File[] files = cookieDir.listFiles();
             final long obsoleteDateLimit = System.currentTimeMillis() - ( ( long )days + 1 ) * 24 * 60 * 60 * 1000L;
@@ -300,9 +300,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
             }
 
             LOG.debug( "Removed {} obsolete cookie logins", deleteCount );
-        } finally {
-            lock.unlock();
-        }
+        });
 
     }
 

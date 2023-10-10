@@ -57,6 +57,7 @@ import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.PropertyReader;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
 import org.apache.wiki.workflow.WorkflowManager;
@@ -81,6 +82,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
@@ -158,12 +160,7 @@ public class WikiEngine implements Engine {
      *  @throws InternalWikiException in case something fails. This is a RuntimeException, so be prepared for it.
      */
     public static WikiEngine getInstance( final ServletConfig config ) throws InternalWikiException {
-        lock.lock();
-        try {
-            return getInstance( config.getServletContext(), null );
-        } finally {
-            lock.unlock();
-        }
+        return Synchronizer.synchronize(lock, () -> getInstance(config.getServletContext(), null));
     }
 
     /**
@@ -177,12 +174,7 @@ public class WikiEngine implements Engine {
      *  @return One well-behaving WikiEngine instance.
      */
     public static WikiEngine getInstance( final ServletConfig config, final Properties props ) {
-        lock.lock();
-        try {
-            return getInstance( config.getServletContext(), props );
-        } finally {
-            lock.unlock();
-        }
+        return Synchronizer.synchronize(lock, () -> getInstance( config.getServletContext(), props ));
     }
 
     /**
@@ -194,22 +186,21 @@ public class WikiEngine implements Engine {
      *  @throws InternalWikiException If the WikiEngine instantiation fails.
      */
     public static WikiEngine getInstance(final ServletContext context, Properties props) throws InternalWikiException {
-        lock.lock();
-        WikiEngine engine;
-        try {
-            engine = (WikiEngine) context.getAttribute(ATTR_WIKIENGINE);
+        final AtomicReference<Properties> propsRef = new AtomicReference<>(props);
+        return Synchronizer.synchronize(lock, () -> {
+            WikiEngine engine = (WikiEngine) context.getAttribute(ATTR_WIKIENGINE);
             if (engine == null) {
                 final String appid = Integer.toString(context.hashCode());
                 context.log(" Assigning new engine to " + appid);
                 try {
-                    if (props == null) {
-                        props = PropertyReader.loadWebAppProps(context);
+                    if (propsRef.get() == null) {
+                        propsRef.set(PropertyReader.loadWebAppProps(context));
                     }
 
                     engine = new WikiEngine(context, appid);
                     try {
                         //  Note: May be null, if JSPWiki has been deployed in a WAR file.
-                        engine.start(props);
+                        engine.start(propsRef.get());
                         LOG.info("Root path for this Wiki is: '{}'", engine.getRootPath());
                     } catch (final Exception e) {
                         final String msg = Release.APPNAME + ": Unable to load and setup properties from jspwiki.properties. " + e.getMessage();
@@ -224,10 +215,8 @@ public class WikiEngine implements Engine {
                     throw new InternalWikiException("No wiki engine, check logs.", e);
                 }
             }
-        } finally {
-            lock.unlock();
-        }
-        return engine;
+            return engine;
+        });
     }
 
     /**
@@ -971,12 +960,9 @@ public class WikiEngine implements Engine {
     /** {@inheritDoc} */
     @Override
     public final void addWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             WikiEventManager.addWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -984,12 +970,9 @@ public class WikiEngine implements Engine {
      */
     @Override
     public final void removeWikiEventListener(final WikiEventListener listener) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             WikiEventManager.removeWikiEventListener(this, listener);
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

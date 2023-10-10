@@ -20,6 +20,7 @@ package org.apache.wiki.auth.acl;
 
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.event.WikiEventManager;
+import org.apache.wiki.util.Synchronizer;
 
 import java.io.Serializable;
 import java.security.Permission;
@@ -68,17 +69,13 @@ public class AclEntryImpl implements AclEntry, Serializable {
      */
     @Override
     public boolean addPermission(final Permission permission) {
-        lock.lock();
-        try {
+       return Synchronizer.synchronize(lock, () -> {
             if (permission instanceof PagePermission && findPermission(permission) == null) {
                 m_permissions.add(permission);
                 return true;
             }
-
             return false;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -100,12 +97,7 @@ public class AclEntryImpl implements AclEntry, Serializable {
      */
     @Override
     public Principal getPrincipal() {
-        lock.lock();
-        try {
-            return m_principal;
-        } finally {
-            lock.unlock();
-        }
+        return Synchronizer.synchronize(lock, () -> m_principal);
     }
 
     /**
@@ -126,18 +118,14 @@ public class AclEntryImpl implements AclEntry, Serializable {
      */
     @Override
     public boolean removePermission(final Permission permission ) {
-        lock.lock();
-        try {
+        return Synchronizer.synchronize(lock, () -> {
             final Permission p = findPermission(permission);
             if (p != null) {
                 m_permissions.remove(p);
                 return true;
             }
-
             return false;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -150,16 +138,13 @@ public class AclEntryImpl implements AclEntry, Serializable {
      */
     @Override
     public boolean setPrincipal(final Principal user) {
-        lock.lock();
-        try {
+        return Synchronizer.synchronize(lock, () -> {
             if (m_principal != null || user == null) {
                 return false;
             }
             m_principal = user;
             return true;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

@@ -35,6 +35,7 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.IOException;
@@ -235,8 +236,7 @@ public class CachingProvider implements PageProvider {
      */
     @Override
     public void putPageText( final Page page, final String text ) throws ProviderException {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             provider.putPageText( page, text );
             page.setLastModified( new Date() );
 
@@ -246,9 +246,7 @@ public class CachingProvider implements PageProvider {
             cachingManager.remove( CachingManager.CACHE_PAGES_HISTORY, page.getName() );
 
             getPageInfoFromCache( page.getName() );
-        } finally {
-            lock.unlock();
-        }
+        });
         pages.incrementAndGet();
     }
 
@@ -261,15 +259,12 @@ public class CachingProvider implements PageProvider {
         if ( !allRequested ) {
             all = provider.getAllPages();
             // Make sure that all pages are in the cache.
-            lock.lock();
-            try {
+            Synchronizer.synchronize(lock, () -> {
                 for( final Page p : all ) {
                     cachingManager.put( CachingManager.CACHE_PAGES,  p.getName(), p );
                 }
                 allRequested = true;
-            } finally {
-                lock.unlock();
-            }
+            });
             pages.set( all.size() );
         } else {
             final List< String > keys = cachingManager.keys( CachingManager.CACHE_PAGES );
@@ -371,8 +366,7 @@ public class CachingProvider implements PageProvider {
      */
     @Override
     public String getProviderInfo() {
-        lock.lock();
-        try {
+        return Synchronizer.synchronize(lock, () -> {
             final CacheInfo pageCacheInfo = cachingManager.info( CachingManager.CACHE_PAGES );
             final CacheInfo pageHistoryCacheInfo = cachingManager.info( CachingManager.CACHE_PAGES_HISTORY );
             return "Real provider: " + provider.getClass().getName()+
@@ -380,9 +374,7 @@ public class CachingProvider implements PageProvider {
                     ". Page cache misses: " + pageCacheInfo.getMisses() +
                     ". History cache hits: " + pageHistoryCacheInfo.getHits() +
                     ". History cache misses: " + pageHistoryCacheInfo.getMisses();
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -391,8 +383,7 @@ public class CachingProvider implements PageProvider {
     @Override
     public void deleteVersion( final String pageName, final int version ) throws ProviderException {
         //  Luckily, this is such a rare operation it is okay to synchronize against the whole thing.
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, (Synchronizer.ThrowingRunnable<ProviderException>) () -> {
             final Page cached = getPageInfoFromCache( pageName );
             final int latestcached = ( cached != null ) ? cached.getVersion() : Integer.MIN_VALUE;
 
@@ -404,9 +395,7 @@ public class CachingProvider implements PageProvider {
 
             provider.deleteVersion( pageName, version );
             cachingManager.remove( CachingManager.CACHE_PAGES_HISTORY, pageName );
-        } finally {
-            lock.unlock();
-        }
+        });
         if( version == PageProvider.LATEST_VERSION ) {
             pages.decrementAndGet();
         }
@@ -418,15 +407,12 @@ public class CachingProvider implements PageProvider {
     @Override
     public void deletePage( final String pageName ) throws ProviderException {
         //  See note in deleteVersion().
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             cachingManager.put( CachingManager.CACHE_PAGES, pageName, null );
             cachingManager.put( CachingManager.CACHE_PAGES_TEXT, pageName, null );
             cachingManager.put( CachingManager.CACHE_PAGES_HISTORY, pageName, null );
             provider.deletePage( pageName );
-        } finally {
-            lock.unlock();
-        }
+        });
         pages.decrementAndGet();
     }
 
@@ -436,8 +422,7 @@ public class CachingProvider implements PageProvider {
     @Override
     public void movePage( final String from, final String to ) throws ProviderException {
         provider.movePage( from, to );
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             // Clear any cached version of the old page and new page
             cachingManager.remove( CachingManager.CACHE_PAGES, from );
             cachingManager.remove( CachingManager.CACHE_PAGES_TEXT, from );
@@ -446,9 +431,7 @@ public class CachingProvider implements PageProvider {
             cachingManager.remove( CachingManager.CACHE_PAGES, to );
             cachingManager.remove( CachingManager.CACHE_PAGES_TEXT, to );
             cachingManager.remove( CachingManager.CACHE_PAGES_HISTORY, to );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

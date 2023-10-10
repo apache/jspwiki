@@ -78,16 +78,13 @@ public class CommentedProperties extends Properties
     @Override
     public void load(final InputStream inStream ) throws IOException
     {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             // Load the file itself into a string
             m_propertyString = FileUtil.readContents( inStream, StandardCharsets.ISO_8859_1.name() );
 
             // Now load it into the properties object as normal
             super.load( new ByteArrayInputStream( m_propertyString.getBytes(StandardCharsets.ISO_8859_1) ) );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -99,15 +96,12 @@ public class CommentedProperties extends Properties
     @Override
     public void load(final Reader in ) throws IOException
     {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             m_propertyString = FileUtil.readContents( in );
 
             // Now load it into the properties object as normal
             super.load( new ByteArrayInputStream( m_propertyString.getBytes(StandardCharsets.ISO_8859_1) ) );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -116,12 +110,7 @@ public class CommentedProperties extends Properties
     @Override
     public Object setProperty(final String key, final String value )
     {
-        lock.lock();
-        try {
-            return put(key, value);
-        } finally {
-            lock.unlock();
-        }
+        return Synchronizer.synchronize(lock, () -> put(key, value));
     }
 
     /**
@@ -130,14 +119,11 @@ public class CommentedProperties extends Properties
     @Override
     public void store(final OutputStream out, final String comments ) throws IOException
     {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             final byte[] bytes = m_propertyString.getBytes( StandardCharsets.ISO_8859_1 );
             FileUtil.copyContents( new ByteArrayInputStream( bytes ), out );
             out.flush();
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -146,16 +132,13 @@ public class CommentedProperties extends Properties
     @Override
     public Object put(final Object arg0, final Object arg1 )
     {
-        lock.lock();
-        try {
+       return Synchronizer.synchronize(lock, () -> {
             // Write the property to the stored string
             writeProperty( arg0, arg1 );
 
             // Return the result of from the superclass properties object
             return super.put(arg0, arg1);
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -164,8 +147,7 @@ public class CommentedProperties extends Properties
     @Override
     public void putAll(final Map< ? , ? > arg0 )
     {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             // Shove all of the entries into the property string
             for (final Entry<?, ?> value : arg0.entrySet()) {
                 @SuppressWarnings("unchecked") final Entry<Object, Object> entry = (Entry<Object, Object>) value;
@@ -174,9 +156,7 @@ public class CommentedProperties extends Properties
 
             // Call the superclass method
             super.putAll(arg0);
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -185,16 +165,13 @@ public class CommentedProperties extends Properties
     @Override
     public Object remove(final Object key )
     {
-        lock.lock();
-        try {
+        return  Synchronizer.synchronize(lock, () -> {
             // Remove from the property string
             deleteProperty( key );
 
             // Call the superclass method
             return super.remove(key);
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -203,12 +180,7 @@ public class CommentedProperties extends Properties
     @Override
     public String toString()
     {
-        lock.lock();
-        try {
-            return m_propertyString;
-        } finally {
-            lock.unlock();
-        }
+       return Synchronizer.synchronize(lock, () -> m_propertyString);
 
     }
 

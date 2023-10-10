@@ -44,6 +44,7 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.freshcookies.security.policy.LocalPolicy;
 
 import javax.servlet.http.HttpServletResponse;
@@ -386,23 +387,17 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
     /** {@inheritDoc} */
     @Override
     public void addWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             WikiEventManager.addWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /** {@inheritDoc} */
     @Override
     public void removeWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             WikiEventManager.removeWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
 }

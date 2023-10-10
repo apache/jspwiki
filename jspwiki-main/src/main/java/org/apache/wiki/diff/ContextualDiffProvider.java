@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.suigeneris.jrcs.diff.Diff;
 import org.suigeneris.jrcs.diff.DifferentiationFailedException;
@@ -151,8 +152,7 @@ public class ContextualDiffProvider implements DiffProvider {
      */
     @Override
     public String makeDiffHtml( final Context ctx, final String wikiOld, final String wikiNew ) {
-        lock.lock();
-        try {
+        return Synchronizer.synchronize(lock, () -> {
             //
             // Sequencing handles lineterminator to <br /> and every-other consequtive space to a &nbsp;
             //
@@ -181,9 +181,7 @@ public class ContextualDiffProvider implements DiffProvider {
             cm.shutdown();
             sb.append( DIFF_END );
             return sb.toString();
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

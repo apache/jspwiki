@@ -27,6 +27,7 @@ import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 import org.apache.wiki.ui.progress.ProgressItem;
 import org.apache.wiki.ui.progress.ProgressManager;
+import org.apache.wiki.util.Synchronizer;
 
 import javax.management.NotCompliantMBeanException;
 import java.util.Collection;
@@ -87,8 +88,7 @@ public class SearchManagerBean extends SimpleAdminBean {
      *  This method prevents itself from being called twice.
      */
     public void reload() {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             if( m_updater == null ) {
                 m_updater = new WikiBackgroundThread( m_engine, 0 ) {
 
@@ -132,9 +132,7 @@ public class SearchManagerBean extends SimpleAdminBean {
 
                 m_updater.start();
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     @Override

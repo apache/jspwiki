@@ -34,6 +34,7 @@ import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
 
@@ -213,23 +214,15 @@ public class DefaultRSSGenerator implements RSSGenerator {
     /** {@inheritDoc} */
     @Override
     public boolean isEnabled() {
-        lock.lock();
-        try {
-            return m_enabled;
-        } finally {
-            lock.unlock();
-        }
+      return  Synchronizer.synchronize(lock, () -> m_enabled);
     }
 
     /** {@inheritDoc} */
     @Override
     public void setEnabled( final boolean enabled ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             m_enabled = enabled;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /** {@inheritDoc} */

@@ -22,6 +22,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
+import org.apache.wiki.util.Synchronizer;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -247,8 +248,7 @@ public class Workflow implements Serializable {
      * If the Workflow had been previously aborted, this method throws an IllegalStateException.
      */
     public final void abort( final Context context ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             // Check corner cases: previous abort or completion
             if( m_state == ABORTED ) {
                 throw new IllegalStateException( "The workflow has already been aborted." );
@@ -267,9 +267,7 @@ public class Workflow implements Serializable {
             m_state = ABORTED;
             WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.ABORTED );
             cleanup();
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -294,15 +292,12 @@ public class Workflow implements Serializable {
      * @return the current actor
      */
     public final Principal getCurrentActor() {
-        lock.lock();
-        try {
+       return Synchronizer.synchronize(lock, () -> {
             if( m_currentStep == null ) {
                 return null;
             }
             return m_currentStep.getActor();
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -368,12 +363,7 @@ public class Workflow implements Serializable {
      */
     public final int getId()
     {
-        lock.lock();
-        try {
-            return m_id;
-        } finally {
-            lock.unlock();
-        }
+       return Synchronizer.synchronize(lock, () -> m_id);
     }
 
     /**
@@ -463,13 +453,10 @@ public class Workflow implements Serializable {
      * @return <code>true</code> if the workflow has been started but has no more steps to perform; <code>false</code> if not.
      */
     public final boolean isCompleted() {
-        lock.lock();
-        try {
+        return Synchronizer.synchronize(lock, () -> {
             // If current step is null, then we're done
             return m_started && m_state == COMPLETED;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -502,8 +489,7 @@ public class Workflow implements Serializable {
      * @throws WikiException if the current task's {@link Task#execute( Context )} method throws an exception
      */
     public final void restart( final Context context ) throws WikiException {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             if( m_state != WAITING ) {
                 throw new IllegalStateException( "Workflow is not paused; cannot restart." );
             }
@@ -518,9 +504,7 @@ public class Workflow implements Serializable {
                 abort( context );
                 throw e;
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -545,12 +529,9 @@ public class Workflow implements Serializable {
      */
     public final void setFirstStep( final Step step )
     {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             m_firstStep = step;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -560,12 +541,9 @@ public class Workflow implements Serializable {
      */
     public final void setId( final int id )
     {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             this.m_id = id;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -577,8 +555,7 @@ public class Workflow implements Serializable {
      * @throws WikiException if the current Step's {@link Step#start()} method throws an exception of any kind
      */
     public final void start( final Context context ) throws WikiException {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             if( m_state == ABORTED ) {
                 throw new IllegalStateException( "Workflow cannot be started; it has already been aborted." );
             }
@@ -601,9 +578,7 @@ public class Workflow implements Serializable {
                 abort( context );
                 throw e;
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -611,16 +586,13 @@ public class Workflow implements Serializable {
      * IllegalStateException. Once paused, the Workflow can be un-paused by executing the {@link #restart(Context)} method.
      */
     public final void waitstate() {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             if ( m_state != RUNNING ) {
                 throw new IllegalStateException( "Workflow is not running; cannot pause." );
             }
             m_state = WAITING;
             WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.WAITING );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -636,16 +608,13 @@ public class Workflow implements Serializable {
      * calls the {@link #cleanup()} method to flush retained objects. This method will no-op if it has previously been called.
      */
     protected final void complete() {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             if( !isCompleted() ) {
                 m_state = COMPLETED;
                 WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.COMPLETED );
                 cleanup();
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

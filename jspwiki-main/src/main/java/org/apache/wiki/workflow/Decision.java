@@ -22,6 +22,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
+import org.apache.wiki.util.Synchronizer;
 
 import java.io.Serializable;
 import java.security.Principal;
@@ -198,16 +199,13 @@ public abstract class Decision extends AbstractStep {
      * @param actor the actor to reassign the Decision to
      */
     public final void reassign( final Principal actor ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             if( isReassignable() ) {
                 m_actor = actor;
             } else {
                 throw new IllegalArgumentException( "Decision cannot be reassigned." );
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

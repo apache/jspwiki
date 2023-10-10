@@ -40,6 +40,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.Synchronizer;
 
 import java.security.Principal;
 import java.util.Arrays;
@@ -84,10 +85,22 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
+    private final ReentrantLock initializeLock;
+    private final ReentrantLock removeGroupLock;
+    private final ReentrantLock setGroupLock;
+    private final ReentrantLock setGroupLockPut;
+    private final ReentrantLock setGroupLockCatch;
+    private final ReentrantLock addWikiEventListenerLock;
+    private final ReentrantLock removeWikiEventListenerLock;
 
     public DefaultGroupManager() {
-        lock = new ReentrantLock();
+        initializeLock = new ReentrantLock();
+        removeGroupLock = new ReentrantLock();
+        setGroupLock = new ReentrantLock();
+        setGroupLockPut = new ReentrantLock();
+        setGroupLockCatch = new ReentrantLock();
+        addWikiEventListenerLock = new ReentrantLock();
+        removeWikiEventListenerLock = new ReentrantLock();
     }
 
     /** {@inheritDoc} */
@@ -167,16 +180,13 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
         // Load all groups from the database into the cache
         final Group[] groups = m_groupDatabase.groups();
-        lock.lock();
-        try {
+        Synchronizer.synchronize(initializeLock, () -> {
             for( final Group group : groups ) {
                 // Add new group to cache; fire GROUP_ADD event
                 m_groups.put( group.getPrincipal(), group );
                 fireEvent( WikiSecurityEvent.GROUP_ADD, group );
             }
-        } finally {
-            lock.unlock();
-        }
+        });
 
         // Make the GroupManager listen for WikiEvents (WikiSecurityEvents for changed user profiles)
         engine.getManager( UserManager.class ).addWikiEventListener( this );
@@ -271,12 +281,9 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
         // Delete the group
         // TODO: need rollback procedure
-        lock.lock();
-        try {
+        Synchronizer.synchronize(removeGroupLock, () -> {
             m_groups.remove( group.getPrincipal() );
-        } finally {
-            lock.unlock();
-        }
+        });
         m_groupDatabase.delete( group );
         fireEvent( WikiSecurityEvent.GROUP_REMOVE, group );
     }
@@ -290,12 +297,9 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         final Group oldGroup = m_groups.get( group.getPrincipal() );
         if( oldGroup != null ) {
             fireEvent( WikiSecurityEvent.GROUP_REMOVE, oldGroup );
-            lock.lock();
-            try {
+            Synchronizer.synchronize(setGroupLock, () -> {
                 m_groups.remove( oldGroup.getPrincipal() );
-            } finally {
-                lock.unlock();
-            }
+            });
         }
 
         // Copy existing modifier info & timestamps
@@ -307,12 +311,9 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         }
 
         // Add new group to cache; announce GROUP_ADD event
-        lock.lock();
-        try {
+        Synchronizer.synchronize(setGroupLockPut, () -> {
             m_groups.put( group.getPrincipal(), group );
-        } finally {
-            lock.unlock();
-        }
+        });
         fireEvent( WikiSecurityEvent.GROUP_ADD, group );
 
         // Save the group to back-end database; if it fails, roll back to previous state. Note that the back-end
@@ -327,12 +328,9 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
                 // Restore previous version, re-throw...
                 fireEvent( WikiSecurityEvent.GROUP_REMOVE, group );
                 fireEvent( WikiSecurityEvent.GROUP_ADD, oldGroup );
-                lock.lock();
-                try {
+                Synchronizer.synchronize(setGroupLockCatch, () -> {
                     m_groups.put( oldGroup.getPrincipal(), oldGroup );
-                } finally {
-                    lock.unlock();
-                }
+                });
                 throw new WikiSecurityException( e.getMessage() + " (rolled back to previous version).", e );
             }
             // Re-throw security exception
@@ -398,23 +396,17 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
     /** {@inheritDoc} */
     @Override
     public void addWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(addWikiEventListenerLock, () -> {
             WikiEventManager.addWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /** {@inheritDoc} */
     @Override
     public void removeWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(removeWikiEventListenerLock, () -> {
             WikiEventManager.removeWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /** {@inheritDoc} */

@@ -23,6 +23,7 @@ import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
+import org.apache.wiki.util.Synchronizer;
 
 import java.io.Serializable;
 import java.security.Principal;
@@ -66,13 +67,10 @@ public class DecisionQueue implements Serializable {
      * @param decision the Decision to add
      */
     protected void add( final Decision decision ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             m_queue.addLast( decision );
             decision.setId( next.getAndIncrement() );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -91,12 +89,9 @@ public class DecisionQueue implements Serializable {
      * @param decision the decision to remove
      */
     protected void remove( final Decision decision ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             m_queue.remove( decision );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -155,8 +150,7 @@ public class DecisionQueue implements Serializable {
      * @throws WikiException never
      */
     public void reassign( final Decision decision, final Principal owner ) throws WikiException {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             if( decision.isReassignable() ) {
                 decision.reassign( owner );
 
@@ -164,9 +158,7 @@ public class DecisionQueue implements Serializable {
                 return;
             }
             throw new IllegalStateException( "Reassignments not allowed for this decision." );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
 }

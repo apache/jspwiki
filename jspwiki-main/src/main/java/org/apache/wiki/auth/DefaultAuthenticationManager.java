@@ -37,6 +37,7 @@ import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.TimedCounterList;
 
@@ -369,12 +370,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
      */
     @Override
     public void addWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             WikiEventManager.addWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -382,12 +380,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
      */
     @Override
     public void removeWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             WikiEventManager.removeWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

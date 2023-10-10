@@ -46,6 +46,7 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.suigeneris.jrcs.diff.Diff;
 import org.suigeneris.jrcs.diff.DifferentiationFailedException;
@@ -452,8 +453,7 @@ public class SpamFilter extends BasePageFilter {
      */
     private void checkSinglePageChange(final Context context, final Change change )
     		throws RedirectException {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             final HttpServletRequest req = context.getHttpRequest();
 
             if( req != null ) {
@@ -534,9 +534,7 @@ public class SpamFilter extends BasePageFilter {
 
                 m_lastModifications.add( new Host( addr, change ) );
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
 
@@ -651,8 +649,7 @@ public class SpamFilter extends BasePageFilter {
 
     /** Goes through the ban list and cleans away any host which has expired from it. */
     private void cleanBanList() {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             final long now = System.currentTimeMillis();
             for( final Iterator< Host > i = m_temporaryBanList.iterator(); i.hasNext(); ) {
                 final Host host = i.next();
@@ -662,9 +659,7 @@ public class SpamFilter extends BasePageFilter {
                     i.remove();
                 }
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

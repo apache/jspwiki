@@ -27,6 +27,7 @@ import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.comparators.PrincipalComparator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +71,12 @@ public class SessionMonitor implements HttpSessionListener {
      *
      * @see ReentrantLock
      */
-    private final ReentrantLock lock;
+    private final ReentrantLock createGuestSessionForLock;
+    private final ReentrantLock removeLock;
+    private final ReentrantLock userPrincipalsLock;
+    private final ReentrantLock addWikiEventListenerLock;
+    private final ReentrantLock removeWikiEventListenerLock;
+
 
     /**
      * Returns the instance of the SessionMonitor for this wiki. Only one SessionMonitor exists per Engine.
@@ -93,7 +99,11 @@ public class SessionMonitor implements HttpSessionListener {
 
     /** Construct the SessionListener */
     public SessionMonitor() {
-        lock = new ReentrantLock();
+        createGuestSessionForLock = new ReentrantLock();
+        removeLock = new ReentrantLock();
+        userPrincipalsLock = new ReentrantLock();
+        addWikiEventListenerLock = new ReentrantLock();
+        removeWikiEventListenerLock = new ReentrantLock();
     }
 
     private SessionMonitor( final Engine engine ) {
@@ -185,12 +195,9 @@ public class SessionMonitor implements HttpSessionListener {
     private Session createGuestSessionFor( final String sessionId ) {
         LOG.debug( "Session for session ID={}... not found. Creating guestSession()", sessionId );
         final Session wikiSession = Wiki.session().guest( m_engine );
-        lock.lock();
-        try {
-            m_sessions.put( sessionId, wikiSession );
-        } finally {
-            lock.unlock();
-        }
+        Synchronizer.synchronize(createGuestSessionForLock, () -> {
+            m_sessions.put(sessionId, wikiSession);
+        });
         return wikiSession;
     }
 
@@ -215,12 +222,9 @@ public class SessionMonitor implements HttpSessionListener {
         if( session == null ) {
             throw new IllegalArgumentException( "Session cannot be null." );
         }
-        lock.lock();
-        try {
+        Synchronizer.synchronize(removeLock, () -> {
             m_sessions.remove( session.getId() );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -242,15 +246,11 @@ public class SessionMonitor implements HttpSessionListener {
      * @return the array of user principals
      */
     public final Principal[] userPrincipals() {
-        final Collection<Principal> principals;
-        lock.lock();
-        try {
-            principals = m_sessions.values().stream().map(Session::getUserPrincipal).collect(Collectors.toList());
-        } finally {
-            lock.unlock();
-        }
-        final Principal[] p = principals.toArray( new Principal[0] );
-        Arrays.sort( p, m_comparator );
+        final Collection<Principal> principals = Synchronizer.synchronize(userPrincipalsLock, () ->
+                m_sessions.values().stream().map(Session::getUserPrincipal).collect(Collectors.toList()));
+
+        final Principal[] p = principals.toArray(new Principal[0]);
+        Arrays.sort(p, m_comparator);
         return p;
     }
 
@@ -261,12 +261,9 @@ public class SessionMonitor implements HttpSessionListener {
      * @since 2.4.75
      */
     public final void addWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(addWikiEventListenerLock, () -> {
             WikiEventManager.addWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -276,12 +273,9 @@ public class SessionMonitor implements HttpSessionListener {
      * @since 2.4.75
      */
     public final void removeWikiEventListener(final WikiEventListener listener) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(removeWikiEventListenerLock, () -> {
             WikiEventManager.removeWikiEventListener(this, listener);
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

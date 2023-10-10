@@ -29,6 +29,7 @@ import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.Synchronizer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -42,6 +43,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -283,26 +286,29 @@ public class VersioningFileProvider extends AbstractFileProvider {
      *  {@inheritDoc}
      */
     @Override
-    public String getPageText( final String page, int version ) throws ProviderException {
-        lock.lock();
-        try {
-            final File dir = findOldPageDir( page );
+    public String getPageText(final String page, int version) throws ProviderException {
+        final AtomicReference<String> result = new AtomicReference<>();
+        final int finalVersion = version; // Make it effectively final for use in lambda
 
-            version = realVersion( page, version );
-            if( version == -1 ) {
+        Synchronizer.synchronize(lock, () -> {
+            final File dir = findOldPageDir(page);
+            int realVersion = realVersion(page, finalVersion);
+
+            if (realVersion == -1) {
                 // We can let the FileSystemProvider take care of these requests.
-                return super.getPageText( page, PageProvider.LATEST_VERSION );
+                result.set(super.getPageText(page, PageProvider.LATEST_VERSION));
+                return;
             }
 
-            final File pageFile = new File( dir, ""+version+FILE_EXT );
-            if( !pageFile.exists() ) {
-                throw new NoSuchVersionException("Version "+version+"does not exist.");
+            final File pageFile = new File(dir, "" + realVersion + FILE_EXT);
+            if (!pageFile.exists()) {
+                throw new NoSuchVersionException("Version " + realVersion + " does not exist.");
             }
 
-            return readFile( pageFile );
-        } finally {
-            lock.unlock();
-        }
+            result.set(readFile(pageFile));
+        });
+
+        return result.get();
     }
 
 
@@ -346,8 +352,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
      */
     @Override
     public void putPageText( final Page page, final String text ) throws ProviderException {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             // This is a bit complicated.  We'll first need to copy the old file to be the newest file.
             final int  latest  = findLatestVersion( page.getName() );
             final File pageDir = findOldPageDir( page.getName() );
@@ -417,9 +422,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 LOG.error( "Saving failed", e );
                 throw new ProviderException("Could not save page text: "+e.getMessage());
             }
-        } finally {
-            lock.unlock();
-        }
+        });
 
     }
 

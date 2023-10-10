@@ -47,6 +47,7 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.tasks.TasksManager;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionRequiredException;
@@ -423,12 +424,9 @@ public class DefaultUserManager implements UserManager {
      * @param listener the event listener
      */
     @Override public void addWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             WikiEventManager.addWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -437,12 +435,9 @@ public class DefaultUserManager implements UserManager {
      * @param listener the event listener
      */
     @Override public void removeWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             WikiEventManager.removeWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

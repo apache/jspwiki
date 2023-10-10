@@ -31,6 +31,7 @@ import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.*;
@@ -81,7 +82,6 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
         m_approvers = new ConcurrentHashMap<>();
         m_queue = new DecisionQueue();
         WikiEventEmitter.attach( this );
-      //  this.lock = new ReentrantLock();
     }
 
     /**
@@ -153,8 +153,7 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
      */
     @SuppressWarnings( "unchecked" )
     long unserializeFromDisk( final File f ) {
-        lock.lock();
-        try {
+        return Synchronizer.synchronize(lock, () -> {
             long saved = 0L;
             final StopWatch sw = new StopWatch();
             sw.start();
@@ -176,17 +175,14 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
             sw.stop();
 
             return saved;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
      *  Serializes workflows and decisionqueue to disk.  The format is private, don't touch it.
      */
     void serializeToDisk( final File f ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
                 final StopWatch sw = new StopWatch();
                 sw.start();
@@ -203,9 +199,7 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
             } catch( final IOException ioe ) {
                 LOG.error( "Unable to serialize!", ioe );
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

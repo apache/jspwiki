@@ -19,6 +19,7 @@
 package org.apache.wiki.auth.acl;
 
 import org.apache.wiki.api.core.AclEntry;
+import org.apache.wiki.util.Synchronizer;
 
 import java.io.Serializable;
 import java.security.Permission;
@@ -99,8 +100,7 @@ public class AclImpl implements Acl, Serializable {
     /** {@inheritDoc} */
     @Override
     public boolean addEntry( final AclEntry entry ) {
-        lock.lock();
-        try {
+        return Synchronizer.synchronize(lock, () -> {
             if( entry.getPrincipal() == null ) {
                 throw new IllegalArgumentException( "Entry principal cannot be null" );
             }
@@ -112,20 +112,13 @@ public class AclImpl implements Acl, Serializable {
             m_entries.add( entry );
 
             return true;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /** {@inheritDoc} */
     @Override
     public boolean removeEntry( final AclEntry entry ) {
-        lock.lock();
-        try {
-            return m_entries.remove( entry );
-        } finally {
-            lock.unlock();
-        }
+        return Synchronizer.synchronize(lock, () -> m_entries.remove( entry ));
     }
 
     /** {@inheritDoc} */

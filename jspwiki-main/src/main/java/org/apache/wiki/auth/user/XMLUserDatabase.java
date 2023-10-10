@@ -25,6 +25,7 @@ import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.util.Serializer;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -52,6 +53,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -107,30 +110,43 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     }
 
     /** {@inheritDoc} */
-    @Override
-    public void deleteByLoginName( final String loginName ) throws WikiSecurityException {
-        lock.lock();
-        try {
-            if( c_dom == null ) {
-                throw new WikiSecurityException( "FATAL: database does not exist" );
-            }
+    public void deleteByLoginName(final String loginName) throws WikiSecurityException {
+        final AtomicBoolean userDeleted = new AtomicBoolean(false);
+        final AtomicReference<WikiSecurityException> exceptionRef = new AtomicReference<>();
 
-            final NodeList users = c_dom.getDocumentElement().getElementsByTagName( USER_TAG );
-            for( int i = 0; i < users.getLength(); i++ ) {
-                final Element user = ( Element )users.item( i );
-                if( user.getAttribute( LOGIN_NAME ).equals( loginName ) ) {
-                    c_dom.getDocumentElement().removeChild( user );
-
-                    // Commit to disk
-                    saveDOM();
-                    return;
+        Synchronizer.synchronize(lock, () -> {
+            try {
+                if (c_dom == null) {
+                    throw new WikiSecurityException("FATAL: database does not exist");
                 }
+
+                final NodeList users = c_dom.getDocumentElement().getElementsByTagName(USER_TAG);
+                for (int i = 0; i < users.getLength(); i++) {
+                    final Element user = (Element) users.item(i);
+                    if (user.getAttribute(LOGIN_NAME).equals(loginName)) {
+                        c_dom.getDocumentElement().removeChild(user);
+
+                        // Commit to disk
+                        saveDOM();
+                        userDeleted.set(true);
+                        return;
+                    }
+                }
+            } catch (WikiSecurityException e) {
+                exceptionRef.set(e);
             }
-            throw new NoSuchPrincipalException( "Not in database: " + loginName );
-        } finally {
-            lock.unlock();
+        });
+
+        if (exceptionRef.get() != null) {
+            throw exceptionRef.get();
+        }
+
+        if (!userDeleted.get()) {
+            throw new NoSuchPrincipalException("Not in database: " + loginName);
         }
     }
+
+
 
     /** {@inheritDoc} */
     @Override
@@ -343,55 +359,51 @@ public class XMLUserDatabase extends AbstractUserDatabase {
      */
     @Override
     public void rename( final String loginName, final String newName) throws DuplicateUserException, WikiSecurityException {
-        lock.lock();
-        try {
-            if( c_dom == null ) {
-                LOG.fatal( "Could not rename profile '" + loginName + "'; database does not exist" );
-                throw new IllegalStateException( "FATAL: database does not exist" );
+        Synchronizer.synchronize(lock, () -> {
+            if (c_dom == null) {
+                LOG.fatal("Could not rename profile '" + loginName + "'; database does not exist");
+                throw new IllegalStateException("FATAL: database does not exist");
             }
             checkForRefresh();
 
             // Get the existing user; if not found, throws NoSuchPrincipalException
-            final UserProfile profile = findByLoginName( loginName );
+            final UserProfile profile = findByLoginName(loginName);
 
             // Get user with the proposed name; if found, it's a collision
             try {
-                final UserProfile otherProfile = findByLoginName( newName );
-                if( otherProfile != null ) {
-                    throw new DuplicateUserException( "security.error.cannot.rename", newName );
+                final UserProfile otherProfile = findByLoginName(newName);
+                if (otherProfile != null) {
+                    throw new DuplicateUserException("security.error.cannot.rename", newName);
                 }
-            } catch( final NoSuchPrincipalException e ) {
+            } catch (final NoSuchPrincipalException e) {
                 // Good! That means it's safe to save using the new name
             }
 
             // Find the user with the old login id attribute, and change it
-            final NodeList users = c_dom.getElementsByTagName( USER_TAG );
-            for( int i = 0; i < users.getLength(); i++ ) {
-                final Element user = ( Element )users.item( i );
-                if( user.getAttribute( LOGIN_NAME ).equals( loginName ) ) {
-                    final DateFormat c_format = new SimpleDateFormat( DATE_FORMAT );
-                    final Date modDate = new Date( System.currentTimeMillis() );
-                    setAttribute( user, LOGIN_NAME, newName );
-                    setAttribute( user, LAST_MODIFIED, c_format.format( modDate ) );
-                    profile.setLoginName( newName );
-                    profile.setLastModified( modDate );
+            final NodeList users = c_dom.getElementsByTagName(USER_TAG);
+            for (int i = 0; i < users.getLength(); i++) {
+                final Element user = (Element) users.item(i);
+                if (user.getAttribute(LOGIN_NAME).equals(loginName)) {
+                    final DateFormat c_format = new SimpleDateFormat(DATE_FORMAT);
+                    final Date modDate = new Date(System.currentTimeMillis());
+                    setAttribute(user, LOGIN_NAME, newName);
+                    setAttribute(user, LAST_MODIFIED, c_format.format(modDate));
+                    profile.setLoginName(newName);
+                    profile.setLastModified(modDate);
                     break;
                 }
             }
 
             // Commit to disk
             saveDOM();
-        } finally {
-            lock.unlock();
-        }
+        });
 
     }
 
     /** {@inheritDoc} */
     @Override
     public void save( final UserProfile profile ) throws WikiSecurityException {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             if ( c_dom == null ) {
                 LOG.fatal( "Could not save profile " + profile + " database does not exist" );
                 throw new IllegalStateException( "FATAL: database does not exist" );
@@ -462,9 +474,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
 
             // Commit to disk
             saveDOM();
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

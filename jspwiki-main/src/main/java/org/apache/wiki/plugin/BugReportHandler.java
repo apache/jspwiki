@@ -31,6 +31,7 @@ import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
@@ -182,8 +183,7 @@ public class BugReportHandler implements Plugin {
      *  and tries again.
      */
     private String findNextPage( final Context context, final String title, final String baseName ) {
-        lock.lock();
-        try {
+        return Synchronizer.synchronize(lock, () -> {
             final String basicPageName = ( ( baseName != null ) ? baseName : "Bug" ) + MarkupParser.cleanLink( title );
             final Engine engine = context.getEngine();
 
@@ -192,11 +192,8 @@ public class BugReportHandler implements Plugin {
             while( engine.getManager( PageManager.class ).wikiPageExists( pageName ) ) {
                 pageName = basicPageName + lastbug++;
             }
-
             return pageName;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**

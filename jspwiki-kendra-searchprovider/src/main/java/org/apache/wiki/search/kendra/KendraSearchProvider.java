@@ -46,6 +46,7 @@ import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.search.SearchProvider;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.IOException;
@@ -157,7 +158,7 @@ public class KendraSearchProvider implements SearchProvider {
         final BatchDeleteDocumentRequest request = new BatchDeleteDocumentRequest().withIndexId( indexId )
                 .withDocumentIdList( pageName );
         final BatchDeleteDocumentResult result = getKendra().batchDeleteDocument( request );
-        if (result.getFailedDocuments().isEmpty()) {
+        if ( result.getFailedDocuments().size() == 0 ) {
             LOG.debug( format( "Page '%s' was removed from index", pageName ) );
         } else {
             LOG.error( format( "Failed to remove Page '%s' from index", pageName ) );
@@ -346,23 +347,21 @@ public class KendraSearchProvider implements SearchProvider {
      * index pages that have been modified
      */
     private void doPartialReindex() {
-        if ( updates.isEmpty() ) {
+        if (updates.isEmpty()) {
             return;
         }
-        LOG.debug( "Indexing updated pages. Please wait ..." );
+        LOG.debug("Indexing updated pages. Please wait ...");
         final String executionId = startExecution();
-        lock.lock();
-        try {
+
+        Synchronizer.synchronize(lock, () -> {
             try {
                 while (!updates.isEmpty()) {
-                    indexOnePage( updates.remove( 0 ), executionId );
+                    indexOnePage(updates.remove(0), executionId);
                 }
             } finally {
                 stopExecution();
             }
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -399,7 +398,7 @@ public class KendraSearchProvider implements SearchProvider {
             final BatchPutDocumentRequest request = new BatchPutDocumentRequest().withIndexId( indexId )
                     .withDocuments( document );
             final BatchPutDocumentResult result = getKendra().batchPutDocument( request );
-            if (result.getFailedDocuments().isEmpty()) {
+            if ( result.getFailedDocuments().size() == 0 ) {
                 LOG.info( format( "Successfully indexed Page '%s' as %s", page.getName(), document.getContentType() ) );
             } else {
                 for ( final BatchPutDocumentResponseFailedDocument failedDocument : result.getFailedDocuments() ) {

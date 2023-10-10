@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.util.Synchronizer;
+
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Map;
@@ -92,12 +94,9 @@ public abstract class Task extends AbstractStep {
      * @param step the successor
      */
     public final void setSuccessor( final Step step ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             m_successor = step;
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -107,12 +106,7 @@ public abstract class Task extends AbstractStep {
      * @return the next step
      */
     public final Step getSuccessor() {
-        lock.lock();
-        try {
-            return m_successor;
-        } finally {
-            lock.unlock();
-        }
+        return Synchronizer.synchronize(lock, () -> m_successor);
     }
 
 }

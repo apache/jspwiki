@@ -26,6 +26,7 @@ import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
+import org.apache.wiki.util.Synchronizer;
 
 import java.util.Properties;
 import java.util.concurrent.locks.ReentrantLock;
@@ -128,12 +129,9 @@ public class PageEventFilter extends BasePageFilter {
      * @param listener the event listener
      */
     public final void addWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             WikiEventManager.addWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
@@ -142,12 +140,9 @@ public class PageEventFilter extends BasePageFilter {
      * @param listener the event listener
      */
     public final void removeWikiEventListener( final WikiEventListener listener ) {
-        lock.lock();
-        try {
+        Synchronizer.synchronize(lock, () -> {
             WikiEventManager.removeWikiEventListener( this, listener );
-        } finally {
-            lock.unlock();
-        }
+        });
     }
 
     /**
