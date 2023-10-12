@@ -121,7 +121,7 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
             if( prop.startsWith( PROPERTY_APPROVER_PREFIX ) ) {
                 // For the key, everything after the prefix is the workflow name
                 final String key = prop.substring( PROPERTY_APPROVER_PREFIX.length() );
-                if( key.length() > 0 ) {
+                if(!key.isEmpty()) {
                     // Only use non-null/non-blank approvers
                     final String approver = props.getProperty( prop );
                     if( approver != null && !approver.isEmpty() ) {

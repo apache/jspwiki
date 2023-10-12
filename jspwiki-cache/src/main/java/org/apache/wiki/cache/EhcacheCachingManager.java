@@ -54,7 +54,7 @@ public class EhcacheCachingManager implements CachingManager, Initializable {
     /** {@inheritDoc} */
     @Override
     public void shutdown() {
-        if( cacheMap.size() > 0 ) {
+        if(!cacheMap.isEmpty()) {
             CacheManager.getInstance().shutdown();
             cacheMap.clear();
             cacheStats.clear();

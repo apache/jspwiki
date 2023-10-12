@@ -118,7 +118,7 @@
         if( p.getLastModified().after( latest ) ) latest = p.getLastModified();
     }
 
-    if( !hasChanged && changed.size() > 0 ) {
+    if( !hasChanged && !changed.isEmpty()) {
         response.sendError( HttpServletResponse.SC_NOT_MODIFIED );
         w.exitState();
         return;

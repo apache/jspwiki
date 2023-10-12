@@ -80,7 +80,7 @@ public class WeblogArchivePlugin implements Plugin {
         //  Output proper HTML.
         sb.append( "<ul>\n" );
 
-        if( months.size() > 0 ) {
+        if(!months.isEmpty()) {
             year = ( months.iterator().next() ).get( Calendar.YEAR );
             sb.append( "<li class=\"archiveyear\">" ).append( year ).append( "</li>\n" );
         }

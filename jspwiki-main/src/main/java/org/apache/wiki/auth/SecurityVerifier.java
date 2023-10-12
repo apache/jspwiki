@@ -673,7 +673,7 @@ public final class SecurityVerifier {
             // Verify the file
             policy.read();
             final List<Exception> errors = policy.getMessages();
-            if ( errors.size() > 0 ) {
+            if (!errors.isEmpty()) {
                 for( final Exception e : errors ) {
                     m_session.addMessage( ERROR_POLICY, e.getMessage() );
                 }

@@ -231,7 +231,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
         }
 
         /* fetch actual formats */
-        if( tfArr.size() == 0 )  {/* no props found - make sure some default formats are avail */
+        if(tfArr.isEmpty())  {/* no props found - make sure some default formats are avail */
             tfArr.add( "dd-MMM-yy" );
             tfArr.add( "d-MMM-yyyy" );
             tfArr.add( "EEE, dd-MMM-yyyy, zzzz" );

@@ -49,7 +49,7 @@
   {
     creationAuthor = firstPage.getAuthor();
 
-    if( creationAuthor != null && creationAuthor.length() > 0 )
+    if( creationAuthor != null && !creationAuthor.isEmpty())
     {
       creationAuthor = TextUtil.replaceEntities(creationAuthor);
     }

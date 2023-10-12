@@ -130,7 +130,7 @@ public final class ClassUtil {
     private static ClassLoader setupClassLoader( final List< String > externaljars) {
         classLoaderSetup = true;
         LOG.info( "setting up classloaders for external (plugin) jars" );
-        if( externaljars.size() == 0 ) {
+        if(externaljars.isEmpty()) {
             LOG.info( "no external jars configured, using standard classloading" );
             return ClassUtil.class.getClassLoader();
         }

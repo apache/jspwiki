@@ -17,6 +17,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-10-12  Arturo Bernal (abernal AT apache DOT org)**
+
+* _2.12.2-git-07_
+
+Replaced 'size() == 0' with 'isEmpty()'
+
 *2023-10-08  Arturo Bernal (abernal AT apache DOT org)**
 
 * _2.12.2-git-06_
