@@ -64,7 +64,7 @@
     <javax-mail.version>1.4.7</javax-mail.version>
     <javax-jsp-api.version>2.3.3</javax-jsp-api.version>
     <javax-servlet-api.version>3.1.0</javax-servlet-api.version>
-    <jdom2.version>2.0.6</jdom2.version>
+    <jdom2.version>2.0.6.1</jdom2.version>
     <jetty.version>9.4.51.v20230217</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.10.0</junit.version>
