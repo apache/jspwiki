@@ -369,7 +369,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                         }
                         result = counter.toString();
 
-                    } else if( body != null && 0 < body.length() && STR_LIST.equals( show ) ) {
+                    } else if( body != null && !body.isEmpty() && STR_LIST.equals( show ) ) {
                         // show list of counts
                         String header = STR_EMPTY;
                         String line = body;
@@ -461,7 +461,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
          */
         private Pattern[] compileGlobs( final String name, final String value ) throws PluginException {
             Pattern[] result = null;
-            if( value != null && 0 < value.length() && !STR_GLOBSTAR.equals( value ) ) {
+            if( value != null && !value.isEmpty() && !STR_GLOBSTAR.equals( value ) ) {
                 try {
                     final PatternCompiler pc = new GlobCompiler();
                     final String[] ptrns = StringUtils.split( value, STR_COMMA );

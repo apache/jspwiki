@@ -145,7 +145,7 @@ public class KendraSearchProvider implements SearchProvider {
         final BatchDeleteDocumentRequest request = new BatchDeleteDocumentRequest().withIndexId( indexId )
                 .withDocumentIdList( pageName );
         final BatchDeleteDocumentResult result = getKendra().batchDeleteDocument( request );
-        if ( result.getFailedDocuments().size() == 0 ) {
+        if (result.getFailedDocuments().isEmpty()) {
             LOG.debug( format( "Page '%s' was removed from index", pageName ) );
         } else {
             LOG.error( format( "Failed to remove Page '%s' from index", pageName ) );
@@ -341,7 +341,7 @@ public class KendraSearchProvider implements SearchProvider {
         final String executionId = startExecution();
         synchronized ( updates ) {
             try {
-                while ( updates.size() > 0 ) {
+                while (!updates.isEmpty()) {
                     indexOnePage( updates.remove( 0 ), executionId );
                 }
             } finally {
@@ -384,7 +384,7 @@ public class KendraSearchProvider implements SearchProvider {
             final BatchPutDocumentRequest request = new BatchPutDocumentRequest().withIndexId( indexId )
                     .withDocuments( document );
             final BatchPutDocumentResult result = getKendra().batchPutDocument( request );
-            if ( result.getFailedDocuments().size() == 0 ) {
+            if (result.getFailedDocuments().isEmpty()) {
                 LOG.info( format( "Successfully indexed Page '%s' as %s", page.getName(), document.getContentType() ) );
             } else {
                 for ( final BatchPutDocumentResponseFailedDocument failedDocument : result.getFailedDocuments() ) {

@@ -95,7 +95,7 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
 
             LOG.debug( "Fetching referring pages for {} with a max of {}", page.getName(), items );
 
-            if( links != null && links.size() > 0 ) {
+            if( links != null && !links.isEmpty()) {
                 links = filterAndSortCollection( links );
                 wikitext = wikitizeCollection( links, m_separator, items );
 
@@ -116,7 +116,7 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
             }
 
             // If nothing was left after filtering or during search
-            if( links == null || links.size() == 0 ) {
+            if( links == null || links.isEmpty()) {
                 wikitext = rb.getString( "referringpagesplugin.nobody" );
                 result.append( makeHTML( context, wikitext ) );
             } else  if( m_show.equals( PARAM_SHOW_VALUE_COUNT ) ) {

@@ -120,7 +120,7 @@
     if( author == null ) {
         author = storedUser;
     }
-    if( author == null || author.length() == 0 ) {
+    if( author == null || author.isEmpty()) {
         author = StringUtils.capitalize( rb.getString( "varmgr.anonymous" ) );
     }
 
@@ -206,9 +206,9 @@
         pageText.append( commentText );
 
         log.debug("Author name ="+author);
-        if( author != null && author.length() > 0 ) {
+        if( author != null && !author.isEmpty()) {
             String signature = author;
-            if( link != null && link.length() > 0 ) {
+            if( link != null && !link.isEmpty()) {
                 link = HttpUtil.guessValidURI( link );
                 signature = "["+author+"|"+link+"]";
             }

@@ -52,7 +52,7 @@ public class ListLocksPlugin implements Plugin {
         result.append( "<th>" ).append( rb.getString( "plugin.listlocks.page" ) ).append( "</th><th>" ).append( rb.getString( "plugin.listlocks.locked.by" ) ).append( "</th><th>" ).append( rb.getString( "plugin.listlocks.acquired" ) ).append( "</th><th>" ).append( rb.getString( "plugin.listlocks.expires" ) ).append( "</th>\n" );
         result.append("</tr>");
 
-        if( locks.size() == 0 ) {
+        if(locks.isEmpty()) {
             result.append( "<tr><td colspan=\"4\" class=\"odd\">" ).append( rb.getString( "plugin.listlocks.no.locks.exist" ) ).append( "</td></tr>\n" );
         } else {
             int rowNum = 1;

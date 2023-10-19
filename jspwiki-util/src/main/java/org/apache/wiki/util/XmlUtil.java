@@ -132,7 +132,7 @@ public final class XmlUtil  {
 
 	public static Element getXPathElement( final Element base, final String expression ) {
 		final List< ? > nodes = XPathFactory.instance().compile( expression ).evaluate( base );
-		if( nodes == null || nodes.size() == 0 ) {
+		if( nodes == null || nodes.isEmpty()) {
 			return null;
 		} else {
 			return ( Element )nodes.get( 0 );

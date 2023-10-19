@@ -569,7 +569,7 @@ public class LuceneSearchProvider implements SearchProvider {
             m_watchdog.enterState( "Emptying index queue", 60 );
 
             synchronized( m_provider.m_updates ) {
-                while( m_provider.m_updates.size() > 0 ) {
+                while(!m_provider.m_updates.isEmpty()) {
                     final Object[] pair = m_provider.m_updates.remove( 0 );
                     final Page page = ( Page )pair[ 0 ];
                     final String text = ( String )pair[ 1 ];

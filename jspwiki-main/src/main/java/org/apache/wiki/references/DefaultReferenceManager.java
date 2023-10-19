@@ -369,7 +369,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
                 // new Set to avoid concurrency issues
                 final Set< Map.Entry < String, Object > > entries = new HashSet<>( p.getAttributes().entrySet() );
 
-                if( entries.size() == 0 ) {
+                if(entries.isEmpty()) {
                     //  Nothing to serialize, therefore we will just simply remove the serialization file so that the
                     //  next time we boot, we don't deserialize old data.
                     f.delete();

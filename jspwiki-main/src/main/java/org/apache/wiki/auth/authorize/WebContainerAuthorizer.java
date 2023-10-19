@@ -221,7 +221,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
                                                   .evaluate( root );
 
         // If we can't find either one, we must not be constrained
-        if( constraints.size() == 0 ) {
+        if(constraints.isEmpty()) {
             return false;
         }
 
@@ -231,7 +231,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         }
 
         // If no roles, we must not be constrained
-        if( roles.size() == 0 ) {
+        if(roles.isEmpty()) {
             return false;
         }
 

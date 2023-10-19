@@ -156,7 +156,7 @@
 
         session.removeAttribute("changenote");
 
-        if( changenote != null && changenote.length() > 0 ) {
+        if( changenote != null && !changenote.isEmpty()) {
             modifiedPage.setAttribute( Page.CHANGENOTE, changenote );
         } else {
             modifiedPage.removeAttribute( Page.CHANGENOTE );

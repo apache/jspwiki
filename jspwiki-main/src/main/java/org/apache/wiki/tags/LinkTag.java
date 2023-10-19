@@ -262,7 +262,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     }
 
     private String addParamsForRecipient( final String addTo, final Map< String, String > params ) {
-        if( params == null || params.size() == 0 ) {
+        if( params == null || params.isEmpty()) {
             return addTo;
         }
         final StringBuilder buf = new StringBuilder();

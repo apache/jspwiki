@@ -168,12 +168,12 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
             // Execute the container login module, then (if that fails) the cookie auth module
             Set< Principal > principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
-            if ( principals.size() == 0 && authenticationMgr.allowsCookieAuthentication() ) {
+            if (principals.isEmpty() && authenticationMgr.allowsCookieAuthentication() ) {
                 principals = authenticationMgr.doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
             }
 
             // If the container logged the user in successfully, tell the Session (and add all the Principals)
-            if ( principals.size() > 0 ) {
+            if (!principals.isEmpty()) {
                 fireEvent( WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );
                 for( final Principal principal : principals ) {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
@@ -188,7 +188,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         if ( !session.isAuthenticated() && authenticationMgr.allowsCookieAssertions() ) {
             // Execute the cookie assertion login module
             final Set< Principal > principals = authenticationMgr.doJAASLogin( CookieAssertionLoginModule.class, handler, options );
-            if ( principals.size() > 0 ) {
+            if (!principals.isEmpty()) {
                 fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, getLoginPrincipal( principals ), session);
             }
         }
@@ -196,7 +196,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         // If user still anonymous, use the remote address
         if( session.isAnonymous() ) {
             final Set< Principal > principals = authenticationMgr.doJAASLogin( AnonymousLoginModule.class, handler, options );
-            if( principals.size() > 0 ) {
+            if(!principals.isEmpty()) {
                 fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, getLoginPrincipal( principals ), session );
                 return true;
             }
@@ -225,7 +225,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
         // Execute the user's specified login module
         final Set< Principal > principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions );
-        if( principals.size() > 0 ) {
+        if(!principals.isEmpty()) {
             fireEvent(WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );
             for ( final Principal principal : principals ) {
                 fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );

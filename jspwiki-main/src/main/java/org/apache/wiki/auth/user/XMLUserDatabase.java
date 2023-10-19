@@ -414,7 +414,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         }
 
         // Save the attributes as Base64 string
-        if( profile.getAttributes().size() > 0 ) {
+        if(!profile.getAttributes().isEmpty()) {
             try {
                 final String encodedAttributes = Serializer.serializeToBase64( profile.getAttributes() );
                 final Element attributes = c_dom.createElement( ATTRIBUTES_TAG );

@@ -430,7 +430,7 @@ public class AttachmentServlet extends HttpServlet {
                 }
             }
 
-            if( fileItems.size() == 0 ) {
+            if(fileItems.isEmpty()) {
                 throw new RedirectException( "Broken file upload", errorPage );
 
             } else {

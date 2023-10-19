@@ -218,7 +218,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @return The result of the mutation.
      */
     protected String callMutatorChain( final Collection< StringTransmutator > list, String text ) {
-        if( list == null || list.size() == 0 ) {
+        if( list == null || list.isEmpty()) {
             return text;
         }
 
@@ -1975,7 +1975,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             }
 
             //  If there were any elements, then add a new <p> (unless it would be an empty one)
-            if( ls.size() > 0 ) {
+            if(!ls.isEmpty()) {
                 final Element newel = new Element("p");
                 for( final Content c : ls ) {
                     c.detach();

@@ -119,7 +119,7 @@ public class TranslationsCheck {
         System.out.println( "Duplicates overall (two or more occurences):" );
         System.out.println( "--------------------------------------------" );
         final Iterator< String > iter = duplProps.iterator();
-        if( duplProps.size() == 0 ) {
+        if(duplProps.isEmpty()) {
             System.out.println( "(none)" );
         } else {
             while( iter.hasNext() ) {
