@@ -78,7 +78,7 @@
             session.setAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail );
         }
 
-        response.sendRedirect( TextUtil.replaceString( wiki.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), redirTo, "tab="+request.getParameter("tab") ),"&amp;","&" ));
+        response.sendRedirect( TextUtil.replaceString( wiki.getURL( ContextEnum.PAGE_UPLOAD.getRequestContext(), redirTo, "" ),"&amp;","&" ));
         return;
     } else if( delete != null ) {
         log.info("Deleting a range of pages from "+pagereq);
