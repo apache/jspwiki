@@ -218,11 +218,8 @@ public class AttachmentServlet extends HttpServlet {
                 final String mimetype = getMimeType( context, att.getFileName() );
                 res.setContentType( mimetype );
 
-                //
-                //  We use 'inline' instead of 'attachment' so that user agents
-                //  can try to automatically open the file.
-                //
-                res.addHeader( "Content-Disposition", "inline; filename=\"" + att.getFileName() + "\";" );
+                final String contentDisposition = getContentDisposition( att );
+                res.addHeader( "Content-Disposition", contentDisposition );
                 res.addDateHeader("Last-Modified",att.getLastModified().getTime());
 
                 if( !att.isCacheable() ) {
@@ -284,6 +281,17 @@ public class AttachmentServlet extends HttpServlet {
             LOG.debug( "I/O exception during download", ioe );
             sendError( res, "Error: " + ioe.getMessage() );
         }
+    }
+
+    String getContentDisposition( final Attachment att ) {
+        // We use 'inline' instead of 'attachment' so that user agents can try to automatically open the file,
+        // except those cases in which we want to enforce the file download.
+        String contentDisposition = "inline; filename=\"";
+        if( m_engine.getManager( AttachmentManager.class ).forceDownload( att.getFileName() ) ) {
+            contentDisposition = "attachment; filename=\"";
+        }
+        contentDisposition += att.getFileName() + "\";";
+        return contentDisposition;
     }
 
     void sendError( final HttpServletResponse res, final String message ) throws IOException {
