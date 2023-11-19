@@ -51,7 +51,7 @@ class MemoryProfiling {
         final Acl acl = Wiki.acls().acl();
         final AclEntry aclEntry = Wiki.acls().entry();
 
-        final MemoryMeter meter = new MemoryMeter();
+        final MemoryMeter meter = MemoryMeter.builder().build();
         final long engineBytes = meter.measureDeep( engine );
         final long engineWithDefaultPagesBytes = meter.measureDeep( engineWithDefaultPages );
         final long mainBytes = meter.measureDeep( main );
