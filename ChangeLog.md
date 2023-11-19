@@ -17,13 +17,35 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-11-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-08_
+
+* `AttachmentServlet` now respects `jspwiki.attachment.forceDownload` pattern and will refuse to inline content matching those extensions
+
+* Added `.svg` to default `jspwiki.attachment.forceDownload` patterns
+
+* [JSPWIKI-1184](https://issues.apache.org/jira/browse/JSPWIKI-1184) - Image missing and German text typo
+  Fixed as suggested by Ulf Dittmer - thanks! 
+
+* Dependency updates
+    * Apache Parent to 31
+    * Commons IO to 2.15.0
+    * Commons Text to 1.11.0
+    * Jamm to 0.4.0 (closes [#296](https://github.com/apache/jspwiki/pull/296)), thanks to dependabot
+    * Jetty to 9.4.53.v20231009 (closes [#313](https://github.com/apache/jspwiki/pull/313)), thanks to dependabot
+    * JUnit to 5.10.1
+    * Tika to 2.9.1
+    * Tomcat to 9.0.83
+    * Maven plugins: clean to 3.3.2, dependency to 3.6.1, javadoc to 3.6.2, jxr to 3.3.1, surefire to 3.2.2, sonar to 3.10.0.2594 (closes [#308](https://github.com/apache/jspwiki/pull/308), thanks to dependabot)
+
 **2023-10-12  Arturo Bernal (abernal AT apache DOT org)**
 
 * _2.12.2-git-07_
 
 Replaced 'size() == 0' with 'isEmpty()'
 
-*2023-10-08  Arturo Bernal (abernal AT apache DOT org)**
+**2023-10-08  Arturo Bernal (abernal AT apache DOT org)**
 
 * _2.12.2-git-06_
 
