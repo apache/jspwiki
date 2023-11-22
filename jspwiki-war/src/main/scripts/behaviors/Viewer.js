@@ -299,9 +299,7 @@ Viewer.LIB.append([
 
     ["https?://vimeo.com/", function(url){
         return {
-            //html5 compatible --- use iframe
-            //src: "http://player.vimeo.com/video/" + url.split("/")[3],
-            url: protocol+"www.vimeo.com/moogaloop.swf?server=www.vimeo.com&amp;clip_id=" + url.split("/")[3],
+            src: protocol+"player.vimeo.com/video/" + url.split("/")[3],
             width: 640,
             height: 360
         };
