@@ -77,7 +77,7 @@ public interface URLConstructor extends Initializable {
     static String parsePageFromURL( final HttpServletRequest request, final Charset encoding ) {
         final String name = request.getPathInfo();
         if( name == null || name.length() <= 1 ) {
-            return null;
+            return request.getParameter("page");
         } else if( name.charAt(0) == '/' ) {
             return name.substring(1);
         }
