@@ -288,7 +288,7 @@ sqltool-2.7.2.jar                           ./jspwiki-war/src/main/config/doc/LI
 jamm-0.4.0.jar                              LICENSE
 jetty-all-9.4.53.v20231009.jar              LICENSE
 junit-5.10.1                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
-mockito-core-5.5.0.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
+mockito-core-5.7.0.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mit
 selenide-6.19.0.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
 stripes-1.7.0-async.jar                     LICENSE
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui
