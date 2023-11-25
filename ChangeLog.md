@@ -17,6 +17,18 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-11-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-09_
+
+* Make `URLConstructor#parsePageFromURL` work with default URL style (closes [#322](https://github.com/apache/jspwiki/pull/322), thanks to Ulf Dittmer)
+
+* Update `Viewer.js` so that Vimeo uses html5 player instead of the flash based one (closes [#321](https://github.com/apache/jspwiki/pull/321), thanks to Ulf Dittmer)
+
+* Dependency updates
+    * Mockito to 5.7.0 (closes [#319](https://github.com/apache/jspwiki/pull/319), thanks to dependabot)
+    * Maven plugins: cargo to 1.10.10 (closes [#320](https://github.com/apache/jspwiki/pull/320), thanks to dependabot)
+
 **2023-11-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-08_
