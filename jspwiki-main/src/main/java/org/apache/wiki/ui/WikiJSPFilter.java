@@ -99,7 +99,7 @@ public class WikiJSPFilter extends WikiServletFilter {
             fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename );
             super.doFilter( request, responseWrapper, chain );
 
-            // The response is now complete. Lets replace the markers now.
+            // The response is now complete. Let's replace the markers now.
 
             // WikiContext is only available after doFilter! (That is after interpreting the jsp)
 
