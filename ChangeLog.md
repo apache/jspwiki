@@ -27,7 +27,7 @@ under the License.
 
 * Dependency updates
     * Mockito to 5.7.0 (closes [#319](https://github.com/apache/jspwiki/pull/319), thanks to dependabot)
-    * Maven plugins: cargo to 1.10.10 (closes [#320](https://github.com/apache/jspwiki/pull/320), thanks to dependabot)
+    * Maven plugins: project-info-reports-plugin to 3.5.0, cargo to 1.10.10 (closes [#320](https://github.com/apache/jspwiki/pull/320), thanks to dependabot)
 
 **2023-11-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
