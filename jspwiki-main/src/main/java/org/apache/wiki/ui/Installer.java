@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.ui;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.providers.AttachmentProvider;
@@ -181,17 +182,18 @@ public class Installer {
 
         // Get application name
         String nullValue = m_props.getProperty( APP_NAME, rb.getString( "install.installer.default.appname" ) );
-        parseProperty( APP_NAME, nullValue );
+        parseProperty( APP_NAME,  nullValue  );
+        sanitizeInput( APP_NAME );
 
         // Get/sanitize page directory
         nullValue = m_props.getProperty( PAGE_DIR, rb.getString( "install.installer.default.pagedir" ) );
         parseProperty( PAGE_DIR, nullValue );
-        sanitizePath( PAGE_DIR );
+        sanitizeAndNormalizePath( PAGE_DIR );
 
         // Get/sanitize work directory
         nullValue = m_props.getProperty( WORK_DIR, TMP_DIR );
         parseProperty( WORK_DIR, nullValue );
-        sanitizePath( WORK_DIR );
+        sanitizeAndNormalizePath( WORK_DIR );
         
         // Set a few more default properties, for easy setup
         m_props.setProperty( STORAGE_DIR, m_props.getProperty( PAGE_DIR ) );
@@ -239,17 +241,34 @@ public class Installer {
         }
         m_props.put( param, value );
     }
-    
+
     /**
-     * Simply sanitizes any path which contains backslashes (sometimes Windows users may have them) by expanding them to double-backslashes
+     * Sanitizes and normalizes the file path associated with the specified property key.
+     * <p>
+     * This method performs a two-step process on the property value:
+     * <ol>
+     *     <li><b>Sanitization:</b> It first sanitizes the input to mitigate the risk of Cross-Site Scripting (XSS) attacks.
+     *         This is achieved by replacing specific characters known to be used in XSS attacks with their corresponding
+     *         HTML entity codes. The characters '<', '>', '"', ''', and '/' are replaced with "&lt;", "&gt;", "&quot;",
+     *         "&#x27;", and "&#x2F;", respectively.</li>
+     *     <li><b>Normalization:</b> After sanitization, the method normalizes the file path using
+     *         {@link org.apache.commons.io.FilenameUtils#normalizeNoEndSeparator(String)}. This normalization process
+     *         ensures that the file path is in a consistent format, which is particularly important for file system
+     *         operations, especially in environments like Windows where backslashes are used.</li>
+     * </ol>
+     * If the property key is null or the property value is not set, the method performs no action.
+     * </p>
      *
-     * @param key the key of the property to sanitize
+     * @param key The key of the property whose value represents a file path. This key is used to retrieve,
+     *            sanitize, and normalize the property value. If the key is null, no action is taken.
      */
-    private void sanitizePath( final String key ) {
-        String s = m_props.getProperty( key );
-        s = TextUtil.replaceString(s, "\\", "\\\\" );
-        s = s.trim();
-        m_props.put( key, s );
+    private void sanitizeAndNormalizePath( final String key ) {
+        sanitizeInput( key ); // Sanitize the input for XSS protection
+        final String sanitizedValue = m_props.getProperty( key );
+        if( sanitizedValue != null ) {
+            final String normalizedPath = FilenameUtils.normalizeNoEndSeparator( sanitizedValue );
+            m_props.put( key, normalizedPath );
+        }
     }
     
     private void validateNotNull( final String key, final String message ) {
@@ -257,6 +276,23 @@ public class Installer {
         if ( value == null || value.isEmpty() ) {
             m_session.addMessage( INSTALL_ERROR, message );
         }
+    }
+
+    /**
+     * Sanitizes the property value associated with the specified key to prevent Cross-Site Scripting (XSS) attacks.
+     * This method retrieves the property value for the given key from the properties map, then replaces certain
+     * characters with their corresponding HTML entity codes to mitigate the risk of XSS vulnerabilities.
+     * The characters '<', '>', '"', ''', and '/' are replaced with "&lt;", "&gt;", "&quot;", "&#x27;", and "&#x2F;", respectively.
+     * If the key is null, the method returns without making any changes.
+     *
+     * @param key The key of the property to be sanitized. If the key is null, no action is taken.
+     */
+    private void sanitizeInput( final String key ) {
+        m_props.put( key, m_props.getProperty( key ).replaceAll( "<", "&lt;" )
+                .replaceAll( ">", "&gt;" )
+                .replaceAll( "\"", "&quot;" )
+                .replaceAll( "'", "&#x27;" )
+                .replaceAll( "/", "&#x2F;" ) );
     }
     
 }

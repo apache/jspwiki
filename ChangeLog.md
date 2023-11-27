@@ -17,6 +17,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-11-26  Arturo Bernal (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-10_
+
+*  [JSPWIKI-1138](https://issues.apache.org/jira/browse/JSPWIKI-1138)  Fix XSS vulnerability in property handling
+
 **2023-11-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-09_
