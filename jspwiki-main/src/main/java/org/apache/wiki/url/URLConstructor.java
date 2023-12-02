@@ -19,6 +19,7 @@
 package org.apache.wiki.url;
 
 import org.apache.wiki.api.engine.Initializable;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -83,9 +84,7 @@ public interface URLConstructor extends Initializable {
         }
 
         //  This is required, because by default all URLs are handled as Latin1, even if they are really UTF-8.
-        // name = TextUtil.urlDecode( name, encoding );
-
-        return name;
+        return TextUtil.urlDecode( name, encoding.name() );
     }
 
 }
