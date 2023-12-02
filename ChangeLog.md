@@ -19,6 +19,18 @@ under the License.
 
 **2023-11-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
+* _2.12.2-git-10_
+
+* Use `Engine#getContentEncoding` to call `URLConstructor#parsePageFromURL` (related to error noted at [#322](https://github.com/apache/jspwiki/pull/322)). The latter also url decodes the returned page name.
+
+* Introduced [`CustomWikiEventListener`](https://jspwiki-wiki.apache.org/Wiki.jsp?page=HowToWriteACustomWikiEventListener) as an easy way to register 3rd party `WikiEventListener`s.
+
+* Dependency updates
+    * commons-lang3 to 3.14.0
+    * Maven plugins: cargo to 1.10.11 (closes [#324](https://github.com/apache/jspwiki/pull/324), thanks to dependabot)
+
+**2023-11-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
 * _2.12.2-git-09_
 
 * Make `URLConstructor#parsePageFromURL` work with default URL style (closes [#322](https://github.com/apache/jspwiki/pull/322), thanks to Ulf Dittmer)
