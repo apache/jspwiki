@@ -45,7 +45,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 
 /**
@@ -95,8 +94,8 @@ public class WikiJSPFilter extends WikiServletFilter {
             final HttpServletResponseWrapper responseWrapper = new JSPWikiServletResponseWrapper( ( HttpServletResponse )response, m_wiki_encoding, useEncoding );
 
             // fire PAGE_REQUESTED event
-            final String pagename = URLConstructor.parsePageFromURL( ( HttpServletRequest )request, Charset.forName( response.getCharacterEncoding() ) );
-            fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename );
+            final String pagename = URLConstructor.parsePageFromURL( ( HttpServletRequest )request, m_engine.getContentEncoding() );
+            fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename != null ? pagename : m_engine.getFrontPage() );
             super.doFilter( request, responseWrapper, chain );
 
             // The response is now complete. Let's replace the markers now.
