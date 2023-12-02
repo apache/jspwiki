@@ -20,9 +20,11 @@ package org.apache.wiki.api.core;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.wiki.api.engine.EngineLifecycleExtension;
+import org.apache.wiki.api.events.CustomWikiEventListener;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventListener;
+import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.ServletContext;
@@ -425,13 +427,19 @@ public interface Engine {
      * @throws WikiException if something happens while setting up the {@code Engine}.
      */
     default void start( final Properties properties ) throws WikiException {
-        final ServiceLoader< EngineLifecycleExtension > loader = ServiceLoader.load( EngineLifecycleExtension.class );
-        for( final EngineLifecycleExtension extension : loader ) {
+        final var loader = ServiceLoader.load( EngineLifecycleExtension.class );
+        for( final var extension : loader ) {
             extension.onInit( properties );
         }
         initialize( properties );
-        for( final EngineLifecycleExtension extension : loader ) {
+        for( final var extension : loader ) {
             extension.onStart( this, properties );
+        }
+        final var events = ServiceLoader.load( CustomWikiEventListener.class );
+        for( final var event : events ) {
+            CustomWikiEventListener.LISTENERS.add( event );
+            event.initialize( this, getWikiProperties() );
+            WikiEventManager.addWikiEventListener( event.client(), event );
         }
     }
 
