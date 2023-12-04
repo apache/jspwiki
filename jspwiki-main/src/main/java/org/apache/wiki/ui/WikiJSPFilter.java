@@ -92,6 +92,7 @@ public class WikiJSPFilter extends WikiServletFilter {
             ThreadContext.push( m_engine.getApplicationName() + ":" + ( ( HttpServletRequest )request ).getRequestURI() );
             w.enterState("Filtering for URL "+((HttpServletRequest)request).getRequestURI(), 90 );
             final HttpServletResponseWrapper responseWrapper = new JSPWikiServletResponseWrapper( ( HttpServletResponse )response, m_wiki_encoding, useEncoding );
+            request.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
 
             // fire PAGE_REQUESTED event
             final String pagename = URLConstructor.parsePageFromURL( ( HttpServletRequest )request, m_engine.getContentEncoding() );
