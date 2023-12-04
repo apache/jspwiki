@@ -32,12 +32,15 @@ import org.apache.wiki.util.FileUtil;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -47,6 +50,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Properties;
 
@@ -88,8 +92,9 @@ public class VersioningFileProvider extends AbstractFileProvider {
 
     public static final String VERSIONING_PROPERTIES_FILE = "versioning.properties";
     private static final String DATE_PROPERTY_WRITTEN = "date.property.written";
-
-    private CachedProperties m_cachedProperties;
+	private static final DateTimeFormatter PROPERTIES_COMMENT_DATE_FORMAT = DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+    private static final DateTimeFormatter PROPERTIES_COMMENT_DATE_FORMAT_DE = PROPERTIES_COMMENT_DATE_FORMAT.withLocale(Locale.GERMAN);
+	private CachedProperties m_cachedProperties;
 
     /**
      *  {@inheritDoc}
@@ -262,7 +267,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
      *  Reads page properties from the file system.
      */
     private Properties getPageProperties( final String page ) throws IOException {
-        final File propertyFile = new File( findOldPageDir(page), PROPERTYFILE );
+        final File propertyFile = getPropertiesFile(page);
         if( propertyFile.exists() ) {
             final long lastModified = propertyFile.lastModified();
 
@@ -293,12 +298,16 @@ public class VersioningFileProvider extends AbstractFileProvider {
         return new Properties(); // Returns an empty object
     }
 
+    private File getPropertiesFile(String page) {
+        return new File( findOldPageDir(page), PROPERTYFILE );
+    }
+
     /**
      *  Writes the page properties back to the file system.
      *  Note that it WILL overwrite any previous properties.
      */
     private void putPageProperties( final String page, final Properties properties ) throws IOException {
-        final File propertyFile = new File( findOldPageDir(page), PROPERTYFILE );
+        final File propertyFile = getPropertiesFile(page);
         try( final OutputStream out = Files.newOutputStream( propertyFile.toPath() ) ) {
             properties.store( out, " JSPWiki page properties for "+page+". DO NOT MODIFY!" );
         }
@@ -539,6 +548,15 @@ public class VersioningFileProvider extends AbstractFileProvider {
                     Date date = Date.from(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateString)));
                     p.setLastModified(date);
                 }
+				// fallback
+				else if (realVersion == 1) {
+					ZonedDateTime dateFromPropertiesComment = extractDateFromPropertiesFileComment(page);
+					if (dateFromPropertiesComment != null) {
+						p.setLastModified(Date.from(dateFromPropertiesComment.toInstant()));
+                        addVersionDate(dateFromPropertiesComment, realVersion, props);
+						putPageProperties(page, props);
+					}
+				}
 
                 // Set the props values to the page attributes
                 setCustomProperties( p, props );
@@ -549,6 +567,26 @@ public class VersioningFileProvider extends AbstractFileProvider {
 
         return p;
     }
+
+	private ZonedDateTime extractDateFromPropertiesFileComment(String page) {
+		File propertiesFile = getPropertiesFile(page);
+        if (!propertiesFile.exists()) return null;
+		try (BufferedReader reader = new BufferedReader(new FileReader(propertiesFile, StandardCharsets.UTF_8))) {
+			reader.readLine();  // erste Zeile überspringen
+			String dateLine = reader.readLine();  // zweite Zeile lesen
+			if (dateLine != null) {
+				String cleaned = dateLine.replace("#", "").trim();
+				try {
+					return ZonedDateTime.parse(cleaned, PROPERTIES_COMMENT_DATE_FORMAT);
+				} catch (Exception e) {
+                    return ZonedDateTime.parse(cleaned, PROPERTIES_COMMENT_DATE_FORMAT_DE);
+                }
+			}
+		} catch (Exception e) {
+			log.error("Cannot read last modified from properties file");
+		}
+		return null;
+	}
 
     private String getChangeNotePropertyKey(int realVersion) {
         return realVersion+".changenote";
