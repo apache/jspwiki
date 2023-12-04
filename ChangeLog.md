@@ -17,7 +17,18 @@ specific language governing permissions and limitations
 under the License.
 -->
 
-**2023-11-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
+**2023-12-04  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-11_
+
+* Call `ServletRequest#setCharacterEncoding` prior to calling `URLConstructor#parsePageFromURL` (related to error noted at [#322](https://github.com/apache/jspwiki/pull/322)), in order to ensure the proper encoding is set.
+
+* Dependency updates
+    * Lucene to 9.9.0
+    * Mockito to 5.8.0 (closes [#325](https://github.com/apache/jspwiki/pull/325), thanks to dependabot)
+    * Maven plugins: javadoc to 3.6.3
+
+**2023-12-02  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-10_
 
