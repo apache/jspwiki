@@ -19,8 +19,11 @@
 package org.apache.wiki.auth.permissions;
 
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.util.Synchronizer;
 
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -42,6 +45,16 @@ public final class PermissionFactory
      *  cached page permissions.
      */
     private static final WeakHashMap<Integer, PagePermission> c_cache = new WeakHashMap<>();
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private static final ReentrantLock lock = new ReentrantLock();
     
     /**
      *  Get a permission object for a WikiPage and a set of actions.
@@ -75,41 +88,28 @@ public final class PermissionFactory
      *  @param actions A list of actions.
      *  @return A PagePermission object.
      */
-    private static PagePermission getPagePermission( final String wiki, String page, final String actions )
-    {
-        PagePermission perm;
-        //
-        //  Since this is pretty speed-critical, we try to avoid the StringBuffer creation
-        //  overhead by XORring the hashcodes.  However, if page name length > 32 characters,
-        //  this might result in two same hashCodes.
-        //  FIXME: Make this work for page-name lengths > 32 characters (use the alt implementation
-        //         if page.length() > 32?)
-        // Alternative implementation below, but it does create an extra StringBuffer.
-        //String         key = wiki+":"+page+":"+actions;
-        
+    private static PagePermission getPagePermission(final String wiki, String page, final String actions) {
         final Integer key = wiki.hashCode() ^ page.hashCode() ^ actions.hashCode();
-   
-        //
-        //  It's fine if two threads update the cache, since the objects mean the same
-        //  thing anyway.  And this avoids nasty blocking effects.
-        //
-        synchronized( c_cache )
-        {
-            perm = c_cache.get( key );
+        AtomicReference<PagePermission> permRef = new AtomicReference<>();
+
+        Synchronizer.synchronize(lock, () -> {
+            PagePermission perm = c_cache.get(key);
+            permRef.set(perm);
+        });
+
+        if (permRef.get() == null) {
+            if (!wiki.isEmpty()) page = wiki + ":" + page;
+            PagePermission newPerm = new PagePermission(page, actions);
+
+            Synchronizer.synchronize(lock, () -> {
+                c_cache.put(key, newPerm);
+            });
+
+            return newPerm;
         }
-        
-        if( perm == null )
-        {
-            if( !wiki.isEmpty() ) page = wiki+":"+page;
-            perm = new PagePermission( page, actions );
-            
-            synchronized( c_cache )
-            {
-                c_cache.put( key, perm );
-            }
-        }
-        
-        return perm;
+
+        return permRef.get();
     }
+
 
 }

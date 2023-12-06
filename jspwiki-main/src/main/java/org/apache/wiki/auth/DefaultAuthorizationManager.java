@@ -44,6 +44,7 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.freshcookies.security.policy.LocalPolicy;
 
 import javax.servlet.http.HttpServletResponse;
@@ -64,6 +65,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -89,9 +91,20 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
     private LocalPolicy m_localPolicy;
 
     /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private ReentrantLock lock;
+
+    /**
      * Constructs a new DefaultAuthorizationManager instance.
      */
     public DefaultAuthorizationManager() {
+        lock = new ReentrantLock();
     }
 
     /** {@inheritDoc} */
@@ -373,14 +386,18 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void addWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.addWikiEventListener( this, listener );
+    public void addWikiEventListener( final WikiEventListener listener ) {
+        Synchronizer.synchronize(lock, () -> {
+            WikiEventManager.addWikiEventListener( this, listener );
+        });
     }
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void removeWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.removeWikiEventListener( this, listener );
+    public void removeWikiEventListener( final WikiEventListener listener ) {
+        Synchronizer.synchronize(lock, () -> {
+            WikiEventManager.removeWikiEventListener( this, listener );
+        });
     }
 
 }

@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2023-12-06 Arturo Bernal (abernal AT apache DOT org)**
+
+* _2.12.2-git-12_
+*
+* [JSPWIKI-1178](https://issues.apache.org/jira/browse/JSPWIKI-1178) - Deadlock with Java Virtual Threads
+
+
 **2023-12-04  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-11_

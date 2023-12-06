@@ -458,6 +458,13 @@
         <artifactId>javax.servlet-api</artifactId>
         <version>${javax-servlet-api.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-util</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 

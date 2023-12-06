@@ -21,6 +21,7 @@ package org.apache.wiki.event;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.wiki.util.Synchronizer;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -33,6 +34,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *  A singleton class that manages the addition and removal of WikiEvent listeners to a event source, as well as the firing of events
@@ -141,6 +144,28 @@ public final class WikiEventManager {
     /* Singleton instance of the WikiEventManager. */
     private static WikiEventManager c_instance;
 
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private static final ReentrantLock instanceLock = new ReentrantLock();
+    private static final ReentrantLock removeWikiEventListenerLock = new ReentrantLock();
+    private static final ReentrantLock delegatesLockLock = new ReentrantLock();
+    private static final ReentrantLock preloadCacheLock = new ReentrantLock();
+    private static final ReentrantLock delegateForLock = new ReentrantLock();
+    private static final ReentrantLock wikiEventListenersLock = new ReentrantLock();
+    private static final ReentrantLock wikiEventListenerLock = new ReentrantLock();
+    private static final ReentrantLock removeWikiEventListenerLock2 = new ReentrantLock();
+    private static final ReentrantLock isListeningLock = new ReentrantLock();
+    private static final ReentrantLock fireEventLock = new ReentrantLock();
+
+
+
+
     /** Constructor for a WikiEventManager. */
     private WikiEventManager() {
         c_instance = this;
@@ -154,11 +179,13 @@ public final class WikiEventManager {
      *  @return A shared instance of the WikiEventManager
      */
     public static WikiEventManager getInstance() {
-        if( c_instance == null ) {
-            synchronized( WikiEventManager.class ) {
-                return new WikiEventManager();
-                // start up any post-instantiation services here
-            }
+        if (c_instance == null) {
+            Synchronizer.synchronize(instanceLock, () -> {
+                if (c_instance == null) {
+                    c_instance = new WikiEventManager();
+                    // start up any post-instantiation services here
+                }
+            });
         }
         return c_instance;
     }
@@ -238,11 +265,11 @@ public final class WikiEventManager {
      * @return true if the listener was found and removed.
      */
     public static boolean removeWikiEventListener( final WikiEventListener listener ) {
-        boolean removed = false;
+        final AtomicBoolean removed = new AtomicBoolean(false);
         // get the Map.entry object for the entire Map, then check match on entry (listener)
         final WikiEventManager mgr = getInstance();
         final Map< Object, WikiEventDelegate > sources =  Collections.synchronizedMap( mgr.getDelegates() );
-        synchronized( sources ) {
+        Synchronizer.synchronize(removeWikiEventListenerLock, () -> {
             // get an iterator over the Map.Enty objects in the map
             for( final Map.Entry< Object, WikiEventDelegate > entry : sources.entrySet() ) {
                 // the entry value is the delegate
@@ -250,20 +277,16 @@ public final class WikiEventManager {
 
                 // now see if we can remove the listener from the delegate (delegate may be null because this is a weak reference)
                 if( delegate != null && delegate.removeWikiEventListener( listener ) ) {
-                    removed = true; // was removed
+                    removed.set(true); // was removed
                 }
             }
-        }
-        return removed;
+        });
+        return removed.get();
     }
 
     private void removeDelegates() {
-        synchronized( m_delegates ) {
-            m_delegates.clear();
-        }
-        synchronized( m_preloadCache ) {
-            m_preloadCache.clear();
-        }
+        Synchronizer.synchronize(delegatesLockLock, m_delegates::clear);
+        Synchronizer.synchronize(preloadCacheLock, m_preloadCache::clear);
     }
 
     public static void shutdown() {
@@ -314,35 +337,35 @@ public final class WikiEventManager {
      * @param client   the client Object, or alternately a Class reference
      * @return the WikiEventDelegate.
      */
-    private WikiEventDelegate getDelegateFor( final Object client ) {
-        synchronized( m_delegates ) {
-            if( client == null || client instanceof Class ) { // then preload the cache
-                final WikiEventDelegate delegate = new WikiEventDelegate( client );
-                m_preloadCache.add( delegate );
-                m_delegates.put( client, delegate );
+    private WikiEventDelegate getDelegateFor(final Object client) {
+        return Synchronizer.synchronize(delegateForLock, () -> {
+            if (client == null || client instanceof Class) { // then preload the cache
+                final WikiEventDelegate delegate = new WikiEventDelegate(client);
+                m_preloadCache.add(delegate);
+                m_delegates.put(client, delegate);
                 return delegate;
-            } else if( !m_preloadCache.isEmpty() ) {
+            } else if (!m_preloadCache.isEmpty()) {
                 // then see if any of the cached delegates match the class of the incoming client
-                for( int i = m_preloadCache.size()-1 ; i >= 0 ; i-- ) { // start with most-recently added
-                    final WikiEventDelegate delegate = m_preloadCache.elementAt( i );
-                    if( delegate.getClientClass() == null || delegate.getClientClass().equals( client.getClass() ) ) {
+                for (int i = m_preloadCache.size() - 1; i >= 0; i--) { // start with most-recently added
+                    final WikiEventDelegate delegate = m_preloadCache.elementAt(i);
+                    if (delegate.getClientClass() == null || delegate.getClientClass().equals(client.getClass())) {
                         // we have a hit, so use it, but only on a client we haven't seen before
-                        if( !m_delegates.containsKey( client ) ) {
-                            m_preloadCache.remove( delegate );
-                            m_delegates.put( client, delegate );
+                        if (!m_delegates.containsKey(client)) {
+                            m_preloadCache.remove(delegate);
+                            m_delegates.put(client, delegate);
                             return delegate;
                         }
                     }
                 }
             }
             // otherwise treat normally...
-            WikiEventDelegate delegate = m_delegates.get( client );
-            if( delegate == null ) {
-                delegate = new WikiEventDelegate( client );
-                m_delegates.put( client, delegate );
+            WikiEventDelegate delegate = m_delegates.get(client);
+            if (delegate == null) {
+                delegate = new WikiEventDelegate(client);
+                m_delegates.put(client, delegate);
             }
             return delegate;
-        }
+        });
     }
 
 
@@ -386,7 +409,7 @@ public final class WikiEventManager {
          * @throws java.lang.UnsupportedOperationException  if any attempt is made to modify the Set
          */
         public Set< WikiEventListener > getWikiEventListeners() {
-            synchronized( m_listenerList ) {
+            return Synchronizer.synchronize(wikiEventListenersLock, () -> {
                 final TreeSet< WikiEventListener > set = new TreeSet<>( new WikiEventListenerComparator() );
                 for( final WeakReference< WikiEventListener > wikiEventListenerWeakReference : m_listenerList ) {
                     final WikiEventListener l = wikiEventListenerWeakReference.get();
@@ -396,7 +419,7 @@ public final class WikiEventManager {
                 }
 
                 return Collections.unmodifiableSet( set );
-            }
+            });
         }
 
         /**
@@ -406,15 +429,15 @@ public final class WikiEventManager {
          * @return true if the listener was added (i.e., it was not already in the list and was added)
          */
         public boolean addWikiEventListener( final WikiEventListener listener ) {
-            synchronized( m_listenerList ) {
+            return Synchronizer.synchronize(wikiEventListenerLock, () -> {
                 final boolean listenerAlreadyContained = m_listenerList.stream()
                                                                        .map( WeakReference::get )
                                                                        .anyMatch( ref -> ref == listener );
                 if( !listenerAlreadyContained ) {
                     return m_listenerList.add( new WeakReference<>( listener ) );
                 }
-            }
-            return false;
+                return false;
+            });
         }
 
         /**
@@ -424,58 +447,54 @@ public final class WikiEventManager {
          * @return true if the listener was removed (i.e., it was actually in the list and was removed)
          */
         public boolean removeWikiEventListener( final WikiEventListener listener ) {
-            synchronized( m_listenerList ) {
-                for( final Iterator< WeakReference< WikiEventListener > > i = m_listenerList.iterator(); i.hasNext(); ) {
+            return Synchronizer.synchronize(removeWikiEventListenerLock2, () -> {
+                for (final Iterator<WeakReference<WikiEventListener>> i = m_listenerList.iterator(); i.hasNext(); ) {
                     final WikiEventListener l = i.next().get();
-                    if( l == listener ) {
+                    if (l == listener) {
                         i.remove();
                         return true;
                     }
                 }
-            }
-
-            return false;
+                return false;
+            });
         }
 
         /**
          *  Returns true if there are one or more listeners registered with this instance.
          */
         public boolean isListening() {
-            synchronized( m_listenerList ) {
-                return !m_listenerList.isEmpty();
-            }
+            return Synchronizer.synchronize(isListeningLock, () -> !m_listenerList.isEmpty());
         }
 
         /**
          *  Notify all listeners having a registered interest in change events of the supplied WikiEvent.
          */
-        public void fireEvent( final WikiEvent event ) {
-            boolean needsCleanup = false;
+        public void fireEvent(final WikiEvent event) {
+            final AtomicBoolean needsCleanup = new AtomicBoolean(false);
             try {
-                synchronized( m_listenerList ) {
-                    for( final WeakReference< WikiEventListener > wikiEventListenerWeakReference : m_listenerList ) {
+                Synchronizer.synchronize(fireEventLock, () -> {
+                    for (final WeakReference<WikiEventListener> wikiEventListenerWeakReference : m_listenerList) {
                         final WikiEventListener listener = wikiEventListenerWeakReference.get();
-                        if( listener != null ) {
-                            listener.actionPerformed( event );
+                        if (listener != null) {
+                            listener.actionPerformed(event);
                         } else {
-                            needsCleanup = true;
+                            needsCleanup.set(true);
                         }
                     }
 
-                    //  Remove all such listeners which have expired
-                    if( needsCleanup ) {
-                        for( int i = 0; i < m_listenerList.size(); i++ ) {
-                            final WeakReference< WikiEventListener > w = m_listenerList.get( i );
-                            if( w.get() == null ) {
+                    // Remove all such listeners which have expired
+                    if (needsCleanup.get()) {
+                        for (int i = 0; i < m_listenerList.size(); i++) {
+                            final WeakReference<WikiEventListener> w = m_listenerList.get(i);
+                            if (w.get() == null) {
                                 m_listenerList.remove(i--);
                             }
                         }
                     }
-
-                }
-            } catch( final ConcurrentModificationException e ) {
-                //  We don't die, we just don't do notifications in that case.
-                LOG.info( "Concurrent modification of event list; please report this.", e );
+                });
+            } catch (final ConcurrentModificationException e) {
+                // We don't die, we just don't do notifications in that case.
+                LOG.info("Concurrent modification of event list; please report this.", e);
             }
         }
     }

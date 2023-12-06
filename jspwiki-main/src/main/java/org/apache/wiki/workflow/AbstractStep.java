@@ -20,10 +20,12 @@ package org.apache.wiki.workflow;
 
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.util.Synchronizer;
 
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Abstract superclass that provides a complete implementation of most Step methods; subclasses need only implement {@link #execute(Context)} and
@@ -57,6 +59,16 @@ public abstract class AbstractStep implements Step {
     private final List<String> m_errors;
 
     private boolean m_started;
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * Protected constructor that creates a new Step with a specified message key. After construction, the method
@@ -146,8 +158,8 @@ public abstract class AbstractStep implements Step {
      * {@inheritDoc}
      */
     @Override
-    public final synchronized Outcome getOutcome() {
-        return m_outcome;
+    public final Outcome getOutcome() {
+       return Synchronizer.synchronize(lock, () -> m_outcome);
     }
 
     /**
@@ -178,35 +190,40 @@ public abstract class AbstractStep implements Step {
      * {@inheritDoc}
      */
     @Override
-    public final synchronized void setOutcome(final Outcome outcome ) {
-        // Is this an allowed Outcome?
-        if( !m_successors.containsKey( outcome ) ) {
-            if( !Outcome.STEP_CONTINUE.equals( outcome ) && !Outcome.STEP_ABORT.equals( outcome ) ) {
-                throw new IllegalArgumentException( "Outcome " + outcome.getMessageKey() + " is not supported for this Step." );
+    public final void setOutcome(final Outcome outcome ) {
+        Synchronizer.synchronize(lock, () -> {
+            // Is this an allowed Outcome?
+            if( !m_successors.containsKey( outcome ) ) {
+                if( !Outcome.STEP_CONTINUE.equals( outcome ) && !Outcome.STEP_ABORT.equals( outcome ) ) {
+                    throw new IllegalArgumentException( "Outcome " + outcome.getMessageKey() + " is not supported for this Step." );
+                }
             }
-        }
 
-        // Is this a "completion" outcome?
-        if( outcome.isCompletion() ) {
-            if( m_completed ) {
-                throw new IllegalStateException( "Step has already been marked complete; cannot set again." );
+            // Is this a "completion" outcome?
+            if( outcome.isCompletion() ) {
+                if( m_completed ) {
+                    throw new IllegalStateException( "Step has already been marked complete; cannot set again." );
+                }
+                m_completed = true;
+                m_end = new Date( System.currentTimeMillis() );
             }
-            m_completed = true;
-            m_end = new Date( System.currentTimeMillis() );
-        }
-        m_outcome = outcome;
+            m_outcome = outcome;
+        });
+
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public final synchronized void start() throws WikiException {
-        if( m_started ) {
-            throw new IllegalStateException( "Step already started." );
-        }
-        m_started = true;
-        m_start = new Date( System.currentTimeMillis() );
+    public final void start() throws WikiException {
+        Synchronizer.synchronize(lock, () -> {
+            if( m_started ) {
+                throw new IllegalStateException( "Step already started." );
+            }
+            m_started = true;
+            m_start = new Date( System.currentTimeMillis() );
+        });
     }
 
     /**
@@ -226,9 +243,11 @@ public abstract class AbstractStep implements Step {
      * @param workflowContext the parent workflow context to set
      */
     @Override
-    public final synchronized void setWorkflow(final int workflowId, final Map< String, Serializable > workflowContext ) {
-        this.workflowId = workflowId;
-        this.workflowContext = workflowContext;
+    public final void setWorkflow(final int workflowId, final Map< String, Serializable > workflowContext ) {
+        Synchronizer.synchronize(lock, () -> {
+            this.workflowId = workflowId;
+            this.workflowContext = workflowContext;
+        });
     }
 
     public int getWorkflowId() {
@@ -244,8 +263,10 @@ public abstract class AbstractStep implements Step {
      *
      * @param message the error message
      */
-    protected final synchronized void addError( final String message ) {
-        m_errors.add( message );
+    protected final void addError( final String message ) {
+        Synchronizer.synchronize(lock, () -> {
+            m_errors.add( message );
+        });
     }
 
 }
