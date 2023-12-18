@@ -27,8 +27,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.WatchDog;
 import org.apache.wiki.WikiBackgroundThread;
@@ -70,7 +70,7 @@ import static java.lang.String.format;
  */
 public class KendraSearchProvider implements SearchProvider {
 
-    private static final Logger LOG = LogManager.getLogger( KendraSearchProvider.class );
+    private static final Logger LOG = LoggerFactory.getLogger( KendraSearchProvider.class );
     private Engine engine;
     private Properties properties;
     private Map< String, Object > contentTypes;

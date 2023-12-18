@@ -21,8 +21,8 @@ package org.apache.wiki.attachment;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -60,7 +60,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
     /** List of attachment types which are forced to be downloaded */
     private String[] m_forceDownloadPatterns;
 
-    private static final Logger log = LogManager.getLogger( DefaultAttachmentManager.class );
+    private static final Logger log = LoggerFactory.getLogger( DefaultAttachmentManager.class );
     private AttachmentProvider m_provider;
     private final Engine m_engine;
     private final CacheManager m_cacheManager = CacheManager.getInstance();

@@ -23,8 +23,8 @@ import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockServletContext;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -66,7 +66,7 @@ import java.util.Properties;
  *  Simple test engine that always assumes pages are found.
  */
 public class TestEngine extends WikiEngine {
-    private static final Logger log = LogManager.getLogger( TestEngine.class );
+    private static final Logger log = LoggerFactory.getLogger( TestEngine.class );
 
     private Session m_adminWikiSession = null;
     private Session m_janneWikiSession = null;

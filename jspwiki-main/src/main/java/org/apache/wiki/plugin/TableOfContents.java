@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.plugin;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -54,7 +54,7 @@ import java.util.ResourceBundle;
  */
 public class TableOfContents implements Plugin, HeadingListener {
 
-    private static final Logger log = LogManager.getLogger( TableOfContents.class );
+    private static final Logger log = LoggerFactory.getLogger( TableOfContents.class );
 
     /** Parameter name for setting the title. */
     public static final String PARAM_TITLE = "title";

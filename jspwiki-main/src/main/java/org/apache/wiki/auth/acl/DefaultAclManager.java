@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.auth.acl;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Attachment;
@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
  */
 public class DefaultAclManager implements AclManager {
 
-    private static final Logger log = LogManager.getLogger(DefaultAclManager.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultAclManager.class);
 
     private AuthorizationManager m_auth;
     private Engine m_engine;

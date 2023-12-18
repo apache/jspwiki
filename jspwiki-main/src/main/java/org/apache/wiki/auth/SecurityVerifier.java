@@ -19,8 +19,8 @@
 package org.apache.wiki.auth;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -144,7 +144,7 @@ public final class SecurityVerifier {
 
     private static final String   BG_RED                       = "bgcolor=\"#ffc0c0\"";
 
-    private static final Logger LOG = LogManager.getLogger( SecurityVerifier.class.getName() );
+    private static final Logger LOG = LoggerFactory.getLogger( SecurityVerifier.class.getName() );
 
     /**
      * Constructs a new SecurityVerifier for a supplied Engine and WikiSession.

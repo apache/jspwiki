@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 
@@ -38,7 +38,7 @@ public abstract class WikiBodyTag extends BodyTagSupport implements TryCatchFina
 
 	private static final long serialVersionUID = -6732266865112847897L;
 	protected WikiContext m_wikiContext;
-    private static final Logger log = LogManager.getLogger( WikiBodyTag.class );
+    private static final Logger log = LoggerFactory.getLogger( WikiBodyTag.class );
 
     public int doStartTag() throws JspException {
         try {

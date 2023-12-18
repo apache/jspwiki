@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.filters;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.FilterException;
@@ -91,7 +91,7 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
 
     private final Map< String, PageFilterInfo > m_filterClassMap = new HashMap<>();
 
-    private static final Logger log = LogManager.getLogger(DefaultFilterManager.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultFilterManager.class);
 
     /**
      *  Constructs a new FilterManager object.

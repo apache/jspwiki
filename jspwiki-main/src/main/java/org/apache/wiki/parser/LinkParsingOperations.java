@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.parser;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.api.core.Context;
@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class LinkParsingOperations {
 
-    private static final Logger log = LogManager.getLogger( LinkParsingOperations.class );
+    private static final Logger log = LoggerFactory.getLogger( LinkParsingOperations.class );
     private final Context wikiContext;
 
     /**

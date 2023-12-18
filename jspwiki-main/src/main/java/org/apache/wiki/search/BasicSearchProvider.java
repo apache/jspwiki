@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.search;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -49,7 +49,7 @@ import java.util.TreeSet;
  */
 public class BasicSearchProvider implements SearchProvider {
 
-    private static final Logger log = LogManager.getLogger( BasicSearchProvider.class );
+    private static final Logger log = LoggerFactory.getLogger( BasicSearchProvider.class );
     private Engine m_engine;
 
     /**

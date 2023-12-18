@@ -20,8 +20,8 @@
 package org.apache.wiki.ajax;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
@@ -52,7 +52,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Map< String, AjaxServletContainer > ajaxServlets = new ConcurrentHashMap<>();
-    private static final Logger log = LogManager.getLogger( WikiAjaxDispatcherServlet.class.getName() );
+    private static final Logger log = LoggerFactory.getLogger( WikiAjaxDispatcherServlet.class.getName() );
     private String PATH_AJAX = "/ajax/";
     private Engine m_engine;
 

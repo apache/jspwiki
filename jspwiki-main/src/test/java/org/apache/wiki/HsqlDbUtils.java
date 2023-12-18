@@ -18,8 +18,8 @@
  */
 package org.apache.wiki;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.hsqldb.Server;
 import org.hsqldb.cmdline.SqlFile;
 
@@ -55,7 +55,7 @@ import java.util.Properties;
 public class HsqlDbUtils
 {
     
-    private static final Logger LOG = LogManager.getLogger( HsqlDbUtils.class );
+    private static final Logger LOG = LoggerFactory.getLogger( HsqlDbUtils.class );
     
     Server hsqlServer = null;
     int localPort = 0;

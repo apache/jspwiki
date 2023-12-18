@@ -17,8 +17,8 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.logging.log4j.Logger" %>
-<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.slf4j.Logger" %>
+<%@ page import="org.slf4j.LoggerFactory" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
@@ -38,7 +38,7 @@
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
 <%!
-    Logger log = LogManager.getLogger("JSPWiki");
+    Logger log = LoggerFactory.getLogger("JSPWiki");
 
     String findParam( PageContext ctx, String key ) {
         ServletRequest req = ctx.getRequest();

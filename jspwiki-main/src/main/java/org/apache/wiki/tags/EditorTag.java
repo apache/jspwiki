@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.TemplateManager;
@@ -41,7 +41,7 @@ import java.io.IOException;
 public class EditorTag extends WikiBodyTag {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LogManager.getLogger( EditorTag.class );
+    private static final Logger log = LoggerFactory.getLogger( EditorTag.class );
     
     @Override
     public final int doWikiStartTag() throws IOException {

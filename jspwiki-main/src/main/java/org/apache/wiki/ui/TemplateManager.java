@@ -17,7 +17,7 @@ import java.util.Vector;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.fmt.LocaleSupport;
 
-import org.apache.logging.log4j.LogManager;
+import org.slf4j.LoggerFactory;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.modules.ModuleManager;
@@ -341,7 +341,7 @@ public interface TemplateManager extends ModuleManager {
             resources.add( resourceString );
         }
 
-        LogManager.getLogger( TemplateManager.class ).debug( "Request to add a resource: " + resourceString );
+        LoggerFactory.getLogger( TemplateManager.class ).debug( "Request to add a resource: " + resourceString );
 
         resourcemap.put(resourceType, resources );
         ctx.setVariable( RESOURCE_INCLUDES, resourcemap );

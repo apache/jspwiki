@@ -18,9 +18,6 @@
  */
 package org.apache.wiki.util;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import javax.activation.DataHandler;
 import javax.mail.*;
 import javax.mail.internet.AddressException;
@@ -38,6 +35,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Contains static methods for sending e-mails to recipients using JNDI-supplied
@@ -203,7 +202,7 @@ public final class MailUtil {
 
     private static final String PROP_MAIL_AUTH = "mail.smtp.auth";
 
-    static final Logger log = LogManager.getLogger(MailUtil.class);
+    static final Logger log = LoggerFactory.getLogger(MailUtil.class);
 
     static final String DEFAULT_MAIL_JNDI_NAME       = "mail/Session";
 
@@ -297,7 +296,7 @@ public final class MailUtil {
         }
         catch (final MessagingException e)
         {
-            log.error(e);
+            log.error("Error while sending", e);
             throw e;
         }
     }
@@ -369,7 +368,7 @@ public final class MailUtil {
         }
         catch (MessagingException e)
         {
-            log.error(e);
+            log.error("Error while sending multipart message", e);
             throw e;
         }
     }

@@ -19,8 +19,8 @@
 
 package org.apache.wiki.plugin;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -60,7 +60,7 @@ import java.util.regex.Pattern;
  */
 public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
 
-	private static final Logger log = LogManager.getLogger(IndexPlugin.class);
+	private static final Logger log = LoggerFactory.getLogger(IndexPlugin.class);
 
 	private final Namespace xmlns_XHTML = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 

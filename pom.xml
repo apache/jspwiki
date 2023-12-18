@@ -52,16 +52,14 @@
     <jetty.version>9.4.44.v20210927</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.8.1</junit.version>
-    <log4j.version>1.2.17</log4j.version>
-    <log4j2.version>2.18.0</log4j2.version>
     <lucene.version>6.6.6</lucene.version>
     <mockito.version>4.2.0</mockito.version>
     <nekohtml.version>1.9.22</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
     <selenide.version>6.5.1</selenide.version>
-    <slf4j.version>1.7.36</slf4j.version>
-    <logback.version>1.2.11</logback.version>
+    <slf4j.version>2.0.9</slf4j.version>
+    <logback.version>1.4.14</logback.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>2.2.1</tika.version>
     <tomcat.version>9.0.54</tomcat.version>
@@ -134,7 +132,7 @@
         <artifactId>aws-java-sdk-kendra</artifactId>
         <version>${aws-java-sdk-kendra.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>com.codeborne</groupId>
         <artifactId>selenide</artifactId>
@@ -232,21 +230,9 @@
       </dependency>
 
       <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-api</artifactId>
-        <version>${log4j2.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-core</artifactId>
-        <version>${log4j2.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-1.2-api</artifactId>
-        <version>${log4j2.version}</version>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
       </dependency>
 
       <dependency>
@@ -271,12 +257,6 @@
         <groupId>jaxen</groupId>
         <artifactId>jaxen</artifactId>
         <version>${jaxen.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${log4j.version}</version>
       </dependency>
 
       <dependency>
@@ -382,12 +362,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>oro</groupId>
         <artifactId>oro</artifactId>
         <version>${oro.version}</version>
@@ -478,7 +452,7 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <plugin>
         <groupId>net.nicoulaj.maven.plugins</groupId>
         <artifactId>checksum-maven-plugin</artifactId>
@@ -951,10 +925,10 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile> <!-- attach additional artifacts to build lifecycle -->
-      <id>attach-additional-artifacts</id> 
-      
+      <id>attach-additional-artifacts</id>
+
       <activation>
         <activeByDefault>false</activeByDefault>
         <property>

@@ -18,8 +18,8 @@
  */
 package org.apache.wiki;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.event.WikiEngineEvent;
 import org.apache.wiki.event.WikiEvent;
@@ -33,7 +33,7 @@ import org.apache.wiki.event.WikiEventListener;
  */
 public abstract class WikiBackgroundThread extends Thread implements WikiEventListener {
 	
-    private static final Logger LOG = LogManager.getLogger( WikiBackgroundThread.class );
+    private static final Logger LOG = LoggerFactory.getLogger( WikiBackgroundThread.class );
     private volatile boolean m_killMe;
     private final Engine m_engine;
     private final int m_interval;

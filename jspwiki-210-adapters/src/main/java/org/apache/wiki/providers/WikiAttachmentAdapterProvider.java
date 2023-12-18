@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.providers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.WikiPage;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
@@ -30,6 +30,7 @@ import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.search.QueryItem;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +52,7 @@ import java.util.stream.Collectors;
 @Deprecated
 public class WikiAttachmentAdapterProvider implements AttachmentProvider {
 
-    private static final Logger LOG = LogManager.getLogger( WikiAttachmentAdapterProvider.class );
+    private static final Logger LOG = LoggerFactory.getLogger( WikiAttachmentAdapterProvider.class );
     private static final String PROP_ADAPTER_IMPL = "jspwiki.attachmentProvider.adapter.impl";
 
     WikiAttachmentProvider provider;

@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.pages;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Page;
 
 import java.io.Serializable;
@@ -34,7 +34,7 @@ import java.util.Date;
 public class PageTimeComparator implements Comparator< Page >, Serializable {
 	
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LogManager.getLogger( PageTimeComparator.class );
+    private static final Logger log = LoggerFactory.getLogger( PageTimeComparator.class );
 
     /**
      *  {@inheritDoc}

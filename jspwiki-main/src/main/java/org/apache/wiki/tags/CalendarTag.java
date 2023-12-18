@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -56,7 +56,7 @@ import java.util.Date;
 public class CalendarTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LogManager.getLogger( CalendarTag.class );
+    private static final Logger log = LoggerFactory.getLogger( CalendarTag.class );
     
     private SimpleDateFormat m_pageFormat;
     private SimpleDateFormat m_urlFormat;

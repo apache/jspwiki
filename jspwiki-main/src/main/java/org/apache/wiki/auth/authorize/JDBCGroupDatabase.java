@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.auth.authorize;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -190,7 +190,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
     /** The column containing the name of the user who last modified the group. */
     public static final String PROP_GROUPDB_MODIFIER = "jspwiki.groupdatabase.modifier";
 
-    protected static final Logger log = LogManager.getLogger( JDBCGroupDatabase.class );
+    protected static final Logger log = LoggerFactory.getLogger( JDBCGroupDatabase.class );
 
     private DataSource m_ds;
 

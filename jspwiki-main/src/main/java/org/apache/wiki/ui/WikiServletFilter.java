@@ -18,9 +18,8 @@
  */
 package org.apache.wiki.ui;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
@@ -29,6 +28,7 @@ import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.slf4j.MDC;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -47,7 +47,7 @@ import java.io.PrintWriter;
  */
 public class WikiServletFilter implements Filter {
 
-    private static final Logger log = LogManager.getLogger( WikiServletFilter.class );
+    private static final Logger log = LoggerFactory.getLogger( WikiServletFilter.class );
     protected Engine m_engine;
 
     /**
@@ -137,15 +137,11 @@ public class WikiServletFilter implements Filter {
             }
         }
 
-        try {
-            ThreadContext.push( m_engine.getApplicationName() + ":" + httpRequest.getRequestURL() );
-            chain.doFilter( httpRequest, response );
-        } finally {
-            ThreadContext.pop();
-            ThreadContext.remove( m_engine.getApplicationName() + ":" + httpRequest.getRequestURL() );
-        }
+		try (MDC.MDCCloseable ignored = MDC.putCloseable(m_engine.getApplicationName(), httpRequest.getRequestURL().toString() )) {
+			chain.doFilter( httpRequest, response );
+		}
 
-    }
+	}
 
     /**
      *  Figures out the wiki context from the request.  This method does not create the context if it does not exist.

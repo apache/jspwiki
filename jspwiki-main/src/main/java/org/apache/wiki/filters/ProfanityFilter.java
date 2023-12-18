@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.filters;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.util.TextUtil;
@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class ProfanityFilter extends BasePageFilter {
 	
-    private static final Logger log = LogManager.getLogger( ProfanityFilter.class );
+    private static final Logger log = LoggerFactory.getLogger( ProfanityFilter.class );
     
     private static final String PROPERTYFILE = "org/apache/wiki/filters/profanity.properties";
     private static String[] c_profanities = new String[0];

@@ -20,8 +20,8 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
@@ -37,7 +37,7 @@ import java.util.ResourceBundle;
  */
 public class MetadataLinkNodePostProcessorState implements NodePostProcessorState< JSPWikiLink > {
 
-    private static final Logger LOG = LogManager.getLogger( MetadataLinkNodePostProcessorState.class );
+    private static final Logger LOG = LoggerFactory.getLogger( MetadataLinkNodePostProcessorState.class );
     private final Context wikiContext;
     private final boolean m_wysiwygEditorMode;
 

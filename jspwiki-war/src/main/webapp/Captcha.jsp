@@ -17,8 +17,6 @@
     under the License.
 --%>
 
-<%@ page import="org.apache.logging.log4j.Logger" %>
-<%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="org.apache.commons.httpclient.*" %>
 <%@ page import="org.apache.commons.httpclient.methods.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
@@ -34,9 +32,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 
-<%!
-    Logger log = LogManager.getLogger("JSPWiki");
-%>
 <%
     Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization

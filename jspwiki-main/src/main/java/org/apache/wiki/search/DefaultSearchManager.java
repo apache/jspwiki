@@ -20,8 +20,8 @@ package org.apache.wiki.search;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.ajax.AjaxUtil;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
@@ -63,7 +63,7 @@ import java.util.Set;
  */
 public class DefaultSearchManager extends BasePageFilter implements SearchManager {
 
-    private static final Logger log = LogManager.getLogger( DefaultSearchManager.class );
+    private static final Logger log = LoggerFactory.getLogger( DefaultSearchManager.class );
 
     private SearchProvider m_searchProvider;
 

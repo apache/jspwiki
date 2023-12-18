@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.auth.authorize;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
@@ -57,7 +57,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
 
     private static final String J2EE_SCHEMA_25_NAMESPACE = "http://xmlns.jcp.org/xml/ns/javaee";
 
-    private static final Logger log = LogManager.getLogger( WebContainerAuthorizer.class );
+    private static final Logger log = LoggerFactory.getLogger( WebContainerAuthorizer.class );
 
     protected Engine m_engine;
 

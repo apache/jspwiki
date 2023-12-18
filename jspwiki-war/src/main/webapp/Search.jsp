@@ -18,8 +18,8 @@
 --%>
 
 <%@ page import="java.util.*" %>
-<%@ page import="org.apache.logging.log4j.Logger" %>
-<%@ page import="org.apache.logging.log4j.LogManager" %>
+<%@ page import="org.slf4j.Logger" %>
+<%@ page import="org.slf4j.LoggerFactory" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.api.search.*" %>
 <%@ page import="org.apache.wiki.api.spi.Wiki" %>
@@ -33,7 +33,7 @@
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
 <%!
-    Logger log = LogManager.getLogger("JSPWikiSearch");
+    Logger log = LoggerFactory.getLogger("JSPWikiSearch");
 %>
 
 <%

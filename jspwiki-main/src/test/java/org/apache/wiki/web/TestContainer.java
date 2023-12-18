@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.web;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.HsqlDbUtils;
 import org.apache.wiki.auth.Users;
 import org.eclipse.jetty.jndi.InitialContextFactory;
@@ -70,7 +70,7 @@ public class TestContainer
 
     private static final HsqlDbUtils m_hu   = new HsqlDbUtils();
 
-    private static final Logger log = LogManager.getLogger( TestContainer.class );
+    private static final Logger log = LoggerFactory.getLogger( TestContainer.class );
 
     private static Context initCtx ;
     private static Resource userDB = null;        

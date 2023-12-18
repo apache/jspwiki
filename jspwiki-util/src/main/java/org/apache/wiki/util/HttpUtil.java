@@ -19,8 +19,8 @@
 package org.apache.wiki.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -40,24 +40,24 @@ import java.util.Date;
  */
 public final class HttpUtil {
 
-    private static final Logger log = LogManager.getLogger( HttpUtil.class );
+    private static final Logger log = LoggerFactory.getLogger( HttpUtil.class );
     private static final int    ONE                   = 48;
     private static final int    NINE                  = 57;
     private static final int    DOT                   = 46;
-    
+
     /** Private constructor to prevent direct instantiation. */
     private HttpUtil() {
     }
-    
+
     /**
-     * returns the remote address by looking into {@code x-forwarded-for} header or, if unavailable, 
+     * returns the remote address by looking into {@code x-forwarded-for} header or, if unavailable,
      * into {@link HttpServletRequest#getRemoteAddr()}.
-     * 
+     *
      * @param req http request
      * @return remote address associated to the request.
      */
     public static String getRemoteAddress( final HttpServletRequest req ) {
-		return StringUtils.isNotEmpty ( req.getHeader( "X-Forwarded-For" ) ) ? req.getHeader( "X-Forwarded-For" ) : 
+		return StringUtils.isNotEmpty ( req.getHeader( "X-Forwarded-For" ) ) ? req.getHeader( "X-Forwarded-For" ) :
 			                                                                          req.getRemoteAddr();
 	}
 
@@ -93,7 +93,7 @@ public final class HttpUtil {
     /**
      *  Creates an ETag based on page information. An ETag is unique to each page and version, so it can be used to check if the page has
      *  changed. Do not assume that the ETag is in any particular format.
-     *  
+     *
      *  @param pageName  The page name for which the ETag should be created.
      *  @param lastModified  The page last modified date for which the ETag should be created.
      *  @return A String depiction of an ETag.
@@ -101,7 +101,7 @@ public final class HttpUtil {
     public static String createETag( final String pageName, final Date lastModified ) {
         return Long.toString( pageName.hashCode() ^ lastModified.getTime() );
     }
-    
+
     /**
      *  If returns true, then should return a 304 (HTTP_NOT_MODIFIED)
      *
@@ -121,11 +121,11 @@ public final class HttpUtil {
             //  HTTP 1.1 ETags go first
             final String thisTag = createETag( pageName, lastModified );
             final String eTag = req.getHeader( "If-None-Match" );
-            
+
             if( eTag != null && eTag.equals(thisTag) ) {
                 return true;
             }
-            
+
             //  Next, try if-modified-since
             final DateFormat rfcDateFormat = new SimpleDateFormat( "EEE, dd MMM yyyy HH:mm:ss z" );
 
@@ -155,14 +155,14 @@ public final class HttpUtil {
                 // FIXME: Should really move to ETags.
             }
         }
-         
+
         return false;
     }
 
     /**
      * Attempts to form a valid URI based on the string given.  Currently it can guess email addresses (mailto:).  If nothing else is given,
      * it assumes it to be an http:// url.
-     * 
+     *
      * @param uri  URI to take a poke at
      * @return Possibly a valid URI
      * @since 2.2.8
@@ -176,7 +176,7 @@ public final class HttpUtil {
         } else if( notBeginningWithHttpOrHttps( uri ) ) {
             uri = "http://" + uri;
         }
-        
+
         return uri;
     }
 

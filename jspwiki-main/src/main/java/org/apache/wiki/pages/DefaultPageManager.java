@@ -19,8 +19,8 @@
 package org.apache.wiki.pages;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.WikiBackgroundThread;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.AclEntry;
@@ -86,7 +86,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class DefaultPageManager implements PageManager {
 
-    private static final Logger LOG = LogManager.getLogger( DefaultPageManager.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DefaultPageManager.class );
 
     private final PageProvider m_provider;
 

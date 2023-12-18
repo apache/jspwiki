@@ -19,8 +19,8 @@
 package org.apache.wiki.auth;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.ajax.AjaxUtil;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
@@ -88,7 +88,7 @@ public class DefaultUserManager implements UserManager {
 
     private Engine m_engine;
 
-    private static final Logger log = LogManager.getLogger( DefaultUserManager.class);
+    private static final Logger log = LoggerFactory.getLogger( DefaultUserManager.class);
 
     /** Associates wiki sessions with profiles */
     private final Map< Session, UserProfile > m_profiles = new WeakHashMap<>();

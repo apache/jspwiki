@@ -45,17 +45,6 @@ public class WikiBootstrapServletContextListenerTest {
     }
 
     @Test
-    public void testLoggingFrameworkInit() {
-        final ServletContextEvent sce = new ServletContextEvent( sc );
-        final WikiBootstrapServletContextListener listener = new WikiBootstrapServletContextListener();
-        final Properties properties = listener.initWikiSPIs( sce );
-
-        Assertions.assertTrue( listener.initWikiLoggingFramework( properties ) );
-        properties.setProperty( "jspwiki.use.external.logconfig", "true" );
-        //Assertions.assertFalse( listener.initWikiLoggingFramework( properties ) );
-    }
-
-    @Test
     public void testServletContextListenerLifeCycle() {
         final ServletContextEvent sce = new ServletContextEvent( sc );
         final WikiBootstrapServletContextListener listener = new WikiBootstrapServletContextListener();

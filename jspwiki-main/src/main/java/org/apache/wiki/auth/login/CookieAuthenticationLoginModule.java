@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.auth.login;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.util.FileUtil;
@@ -75,7 +75,7 @@ import java.util.UUID;
  */
 public class CookieAuthenticationLoginModule extends AbstractLoginModule {
 
-    private static final Logger log = LogManager.getLogger( CookieAuthenticationLoginModule.class );
+    private static final Logger log = LoggerFactory.getLogger( CookieAuthenticationLoginModule.class );
     private static final String LOGIN_COOKIE_NAME = "JSPWikiUID";
 
     /** The directory name under which the cookies are stored.  The value is {@value}. */

@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.url;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
@@ -38,7 +38,7 @@ import java.util.Properties;
 public class ShortURLConstructor extends DefaultURLConstructor {
     
     private static final String DEFAULT_PREFIX = "wiki/";
-    private static final Logger log = LogManager.getLogger( ShortURLConstructor.class );
+    private static final Logger log = LoggerFactory.getLogger( ShortURLConstructor.class );
     
     /** Contains the path part after the JSPWiki base URL */
     protected String m_urlPrefix = "";

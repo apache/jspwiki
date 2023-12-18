@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.api.core;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.util.TextUtil;
@@ -240,7 +240,7 @@ public interface Engine {
      * @return the URL to the file
      */
     default URL findConfigFile( final String name ) {
-        Logger log = LogManager.getLogger(Engine.class);
+        Logger log = LoggerFactory.getLogger(Engine.class);
         log.info( "looking for " + name + " inside WEB-INF " );
         // Try creating an absolute path first
         File defaultFile = null;
@@ -294,7 +294,7 @@ public interface Engine {
                 path = tmpFile.toURI().toURL();
             } catch( final MalformedURLException e ) {
                 // This should never happen unless I screw up
-                log.fatal( "Your code is b0rked.  You are a bad person.", e );
+                log.error( "Your code is b0rked.  You are a bad person.", e );
             } catch( final IOException e ) {
                 log.error( "failed to load security policy from file " + name + ",stacktrace follows", e );
             }

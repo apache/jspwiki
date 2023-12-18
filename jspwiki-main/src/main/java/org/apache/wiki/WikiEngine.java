@@ -19,8 +19,8 @@
 package org.apache.wiki;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.wiki.api.Release;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -96,7 +96,7 @@ import java.util.stream.Collectors;
 public class WikiEngine implements Engine {
 
     private static final String ATTR_WIKIENGINE = "org.apache.wiki.WikiEngine";
-    private static final Logger log = LogManager.getLogger( WikiEngine.class );
+    private static final Logger log = LoggerFactory.getLogger( WikiEngine.class );
 
     /** Stores properties. */
     private Properties m_properties;
@@ -294,7 +294,7 @@ public class WikiEngine implements Engine {
                 throw new WikiException( "jspwiki.workDir does not point to a directory: " + m_workDir );
             }
         } catch( final SecurityException e ) {
-            log.fatal( "Unable to find or create the working directory: "+m_workDir, e );
+            log.error( "Unable to find or create the working directory: "+m_workDir, e );
             throw new IllegalArgumentException( "Unable to find or create the working dir: " + m_workDir, e );
         }
 
@@ -349,20 +349,20 @@ public class WikiEngine implements Engine {
             getManager( FilterManager.class ).addPageFilter( getManager( SearchManager.class ), -1002 );
         } catch( final RuntimeException e ) {
             // RuntimeExceptions may occur here, even if they shouldn't.
-            log.fatal( "Failed to start managers.", e );
+            log.error( "Failed to start managers.", e );
             throw new WikiException( "Failed to start managers: " + e.getMessage(), e );
         } catch( final ClassNotFoundException e ) {
-            log.fatal( "JSPWiki could not start, URLConstructor was not found: " + e.getMessage(), e );
+            log.error( "JSPWiki could not start, URLConstructor was not found: " + e.getMessage(), e );
             throw new WikiException( e.getMessage(), e );
         } catch( final InstantiationException e ) {
-            log.fatal( "JSPWiki could not start, URLConstructor could not be instantiated: " + e.getMessage(), e );
+            log.error( "JSPWiki could not start, URLConstructor could not be instantiated: " + e.getMessage(), e );
             throw new WikiException( e.getMessage(), e );
         } catch( final IllegalAccessException e ) {
-            log.fatal( "JSPWiki could not start, URLConstructor cannot be accessed: " + e.getMessage(), e );
+            log.error( "JSPWiki could not start, URLConstructor cannot be accessed: " + e.getMessage(), e );
             throw new WikiException( e.getMessage(), e );
         } catch( final Exception e ) {
             // Final catch-all for everything
-            log.fatal( "JSPWiki could not start, due to an unknown exception when starting.",e );
+            log.error( "JSPWiki could not start, due to an unknown exception when starting.",e );
             throw new WikiException( "Failed to start. Caused by: " + e.getMessage() + "; please check log files for better information.", e );
         }
 
@@ -485,7 +485,7 @@ public class WikiEngine implements Engine {
             }
 
         } catch( final ProviderException e ) {
-            log.fatal("PageProvider is unable to list pages: ", e);
+            log.error("PageProvider is unable to list pages: ", e);
         } catch( final Exception e ) {
             throw new WikiException( "Could not instantiate ReferenceManager: " + e.getMessage(), e );
         }

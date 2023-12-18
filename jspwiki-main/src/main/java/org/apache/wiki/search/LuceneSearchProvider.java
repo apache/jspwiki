@@ -34,8 +34,8 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
@@ -91,7 +91,7 @@ import org.apache.wiki.util.TextUtil;
  */
 public class LuceneSearchProvider implements SearchProvider {
 
-    protected static final Logger log = LogManager.getLogger(LuceneSearchProvider.class);
+    protected static final Logger log = LoggerFactory.getLogger(LuceneSearchProvider.class);
 
     protected Engine m_engine;
     private Executor searchExecutor;

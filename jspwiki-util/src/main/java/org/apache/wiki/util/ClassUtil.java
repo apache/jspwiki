@@ -20,9 +20,9 @@ package org.apache.wiki.util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +48,7 @@ import java.util.jar.JarFile;
  */
 public final class ClassUtil {
 
-    private static final Logger log = LogManager.getLogger(ClassUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(ClassUtil.class);
 
     /**
      * System property to overwrite the class definition xml

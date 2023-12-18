@@ -21,8 +21,8 @@ package org.apache.wiki.filters;
 import net.sf.akismet.Akismet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.MatchResult;
 import org.apache.oro.text.regex.Pattern;
@@ -196,8 +196,8 @@ public class SpamFilter extends BasePageFilter {
 
     private Date m_lastRebuild = new Date( 0L );
 
-    private static final Logger c_spamlog = LogManager.getLogger( "SpamLog" );
-    private static final Logger log = LogManager.getLogger( SpamFilter.class );
+    private static final Logger c_spamlog = LoggerFactory.getLogger( "SpamLog" );
+    private static final Logger log = LoggerFactory.getLogger( SpamFilter.class );
 
     private final Vector<Host>    m_temporaryBanList = new Vector<>();
 
@@ -268,7 +268,7 @@ public class SpamFilter extends BasePageFilter {
         try {
             m_urlPattern = m_compiler.compile( URL_REGEXP );
         } catch( final MalformedPatternException e ) {
-            log.fatal( "Internal error: Someone put in a faulty pattern.", e );
+            log.error( "Internal error: Someone put in a faulty pattern.", e );
             throw new InternalWikiException( "Faulty pattern." , e);
         }
 
