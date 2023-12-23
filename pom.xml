@@ -722,6 +722,12 @@
               <groupId>org.mockito</groupId>
               <artifactId>mockito-core</artifactId>
               <version>${mockito.version}</version>
+              <exclusions>
+                <exclusion>
+                  <groupId>org.webjars.npm</groupId>
+                  <artifactId>minimatch</artifactId>
+                </exclusion>
+              </exclusions>
             </dependency>
           </dependencies>
         </plugin>
