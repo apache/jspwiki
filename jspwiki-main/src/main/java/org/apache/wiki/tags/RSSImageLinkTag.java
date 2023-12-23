@@ -88,23 +88,24 @@ public class RSSImageLinkTag
     @Override
     public final int doWikiStartTag() throws IOException {
         final Engine engine = m_wikiContext.getEngine();
-        final JspWriter out = pageContext.getOut();
-        final ResourceBundle rb = Preferences.getBundle( m_wikiContext, InternationalizationManager.CORE_BUNDLE );
-        if( engine.getManager( RSSGenerator.class ) != null && engine.getManager( RSSGenerator.class ).isEnabled() ) {
-            if( RSSGenerator.MODE_FULL.equals(m_mode) ) {
-                final String rssURL = engine.getGlobalRSSURL();
-                if( rssURL != null ) {
-                    out.print("<a class=\"feed\" href=\""+rssURL);
-                    out.print( " title='"+rb.getString( "rss.title.full" )+"'>" );
-                    out.print( "&nbsp;</a> ");
+        try (JspWriter out = pageContext.getOut()) {
+            final ResourceBundle rb = Preferences.getBundle(m_wikiContext, InternationalizationManager.CORE_BUNDLE);
+            if (engine.getManager(RSSGenerator.class) != null && engine.getManager(RSSGenerator.class).isEnabled()) {
+                if (RSSGenerator.MODE_FULL.equals(m_mode)) {
+                    final String rssURL = engine.getGlobalRSSURL();
+                    if (rssURL != null) {
+                        out.print("<a class=\"feed\" href=\"" + rssURL);
+                        out.print(" title='" + rb.getString("rss.title.full") + "'>");
+                        out.print("&nbsp;</a> ");
+                    }
+                } else {
+                    final String page = m_pageName != null ? m_pageName : m_wikiContext.getPage().getName();
+                    final String params = "page=" + page + "&mode=" + m_mode;
+                    out.print("<a href='" + m_wikiContext.getURL(ContextEnum.PAGE_NONE.getRequestContext(), "rss.jsp", params));
+                    out.print("' class='feed'");
+                    out.print(" title='" + MessageFormat.format(rb.getString("rss.title"), page) + "'>");
+                    out.print("&nbsp;</a> ");
                 }
-            } else {
-                final String page = m_pageName != null ? m_pageName : m_wikiContext.getPage().getName();
-                final String params = "page="+page+"&mode="+m_mode;
-                out.print( "<a href='"+m_wikiContext.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "rss.jsp", params ));
-                out.print( "' class='feed'" );
-                out.print( " title='"+MessageFormat.format( rb.getString( "rss.title" ), page )+"'>" );
-                out.print( "&nbsp;</a> ");
             }
         }
 
