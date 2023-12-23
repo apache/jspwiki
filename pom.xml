@@ -764,6 +764,7 @@
               <exclude>**/src/main/webapp/favicons/*.svg</exclude>
               <exclude>**/src/overlay/launchers/tomcat/woas.app/Contents/*.plist</exclude>
               <exclude>**/src/overlay/launchers/tomcat/woas.app/Contents/Resources/*.none</exclude>
+              <exclude>**/.eslintrc</exclude>
 
             </excludes>
           </configuration>
