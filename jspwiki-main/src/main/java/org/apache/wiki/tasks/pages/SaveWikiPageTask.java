@@ -27,48 +27,49 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.tasks.TasksManager;
+import org.apache.wiki.utils.WikiPageUtils;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
 import org.apache.wiki.workflow.WorkflowManager;
 
-
 /**
- * Handles the actual page save and post-save actions. 
+ * Handles the actual page save and post-save actions.
  */
 public class SaveWikiPageTask extends Task {
 
-    private static final long serialVersionUID = 3190559953484411420L;
+	private static final long serialVersionUID = 3190559953484411420L;
 
-    /**
-     * Creates the Task.
-     */
-    public SaveWikiPageTask() {
-        super( TasksManager.WIKIPAGE_SAVE_TASK_MESSAGE_KEY );
-    }
+	/**
+	 * Creates the Task.
+	 */
+	public SaveWikiPageTask() {
+		super(TasksManager.WIKIPAGE_SAVE_TASK_MESSAGE_KEY);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Outcome execute( final Context context ) throws WikiException {
-        // Retrieve attributes
-        final String proposedText = ( String )getWorkflowContext().get( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT );
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Outcome execute(final Context context) throws WikiException {
+		// Retrieve attributes
+		final String proposedText = (String) getWorkflowContext().get(WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT);
 
-        final Page page = context.getPage();
+		final Page page = context.getPage();
 
-        // Let the rest of the engine handle actual saving.
-        context.getEngine().getManager( PageManager.class ).putPageText( page, proposedText );
+		WikiPageUtils.checkDuplicatePagesCaseSensitive(context.getEngine(), page.getName());
 
-        // Refresh the context for post save filtering.
-        context.getEngine().getManager( PageManager.class ).getPage( page.getName() );
-        context.getEngine().getManager( RenderingManager.class ).textToHTML( context, proposedText );
-        context.getEngine().getManager( FilterManager.class ).doPostSaveFiltering( context, proposedText );
+		// Let the rest of the engine handle actual saving.
+		context.getEngine().getManager(PageManager.class).putPageText(page, proposedText);
 
-        // Reindex saved page
-        page.setVersion( PageProvider.LATEST_VERSION );
-        context.getEngine().getManager( SearchManager.class ).reindexPage( page );
+		// Refresh the context for post save filtering.
+		context.getEngine().getManager(PageManager.class).getPage(page.getName());
+		context.getEngine().getManager(RenderingManager.class).textToHTML(context, proposedText);
+		context.getEngine().getManager(FilterManager.class).doPostSaveFiltering(context, proposedText);
 
-        return Outcome.STEP_COMPLETE;
-    }
+		// Reindex saved page
+		page.setVersion(PageProvider.LATEST_VERSION);
+		context.getEngine().getManager(SearchManager.class).reindexPage(page);
 
+		return Outcome.STEP_COMPLETE;
+	}
 }
