@@ -27,7 +27,6 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.SearchManager;
 import org.apache.wiki.tasks.TasksManager;
-import org.apache.wiki.utils.WikiPageUtils;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
 import org.apache.wiki.workflow.WorkflowManager;
@@ -56,7 +55,7 @@ public class SaveWikiPageTask extends Task {
 
 		final Page page = context.getPage();
 
-		WikiPageUtils.checkDuplicatePagesCaseSensitive(context.getEngine(), page.getName());
+//		WikiPageUtils.checkDuplicatePagesCaseSensitive(context.getEngine(), page.getName());
 
 		// Let the rest of the engine handle actual saving.
 		context.getEngine().getManager(PageManager.class).putPageText(page, proposedText);
