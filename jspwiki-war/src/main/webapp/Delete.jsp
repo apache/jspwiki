@@ -32,80 +32,98 @@
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp" %>
+<%@ page import="org.apache.wiki.ui.EditorManager" %>
+<%@ page import="org.joda.time.DateTime" %>
+<%@ page import="java.time.format.DateTimeFormatter" %>
+<%@ page import="java.time.LocalDateTime" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
 <%!
-    Logger log = LoggerFactory.getLogger("JSPWiki");
+	Logger log = LoggerFactory.getLogger("JSPWiki");
 %>
 
 <%
-    Engine wiki = Wiki.engine().find( getServletConfig() );
-    // Create wiki context and check for authorization
-    Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_DELETE.getRequestContext() );
-    if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
-    if( wikiContext.getCommand().getTarget() == null ) {
-        response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
-        return;
-    }
-    String pagereq = wikiContext.getName();
+	Engine wiki = Wiki.engine().find(getServletConfig());
+	// Create wiki context and check for authorization
+	Context wikiContext = Wiki.context().create(wiki, request, ContextEnum.PAGE_DELETE.getRequestContext());
+	if (!wiki.getManager(AuthorizationManager.class).hasAccess(wikiContext, response)) return;
+	if (wikiContext.getCommand().getTarget() == null) {
+		response.sendRedirect(wikiContext.getURL(wikiContext.getRequestContext(), wikiContext.getName()));
+		return;
+	}
+	String deleteAdmin = request.getParameter("delete-admin");
+	String deleteall = request.getParameter("delete-all");
+	String delete = request.getParameter("delete");
 
-    Page wikipage      = wikiContext.getPage();
-    Page latestversion = wiki.getManager( PageManager.class ).getPage( pagereq );
+	Date lastModified = wiki.getManager(PageManager.class).getPageInfo(wikiContext.getName(), 1).getLastModified();
+	long lastModifiedTime = lastModified.getTime();
+	long currentTime = System.currentTimeMillis();
+	// if not admin-button was pressed, last change >1h ago, >=3 versions -> only clear
+	if (deleteAdmin == null && ((currentTime - lastModifiedTime) > 60 * 60 * 1000 || wikiContext.getPage()
+			.getVersion() >= 3)) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		wiki.getManager(PageManager.class)
+				.putPageText(wikiContext.getPage(), "Deleted by " + wikiContext.getCurrentUser()
+						.getName() + " at " + formatter.format(LocalDateTime.now()));
+		response.sendRedirect(wikiContext.getURL(ContextEnum.PAGE_VIEW.getRequestContext(), wikiContext.getName()));
+		return;
+	}
+	String pagereq = wikiContext.getName();
 
-    String delete = request.getParameter( "delete" );
-    String deleteall = request.getParameter( "delete-all" );
+	Page wikipage = wikiContext.getPage();
+	Page latestversion = wiki.getManager(PageManager.class).getPage(pagereq);
 
-    if( latestversion == null )
-    {
-        latestversion = wikiContext.getPage();
-    }
+	if (latestversion == null) {
+		latestversion = wikiContext.getPage();
+	}
 
-    // If deleting an attachment, go to the parent page.
-    String redirTo = pagereq;
-    if( wikipage instanceof Attachment ) {
-        redirTo = ((Attachment)wikipage).getParentName();
-    }
+	// If deleting an attachment, go to the parent page.
+	String redirTo = pagereq;
+	if (wikipage instanceof Attachment) {
+		redirTo = ((Attachment) wikipage).getParentName();
+	}
 
-    if( deleteall != null ) {
-        log.info("Deleting page "+pagereq+". User="+request.getRemoteUser()+", host="+HttpUtil.getRemoteAddress(request) );
+	if (deleteall != null || deleteAdmin != null) {
+		log.info("Deleting page " + pagereq + ". User=" + request.getRemoteUser() + ", host=" + HttpUtil.getRemoteAddress(request));
 
-        wiki.getManager( PageManager.class ).deletePage( pagereq );
+		wiki.getManager(PageManager.class).deletePage(pagereq);
 
-        FixedQueue trail = (FixedQueue) session.getAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY );
-        if( trail != null )
-        {
-            trail.removeItem( pagereq );
-            session.setAttribute( BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail );
-        }
+		FixedQueue trail = (FixedQueue) session.getAttribute(BreadcrumbsTag.BREADCRUMBTRAIL_KEY);
+		if (trail != null) {
+			trail.removeItem(pagereq);
+			session.setAttribute(BreadcrumbsTag.BREADCRUMBTRAIL_KEY, trail);
+		}
 
-        response.sendRedirect( TextUtil.replaceString( wiki.getURL( ContextEnum.PAGE_UPLOAD.getRequestContext(), redirTo, "" ),"&amp;","&" ));
-        return;
-    } else if( delete != null ) {
-        log.info("Deleting a range of pages from "+pagereq);
+		response.sendRedirect(TextUtil.replaceString(wiki.getURL(ContextEnum.PAGE_UPLOAD.getRequestContext(), redirTo, ""), "&amp;", "&"));
+		return;
+	}
+	else if (delete != null) {
+		log.info("Deleting a range of pages from " + pagereq);
 
-        for( Enumeration< String > params = request.getParameterNames(); params.hasMoreElements(); ) {
-            String paramName = params.nextElement();
+		for (Enumeration<String> params = request.getParameterNames(); params.hasMoreElements(); ) {
+			String paramName = params.nextElement();
 
-            if( paramName.startsWith("delver") ) {
-                int version = Integer.parseInt( paramName.substring(7) );
+			if (paramName.startsWith("delver")) {
+				int version = Integer.parseInt(paramName.substring(7));
 
-                Page p = wiki.getManager( PageManager.class ).getPage( pagereq, version );
+				Page p = wiki.getManager(PageManager.class).getPage(pagereq, version);
 
-                log.debug("Deleting version "+version);
-                wiki.getManager( PageManager.class ).deleteVersion( p );
-            }
-        }
+				log.debug("Deleting version " + version);
+				wiki.getManager(PageManager.class).deleteVersion(p);
+			}
+		}
 
-        response.sendRedirect(
-            TextUtil.replaceString( wiki.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), redirTo, "tab=" + request.getParameter( "tab" ) ),"&amp;","&" )
-        );
+		response.sendRedirect(
+				TextUtil.replaceString(wiki.getURL(ContextEnum.PAGE_VIEW.getRequestContext(), redirTo, "tab=" + request.getParameter("tab")), "&amp;", "&")
+		);
 
-        return;
-    }
+		return;
+	}
 
-    // Set the content type and include the response content
-    // FIXME: not so.
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
-    String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "EditTemplate.jsp" );
-%><wiki:Include page="<%=contentPage%>" />
+	// Set the content type and include the response content
+	// FIXME: not so.
+	response.setContentType("text/html; charset=" + wiki.getContentEncoding());
+	String contentPage = wiki.getManager(TemplateManager.class)
+			.findJSP(pageContext, wikiContext.getTemplate(), "EditTemplate.jsp");
+%><wiki:Include page="<%=contentPage%>"/>
 
