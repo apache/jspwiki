@@ -32,6 +32,7 @@ import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.security.Principal;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -299,6 +300,12 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
     private boolean m_supportsCommits;
 
     /**
+     * The character set encoding used by this object. This is obtained from {@link org.apache.wiki.WikiEngine#getContentEncoding()},
+     * which returns the content encoding of the engine, either UTF-8 or ISO-8859-1.
+     */
+    private Charset m_encoding;
+
+    /**
      * Looks up and deletes the first {@link UserProfile} in the user database
      * that matches a profile having a given login name. If the user database
      * does not contain a user with a matching attribute, throws a
@@ -415,6 +422,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
     @Override
     public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException, WikiSecurityException {
         final String jndiName = props.getProperty( PROP_DB_DATASOURCE, DEFAULT_DB_JNDI_NAME );
+        m_encoding = engine != null ? engine.getContentEncoding() : Charset.defaultCharset();
         try {
             final Context initCtx = new InitialContext();
             final Context ctx = (Context) initCtx.lookup( "java:comp/env" );
@@ -615,7 +623,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                 ps1.setTimestamp( 6, ts );
                 ps1.setString( 7, profile.getLoginName() );
                 try {
-                    ps1.setString( 8, Serializer.serializeToBase64( profile.getAttributes() ) );
+                    ps1.setString( 8, Serializer.serializeToBase64( profile.getAttributes(), m_encoding != null ? m_encoding : Charset.defaultCharset() ) );
                 } catch ( final IOException e ) {
                     throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
                 }
@@ -649,7 +657,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                 ps4.setTimestamp( 6, ts );
                 ps4.setString( 7, profile.getLoginName() );
                 try {
-                    ps4.setString( 8, Serializer.serializeToBase64( profile.getAttributes() ) );
+                    ps4.setString( 8, Serializer.serializeToBase64( profile.getAttributes(), m_encoding != null ? m_encoding : Charset.defaultCharset() ) );
                 } catch ( final IOException e ) {
                     throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
                 }

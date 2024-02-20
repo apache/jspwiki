@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
@@ -74,10 +75,11 @@ public final class Serializer
      * Serializes a Map and formats it into a Base64-encoded String. For ease of serialization, the Map contents
      * are first copied into a HashMap, then serialized into a byte array that is encoded as a Base64 String.
      * @param map the Map to serialize
+     * @param charset the character set encoding to use for the Base64-encoded String
      * @return a String representing the serialized form of the Map
      * @throws IOException If serialization cannot be done
      */
-    public static String serializeToBase64(final Map< String, Serializable > map ) throws IOException {
+    public static String serializeToBase64(final Map< String, Serializable > map, final Charset charset) throws IOException {
         // Load the Map contents into a defensive HashMap
         final Map<String, Serializable> serialMap = new HashMap<>(map);
         
@@ -89,7 +91,7 @@ public final class Serializer
         
         // Transform to Base64-encoded String
         final byte[] result = Base64.getEncoder().encode( bytesOut.toByteArray() );
-        return new String( result ) ;
+        return new String( result, charset ) ;
     }
 
 }

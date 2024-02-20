@@ -41,6 +41,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.Principal;
@@ -90,6 +91,12 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     private static final String DATE_FORMAT       = "yyyy.MM.dd 'at' HH:mm:ss:SSS z";
     private Document            c_dom;
     private File                c_file;
+
+    /**
+     * The character set encoding used by this object. This is obtained from {@link org.apache.wiki.WikiEngine#getContentEncoding()},
+     * which returns the content encoding of the engine, either UTF-8 or ISO-8859-1.
+     */
+    private Charset m_encoding;
 
     /** {@inheritDoc} */
     @Override
@@ -181,6 +188,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         } else {
             defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + DEFAULT_USERDATABASE );
         }
+
+        m_encoding = engine.getContentEncoding();
 
         // Get database file location
         final String file = TextUtil.getStringProperty( props, PROP_USERDATABASE, defaultFile.getAbsolutePath() );
@@ -416,7 +425,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         // Save the attributes as Base64 string
         if(!profile.getAttributes().isEmpty()) {
             try {
-                final String encodedAttributes = Serializer.serializeToBase64( profile.getAttributes() );
+                final String encodedAttributes = Serializer.serializeToBase64( profile.getAttributes(), m_encoding != null ? m_encoding : Charset.defaultCharset() );
                 final Element attributes = c_dom.createElement( ATTRIBUTES_TAG );
                 user.appendChild( attributes );
                 final Text value = c_dom.createTextNode( encodedAttributes );

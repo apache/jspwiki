@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+*2024-02-20  Arturo Bernal (abernal AT apache DOT org)**
+
+* _2.12.2-git-12_
+
+Avoid method that assume default platform encoding is suitable. #232
+
+
 **2023-12-04  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-11_
