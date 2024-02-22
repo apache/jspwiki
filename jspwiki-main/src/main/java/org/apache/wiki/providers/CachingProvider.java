@@ -402,6 +402,7 @@ public class CachingProvider implements PageProvider {
             final RenderingManager mgr = m_engine.getManager( RenderingManager.class );
             try {
                 final String data;
+
                 if (version == LATEST_VERSION) {
                     data = getTextFromCache(page.getName());
                 }
