@@ -292,12 +292,32 @@ public final class PropertyReader {
         Enumeration< ? > propertyList = properties.propertyNames();
         while( propertyList.hasMoreElements() ) {
             final String propertyName = ( String )propertyList.nextElement();
-            final String propertyValue = properties.getProperty( propertyName );
+            String propertyValue = properties.getProperty( propertyName );
 
             if ( propertyName.startsWith( PARAM_VAR_DECLARATION ) ) {
                 final String varName = propertyName.substring( 4 ).trim();
                 final String varValue = propertyValue.trim();
                 vars.put( varName, varValue );
+            }
+            boolean subsitution=false;
+            while ( propertyValue.contains( "${" ) && propertyValue.contains( "}" ) ) {
+                int start = propertyValue.indexOf( "${" );
+                int end = propertyValue.indexOf( "}" );
+                if ( start == -1 || end == -1 ) break;
+                if ( end > start ) {
+                    String substring = propertyValue.substring( start, end ).replace( "${", "" ).replace( "}", "" );
+                    if (System.getProperty( substring ) != null ) {
+                        propertyValue = propertyValue.replace( "${" + substring + "}", System.getProperty( substring ) );
+                        subsitution = true;
+                    } else break;
+                } else {
+                    //this would be a strange issue of a value like
+                    // foo}${bar
+                    break;
+                }
+            }
+            if ( subsitution ) {
+                properties.setProperty( propertyName, propertyValue );
             }
         }
 
