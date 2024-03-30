@@ -68,6 +68,14 @@ public class PropertyReaderTest {
         Assertions.assertTrue( p.getProperty( "jspwiki.xyz" ).endsWith( "test basedir" ) ); //don't touch this
         Assertions.assertFalse( p.getProperty( "jspwiki.workDir" ).endsWith( "$basedir/wrk/" ) );
     }
+     @Test
+    public void testSystemPropertyInjection() {
+        System.setProperty("FOO", "BAR");
+        final Properties p = new Properties();
+        p.put( "jspwiki.fileSystemProvider.pageDir", "${FOO}/www/" );
+        PropertyReader.expandVars( p );
+        Assertions.assertTrue( p.getProperty( "jspwiki.fileSystemProvider.pageDir" ).equals( "BAR/www/" ) );
+    }
 
     @Test
     public void testVariableExpansion2() {
