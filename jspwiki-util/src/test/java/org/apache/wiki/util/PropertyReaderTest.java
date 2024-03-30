@@ -71,10 +71,19 @@ public class PropertyReaderTest {
      @Test
     public void testSystemPropertyInjection() {
         System.setProperty("FOO", "BAR");
+        System.setProperty("TEST", "VAL");
         final Properties p = new Properties();
         p.put( "jspwiki.fileSystemProvider.pageDir", "${FOO}/www/" );
+        p.put( "jspwiki.fileSystemProvider.workDir", "${FOO}/www/${TEST}" );
+        p.put( "jspwiki.fileSystemProvider.badVal1", "${FOO/www/${TEST}" );
+        p.put( "jspwiki.fileSystemProvider.badVal2", "}${FOO/www/${TEST}" );
+        p.put( "jspwiki.fileSystemProvider.badVal3", "${NONEXISTANTPROP}" );
         PropertyReader.expandVars( p );
-        Assertions.assertTrue( p.getProperty( "jspwiki.fileSystemProvider.pageDir" ).equals( "BAR/www/" ) );
+        Assertions.assertEquals( "BAR/www/", p.getProperty( "jspwiki.fileSystemProvider.pageDir" ) );
+        Assertions.assertEquals( "BAR/www/VAL", p.getProperty( "jspwiki.fileSystemProvider.workDir" ) );
+        Assertions.assertEquals( "${FOO/www/${TEST}", p.getProperty( "jspwiki.fileSystemProvider.badVal1" ) );
+        Assertions.assertEquals( "}${FOO/www/${TEST}", p.getProperty( "jspwiki.fileSystemProvider.badVal2" ) );
+        Assertions.assertEquals( "${NONEXISTANTPROP}", p.getProperty( "jspwiki.fileSystemProvider.badVal3" ) );
     }
 
     @Test
