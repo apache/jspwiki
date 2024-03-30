@@ -302,7 +302,7 @@ public final class PropertyReader {
             boolean subsitution=false;
             while ( propertyValue.contains( "${" ) && propertyValue.contains( "}" ) ) {
                 int start = propertyValue.indexOf( "${" );
-                int end = propertyValue.indexOf( "}" );
+                int end = propertyValue.indexOf( "}", start );
                 if ( start == -1 || end == -1 ) break;
                 if ( end > start ) {
                     String substring = propertyValue.substring( start, end ).replace( "${", "" ).replace( "}", "" );
