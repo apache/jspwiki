@@ -136,12 +136,6 @@ public final class PropertyReader {
             // this will add additional properties to the default ones:
             LOG.debug( "Loading cascading properties..." );
 
-            // now load the cascade (new in 2.5)
-            loadWebAppPropsCascade( context, props );
-
-            // sets the JSPWiki working directory (jspwiki.workDir)
-            setWorkDir( context, props );
-
             // add system properties beginning with jspwiki...
             final Map< String, String > sysprops = collectPropertiesFrom( System.getProperties().entrySet().stream()
                                                                                 .collect( Collectors.toMap( Object::toString, Object::toString ) ) );
@@ -149,6 +143,15 @@ public final class PropertyReader {
 
             // finally, expand the variables (new in 2.5)
             expandVars( props );
+            
+            
+            // now load the cascade (new in 2.5)
+            loadWebAppPropsCascade( context, props );
+
+            // sets the JSPWiki working directory (jspwiki.workDir)
+            setWorkDir( context, props );
+
+            
 
             return props;
         } catch( final Exception e ) {
