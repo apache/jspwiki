@@ -403,9 +403,7 @@ public class LuceneSearchProvider implements SearchProvider {
             field = new Field( LUCENE_PAGE_KEYWORDS, page.getAttribute( "keywords" ).toString(), TextField.TYPE_STORED );
             doc.add( field );
         }
-        Synchronizer.synchronize(lock, () -> {
-            writer.addDocument( doc );
-        });
+        writer.addDocument( doc );
 
         return doc;
     }
@@ -415,15 +413,13 @@ public class LuceneSearchProvider implements SearchProvider {
      */
     @Override
     public void pageRemoved( final Page page ) {
-        Synchronizer.synchronize(lock, () -> {
-            try( final Directory luceneDir = new NIOFSDirectory( new File( m_luceneDirectory ).toPath() );
-                 final IndexWriter writer = getIndexWriter( luceneDir ) ) {
-                final Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
-                writer.deleteDocuments( query );
-            } catch( final Exception e ) {
-                LOG.error( "Unable to remove page '{}' from Lucene index", page.getName(), e );
-            }
-        });
+        try( final Directory luceneDir = new NIOFSDirectory( new File( m_luceneDirectory ).toPath() );
+             final IndexWriter writer = getIndexWriter( luceneDir ) ) {
+            final Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
+            writer.deleteDocuments( query );
+        } catch( final Exception e ) {
+            LOG.error( "Unable to remove page '{}' from Lucene index", page.getName(), e );
+        }
     }
 
     IndexWriter getIndexWriter( final Directory luceneDir ) throws IOException, ProviderException {
