@@ -46,6 +46,7 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.suigeneris.jrcs.diff.Diff;
 import org.suigeneris.jrcs.diff.DifferentiationFailedException;
@@ -77,6 +78,7 @@ import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -235,13 +237,22 @@ public class SpamFilter extends BasePageFilter {
     private static String   c_hashName;
     private static long     c_lastUpdate;
 
-    /** The HASH_DELAY value is a maximum amount of time that an user can keep
+    /** The HASH_DELAY value is a maximum amount of time that a user can keep
      *  a session open, because after the value has expired, we will invent a new
-     *  hash field name.  By default this is {@value} hours, which should be ample
+     *  hash field name.  By default, this is {@value} hours, which should be ample
      *  time for someone.
      */
     private static final long HASH_DELAY = 24;
 
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      *  {@inheritDoc}
@@ -435,88 +446,90 @@ public class SpamFilter extends BasePageFilter {
      * @param change page change
      * @throws RedirectException spam filter rejects the page change.
      */
-    private synchronized void checkSinglePageChange(final Context context, final Change change )
+    private void checkSinglePageChange(final Context context, final Change change )
     		throws RedirectException {
-        final HttpServletRequest req = context.getHttpRequest();
+        Synchronizer.synchronize(lock, () -> {
+            final HttpServletRequest req = context.getHttpRequest();
 
-        if( req != null ) {
-            final String addr = HttpUtil.getRemoteAddress( req );
-            int hostCounter = 0;
-            int changeCounter = 0;
+            if( req != null ) {
+                final String addr = HttpUtil.getRemoteAddress( req );
+                int hostCounter = 0;
+                int changeCounter = 0;
 
-            LOG.debug( "Change is " + change.m_change );
+                LOG.debug( "Change is " + change.m_change );
 
-            final long time = System.currentTimeMillis() - 60*1000L; // 1 minute
+                final long time = System.currentTimeMillis() - 60*1000L; // 1 minute
 
-            for( final Iterator< Host > i = m_lastModifications.iterator(); i.hasNext(); ) {
-                final Host host = i.next();
+                for( final Iterator< Host > i = m_lastModifications.iterator(); i.hasNext(); ) {
+                    final Host host = i.next();
 
-                //  Check if this item is invalid
-                if( host.getAddedTime() < time ) {
-                    LOG.debug( "Removed host " + host.getAddress() + " from modification queue (expired)" );
-                    i.remove();
-                    continue;
+                    //  Check if this item is invalid
+                    if( host.getAddedTime() < time ) {
+                        LOG.debug( "Removed host " + host.getAddress() + " from modification queue (expired)" );
+                        i.remove();
+                        continue;
+                    }
+
+                    // Check if this IP address has been seen before
+                    if( host.getAddress().equals( addr ) ) {
+                        hostCounter++;
+                    }
+
+                    //  Check, if this change has been seen before
+                    if( host.getChange() != null && host.getChange().equals( change ) ) {
+                        changeCounter++;
+                    }
                 }
 
-                // Check if this IP address has been seen before
-                if( host.getAddress().equals( addr ) ) {
-                    hostCounter++;
+                //  Now, let's check against the limits.
+                if( hostCounter >= m_limitSinglePageChanges ) {
+                    final Host host = new Host( addr, null );
+                    m_temporaryBanList.add( host );
+
+                    final String uid = log( context, REJECT, REASON_TOO_MANY_MODIFICATIONS, change.m_change );
+                    LOG.info( "SPAM:TooManyModifications (" + uid + "). Added host " + addr + " to temporary ban list for doing too many modifications/minute" );
+                    checkStrategy( context, "Herb says you look like a spammer, and I trust Herb! (Incident code " + uid + ")" );
                 }
 
-                //  Check, if this change has been seen before
-                if( host.getChange() != null && host.getChange().equals( change ) ) {
-                    changeCounter++;
+                if( changeCounter >= m_limitSimilarChanges ) {
+                    final Host host = new Host( addr, null );
+                    m_temporaryBanList.add( host );
+
+                    final String uid = log( context, REJECT, REASON_SIMILAR_MODIFICATIONS, change.m_change );
+                    LOG.info( "SPAM:SimilarModifications (" + uid + "). Added host " + addr + " to temporary ban list for doing too many similar modifications" );
+                    checkStrategy( context, "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")");
                 }
+
+                //  Calculate the number of links in the addition.
+                String tstChange  = change.toString();
+                int urlCounter = 0;
+                while( m_matcher.contains( tstChange,m_urlPattern ) ) {
+                    final MatchResult m = m_matcher.getMatch();
+                    tstChange = tstChange.substring( m.endOffset(0) );
+                    urlCounter++;
+                }
+
+                if( urlCounter > m_maxUrls ) {
+                    final Host host = new Host( addr, null );
+                    m_temporaryBanList.add( host );
+
+                    final String uid = log( context, REJECT, REASON_TOO_MANY_URLS, change.toString() );
+                    LOG.info( "SPAM:TooManyUrls (" + uid + "). Added host " + addr + " to temporary ban list for adding too many URLs" );
+                    checkStrategy( context, "Herb says you look like a spammer, and I trust Herb! (Incident code " + uid + ")" );
+                }
+
+                //  Check bot trap
+                checkBotTrap( context, change );
+
+                //  Check UTF-8 mangling
+                checkUTF8( context, change );
+
+                //  Do Akismet check.  This is good to be the last, because this is the most expensive operation.
+                checkAkismet( context, change );
+
+                m_lastModifications.add( new Host( addr, change ) );
             }
-
-            //  Now, let's check against the limits.
-            if( hostCounter >= m_limitSinglePageChanges ) {
-                final Host host = new Host( addr, null );
-                m_temporaryBanList.add( host );
-
-                final String uid = log( context, REJECT, REASON_TOO_MANY_MODIFICATIONS, change.m_change );
-                LOG.info( "SPAM:TooManyModifications (" + uid + "). Added host " + addr + " to temporary ban list for doing too many modifications/minute" );
-                checkStrategy( context, "Herb says you look like a spammer, and I trust Herb! (Incident code " + uid + ")" );
-            }
-
-            if( changeCounter >= m_limitSimilarChanges ) {
-                final Host host = new Host( addr, null );
-                m_temporaryBanList.add( host );
-
-                final String uid = log( context, REJECT, REASON_SIMILAR_MODIFICATIONS, change.m_change );
-                LOG.info( "SPAM:SimilarModifications (" + uid + "). Added host " + addr + " to temporary ban list for doing too many similar modifications" );
-                checkStrategy( context, "Herb says you look like a spammer, and I trust Herb! (Incident code "+uid+")");
-            }
-
-            //  Calculate the number of links in the addition.
-            String tstChange  = change.toString();
-            int urlCounter = 0;
-            while( m_matcher.contains( tstChange,m_urlPattern ) ) {
-                final MatchResult m = m_matcher.getMatch();
-                tstChange = tstChange.substring( m.endOffset(0) );
-                urlCounter++;
-            }
-
-            if( urlCounter > m_maxUrls ) {
-                final Host host = new Host( addr, null );
-                m_temporaryBanList.add( host );
-
-                final String uid = log( context, REJECT, REASON_TOO_MANY_URLS, change.toString() );
-                LOG.info( "SPAM:TooManyUrls (" + uid + "). Added host " + addr + " to temporary ban list for adding too many URLs" );
-                checkStrategy( context, "Herb says you look like a spammer, and I trust Herb! (Incident code " + uid + ")" );
-            }
-
-            //  Check bot trap
-            checkBotTrap( context, change );
-
-            //  Check UTF-8 mangling
-            checkUTF8( context, change );
-
-            //  Do Akismet check.  This is good to be the last, because this is the most expensive operation.
-            checkAkismet( context, change );
-
-            m_lastModifications.add( new Host( addr, change ) );
-        }
+        });
     }
 
 
@@ -630,16 +643,18 @@ public class SpamFilter extends BasePageFilter {
     }
 
     /** Goes through the ban list and cleans away any host which has expired from it. */
-    private synchronized void cleanBanList() {
-        final long now = System.currentTimeMillis();
-        for( final Iterator< Host > i = m_temporaryBanList.iterator(); i.hasNext(); ) {
-            final Host host = i.next();
+    private void cleanBanList() {
+        Synchronizer.synchronize(lock, () -> {
+            final long now = System.currentTimeMillis();
+            for( final Iterator< Host > i = m_temporaryBanList.iterator(); i.hasNext(); ) {
+                final Host host = i.next();
 
-            if( host.getReleaseTime() < now ) {
-                LOG.debug( "Removed host " + host.getAddress() + " from temporary ban list (expired)" );
-                i.remove();
+                if( host.getReleaseTime() < now ) {
+                    LOG.debug( "Removed host " + host.getAddress() + " from temporary ban list (expired)" );
+                    i.remove();
+                }
             }
-        }
+        });
     }
 
     /**

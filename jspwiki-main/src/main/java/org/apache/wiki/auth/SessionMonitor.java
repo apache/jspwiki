@@ -22,22 +22,26 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.spi.SessionSPI;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.comparators.PrincipalComparator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.lang.ref.WeakReference;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -60,6 +64,18 @@ public class SessionMonitor implements HttpSessionListener {
     private final PrincipalComparator m_comparator = new PrincipalComparator();
 
     /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see ReentrantLock
+     */
+    private final ReentrantLock mSessionsLock = new ReentrantLock();
+    private final ReentrantLock listenerLock = new ReentrantLock();
+
+
+    /**
      * Returns the instance of the SessionMonitor for this wiki. Only one SessionMonitor exists per Engine.
      *
      * @param engine the wiki engine
@@ -79,9 +95,6 @@ public class SessionMonitor implements HttpSessionListener {
     }
 
     /** Construct the SessionListener */
-    public SessionMonitor() {
-    }
-
     private SessionMonitor( final Engine engine ) {
         m_engine = engine;
     }
@@ -123,10 +136,10 @@ public class SessionMonitor implements HttpSessionListener {
 
     /**
      * <p>Looks up the wiki session associated with a user's Http session and adds it to the session cache. This method will return the
-     * "guest session" as constructed by {@link org.apache.wiki.api.spi.SessionSPI#guest(Engine)} if the HttpSession is not currently
+     * "guest session" as constructed by {@link SessionSPI#guest(Engine)} if the HttpSession is not currently
      * associated with a WikiSession. This method is guaranteed to return a non-<code>null</code> WikiSession.</p>
      * <p>Internally, the session is stored in a HashMap; keys are the HttpSession objects, while the values are
-     * {@link java.lang.ref.WeakReference}-wrapped WikiSessions.</p>
+     * {@link WeakReference}-wrapped WikiSessions.</p>
      *
      * @param session the HTTP session
      * @return the wiki session
@@ -143,10 +156,10 @@ public class SessionMonitor implements HttpSessionListener {
 
     /**
      * <p>Looks up the wiki session associated with a user's Http session and adds it to the session cache. This method will return the
-     * "guest session" as constructed by {@link org.apache.wiki.api.spi.SessionSPI#guest(Engine)} if the HttpSession is not currently
+     * "guest session" as constructed by {@link SessionSPI#guest(Engine)} if the HttpSession is not currently
      * associated with a WikiSession. This method is guaranteed to return a non-<code>null</code> WikiSession.</p>
      * <p>Internally, the session is stored in a HashMap; keys are the HttpSession objects, while the values are
-     * {@link java.lang.ref.WeakReference}-wrapped WikiSessions.</p>
+     * {@link WeakReference}-wrapped WikiSessions.</p>
      *
      * @param sessionId the HTTP session
      * @return the wiki session
@@ -169,9 +182,9 @@ public class SessionMonitor implements HttpSessionListener {
     private Session createGuestSessionFor( final String sessionId ) {
         LOG.debug( "Session for session ID={}... not found. Creating guestSession()", sessionId );
         final Session wikiSession = Wiki.session().guest( m_engine );
-        synchronized( m_sessions ) {
-            m_sessions.put( sessionId, wikiSession );
-        }
+        Synchronizer.synchronize( mSessionsLock, () -> {
+            m_sessions.put(sessionId, wikiSession);
+        } );
         return wikiSession;
     }
 
@@ -196,9 +209,9 @@ public class SessionMonitor implements HttpSessionListener {
         if( session == null ) {
             throw new IllegalArgumentException( "Session cannot be null." );
         }
-        synchronized( m_sessions ) {
+        Synchronizer.synchronize( mSessionsLock, () -> {
             m_sessions.remove( session.getId() );
-        }
+        } );
     }
 
     /**
@@ -214,17 +227,16 @@ public class SessionMonitor implements HttpSessionListener {
      * <p>Returns the current wiki users as a sorted array of Principal objects. The principals are those returned by
      * each WikiSession's {@link Session#getUserPrincipal()}'s method.</p>
      * <p>To obtain the list of current WikiSessions, we iterate through our session Map and obtain the list of values,
-     * which are WikiSessions wrapped in {@link java.lang.ref.WeakReference} objects. Those <code>WeakReference</code>s
+     * which are WikiSessions wrapped in {@link WeakReference} objects. Those <code>WeakReference</code>s
      * whose <code>get()</code> method returns non-<code>null</code> values are valid sessions.</p>
      *
      * @return the array of user principals
      */
     public final Principal[] userPrincipals() {
-        final Collection<Principal> principals;
-        synchronized ( m_sessions ) {
-            principals = m_sessions.values().stream().map(Session::getUserPrincipal).collect(Collectors.toList());
-        }
-        final Principal[] p = principals.toArray( new Principal[0] );
+        final Collection< Principal > principals = Synchronizer.synchronize( mSessionsLock, () ->
+                m_sessions.values().stream().map( Session::getUserPrincipal ).collect( Collectors.toList() ) );
+
+        final Principal[] p = principals.toArray( new Principal[ 0 ] );
         Arrays.sort( p, m_comparator );
         return p;
     }
@@ -235,8 +247,10 @@ public class SessionMonitor implements HttpSessionListener {
      * @param listener the event listener
      * @since 2.4.75
      */
-    public final synchronized void addWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.addWikiEventListener( this, listener );
+    public final void addWikiEventListener( final WikiEventListener listener ) {
+        Synchronizer.synchronize( listenerLock, () -> {
+            WikiEventManager.addWikiEventListener( this, listener );
+        });
     }
 
     /**
@@ -245,8 +259,10 @@ public class SessionMonitor implements HttpSessionListener {
      * @param listener the event listener
      * @since 2.4.75
      */
-    public final synchronized void removeWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.removeWikiEventListener( this, listener );
+    public final void removeWikiEventListener(final WikiEventListener listener) {
+        Synchronizer.synchronize( listenerLock, () -> {
+            WikiEventManager.removeWikiEventListener(this, listener);
+        });
     }
 
     /**
@@ -265,7 +281,7 @@ public class SessionMonitor implements HttpSessionListener {
 
     /**
      * Fires when the web container creates a new HTTP session.
-     * 
+     *
      * @param se the HTTP session event
      */
     @Override

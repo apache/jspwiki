@@ -67,6 +67,7 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.FileUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.File;
@@ -84,6 +85,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 
@@ -132,6 +134,16 @@ public class LuceneSearchProvider implements SearchProvider {
     public static final int MAX_SEARCH_HITS = 99_999;
 
     private static final String PUNCTUATION_TO_SPACES = StringUtils.repeat( " ", TextUtil.PUNCTUATION_CHARS_ALLOWED.length() );
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /** {@inheritDoc} */
     @Override
@@ -303,23 +315,25 @@ public class LuceneSearchProvider implements SearchProvider {
      * @param page The WikiPage to check
      * @param text The page text to index.
      */
-    protected synchronized void updateLuceneIndex( final Page page, final String text ) {
-        LOG.debug( "Updating Lucene index for page '{}'...", page.getName() );
-        pageRemoved( page );
+    protected void updateLuceneIndex( final Page page, final String text ) {
+        Synchronizer.synchronize(lock, () -> {
+            LOG.debug( "Updating Lucene index for page '{}'...", page.getName() );
+            pageRemoved( page );
 
-        // Now add back the new version.
-        try( final Directory luceneDir = new NIOFSDirectory( new File( m_luceneDirectory ).toPath() );
-             final IndexWriter writer = getIndexWriter( luceneDir ) ) {
-            luceneIndexPage( page, text, writer );
-        } catch( final IOException e ) {
-            LOG.error( "Unable to update page '{}' from Lucene index", page.getName(), e );
-            // reindexPage( page );
-        } catch( final Exception e ) {
-            LOG.error( "Unexpected Lucene exception - please check configuration!", e );
-            // reindexPage( page );
-        }
+            // Now add back the new version.
+            try( final Directory luceneDir = new NIOFSDirectory( new File( m_luceneDirectory ).toPath() );
+                 final IndexWriter writer = getIndexWriter( luceneDir ) ) {
+                luceneIndexPage( page, text, writer );
+            } catch( final IOException e ) {
+                LOG.error( "Unable to update page '{}' from Lucene index", page.getName(), e );
+                // reindexPage( page );
+            } catch( final Exception e ) {
+                LOG.error( "Unexpected Lucene exception - please check configuration!", e );
+                // reindexPage( page );
+            }
 
-        LOG.debug( "Done updating Lucene index for page '{}'.", page.getName() );
+            LOG.debug( "Done updating Lucene index for page '{}'.", page.getName() );
+        });
     }
 
     private Analyzer getLuceneAnalyzer() throws ProviderException {
@@ -389,9 +403,7 @@ public class LuceneSearchProvider implements SearchProvider {
             field = new Field( LUCENE_PAGE_KEYWORDS, page.getAttribute( "keywords" ).toString(), TextField.TYPE_STORED );
             doc.add( field );
         }
-        synchronized( writer ) {
-            writer.addDocument( doc );
-        }
+        writer.addDocument( doc );
 
         return doc;
     }
@@ -400,7 +412,7 @@ public class LuceneSearchProvider implements SearchProvider {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void pageRemoved( final Page page ) {
+    public void pageRemoved( final Page page ) {
         try( final Directory luceneDir = new NIOFSDirectory( new File( m_luceneDirectory ).toPath() );
              final IndexWriter writer = getIndexWriter( luceneDir ) ) {
             final Query query = new TermQuery( new Term( LUCENE_ID, page.getName() ) );
@@ -540,6 +552,16 @@ public class LuceneSearchProvider implements SearchProvider {
 
         private WatchDog m_watchdog;
 
+        /**
+         * A lock used to ensure thread safety when accessing shared resources.
+         * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+         * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+         * waiting to acquire a lock.
+         *
+         * @see java.util.concurrent.locks.ReentrantLock
+         */
+        private static final ReentrantLock lock = new ReentrantLock();
+
         private LuceneUpdater( final Engine engine, final LuceneSearchProvider provider, final int initialDelay, final int indexDelay ) {
             super( engine, indexDelay );
             m_provider = provider;
@@ -567,15 +589,15 @@ public class LuceneSearchProvider implements SearchProvider {
         @Override
         public void backgroundTask() {
             m_watchdog.enterState( "Emptying index queue", 60 );
-
-            synchronized( m_provider.m_updates ) {
-                while(!m_provider.m_updates.isEmpty()) {
+            Synchronizer.synchronize(lock, () -> {
+                while( !m_provider.m_updates.isEmpty() ) {
                     final Object[] pair = m_provider.m_updates.remove( 0 );
                     final Page page = ( Page )pair[ 0 ];
                     final String text = ( String )pair[ 1 ];
                     m_provider.updateLuceneIndex( page, text );
                 }
-            }
+            });
+
 
             m_watchdog.exitState();
         }

@@ -34,6 +34,7 @@ import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
 
@@ -43,11 +44,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
  * Default implementation for {@link RSSGenerator}.
- *
  * {@inheritDoc}
  */
 // FIXME: Limit diff and page content size.
@@ -63,6 +64,16 @@ public class DefaultRSSGenerator implements RSSGenerator {
     private boolean m_enabled = true;
 
     private static final int MAX_CHARACTERS = Integer.MAX_VALUE-1;
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      *  Builds the RSS generator for a given Engine.
@@ -200,14 +211,16 @@ public class DefaultRSSGenerator implements RSSGenerator {
 
     /** {@inheritDoc} */
     @Override
-    public synchronized boolean isEnabled() {
-        return m_enabled;
+    public boolean isEnabled() {
+      return  Synchronizer.synchronize(lock, () -> m_enabled);
     }
 
     /** {@inheritDoc} */
     @Override
-    public synchronized void setEnabled( final boolean enabled ) {
-        m_enabled = enabled;
+    public void setEnabled( final boolean enabled ) {
+        Synchronizer.synchronize(lock, () -> {
+            m_enabled = enabled;
+        });
     }
 
     /** {@inheritDoc} */

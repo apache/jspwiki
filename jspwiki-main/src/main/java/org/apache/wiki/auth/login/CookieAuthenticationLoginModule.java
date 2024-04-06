@@ -24,6 +24,7 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import javax.security.auth.callback.Callback;
@@ -44,6 +45,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.UUID;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -98,6 +100,16 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
      * Describes how often we scrub the cookieDir directory.
      */
     private static final long SCRUB_PERIOD = 60 * 60 * 1_000L; // In milliseconds
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private static final ReentrantLock lock = new ReentrantLock();
 
     /**
      * {@inheritDoc}
@@ -268,25 +280,28 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
      * @param days number of days that the cookie will survive
      * @param cookieDir cookie directory
      */
-    private static synchronized void scrub( final int days, final File cookieDir ) {
-        LOG.debug( "Scrubbing cookieDir..." );
-        final File[] files = cookieDir.listFiles();
-        final long obsoleteDateLimit = System.currentTimeMillis() - ( ( long )days + 1 ) * 24 * 60 * 60 * 1000L;
-        int deleteCount = 0;
+    private static void scrub( final int days, final File cookieDir ) {
+        Synchronizer.synchronize(lock, () -> {
+            LOG.debug( "Scrubbing cookieDir..." );
+            final File[] files = cookieDir.listFiles();
+            final long obsoleteDateLimit = System.currentTimeMillis() - ( ( long )days + 1 ) * 24 * 60 * 60 * 1000L;
+            int deleteCount = 0;
 
-        for( int i = 0; i < files.length; i++ ) {
-            final File f = files[ i ];
-            final long lastModified = f.lastModified();
-            if( lastModified < obsoleteDateLimit ) {
-                if( f.delete() ) {
-                    deleteCount++;
-                } else {
-                    LOG.debug( "Error deleting cookie login with index {}", i );
+            for( int i = 0; i < files.length; i++ ) {
+                final File f = files[ i ];
+                final long lastModified = f.lastModified();
+                if( lastModified < obsoleteDateLimit ) {
+                    if( f.delete() ) {
+                        deleteCount++;
+                    } else {
+                        LOG.debug( "Error deleting cookie login with index {}", i );
+                    }
                 }
             }
-        }
 
-        LOG.debug( "Removed {} obsolete cookie logins", deleteCount );
+            LOG.debug( "Removed {} obsolete cookie logins", deleteCount );
+        });
+
     }
 
 }

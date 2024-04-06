@@ -47,6 +47,7 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.tasks.TasksManager;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionRequiredException;
@@ -69,6 +70,7 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -95,6 +97,16 @@ public class DefaultUserManager implements UserManager {
 
     /** The user database loads, manages and persists user identities */
     private UserDatabase m_database;
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /** {@inheritDoc} */
     @Override
@@ -406,8 +418,11 @@ public class DefaultUserManager implements UserManager {
      * This is a convenience method.
      * @param listener the event listener
      */
-    @Override public synchronized void addWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.addWikiEventListener( this, listener );
+    @Override
+    public void addWikiEventListener( final WikiEventListener listener ) {
+        Synchronizer.synchronize(lock, () -> {
+            WikiEventManager.addWikiEventListener( this, listener );
+        });
     }
 
     /**
@@ -415,8 +430,11 @@ public class DefaultUserManager implements UserManager {
      * This is a convenience method.
      * @param listener the event listener
      */
-    @Override public synchronized void removeWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.removeWikiEventListener( this, listener );
+    @Override
+    public void removeWikiEventListener( final WikiEventListener listener ) {
+        Synchronizer.synchronize(lock, () -> {
+            WikiEventManager.removeWikiEventListener( this, listener );
+        });
     }
 
     /**

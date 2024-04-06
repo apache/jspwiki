@@ -19,12 +19,14 @@
 package org.apache.wiki.auth.acl;
 
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.util.Synchronizer;
 
 import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 
@@ -40,10 +42,14 @@ public class AclEntryImpl implements AclEntry, Serializable {
     private Principal m_principal;
 
     /**
-     * Constructs a new AclEntryImpl instance.
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
      */
-    public AclEntryImpl() {
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * Adds the specified permission to this ACL entry. The permission <em>must</em> be of type
@@ -54,13 +60,14 @@ public class AclEntryImpl implements AclEntry, Serializable {
      * already part of this entry's permission set, and <code>false</code> if the permission is not of type PagePermission
      */
     @Override
-    public synchronized boolean addPermission(final Permission permission ) {
-        if( permission instanceof PagePermission && findPermission( permission ) == null ) {
-            m_permissions.add( permission );
-            return true;
-        }
-
-        return false;
+    public boolean addPermission(final Permission permission) {
+       return Synchronizer.synchronize(lock, () -> {
+            if (permission instanceof PagePermission && findPermission(permission) == null) {
+                m_permissions.add(permission);
+                return true;
+            }
+            return false;
+        });
     }
 
     /**
@@ -81,8 +88,8 @@ public class AclEntryImpl implements AclEntry, Serializable {
      * @return the principal associated with this entry.
      */
     @Override
-    public synchronized Principal getPrincipal() {
-        return m_principal;
+    public Principal getPrincipal() {
+        return Synchronizer.synchronize(lock, () -> m_principal);
     }
 
     /**
@@ -102,14 +109,15 @@ public class AclEntryImpl implements AclEntry, Serializable {
      * @return true if the permission is removed, false if the permission was not part of this entry's permission set.
      */
     @Override
-    public synchronized boolean removePermission(final Permission permission ) {
-        final Permission p = findPermission( permission );
-        if( p != null ) {
-            m_permissions.remove( p );
-            return true;
-        }
-
-        return false;
+    public boolean removePermission(final Permission permission ) {
+        return Synchronizer.synchronize(lock, () -> {
+            final Permission p = findPermission(permission);
+            if (p != null) {
+                m_permissions.remove(p);
+                return true;
+            }
+            return false;
+        });
     }
 
     /**
@@ -121,12 +129,14 @@ public class AclEntryImpl implements AclEntry, Serializable {
      * principal set for this entry
      */
     @Override
-    public synchronized boolean setPrincipal(final Principal user ) {
-        if( m_principal != null || user == null ) {
-            return false;
-        }
-        m_principal = user;
-        return true;
+    public boolean setPrincipal(final Principal user) {
+        return Synchronizer.synchronize(lock, () -> {
+            if (m_principal != null || user == null) {
+                return false;
+            }
+            m_principal = user;
+            return true;
+        });
     }
 
     /**

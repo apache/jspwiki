@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.suigeneris.jrcs.diff.Diff;
 import org.suigeneris.jrcs.diff.DifferentiationFailedException;
@@ -42,13 +43,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 
 /**
- * A seriously better diff provider, which highlights changes word-by-word using CSS.
- *
- * Suggested by John Volkar.
+ * A seriously better diff provider, which highlights changes word-by-word using CSS. Suggested by John Volkar.
  */
 public class ContextualDiffProvider implements DiffProvider {
 
@@ -92,12 +92,15 @@ public class ContextualDiffProvider implements DiffProvider {
     private static final int LIMIT_MAX_VALUE = (Integer.MAX_VALUE /2) - 1;
     private int m_unchangedContextLimit = LIMIT_MAX_VALUE;
 
-
     /**
-     *  Constructs this provider.
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
      */
-    public ContextualDiffProvider()
-    {}
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * @see org.apache.wiki.api.providers.WikiProvider#getProviderInfo()
@@ -137,44 +140,45 @@ public class ContextualDiffProvider implements DiffProvider {
      * {@inheritDoc}
      */
     @Override
-    public synchronized String makeDiffHtml( final Context ctx, final String wikiOld, final String wikiNew ) {
-        //
-        // Sequencing handles lineterminator to <br /> and every-other consequtive space to a &nbsp;
-        //
-        final String[] alpha = sequence( TextUtil.replaceEntities( wikiOld ) );
-        final String[] beta  = sequence( TextUtil.replaceEntities( wikiNew ) );
+    public String makeDiffHtml( final Context ctx, final String wikiOld, final String wikiNew ) {
+        return Synchronizer.synchronize(lock, () -> {
+            //
+            // Sequencing handles lineterminator to <br /> and every-other consequtive space to a &nbsp;
+            //
+            final String[] alpha = sequence( TextUtil.replaceEntities( wikiOld ) );
+            final String[] beta  = sequence( TextUtil.replaceEntities( wikiNew ) );
 
-        final Revision rev;
-        try {
-            rev = Diff.diff( alpha, beta, new MyersDiff() );
-        } catch( final DifferentiationFailedException dfe ) {
-            LOG.error( "Diff generation failed", dfe );
-            return "Error while creating version diff.";
-        }
+            final Revision rev;
+            try {
+                rev = Diff.diff( alpha, beta, new MyersDiff() );
+            } catch( final DifferentiationFailedException dfe ) {
+                LOG.error( "Diff generation failed", dfe );
+                return "Error while creating version diff.";
+            }
 
-        final int revSize = rev.size();
-        final StringBuffer sb = new StringBuffer();
+            final int revSize = rev.size();
+            final StringBuffer sb = new StringBuffer();
 
-        sb.append( DIFF_START );
+            sb.append( DIFF_START );
 
-        //
-        // The MyersDiff is a bit dumb by converting a single line multi-word diff into a series
-        // of Changes. The ChangeMerger pulls them together again...
-        //
-        final ChangeMerger cm = new ChangeMerger( sb, alpha, revSize );
-        rev.accept( cm );
-        cm.shutdown();
-        sb.append( DIFF_END );
-        return sb.toString();
+            //
+            // The MyersDiff is a bit dumb by converting a single line multi-word diff into a series
+            // of Changes. The ChangeMerger pulls them together again...
+            //
+            final ChangeMerger cm = new ChangeMerger( sb, alpha, revSize );
+            rev.accept( cm );
+            cm.shutdown();
+            sb.append( DIFF_END );
+            return sb.toString();
+        });
     }
 
     /**
      * Take the string and create an array from it, split it first on newlines, making
      * sure to preserve the newlines in the elements, split each resulting element on
      * spaces, preserving the spaces.
-     *
-     * All this preseving of newlines and spaces is so the wikitext when diffed will have fidelity
-     * to it's original form.  As a side affect we see edits of purely whilespace.
+     * All this preserving of newlines and spaces is so the wikitext when diffed will have fidelity
+     * to its original form.  As a side effect we see edits of purely whitespace.
      */
     private String[] sequence( final String wikiText ) {
         final String[] linesArray = Diff.stringToArray( wikiText );
@@ -183,7 +187,7 @@ public class ContextualDiffProvider implements DiffProvider {
 
             String lastToken = null;
             String token;
-            // StringTokenizer might be discouraged but it still is perfect here...
+            // StringTokenizer might be discouraged, but it is still perfect here...
             for( final StringTokenizer st = new StringTokenizer( line, " ", true ); st.hasMoreTokens(); ) {
                 token = st.nextToken();
 

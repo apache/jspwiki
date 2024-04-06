@@ -43,6 +43,7 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.event.WikiPageRenameEvent;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.File;
@@ -59,6 +60,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -130,6 +135,16 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
     private static final int STORAGE_INTERVAL = 60;
 
     /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
+
+    /**
      * Initialize the PageViewPlugin and its singleton.
      * 
      * @param engine The wiki engine.
@@ -137,12 +152,12 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
     @Override
     public void initialize( final Engine engine ) {
         LOG.info( "initializing PageViewPlugin" );
-        synchronized( this ) {
+        Synchronizer.synchronize( lock, () -> {
             if( c_singleton == null ) {
                 c_singleton = new PageViewManager();
             }
             c_singleton.initialize( engine );
-        }
+        } );
     }
 
     /**
@@ -202,50 +217,54 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
          * 
          * @param engine The wiki engine.
          */
-        public synchronized void initialize( final Engine engine ) {
-            LOG.info( "initializing PageView Manager" );
-            m_workDir = engine.getWorkDir();
-            engine.addWikiEventListener( this );
-            if( m_counters == null ) {
-                // Load the counters into a collection
-                m_storage = new Properties();
-                m_counters = new TreeMap<>();
+        public void initialize( final Engine engine ) {
+            Synchronizer.synchronize( lock, () -> {
+                LOG.info( "initializing PageView Manager" );
+                m_workDir = engine.getWorkDir();
+                engine.addWikiEventListener( this );
+                if( m_counters == null ) {
+                    // Load the counters into a collection
+                    m_storage = new Properties();
+                    m_counters = new TreeMap<>();
 
-                loadCounters();
-            }
+                    loadCounters();
+                }
 
-            // backup counters every 5 minutes
-            if( m_pageCountSaveThread == null ) {
-                m_pageCountSaveThread = new CounterSaveThread( engine, 5 * STORAGE_INTERVAL, this );
-                m_pageCountSaveThread.start();
-            }
+                // backup counters every 5 minutes
+                if( m_pageCountSaveThread == null ) {
+                    m_pageCountSaveThread = new CounterSaveThread( engine, 5 * STORAGE_INTERVAL, this );
+                    m_pageCountSaveThread.start();
+                }
 
-            m_initialized = true;
+                m_initialized = true;
+            } );
         }
 
         /**
          * Handle the shutdown event via the page counter thread.
          */
-        private synchronized void handleShutdown() {
-            LOG.info( "handleShutdown: The counter store thread was shut down." );
+        private void handleShutdown() {
+            Synchronizer.synchronize(lock, () -> {
+                LOG.info( "handleShutdown: The counter store thread was shut down." );
 
-            cleanup();
+                cleanup();
 
-            if( m_counters != null ) {
+                if( m_counters != null ) {
 
-                m_dirty = true;
-                storeCounters();
+                    m_dirty = true;
+                    storeCounters();
 
-                m_counters.clear();
-                m_counters = null;
+                    m_counters.clear();
+                    m_counters = null;
 
-                m_storage.clear();
-                m_storage = null;
-            }
+                    m_storage.clear();
+                    m_storage = null;
+                }
 
-            m_initialized = false;
+                m_initialized = false;
 
-            m_pageCountSaveThread = null;
+                m_pageCountSaveThread = null;
+            });
         }
 
         /**
@@ -289,14 +308,15 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
         public String execute( final Context context, final Map< String, String > params ) throws PluginException {
             final Engine engine = context.getEngine();
             final Page page = context.getPage();
-            String result = STR_EMPTY;
+            final AtomicReference<String> atomicResult = new AtomicReference<>(STR_EMPTY);
+            final AtomicReference<PluginException> pluginExceptionRef = new AtomicReference<>();
 
             if( page != null ) {
                 // get parameters
                 final String pagename = page.getName();
                 String count = params.get( PARAM_COUNT );
                 final String show = params.get( PARAM_SHOW );
-                int entries = TextUtil.parseIntParameter( params.get( PARAM_MAX_ENTRIES ), Integer.MAX_VALUE );
+                final AtomicInteger atomicEntries = new AtomicInteger(TextUtil.parseIntParameter(params.get(PARAM_MAX_ENTRIES), Integer.MAX_VALUE));
                 final int max = TextUtil.parseIntParameter( params.get( PARAM_MAX_COUNT ), Integer.MAX_VALUE );
                 final int min = TextUtil.parseIntParameter( params.get( PARAM_MIN_COUNT ), Integer.MIN_VALUE );
                 final String sort = params.get( PARAM_SORT );
@@ -305,22 +325,22 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                 final Pattern[] include = compileGlobs( PARAM_INCLUDE, params.get( PARAM_INCLUDE ) );
                 final Pattern[] refer = compileGlobs( PARAM_REFER, params.get( PARAM_REFER ) );
                 final PatternMatcher matcher = (null != exclude || null != include || null != refer) ? new Perl5Matcher() : null;
-                boolean increment = false;
+                final AtomicBoolean atomicIncrement = new AtomicBoolean(false);
 
                 // increment counter?
                 if( STR_YES.equals( count ) ) {
-                    increment = true;
+                    atomicIncrement.set(true);
                 } else {
                     count = null;
                 }
 
                 // default increment counter?
                 if( ( show == null || STR_NONE.equals( show ) ) && count == null ) {
-                    increment = true;
+                    atomicIncrement.set(true);
                 }
 
                 // filter on referring pages?
-                Collection< String > referrers = null;
+                final AtomicReference<Collection<String>> atomicReferrers = new AtomicReference<>(null);
 
                 if( refer != null ) {
                     final ReferenceManager refManager = engine.getManager( ReferenceManager.class );
@@ -333,122 +353,134 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                         if( use ) {
                             final Collection< String > refs = engine.getManager( ReferenceManager.class ).findReferrers( name );
                             if( refs != null && !refs.isEmpty() ) {
-                                if( referrers == null ) {
-                                    referrers = new HashSet<>();
+                                if (atomicReferrers.get() == null) {
+                                    atomicReferrers.set(new HashSet<>());
                                 }
-                                referrers.addAll( refs );
+                                atomicReferrers.get().addAll(refs);
                             }
                         }
                     }
                 }
 
-                synchronized( this ) {
-                    Counter counter = m_counters.get( pagename );
+                Synchronizer.synchronize( lock, () -> {
+                    try {
 
-                    // only count in view mode, keep storage values in sync
-                    if( increment && ContextEnum.PAGE_VIEW.getRequestContext().equalsIgnoreCase( context.getRequestContext() ) ) {
-                        if( counter == null ) {
-                            counter = new Counter();
-                            m_counters.put( pagename, counter );
-                        }
-                        counter.increment();
-                        m_storage.setProperty( pagename, counter.toString() );
-                        m_dirty = true;
-                    }
+                        Counter counter = m_counters.get( pagename );
 
-                    if( show == null || STR_NONE.equals( show ) ) {
-                        // nothing to show
-
-                    } else if( PARAM_COUNT.equals( show ) ) {
-                        // show page count
-                        if( counter == null ) {
-                            counter = new Counter();
-                            m_counters.put( pagename, counter );
+                        // only count in view mode, keep storage values in sync
+                        if( atomicIncrement.get() && ContextEnum.PAGE_VIEW.getRequestContext().equalsIgnoreCase( context.getRequestContext() ) ) {
+                            if( counter == null ) {
+                                counter = new Counter();
+                                m_counters.put( pagename, counter );
+                            }
+                            counter.increment();
                             m_storage.setProperty( pagename, counter.toString() );
                             m_dirty = true;
                         }
-                        result = counter.toString();
 
-                    } else if( body != null && !body.isEmpty() && STR_LIST.equals( show ) ) {
-                        // show list of counts
-                        String header = STR_EMPTY;
-                        String line = body;
-                        String footer = STR_EMPTY;
-                        int start = body.indexOf( STR_SEPARATOR );
+                        if( show == null || STR_NONE.equals( show ) ) {
+                            // nothing to show
 
-                        // split body into header, line, footer on ---- separator
-                        if( 0 < start ) {
-                            header = body.substring( 0, start );
-                            start = skipWhitespace( start + STR_SEPARATOR.length(), body );
-                            int end = body.indexOf( STR_SEPARATOR, start );
-                            if( start >= end ) {
-                                line = body.substring( start );
-                            } else {
-                                line = body.substring( start, end );
-                                end = skipWhitespace( end + STR_SEPARATOR.length(), body );
-                                footer = body.substring( end );
+                        } else if( PARAM_COUNT.equals( show ) ) {
+                            // show page count
+                            if( counter == null ) {
+                                counter = new Counter();
+                                m_counters.put( pagename, counter );
+                                m_storage.setProperty( pagename, counter.toString() );
+                                m_dirty = true;
                             }
-                        }
+                            atomicResult.set(counter.toString());
 
-                        // sort on name or count?
-                        Map< String, Counter > sorted = m_counters;
-                        if( PARAM_COUNT.equals( sort ) ) {
-                            sorted = new TreeMap<>( m_compareCountDescending );
-                            sorted.putAll( m_counters );
-                        }
+                        } else if( body != null && 0 < body.length() && STR_LIST.equals( show ) ) {
+                            // show list of counts
+                            String header = STR_EMPTY;
+                            String line = body;
+                            String footer = STR_EMPTY;
+                            int start = body.indexOf( STR_SEPARATOR );
 
-                        // build a messagebuffer with the list in wiki markup
-                        final StringBuffer buf = new StringBuffer( header );
-                        final MessageFormat fmt = new MessageFormat( line );
-                        final Object[] args = new Object[] { pagename, STR_EMPTY, STR_EMPTY };
-                        final Iterator< Entry< String, Counter > > iter = sorted.entrySet().iterator();
-
-                        while( 0 < entries && iter.hasNext() ) {
-                            final Entry< String, Counter > entry = iter.next();
-                            final String name = entry.getKey();
-
-                            // check minimum/maximum count
-                            final int value = entry.getValue().getValue();
-                            boolean use = min <= value && value <= max;
-
-                            // did we specify a refer-to page?
-                            if( use && referrers != null ) {
-                                use = referrers.contains( name );
-                            }
-
-                            // did we specify what pages to include?
-                            if( use && include != null ) {
-                                use = false;
-
-                                for( int n = 0; !use && n < include.length; n++ ) {
-                                    use = matcher.matches( name, include[ n ] );
+                            // split body into header, line, footer on ---- separator
+                            if( 0 < start ) {
+                                header = body.substring( 0, start );
+                                start = skipWhitespace( start + STR_SEPARATOR.length(), body );
+                                int end = body.indexOf( STR_SEPARATOR, start );
+                                if( start >= end ) {
+                                    line = body.substring( start );
+                                } else {
+                                    line = body.substring( start, end );
+                                    end = skipWhitespace( end + STR_SEPARATOR.length(), body );
+                                    footer = body.substring( end );
                                 }
                             }
 
-                            // did we specify what pages to exclude?
-                            if( use && null != exclude ) {
-                                for( int n = 0; use && n < exclude.length; n++ ) {
-                                    use = !matcher.matches( name, exclude[ n ] );
+                            // sort on name or count?
+                            Map< String, Counter > sorted = m_counters;
+                            if( PARAM_COUNT.equals( sort ) ) {
+                                sorted = new TreeMap<>( m_compareCountDescending );
+                                sorted.putAll( m_counters );
+                            }
+
+                            // build a messagebuffer with the list in wiki markup
+                            final StringBuffer buf = new StringBuffer( header );
+                            final MessageFormat fmt = new MessageFormat( line );
+                            final Object[] args = new Object[] { pagename, STR_EMPTY, STR_EMPTY };
+                            final Iterator< Entry< String, Counter > > iter = sorted.entrySet().iterator();
+
+                            while( 0 < atomicEntries.get() && iter.hasNext() ) {
+                                final Entry< String, Counter > entry = iter.next();
+                                final String name = entry.getKey();
+
+                                // check minimum/maximum count
+                                final int value = entry.getValue().getValue();
+                                boolean use = min <= value && value <= max;
+
+                                // did we specify a refer-to page?
+                                if( use && atomicReferrers.get() != null ) {
+                                    use = atomicReferrers.get().contains( name );
+                                }
+
+                                // did we specify what pages to include?
+                                if( use && include != null ) {
+                                    use = false;
+
+                                    for( int n = 0; !use && n < include.length; n++ ) {
+                                        use = matcher.matches( name, include[ n ] );
+                                    }
+                                }
+
+                                // did we specify what pages to exclude?
+                                if( use && null != exclude ) {
+                                    for( int n = 0; use && n < exclude.length; n++ ) {
+                                        use = !matcher.matches( name, exclude[ n ] );
+                                    }
+                                }
+
+                                if( use ) {
+                                    args[ 1 ] = engine.getManager( RenderingManager.class ).beautifyTitle( name );
+                                    args[ 2 ] = entry.getValue();
+
+                                    fmt.format( args, buf, null );
+
+                                    atomicEntries.decrementAndGet();
                                 }
                             }
+                            buf.append( footer );
 
-                            if( use ) {
-                                args[ 1 ] = engine.getManager( RenderingManager.class ).beautifyTitle( name );
-                                args[ 2 ] = entry.getValue();
-
-                                fmt.format( args, buf, null );
-
-                                entries--;
-                            }
+                            // let the engine render the list
+                            atomicResult.set(engine.getManager(RenderingManager.class).textToHTML(context, buf.toString()));
                         }
-                        buf.append( footer );
-
-                        // let the engine render the list
-                        result = engine.getManager( RenderingManager.class ).textToHTML( context, buf.toString() );
+                    } catch (Exception e) {
+                        if (e instanceof PluginException) {
+                            pluginExceptionRef.set(new PluginException(e.getMessage()));
+                        }
                     }
-                }
+                } );
             }
-            return result;
+
+            if (pluginExceptionRef.get() != null) {
+                throw pluginExceptionRef.get();
+            }
+
+            return atomicResult.get();
         }
 
         /**
@@ -461,7 +493,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
          */
         private Pattern[] compileGlobs( final String name, final String value ) throws PluginException {
             Pattern[] result = null;
-            if( value != null && !value.isEmpty() && !STR_GLOBSTAR.equals( value ) ) {
+            if( value != null && 0 < value.length() && !STR_GLOBSTAR.equals( value ) ) {
                 try {
                     final PatternCompiler pc = new GlobCompiler();
                     final String[] ptrns = StringUtils.split( value, STR_COMMA );
@@ -509,7 +541,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
         private void loadCounters() {
             if( m_counters != null && m_storage != null ) {
                 LOG.info( "Loading counters." );
-                synchronized( this ) {
+                Synchronizer.synchronize( lock, () -> {
                     try( final InputStream fis = Files.newInputStream( new File( m_workDir, COUNTER_PAGE ).toPath() ) ) {
                         m_storage.load( fis );
                     } catch( final IOException ioe ) {
@@ -520,9 +552,9 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                     for( final Entry< ?, ? > entry : m_storage.entrySet() ) {
                         m_counters.put( ( String )entry.getKey(), new Counter( ( String )entry.getValue() ) );
                     }
-                    
+
                     LOG.info( "Loaded " + m_counters.size() + " counter values." );
-                }
+                } );
             }
         }
 
@@ -532,7 +564,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
         void storeCounters() {
             if( m_counters != null && m_storage != null && m_dirty ) {
                 LOG.info( "Storing " + m_counters.size() + " counter values." );
-                synchronized( this ) {
+                Synchronizer.synchronize( lock, () -> {
                     // Write out the collection of counters
                     try( final OutputStream fos = Files.newOutputStream( new File( m_workDir, COUNTER_PAGE ).toPath() ) ) {
                         m_storage.store( fos, "\n# The number of times each page has been viewed.\n# Do not modify.\n" );
@@ -542,7 +574,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                     } catch( final IOException ioe ) {
                         LOG.error( "Couldn't store counters values: " + ioe.getMessage() );
                     }
-                }
+                } );
             }
         }
 
@@ -552,9 +584,9 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
          * @param thrd thread that can be the current background thread.
          * @return boolean <code>true</code> if the thread is still the current background thread.
          */
-        private synchronized boolean isRunning( final Thread thrd )
+        private boolean isRunning( final Thread thrd )
         {
-            return m_initialized && thrd == m_pageCountSaveThread;
+            return Synchronizer.synchronize( lock, () -> m_initialized && thrd == m_pageCountSaveThread );
         }
 
     }

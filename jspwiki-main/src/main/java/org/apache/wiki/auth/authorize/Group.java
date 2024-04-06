@@ -19,10 +19,13 @@
 package org.apache.wiki.auth.authorize;
 
 import org.apache.wiki.auth.GroupPrincipal;
+import org.apache.wiki.util.Synchronizer;
 
 import java.security.Principal;
 import java.util.Date;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * <p>
@@ -78,6 +81,16 @@ public class Group {
     private final String    m_wiki;
 
     /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
+
+    /**
      * Protected constructor to prevent direct instantiation except by other
      * package members. Callers should use
      * {@link GroupManager#parseGroup(String, String, boolean)} or
@@ -98,20 +111,22 @@ public class Group {
      * @param user the principal to add
      * @return <code>true</code> if the operation was successful
      */
-    public synchronized boolean add( final Principal user ) {
-        if( isMember( user ) ) {
-            return false;
-        }
+    public boolean add( final Principal user ) {
+        return Synchronizer.synchronize(lock, () -> {
+            if( isMember( user ) ) {
+                return false;
+            }
 
-        m_members.add( user );
-        return true;
+            m_members.add( user );
+            return true;
+        });
     }
 
     /**
      * Clears all Principals from the group list. 
      */
-    public synchronized void clear() {
-        m_members.clear();
+    public void clear() {
+        Synchronizer.synchronize(lock, m_members::clear);
     }
 
     /**
@@ -156,8 +171,8 @@ public class Group {
      *
      * @return the creation date
      */
-    public synchronized Date getCreated() {
-        return m_created;
+    public Date getCreated() {
+        return Synchronizer.synchronize(lock, () -> m_created);
     }
 
     /**
@@ -165,8 +180,8 @@ public class Group {
      *
      * @return the creator
      */
-    public final synchronized String getCreator() {
-        return m_creator;
+    public final String getCreator() {
+        return Synchronizer.synchronize(lock, () -> m_creator);
     }
 
     /**
@@ -174,8 +189,8 @@ public class Group {
      *
      * @return the date and time of last modification
      */
-    public synchronized Date getLastModified() {
-        return m_modified;
+    public Date getLastModified() {
+        return Synchronizer.synchronize(lock, () -> m_modified);
     }
 
     /**
@@ -183,8 +198,8 @@ public class Group {
      *
      * @return the modifier
      */
-    public final synchronized String getModifier() {
-        return m_modifier;
+    public final String getModifier() {
+        return Synchronizer.synchronize(lock, () -> m_modifier);
     }
 
     /**
@@ -240,14 +255,17 @@ public class Group {
      * @param user the principal to remove
      * @return <code>true</code> if the operation was successful
      */
-    public synchronized boolean remove( Principal user ) {
-        user = findMember( user.getName() );
-        if( user == null )
-            return false;
-
-        m_members.remove( user );
-
-        return true;
+    public boolean remove(Principal user) {
+        final AtomicReference<Principal> userRef = new AtomicReference<>(user);
+        return Synchronizer.synchronize(lock, () -> {
+            Principal updatedUser = findMember(userRef.get().getName());
+            userRef.set(updatedUser);
+            if (updatedUser == null) {
+                return false;
+            }
+            m_members.remove(updatedUser);
+            return true;
+        });
     }
 
     /**
@@ -255,16 +273,20 @@ public class Group {
      *
      * @param date the creation date
      */
-    public synchronized void setCreated( final Date date ) {
-        m_created = date;
+    public void setCreated( final Date date ) {
+        Synchronizer.synchronize(lock, () -> {
+            m_created = date;
+        });
     }
 
     /**
      * Sets the creator of this Group.
      * @param creator the creator
      */
-    public final synchronized void setCreator( final String creator ) {
-        this.m_creator = creator;
+    public final void setCreator( final String creator ) {
+        Synchronizer.synchronize(lock, () -> {
+            this.m_creator = creator;
+        });
     }
 
     /**
@@ -272,8 +294,10 @@ public class Group {
      *
      * @param date the last-modified date
      */
-    public synchronized void setLastModified( final Date date ) {
-        m_modified = date;
+    public void setLastModified( final Date date ) {
+        Synchronizer.synchronize(lock, () -> {
+            m_modified = date;
+        });
     }
 
     /**
@@ -281,8 +305,10 @@ public class Group {
      *
      * @param modifier the modifier
      */
-    public final synchronized void setModifier( final String modifier ) {
-        this.m_modifier = modifier;
+    public final void setModifier( final String modifier ) {
+        Synchronizer.synchronize(lock, () -> {
+            this.m_modifier = modifier;
+        });
     }
 
     /**
