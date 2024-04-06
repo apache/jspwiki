@@ -160,7 +160,7 @@ public class WikiEngine implements Engine {
      *  @throws InternalWikiException in case something fails. This is a RuntimeException, so be prepared for it.
      */
     public static WikiEngine getInstance( final ServletConfig config ) throws InternalWikiException {
-        return Synchronizer.synchronize(lock, () -> getInstance(config.getServletContext(), null));
+        return getInstance( config.getServletContext(), null );
     }
 
     /**
@@ -174,7 +174,7 @@ public class WikiEngine implements Engine {
      *  @return One well-behaving WikiEngine instance.
      */
     public static WikiEngine getInstance( final ServletConfig config, final Properties props ) {
-        return Synchronizer.synchronize(lock, () -> getInstance( config.getServletContext(), props ));
+        return getInstance( config.getServletContext(), props );
     }
 
     /**
@@ -187,7 +187,7 @@ public class WikiEngine implements Engine {
      */
     public static WikiEngine getInstance(final ServletContext context, Properties props) throws InternalWikiException {
         final AtomicReference<Properties> propsRef = new AtomicReference<>(props);
-        return Synchronizer.synchronize(lock, () -> {
+        return Synchronizer.synchronize( lock, () -> {
             WikiEngine engine = (WikiEngine) context.getAttribute(ATTR_WIKIENGINE);
             if (engine == null) {
                 final String appid = Integer.toString(context.hashCode());
@@ -216,7 +216,7 @@ public class WikiEngine implements Engine {
                 }
             }
             return engine;
-        });
+        } );
     }
 
     /**
