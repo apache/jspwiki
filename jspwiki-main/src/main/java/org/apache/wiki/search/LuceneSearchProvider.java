@@ -143,11 +143,7 @@ public class LuceneSearchProvider implements SearchProvider {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    public LuceneSearchProvider() {
-        lock = new ReentrantLock();
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /** {@inheritDoc} */
     @Override
