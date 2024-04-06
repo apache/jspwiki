@@ -49,7 +49,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Default implementation for {@link RSSGenerator}.
- *
  * {@inheritDoc}
  */
 // FIXME: Limit diff and page content size.
@@ -74,7 +73,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      *  Builds the RSS generator for a given Engine.
@@ -87,7 +86,6 @@ public class DefaultRSSGenerator implements RSSGenerator {
         m_channelDescription = properties.getProperty( PROP_CHANNEL_DESCRIPTION, m_channelDescription );
         m_channelLanguage = properties.getProperty( PROP_CHANNEL_LANGUAGE, m_channelLanguage );
         m_rssFile = TextUtil.getStringProperty( properties, DefaultRSSGenerator.PROP_RSSFILE, "rss.rdf" );
-        this.lock = new ReentrantLock();
     }
 
     /**

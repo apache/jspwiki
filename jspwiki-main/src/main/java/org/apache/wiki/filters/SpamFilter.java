@@ -237,9 +237,9 @@ public class SpamFilter extends BasePageFilter {
     private static String   c_hashName;
     private static long     c_lastUpdate;
 
-    /** The HASH_DELAY value is a maximum amount of time that an user can keep
+    /** The HASH_DELAY value is a maximum amount of time that a user can keep
      *  a session open, because after the value has expired, we will invent a new
-     *  hash field name.  By default this is {@value} hours, which should be ample
+     *  hash field name.  By default, this is {@value} hours, which should be ample
      *  time for someone.
      */
     private static final long HASH_DELAY = 24;
@@ -252,12 +252,7 @@ public class SpamFilter extends BasePageFilter {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    public SpamFilter() {
-        lock = new ReentrantLock();
-    }
-
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      *  {@inheritDoc}

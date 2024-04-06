@@ -103,46 +103,38 @@ public class XMLUserDatabase extends AbstractUserDatabase {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    public XMLUserDatabase() {
-        lock = new ReentrantLock();
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /** {@inheritDoc} */
-    public void deleteByLoginName(final String loginName) throws WikiSecurityException {
-        final AtomicBoolean userDeleted = new AtomicBoolean(false);
-        final AtomicReference<WikiSecurityException> exceptionRef = new AtomicReference<>();
-
-        Synchronizer.synchronize(lock, () -> {
-            try {
-                if (c_dom == null) {
-                    throw new WikiSecurityException("FATAL: database does not exist");
+    public void deleteByLoginName( final String loginName ) throws WikiSecurityException {
+        final AtomicBoolean userDeleted = new AtomicBoolean( false );
+        final AtomicReference< WikiSecurityException > exceptionRef = new AtomicReference<>();
+        Synchronizer.synchronize( lock, () -> {
+            try{
+                if( c_dom == null ) {
+                    throw new WikiSecurityException( "FATAL: database does not exist" );
                 }
-
-                final NodeList users = c_dom.getDocumentElement().getElementsByTagName(USER_TAG);
-                for (int i = 0; i < users.getLength(); i++) {
-                    final Element user = (Element) users.item(i);
-                    if (user.getAttribute(LOGIN_NAME).equals(loginName)) {
-                        c_dom.getDocumentElement().removeChild(user);
+                final NodeList users = c_dom.getDocumentElement().getElementsByTagName( USER_TAG );
+                for( int i = 0; i < users.getLength(); i++ ) {
+                    final Element user = ( Element ) users.item( i );
+                    if( user.getAttribute( LOGIN_NAME ).equals( loginName ) ) {
+                        c_dom.getDocumentElement().removeChild( user );
 
                         // Commit to disk
                         saveDOM();
-                        userDeleted.set(true);
+                        userDeleted.set( true );
                         return;
                     }
                 }
-            } catch (WikiSecurityException e) {
-                exceptionRef.set(e);
+            } catch( WikiSecurityException e ) {
+                exceptionRef.set( e );
             }
-        });
-
-        if (exceptionRef.get() != null) {
+        } );
+        if( exceptionRef.get() != null ) {
             throw exceptionRef.get();
         }
-
-        if (!userDeleted.get()) {
-            throw new NoSuchPrincipalException("Not in database: " + loginName);
+        if( !userDeleted.get() ) {
+            throw new NoSuchPrincipalException( "Not in database: " + loginName );
         }
     }
 
@@ -446,7 +438,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
 
             // Hash and save the new password if it's different from old one
             final String newPassword = profile.getPassword();
-            if( newPassword != null && !newPassword.equals( "" ) ) {
+            if( newPassword != null && !newPassword.isEmpty() ) {
                 final String oldPassword = user.getAttribute( PASSWORD );
                 if( !oldPassword.equals( newPassword ) ) {
                     setAttribute( user, PASSWORD, getHash( newPassword ) );

@@ -113,12 +113,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    public DefaultAuthenticationManager () {
-        lock = new ReentrantLock();
-    }
-
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * {@inheritDoc}

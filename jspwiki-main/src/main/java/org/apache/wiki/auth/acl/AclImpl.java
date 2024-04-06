@@ -46,17 +46,10 @@ public class AclImpl implements Acl, Serializable {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
+    private final ReentrantLock lock = new ReentrantLock();
 
     private static final long serialVersionUID = 1L;
     private final Vector< AclEntry > m_entries = new Vector<>();
-
-    /**
-     * Constructs a new AclImpl instance.
-     */
-    public AclImpl() {
-        lock = new ReentrantLock();
-    }
 
     /** {@inheritDoc} */
     @Override

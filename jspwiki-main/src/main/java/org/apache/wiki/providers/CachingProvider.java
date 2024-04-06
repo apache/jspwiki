@@ -80,18 +80,14 @@ public class CachingProvider implements PageProvider {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    public CachingProvider() {
-        lock = new ReentrantLock();
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      *  {@inheritDoc}
      */
     @Override
     public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
-        LOG.debug( "Initing CachingProvider" );
+        LOG.debug( "Initializing CachingProvider" );
 
         // engine is used for getting the search engine
         this.engine = engine;

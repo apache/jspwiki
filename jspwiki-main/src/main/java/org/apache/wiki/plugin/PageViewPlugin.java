@@ -142,11 +142,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    public PageViewPlugin() {
-        lock = new ReentrantLock();
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * Initialize the PageViewPlugin and its singleton.
@@ -156,12 +152,12 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
     @Override
     public void initialize( final Engine engine ) {
         LOG.info( "initializing PageViewPlugin" );
-        Synchronizer.synchronize(lock, () -> {
+        Synchronizer.synchronize( lock, () -> {
             if( c_singleton == null ) {
                 c_singleton = new PageViewManager();
             }
             c_singleton.initialize( engine );
-        });
+        } );
     }
 
     /**
@@ -222,7 +218,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
          * @param engine The wiki engine.
          */
         public void initialize( final Engine engine ) {
-            Synchronizer.synchronize(lock, () -> {
+            Synchronizer.synchronize( lock, () -> {
                 LOG.info( "initializing PageView Manager" );
                 m_workDir = engine.getWorkDir();
                 engine.addWikiEventListener( this );
@@ -241,7 +237,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                 }
 
                 m_initialized = true;
-            });
+            } );
         }
 
         /**
@@ -366,7 +362,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                     }
                 }
 
-                Synchronizer.synchronize(lock, () -> {
+                Synchronizer.synchronize( lock, () -> {
                     try {
 
                         Counter counter = m_counters.get( pagename );
@@ -477,7 +473,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                             pluginExceptionRef.set(new PluginException(e.getMessage()));
                         }
                     }
-                });
+                } );
             }
 
             if (pluginExceptionRef.get() != null) {
@@ -545,7 +541,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
         private void loadCounters() {
             if( m_counters != null && m_storage != null ) {
                 LOG.info( "Loading counters." );
-                Synchronizer.synchronize(lock, () -> {
+                Synchronizer.synchronize( lock, () -> {
                     try( final InputStream fis = Files.newInputStream( new File( m_workDir, COUNTER_PAGE ).toPath() ) ) {
                         m_storage.load( fis );
                     } catch( final IOException ioe ) {
@@ -558,7 +554,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                     }
 
                     LOG.info( "Loaded " + m_counters.size() + " counter values." );
-                });
+                } );
             }
         }
 
@@ -568,7 +564,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
         void storeCounters() {
             if( m_counters != null && m_storage != null && m_dirty ) {
                 LOG.info( "Storing " + m_counters.size() + " counter values." );
-                Synchronizer.synchronize(lock, () -> {
+                Synchronizer.synchronize( lock, () -> {
                     // Write out the collection of counters
                     try( final OutputStream fos = Files.newOutputStream( new File( m_workDir, COUNTER_PAGE ).toPath() ) ) {
                         m_storage.store( fos, "\n# The number of times each page has been viewed.\n# Do not modify.\n" );
@@ -578,7 +574,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                     } catch( final IOException ioe ) {
                         LOG.error( "Couldn't store counters values: " + ioe.getMessage() );
                     }
-                });
+                } );
             }
         }
 
@@ -590,7 +586,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
          */
         private boolean isRunning( final Thread thrd )
         {
-            return Synchronizer.synchronize(lock, () -> m_initialized && thrd == m_pageCountSaveThread);
+            return Synchronizer.synchronize( lock, () -> m_initialized && thrd == m_pageCountSaveThread );
         }
 
     }

@@ -35,8 +35,8 @@ import java.util.concurrent.locks.ReentrantLock;
  * comments present in the file are preserved.
  * @since 2.4.22
  */
-public class CommentedProperties extends Properties
-{
+public class CommentedProperties extends Properties {
+
     private static final long serialVersionUID = 8057284636436329669L;
 
     private String m_propertyString;
@@ -49,7 +49,7 @@ public class CommentedProperties extends Properties
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * @see java.util.Properties#Properties()
@@ -57,19 +57,16 @@ public class CommentedProperties extends Properties
     public CommentedProperties()
     {
         super();
-        lock = new ReentrantLock();
     }
 
     /**
      *  Creates new properties.
      *
-     *  @param defaultValues A list of default values, which are used if in subsequent gets
-     *                       a key is not found.
+     *  @param defaultValues A list of default values, which are used if in subsequent gets a key is not found.
      */
-    public CommentedProperties(final Properties defaultValues )
+    public CommentedProperties( final Properties defaultValues )
     {
         super( defaultValues );
-        lock = new ReentrantLock();
     }
 
     /**

@@ -71,11 +71,8 @@ public class SessionMonitor implements HttpSessionListener {
      *
      * @see ReentrantLock
      */
-    private final ReentrantLock createGuestSessionForLock;
-    private final ReentrantLock removeLock;
-    private final ReentrantLock userPrincipalsLock;
-    private final ReentrantLock addWikiEventListenerLock;
-    private final ReentrantLock removeWikiEventListenerLock;
+    private final ReentrantLock mSessionsLock = new ReentrantLock();
+    private final ReentrantLock listenerLock = new ReentrantLock();
 
 
     /**
@@ -98,18 +95,8 @@ public class SessionMonitor implements HttpSessionListener {
     }
 
     /** Construct the SessionListener */
-    public SessionMonitor() {
-        createGuestSessionForLock = new ReentrantLock();
-        removeLock = new ReentrantLock();
-        userPrincipalsLock = new ReentrantLock();
-        addWikiEventListenerLock = new ReentrantLock();
-        removeWikiEventListenerLock = new ReentrantLock();
-    }
-
     private SessionMonitor( final Engine engine ) {
-        this();
         m_engine = engine;
-
     }
 
     /**
@@ -195,9 +182,9 @@ public class SessionMonitor implements HttpSessionListener {
     private Session createGuestSessionFor( final String sessionId ) {
         LOG.debug( "Session for session ID={}... not found. Creating guestSession()", sessionId );
         final Session wikiSession = Wiki.session().guest( m_engine );
-        Synchronizer.synchronize(createGuestSessionForLock, () -> {
+        Synchronizer.synchronize( mSessionsLock, () -> {
             m_sessions.put(sessionId, wikiSession);
-        });
+        } );
         return wikiSession;
     }
 
@@ -222,9 +209,9 @@ public class SessionMonitor implements HttpSessionListener {
         if( session == null ) {
             throw new IllegalArgumentException( "Session cannot be null." );
         }
-        Synchronizer.synchronize(removeLock, () -> {
+        Synchronizer.synchronize( mSessionsLock, () -> {
             m_sessions.remove( session.getId() );
-        });
+        } );
     }
 
     /**
@@ -246,11 +233,11 @@ public class SessionMonitor implements HttpSessionListener {
      * @return the array of user principals
      */
     public final Principal[] userPrincipals() {
-        final Collection<Principal> principals = Synchronizer.synchronize(userPrincipalsLock, () ->
-                m_sessions.values().stream().map(Session::getUserPrincipal).collect(Collectors.toList()));
+        final Collection< Principal > principals = Synchronizer.synchronize( mSessionsLock, () ->
+                m_sessions.values().stream().map( Session::getUserPrincipal ).collect( Collectors.toList() ) );
 
-        final Principal[] p = principals.toArray(new Principal[0]);
-        Arrays.sort(p, m_comparator);
+        final Principal[] p = principals.toArray( new Principal[ 0 ] );
+        Arrays.sort( p, m_comparator );
         return p;
     }
 
@@ -261,7 +248,7 @@ public class SessionMonitor implements HttpSessionListener {
      * @since 2.4.75
      */
     public final void addWikiEventListener( final WikiEventListener listener ) {
-        Synchronizer.synchronize(addWikiEventListenerLock, () -> {
+        Synchronizer.synchronize( listenerLock, () -> {
             WikiEventManager.addWikiEventListener( this, listener );
         });
     }
@@ -273,7 +260,7 @@ public class SessionMonitor implements HttpSessionListener {
      * @since 2.4.75
      */
     public final void removeWikiEventListener(final WikiEventListener listener) {
-        Synchronizer.synchronize(removeWikiEventListenerLock, () -> {
+        Synchronizer.synchronize( listenerLock, () -> {
             WikiEventManager.removeWikiEventListener(this, listener);
         });
     }

@@ -60,11 +60,7 @@ public class PageEventFilter extends BasePageFilter {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    public PageEventFilter() {
-        lock = new ReentrantLock();
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * Called whenever a new PageFilter is instantiated and reset.

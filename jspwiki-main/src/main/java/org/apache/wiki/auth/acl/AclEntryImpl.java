@@ -19,7 +19,6 @@
 package org.apache.wiki.auth.acl;
 
 import org.apache.wiki.auth.permissions.PagePermission;
-import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.util.Synchronizer;
 
 import java.io.Serializable;
@@ -50,14 +49,7 @@ public class AclEntryImpl implements AclEntry, Serializable {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    /**
-     * Constructs a new AclEntryImpl instance.
-     */
-    public AclEntryImpl() {
-        lock = new ReentrantLock();
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * Adds the specified permission to this ACL entry. The permission <em>must</em> be of type

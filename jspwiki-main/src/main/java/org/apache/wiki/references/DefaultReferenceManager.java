@@ -144,7 +144,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      *  Builds a new ReferenceManager.
@@ -157,12 +157,9 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
         m_engine = engine;
         m_matchEnglishPlurals = TextUtil.getBooleanProperty( engine.getWikiProperties(), Engine.PROP_MATCHPLURALS, false );
 
-        //
         //  Create two maps that contain unmutable versions of the two basic maps.
-        //
         m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
         m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
-        lock = new ReentrantLock();
     }
 
     /**
@@ -610,13 +607,10 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
 
     /**
      * Cleans the 'referred by' list, removing references by 'referrer' to any other page. Called after 'referrer' is removed.
-     *
      * Two ways to go about this. One is to look up all pages previously referred by referrer and remove referrer
      * from their lists, and let the update put them back in (except possibly removed ones).
-     *
      * The other is to get the old referred-to list, compare to the new, and tell the ones missing in the latter to remove referrer from
      * their list.
-     *
      * We'll just try the first for now. Need to come back and optimize this a bit.
      */
     private void cleanReferredBy( final String referrer,
@@ -849,10 +843,9 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      * This 'deepHashCode' can be used to determine if there were any modifications made to the underlying to and by maps of the
      * ReferenceManager. The maps of the ReferenceManager are not synchronized, so someone could add/remove entries in them while the
      * hashCode is being computed.
-     *
      * This method traps and retries if a concurrent modification occurs.
      *
-     * @return Sum of the hashCodes for the to and by maps of the ReferenceManager
+     * @return Sum of the hashCodes for the 'to' and 'by' maps of the ReferenceManager
      * @since 2.3.24
      */
     //

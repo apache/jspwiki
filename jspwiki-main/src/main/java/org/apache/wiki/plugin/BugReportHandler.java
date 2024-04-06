@@ -83,11 +83,7 @@ public class BugReportHandler implements Plugin {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    public BugReportHandler() {
-        lock = new ReentrantLock();
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      *  {@inheritDoc}

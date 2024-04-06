@@ -98,14 +98,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private ReentrantLock lock;
-
-    /**
-     * Constructs a new DefaultAuthorizationManager instance.
-     */
-    public DefaultAuthorizationManager() {
-        lock = new ReentrantLock();
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /** {@inheritDoc} */
     @Override

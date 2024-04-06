@@ -16,7 +16,6 @@
     specific language governing permissions and limitations
     under the License.
  */
-
 package org.apache.wiki.util;
 
 import java.util.concurrent.locks.ReentrantLock;
@@ -60,7 +59,6 @@ public class Synchronizer {
      * } finally {
      *     lock.unlock();
      * }
-     *
      * </pre>
      *
      * <p><strong>Parameters:</strong></p>
@@ -113,7 +111,7 @@ public class Synchronizer {
      * @throws E the thrown exception
      */
     @SuppressWarnings("unchecked")
-    private static <E extends Throwable> void throwAsUnchecked(final Exception exception) throws E {
+    private static < E extends Throwable > void throwAsUnchecked( final Exception exception ) throws E {
         throw (E) exception;
     }
 
@@ -135,12 +133,12 @@ public class Synchronizer {
      * @param lock             the ReentrantLock to use for synchronization
      * @param throwingRunnable the ThrowingRunnable to execute
      */
-    public static <E extends Exception> void synchronize(final ReentrantLock lock, final ThrowingRunnable<E> throwingRunnable) {
+    public static < E extends Exception > void synchronize( final ReentrantLock lock, final ThrowingRunnable<E> throwingRunnable ) {
         lock.lock();
         try {
             throwingRunnable.run();
-        } catch (final Exception e) {
-            throwAsUnchecked(e);
+        } catch( final Exception e ) {
+            throwAsUnchecked( e );
         } finally {
             lock.unlock();
         }

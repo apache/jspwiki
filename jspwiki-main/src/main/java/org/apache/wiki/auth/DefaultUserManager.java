@@ -106,12 +106,7 @@ public class DefaultUserManager implements UserManager {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    public DefaultUserManager() {
-        lock = new ReentrantLock();
-    }
-
+    private final ReentrantLock lock = new ReentrantLock();
 
     /** {@inheritDoc} */
     @Override
@@ -423,7 +418,8 @@ public class DefaultUserManager implements UserManager {
      * This is a convenience method.
      * @param listener the event listener
      */
-    @Override public void addWikiEventListener( final WikiEventListener listener ) {
+    @Override
+    public void addWikiEventListener( final WikiEventListener listener ) {
         Synchronizer.synchronize(lock, () -> {
             WikiEventManager.addWikiEventListener( this, listener );
         });
@@ -434,7 +430,8 @@ public class DefaultUserManager implements UserManager {
      * This is a convenience method.
      * @param listener the event listener
      */
-    @Override public void removeWikiEventListener( final WikiEventListener listener ) {
+    @Override
+    public void removeWikiEventListener( final WikiEventListener listener ) {
         Synchronizer.synchronize(lock, () -> {
             WikiEventManager.removeWikiEventListener( this, listener );
         });

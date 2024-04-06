@@ -19,7 +19,6 @@
 package org.apache.wiki.auth.authorize;
 
 import org.apache.wiki.auth.GroupPrincipal;
-import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.util.Synchronizer;
 
 import java.security.Principal;
@@ -89,7 +88,7 @@ public class Group {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * Protected constructor to prevent direct instantiation except by other
@@ -104,7 +103,6 @@ public class Group {
         m_name = name;
         m_wiki = wiki;
         m_principal = new GroupPrincipal( name );
-        lock = new ReentrantLock();
     }
 
     /**

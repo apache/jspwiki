@@ -24,11 +24,14 @@ import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
 import org.apache.wiki.util.Synchronizer;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
@@ -217,7 +220,7 @@ public class Workflow implements Serializable {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private ReentrantLock lock = new ReentrantLock();
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * Constructs a new Workflow object with a supplied message key, owner Principal, and undefined unique identifier {@link #ID_NOT_SET}.
@@ -429,7 +432,7 @@ public class Workflow implements Serializable {
      * Returns a Step history for this Workflow as a List, chronologically, from the first Step to the currently executing one. The first
      * step is the first item in the array. If the Workflow has not started, this method returns a zero-length array.
      *
-     * @return an array of Steps representing those that have executed, or are currently executing
+     * @return a List of Steps representing those that have executed, or are currently executing.
      */
     public final List< Step > getHistory()
     {

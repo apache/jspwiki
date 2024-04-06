@@ -48,9 +48,7 @@ import java.util.stream.Collectors;
 
 
 /**
- * A seriously better diff provider, which highlights changes word-by-word using CSS.
- *
- * Suggested by John Volkar.
+ * A seriously better diff provider, which highlights changes word-by-word using CSS. Suggested by John Volkar.
  */
 public class ContextualDiffProvider implements DiffProvider {
 
@@ -102,16 +100,7 @@ public class ContextualDiffProvider implements DiffProvider {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-
-    /**
-     *  Constructs this provider.
-     */
-    public ContextualDiffProvider()
-    {
-        lock = new ReentrantLock();
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * @see org.apache.wiki.api.providers.WikiProvider#getProviderInfo()
@@ -188,9 +177,8 @@ public class ContextualDiffProvider implements DiffProvider {
      * Take the string and create an array from it, split it first on newlines, making
      * sure to preserve the newlines in the elements, split each resulting element on
      * spaces, preserving the spaces.
-     *
-     * All this preseving of newlines and spaces is so the wikitext when diffed will have fidelity
-     * to it's original form.  As a side affect we see edits of purely whilespace.
+     * All this preserving of newlines and spaces is so the wikitext when diffed will have fidelity
+     * to its original form.  As a side effect we see edits of purely whitespace.
      */
     private String[] sequence( final String wikiText ) {
         final String[] linesArray = Diff.stringToArray( wikiText );
@@ -199,7 +187,7 @@ public class ContextualDiffProvider implements DiffProvider {
 
             String lastToken = null;
             String token;
-            // StringTokenizer might be discouraged but it still is perfect here...
+            // StringTokenizer might be discouraged, but it is still perfect here...
             for( final StringTokenizer st = new StringTokenizer( line, " ", true ); st.hasMoreTokens(); ) {
                 token = st.nextToken();
 

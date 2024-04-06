@@ -72,11 +72,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    public CachingAttachmentProvider() {
-        lock = new ReentrantLock();
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * {@inheritDoc}

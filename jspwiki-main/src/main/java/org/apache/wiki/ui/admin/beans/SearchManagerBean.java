@@ -56,12 +56,11 @@ public class SearchManagerBean extends SimpleAdminBean {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
+    private final ReentrantLock lock = new ReentrantLock();
 
     public SearchManagerBean( final Engine engine ) throws NotCompliantMBeanException {
         super();
         initialize( engine );
-        this.lock = new ReentrantLock();
     }
 
     @Override

@@ -43,7 +43,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -64,7 +63,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  *  In this case, "Main" has three versions, and "Foobar" just one version.
  *  <P>
- *  The properties file contains the necessary metainformation (such as author)
+ *  The properties file contains the necessary meta information (such as author)
  *  information of the page.  DO NOT MESS WITH IT!
  *
  *  <P>
@@ -93,11 +92,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
      *
      * @see java.util.concurrent.locks.ReentrantLock
      */
-    private final ReentrantLock lock;
-
-    public VersioningFileProvider() {
-        lock = new ReentrantLock();
-    }
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      *  {@inheritDoc}
@@ -105,7 +100,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
     @Override
     public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
         super.initialize( engine, properties );
-        // some additional sanity checks :
+        // some additional sanity checks:
         final File oldpages = new File( getPageDirectory(), PAGEDIR );
         if( !oldpages.exists() ) {
             if( !oldpages.mkdirs() ) {
