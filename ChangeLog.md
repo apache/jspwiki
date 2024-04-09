@@ -17,6 +17,24 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2024-04-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-12_
+
+* `BasicAttachmentProvider` doesn't throw an Exception if attachment metadata files are not correctly formed, aligning behaviour with metadata files not being present. This ensures plugin relying on this functionality, like f.ex RecentChanges, keep working if this condition is met.
+
+* Publish SBOMs artifacts as part of the build.
+
+* Dependency updates
+    * Commons IO to 2.16.1
+    * JUnit to 5.10.2
+    * Log4J2 to 2.23.0
+    * Lucene to 9.10.0
+    * Mockito to 5.11.0
+    * Tika to 2.9.2
+    * Tomcat to 9.0.87
+    * Maven plugins: assembly to 3.7.1, compiler to 3.13.0, jxr to 3.3.2, remote-resources to 3.2.0, source to 3.3.1, surefire to 3.2.5, jdk-doclet to 2.1.2
+
 **2023-12-04  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-11_
