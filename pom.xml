@@ -107,6 +107,7 @@
     <plugin.cargo.version>1.10.11</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
     <plugin.cobertura.version>2.7</plugin.cobertura.version>
+    <plugin.cyclonedx.version>2.8.0</plugin.cyclonedx.version>
     <plugin.sonar.version>3.10.0.2594</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
     <plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
@@ -478,6 +479,29 @@
         <groupId>net.nicoulaj.maven.plugins</groupId>
         <artifactId>checksum-maven-plugin</artifactId>
       </plugin>
+
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-sbom</id>
+            <goals>
+              <goal>makeAggregateBom</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <externalReferences>
+                <externalReference>
+                  <type>vulnerability-assertion</type>
+                  <url>https://jspwiki.apache.org/cyclonedx/vdr.xml</url>
+                </externalReference>
+              </externalReferences>
+              <outputFormat>xml</outputFormat>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
 
     <pluginManagement> <!-- defines what configuration is going to be used if, and only if, the plugin is used                          -->
@@ -823,6 +847,12 @@
               <format>xml</format>
             </formats>
           </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.cyclonedx</groupId>
+          <artifactId>cyclonedx-maven-plugin</artifactId>
+          <version>${plugin.cyclonedx.version}</version>
         </plugin>
 
         <plugin>
