@@ -41,7 +41,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.outputTimestamp>2023-08-07T19:55:12Z</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
     <jdk.version>11</jdk.version>
-    <jdk.javadoc.doclet.version>2.1.1</jdk.javadoc.doclet.version>
+    <jdk.javadoc.doclet.version>2.1.2</jdk.javadoc.doclet.version>
     <maven.version>3.5</maven.version>
 
     <akismet-java.version>1.02</akismet-java.version>
@@ -50,7 +50,7 @@
     <commons-collections.version>4.4</commons-collections.version>
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
-    <commons-io.version>2.15.0</commons-io.version>
+    <commons-io.version>2.16.1</commons-io.version>
     <commons-lang.version>3.14.0</commons-lang.version>
     <commons-text.version>1.11.0</commons-text.version>
     <ehcache.version>2.10.9.2</ehcache.version>
@@ -67,37 +67,37 @@
     <jdom2.version>2.0.6</jdom2.version>
     <jetty.version>9.4.53.v20231009</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
-    <junit.version>5.10.1</junit.version>
-    <log4j2.version>2.20.0</log4j2.version>
-    <lucene.version>9.9.0</lucene.version>
-    <mockito.version>5.8.0</mockito.version>
+    <junit.version>5.10.2</junit.version>
+    <log4j2.version>2.23.0</log4j2.version>
+    <lucene.version>9.10.0</lucene.version>
+    <mockito.version>5.11.0</mockito.version>
     <nekohtml.version>2.1.2</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
     <selenide.version>6.19.0</selenide.version>
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
-    <tika.version>2.9.1</tika.version>
-    <tomcat.version>9.0.83</tomcat.version>
+    <tika.version>2.9.2</tika.version>
+    <tomcat.version>9.0.87</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
     <plugin.antrun.version>3.1.0</plugin.antrun.version>
-    <plugin.assembly.version>3.6.0</plugin.assembly.version>
+    <plugin.assembly.version>3.7.1</plugin.assembly.version>
     <plugin.clean.version>3.3.2</plugin.clean.version>
-    <plugin.compiler.version>3.11.0</plugin.compiler.version>
+    <plugin.compiler.version>3.13.0</plugin.compiler.version>
     <plugin.dependency.version>3.6.1</plugin.dependency.version>
     <plugin.enforcer.version>3.4.1</plugin.enforcer.version>
     <plugin.install.version>3.1.1</plugin.install.version>
     <plugin.jar.version>3.3.0</plugin.jar.version>
     <plugin.javadoc.version>3.6.3</plugin.javadoc.version>
-    <plugin.jxr.version>3.3.1</plugin.jxr.version>
+    <plugin.jxr.version>3.3.2</plugin.jxr.version>
     <plugin.project-info-reports.version>3.5.0</plugin.project-info-reports.version>
     <plugin.release.version>3.0.1</plugin.release.version>
-    <plugin.remote-resources.version>3.1.0</plugin.remote-resources.version>
+    <plugin.remote-resources.version>3.2.0</plugin.remote-resources.version>
     <plugin.resources.version>3.3.1</plugin.resources.version>
-    <plugin.source.version>3.3.0</plugin.source.version>
-    <plugin.surefire.version>3.2.2</plugin.surefire.version>
+    <plugin.source.version>3.3.1</plugin.source.version>
+    <plugin.surefire.version>3.2.5</plugin.surefire.version>
     <plugin.surefire.junit5-tree-reporter.version>1.2.1</plugin.surefire.junit5-tree-reporter.version>
     <plugin.war.version>3.4.0</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
