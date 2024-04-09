@@ -255,6 +255,8 @@ public class BasicAttachmentProvider implements AttachmentProvider {
         if( propertyFile.exists() ) {
             try( final InputStream in = Files.newInputStream( propertyFile.toPath() ) ) {
                 props.load( in );
+            } catch( final IOException ioe ) {
+                LOG.error( ioe.getMessage() );
             }
         }
         
