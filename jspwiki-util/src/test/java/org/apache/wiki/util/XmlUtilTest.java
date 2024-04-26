@@ -41,8 +41,7 @@ public class XmlUtilTest {
         Assertions.assertEquals( 1, elements.size() );
 
         elements = XmlUtil.parse( "ini/jspwiki_module.xml", "/modules/editor" );
-        Assertions.assertEquals( 1, elements.size() ); // reduced to one, since wysiwyg was is deactivated for now
-
+        Assertions.assertEquals( 2, elements.size() );
 
         elements = XmlUtil.parse( "ini/jspwiki_module.xml", "/modules/heck" );
         Assertions.assertEquals( 0, elements.size() );
