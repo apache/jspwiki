@@ -57,9 +57,8 @@ public class CachingAttachmentProvider implements AttachmentProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(CachingAttachmentProvider.class);
 
-    private AttachmentProvider m_provider;
-
     private AttachmentProvider provider;
+    private CachingManager cachingManager;
     private boolean allRequested;
     private final AtomicLong attachments = new AtomicLong( 0L );
 
@@ -264,10 +263,10 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      * {@inheritDoc}
      */
     @Override
-    public void moveAttachmentsForPage( final String oldParent, final String newParent ) throws ProviderException {
+    public void moveAttachmentsForPage( final Page oldParent, final String newParent ) throws ProviderException {
         provider.moveAttachmentsForPage( oldParent, newParent );
         cachingManager.remove( CachingManager.CACHE_ATTACHMENTS_COLLECTION, newParent );
-        cachingManager.remove( CachingManager.CACHE_ATTACHMENTS_COLLECTION, oldParent );
+        cachingManager.remove( CachingManager.CACHE_ATTACHMENTS_COLLECTION, oldParent.getName() );
 
         // This is a kludge to make sure that the pages are removed from the other cache as well.
         final String checkName = oldParent + "/";

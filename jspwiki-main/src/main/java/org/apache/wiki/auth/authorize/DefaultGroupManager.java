@@ -64,7 +64,7 @@ import java.util.StringTokenizer;
  */
 public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventListener {
 
-    private static final Logger error = LoggerFactory.getLogger( DefaultGroupManager.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DefaultGroupManager.class );
 
     protected Engine m_engine;
 

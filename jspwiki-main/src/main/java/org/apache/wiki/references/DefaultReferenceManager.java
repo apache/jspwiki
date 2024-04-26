@@ -202,7 +202,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
                     final Page wp = m_engine.getManager( PageManager.class ).getPage( page.getName() );
 
                     if( wp.getLastModified() == null ) {
-						LOG.fatal( "Provider returns null lastModified.  Please submit a bug report." );
+						LOG.error( "Provider returns null lastModified.  Please submit a bug report." );
                     } else if( wp.getLastModified().getTime() > saved ) {
                         updatePageReferences( wp );
                     }

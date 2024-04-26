@@ -311,7 +311,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 				putPageProperties(att, props);
 			}
 			catch (final IOException e) {
-				log.error("Could not save attachment data: ", e);
+				LOG.error("Could not save attachment data: ", e);
 				throw (IOException) e.fillInStackTrace();
 			}
 		}
@@ -396,7 +396,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 						final File[] files = f.listFiles();
 						if (files == null || files.length == 0 || (files.length == 1 && PROPERTY_FILE.equals(files[0].getName()))) {
 							// can happen with git synced wiki contents, just clean up
-							log.warn("Cleaning up empty attachment folder: " + f.getPath());
+							LOG.warn("Cleaning up empty attachment folder: " + f.getPath());
 							f.delete();
 							continue;
 						}

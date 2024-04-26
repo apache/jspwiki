@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,11 +33,11 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.classic.ClassicAnalyzer;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.classic.ClassicAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -232,7 +231,7 @@ public class LuceneSearchProvider implements SearchProvider {
                             LOG.warn( "Unable to index page {}, continuing to next ", page.getName(), e );
                         }
                     }
-                    log.info("Indexed {} pages in {}ms", pagesIndexed, System.currentTimeMillis() - pagesStart);
+                    LOG.info("Indexed {} pages in {}ms", pagesIndexed, System.currentTimeMillis() - pagesStart);
 
                     long attachmentStart = System.currentTimeMillis();
 
@@ -247,7 +246,7 @@ public class LuceneSearchProvider implements SearchProvider {
                             LOG.warn( "Unable to index attachment {}, continuing to next", att.getName(), e );
                         }
                     }
-                    log.info("Indexed {} attachments in {}ms", attachmentsIndexed, System.currentTimeMillis() - attachmentStart);
+                    LOG.info("Indexed {} attachments in {}ms", attachmentsIndexed, System.currentTimeMillis() - attachmentStart);
                 }
 
                 final Date end = new Date();

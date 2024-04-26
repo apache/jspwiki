@@ -38,7 +38,7 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jspwiki-main-util</artifactId>
+			<artifactId>jspwiki-util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 

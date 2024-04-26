@@ -286,7 +286,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
             try {
                 return ClassUtil.buildInstance( "org.apache.wiki.auth.authorize", clazz );
             } catch( final ReflectiveOperationException e ) {
-                LOG.fatal( "Authorizer {} cannot be instantiated", clazz, e );
+                LOG.error( "Authorizer {} cannot be instantiated", clazz, e );
                 throw new WikiException( "Authorizer " + clazz + " cannot be instantiated", e );
             }
         }

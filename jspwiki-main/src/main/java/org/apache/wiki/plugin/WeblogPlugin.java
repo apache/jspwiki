@@ -87,7 +87,7 @@ import java.util.regex.Pattern;
 
 public class WeblogPlugin implements Plugin, ParserStagePlugin {
 
-    private static final Logger log = LoggerFactory.getLogger(WeblogPlugin.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WeblogPlugin.class);
     private static final Pattern HEADINGPATTERN;
 
     /** How many days are considered by default.  Default value is {@value} */

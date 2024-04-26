@@ -18,11 +18,6 @@
  */
 package org.apache.wiki.providers;
 
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -39,6 +34,8 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -374,12 +371,12 @@ public class CachingProvider implements PageProvider {
 
             //  If we have this version cached, remove from cache.
             if( version == PageProvider.LATEST_VERSION || version == latestcached ) {
-                cachingManager.remove( CachingManager.CACHE_PAGES, pageName );
-                cachingManager.remove( CachingManager.CACHE_PAGES_TEXT, pageName );
+                cachingManager.remove( CachingManager.CACHE_PAGES, page.getName() );
+                cachingManager.remove( CachingManager.CACHE_PAGES_TEXT, page.getName() );
             }
 
-            provider.deleteVersion( pageName, version );
-            cachingManager.remove( CachingManager.CACHE_PAGES_HISTORY, pageName );
+            provider.deleteVersion( page, version );
+            cachingManager.remove( CachingManager.CACHE_PAGES_HISTORY, page.getName() );
         }
         if( version == PageProvider.LATEST_VERSION ) {
             pages.decrementAndGet();
@@ -394,10 +391,10 @@ public class CachingProvider implements PageProvider {
     public void deletePage( final Page page) throws ProviderException {
         //  See note in deleteVersion().
         synchronized( this ) {
-            cachingManager.put( CachingManager.CACHE_PAGES, pageName, null );
-            cachingManager.put( CachingManager.CACHE_PAGES_TEXT, pageName, null );
-            cachingManager.put( CachingManager.CACHE_PAGES_HISTORY, pageName, null );
-            provider.deletePage( pageName );
+            cachingManager.put( CachingManager.CACHE_PAGES, page.getName(), null );
+            cachingManager.put( CachingManager.CACHE_PAGES_TEXT, page.getName(), null );
+            cachingManager.put( CachingManager.CACHE_PAGES_HISTORY, page.getName(), null );
+            provider.deletePage( page );
         }
         pages.decrementAndGet();
     }
@@ -406,13 +403,13 @@ public class CachingProvider implements PageProvider {
      *  {@inheritDoc}
      */
     @Override
-    public void movePage( final String from, final String to ) throws ProviderException {
+    public void movePage( final Page from, final String to ) throws ProviderException {
         provider.movePage( from, to );
         synchronized( this ) {
             // Clear any cached version of the old page and new page
-            cachingManager.remove( CachingManager.CACHE_PAGES, from );
-            cachingManager.remove( CachingManager.CACHE_PAGES_TEXT, from );
-            cachingManager.remove( CachingManager.CACHE_PAGES_HISTORY, from );
+            cachingManager.remove( CachingManager.CACHE_PAGES, from.getName() );
+            cachingManager.remove( CachingManager.CACHE_PAGES_TEXT, from.getName() );
+            cachingManager.remove( CachingManager.CACHE_PAGES_HISTORY, from.getName() );
             LOG.debug( "Removing to page {} from cache", to );
             cachingManager.remove( CachingManager.CACHE_PAGES, to );
             cachingManager.remove( CachingManager.CACHE_PAGES_TEXT, to );

@@ -151,7 +151,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
 			}
 			putPageProperties(page.getName(), pageProps);
 		}
-		log.info("Written date properties in " + (System.currentTimeMillis() - start) + "ms");
+        LOG.info("Written date properties in " + (System.currentTimeMillis() - start) + "ms");
 	}
 
     private Properties getVersioningProperties() throws IOException {
@@ -583,7 +583,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 }
 			}
 		} catch (Exception e) {
-			log.error("Cannot read last modified from properties file");
+            LOG.error("Cannot read last modified from properties file");
 		}
 		return null;
 	}
@@ -684,7 +684,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                     Files.delete(file.toPath());
                 }
                 catch (IOException e) {
-                    log.error("Can't delete file " + file.getAbsolutePath() + " " + e.getMessage(), e);
+                    LOG.error("Can't delete file " + file.getAbsolutePath() + " " + e.getMessage(), e);
                     hasError = true;
                 }
             }
@@ -695,7 +695,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                     Files.delete(propfile.toPath());
                 }
                 catch (IOException e) {
-                    log.error("Can't delete file " + propfile.getAbsolutePath() + " " + e.getMessage(), e);
+                    LOG.error("Can't delete file " + propfile.getAbsolutePath() + " " + e.getMessage(), e);
                     hasError = true;
                 }
             }
@@ -704,7 +704,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                 Files.delete(dir.toPath());
             }
             catch (IOException e) {
-                log.error("Can't delete directory " + propfile.getAbsolutePath() + " " + e.getMessage(), e);
+                LOG.error("Can't delete directory " + propfile.getAbsolutePath() + " " + e.getMessage(), e);
                 hasError = true;
             }
             if (hasError) {

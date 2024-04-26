@@ -23,6 +23,7 @@ import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import net.sourceforge.stripes.mock.MockHttpSession;
 import net.sourceforge.stripes.mock.MockServletContext;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wiki.api.Release;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.apache.wiki.api.core.Attachment;
@@ -179,7 +180,7 @@ public class TestEngine extends WikiEngine {
         try {
             start( cleanTestProps( props ) );
         } catch( final Exception e ) {
-            throw new WikiException( Release.APPNAME + ": Unable to load and setup properties from jspwiki.properties. " + e.getMessage(), e );
+            throw new WikiException(Release.APPNAME + ": Unable to load and setup properties from jspwiki.properties. " + e.getMessage(), e );
         }
 
         // Stash the WikiEngine in the servlet context

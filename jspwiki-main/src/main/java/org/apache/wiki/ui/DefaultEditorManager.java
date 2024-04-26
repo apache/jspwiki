@@ -61,7 +61,7 @@ public class DefaultEditorManager extends BaseModuleManager implements EditorMan
 
     private Map< String, WikiEditorInfo > m_editors;
 
-    private static final Logger error = LoggerFactory.getLogger( DefaultEditorManager.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DefaultEditorManager.class );
 
     public DefaultEditorManager( final Engine engine ) {
         super( engine );

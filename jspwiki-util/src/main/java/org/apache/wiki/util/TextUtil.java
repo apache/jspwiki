@@ -19,8 +19,8 @@
 package org.apache.wiki.util;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -39,7 +39,7 @@ import java.util.stream.IntStream;
  */
 public final class TextUtil {
 
-    private static final Logger LOG = LogManager.getLogger( TextUtil.class );
+    private static final Logger LOG = LoggerFactory.getLogger( TextUtil.class );
 
     static final String HEX_DIGITS = "0123456789ABCDEF";
 

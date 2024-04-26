@@ -92,7 +92,7 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
 
     private final Map< String, PageFilterInfo > m_filterClassMap = new HashMap<>();
 
-    private static final Logger error = LoggerFactory.getLogger(DefaultFilterManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultFilterManager.class);
 
     /**
      *  Constructs a new FilterManager object.

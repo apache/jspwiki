@@ -52,7 +52,7 @@ import java.util.regex.Pattern;
  */
 public class DefaultPageRenamer implements PageRenamer {
 
-	private static final Logger error = LoggerFactory.getLogger(DefaultPageRenamer.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DefaultPageRenamer.class);
 
 	private boolean m_camelCase;
 

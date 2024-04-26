@@ -37,7 +37,7 @@ import java.util.Properties;
  */
 public class DefaultDifferenceManager implements DifferenceManager {
 
-    private static final Logger error = LoggerFactory.getLogger( DefaultDifferenceManager.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DefaultDifferenceManager.class );
 
     private DiffProvider m_provider;
 
