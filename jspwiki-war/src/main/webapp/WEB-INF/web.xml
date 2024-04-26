@@ -66,25 +66,25 @@
    -->
 
    <filter>
-      <filter-name>WikiServletFilter</filter-name>
-      <filter-class>org.apache.wiki.ui.WikiServletFilter</filter-class>
+     <filter-name>WikiServletFilter</filter-name>
+     <filter-class>org.apache.wiki.ui.WikiServletFilter</filter-class>
    </filter>
    <filter>
-      <filter-name>WikiJSPFilter</filter-name>
-      <filter-class>org.apache.wiki.ui.WikiJSPFilter</filter-class>
+     <filter-name>WikiJSPFilter</filter-name>
+     <filter-class>org.apache.wiki.ui.WikiJSPFilter</filter-class>
    </filter>
 
    <filter-mapping>
-       <filter-name>WikiServletFilter</filter-name>
-       <url-pattern>/attach/*</url-pattern>
-       <url-pattern>/atom/*</url-pattern>
-       <url-pattern>/RPCU/</url-pattern>
-       <url-pattern>/RPC2/</url-pattern>
+     <filter-name>WikiServletFilter</filter-name>
+     <url-pattern>/attach/*</url-pattern>
+     <url-pattern>/atom/*</url-pattern>
+     <url-pattern>/RPCU/</url-pattern>
+     <url-pattern>/RPC2/</url-pattern>
    </filter-mapping>
    <filter-mapping>
-       <filter-name>WikiJSPFilter</filter-name>
-       <url-pattern>/wiki/*</url-pattern>
-       <url-pattern>*.jsp</url-pattern>
+     <filter-name>WikiJSPFilter</filter-name>
+     <url-pattern>/wiki/*</url-pattern>
+     <url-pattern>*.jsp</url-pattern>
    </filter-mapping>
 
    <!--

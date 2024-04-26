@@ -115,13 +115,8 @@ public class AclImpl implements Acl, Serializable {
     /** {@inheritDoc} */
     @Override
     public AclEntry getAclEntry( final Principal principal ) {
-        for( final AclEntry entry : m_entries ) {
-            if( entry.getPrincipal().getName().equals( principal.getName() ) ) {
-                return entry;
-            }
-        }
+        return m_entries.stream().filter(entry -> entry.getPrincipal().getName().equals(principal.getName())).findFirst().orElse(null);
 
-        return null;
     }
 
     /** {@inheritDoc} */

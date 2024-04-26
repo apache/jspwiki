@@ -49,7 +49,7 @@ import java.util.TreeSet;
  */
 public class BasicSearchProvider implements SearchProvider {
 
-    private static final Logger log = LoggerFactory.getLogger( BasicSearchProvider.class );
+    private static final Logger LOG = LoggerFactory.getLogger( BasicSearchProvider.class );
     private Engine m_engine;
 
     /**
@@ -83,11 +83,11 @@ public class BasicSearchProvider implements SearchProvider {
         final QueryItem[] items = new QueryItem[st.countTokens()];
         int word = 0;
 
-        log.debug("Expecting "+items.length+" items");
+        LOG.debug("Expecting "+items.length+" items");
 
         //  Parse incoming search string
         while( st.hasMoreTokens() ) {
-            log.debug( "Item " + word );
+            LOG.debug( "Item " + word );
             String token = st.nextToken().toLowerCase();
 
             items[ word ] = new QueryItem();
@@ -96,18 +96,18 @@ public class BasicSearchProvider implements SearchProvider {
             case '+':
                 items[ word ].type = QueryItem.REQUIRED;
                 token = token.substring( 1 );
-                log.debug( "Required word: " + token );
+                LOG.debug( "Required word: " + token );
                 break;
 
             case '-':
                 items[ word ].type = QueryItem.FORBIDDEN;
                 token = token.substring( 1 );
-                log.debug( "Forbidden word: " + token );
+                LOG.debug( "Forbidden word: " + token );
                 break;
 
             default:
                 items[ word ].type = QueryItem.REQUESTED;
-                log.debug( "Requested word: " + token );
+                LOG.debug( "Requested word: " + token );
                 break;
             }
 
@@ -123,7 +123,7 @@ public class BasicSearchProvider implements SearchProvider {
             try {
                 attachments = m_engine.getManager( AttachmentManager.class ).listAttachments( page );
             } catch( final ProviderException e ) {
-                log.error( "Unable to get attachments for page", e );
+                LOG.error( "Unable to get attachments for page", e );
                 return "";
             }
 
@@ -148,7 +148,7 @@ public class BasicSearchProvider implements SearchProvider {
         try {
             allPages = m_engine.getManager( PageManager.class ).getAllPages();
         } catch( final ProviderException pe ) {
-            log.error( "Unable to retrieve page list", pe );
+            LOG.error( "Unable to retrieve page list", pe );
             return null;
         }
 
@@ -169,9 +169,9 @@ public class BasicSearchProvider implements SearchProvider {
                     }
                 }
             } catch( final ProviderException pe ) {
-                log.error( "Unable to retrieve page from cache", pe );
+                LOG.error( "Unable to retrieve page from cache", pe );
             } catch( final IOException ioe ) {
-                log.error( "Failed to search page", ioe );
+                LOG.error( "Failed to search page", ioe );
             }
         }
 

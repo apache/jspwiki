@@ -223,7 +223,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
                 startTime.setTime( d );
                 stopTime.setTime( d );
             } catch( final ParseException e ) {
-                return "Illegal time format: "+startDay;
+                return "Illegal time format: "+ TextUtil.replaceEntities(startDay);
             }
         }
 
@@ -408,7 +408,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
                         result.add( firstVersion );
                     }
                 } catch( final Exception e ) {
-                    log.debug( "Page name :" + pageName + " was suspected as a blog entry but it isn't because of parsing errors", e );
+                    LOG.debug( "Page name :" + pageName + " was suspected as a blog entry but it isn't because of parsing errors", e );
                 }
             }
         }

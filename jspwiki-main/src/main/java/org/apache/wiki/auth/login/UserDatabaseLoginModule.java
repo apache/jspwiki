@@ -27,13 +27,21 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
+
+import javax.security.auth.callback.Callback;
+import javax.security.auth.callback.NameCallback;
+import javax.security.auth.callback.PasswordCallback;
+import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.login.FailedLoginException;
+import javax.security.auth.login.LoginException;
+import java.io.IOException;
 
 /**
  * <p>
@@ -55,16 +63,16 @@ import org.apache.wiki.auth.user.UserProfile;
  * </p>
  * @since 2.3
  */
-public class UserDatabaseLoginModule extends AbstractLoginModule
-{
+public class UserDatabaseLoginModule extends AbstractLoginModule {
 
-    private static final Logger log = LoggerFactory.getLogger( UserDatabaseLoginModule.class );
+    private static final Logger LOG = LoggerFactory.getLogger( UserDatabaseLoginModule.class );
 
     /**
      * @see javax.security.auth.spi.LoginModule#login()
      * 
      * {@inheritDoc}
      */
+    @Override
     public boolean login() throws LoginException
     {
         final UserDatabaseCallback ucb = new UserDatabaseCallback();
@@ -80,18 +88,13 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
             final String password = new String( pcb.getPassword() );
 
             // Look up the user and compare the password hash
-            if ( db == null )
-            {
+            if ( db == null ) {
                 throw new FailedLoginException( "No user database: check the callback handler code!" );
             }
             final UserProfile profile = db.findByLoginName( username );
             final String storedPassword = profile.getPassword();
-            if ( storedPassword != null && db.validatePassword( username, password ) )
-            {
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( "Logged in user database user " + username );
-                }
+            if ( storedPassword != null && db.validatePassword( username, password ) ) {
+                LOG.debug( "Logged in user database user {}", username );
 
                 // If login succeeds, commit these principals/roles
                 m_principals.add( new WikiPrincipal( username,  WikiPrincipal.LOGIN_NAME ) );
@@ -99,21 +102,15 @@ public class UserDatabaseLoginModule extends AbstractLoginModule
                 return true;
             }
             throw new FailedLoginException( "The username or password is incorrect." );
-        }
-        catch( final IOException e )
-        {
+        } catch( final IOException e ) {
             final String message = "IO exception; disallowing login.";
-            log.error( message, e );
+            LOG.error( message, e );
             throw new LoginException( message );
-        }
-        catch( final UnsupportedCallbackException e )
-        {
+        } catch( final UnsupportedCallbackException e ) {
             final String message = "Unable to handle callback; disallowing login.";
-            log.error( message, e );
+            LOG.error( message, e );
             throw new LoginException( message );
-        }
-        catch( final NoSuchPrincipalException e )
-        {
+        } catch( final NoSuchPrincipalException e ) {
             throw new FailedLoginException( "The username or password is incorrect." );
         }
     }

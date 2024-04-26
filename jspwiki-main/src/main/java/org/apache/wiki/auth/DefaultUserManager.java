@@ -88,7 +88,7 @@ public class DefaultUserManager implements UserManager {
 
     private Engine m_engine;
 
-    private static final Logger log = LoggerFactory.getLogger( DefaultUserManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger( DefaultUserManager.class);
 
     /** Associates wiki sessions with profiles */
     private final Map< Session, UserProfile > m_profiles = new WeakHashMap<>();
@@ -121,24 +121,19 @@ public class DefaultUserManager implements UserManager {
         try {
             dbClassName = TextUtil.getRequiredProperty( m_engine.getWikiProperties(), PROP_DATABASE );
 
-            log.info( "Attempting to load user database class " + dbClassName );
-            final Class<?> dbClass = ClassUtil.findClass( USERDATABASE_PACKAGE, dbClassName );
-            m_database = (UserDatabase) dbClass.newInstance();
+            LOG.info( "Attempting to load user database class {}", dbClassName );
+            m_database = ClassUtil.buildInstance( USERDATABASE_PACKAGE, dbClassName );
             m_database.initialize( m_engine, m_engine.getWikiProperties() );
-            log.info("UserDatabase initialized.");
+            LOG.info( "UserDatabase initialized." );
         } catch( final NoSuchElementException | NoRequiredPropertyException e ) {
-            log.error( "You have not set the '"+PROP_DATABASE+"'. You need to do this if you want to enable user management by JSPWiki.", e );
-        } catch( final ClassNotFoundException e ) {
-            log.error( "UserDatabase class " + dbClassName + " cannot be found", e );
-        } catch( final InstantiationException e ) {
-            log.error( "UserDatabase class " + dbClassName + " cannot be created", e );
-        } catch( final IllegalAccessException e ) {
-            log.error( "You are not allowed to access this user database class", e );
+            LOG.error( "You have not set the '{}'. You need to do this if you want to enable user management by JSPWiki.", PROP_DATABASE, e );
+        } catch( final ReflectiveOperationException e ) {
+            LOG.error( "UserDatabase {} cannot be instantiated", dbClassName, e );
         } catch( final WikiSecurityException e ) {
-            log.error( "Exception initializing user database: " + e.getMessage(), e );
+            LOG.error( "Exception initializing user database: {}", e.getMessage(), e );
         } finally {
             if( m_database == null ) {
-                log.info("I could not create a database object you specified (or didn't specify), so I am falling back to a default.");
+                LOG.info( "I could not create a database object you specified (or didn't specify), so I am falling back to a default." );
                 m_database = new DummyUserDatabase();
             }
         }
@@ -318,7 +313,6 @@ public class DefaultUserManager implements UserManager {
     /** {@inheritDoc} */
     @Override
     public void validateProfile( final Context context, final UserProfile profile ) {
-        final boolean isNew = profile.isNew();
         final Session session = context.getWikiSession();
         final InputValidator validator = new InputValidator( SESSION_MESSAGES, context );
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
@@ -346,17 +340,19 @@ public class DefaultUserManager implements UserManager {
         validator.validateNotNull( profile.getFullname(), rb.getString("security.user.fullname") );
         validator.validate( profile.getEmail(), rb.getString("security.user.email"), InputValidator.EMAIL );
 
-        // If new profile, passwords must match and can't be null
         if( !m_engine.getManager( AuthenticationManager.class ).isContainerAuthenticated() ) {
+            // passwords must match and can't be null
             final String password = profile.getPassword();
             if( password == null ) {
-                if( isNew ) {
-                    session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.blankpassword" ) );
-                }
+                session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.blankpassword" ) );
             } else {
                 final HttpServletRequest request = context.getHttpRequest();
+                final String password0 = ( request == null ) ? null : request.getParameter( "password0" );
                 final String password2 = ( request == null ) ? null : request.getParameter( "password2" );
                 if( !password.equals( password2 ) ) {
+                    session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
+                }
+                if( !profile.isNew() && !getUserDatabase().validatePassword( profile.getLoginName(), password0 ) ) {
                     session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
                 }
             }
@@ -450,11 +446,11 @@ public class DefaultUserManager implements UserManager {
         @Override
         public void service( final HttpServletRequest req, final HttpServletResponse resp, final String actionName, final List<String> params) throws ServletException, IOException {
         	try {
-            	if( params.size() < 1 ) {
+            	if( params.isEmpty() ) {
             		return;
             	}
         		final String uid = params.get(0);
-	        	log.debug("uid="+uid);
+	        	LOG.debug("uid="+uid);
 	        	if (StringUtils.isNotBlank(uid)) {
 		            final UserProfile prof = getUserInfo(uid);
 		            resp.getWriter().write(AjaxUtil.toJson(prof));

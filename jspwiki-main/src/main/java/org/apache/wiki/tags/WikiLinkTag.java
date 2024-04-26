@@ -47,7 +47,8 @@ public abstract class WikiLinkTag extends WikiTagBase {
     protected String m_template;
 
     
-    public void initTag() 
+    @Override
+    public void initTag()
     {
         super.initTag();
         m_pageName = m_template = null;
@@ -87,6 +88,7 @@ public abstract class WikiLinkTag extends WikiTagBase {
         }
     }
 
+    @Override
     public int doEndTag()
     {
         try

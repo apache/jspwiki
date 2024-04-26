@@ -28,7 +28,7 @@ package org.apache.wiki.auth.acl;
  *
  * @see Acl
  * @since 2.3
- * @deprecated use {@link org.apache.wiki.api.core.AclEntry} insteaad
+ * @deprecated use {@link org.apache.wiki.api.core.AclEntry} instead
  * @see org.apache.wiki.api.core.AclEntry
  */
 @Deprecated

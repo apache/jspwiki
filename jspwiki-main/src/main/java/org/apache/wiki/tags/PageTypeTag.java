@@ -39,6 +39,7 @@ public class PageTypeTag extends WikiTagBase {
     
     private String m_type;
 
+    @Override
     public void initTag() {
         super.initTag();
         m_type = null;
@@ -49,6 +50,7 @@ public class PageTypeTag extends WikiTagBase {
         m_type = arg.toLowerCase();
     }
 
+    @Override
     public final int doWikiStartTag() throws IOException {
         final Page page = m_wikiContext.getPage();
         if( page != null ) {

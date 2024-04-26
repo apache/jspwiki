@@ -63,7 +63,7 @@ import java.util.Set;
  */
 public class DefaultSearchManager extends BasePageFilter implements SearchManager {
 
-    private static final Logger log = LoggerFactory.getLogger( DefaultSearchManager.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DefaultSearchManager.class );
 
     private SearchProvider m_searchProvider;
 
@@ -106,38 +106,38 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                              final List< String > params ) throws IOException {
             String result = "";
             if( StringUtils.isNotBlank( actionName ) ) {
-                if( params.size() < 1 ) {
+                if( params.isEmpty() ) {
                     return;
                 }
                 final String itemId = params.get( 0 );
-                log.debug( "itemId=" + itemId );
+                LOG.debug( "itemId=" + itemId );
                 if( params.size() > 1 ) {
                     final String maxResultsParam = params.get( 1 );
-                    log.debug( "maxResultsParam=" + maxResultsParam );
+                    LOG.debug( "maxResultsParam=" + maxResultsParam );
                     if( StringUtils.isNotBlank( maxResultsParam ) && StringUtils.isNumeric( maxResultsParam ) ) {
                         maxResults = Integer.parseInt( maxResultsParam );
                     }
                 }
 
                 if( actionName.equals( AJAX_ACTION_SUGGESTIONS ) ) {
-                    log.debug( "Calling getSuggestions() START" );
+                    LOG.debug( "Calling getSuggestions() START" );
                     final List< String > callResults = getSuggestions( itemId, maxResults );
-                    log.debug( "Calling getSuggestions() DONE. " + callResults.size() );
+                    LOG.debug( "Calling getSuggestions() DONE. " + callResults.size() );
                     result = AjaxUtil.toJson( callResults );
                 } else if( actionName.equals( AJAX_ACTION_PAGES ) ) {
-                    log.debug("Calling findPages() START");
+                    LOG.debug("Calling findPages() START");
                     final Context wikiContext = Wiki.context().create( m_engine, req, ContextEnum.PAGE_VIEW.getRequestContext() );
                     final List< Map< String, Object > > callResults = findPages( itemId, maxResults, wikiContext );
-                    log.debug( "Calling findPages() DONE. " + callResults.size() );
+                    LOG.debug( "Calling findPages() DONE. " + callResults.size() );
                     result = AjaxUtil.toJson( callResults );
                 }
             }
-            log.debug( "result=" + result );
+            LOG.debug( "result=" + result );
             resp.getWriter().write( result );
         }
 
         /**
-         *  Provides a list of suggestions to use for a page name. Currently the algorithm just looks into the value parameter,
+         *  Provides a list of suggestions to use for a page name. Currently, the algorithm just looks into the value parameter,
          *  and returns all page names from that.
          *
          *  @param wikiName the page name
@@ -173,9 +173,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
             }
 
             sw.stop();
-            if( log.isDebugEnabled() ) {
-                log.debug( "Suggestion request for " + wikiName + " done in " + sw );
-            }
+            LOG.debug( "Suggestion request for {} done in {}", wikiName, sw );
             return list;
         }
 
@@ -206,14 +204,12 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                         list.add( sr.toMap() );
                     }
                 } catch( final Exception e ) {
-                    log.info( "AJAX search failed; ", e );
+                    LOG.info( "AJAX search failed; ", e );
                 }
             }
 
             sw.stop();
-            if( log.isDebugEnabled() ) {
-                log.debug( "AJAX search complete in " + sw );
-            }
+            LOG.debug( "AJAX search complete in {}", sw );
             return list;
         }
     }
@@ -228,27 +224,24 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
         try {
             m_searchProvider.initialize( engine, properties );
         } catch( final NoRequiredPropertyException | IOException e ) {
-            log.error( e.getMessage(), e );
+            LOG.error( e.getMessage(), e );
         }
     }
 
     private void loadSearchProvider( final Properties properties ) {
-        // See if we're using Lucene, and if so, ensure that its index directory is up to date.
-
+        // See if we're using Lucene, and if so, ensure that its index directory is up-to-date.
         final String providerClassName = TextUtil.getStringProperty( properties, PROP_SEARCHPROVIDER, DEFAULT_SEARCHPROVIDER );
 
         try {
-            final Class<?> providerClass = ClassUtil.findClass( "org.apache.wiki.search", providerClassName );
-            m_searchProvider = ( SearchProvider )providerClass.newInstance();
-        } catch( final ClassNotFoundException | InstantiationException | IllegalAccessException e ) {
-            log.warn("Failed loading SearchProvider, will use BasicSearchProvider.", e);
+            m_searchProvider = ClassUtil.buildInstance( "org.apache.wiki.search", providerClassName );
+        } catch( final ReflectiveOperationException e ) {
+            LOG.warn( "Failed loading SearchProvider, will use BasicSearchProvider.", e );
         }
 
         if( null == m_searchProvider ) {
-            // FIXME: Make a static with the default search provider
             m_searchProvider = new BasicSearchProvider();
         }
-        log.debug("Loaded search provider " + m_searchProvider);
+        LOG.debug( "Loaded search provider {}", m_searchProvider );
     }
 
     /** {@inheritDoc} */

@@ -55,7 +55,7 @@ import java.util.TreeSet;
  */
 public class DefaultTemplateManager extends BaseModuleManager implements TemplateManager {
 
-    private static final Logger log = LoggerFactory.getLogger( DefaultTemplateManager.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DefaultTemplateManager.class );
 
     /**
      *  Creates a new TemplateManager.  There is typically one manager per engine.
@@ -77,7 +77,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
                 return true;
             }
         } catch( final IOException e ) {
-            log.error( e.getMessage(), e );
+            LOG.error( e.getMessage(), e );
         }
         return false;
     }
@@ -100,7 +100,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
                 }
             }
         } catch( final IOException e ) {
-            log.error( "unable to open " + name + " as resource stream", e );
+            LOG.error( "unable to open " + name + " as resource stream", e );
         }
         return resourceName;
     }
@@ -146,9 +146,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
             }
         }
 
-        if( log.isDebugEnabled() ) {
-            log.debug( "Final name = "+name );
-        }
+        LOG.debug( "Final name = {}", name );
         return name;
     }
 
@@ -167,7 +165,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
     @Override
     public String findJSP( final PageContext pageContext, final String template, final String name ) {
         if( name == null || template == null ) {
-            log.error("findJSP() was asked to find a null template or name (" + template + "," + name + ")." + " JSP page '" +
+			LOG.error("findJSP() was asked to find a null template or name (" + template + "," + name + ")." + " JSP page '" +
                       ( ( HttpServletRequest )pageContext.getRequest() ).getRequestURI() + "'" );
             throw new InternalWikiException( "Illegal arguments to findJSP(); please check logs." );
         }
@@ -185,44 +183,6 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
         return getPath( template ) + "/" + name;
     }
 
-    /*
-     *  Returns a property, as defined in the template.  The evaluation is lazy, i.e. the properties are not loaded until the template is
-     *  actually used for the first time.
-     */
-    /*
-    public String getTemplateProperty( WikiContext context, String key )
-    {
-        String template = context.getTemplate();
-
-        try
-        {
-            Properties props = (Properties)m_propertyCache.getFromCache( template, -1 );
-
-            if( props == null )
-            {
-                try
-                {
-                    props = getTemplateProperties( template );
-
-                    m_propertyCache.putInCache( template, props );
-                }
-                catch( IOException e )
-                {
-                    log.warn("IO Exception while reading template properties",e);
-
-                    return null;
-                }
-            }
-
-            return props.getProperty( key );
-        }
-        catch( NeedsRefreshException ex )
-        {
-            // FIXME
-            return null;
-        }
-    }
-*/
     /**
      *  Returns an absolute path to a given template.
      */
@@ -238,10 +198,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
         final Set< String > skinSet = sContext.getResourcePaths( place );
         final Set< String > resultSet = new TreeSet<>();
 
-        if( log.isDebugEnabled() ) {
-            log.debug( "Listings skins from " + place );
-        }
-
+        LOG.debug( "Listings skins from {}", place );
         if( skinSet != null ) {
             final String[] skins = skinSet.toArray( new String[]{} );
             for( final String skin : skins ) {
@@ -249,16 +206,13 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
                 if( s.length > 2 && skin.endsWith( "/" ) ) {
                     final String skinName = s[ s.length - 1 ];
                     resultSet.add( skinName );
-                    if( log.isDebugEnabled() ) {
-                        log.debug( "...adding skin '" + skinName + "'" );
-                    }
+                    LOG.debug( "...adding skin '{}'", skinName );
                 }
             }
         }
 
         return resultSet;
     }
-
 
     /** {@inheritDoc} */
     @Override
@@ -277,16 +231,14 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
         }
 
         /* fetch actual formats */
-        if( tfArr.size() == 0 )  {/* no props found - make sure some default formats are avail */
+        if(tfArr.isEmpty())  {/* no props found - make sure some default formats are avail */
             tfArr.add( "dd-MMM-yy" );
             tfArr.add( "d-MMM-yyyy" );
             tfArr.add( "EEE, dd-MMM-yyyy, zzzz" );
         } else {
             Collections.sort( tfArr );
 
-            for (int i = 0; i < tfArr.size(); i++) {
-                tfArr.set(i, props.getProperty(tfArr.get(i)));
-            }
+            tfArr.replaceAll(props::getProperty);
         }
 
         final String prefTimeZone = Preferences.getPreference( context, "TimeZone" );
@@ -309,34 +261,6 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
 
         return resultMap;
     }
-
-    /*
-     *  Always returns a valid property map.
-     */
-    /*
-    private Properties getTemplateProperties( String templateName )
-        throws IOException
-    {
-        Properties p = new Properties();
-
-        ServletContext context = m_engine.getServletContext();
-
-        InputStream propertyStream = context.getResourceAsStream(getPath(templateName)+PROPERTYFILE);
-
-        if( propertyStream != null )
-        {
-            p.load( propertyStream );
-
-            propertyStream.close();
-        }
-        else
-        {
-            log.debug("Template '"+templateName+"' does not have a propertyfile '"+PROPERTYFILE+"'.");
-        }
-
-        return p;
-    }
-*/
 
     /** {@inheritDoc} */
     @Override

@@ -24,6 +24,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.spi.Wiki;
+import org.apache.wiki.util.ClassUtil;
 import org.apache.xmlrpc.ContextXmlRpcHandler;
 import org.apache.xmlrpc.Invoker;
 import org.apache.xmlrpc.XmlRpcContext;
@@ -62,7 +63,7 @@ public class RPCServlet extends HttpServlet {
     private Engine m_engine;
     private final XmlRpcServer m_xmlrpcServer = new XmlRpcServer();
 
-    private static final Logger log = LoggerFactory.getLogger( RPCServlet.class );
+    private static final Logger LOG = LoggerFactory.getLogger( RPCServlet.class );
 
     public void initHandler( final String prefix, final String handlerName ) throws ClassNotFoundException {
         /*
@@ -71,8 +72,8 @@ public class RPCServlet extends HttpServlet {
         rpchandler.initialize( m_engine );
         m_xmlrpcServer.addHandler( prefix, rpchandler );
         */
-        final Class< ? > handlerClass = Class.forName( handlerName );
-        m_xmlrpcServer.addHandler( prefix, new LocalHandler(handlerClass) );
+        final Class< WikiRPCHandler > handlerClass = ClassUtil.findClass( "", handlerName );
+        m_xmlrpcServer.addHandler( prefix, new LocalHandler( handlerClass ) );
     }
 
     /**
@@ -98,7 +99,7 @@ public class RPCServlet extends HttpServlet {
             // FIXME: The metaweblog API should be possible to turn off.
             initHandler( "metaWeblog", "org.apache.wiki.xmlrpc.MetaWeblogHandler" );
         } catch( final Exception e ) {
-            log.error("Unable to start RPC interface: ", e);
+			LOG.error("Unable to start RPC interface: ", e);
             throw new ServletException( "No RPC interface", e );
         }
     }
@@ -108,7 +109,7 @@ public class RPCServlet extends HttpServlet {
      */
     @Override
     public void doPost( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
-        log.debug("Received POST to RPCServlet");
+        LOG.debug("Received POST to RPCServlet");
 
         try {
             final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_NONE.getRequestContext() );
@@ -127,7 +128,7 @@ public class RPCServlet extends HttpServlet {
             out.write( result );
             out.flush();
 
-            // log.debug("Result = "+new String(result) );
+            // LOG.debug("Result = "+new String(result) );
         } catch( final IOException e ) {
             throw new ServletException("Failed to build RPC result", e);
         }
@@ -138,7 +139,7 @@ public class RPCServlet extends HttpServlet {
      */
     @Override
     public void doGet( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
-        log.debug("Received HTTP GET to RPCServlet");
+        LOG.debug("Received HTTP GET to RPCServlet");
 
         try {
             final String msg = "We do not support HTTP GET here.  Sorry.";
@@ -155,16 +156,16 @@ public class RPCServlet extends HttpServlet {
     }
 
     private static class LocalHandler implements ContextXmlRpcHandler {
-        private final Class< ? > m_clazz;
+        private final Class< WikiRPCHandler > m_clazz;
 
-        public LocalHandler( final Class< ? > clazz )
+        public LocalHandler( final Class< WikiRPCHandler > clazz )
         {
             m_clazz = clazz;
         }
 
         @Override
         public Object execute( final String method, final Vector params, final XmlRpcContext context ) throws Exception {
-            final WikiRPCHandler rpchandler = (WikiRPCHandler) m_clazz.newInstance();
+            final WikiRPCHandler rpchandler = ClassUtil.buildInstance( m_clazz );
             rpchandler.initialize( ((WikiXmlRpcContext)context).getWikiContext() );
 
             final Invoker invoker = new Invoker( rpchandler );

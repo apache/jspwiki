@@ -28,8 +28,11 @@ import org.apache.wiki.util.TextUtil;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
+
 /**
  *  <p>Lists all pages containing links to Undefined Pages (pages containing dead links).</p>
  *
@@ -60,16 +63,9 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
         super.initialize( context, params );
         Collection< String > result = null;
 
-        final TreeMap< String, String > sortedMap = new TreeMap<>();
+        final TreeMap< String, String > sortedMap;
         if( uncreatedPages != null ) {
-            for( final String uncreatedPageName : uncreatedPages ) {
-                final Collection< String > referrers = referenceManager.findReferrers( uncreatedPageName );
-                if( referrers != null ) {
-                    for( final String referringPage : referrers ) {
-                        sortedMap.put( referringPage, "" );
-                    }
-                }
-            }
+            sortedMap = uncreatedPages.stream().map(referenceManager::findReferrers).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toMap(referringPage -> referringPage, referringPage -> "", (a, b) -> b, TreeMap::new));
             result = sortedMap.keySet();
         }
 
@@ -77,7 +73,7 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
 
         final String wikitext = wikitizeCollection( result, m_separator, items );
         final StringBuilder resultHTML = new StringBuilder();
-        resultHTML.append( makeHTML( context, wikitext ) );
+        resultHTML.append( applyColumnsStyle( makeHTML( context, wikitext ) ) );
 
         // add the more.... text
         if( items < result.size() && items > 0 ) {

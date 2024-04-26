@@ -57,7 +57,7 @@ import java.util.Properties;
  */
 public class Denounce implements Plugin {
 
-    private static final Logger log = LoggerFactory.getLogger( Denounce.class );
+    private static final Logger LOG = LoggerFactory.getLogger( Denounce.class );
 
     /** Parameter name for setting the link.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_LINK = "link";
@@ -107,15 +107,15 @@ public class Denounce implements Plugin {
                         c_hostPatterns.add( compiler.compile( props.getProperty(name) ) );
                     }
                 } catch( final MalformedPatternException ex ) {
-                    log.error( "Malformed URL pattern in "+PROPERTYFILE+": "+props.getProperty(name), ex );
+                    LOG.error( "Malformed URL pattern in "+PROPERTYFILE+": "+props.getProperty(name), ex );
                 }
             }
 
-            log.debug( "Added " + c_refererPatterns.size() + c_agentPatterns.size() + c_hostPatterns.size() + " crawlers to denounce list." );
+            LOG.debug( "Added " + c_refererPatterns.size() + c_agentPatterns.size() + c_hostPatterns.size() + " crawlers to denounce list." );
         } catch( final IOException e ) {
-            log.error( "Unable to load URL patterns from " + PROPERTYFILE, e );
+            LOG.error( "Unable to load URL patterns from " + PROPERTYFILE, e );
         } catch( final Exception e ) {
-            log.error( "Unable to initialize Denounce plugin", e );
+            LOG.error( "Unable to initialize Denounce plugin", e );
         }
     }
 
@@ -124,7 +124,8 @@ public class Denounce implements Plugin {
      */
     @Override
     public String execute( final Context context, final Map<String, String> params ) throws PluginException {
-        final String link = params.get( PARAM_LINK );
+        final String link = TextUtil.replaceEntities( params.get( PARAM_LINK ) );
+        //final String link = params.get( PARAM_LINK );
         String text = params.get( PARAM_TEXT );
         boolean linkAllowed = true;
 
@@ -155,7 +156,7 @@ public class Denounce implements Plugin {
         try {
             new URL( link ).toURI().parseServerAuthority();
         } catch ( final Exception e ) {
-            log.debug( "invalid link {} - {}", link, e.getMessage() );
+            LOG.debug( "invalid link {} - {}", link, e.getMessage() );
             return false;
         }
         return true;
@@ -166,33 +167,28 @@ public class Denounce implements Plugin {
      */
     private boolean matchPattern( final List< Pattern > list, final String path ) {
         final PatternMatcher matcher = new Perl5Matcher();
-        for( final Pattern pattern : list ) {
-            if( matcher.matches( path, pattern ) ) {
-                return true;
-            }
-        }
-        return false;
+        return list.stream().anyMatch(pattern -> matcher.matches(path, pattern));
     }
 
     private boolean matchHeaders( final HttpServletRequest request ) {
         //  User Agent
         final String userAgent = request.getHeader( "User-Agent" );
         if( userAgent != null && matchPattern( c_agentPatterns, userAgent ) ) {
-            log.debug( "Matched user agent " + userAgent + " for denounce." );
+            LOG.debug( "Matched user agent " + userAgent + " for denounce." );
             return true;
         }
 
         //  Referrer header
         final String refererPath = request.getHeader( "Referer" );
         if( refererPath != null && matchPattern( c_refererPatterns, refererPath ) ) {
-            log.debug( "Matched referer " + refererPath + " for denounce." );
+            LOG.debug( "Matched referer " + refererPath + " for denounce." );
             return true;
         }
 
         //  Host
         final String host = request.getRemoteHost();
         if( host != null && matchPattern( c_hostPatterns, host ) ) {
-            log.debug( "Matched host " + host + " for denounce." );
+            LOG.debug( "Matched host " + host + " for denounce." );
             return true;
         }
 

@@ -88,6 +88,10 @@
     <mappedClass>org.apache.wiki.auth.authorize.DefaultGroupManager</mappedClass>
   </mapping>
   <mapping>
+    <requestedClass>org.apache.wiki.cache.CachingManager</requestedClass>
+    <mappedClass>org.apache.wiki.cache.EhcacheCachingManager</mappedClass>
+  </mapping>
+  <mapping>
     <requestedClass>org.apache.wiki.content.PageRenamer</requestedClass>
     <mappedClass>org.apache.wiki.content.DefaultPageRenamer</mappedClass>
   </mapping>

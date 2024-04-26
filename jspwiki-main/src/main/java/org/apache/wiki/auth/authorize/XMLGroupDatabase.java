@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.auth.authorize;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -77,7 +78,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class XMLGroupDatabase implements GroupDatabase {
 
-    private static final Logger log = LoggerFactory.getLogger( XMLGroupDatabase.class );
+    private static final Logger LOG = LoggerFactory.getLogger( XMLGroupDatabase.class );
 
     /** The jspwiki.properties property specifying the file system location of the group database. */
     public static final String    PROP_DATABASE    = "jspwiki.xmlGroupDatabaseFile";
@@ -128,8 +129,7 @@ public class XMLGroupDatabase implements GroupDatabase {
      * the commit did not succeed
      */
     @Override
-    public void delete( final Group group ) throws WikiSecurityException
-    {
+    public void delete( final Group group ) throws WikiSecurityException {
         final String index = group.getName();
         final boolean exists = m_groups.containsKey( index );
 
@@ -154,8 +154,7 @@ public class XMLGroupDatabase implements GroupDatabase {
      * @throws WikiSecurityException if the groups cannot be returned by the back-end
      */
     @Override
-    public Group[] groups() throws WikiSecurityException
-    {
+    public Group[] groups() throws WikiSecurityException {
         buildDOM();
         final Collection<Group> groups = m_groups.values();
         return groups.toArray( new Group[0] );
@@ -167,8 +166,7 @@ public class XMLGroupDatabase implements GroupDatabase {
      * whose key is {@link #PROP_DATABASE}.
      * @param engine the wiki engine
      * @param props the properties used to initialize the group database
-     * @throws NoRequiredPropertyException if the user database cannot be
-     *             located, parsed, or opened
+     * @throws NoRequiredPropertyException if the user database cannot be located, parsed, or opened
      * @throws WikiSecurityException if the database could not be initialized successfully
      */
     @Override
@@ -178,7 +176,7 @@ public class XMLGroupDatabase implements GroupDatabase {
 
         final File defaultFile;
         if ( engine.getRootPath() == null ) {
-            log.warn( "Cannot identify JSPWiki root path" );
+            LOG.warn( "Cannot identify JSPWiki root path" );
             defaultFile = new File( "WEB-INF/" + DEFAULT_DATABASE ).getAbsoluteFile();
         } else {
             defaultFile = new File( engine.getRootPath() + "/WEB-INF/" + DEFAULT_DATABASE );
@@ -187,13 +185,13 @@ public class XMLGroupDatabase implements GroupDatabase {
         // Get database file location
         final String file = TextUtil.getStringProperty(props, PROP_DATABASE , defaultFile.getAbsolutePath());
         if ( file == null ) {
-            log.warn( "XML group database property " + PROP_DATABASE + " not found; trying " + defaultFile );
+            LOG.warn( "XML group database property " + PROP_DATABASE + " not found; trying " + defaultFile );
             m_file = defaultFile;
         } else {
             m_file = new File( file );
         }
 
-        log.info( "XML group database at " + m_file.getAbsolutePath() );
+        LOG.info( "XML group database at " + m_file.getAbsolutePath() );
 
         // Read DOM
         buildDOM();
@@ -221,8 +219,7 @@ public class XMLGroupDatabase implements GroupDatabase {
         final String index = group.getName();
         final boolean isNew = !( m_groups.containsKey( index ) );
         final Date modDate = new Date( System.currentTimeMillis() );
-        if ( isNew )
-        {
+        if( isNew ) {
             // If new, set created info
             group.setCreated( modDate );
             group.setCreator( modifier.getName() );
@@ -243,19 +240,21 @@ public class XMLGroupDatabase implements GroupDatabase {
         factory.setExpandEntityReferences( false );
         factory.setIgnoringComments( true );
         factory.setNamespaceAware( false );
+        //factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
+        //factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_SCHEMA, "" );
         try {
             m_dom = factory.newDocumentBuilder().parse( m_file );
-            log.debug( "Database successfully initialized" );
+            LOG.debug( "Database successfully initialized" );
             m_lastModified = m_file.lastModified();
             m_lastCheck    = System.currentTimeMillis();
         } catch( final ParserConfigurationException e ) {
-            log.error( "Configuration error: " + e.getMessage() );
+            LOG.error( "Configuration error: {}", e.getMessage() );
         } catch( final SAXException e ) {
-            log.error( "SAX error: " + e.getMessage() );
+            LOG.error( "SAX error: {}", e.getMessage() );
         } catch( final FileNotFoundException e ) {
-            log.info( "Group database not found; creating from scratch..." );
+            LOG.info( "Group database not found; creating from scratch..." );
         } catch( final IOException e ) {
-            log.error( "IO error: " + e.getMessage() );
+            LOG.error( "IO error: {}", e.getMessage() );
         }
         if ( m_dom == null ) {
             try {
@@ -265,21 +264,19 @@ public class XMLGroupDatabase implements GroupDatabase {
                 m_dom = factory.newDocumentBuilder().newDocument();
                 m_dom.appendChild( m_dom.createElement( "groups" ) );
             } catch( final ParserConfigurationException e ) {
-                log.error( "Could not create in-memory DOM" );
+				LOG.error( "Could not create in-memory DOM" );
             }
         }
 
         // Ok, now go and read this sucker in
-        if ( m_dom != null ) {
+        if( m_dom != null ) {
             final NodeList groupNodes = m_dom.getElementsByTagName( GROUP_TAG );
             for( int i = 0; i < groupNodes.getLength(); i++ ) {
                 final Element groupNode = (Element) groupNodes.item( i );
                 final String groupName = groupNode.getAttribute( GROUP_NAME );
-                if ( groupName == null ) {
-                    log.warn( "Detected null group name in XMLGroupDataBase. Check your group database." );
-                }
-                else
-                {
+                if( StringUtils.isEmpty( groupName ) ) {
+                    LOG.warn( "Detected null or empty group name in XMLGroupDataBase. Check your group database." );
+                } else {
                     final Group group = buildGroup( groupNode, groupName );
                     m_groups.put( groupName, group );
                 }
@@ -336,7 +333,7 @@ public class XMLGroupDatabase implements GroupDatabase {
                 group.setCreated( m_defaultFormat.parse( created ) );
                 group.setLastModified( m_defaultFormat.parse( modified ) );
             } catch ( final ParseException e2 ) {
-                log.warn( "Could not parse 'created' or 'lastModified' " + "attribute for " + " group'"
+                LOG.warn( "Could not parse 'created' or 'lastModified' " + "attribute for " + " group'"
                           + group.getName() + "'." + " It may have been tampered with." );
             }
         }
@@ -360,7 +357,7 @@ public class XMLGroupDatabase implements GroupDatabase {
 
     private void saveDOM() throws WikiSecurityException {
         if ( m_dom == null ) {
-            log.error( "Group database doesn't exist in memory." );
+			LOG.error( "Group database doesn't exist in memory." );
         }
 
         final File newFile = new File( m_file.getAbsolutePath() + ".new" );
@@ -403,17 +400,17 @@ public class XMLGroupDatabase implements GroupDatabase {
         // Copy new file over old version
         final File backup = new File( m_file.getAbsolutePath() + ".old" );
         if ( backup.exists() && !backup.delete()) {
-            log.error( "Could not delete old group database backup: " + backup );
+            LOG.error( "Could not delete old group database backup: " + backup );
         }
         if ( !m_file.renameTo( backup ) ) {
-            log.error( "Could not create group database backup: " + backup );
+            LOG.error( "Could not create group database backup: " + backup );
         }
         if ( !newFile.renameTo( m_file ) ) {
-            log.error( "Could not save database: " + backup + " restoring backup." );
+            LOG.error( "Could not save database: " + backup + " restoring backup." );
             if ( !backup.renameTo( m_file ) ) {
-                log.error( "Restore failed. Check the file permissions." );
+                LOG.error( "Restore failed. Check the file permissions." );
             }
-            log.error( "Could not save database: " + m_file + ". Check the file permissions" );
+            LOG.error( "Could not save database: " + m_file + ". Check the file permissions" );
         }
     }
 

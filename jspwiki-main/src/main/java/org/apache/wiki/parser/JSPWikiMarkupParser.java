@@ -73,9 +73,8 @@ import java.util.ResourceBundle;
 import java.util.Stack;
 
 /**
- *  Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the
- *  heart and soul of JSPWiki : make sure you test properly anything that is added,
- *  or else it breaks down horribly.
+ * Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the heart and soul of JSPWiki : make
+ * sure you test properly anything that is added, or else it breaks down horribly.
  *
  *  @since  2.4
  */
@@ -93,7 +92,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     protected static final int              IMAGEWIKILINK = 9;
     protected static final int              ATTACHMENT    = 10;
 
-    private static final Logger log = LoggerFactory.getLogger( JSPWikiMarkupParser.class );
+    private static final Logger LOG = LoggerFactory.getLogger( JSPWikiMarkupParser.class );
 
     private boolean        m_isbold;
     private boolean        m_isitalic;
@@ -105,58 +104,58 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private boolean        m_isPreBlock;
 
     /** Contains style information, in multiple forms. */
-    private final Stack<Boolean> m_styleStack   = new Stack<>();
+    private final Stack< Boolean > m_styleStack = new Stack<>();
 
      // general list handling
-    private int            m_genlistlevel;
-    private final StringBuilder  m_genlistBulletBuffer = new StringBuilder(10);  // stores the # and * pattern
-    private final boolean        m_allowPHPWikiStyleLists = true;
+    private int m_genlistlevel;
+    private final StringBuilder m_genlistBulletBuffer = new StringBuilder( 10 );  // stores the # and * pattern
+    private final boolean m_allowPHPWikiStyleLists = true;
 
-    private boolean        m_isOpenParagraph;
+    private boolean m_isOpenParagraph;
 
     /** Parser for extended link functionality. */
-    private final LinkParser     m_linkParser = new LinkParser();
+    private final LinkParser m_linkParser = new LinkParser();
 
     /** Keeps track of any plain text that gets put in the Text nodes */
-    private StringBuilder  m_plainTextBuf = new StringBuilder(20);
+    private StringBuilder m_plainTextBuf = new StringBuilder( 20 );
 
-    private Element        m_currentElement;
+    private Element m_currentElement;
 
     /** Keep track of duplicate header names.  */
-    private final Map<String, Integer>   m_titleSectionCounter = new HashMap<>();
+    private final Map< String, Integer > m_titleSectionCounter = new HashMap<>();
 
     /** If true, then considers CamelCase links as well. */
-    private boolean                m_camelCaseLinks;
+    private boolean m_camelCaseLinks;
 
     /** If true, then generate special output for wysiwyg editing in certain cases */
-    private boolean                m_wysiwygEditorMode;
+    private boolean m_wysiwygEditorMode;
 
     /** If true, consider URIs that have no brackets as well. */
     // FIXME: Currently reserved, but not used.
-    private boolean                m_plainUris;
+    private boolean m_plainUris;
 
     /** If true, all outward links use a small link image. */
-    private boolean                m_useOutlinkImage     = true;
+    private boolean m_useOutlinkImage = true;
 
-    private boolean                m_useAttachmentImage  = true;
+    private boolean m_useAttachmentImage = true;
 
     /** If true, allows raw HTML. */
-    private boolean                m_allowHTML;
+    private boolean m_allowHTML;
 
-    private boolean                m_useRelNofollow;
+    private boolean m_useRelNofollow;
 
-    private final PatternCompiler        m_compiler = new Perl5Compiler();
+    private final PatternCompiler m_compiler = new Perl5Compiler();
 
     static final String WIKIWORD_REGEX = "(^|[[:^alnum:]]+)([[:upper:]]+[[:lower:]]+[[:upper:]]+[[:alnum:]]*|(http://|https://|mailto:)([A-Za-z0-9_/\\.\\+\\?\\#\\-\\@=&;~%]+))";
 
-    private final PatternMatcher         m_camelCaseMatcher = new Perl5Matcher();
-    private Pattern                m_camelCasePattern;
+    private final PatternMatcher m_camelCaseMatcher = new Perl5Matcher();
+    private Pattern m_camelCasePattern;
 
-    private int                    m_rowNum              = 1;
+    private int m_rowNum = 1;
 
-    private Heading                m_lastHeading;
+    private Heading m_lastHeading;
 
-    private static final String CAMELCASE_PATTERN     = "JSPWikiMarkupParser.camelCasePattern";
+    private static final String CAMELCASE_PATTERN = "JSPWikiMarkupParser.camelCasePattern";
 
     /**
      *  Creates a markup parser.
@@ -164,8 +163,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @param context The WikiContext which controls the parsing
      *  @param in Where the data is read from.
      */
-    public JSPWikiMarkupParser( final Context context, final Reader in )
-    {
+    public JSPWikiMarkupParser( final Context context, final Reader in ) {
         super( context, in );
         initialize();
     }
@@ -179,7 +177,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             try {
                 m_camelCasePattern = m_compiler.compile( WIKIWORD_REGEX,Perl5Compiler.DEFAULT_MASK|Perl5Compiler.READ_ONLY_MASK );
             } catch( final MalformedPatternException e ) {
-                log.error("Internal error: Someone put in a faulty pattern.",e);
+				LOG.error("Internal error: Someone put in a faulty pattern.",e);
                 throw new InternalWikiException("Faulty camelcasepattern in TranslatorReader", e);
             }
             m_engine.setAttribute( CAMELCASE_PATTERN, m_camelCasePattern );
@@ -221,7 +219,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @return The result of the mutation.
      */
     protected String callMutatorChain( final Collection< StringTransmutator > list, String text ) {
-        if( list == null || list.size() == 0 ) {
+        if( list == null || list.isEmpty()) {
             return text;
         }
 
@@ -237,7 +235,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *
      * @param param A Heading object.
      */
-    protected void callHeadingListenerChain( final Heading param ) {
+    private void callHeadingListenerChain( final Heading param ) {
         for( final HeadingListener h : m_headingListenerChain ) {
             h.headingAdded( m_context, param );
         }
@@ -254,38 +252,31 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  @return An A element.
      *  @since 2.4.78
      */
-    protected Element createAnchor( final int type, final String link, String text, String section)
-    {
+    private Element createAnchor( final int type, final String link, String text, String section ) {
         text = escapeHTMLEntities( text );
         section = escapeHTMLEntities( section );
-        final Element el = new Element("a");
-        el.setAttribute("class",CLASS_TYPES[type]);
-        el.setAttribute("href",link+section);
-        el.addContent(text);
+        final Element el = new Element( "a" );
+        el.setAttribute( "class", CLASS_TYPES[ type ] );
+        el.setAttribute( "href", link + section );
+        el.addContent( text );
         return el;
     }
 
-    private Element makeLink( int type, final String link, String text, String section, final Iterator< Attribute > attributes )
-    {
+    private Element makeLink( int type, final String link, String text, String section, final Iterator< Attribute > attributes ) {
         Element el = null;
-
-        if( text == null ) text = link;
-
+        if( text == null ) {
+            text = link;
+        }
         text = callMutatorChain( m_linkMutators, text );
-
         section = (section != null) ? ("#"+section) : "";
 
-        // Make sure we make a link name that can be accepted
-        // as a valid URL.
-
-        if( link.isEmpty() )
-        {
+        // Make sure we make a link name that can be accepted  as a valid URL.
+        if( link.isEmpty() ) {
             type = EMPTY;
         }
         final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
 
-        switch(type)
-        {
+        switch( type ) {
             case READ:
                 el = createAnchor( READ, m_context.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), link), text, section );
                 break;
@@ -293,60 +284,53 @@ public class JSPWikiMarkupParser extends MarkupParser {
             case EDIT:
                 el = createAnchor( EDIT, m_context.getURL( ContextEnum.PAGE_EDIT.getRequestContext(),link), text, "" );
                 el.setAttribute("title", MessageFormat.format( rb.getString( "markupparser.link.create" ), link ) );
-
                 break;
 
             case EMPTY:
                 el = new Element("u").addContent(text);
                 break;
 
-                //
-                //  These two are for local references - footnotes and
-                //  references to footnotes.
-                //  We embed the page name (or whatever WikiContext gives us)
-                //  to make sure the links are unique across Wiki.
-                //
+            // These two are for local references - footnotes and references to footnotes.
+            // We embed the page name (or whatever WikiContext gives us) to make sure the links are unique across Wiki.
             case LOCALREF:
                 el = createAnchor( LOCALREF, "#ref-"+m_context.getName()+"-"+link, "["+text+"]", "" );
                 break;
 
             case LOCAL:
-                el = new Element("a").setAttribute("class",CLASS_FOOTNOTE);
-                el.setAttribute("name", "ref-"+m_context.getName()+"-"+link.substring(1));
-                el.addContent("["+text+"]");
+                el = new Element( "a" ).setAttribute( "class", CLASS_FOOTNOTE );
+                el.setAttribute( "name", "ref-" + m_context.getName() + "-" + link.substring( 1 ) );
+                el.addContent( "[" + text + "]" );
                 break;
 
-                //
-                //  With the image, external and interwiki types we need to
-                //  make sure nobody can put in Javascript or something else
-                //  annoying into the links themselves.  We do this by preventing
-                //  a haxor from stopping the link name short with quotes in
-                //  fillBuffer().
-                //
+                //  With the image, external and interwiki types we need to make sure nobody can put in Javascript or
+                //  something else annoying into the links themselves.  We do this by preventing a haxor from stopping
+                //  the link name short with quotes in fillBuffer().
             case IMAGE:
-                el = new Element("img").setAttribute("class","inline");
-                el.setAttribute("src",link);
-                el.setAttribute("alt",text);
+                el = new Element( "img" ).setAttribute( "class", "inline" );
+                el.setAttribute( "src", link );
+                el.setAttribute( "alt", text );
                 break;
 
             case IMAGELINK:
-                el = new Element("img").setAttribute("class","inline");
-                el.setAttribute("src",link);
-                el.setAttribute("alt",text);
-                el = createAnchor(IMAGELINK,text,"","").addContent(el);
+                el = new Element( "img" ).setAttribute( "class", "inline" );
+                el.setAttribute( "src", link );
+                el.setAttribute( "alt", text );
+                el = createAnchor( IMAGELINK, text, "", "" ).addContent( el );
                 break;
 
             case IMAGEWIKILINK:
                 final String pagelink = m_context.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), text );
-                el = new Element("img").setAttribute("class","inline");
-                el.setAttribute("src",link);
-                el.setAttribute("alt",text);
-                el = createAnchor(IMAGEWIKILINK,pagelink,"","").addContent(el);
+                el = new Element( "img" ).setAttribute( "class", "inline" );
+                el.setAttribute( "src", link );
+                el.setAttribute( "alt", text );
+                el = createAnchor( IMAGEWIKILINK, pagelink, "", "" ).addContent( el );
                 break;
 
             case EXTERNAL:
                 el = createAnchor( EXTERNAL, link, text, section );
-                if( m_useRelNofollow ) el.setAttribute("rel","nofollow");
+                if( m_useRelNofollow ) {
+                    el.setAttribute( "rel", "nofollow" );
+                }
                 break;
 
             case INTERWIKI:
@@ -358,25 +342,21 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 final String infolink = m_context.getURL( ContextEnum.PAGE_INFO.getRequestContext(), link );
                 final String imglink = m_context.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "images/attachment_small.png" );
                 el = createAnchor( ATTACHMENT, attlink, text, "" );
-
                 if(  m_engine.getManager( AttachmentManager.class ).forceDownload( attlink ) ) {
                     el.setAttribute("download", "");
                 }
 
-                pushElement(el);
-                popElement(el.getName());
+                pushElement( el );
+                popElement( el.getName() );
 
-                if( m_useAttachmentImage )
-                {
-                    el = new Element("img").setAttribute("src",imglink);
-                    el.setAttribute("border","0");
-                    el.setAttribute("alt","(info)");
+                if( m_useAttachmentImage ) {
+                    el = new Element( "img" ).setAttribute( "src", imglink );
+                    el.setAttribute( "border", "0" );
+                    el.setAttribute( "alt", "(info)" );
 
-                    el = new Element("a").setAttribute("href",infolink).addContent(el);
-                    el.setAttribute("class","infolink");
-                }
-                else
-                {
+                    el = new Element( "a" ).setAttribute( "href", infolink ).addContent( el );
+                    el.setAttribute( "class", "infolink" );
+                } else {
                     el = null;
                 }
                 break;
@@ -385,20 +365,16 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 break;
         }
 
-        if( el != null && attributes != null )
-        {
-            while( attributes.hasNext() )
-            {
+        if( el != null && attributes != null ) {
+            while( attributes.hasNext() ) {
                 final Attribute attr = attributes.next();
-                if( attr != null )
-                {
-                    el.setAttribute(attr);
+                if( attr != null ) {
+                    el.setAttribute( attr );
                 }
             }
         }
 
-        if( el != null )
-        {
+        if( el != null ) {
             flushPlainText();
             m_currentElement.addContent( el );
         }
@@ -406,7 +382,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     /**
-     *  These are all of the HTML 4.01 block-level elements.
+     *  These are all the HTML 4.01 block-level elements.
      */
     private static final String[] BLOCK_ELEMENTS = {
         "address", "blockquote", "div", "dl", "fieldset", "form",
@@ -414,87 +390,54 @@ public class JSPWikiMarkupParser extends MarkupParser {
         "hr", "noscript", "ol", "p", "pre", "table", "ul"
     };
 
-    private static boolean isBlockLevel( final String name )
-    {
+    private static boolean isBlockLevel( final String name ) {
         return Arrays.binarySearch( BLOCK_ELEMENTS, name ) >= 0;
     }
 
     /**
-     *  This method peeks ahead in the stream until EOL and returns the result.
-     *  It will keep the buffers untouched.
+     *  This method peeks ahead in the stream until EOL and returns the result. It will keep the buffers untouched.
      *
      *  @return The string from the current position to the end of line.
      */
-
     // FIXME: Always returns an empty line, even if the stream is full.
-    private String peekAheadLine()
-        throws IOException
-    {
+    private String peekAheadLine() throws IOException {
         final String s = readUntilEOL().toString();
-
-        if( s.length() > PUSHBACK_BUFFER_SIZE )
-        {
-            log.warn("Line is longer than maximum allowed size ("+PUSHBACK_BUFFER_SIZE+" characters.  Attempting to recover...");
-            pushBack( s.substring(0,PUSHBACK_BUFFER_SIZE-1) );
-        }
-        else
-        {
-            try
-            {
+        if( s.length() > PUSHBACK_BUFFER_SIZE ) {
+            LOG.warn( "Line is longer than maximum allowed size (" + PUSHBACK_BUFFER_SIZE + " characters.  Attempting to recover..." );
+            pushBack( s.substring( 0, PUSHBACK_BUFFER_SIZE - 1 ) );
+        } else {
+            try {
                 pushBack( s );
-            }
-            catch( final IOException e )
-            {
-                log.warn("Pushback failed: the line is probably too long.  Attempting to recover.");
+            } catch( final IOException e ) {
+                LOG.warn( "Pushback failed: the line is probably too long.  Attempting to recover." );
             }
         }
         return s;
     }
 
-    private int flushPlainText()
-    {
+    private int flushPlainText() {
         final int numChars = m_plainTextBuf.length();
-
-        if( numChars > 0 )
-        {
+        if( numChars > 0 ) {
             String buf;
 
-            if( !m_allowHTML )
-            {
+            if( !m_allowHTML ) {
                 buf = escapeHTMLEntities(m_plainTextBuf.toString());
-            }
-            else
-            {
+            } else {
                 buf = m_plainTextBuf.toString();
             }
-            //
-            //  We must first empty the buffer because the side effect of
-            //  calling makeCamelCaseLink() is to call this routine.
-            //
-
+            //  We must first empty the buffer because the side effect of calling makeCamelCaseLink() is to call this routine.
             m_plainTextBuf = new StringBuilder(20);
-
-            try
-            {
-                //
-                //  This is the heaviest part of parsing, and therefore we can
-                //  do some optimization here.
-                //
-                //  1) Only when the length of the buffer is big enough, we try to do the match
-                //
-
-                if( m_camelCaseLinks && !m_isEscaping && buf.length() > 3 )
-                {
-                    // System.out.println("Buffer="+buf);
-
-                    while( m_camelCaseMatcher.contains( buf, m_camelCasePattern ) )
-                    {
+            try {
+                // This is the heaviest part of parsing, and therefore we can do some optimization here.
+                // 1) Only when the length of the buffer is big enough, we try to do the match
+                if( m_camelCaseLinks && !m_isEscaping && buf.length() > 3 ) {
+                    while( m_camelCaseMatcher.contains( buf, m_camelCasePattern ) ) {
                         final MatchResult result = m_camelCaseMatcher.getMatch();
-
-                        final String firstPart = buf.substring(0,result.beginOffset(0));
-                        String prefix = result.group(1);
-
-                        if( prefix == null ) prefix = "";
+                        final String firstPart = buf.substring( 0, result.beginOffset( 0 ) );
+                        String prefix = result.group( 1 );
+                        if( prefix == null ) {
+                            prefix = "";
+                        }
 
                         final String camelCase = result.group(2);
                         final String protocol  = result.group(3);
@@ -502,74 +445,47 @@ public class JSPWikiMarkupParser extends MarkupParser {
                         buf              = buf.substring(result.endOffset(0));
 
                         m_currentElement.addContent( firstPart );
-
-                        //
                         //  Check if the user does not wish to do URL or WikiWord expansion
-                        //
-                        if( prefix.endsWith("~") || prefix.indexOf('[') != -1 )
-                        {
-                            if( prefix.endsWith("~") )
-                            {
-                                if( m_wysiwygEditorMode )
-                                {
+                        if( prefix.endsWith( "~" ) || prefix.indexOf( '[' ) != -1 ) {
+                            if( prefix.endsWith( "~" ) ) {
+                                if( m_wysiwygEditorMode ) {
                                     m_currentElement.addContent( "~" );
                                 }
-                                prefix = prefix.substring(0,prefix.length()-1);
+                                prefix = prefix.substring( 0, prefix.length() - 1 );
                             }
-                            if( camelCase != null )
-                            {
-                                m_currentElement.addContent( prefix+camelCase );
-                            }
-                            else if( protocol != null )
-                            {
-                                m_currentElement.addContent( prefix+uri );
+                            if( camelCase != null ) {
+                                m_currentElement.addContent( prefix + camelCase );
+                            } else if( protocol != null ) {
+                                m_currentElement.addContent( prefix + uri );
                             }
                             continue;
                         }
 
-                        //
-                        //  Fine, then let's check what kind of a link this was
-                        //  and emit the proper elements
-                        //
-                        if( protocol != null )
-                        {
-                            final char c = uri.charAt(uri.length()-1);
-                            if( c == '.' || c == ',' )
-                            {
-                                uri = uri.substring(0,uri.length()-1);
+                        // Fine, then let's check what kind of link this was and emit the proper elements
+                        if( protocol != null ) {
+                            final char c = uri.charAt( uri.length() - 1 );
+                            if( c == '.' || c == ',' ) {
+                                uri = uri.substring( 0, uri.length() - 1 );
                                 buf = c + buf;
                             }
                             // System.out.println("URI match "+uri);
                             m_currentElement.addContent( prefix );
                             makeDirectURILink( uri );
-                        }
-                        else
-                        {
+                        } else {
                             // System.out.println("Matched: '"+camelCase+"'");
                             // System.out.println("Split to '"+firstPart+"', and '"+buf+"'");
                             // System.out.println("prefix="+prefix);
                             m_currentElement.addContent( prefix );
-
                             makeCamelCaseLink( camelCase );
                         }
                     }
-
                     m_currentElement.addContent( buf );
-                }
-                else
-                {
-                    //
+                } else {
                     //  No camelcase asked for, just add the elements
-                    //
                     m_currentElement.addContent( buf );
                 }
-            }
-            catch( final IllegalDataException e )
-            {
-                //
-                // Sometimes it's possible that illegal XML chars is added to the data.
-                // Here we make sure it does not stop parsing.
-                //
+            } catch( final IllegalDataException e ) {
+                // Sometimes it's possible that illegal XML chars is added to the data. Here we make sure it does not stop parsing.
                 m_currentElement.addContent( makeError(cleanupSuspectData( e.getMessage() )) );
             }
         }
@@ -578,78 +494,48 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     /**
-     *  Escapes XML entities in a HTML-compatible way (i.e. does not escape
-     *  entities that are already escaped).
+     *  Escapes XML entities in a HTML-compatible way (i.e. does not escape entities that are already escaped).
      *
      *  @param buf
      *  @return An escaped string.
      */
-    private String escapeHTMLEntities( final String buf)
-    {
+    private String escapeHTMLEntities( final String buf ) {
         final StringBuilder tmpBuf = new StringBuilder( buf.length() + 20 );
-
-        for( int i = 0; i < buf.length(); i++ )
-        {
+        for( int i = 0; i < buf.length(); i++ ) {
             final char ch = buf.charAt(i);
-
-            if( ch == '<' )
-            {
+            if( ch == '<' ) {
                 tmpBuf.append("&lt;");
-            }
-            else if( ch == '>' )
-            {
+            } else if( ch == '>' ) {
                 tmpBuf.append("&gt;");
-            }
-            else if( ch == '\"' )
-            {
+            } else if( ch == '\"' ) {
                 tmpBuf.append("&quot;");
-            }
-            else if( ch == '&' )
-            {
-                //
-                //  If the following is an XML entity reference (&#.*;) we'll
-                //  leave it as it is; otherwise we'll replace it with an &amp;
-                //
-
+            } else if( ch == '&' ) {
+                // If the following is an XML entity reference (&#.*;) we'll leave it as it is; otherwise we'll replace it with an &amp;
                 boolean isEntity = false;
                 final StringBuilder entityBuf = new StringBuilder();
-
-                if( i < buf.length() -1 )
-                {
-                    for( int j = i; j < buf.length(); j++ )
-                    {
-                        final char ch2 = buf.charAt(j);
-
-                        if( Character.isLetterOrDigit( ch2 ) || (ch2 == '#' && j == i+1) || ch2 == ';' || ch2 == '&' )
-                        {
+                if( i < buf.length() -1 ) {
+                    for( int j = i; j < buf.length(); j++ ) {
+                        final char ch2 = buf.charAt( j );
+                        if( Character.isLetterOrDigit( ch2 ) || (ch2 == '#' && j == i+1) || ch2 == ';' || ch2 == '&' ) {
                             entityBuf.append(ch2);
-
-                            if( ch2 == ';' )
-                            {
+                            if( ch2 == ';' ) {
                                 isEntity = true;
                                 break;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             break;
                         }
                     }
                 }
 
-                if( isEntity )
-                {
+                if( isEntity ) {
                     tmpBuf.append( entityBuf );
                     i = i + entityBuf.length() - 1;
-                }
-                else
-                {
-                    tmpBuf.append("&amp;");
+                } else {
+                    tmpBuf.append( "&amp;" );
                 }
 
-            }
-            else
-            {
+            } else {
                 tmpBuf.append( ch );
             }
         }
@@ -657,8 +543,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return tmpBuf.toString();
     }
 
-    private Element pushElement( final Element e )
-    {
+    private Element pushElement( final Element e ) {
         flushPlainText();
         m_currentElement.addContent( e );
         m_currentElement = e;
@@ -666,10 +551,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return e;
     }
 
-    private Element addElement( final Content e )
-    {
-        if( e != null )
-        {
+    private Element addElement( final Content e ) {
+        if( e != null ) {
             flushPlainText();
             m_currentElement.addContent( e );
         }
@@ -688,73 +571,51 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  Goes through the current element stack and pops all elements until this
      *  element is found - this essentially "closes" and element.
      *
-     *  @param s
+     *  @param s element to be found.
      *  @return The new current element, or null, if there was no such element in the entire stack.
      */
-    private Element popElement( final String s )
-    {
+    private Element popElement( final String s ) {
         final int flushedBytes = flushPlainText();
-
         Element currEl = m_currentElement;
-
-        while( currEl.getParentElement() != null )
-        {
-            if( currEl.getName().equals(s) && !currEl.isRootElement() )
-            {
+        while( currEl.getParentElement() != null ) {
+            if( currEl.getName().equals( s ) && !currEl.isRootElement() ) {
                 m_currentElement = currEl.getParentElement();
 
-                //
                 //  Check if it's okay for this element to be empty.  Then we will
                 //  trick the JDOM generator into not generating an empty element,
                 //  by putting an empty string between the tags.  Yes, it's a kludge
                 //  but what'cha gonna do about it. :-)
-                //
-
-                if( flushedBytes == 0 && Arrays.binarySearch( EMPTY_ELEMENTS, s ) < 0 )
-                {
-                    currEl.addContent("");
+                if( flushedBytes == 0 && Arrays.binarySearch( EMPTY_ELEMENTS, s ) < 0 ) {
+                    currEl.addContent( "" );
                 }
-
                 return m_currentElement;
             }
-
             currEl = currEl.getParentElement();
         }
-
         return null;
     }
 
 
     /**
-     *  Reads the stream until it meets one of the specified
-     *  ending characters, or stream end.  The ending character will be left
-     *  in the stream.
+     * Reads the stream until it meets one of the specified ending characters, or stream end. The ending
+     * character will be left in the stream.
      */
-    private String readUntil( final String endChars )
-        throws IOException
-    {
+    private String readUntil( final String endChars ) throws IOException {
         final StringBuilder sb = new StringBuilder( 80 );
         int ch = nextToken();
-
-        while( ch != -1 )
-        {
-            if( ch == '\\' )
-            {
+        while( ch != -1 ) {
+            if( ch == '\\' ) {
                 ch = nextToken();
-                if( ch == -1 )
-                {
+                if( ch == -1 ) {
                     break;
                 }
-            }
-            else
-            {
-                if( endChars.indexOf((char)ch) != -1 )
-                {
+            } else {
+                if( endChars.indexOf( ( char )ch ) != -1 ) {
                     pushBack( ch );
                     break;
                 }
             }
-            sb.append( (char) ch );
+            sb.append( ( char )ch );
             ch = nextToken();
         }
 
@@ -765,21 +626,15 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  Reads the stream while the characters that have been specified are
      *  in the stream, returning then the result as a String.
      */
-    private String readWhile( final String endChars )
-        throws IOException
-    {
+    private String readWhile( final String endChars ) throws IOException {
         final StringBuilder sb = new StringBuilder( 80 );
         int ch = nextToken();
-
-        while( ch != -1 )
-        {
-            if( endChars.indexOf((char)ch) == -1 )
-            {
+        while( ch != -1 ) {
+            if( endChars.indexOf( ( char ) ch ) == -1 ) {
                 pushBack( ch );
                 break;
             }
-
-            sb.append( (char) ch );
+            sb.append( ( char ) ch );
             ch = nextToken();
         }
 
@@ -801,6 +656,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         return m_cleanTranslator;
     }
+
     /**
      *  Modifies the "hd" parameter to contain proper values.  Because
      *  an "id" tag may only contain [a-zA-Z0-9:_-], we'll replace the
@@ -809,11 +665,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *  Counts also duplicate headings (= headings with similar name), and
      *  attaches a counter.
      */
-    private String makeHeadingAnchor( final String baseName, String title, final Heading hd ) {
+    protected String makeHeadingAnchor( final String baseName, String title, final Heading hd ) {
         hd.m_titleText = title;
         title = MarkupParser.wikifyLink( title );
         hd.m_titleSection = m_engine.encodeName(title);
-
         if( m_titleSectionCounter.containsKey( hd.m_titleSection ) ) {
             final Integer count = m_titleSectionCounter.get( hd.m_titleSection ) + 1;
             m_titleSectionCounter.put( hd.m_titleSection, count );
@@ -839,7 +694,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
             return XmlUtil.extractTextFromDocument( doc );
         } catch( final IOException e ) {
-            log.error("Title parsing not working", e );
+			https://stackoverflow.com/questions/2789741/how-can-i-set-the-background-color-of-option-in-a-select-element.error("Title parsing not working", e );
             throw new InternalWikiException( "Xml text extraction not working as expected when cleaning title" + e.getMessage() , e );
         }
     }
@@ -879,16 +734,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     /**
-     *  When given a link to a WikiName, we just return
-     *  a proper HTML link for it.  The local link mutator
+     *  When given a link to a WikiName, we just return a proper HTML link for it.  The local link mutator
      *  chain is also called.
      */
-    private Element makeCamelCaseLink( final String wikiname )
-    {
+    private Element makeCamelCaseLink( final String wikiname ) {
         final String matchedLink = m_linkParsingOperations.linkIfExists( wikiname );
-
         callMutatorChain( m_localLinkMutatorChain, wikiname );
-
         if( matchedLink != null ) {
             makeLink( READ, matchedLink, wikiname, null, null );
         } else {
@@ -902,21 +753,16 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private String m_outlinkImageURL;
 
     /**
-     *  Returns an element for the external link image (out.png).  However,
-     *  this method caches the URL for the lifetime of this MarkupParser,
-     *  because it's commonly used, and we'll end up with possibly hundreds
-     *  our thousands of references to it...  It's a lot faster, too.
+     * Returns an element for the external link image (out.png).  However, this method caches the URL for the lifetime
+     * of this MarkupParser, because it's commonly used, and we'll end up with possibly hundreds our thousands of
+     * references to it...  It's a lot faster, too.
      *
-     *  @return  An element containing the HTML for the outlink image.
+     * @return  An element containing the HTML for the outlink image.
      */
-    private Element outlinkImage()
-    {
+    private Element outlinkImage() {
         Element el = null;
-
-        if( m_useOutlinkImage )
-        {
-            if( m_outlinkImageURL == null )
-            {
+        if( m_useOutlinkImage ) {
+            if( m_outlinkImageURL == null ) {
                 m_outlinkImageURL = m_context.getURL( ContextEnum.PAGE_NONE.getRequestContext(), OUTLINK_IMAGE );
             }
 
@@ -929,14 +775,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     /**
-     *  Takes an URL and turns it into a regular wiki link.  Unfortunately,
-     *  because of the way that flushPlainText() works, it already encodes
-     *  all of the XML entities.  But so does WikiContext.getURL(), so we
+     *  Takes a URL and turns it into a regular wiki link. Unfortunately, because of the way that flushPlainText()
+     *  works, it already encodes all the XML entities. But so does WikiContext.getURL(), so we
      *  have to do a reverse-replace here, so that it can again be replaced in makeLink.
      *  <p>
      *  What a crappy problem.
      *
-     * @param url
+     * @param url provided url.
      * @return An anchor Element containing the link.
      */
     private Element makeDirectURILink( String url ) {
@@ -966,10 +811,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     /**
      *  Image links are handled differently:
-     *  1. If the text is a WikiName of an existing page,
-     *     it gets linked.
+     *  1. If the text is a WikiName of an existing page, it gets linked.
      *  2. If the text is an external link, then it is inlined.
-     *  3. Otherwise it becomes an ALT text.
+     *  3. Otherwise, it becomes an ALT text.
      *
      *  @param reallink The link to the image.
      *  @param link     Link text portion, may be a link to somewhere else.
@@ -977,25 +821,14 @@ public class JSPWikiMarkupParser extends MarkupParser {
      *                  This means that the link text may be a link to a wiki page,
      *                  or an external resource.
      */
-
-    // FIXME: isExternalLink() is called twice.
-    private Element handleImageLink( final String reallink, final String link, final boolean hasLinkText )
-    {
+    private Element handleImageLink( final String reallink, final String link, final boolean hasLinkText ) {
         final String possiblePage = MarkupParser.cleanLink( link );
-
-        if( m_linkParsingOperations.isExternalLink( link ) && hasLinkText )
-        {
+        if( m_linkParsingOperations.isExternalLink( link ) && hasLinkText ) {
             return makeLink( IMAGELINK, reallink, link, null, null );
-        }
-        else if( m_linkParsingOperations.linkExists( possiblePage ) && hasLinkText )
-        {
-            // System.out.println("Orig="+link+", Matched: "+matchedLink);
+        } else if( m_linkParsingOperations.linkExists( possiblePage ) && hasLinkText ) {
             callMutatorChain( m_localLinkMutatorChain, possiblePage );
-
             return makeLink( IMAGEWIKILINK, reallink, link, null, null );
-        }
-        else
-        {
+        } else {
             return makeLink( IMAGE, reallink, link, null, null );
         }
     }
@@ -1004,7 +837,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         if( m_wysiwygEditorMode ) {
             m_currentElement.addContent( "[" + ruleLine + "]" );
         }
-
         if( !m_parseAccessRules ) {
             return m_currentElement;
         }
@@ -1019,17 +851,12 @@ public class JSPWikiMarkupParser extends MarkupParser {
             ruleLine = ruleLine.substring( 0, ruleLine.length() - 1 );
         }
 
-        if( log.isDebugEnabled() ) {
-            log.debug("page="+page.getName()+", ACL = "+ruleLine);
-        }
+        LOG.debug("page={}, ACL = {}", page.getName(), ruleLine);
 
         try {
             final Acl acl = m_engine.getManager( AclManager.class ).parseAcl( page, ruleLine );
             page.setAcl( acl );
-
-            if( log.isDebugEnabled() ) {
-                log.debug( acl.toString() );
-            }
+            LOG.debug( acl.toString() );
         } catch( final WikiSecurityException wse ) {
             return makeError( wse.getMessage() );
         }
@@ -1057,7 +884,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 val = val.substring( 0, val.length()-1 );
             }
 
-            // log.debug("SET name='"+name+"', value='"+val+"'.");
+            // LOG.debug("SET name='"+name+"', value='"+val+"'.");
 
             if( !name.isEmpty() && !val.isEmpty() ) {
                 val = m_engine.getManager( VariableManager.class ).expandVariables( m_context, val );
@@ -1074,7 +901,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
     /**
      *  Emits a processing instruction that will disable markup escaping. This is
      *  very useful if you want to emit HTML directly into the stream.
-     *
      */
     private void disableOutputEscaping() {
         addElement( new ProcessingInstruction( Result.PI_DISABLE_OUTPUT_ESCAPING, "" ) );
@@ -1105,8 +931,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     pluginContent.executeParse( m_context );
                 }
             } catch( final PluginException e ) {
-                log.info( m_context.getRealPage().getWiki() + " : " + m_context.getRealPage().getName() + " - Failed to insert plugin: " + e.getMessage() );
-                //log.info( "Root cause:",e.getRootThrowable() );
+                LOG.info( m_context.getRealPage().getWiki() + " : " + m_context.getRealPage().getName() + " - Failed to insert plugin: " + e.getMessage() );
+                //LOG.info( "Root cause:",e.getRootThrowable() );
                 if( !m_wysiwygEditorMode ) {
                     final ResourceBundle rbPlugin = Preferences.getBundle( m_context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
                     return addElement( makeError( MessageFormat.format( rbPlugin.getString( "plugin.error.insertionfailed" ),
@@ -1115,7 +941,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     		                                            e.getMessage() ) ) );
                 }
             }
-
             return m_currentElement;
         }
 
@@ -1123,23 +948,16 @@ public class JSPWikiMarkupParser extends MarkupParser {
             final LinkParser.Link link = m_linkParser.parse( linktext );
             linktext = link.getText();
             String linkref = link.getReference();
-
-            //
             //  Yes, we now have the components separated.
             //  linktext = the text the link should have
             //  linkref  = the url or page name.
-            //
             //  In many cases these are the same.  [linktext|linkref].
-            //
             if( m_linkParsingOperations.isVariableLink( linktext ) ) {
                 final Content el = new VariableContent( linktext );
-
                 addElement( el );
             } else if( m_linkParsingOperations.isExternalLink( linkref ) ) {
                 // It's an external link, out of this Wiki
-
                 callMutatorChain( m_externalLinkMutatorChain, linkref );
-
                 if( m_linkParsingOperations.isImageLink( linkref, isImageInlining(), getInlineImagePatterns() ) ) {
                     handleImageLink( linkref, linktext, link.hasReference() );
                 } else {
@@ -1158,12 +976,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                 final String extWiki = link.getExternalWiki();
                 final String wikiPage = link.getExternalWikiPage();
-
                 if( m_wysiwygEditorMode ) {
                     makeLink( INTERWIKI, extWiki + ":" + wikiPage, linktext, null, link.getAttributes() );
                 } else {
                     String urlReference = m_engine.getInterWikiURL( extWiki );
-
                     if( urlReference != null ) {
                         urlReference = TextUtil.replaceString( urlReference, "%s", wikiPage );
                         urlReference = callMutatorChain( m_externalLinkMutatorChain, urlReference );
@@ -1173,13 +989,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
                         } else {
                             makeLink( INTERWIKI, urlReference, linktext, null, link.getAttributes() );
                         }
-
                         if( m_linkParsingOperations.isExternalLink( urlReference ) ) {
                             addElement( outlinkImage() );
                         }
                     } else {
                         final Object[] args = { escapeHTMLEntities( extWiki ) };
-
                         addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.nointerwikiref" ), args ) ) );
                     }
                 }
@@ -1196,7 +1010,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 String attachment = m_engine.getManager( AttachmentManager.class ).getAttachmentInfoName( m_context, linkref );
                 if( attachment != null ) {
                     callMutatorChain( m_attachmentLinkMutatorChain, attachment );
-
                     if( m_linkParsingOperations.isImageLink( linkref, isImageInlining(), getInlineImagePatterns() ) ) {
                         attachment = m_context.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), attachment );
                         sb.append( handleImageLink( attachment, linktext, link.hasReference() ) );
@@ -1205,14 +1018,10 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     }
                 } else if( ( hashMark = linkref.indexOf( '#' ) ) != -1 ) {
                     // It's an internal Wiki link, but to a named section
-
                     final String namedSection = linkref.substring( hashMark + 1 );
                     linkref = linkref.substring( 0, hashMark );
-
                     linkref = MarkupParser.cleanLink( linkref );
-
                     callMutatorChain( m_localLinkMutatorChain, linkref );
-
                     final String matchedLink = m_linkParsingOperations.linkIfExists( linkref );
                     if( matchedLink != null ) {
                         String sectref = "section-" + m_engine.encodeName( matchedLink + "-" + wikifyLink( namedSection ) );
@@ -1224,9 +1033,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 } else {
                     // It's an internal Wiki link
                     linkref = MarkupParser.cleanLink( linkref );
-
                     callMutatorChain( m_localLinkMutatorChain, linkref );
-
                     final String matchedLink = m_linkParsingOperations.linkIfExists( linkref );
                     if( matchedLink != null ) {
                         makeLink( READ, matchedLink, linktext, null, link.getAttributes() );
@@ -1236,75 +1043,52 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 }
             }
 
-    } catch( final ParseException e ) {
-        log.info( "Parser failure: ", e );
-        final Object[] args = { e.getMessage() };
-        addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.parserfailure" ), args ) ) );
-    }
+        } catch( final ParseException e ) {
+            LOG.info( "Parser failure: ", e );
+            final Object[] args = { e.getMessage() };
+            addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.parserfailure" ), args ) ) );
+        }
         return m_currentElement;
     }
 
     /**
-     *  Pushes back any string that has been read.  It will obviously
-     *  be pushed back in a reverse order.
+     *  Pushes back any string that has been read.  It will obviously be pushed back in a reverse order.
      *
      *  @since 2.1.77
      */
-    private void pushBack( final String s )
-        throws IOException
-    {
-        for( int i = s.length()-1; i >= 0; i-- )
-        {
+    private void pushBack( final String s ) throws IOException {
+        for( int i = s.length()-1; i >= 0; i-- ) {
             pushBack( s.charAt(i) );
         }
     }
 
-    private Element handleBackslash()
-        throws IOException
-    {
+    private Element handleBackslash() throws IOException {
         final int ch = nextToken();
-
-        if( ch == '\\' )
-        {
+        if( ch == '\\' ) {
             final int ch2 = nextToken();
-
-            if( ch2 == '\\' )
-            {
-                pushElement( new Element("br").setAttribute("clear","all"));
-                return popElement("br");
+            if( ch2 == '\\' ) {
+                pushElement( new Element( "br" ).setAttribute( "clear", "all" ) );
+                return popElement( "br" );
             }
-
             pushBack( ch2 );
-
-            pushElement( new Element("br") );
-            return popElement("br");
+            pushElement( new Element( "br" ) );
+            return popElement( "br" );
         }
-
         pushBack( ch );
-
         return null;
     }
 
-    private Element handleUnderscore()
-        throws IOException
-    {
+    private Element handleUnderscore() throws IOException {
         final int ch = nextToken();
         Element el = null;
-
-        if( ch == '_' )
-        {
-            if( m_isbold )
-            {
-                el = popElement("b");
-            }
-            else
-            {
-                el = pushElement( new Element("b") );
+        if( ch == '_' ) {
+            if( m_isbold ) {
+                el = popElement( "b" );
+            } else {
+                el = pushElement( new Element( "b" ) );
             }
             m_isbold = !m_isbold;
-        }
-        else
-        {
+        } else {
             pushBack( ch );
         }
 
@@ -1315,215 +1099,145 @@ public class JSPWikiMarkupParser extends MarkupParser {
     /**
      *  For example: italics.
      */
-    private Element handleApostrophe()
-        throws IOException
-    {
+    private Element handleApostrophe() throws IOException {
         final int ch = nextToken();
         Element el = null;
 
-        if( ch == '\'' )
-        {
-            if( m_isitalic )
-            {
-                el = popElement("i");
-            }
-            else
-            {
-                el = pushElement( new Element("i") );
+        if( ch == '\'' ) {
+            if( m_isitalic ) {
+                el = popElement( "i" );
+            } else {
+                el = pushElement( new Element( "i" ) );
             }
             m_isitalic = !m_isitalic;
-        }
-        else
-        {
+        } else {
             pushBack( ch );
         }
 
         return el;
     }
 
-    private Element handleOpenbrace( final boolean isBlock )
-        throws IOException
-    {
+    private Element handleOpenbrace( final boolean isBlock ) throws IOException {
         final int ch = nextToken();
-
-        if( ch == '{' )
-        {
+        if( ch == '{' ) {
             final int ch2 = nextToken();
-
-            if( ch2 == '{' )
-            {
+            if( ch2 == '{' ) {
                 m_isPre = true;
                 m_isEscaping = true;
                 m_isPreBlock = isBlock;
-
-                if( isBlock )
-                {
+                if( isBlock ) {
                     startBlockLevel();
-                    return pushElement( new Element("pre") );
+                    return pushElement( new Element( "pre" ) );
                 }
 
-                return pushElement( new Element("span").setAttribute("class","inline-code") );
+                return pushElement( new Element( "span" ).setAttribute( "class", "inline-code" ) );
             }
-
             pushBack( ch2 );
-
-            return pushElement( new Element("tt") );
+            return pushElement( new Element( "tt" ) );
         }
-
         pushBack( ch );
-
         return null;
     }
 
     /**
      *  Handles both }} and }}}
      */
-    private Element handleClosebrace()
-        throws IOException
-    {
+    private Element handleClosebrace() throws IOException {
         final int ch2 = nextToken();
-
-        if( ch2 == '}' )
-        {
+        if( ch2 == '}' ) {
             final int ch3 = nextToken();
-
-            if( ch3 == '}' )
-            {
-                if( m_isPre )
-                {
-                    if( m_isPreBlock )
-                    {
+            if( ch3 == '}' ) {
+                if( m_isPre ) {
+                    if( m_isPreBlock ) {
                         popElement( "pre" );
-                    }
-                    else
-                    {
+                    } else {
                         popElement( "span" );
                     }
-
                     m_isPre = false;
                     m_isEscaping = false;
                     return m_currentElement;
                 }
-
-                m_plainTextBuf.append("}}}");
+                m_plainTextBuf.append( "}}}" );
                 return m_currentElement;
             }
-
             pushBack( ch3 );
-
-            if( !m_isEscaping )
-            {
-                return popElement("tt");
+            if( !m_isEscaping ) {
+                return popElement( "tt" );
             }
         }
-
         pushBack( ch2 );
-
         return null;
     }
 
-    private Element handleDash()
-        throws IOException
-    {
+    private Element handleDash() throws IOException {
         int ch = nextToken();
-
-        if( ch == '-' )
-        {
+        if( ch == '-' ) {
             final int ch2 = nextToken();
-
-            if( ch2 == '-' )
-            {
+            if( ch2 == '-' ) {
                 final int ch3 = nextToken();
-
-                if( ch3 == '-' )
-                {
+                if( ch3 == '-' ) {
                     // Empty away all the rest of the dashes.
                     // Do not forget to return the first non-match back.
-                    do
-                    {
+                    do {
                         ch = nextToken();
-                    }
-                    while ( ch == '-' );
+                    } while ( ch == '-' );
 
-                    pushBack(ch);
+                    pushBack( ch );
                     startBlockLevel();
-                    pushElement( new Element("hr") );
+                    pushElement( new Element( "hr" ) );
                     return popElement( "hr" );
                 }
-
                 pushBack( ch3 );
             }
             pushBack( ch2 );
         }
-
         pushBack( ch );
-
         return null;
     }
 
-    private Element handleHeading()
-        throws IOException
-    {
-        Element el = null;
-
+    private Element handleHeading() throws IOException {
+        final Element el;
         final int ch  = nextToken();
-
         final Heading hd = new Heading();
-
-        if( ch == '!' )
-        {
+        if( ch == '!' ) {
             final int ch2 = nextToken();
-
-            if( ch2 == '!' )
-            {
+            if( ch2 == '!' ) {
                 final String title = peekAheadLine();
-
-                el = makeHeading( Heading.HEADING_LARGE, title, hd);
-            }
-            else
-            {
+                el = makeHeading( Heading.HEADING_LARGE, title, hd );
+            } else {
                 pushBack( ch2 );
                 final String title = peekAheadLine();
                 el = makeHeading( Heading.HEADING_MEDIUM, title, hd );
             }
-        }
-        else
-        {
+        } else {
             pushBack( ch );
             final String title = peekAheadLine();
             el = makeHeading( Heading.HEADING_SMALL, title, hd );
         }
 
         callHeadingListenerChain( hd );
-
         m_lastHeading = hd;
-
-        if( el != null ) pushElement(el);
-
+        if( el != null ) {
+            pushElement( el );
+        }
         return el;
     }
 
     /**
-     *  Reads the stream until the next EOL or EOF.  Note that it will also read the
-     *  EOL from the stream.
+     * Reads the stream until the next EOL or EOF.  Note that it will also read the EOL from the stream.
      */
-    private StringBuilder readUntilEOL()
-        throws IOException
-    {
+    private StringBuilder readUntilEOL() throws IOException {
         int ch;
         final StringBuilder buf = new StringBuilder( 256 );
-
-        while( true )
-        {
+        while( true ) {
             ch = nextToken();
-
-            if( ch == -1 )
+            if( ch == -1 ) {
                 break;
-
+            }
             buf.append( (char) ch );
-
-            if( ch == '\n' )
+            if( ch == '\n' ) {
                 break;
+            }
         }
         return buf;
     }
@@ -1536,279 +1250,191 @@ public class JSPWikiMarkupParser extends MarkupParser {
     private boolean m_newLine;
 
     /**
-     *  Starts a block level element, therefore closing
-     *  a potential open paragraph tag.
+     * Starts a block level element, therefore closing a potential open paragraph tag.
      */
-    private void startBlockLevel()
-    {
+    private void startBlockLevel() {
         // These may not continue over block level limits in XHTML
-
-        popElement("i");
-        popElement("b");
-        popElement("tt");
-
-        if( m_isOpenParagraph )
-        {
+        popElement( "i" );
+        popElement( "b" );
+        popElement( "tt" );
+        if( m_isOpenParagraph ) {
             m_isOpenParagraph = false;
-            popElement("p");
-            m_plainTextBuf.append("\n"); // Just small beautification
+            popElement( "p" );
+            m_plainTextBuf.append( "\n" ); // Just small beautification
         }
-
         m_restartitalic = m_isitalic;
         m_restartbold   = m_isbold;
-
         m_isitalic = false;
         m_isbold   = false;
     }
 
-    private static String getListType( final char c )
-    {
-        if( c == '*' )
-        {
+    private static String getListType( final char c ) {
+        if( c == '*' ) {
             return "ul";
-        }
-        else if( c == '#' )
-        {
+        } else if( c == '#' ) {
             return "ol";
         }
-        throw new InternalWikiException("Parser got faulty list type: "+c);
+        throw new InternalWikiException( "Parser got faulty list type: " + c );
     }
     /**
-     *  Like original handleOrderedList() and handleUnorderedList()
-     *  however handles both ordered ('#') and unordered ('*') mixed together.
+     * Like original handleOrderedList() and handleUnorderedList(),
+     * however handles both ordered ('#') and unordered ('*') mixed together.
      */
-
     // FIXME: Refactor this; it's a bit messy.
-
-    private Element handleGeneralList()
-        throws IOException
-    {
+    private Element handleGeneralList() throws IOException {
          startBlockLevel();
-
          String strBullets = readWhile( "*#" );
          // String strBulletsRaw = strBullets;      // to know what was original before phpwiki style substitution
          final int numBullets = strBullets.length();
 
-         // override the beginning portion of bullet pattern to be like the previous
-         // to simulate PHPWiki style lists
+         // override the beginning portion of bullet pattern to be like the previous to simulate PHPWiki style lists
 
-         if(m_allowPHPWikiStyleLists)
-         {
-             // only substitute if different
-             if(!( strBullets.substring(0,Math.min(numBullets,m_genlistlevel)).equals
-                   (m_genlistBulletBuffer.substring(0,Math.min(numBullets,m_genlistlevel)) ) ) )
-             {
-                 if(numBullets <= m_genlistlevel)
-                 {
-                     // Substitute all but the last character (keep the expressed bullet preference)
-                     strBullets  = (numBullets > 1 ? m_genlistBulletBuffer.substring(0, numBullets-1) : "")
-                                   + strBullets.charAt( numBullets-1 );
-                 }
-                 else
-                 {
-                     strBullets = m_genlistBulletBuffer + strBullets.substring(m_genlistlevel, numBullets);
-                 }
-             }
-         }
+        if( m_allowPHPWikiStyleLists ) {
+            // only substitute if different
+            if( !( strBullets.substring( 0, Math.min( numBullets, m_genlistlevel ) ).equals( m_genlistBulletBuffer.substring( 0, Math.min( numBullets, m_genlistlevel ) ) ) ) ) {
+                if( numBullets <= m_genlistlevel ) {
+                    // Substitute all but the last character (keep the expressed bullet preference)
+                    strBullets = ( numBullets > 1 ? m_genlistBulletBuffer.substring( 0, numBullets - 1 ) : "" ) +
+                                 strBullets.charAt( numBullets - 1 );
+                } else {
+                    strBullets = m_genlistBulletBuffer + strBullets.substring( m_genlistlevel, numBullets );
+                }
+            }
+        }
 
-         //
          //  Check if this is still of the same type
-         //
-         if( strBullets.substring(0,Math.min(numBullets,m_genlistlevel)).equals
-            (m_genlistBulletBuffer.substring(0,Math.min(numBullets,m_genlistlevel)) ) )
-         {
-             if( numBullets > m_genlistlevel )
-             {
-                 pushElement( new Element( getListType(strBullets.charAt(m_genlistlevel++) ) ) );
+        if( strBullets.substring( 0, Math.min( numBullets, m_genlistlevel ) ).equals( m_genlistBulletBuffer.substring( 0, Math.min( numBullets, m_genlistlevel ) ) ) ) {
+            if( numBullets > m_genlistlevel ) {
+                pushElement( new Element( getListType( strBullets.charAt( m_genlistlevel++ ) ) ) );
+                for( ; m_genlistlevel < numBullets; m_genlistlevel++ ) {
+                    // bullets are growing, get from new bullet list
+                    pushElement( new Element( "li" ) );
+                    pushElement( new Element( getListType( strBullets.charAt( m_genlistlevel ) ) ) );
+                }
+            } else if( numBullets < m_genlistlevel ) {
+                //  Close the previous list item.
+                popElement( "li" );
+                for( ; m_genlistlevel > numBullets; m_genlistlevel-- ) {
+                    // bullets are shrinking, get from old bullet list
+                    popElement( getListType( m_genlistBulletBuffer.charAt( m_genlistlevel - 1 ) ) );
+                    if( m_genlistlevel > 0 ) {
+                        popElement( "li" );
+                    }
+                }
+            } else {
+                if( m_genlistlevel > 0 ) {
+                    popElement( "li" );
+                }
+            }
+        } else {
+            //  The pattern has changed, unwind and restart
+            int numEqualBullets;
+            final int numCheckBullets;
 
-                 for( ; m_genlistlevel < numBullets; m_genlistlevel++ )
-                 {
-                     // bullets are growing, get from new bullet list
-                     pushElement( new Element("li") );
-                     pushElement( new Element( getListType(strBullets.charAt(m_genlistlevel)) ));
-                 }
-             }
-             else if( numBullets < m_genlistlevel )
-             {
-                 //  Close the previous list item.
-                 // buf.append( m_renderer.closeListItem() );
-                 popElement( "li" );
+            // find out how much is the same
+            numEqualBullets = 0;
+            numCheckBullets = Math.min( numBullets, m_genlistlevel );
 
-                 for( ; m_genlistlevel > numBullets; m_genlistlevel-- )
-                 {
-                     // bullets are shrinking, get from old bullet list
+            while( numEqualBullets < numCheckBullets ) {
+                // if the bullets are equal so far, keep going
+                if( strBullets.charAt( numEqualBullets ) == m_genlistBulletBuffer.charAt( numEqualBullets ) )
+                    numEqualBullets++;
+                    // otherwise giveup, we have found how many are equal
+                else
+                    break;
+            }
 
-                     popElement( getListType(m_genlistBulletBuffer.charAt(m_genlistlevel-1)) );
-                     if( m_genlistlevel > 0 )
-                     {
-                         popElement( "li" );
-                     }
+            //unwind
+            for( ; m_genlistlevel > numEqualBullets; m_genlistlevel-- ) {
+                popElement( getListType( m_genlistBulletBuffer.charAt( m_genlistlevel - 1 ) ) );
+                if( m_genlistlevel > numBullets ) {
+                    popElement( "li" );
+                }
+            }
 
-                 }
-             }
-             else
-             {
-                 if( m_genlistlevel > 0 )
-                 {
-                     popElement( "li" );
-                 }
-             }
-         }
-         else
-         {
-             //
-             //  The pattern has changed, unwind and restart
-             //
-             int  numEqualBullets;
-             final int  numCheckBullets;
+            //rewind
+            pushElement( new Element( getListType( strBullets.charAt( numEqualBullets++ ) ) ) );
+            for( int i = numEqualBullets; i < numBullets; i++ ) {
+                pushElement( new Element( "li" ) );
+                pushElement( new Element( getListType( strBullets.charAt( i ) ) ) );
+            }
+            m_genlistlevel = numBullets;
+        }
 
-             // find out how much is the same
-             numEqualBullets = 0;
-             numCheckBullets = Math.min(numBullets,m_genlistlevel);
+         // Push a new list item, and eat away any extra whitespace
+        pushElement( new Element( "li" ) );
+        readWhile( " " );
 
-             while( numEqualBullets < numCheckBullets )
-             {
-                 // if the bullets are equal so far, keep going
-                 if( strBullets.charAt(numEqualBullets) == m_genlistBulletBuffer.charAt(numEqualBullets))
-                     numEqualBullets++;
-                 // otherwise giveup, we have found how many are equal
-                 else
-                     break;
-             }
-
-             //unwind
-             for( ; m_genlistlevel > numEqualBullets; m_genlistlevel-- )
-             {
-                 popElement( getListType( m_genlistBulletBuffer.charAt(m_genlistlevel-1) ) );
-                 if( m_genlistlevel > numBullets )
-                 {
-                     popElement("li");
-                 }
-             }
-
-             //rewind
-
-             pushElement( new Element(getListType( strBullets.charAt(numEqualBullets++) ) ) );
-             for(int i = numEqualBullets; i < numBullets; i++)
-             {
-                 pushElement( new Element("li") );
-                 pushElement( new Element( getListType( strBullets.charAt(i) ) ) );
-             }
-             m_genlistlevel = numBullets;
-         }
-
-         //
-         //  Push a new list item, and eat away any extra whitespace
-         //
-         pushElement( new Element("li") );
-         readWhile(" ");
-
-         // work done, remember the new bullet list (in place of old one)
-         m_genlistBulletBuffer.setLength(0);
-         m_genlistBulletBuffer.append(strBullets);
-
-         return m_currentElement;
+        // work done, remember the new bullet list (in place of old one)
+        m_genlistBulletBuffer.setLength( 0 );
+        m_genlistBulletBuffer.append( strBullets );
+        return m_currentElement;
     }
 
-    private Element unwindGeneralList()
-    {
-        //unwind
-        for( ; m_genlistlevel > 0; m_genlistlevel-- )
-        {
+    private Element unwindGeneralList() {
+        // unwind
+        for( ; m_genlistlevel > 0; m_genlistlevel-- ) {
             popElement( "li" );
-            popElement( getListType(m_genlistBulletBuffer.charAt(m_genlistlevel-1)) );
+            popElement( getListType( m_genlistBulletBuffer.charAt( m_genlistlevel - 1 ) ) );
         }
-
-        m_genlistBulletBuffer.setLength(0);
-
+        m_genlistBulletBuffer.setLength( 0 );
         return null;
     }
 
 
-    private Element handleDefinitionList()
-        throws IOException
-    {
-        if( !m_isdefinition )
-        {
+    private Element handleDefinitionList() {
+        if( !m_isdefinition ) {
             m_isdefinition = true;
-
             startBlockLevel();
-
-            pushElement( new Element("dl") );
-            return pushElement( new Element("dt") );
+            pushElement( new Element( "dl" ) );
+            return pushElement( new Element( "dt" ) );
         }
-
         return null;
     }
 
-    private Element handleOpenbracket()
-        throws IOException
-    {
-        final StringBuilder sb = new StringBuilder(40);
+    private Element handleOpenbracket() throws IOException {
+        final StringBuilder sb = new StringBuilder( 40 );
         final int pos = getPosition();
         int ch = nextToken();
         boolean isPlugin = false;
-
-        if( ch == '[' )
-        {
-            if( m_wysiwygEditorMode )
-            {
+        if( ch == '[' ) {
+            if( m_wysiwygEditorMode ) {
                 sb.append( '[' );
             }
-
-            sb.append( (char)ch );
-
-            while( (ch = nextToken()) == '[' )
-            {
-                sb.append( (char)ch );
+            sb.append( ( char )ch );
+            while( ( ch = nextToken() ) == '[' ) {
+                sb.append( ( char )ch );
             }
         }
 
-
-        if( ch == '{' )
-        {
+        if( ch == '{' ) {
             isPlugin = true;
         }
 
         pushBack( ch );
 
-        if( sb.length() > 0 )
-        {
+        if( sb.length() > 0 ) {
             m_plainTextBuf.append( sb );
             return m_currentElement;
         }
 
-        //
         //  Find end of hyperlink
-        //
-
         ch = nextToken();
-        int nesting = 1;    // Check for nested plugins
-
-        while( ch != -1 )
-        {
-            final int ch2 = nextToken(); pushBack(ch2);
-
-            if( isPlugin )
-            {
-                if( ch == '[' && ch2 == '{' )
-                {
+        int nesting = 1; // Check for nested plugins
+        while( ch != -1 ) {
+            final int ch2 = nextToken();
+            pushBack( ch2 );
+            if( isPlugin ) {
+                if( ch == '[' && ch2 == '{' ) {
                     nesting++;
-                }
-                else if( nesting == 0 && ch == ']' && sb.charAt(sb.length()-1) == '}' )
-                {
+                } else if( nesting == 0 && ch == ']' && sb.charAt(sb.length()-1) == '}' ) {
                     break;
-                }
-                else if( ch == '}' && ch2 == ']' )
-                {
+                } else if( ch == '}' && ch2 == ']' ) {
                     // NB: This will be decremented once at the end
                     nesting--;
                 }
-            }
-            else
-            {
-                if( ch == ']' )
-                {
+            } else {
+                if( ch == ']' ) {
                     break;
                 }
             }
@@ -1818,13 +1444,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
             ch = nextToken();
         }
 
-        //
-        //  If the link is never finished, do some tricks to display the rest of the line
-        //  unchanged.
-        //
-        if( ch == -1 )
-        {
-            log.debug("Warning: unterminated link detected!");
+        //  If the link is never finished, do some tricks to display the rest of the line unchanged.
+        if( ch == -1 ) {
+            LOG.debug( "Warning: unterminated link detected!" );
             m_isEscaping = true;
             m_plainTextBuf.append( sb );
             flushPlainText();
@@ -1838,64 +1460,46 @@ public class JSPWikiMarkupParser extends MarkupParser {
     /**
      *  Reads the stream until the current brace is closed or stream end.
      */
-    private String readBraceContent( final char opening, final char closing )
-        throws IOException
-    {
-        final StringBuilder sb = new StringBuilder(40);
+    private String readBraceContent( final char opening, final char closing ) throws IOException {
+        final StringBuilder sb = new StringBuilder( 40 );
         int braceLevel = 1;
         int ch;
-        while(( ch = nextToken() ) != -1 )
-        {
-            if( ch == '\\' )
-            {
+        while( ( ch = nextToken() ) != -1 ) {
+            if( ch == '\\' ) {
                 continue;
-            }
-            else if ( ch == opening )
-            {
+            } else if( ch == opening ) {
                 braceLevel++;
-            }
-            else if ( ch == closing )
-            {
+            } else if( ch == closing ) {
                 braceLevel--;
-                if (braceLevel==0)
-                {
-                  break;
+                if( braceLevel == 0 ) {
+                    break;
                 }
             }
-            sb.append( (char)ch );
+            sb.append( ( char ) ch );
         }
         return sb.toString();
     }
 
 
     /**
-     *  Handles constructs of type %%(style) and %%class
-     * @param newLine
+     * Handles constructs of type %%(style) and %%class
      * @return An Element containing the div or span, depending on the situation.
      * @throws IOException
      */
-    private Element handleDiv( final boolean newLine )
-        throws IOException
-    {
+    private Element handleDiv( ) throws IOException {
         int ch = nextToken();
         Element el = null;
 
-        if( ch == '%' )
-        {
+        if( ch == '%' ) {
             String style = null;
             String clazz = null;
 
             ch = nextToken();
 
-            //
             //  Style or class?
-            //
-            if( ch == '(' )
-            {
+            if( ch == '(' ) {
                 style = readBraceContent('(',')');
-            }
-            else if( Character.isLetter( (char) ch ) )
-            {
+            } else if( Character.isLetter( (char) ch ) ) {
                 pushBack( ch );
                 clazz = readUntil( "( \t\n\r" );
                 //Note: ref.https://www.w3.org/TR/CSS21/syndata.html#characters
@@ -1905,101 +1509,61 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
                 //(1) replace '.' by spaces, allowing multiple classnames on a div or span
                 //(2) remove any invalid character
-                if( clazz != null){
-
-                    clazz = clazz.replace('.', ' ')
-                                 .replaceAll("[^\\s-_\\w\\x200-\\x377]+","");
-
+                if( clazz != null ) {
+                    clazz = clazz.replace( '.', ' ' )
+                                 .replaceAll( "[^\\s-_\\w\\x200-\\x377]+", "" );
                 }
                 ch = nextToken();
 
-                //check for %%class1.class2( style information )
-                if( ch == '(' )
-                {
-                    style = readBraceContent('(',')');
+                // check for %%class1.class2( style information )
+                if( ch == '(' ) {
+                    style = readBraceContent( '(', ')' );
+                //  Pop out only spaces, so that the upcoming EOL check does not check the next line.
+                } else if( ch == '\n' || ch == '\r' ) {
+                    pushBack( ch );
                 }
-                //
-                //  Pop out only spaces, so that the upcoming EOL check does not check the
-                //  next line.
-                //
-                else if( ch == '\n' || ch == '\r' )
-                {
-                    pushBack(ch);
-                }
-            }
-            else
-            {
-                //
+            } else {
                 // Anything else stops.
-                //
-
-                pushBack(ch);
-
-                try
-                {
+                pushBack( ch );
+                try {
                     final Boolean isSpan = m_styleStack.pop();
-
-                    if( isSpan == null )
-                    {
+                    if( isSpan == null ) {
                         // Fail quietly
-                    }
-                    else if( isSpan.booleanValue() )
-                    {
+                    } else if( isSpan ) {
                         el = popElement( "span" );
-                    }
-                    else
-                    {
+                    } else {
                         el = popElement( "div" );
                     }
-                }
-                catch( final EmptyStackException e )
-                {
-                    log.debug("Page '"+m_context.getName()+"' closes a %%-block that has not been opened.");
+                } catch( final EmptyStackException e ) {
+                    LOG.debug( "Page '" + m_context.getName() + "' closes a %%-block that has not been opened." );
                     return m_currentElement;
                 }
-
                 return el;
             }
 
-            //
             //  Check if there is an attempt to do something nasty
-            //
-
-            try
-            {
+            try {
                 style = StringEscapeUtils.unescapeHtml4(style);
-                if( style != null && style.indexOf("javascript:") != -1 )
-                {
-                    log.debug("Attempt to output javascript within CSS:"+style);
+                if( style != null && style.contains( "javascript:" ) ) {
+                    LOG.debug( "Attempt to output javascript within CSS: {}", style );
                     final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
                     return addElement( makeError( rb.getString( "markupparser.error.javascriptattempt" ) ) );
                 }
-            }
-            catch( final NumberFormatException e )
-            {
-                //
+            } catch( final NumberFormatException e ) {
                 //  If there are unknown entities, we don't want the parser to stop.
-                //
                 final ResourceBundle rb = Preferences.getBundle( m_context, InternationalizationManager.CORE_BUNDLE );
                 final String msg = MessageFormat.format( rb.getString( "markupparser.error.parserfailure"), e.getMessage() );
                 return addElement( makeError( msg ) );
             }
 
-            //
             //  Decide if we should open a div or a span?
-            //
             final String eol = peekAheadLine();
 
-            if( !eol.trim().isEmpty() )
-            {
+            if( !eol.trim().isEmpty() ) {
                 // There is stuff after the class
-
                 el = new Element("span");
-
                 m_styleStack.push( Boolean.TRUE );
-            }
-            else
-            {
+            } else {
                 startBlockLevel();
                 el = new Element("div");
                 m_styleStack.push( Boolean.FALSE );
@@ -2007,37 +1571,25 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
             if( style != null ) el.setAttribute("style", style);
             if( clazz != null ) el.setAttribute("class", clazz);
-            el = pushElement( el );
-
-            return el;
+            return pushElement( el );
         }
-
-        pushBack(ch);
-
+        pushBack( ch );
         return el;
     }
 
-    private Element handleSlash( final boolean newLine )
-        throws IOException
-    {
+    private Element handleSlash( ) throws IOException {
         final int ch = nextToken();
-
-        pushBack(ch);
-        if( ch == '%' && !m_styleStack.isEmpty() )
-        {
-            return handleDiv( newLine );
+        pushBack( ch );
+        if( ch == '%' && !m_styleStack.isEmpty() ) {
+            return handleDiv();
         }
 
         return null;
     }
 
-    private Element handleBar( final boolean newLine )
-        throws IOException
-    {
-        Element el = null;
-
-        if( !m_istable && !newLine )
-        {
+    private Element handleBar( final boolean newLine ) throws IOException {
+        Element el;
+        if( !m_istable && !newLine ) {
             return null;
         }
 
@@ -2088,35 +1640,25 @@ public class JSPWikiMarkupParser extends MarkupParser {
                 if( el == null ) popElement("td");
             }
             el = pushElement( new Element("th") );
-        }
-        else
-        {
-            if( !newLine )
-            {
-                el = popElement("td");
-                if( el == null ) popElement("th");
+        } else {
+            if( !newLine ) {
+                el = popElement( "td" );
+                if( el == null ) popElement( "th" );
             }
-
             el = pushElement( new Element("td") );
-
             pushBack( ch );
         }
-
         return el;
     }
 
     /**
      *  Generic escape of next character or entity.
      */
-    private Element handleTilde()
-        throws IOException
-    {
+    private Element handleTilde() throws IOException {
         final int ch = nextToken();
 
-        if( ch == ' ' )
-        {
-            if( m_wysiwygEditorMode )
-            {
+        if( ch == ' ' ) {
+            if( m_wysiwygEditorMode ) {
                 m_plainTextBuf.append( "~ " );
             }
             return m_currentElement;
@@ -2124,139 +1666,89 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
         if( ch == '|' || ch == '~' || ch == '\\' || ch == '*' || ch == '#' ||
             ch == '-' || ch == '!' || ch == '\'' || ch == '_' || ch == '[' ||
-            ch == '{' || ch == ']' || ch == '}' || ch == '%' )
-        {
-            if( m_wysiwygEditorMode )
-            {
+            ch == '{' || ch == ']' || ch == '}' || ch == '%' ) {
+            if( m_wysiwygEditorMode ) {
                 m_plainTextBuf.append( '~' );
             }
-
-            m_plainTextBuf.append( (char)ch );
-            m_plainTextBuf.append(readWhile( ""+(char)ch ));
+            m_plainTextBuf.append( ( char ) ch );
+            m_plainTextBuf.append( readWhile( "" + ( char ) ch ) );
             return m_currentElement;
         }
-
         // No escape.
         pushBack( ch );
-
         return null;
     }
 
-    private void fillBuffer( final Element startElement )
-        throws IOException
-    {
+    private void fillBuffer( final Element startElement ) throws IOException {
         m_currentElement = startElement;
-
-        boolean quitReading = false;
         m_newLine = true;
+        boolean quitReading = false;
         disableOutputEscaping();
-
-        while(!quitReading)
-        {
+        while( !quitReading ) {
             final int ch = nextToken();
+            if( ch == -1 ) {
+                break;
+            }
 
-            if( ch == -1 ) break;
-
-            //
-            //  Check if we're actually ending the preformatted mode.
-            //  We still must do an entity transformation here.
-            //
-            if( m_isEscaping )
-            {
-                if( ch == '}' )
-                {
+            //  Check if we're actually ending the preformatted mode. We still must do an entity transformation here.
+            if( m_isEscaping ) {
+                if( ch == '}' ) {
                     if( handleClosebrace() == null ) m_plainTextBuf.append( (char) ch );
-                }
-                else if( ch == -1 )
-                {
+                } else if( ch == -1 ) {
                     quitReading = true;
                 }
-                else if( ch == '\r' )
-                {
+                else if( ch == '\r' ) {
                     // DOS line feeds we ignore.
-                }
-                else if( ch == '<' )
-                {
+                } else if( ch == '<' ) {
                     m_plainTextBuf.append( "&lt;" );
-                }
-                else if( ch == '>' )
-                {
+                } else if( ch == '>' ) {
                     m_plainTextBuf.append( "&gt;" );
-                }
-                else if( ch == '&' )
-                {
+                } else if( ch == '&' ) {
                     m_plainTextBuf.append( "&amp;" );
-                }
-                else if( ch == '~' )
-                {
-                    String braces = readWhile("}");
-                    if( braces.length() >= 3 )
-                    {
-                        m_plainTextBuf.append("}}}");
-
+                } else if( ch == '~' ) {
+                    String braces = readWhile( "}" );
+                    if( braces.length() >= 3 ) {
+                        m_plainTextBuf.append( "}}}" );
                         braces = braces.substring(3);
-                    }
-                    else
-                    {
+                    } else {
                         m_plainTextBuf.append( (char) ch );
                     }
 
-                    for( int i = braces.length()-1; i >= 0; i-- )
-                    {
-                        pushBack(braces.charAt(i));
+                    for( int i = braces.length()-1; i >= 0; i-- ) {
+                        pushBack( braces.charAt( i ) );
                     }
-                }
-                else
-                {
+                } else {
                     m_plainTextBuf.append( (char) ch );
                 }
 
                 continue;
             }
 
-            //
             //  An empty line stops a list
-            //
-            if( m_newLine && ch != '*' && ch != '#' && ch != ' ' && m_genlistlevel > 0 )
-            {
+            if( m_newLine && ch != '*' && ch != '#' && ch != ' ' && m_genlistlevel > 0 ) {
                 m_plainTextBuf.append(unwindGeneralList());
             }
 
-            if( m_newLine && ch != '|' && m_istable )
-            {
-                popElement("table");
+            if( m_newLine && ch != '|' && m_istable ) {
+                popElement( "table" );
                 m_istable = false;
                 m_isheader = false;
             }
 
             int skip = IGNORE;
-
-            //
             //  Do the actual parsing and catch any errors.
-            //
-            try
-            {
+            try {
                 skip = parseToken( ch );
-            }
-            catch( final IllegalDataException e )
-            {
-                log.info("Page "+m_context.getPage().getName()+" contains data which cannot be added to DOM tree: "+e.getMessage());
-
-                makeError("Error: "+cleanupSuspectData(e.getMessage()) );
+            } catch( final IllegalDataException e ) {
+                LOG.info( "Page {} contains data which cannot be added to DOM tree: {}", m_context.getPage().getName(), e.getMessage() );
+                makeError( "Error: " + cleanupSuspectData( e.getMessage() ) );
             }
 
+            // The idea is as follows:  If the handler method returns an element (el != null), it is assumed that it
+            // has been added in the stack.  Otherwise, the character is added as is to the plaintext buffer.
             //
-            //   The idea is as follows:  If the handler method returns
-            //   an element (el != null), it is assumed that it has been
-            //   added in the stack.  Otherwise the character is added
-            //   as is to the plaintext buffer.
-            //
-            //   For the transition phase, if s != null, it also gets
-            //   added in the plaintext buffer.
-            //
-
-            switch( skip )
-            {
+            // For the transition phase, if s != null, it also gets added in the plaintext buffer.
+            switch( skip ) {
                 case ELEMENT:
                     m_newLine = false;
                     break;
@@ -2273,17 +1765,13 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
 
         closeHeadings();
-        popElement("domroot");
+        popElement( "domroot" );
     }
 
-    private String cleanupSuspectData( final String s )
-    {
+    private String cleanupSuspectData( final String s ) {
         final StringBuilder sb = new StringBuilder( s.length() );
-
-        for( int i = 0; i < s.length(); i++ )
-        {
+        for( int i = 0; i < s.length(); i++ ) {
             final char c = s.charAt(i);
-
             if( Verifier.isXMLCharacter( c ) ) sb.append( c );
             else sb.append( "0x" ).append( Integer.toString( c, 16 ).toUpperCase() );
         }
@@ -2314,78 +1802,54 @@ public class JSPWikiMarkupParser extends MarkupParser {
      * @return {@link #ELEMENT}, {@link #CHARACTER} or {@link #IGNORE}.
      * @throws IOException If parsing fails.
      */
-    protected int parseToken( final int ch )
-        throws IOException
-    {
+    protected int parseToken( final int ch ) throws IOException {
         Element el = null;
-
-        //
         //  Now, check the incoming token.
-        //
-        switch( ch )
-        {
+        switch( ch ) {
           case '\r':
             // DOS linefeeds we forget
             return IGNORE;
 
           case '\n':
-            //
             //  Close things like headings, etc.
-            //
-
             // FIXME: This is not really very fast
-
             closeHeadings();
 
-            popElement("dl"); // Close definition lists.
-            if( m_istable )
-            {
+            popElement( "dl" ); // Close definition lists.
+            if( m_istable ) {
                 popElement("tr");
             }
-
             m_isdefinition = false;
-
-            if( m_newLine )
-            {
+            if( m_newLine ) {
                 // Paragraph change.
                 startBlockLevel();
-
-                //
-                //  Figure out which elements cannot be enclosed inside
-                //  a <p></p> pair according to XHTML rules.
-                //
+                //  Figure out which elements cannot be enclosed inside a <p></p> pair according to XHTML rules.
                 final String nextLine = peekAheadLine();
                 if( nextLine.isEmpty() ||
-                    (!nextLine.isEmpty() &&
-                     !nextLine.startsWith("{{{") &&
-                     !nextLine.startsWith("----") &&
-                     !nextLine.startsWith("%%") &&
-                     "*#!;".indexOf( nextLine.charAt(0) ) == -1) )
-                {
-                    pushElement( new Element("p") );
+                     ( !nextLine.isEmpty() &&
+                       !nextLine.startsWith( "{{{" ) &&
+                       !nextLine.startsWith( "----" ) &&
+                       !nextLine.startsWith( "%%" ) &&
+                       "*#!;".indexOf( nextLine.charAt( 0 ) ) == -1 ) ) {
+                    pushElement( new Element( "p" ) );
                     m_isOpenParagraph = true;
 
-                    if( m_restartitalic )
-                    {
-                        pushElement( new Element("i") );
+                    if( m_restartitalic ) {
+                        pushElement( new Element( "i" ) );
                         m_isitalic = true;
                         m_restartitalic = false;
                     }
-                    if( m_restartbold )
-                    {
-                        pushElement( new Element("b") );
+                    if( m_restartbold ) {
+                        pushElement( new Element( "b" ) );
                         m_isbold = true;
                         m_restartbold = false;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 m_plainTextBuf.append("\n");
                 m_newLine = true;
             }
             return IGNORE;
-
 
           case '\\':
             el = handleBackslash();
@@ -2408,30 +1872,27 @@ public class JSPWikiMarkupParser extends MarkupParser {
             break;
 
           case '-':
-            if( m_newLine )
+            if( m_newLine ) {
                 el = handleDash();
-
+            }
             break;
 
           case '!':
-            if( m_newLine )
-            {
+            if( m_newLine ) {
                 el = handleHeading();
             }
             break;
 
           case ';':
-            if( m_newLine )
-            {
+            if( m_newLine ) {
                 el = handleDefinitionList();
             }
             break;
 
           case ':':
-            if( m_isdefinition )
-            {
-                popElement("dt");
-                el = pushElement( new Element("dd") );
+            if( m_isdefinition ) {
+                popElement( "dt" );
+                el = pushElement( new Element( "dd" ) );
                 m_isdefinition = false;
             }
             break;
@@ -2441,17 +1902,15 @@ public class JSPWikiMarkupParser extends MarkupParser {
             break;
 
           case '*':
-            if( m_newLine )
-            {
-                pushBack('*');
+            if( m_newLine ) {
+                pushBack( '*' );
                 el = handleGeneralList();
             }
             break;
 
           case '#':
-            if( m_newLine )
-            {
-                pushBack('#');
+            if( m_newLine ) {
+                pushBack( '#' );
                 el = handleGeneralList();
             }
             break;
@@ -2465,11 +1924,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
             break;
 
           case '%':
-            el = handleDiv( m_newLine );
+            el = handleDiv();
             break;
 
           case '/':
-            el = handleSlash( m_newLine );
+            el = handleSlash();
             break;
 
           default:
@@ -2479,40 +1938,33 @@ public class JSPWikiMarkupParser extends MarkupParser {
         return el != null ? ELEMENT : CHARACTER;
     }
 
-    private void closeHeadings()
-    {
-        if( m_lastHeading != null && !m_wysiwygEditorMode )
-        {
+    private void closeHeadings() {
+        if( m_lastHeading != null && !m_wysiwygEditorMode ) {
             // Add the hash anchor element at the end of the heading
-            addElement( new Element("a").setAttribute( "class",HASHLINK ).setAttribute( "href","#"+m_lastHeading.m_titleAnchor ).setText( "#" ) );
+            addElement( new Element("a").setAttribute( "class",HASHLINK )
+                                              .setAttribute( "href","#" + m_lastHeading.m_titleAnchor )
+                                              .setText( "#" ) );
             m_lastHeading = null;
         }
-        popElement("h2");
-        popElement("h3");
-        popElement("h4");
+        popElement( "h2" );
+        popElement( "h3" );
+        popElement( "h4" );
     }
 
     /**
-     *  Parses the entire document from the Reader given in the constructor or
-     *  set by {@link #setInputReader(Reader)}.
+     *  Parses the entire document from the Reader given in the constructor or set by {@link #setInputReader(Reader)}.
      *
      *  @return A WikiDocument, ready to be passed to the renderer.
      *  @throws IOException If parsing cannot be accomplished.
      */
     @Override
-    public WikiDocument parse()
-        throws IOException
-    {
+    public WikiDocument parse() throws IOException {
         final WikiDocument d = new WikiDocument( m_context.getPage() );
         d.setContext( m_context );
-
-        final Element rootElement = new Element("domroot");
-
+        final Element rootElement = new Element( "domroot" );
         d.setRootElement( rootElement );
-
         fillBuffer( rootElement );
-
-        paragraphify(rootElement);
+        paragraphify( rootElement );
 
         return d;
     }
@@ -2520,58 +1972,45 @@ public class JSPWikiMarkupParser extends MarkupParser {
     /**
      *  Checks out that the first paragraph is correctly installed.
      *
-     *  @param rootElement
+     *  @param rootElement element to be checked.
      */
-    private void paragraphify( final Element rootElement)
-    {
-        //
+    private void paragraphify( final Element rootElement) {
         //  Add the paragraph tag to the first paragraph
-        //
         final List< Content > kids = rootElement.getContent();
-
-        if( rootElement.getChild("p") != null )
-        {
+        if( rootElement.getChild( "p" ) != null ) {
             final ArrayList<Content> ls = new ArrayList<>();
             int idxOfFirstContent = 0;
             int count = 0;
 
-            for( final Iterator< Content > i = kids.iterator(); i.hasNext(); count++ )
-            {
+            for( final Iterator< Content > i = kids.iterator(); i.hasNext(); count++ ) {
                 final Content c = i.next();
-                if( c instanceof Element )
-                {
+                if( c instanceof Element ) {
                     final String name = ( ( Element )c ).getName();
-                    if( isBlockLevel( name ) ) break;
+                    if( isBlockLevel( name ) ) {
+                        break;
+                    }
                 }
 
-                if( !(c instanceof ProcessingInstruction) )
-                {
+                if( !( c instanceof ProcessingInstruction ) ) {
                     ls.add( c );
-                    if( idxOfFirstContent == 0 ) idxOfFirstContent = count;
+                    if( idxOfFirstContent == 0 ) {
+                        idxOfFirstContent = count;
+                    }
                 }
             }
 
-            //
-            //  If there were any elements, then add a new <p> (unless it would
-            //  be an empty one)
-            //
-            if( ls.size() > 0 )
-            {
+            //  If there were any elements, then add a new <p> (unless it would be an empty one)
+            if(!ls.isEmpty()) {
                 final Element newel = new Element("p");
-
-                for( final Iterator< Content > i = ls.iterator(); i.hasNext(); )
-                {
-                    final Content c = i.next();
-
+                for( final Content c : ls ) {
                     c.detach();
-                    newel.addContent(c);
+                    newel.addContent( c );
                 }
 
-                //
                 // Make sure there are no empty <p/> tags added.
-                //
-                if( !newel.getTextTrim().isEmpty() || !newel.getChildren().isEmpty() )
-                    rootElement.addContent(idxOfFirstContent, newel);
+                if( !newel.getTextTrim().isEmpty() || !newel.getChildren().isEmpty() ) {
+                    rootElement.addContent( idxOfFirstContent, newel );
+                }
             }
         }
     }

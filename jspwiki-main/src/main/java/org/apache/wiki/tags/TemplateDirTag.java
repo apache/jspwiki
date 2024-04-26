@@ -31,6 +31,7 @@ public class TemplateDirTag
 {
     private static final long serialVersionUID = 0L;
     
+    @Override
     public final int doWikiStartTag()
         throws IOException
     {

@@ -59,7 +59,10 @@ Wiki.Category = function(element, pagename, xhrURL){
 
         new Request.HTML({
             url: xhrURL, //+"?page="+pagename,
-            data: { page: decodeURIComponent(pagename) },
+            data: {
+                page: decodeURIComponent(pagename),
+                'X-XSRF-TOKEN': Wiki.CsrfProtection
+            },
             update: popup,
             onSuccess: function(){
                 popup.swapClass("loading", "active");

@@ -28,6 +28,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import java.util.Properties;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 
 @ExtendWith( MockitoExtension.class )
 public class WikiBootstrapServletContextListenerTest {
@@ -41,7 +43,7 @@ public class WikiBootstrapServletContextListenerTest {
         final WikiBootstrapServletContextListener listener = new WikiBootstrapServletContextListener();
         final Properties properties = listener.initWikiSPIs( sce );
 
-        Assertions.assertEquals( 19, properties.size() );
+        Assertions.assertEquals( 36, properties.size() );
     }
 
     @Test
@@ -51,5 +53,4 @@ public class WikiBootstrapServletContextListenerTest {
         Assertions.assertDoesNotThrow( () -> listener.contextInitialized( sce ) );
         Assertions.assertDoesNotThrow( () -> listener.contextDestroyed( sce ) );
     }
-
 }

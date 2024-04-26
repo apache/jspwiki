@@ -25,6 +25,7 @@ import java.security.Permission;
 import java.security.Principal;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 
 /**
@@ -52,7 +53,8 @@ public class AclEntryImpl implements AclEntry, Serializable {
      * @return <code>true</code> if the permission was added, <code>false</code> if the permission was
      * already part of this entry's permission set, and <code>false</code> if the permission is not of type PagePermission
      */
-    public synchronized boolean addPermission( final Permission permission ) {
+    @Override
+    public synchronized boolean addPermission(final Permission permission ) {
         if( permission instanceof PagePermission && findPermission( permission ) == null ) {
             m_permissions.add( permission );
             return true;
@@ -67,7 +69,8 @@ public class AclEntryImpl implements AclEntry, Serializable {
      * @param permission the permission to be checked for.
      * @return true if the permission is part of the permission set in this entry, false otherwise.
      */
-    public boolean checkPermission( final Permission permission ) {
+    @Override
+    public boolean checkPermission(final Permission permission ) {
         return findPermission( permission ) != null;
     }
 
@@ -77,6 +80,7 @@ public class AclEntryImpl implements AclEntry, Serializable {
      *
      * @return the principal associated with this entry.
      */
+    @Override
     public synchronized Principal getPrincipal() {
         return m_principal;
     }
@@ -86,6 +90,7 @@ public class AclEntryImpl implements AclEntry, Serializable {
      *
      * @return an enumeration of the permissions
      */
+    @Override
     public Enumeration< Permission > permissions() {
         return m_permissions.elements();
     }
@@ -96,7 +101,8 @@ public class AclEntryImpl implements AclEntry, Serializable {
      * @param permission the permission to be removed from this entry.
      * @return true if the permission is removed, false if the permission was not part of this entry's permission set.
      */
-    public synchronized boolean removePermission( final Permission permission ) {
+    @Override
+    public synchronized boolean removePermission(final Permission permission ) {
         final Permission p = findPermission( permission );
         if( p != null ) {
             m_permissions.remove( p );
@@ -114,7 +120,8 @@ public class AclEntryImpl implements AclEntry, Serializable {
      * @return true if the principal is set, false if there was already a
      * principal set for this entry
      */
-    public synchronized boolean setPrincipal( final Principal user ) {
+    @Override
+    public synchronized boolean setPrincipal(final Principal user ) {
         if( m_principal != null || user == null ) {
             return false;
         }
@@ -129,19 +136,8 @@ public class AclEntryImpl implements AclEntry, Serializable {
      */
     public String toString() {
         final Principal p = getPrincipal();
-        final StringBuilder sb = new StringBuilder();
-        sb.append( "[AclEntry ALLOW " )
-          .append( p != null ? p.getName() : "null" )
-          .append( " " );
 
-        for( final Permission pp : m_permissions ) {
-            sb.append( pp.toString() );
-            sb.append( "," );
-        }
-
-        sb.append( "]" );
-
-        return sb.toString();
+        return m_permissions.stream().map(pp -> pp.toString() + ",").collect(Collectors.joining("", "[AclEntry ALLOW " + (p != null ? p.getName() : "null") + " ", "]"));
     }
 
     /**
@@ -149,12 +145,7 @@ public class AclEntryImpl implements AclEntry, Serializable {
      * permission.
      */
     private Permission findPermission( final Permission p ) {
-        for( final Permission pp : m_permissions ) {
-            if( pp.implies( p ) ) {
-                return pp;
-            }
-        }
-        return null;
+        return m_permissions.stream().filter(pp -> pp.implies(p)).findFirst().orElse(null);
     }
 
 }

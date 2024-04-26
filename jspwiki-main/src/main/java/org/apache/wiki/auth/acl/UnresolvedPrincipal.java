@@ -27,7 +27,7 @@ import java.security.Principal;
  * manager, and built-in role definitions.
  * Creating a principal marked "unresolved" allows
  * delayed resolution, which enables principals to be resolved
- * lazily during a later access control check. Conceptuallly,
+ * lazily during a later access control check. Conceptually,
  * UnresolvedPrincipal performs a function similar to
  * {@link java.security.UnresolvedPermission}.
  * 
@@ -52,6 +52,7 @@ public final class UnresolvedPrincipal implements Principal, Serializable
      * @return the name
      * @see java.security.Principal#getName()
      */
+    @Override
     public String getName()
     {
         return m_name;

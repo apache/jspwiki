@@ -83,7 +83,7 @@ if ( !installer.adminExists() )
 <html lang="en">
 <head>
   <title><fmt:message key="install.jsp.title" /></title>
-  <link rel="stylesheet" media="screen, projection" type="text/css" href='<wiki:Link format="url" templatefile="jspwiki.css"/>'/>
+  <link rel="stylesheet" media="screen, projection" type="text/css" href='<wiki:Link format="url" templatefile="../../templates/default/haddock.css"/>'/>
   <wiki:IncludeResources type="stylesheet"/>
 </head>
 <body class="container">
@@ -109,7 +109,7 @@ if ( !installer.adminExists() )
 <div class="formcontainer">
 
 <form action="Install.jsp" method="post">
-
+  <wiki:CsrfProtection/>
   <!-- Page directory -->
   <h3><fmt:message key="install.jsp.basics.title" /></h3>
 
@@ -121,7 +121,7 @@ if ( !installer.adminExists() )
     </div>
 
     <label class="control-label" ><fmt:message key="install.jsp.basics.page.storage.label" />
-    <input class="form-control" type="text" name="<%=Installer.PAGE_DIR%>" size="40" value="<%=installer.getProperty( Installer.PAGE_DIR )%>"/>
+    <input class="form-control" type="text" name="<%=Installer.PAGE_DIR%>" size="60" value="<%=installer.getProperty( Installer.PAGE_DIR )%>"/>
     </label>
     <div class="help-block">
       <fmt:message key="install.jsp.basics.page.storage.desc" />
@@ -159,7 +159,7 @@ if ( !installer.adminExists() )
   <h3><fmt:message key="install.jsp.adv.settings.title" /></h3>
 
     <label class="control-label" ><fmt:message key="install.jsp.adv.settings.workdir.label" />
-    <input class="form-control" type="text" name="<%=Installer.WORK_DIR%>" size="40" value="<%=installer.getProperty( Installer.WORK_DIR )%>"/>
+    <input class="form-control" type="text" name="<%=Installer.WORK_DIR%>" size="60" value="<%=installer.getProperty( Installer.WORK_DIR )%>"/>
     </label>
     <div class="help-block">
       <fmt:message key="install.jsp.adv.settings.workdir.desc" />

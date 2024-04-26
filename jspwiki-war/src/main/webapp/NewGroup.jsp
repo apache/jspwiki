@@ -28,6 +28,7 @@
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -40,7 +41,7 @@
     Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
     Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_CREATE_GROUP.getRequestContext() );
-    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
+    if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     
     // Extract the current user, group name, members and action attributes
     Session wikiSession = wikiContext.getWikiSession();
@@ -56,40 +57,35 @@
     }
     
     // Are we saving the group?
-    if( "save".equals(request.getParameter("action")) )
-    {
+    if( "save".equals( request.getParameter( "action" ) ) ) {
+        if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+            response.sendRedirect( "/error/Forbidden.html" );
+            return;
+        }
         // Validate the group
         groupMgr.validateGroup( wikiContext, group );
         
-        try 
-        {
+        try {
             groupMgr.getGroup( group.getName() );
 
             // Oops! The group already exists. This is mischief!
             ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources");
             wikiSession.addMessage( GroupManager.MESSAGES_KEY,
                                     MessageFormat.format(rb.getString("newgroup.exists"),group.getName()));
-        }
-        catch ( NoSuchPrincipalException e )
-        {
+        } catch( NoSuchPrincipalException e ) {
             // Group not found; this is good!
         }
 
         // If no errors, save the group now
-        if ( wikiSession.getMessages( GroupManager.MESSAGES_KEY ).length == 0 )
-        {
-            try
-            {
+        if( wikiSession.getMessages( GroupManager.MESSAGES_KEY ).length == 0 ) {
+            try {
                 groupMgr.setGroup( wikiSession, group );
-            }
-            catch( WikiSecurityException e )
-            {
+            } catch( WikiSecurityException e ) {
                 // Something went horribly wrong! Maybe it's an I/O error...
                 wikiSession.addMessage( GroupManager.MESSAGES_KEY, e.getMessage() );
             }
         }
-        if ( wikiSession.getMessages( GroupManager.MESSAGES_KEY ).length == 0 )
-        {
+        if ( wikiSession.getMessages( GroupManager.MESSAGES_KEY ).length == 0 ) {
             response.sendRedirect( "Group.jsp?group=" + group.getName() );
             return;
         }

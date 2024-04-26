@@ -28,6 +28,7 @@
 <%@ page import="org.apache.wiki.auth.login.CookieAuthenticationLoginModule" %>
 <%@ page import="org.apache.wiki.auth.user.DuplicateUserException" %>
 <%@ page import="org.apache.wiki.auth.user.UserProfile" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
@@ -53,7 +54,12 @@
     }
 
     // Are we saving the profile?
-    if( "saveProfile".equals(request.getParameter("action")) ) {
+    if( "saveProfile".equals( request.getParameter( "action" ) ) ) {
+        if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+            response.sendRedirect( "/error/Forbidden.html" );
+            return;
+        }
+
         UserManager userMgr = wiki.getManager( UserManager.class );
         UserProfile profile = userMgr.parseProfile( wikiContext );
          
@@ -98,41 +104,35 @@
         }
 
         // If using custom auth, we need to do the login now
-
         String action = request.getParameter("action");
         if( request.getParameter("submitlogin") != null ) {
             String uid    = request.getParameter( "j_username" );
             String passwd = request.getParameter( "j_password" );
-            log.debug( "Attempting to authenticate user " + uid );
+            log.debug( "Attempting to authenticate user {}", uid );
 
             // Log the user in!
             if ( mgr.login( wikiSession, request, uid, passwd ) ) {
-                log.info( "Successfully authenticated user " + uid + " (custom auth)" );
+                log.info( "Successfully authenticated user {} (custom auth)", uid );
             } else {
-                log.info( "Failed to authenticate user " + uid );
-                wikiSession.addMessage( "login", rb.getString("login.error.password") );
+                log.info( "Failed to authenticate user {}", uid );
+                wikiSession.addMessage( "login", rb.getString( "login.error.password" ) );
             }
         }
     } else {
-        //
         //  Have we already been submitted?  If yes, then we can assume that we have been logged in before.
-        //
-        Object seen = session.getAttribute("_redirect");
+        Object seen = session.getAttribute( "_redirect" );
         if( seen != null ) {
-            response.sendError( HttpServletResponse.SC_FORBIDDEN, rb.getString("login.error.noaccess") );
-            session.removeAttribute("_redirect");
+            response.sendError( HttpServletResponse.SC_FORBIDDEN, rb.getString( "login.error.noaccess" ) );
+            session.removeAttribute( "_redirect" );
             return;
         }
-        session.setAttribute("_redirect","I love Outi"); // Just any marker will do
+        session.setAttribute( "_redirect","I love Outi" ); // Just any marker will do
 
-        // If using container auth, the container will have automatically
-        // attempted to log in the user before Login.jsp was loaded.
-        // Thus, if we got here, the container must have authenticated
-        // the user already. All we do is simply record that fact.
-        // Nice and easy.
-
+        // If using container auth, the container will have automatically attempted to log in the user before
+        // Login.jsp was loaded. Thus, if we got here, the container must have authenticated the user already.
+        // All we do is simply record that fact. Nice and easy.
         Principal user = wikiSession.getLoginPrincipal();
-        log.info( "Successfully authenticated user " + user.getName() + " (container auth)" );
+        log.info( "Successfully authenticated user {} (container auth)", user.getName() );
     }
 
     // If user logged in, set the user cookie with the wiki principal's name.
@@ -159,7 +159,7 @@
         String viewUrl = ( "Login".equals( redirectPage ) ) ? "Wiki.jsp" : wikiContext.getViewURL( redirectPage );
 
         // Redirect!
-        log.info( "Redirecting user to " + viewUrl );
+        log.info( "Redirecting user to {}", viewUrl );
         response.sendRedirect( viewUrl );
         return;
     }

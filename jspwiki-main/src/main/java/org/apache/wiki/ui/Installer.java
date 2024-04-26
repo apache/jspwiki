@@ -45,6 +45,7 @@ import java.text.MessageFormat;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Manages JSPWiki installation on behalf of <code>admin/Install.jsp</code>. The contents of this class were previously part of
@@ -65,7 +66,7 @@ public class Installer {
     public static final String WORK_DIR = Engine.PROP_WORKDIR;
     public static final String ADMIN_GROUP = "Admin";
     public static final String PROPFILENAME = "jspwiki-custom.properties" ;
-    public static final String TMP_DIR = System.getProperty("java.io.tmpdir");
+    public static String TMP_DIR;
     private final Session m_session;
     private final File m_propertyFile;
     private final Properties m_props;
@@ -85,6 +86,7 @@ public class Installer {
         // Stash the request
         m_request = request;
         m_validated = false;
+        TMP_DIR = m_engine.getWikiProperties().getProperty( "jspwiki.workDir" );
     }
     
     /**
@@ -154,12 +156,10 @@ public class Installer {
      * @return the string
      */
     public String getPropertiesList() {
-        final StringBuilder result = new StringBuilder();
+        final String result;
         final Set< String > keys = m_props.stringPropertyNames();
-        for( final String key : keys ) {
-            result.append(key ).append( " = " ).append( m_props.getProperty( key ) ).append( "\n" );
-        }
-        return result.toString();
+        result = keys.stream().map(key -> key + " = " + m_props.getProperty(key) + "\n").collect(Collectors.joining());
+        return result;
     }
 
     public String getPropertiesPath() {

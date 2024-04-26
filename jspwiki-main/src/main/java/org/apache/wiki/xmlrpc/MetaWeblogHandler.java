@@ -57,7 +57,7 @@ import java.util.List;
 
 public class MetaWeblogHandler implements WikiRPCHandler {
 
-    private static final Logger log = LoggerFactory.getLogger( MetaWeblogHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( MetaWeblogHandler.class );
 
     private Context m_context;
 
@@ -169,7 +169,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
     // FIXME: The implementation is suboptimal, as it goes through all of the blog entries.
     public Hashtable getRecentPosts( final String blogid, final String username, final String password, final int numberOfPosts ) throws XmlRpcException {
         final Hashtable<String, Hashtable<String, Object>> result = new Hashtable<>();
-        log.info( "metaWeblog.getRecentPosts() called");
+        LOG.info( "metaWeblog.getRecentPosts() called");
         final Page page = m_context.getEngine().getManager( PageManager.class ).getPage( blogid );
         checkPermissions( page, username, password, "view" );
 
@@ -202,7 +202,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
                            final String password,
                            final Hashtable< String, Object > content,
                            final boolean publish ) throws XmlRpcException {
-        log.info("metaWeblog.newPost() called");
+        LOG.info("metaWeblog.newPost() called");
         final Engine engine = m_context.getEngine();
         final Page page = engine.getManager( PageManager.class ).getPage( blogid );
         checkPermissions( page, username, password, "createPages" );
@@ -219,11 +219,11 @@ public class MetaWeblogHandler implements WikiRPCHandler {
             text.append( "\n\n" );
             text.append( content.get("description") );
 
-            log.debug("Writing entry: "+text);
+            LOG.debug("Writing entry: "+text);
 
             engine.getManager( PageManager.class ).saveText( context, text.toString() );
         } catch( final Exception e ) {
-            log.error("Failed to create weblog entry",e);
+            LOG.error("Failed to create weblog entry",e);
             throw new XmlRpcException( 0, "Failed to create weblog entry: "+e.getMessage() );
         }
 
@@ -249,7 +249,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
         final Engine engine = m_context.getEngine();
         final String url;
 
-        log.info( "metaWeblog.newMediaObject() called" );
+        LOG.info( "metaWeblog.newMediaObject() called" );
 
         final Page page = engine.getManager( PageManager.class ).getPage( blogid );
         checkPermissions( page, username, password, "upload" );
@@ -266,7 +266,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
 
             url = engine.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), att.getName(), null );
         } catch( final Exception e ) {
-            log.error( "Failed to upload attachment", e );
+            LOG.error( "Failed to upload attachment", e );
             throw new XmlRpcException( 0, "Failed to upload media object: "+e.getMessage() );
         }
 
@@ -286,7 +286,7 @@ public class MetaWeblogHandler implements WikiRPCHandler {
                       final Hashtable< String,Object > content,
                       final boolean publish ) throws XmlRpcException {
         final Engine engine = m_context.getEngine();
-        log.info("metaWeblog.editPost("+postid+") called");
+        LOG.info("metaWeblog.editPost("+postid+") called");
 
         // FIXME: Is postid correct?  Should we determine it from the page name?
         final Page page = engine.getManager( PageManager.class ).getPage( postid );
@@ -303,11 +303,11 @@ public class MetaWeblogHandler implements WikiRPCHandler {
             text.append( "\n\n" );
             text.append( content.get("description") );
 
-            log.debug("Updating entry: "+text);
+            LOG.debug("Updating entry: "+text);
 
             engine.getManager( PageManager.class ).saveText( context, text.toString() );
         } catch( final Exception e ) {
-            log.error("Failed to create weblog entry",e);
+            LOG.error("Failed to create weblog entry",e);
             throw new XmlRpcException( 0, "Failed to update weblog entry: "+e.getMessage() );
         }
 

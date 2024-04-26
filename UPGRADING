@@ -1,5 +1,5 @@
 
-Apache JSPWiki 2.11.0 - Upgrading Notes
+Apache JSPWiki 2.12.0 - Upgrading Notes
 ==================================================
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -21,8 +21,20 @@ Apache JSPWiki 2.11.0 - Upgrading Notes
 
 The license file can be found in LICENSE.
 
+Upgrading JSPWiki to 2.12.0
+---------------------------
+
+Please see https://jspwiki-wiki.apache.org/Wiki.jsp?page=NewIn2.12 for details
+
+1. New requirements
+  * Java 11 needed to run JSPWiki
+
+2. Backwards API incompatible changes: https://jspwiki.apache.org/japicmp/2.12.0/
+
 Upgrading JSPWiki to 2.11.0
 ---------------------------
+
+Please see https://jspwiki-wiki.apache.org/Wiki.jsp?page=NewIn2.11 for details
 
 1. New requirements
   * Java 8 needed to run JSPWiki
@@ -36,6 +48,8 @@ Upgrading JSPWiki to 2.11.0
 Upgrading JSPWiki to 2.10.0
 ---------------------------
 
+Please see https://jspwiki-wiki.apache.org/Wiki.jsp?page=NewIn2.10 for details
+
 1. There have been some public API changes, detailed at:
 http://svn.apache.org/repos/asf/jspwiki/trunk/jspwiki-war/src/main/config/doc/2.10-API.txt
 
@@ -44,6 +58,8 @@ http://svn.apache.org/repos/asf/jspwiki/trunk/jspwiki-war/src/main/config/doc/2.
 
 Upgrading JSPWiki to 2.9.1
 --------------------------
+
+Please see https://jspwiki-wiki.apache.org/Wiki.jsp?page=NewIn2.9 for details
 
 1. Beginning with JSPWiki-2.9.1-svn-3, generics have been added to WikiPlugin's execute() signature, 
 which now looks like:
@@ -68,6 +84,8 @@ In the next JSPWiki version, RCS support will be removed (JSPWIKI-758).
 
 Upgrading JSPWiki from 2.8.x to 2.9.0
 -------------------------------------
+
+Please see https://jspwiki-wiki.apache.org/Wiki.jsp?page=NewIn2.9 for details
 
 1. Shut down your web container
 
@@ -110,6 +128,8 @@ sure you have backed up and adapted your configuration files first!
 
 Upgrading JSPWiki from older versions to any version of 2.8
 -----------------------------------------------------------
+
+Please see https://jspwiki-wiki.apache.org/Wiki.jsp?page=NewIn2.8 for details
 
 This file documents the steps necessary to upgrade JSPWiki 2.8 from 2.6. This 
 document was written for two audiences: 

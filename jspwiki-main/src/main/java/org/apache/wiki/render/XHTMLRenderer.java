@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 /**
- *  Implements a WikiRendered that outputs XHTML.  Because the internal DOM  representation is in XHTML already, this just basically
+ *  Implements a WikiRenderer that outputs XHTML.  Because the internal DOM  representation is in XHTML already, this just basically
  *  dumps out everything out in a non-prettyprinted format.
  *
  *  @since  2.4
@@ -50,6 +50,7 @@ public class XHTMLRenderer extends WikiRenderer {
     /**
      *  {@inheritDoc}
      */
+    @Override
     public String getString() throws IOException {
         m_document.setContext( m_context );
 

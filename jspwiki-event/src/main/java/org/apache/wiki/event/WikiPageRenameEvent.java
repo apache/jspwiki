@@ -81,6 +81,7 @@ public class WikiPageRenameEvent extends WikiPageEvent {
      *
      * @return a String representation of the type
      */
+    @Override
     public String eventName() {
         return "PAGE_RENAMED";
     //  switch ( getType() )
@@ -94,6 +95,7 @@ public class WikiPageRenameEvent extends WikiPageEvent {
     /** Returns a human-readable description of the event type.
      * @return a String description of the type
      */
+    @Override
     public String getTypeDescription() {
         return "page renamed event";
     //  switch ( getType() )

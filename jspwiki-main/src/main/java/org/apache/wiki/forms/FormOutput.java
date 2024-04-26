@@ -1,4 +1,4 @@
-/* 
+/*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 
 package org.apache.wiki.forms;
@@ -27,6 +27,7 @@ import org.apache.wiki.plugin.DefaultPluginManager;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.FormUtil;
+import org.apache.wiki.util.TextUtil;
 
 import java.text.MessageFormat;
 import java.util.Map;
@@ -42,14 +43,14 @@ public class FormOutput extends FormElement {
      * <p>
      * If the parameter 'populate' was given, the WikiPlugin it names
      * is used to get default values. (It probably makes a lot of
-     * sense for this to be the same plugin as the handler.) 
+     * sense for this to be the same plugin as the handler.)
      * Information for the populator can be given with the FormSet
      * plugin. If 'populate' is not specified, the form is not
      * displayed.
      * <p>
      * Should there be no HTTP request associated with this request,
      * the method will return immediately with an empty string.
-     * 
+     *
      * @param ctx {@inheritDoc}
      * @param params {@inheritDoc}
      * @return {@inheritDoc}
@@ -61,12 +62,12 @@ public class FormOutput extends FormElement {
             return "";
         }
         final ResourceBundle rb = Preferences.getBundle( ctx, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
-        
+
         // If we are NOT here due to this form being submitted, we do nothing.
         // The submitted form MUST have parameter 'formname' equal to the name
         // parameter of this Form plugin.
 
-        final String formName   = params.get( PARAM_FORM );
+        final String formName   = TextUtil.replaceEntities( params.get( PARAM_FORM ) );
         final String submitForm = ctx.getHttpParameter( PARAM_FORMNAMEHIDDEN );
         final String populator  = params.get( PARAM_POPULATE );
 
@@ -77,10 +78,10 @@ public class FormOutput extends FormElement {
             // the context, otherwise we'll just hide.
             if( !PARAM_HANDLER.equals( populator ) )
                 return "";
-            // If population was allowed, we should first  
+            // If population was allowed, we should first
         }
 
-        final String handler = params.get( PARAM_HANDLER );
+        final String handler = TextUtil.replaceEntities( params.get( PARAM_HANDLER ) );
         if( handler == null || handler.isEmpty() ) {
             // Need to print out an error here as this form is misconfigured
             return "<p class=\"error\">" + MessageFormat.format( rb.getString( "formoutput.missingargument" ), PARAM_HANDLER ) + "</p>";

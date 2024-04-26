@@ -35,7 +35,7 @@ import org.apache.wiki.pages.PageManager;
 public class HasAttachmentsTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LoggerFactory.getLogger( HasAttachmentsTag.class );
+    private static final Logger LOG = LoggerFactory.getLogger( HasAttachmentsTag.class );
     
     @Override
     public final int doWikiStartTag() {
@@ -50,7 +50,7 @@ public class HasAttachmentsTag extends WikiTagBase {
                 }
             }
         } catch( final ProviderException e ) {
-            log.error("Provider failed while trying to check for attachements",e);
+			LOG.error("Provider failed while trying to check for attachements",e);
             // FIXME: THrow something.
         }
 

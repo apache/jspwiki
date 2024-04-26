@@ -111,7 +111,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 	 */
 	public static final String ATTDIR_EXTENSION = "-dir";
 
-	private static final Logger log = LoggerFactory.getLogger(BasicAttachmentProvider.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BasicAttachmentProvider.class);
 
 	private final ReentrantReadWriteLock attachmentLock = new ReentrantReadWriteLock();
 
@@ -291,8 +291,8 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 
 			final File newfile = new File(attDir, versionNumber + "." + getFileExtension(att.getFileName()));
 			try (final OutputStream out = Files.newOutputStream(newfile.toPath())) {
-				log.info("Uploading attachment " + att.getFileName() + " to page " + att.getParentName());
-				log.info("Saving attachment contents to " + newfile.getAbsolutePath());
+            LOG.info( "Uploading attachment " + att.getFileName() + " to page " + att.getParentName() );
+            LOG.info( "Saving attachment contents to " + newfile.getAbsolutePath() );
 				FileUtil.copyContents(data, out);
 
 				final Properties props = getPageProperties(att);
@@ -369,7 +369,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 				return Files.newInputStream(f.toPath());
 			}
 			catch (final FileNotFoundException e) {
-				log.error("File not found: " + e.getMessage());
+				LOG.error("File not found: " + e.getMessage());
 				throw new ProviderException("No such page was found.");
 			}
 		}
@@ -491,7 +491,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 			final Attachment att = new org.apache.wiki.attachment.Attachment(m_engine, page.getName(), name);
 			final File dir = findAttachmentDir(att);
 			if (!dir.exists()) {
-				// log.debug("Attachment dir not found - thus no attachment can exist.");
+            // LOG.debug("Attachment dir not found - thus no attachment can exist.");
 				return null;
 			}
 
@@ -523,11 +523,11 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 				att.setLastModified(new Date(f.lastModified()));
 			}
 			catch (final FileNotFoundException e) {
-				log.error("Can't get attachment properties for " + att, e);
+				LOG.error("Can't get attachment properties for " + att, e);
 				return null;
 			}
 			catch (final IOException e) {
-				log.error("Can't read page properties", e);
+				LOG.error("Can't read page properties", e);
 				throw new ProviderException("Cannot read page properties: " + e.getMessage());
 			}
 			// FIXME: Check for existence of this particular version.
@@ -562,7 +562,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 				}
 			}
 			catch (final ProviderException e) {
-				log.error("Getting version history failed for page: " + att, e);
+				LOG.error("Getting version history failed for page: " + att, e);
 				// FIXME: Should this fail?
 			}
 
@@ -667,11 +667,11 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 			final File srcDir = findPageDir(oldParent.getName());
 			final File destDir = findPageDir(newParent);
 
-			log.debug("Trying to move all attachments from " + srcDir + " to " + destDir);
+        LOG.debug( "Trying to move all attachments from " + srcDir + " to " + destDir );
 
 			// If it exists, we're overwriting an old page (this has already been confirmed at a higher level), so delete any existing attachments.
 			if (destDir.exists()) {
-				log.error("Page rename failed because target directory " + destDir + " exists");
+				LOG.error("Page rename failed because target directory " + destDir + " exists");
 			}
 			else {
 				// destDir.getParentFile().mkdir();

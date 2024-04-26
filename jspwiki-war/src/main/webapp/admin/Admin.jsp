@@ -49,7 +49,7 @@
         <!doctype html>
         <html lang="en">
         <head>
-          <title><wiki:Variable var="applicationname" />: ADMIN UI</title>
+          <title><wiki:Variable var="applicationname" default="Apache JSPWiki" />: ADMIN UI</title>
           <base href="../"/>
           <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
           <wiki:IncludeResources type="stylesheet"/>

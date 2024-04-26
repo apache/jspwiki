@@ -20,7 +20,7 @@ package org.apache.wiki.event;
 
 public class TestWikiEventListener implements WikiEventListener {
 
-    int invoked = 0;
+    int invoked;
 
     /** {@inheritDoc} */
     @Override

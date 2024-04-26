@@ -38,8 +38,9 @@ public abstract class WikiBodyTag extends BodyTagSupport implements TryCatchFina
 
 	private static final long serialVersionUID = -6732266865112847897L;
 	protected WikiContext m_wikiContext;
-    private static final Logger log = LoggerFactory.getLogger( WikiBodyTag.class );
+    private static final Logger LOG = LoggerFactory.getLogger( WikiBodyTag.class );
 
+    @Override
     public int doStartTag() throws JspException {
         try {
             m_wikiContext = (WikiContext) pageContext.getAttribute( Context.ATTR_CONTEXT, PageContext.REQUEST_SCOPE );
@@ -49,7 +50,7 @@ public abstract class WikiBodyTag extends BodyTagSupport implements TryCatchFina
 
             return doWikiStartTag();
         } catch( final Exception e ) {
-            log.error( "Tag failed", e );
+            LOG.error( "Tag failed", e );
             throw new JspException( "Tag failed, check logs: "+e.getMessage() );
         }
     }
@@ -63,9 +64,11 @@ public abstract class WikiBodyTag extends BodyTagSupport implements TryCatchFina
      */
     public abstract int doWikiStartTag() throws JspException, IOException;
 
-    public void doCatch( final Throwable arg0) throws Throwable {
+    @Override
+    public void doCatch(final Throwable arg0) throws Throwable {
     }
 
+    @Override
     public void doFinally()
     {
         m_wikiContext = null;

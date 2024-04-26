@@ -51,7 +51,7 @@ public final class FileUtil {
 
     /** Size of the buffer used when copying large chunks of data. */
     private static final int      BUFFER_SIZE = 8192;
-    private static final Logger log         = LoggerFactory.getLogger(FileUtil.class);
+    private static final Logger LOG         = LoggerFactory.getLogger(FileUtil.class);
 
     /**
      *  Private constructor prevents instantiation.
@@ -104,7 +104,7 @@ public final class FileUtil {
      *  @throws InterruptedException If the command was halted
      */
     public static String runSimpleCommand( final String command, final String directory ) throws IOException, InterruptedException {
-        log.info( "Running simple command " + command + " in " + directory );
+        LOG.info( "Running simple command " + command + " in " + directory );
         final StringBuilder result = new StringBuilder();
         final Process process = Runtime.getRuntime().exec( command, null, new File( directory ) );
 
@@ -122,7 +122,7 @@ public final class FileUtil {
             }
 
             if( error.length() > 0 ) {
-                log.error("Command failed, error stream is: "+error);
+                LOG.error("Command failed, error stream is: "+error);
             }
 
             process.waitFor();

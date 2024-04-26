@@ -44,7 +44,7 @@ import java.util.Properties;
  */
 public class CreoleFilter extends BasePageFilter {
     
-    private static final Logger log = LoggerFactory.getLogger(CreoleFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CreoleFilter.class);
     
     /**
      *  {@inheritDoc}
@@ -64,7 +64,7 @@ public class CreoleFilter extends BasePageFilter {
             final Properties prop = m_engine.getWikiProperties();
             return new CreoleToJSPWikiTranslator().translateSignature(prop, content,username);
         } catch( final Exception e ) {
-            log.error( e.getMessage(), e );
+            LOG.error( e.getMessage(), e );
             return e.getMessage();
         }
     }
@@ -78,7 +78,7 @@ public class CreoleFilter extends BasePageFilter {
             final Properties prop = m_engine.getWikiProperties();
             return new CreoleToJSPWikiTranslator().translate(prop ,content);
         } catch( final Exception e ) {
-            log.error( e.getMessage(), e );
+            LOG.error( e.getMessage(), e );
             return content
                    + "\n \n %%error \n"
                    + "[CreoleFilterError]: This page was not translated by the CreoleFilter due to "

@@ -13,7 +13,6 @@
  */
 package org.apache.wiki.references;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.spi.Wiki;
@@ -25,42 +24,29 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.Properties;
 import java.util.Set;
+
+import static org.apache.wiki.TestEngine.with;
 
 /**
  * The ReferenceManager maintains all hyperlinks between wiki pages.
  */
 public class ReferenceManagerTest  {
 
-    Properties props = TestEngine.getTestProperties();
-    TestEngine engine;
-    ReferenceManager mgr;
+    TestEngine engine = TestEngine.build( with( "jspwiki.translatorReader.matchEnglishPlurals", "true" ) );
+    ReferenceManager mgr = engine.getManager( ReferenceManager.class );
 
     @BeforeEach
     public void setUp() throws Exception {
-        props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true");
-
-        engine = new TestEngine(props);
-
         // create two handy wiki pages used in most test cases
         // Danger! all wiki page names must start with a capital letter!
         engine.saveText( "TestPage", "Reference to [Foobar]." );
         engine.saveText( "Foobar", "Reference to [Foobar2], [Foobars], [Foobar]" );
-
-        mgr = engine.getManager( ReferenceManager.class );
     }
 
     @AfterEach
     public void tearDown() {
-        // any wiki page that was created must be deleted!
-        TestEngine.emptyWikiDir();
-
-        // jspwiki always uses a singleton CacheManager, so clear the cache at the end of every test case to avoid polluting another test case
-        CacheManager.getInstance().removeAllCaches();
-
-        // make sure that the reference manager cache is cleaned
-        TestEngine.emptyWorkDir(null);
+        engine.stop();
     }
 
     @Test
@@ -150,7 +136,7 @@ public class ReferenceManagerTest  {
     }
 
     /**
-     *  Should Assertions.fail in 2.2.14-beta
+     *  Should Assertions.
      */
     @Test
     public void testSingularReferences() throws Exception {
@@ -197,11 +183,13 @@ public class ReferenceManagerTest  {
 
     @Test
     public void testUpdateBothExist() throws Exception {
-        engine.saveText( "Foobars", "qwertz" );
-        final Collection< String > c = mgr.findReferrers( "Foobars" );
+        engine.saveText( "BooFars", "qwertz" );
+        engine.saveText( "Boo0", "Reference to [BooFars]" );
+        engine.saveText( "Boo1", "Another reference to [BooFars]" );
+        final Collection< String > c = mgr.findReferrers( "BooFars" );
         Assertions.assertNotNull( c, "referrers expected" );
-        Assertions.assertEquals( 2, c.size(), "Foobars referrers" );
-        Assertions.assertTrue( c.contains( "TestPage" ) && c.contains("Foobar"), "Foobars referrer is not TestPage" );
+        Assertions.assertEquals( 2, c.size(), "BooFars referrers: " + c );
+        Assertions.assertTrue( c.contains( "Boo0" ) && c.contains("Boo1"), "BooFars referrers are not Boo*" );
     }
 
     @Test

@@ -109,7 +109,7 @@ public class ViewWikiPage implements HaddockPage {
      * @return {@link SearchResultsPage} instance, to allow chaining of actions.
      */
     public SearchResultsPage searchFor( final String text ) {
-        Selenide.$( By.id( "searchForm" ) ).hover();
+        Selenide.$( By.className( "icon-search" ) ).hover();
         Selenide.$( By.id( "query" ) ).click();
         Selenide.$( By.id( "query" ) ).val( text );
         Selenide.$( By.id( "searchSubmit" ) ).click();

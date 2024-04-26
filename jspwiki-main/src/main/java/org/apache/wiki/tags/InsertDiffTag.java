@@ -43,7 +43,7 @@ import java.io.IOException;
 public class InsertDiffTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LoggerFactory.getLogger( InsertDiffTag.class );
+    private static final Logger LOG = LoggerFactory.getLogger( InsertDiffTag.class );
     
     /** Attribute which is used to store the old page content to the Page Context */
     public static final String ATTR_OLDVERSION = "olddiff";
@@ -93,11 +93,11 @@ public class InsertDiffTag extends WikiTagBase {
         final Integer vernew = ( Integer )pageContext.getAttribute( ATTR_NEWVERSION, PageContext.REQUEST_SCOPE );
         final Integer verold = ( Integer )pageContext.getAttribute( ATTR_OLDVERSION, PageContext.REQUEST_SCOPE );
 
-        log.debug("Request diff between version "+verold+" and "+vernew);
+        LOG.debug("Request diff between version "+verold+" and "+vernew);
 
         if( ctx.getPage() != null ) {
             final JspWriter out = pageContext.getOut();
-            final String diff = engine.getManager( DifferenceManager.class ).getDiff( ctx, vernew.intValue(), verold.intValue() );
+            final String diff = engine.getManager( DifferenceManager.class ).getDiff( ctx, vernew, verold);
 
             if( diff.isEmpty() ) {
                 return EVAL_BODY_INCLUDE;

@@ -71,11 +71,11 @@
         <% evenOdd = (i % 2 == 0) ? "even" : "odd"; %>
         <tr class="<%=evenOdd%>">
           <!-- Workflow ID -->
-          <td align="center"><c:out value="${decision.workflow.id}"/></td>
+          <td align="center"><c:out value="${decision.workflowId}"/></td>
           <!-- Name of item -->
           <td align="left">
             <fmt:message key="${decision.messageKey}">
-              <c:forEach var="messageArg" items="${decision.messageArguments}">
+              <c:forEach var="messageArg" items="${activeWorkflows[decision.workflowId].messageArguments}">
                 <fmt:param><c:out value="${messageArg}"/></fmt:param>
               </c:forEach>
             </fmt:message>
@@ -84,6 +84,7 @@
           <td align="left">
             <form id="<c:out value='decision.${decision.id}'/>"
               action="<wiki:Link jsp='Workflow.jsp' format='url'/>" method="POST" accept-charset="UTF-8">
+              <wiki:CsrfProtection/>
               <input type="hidden" name="action" value="decide" />
               <input type="hidden" name="id" value="<c:out value='${decision.id}' />" />
               <select name="outcome" onchange="SubmitOutcomeIfSelected(this)">
@@ -94,7 +95,7 @@
             </form>
           </td>
           <!-- Requester -->
-          <td align="left"><c:out value="${decision.owner.name}"/></td>
+          <td align="left"><c:out value="${activeWorkflows[decision.workflowId].owner.name}"/></td>
           <!-- When did the actor start this step? -->
           <td align="left">
             <fmt:formatDate value="${decision.startTime}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
@@ -163,6 +164,7 @@
           <!-- Actions -->
           <td align="left">
             <form id="<c:out value='workflow.${workflow.id}'/>" action="<wiki:Link jsp='Workflow.jsp' format='url'/>" method="POST" accept-charset="UTF-8">
+              <wiki:CsrfProtection/>
               <input type="submit" name="submit" value="<fmt:message key="outcome.step.abort" />" />
               <input type="hidden" name="action" value="abort" />
               <input type="hidden" name="id" value="<c:out value="${workflow.id}" />" />

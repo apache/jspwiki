@@ -121,7 +121,7 @@
     if( author == null ) {
         author = storedUser;
     }
-    if( author == null || author.length() == 0 ) {
+    if( author == null || author.isEmpty()) {
         author = StringUtils.capitalize( rb.getString( "varmgr.anonymous" ) );
     }
 
@@ -201,15 +201,15 @@
         //
         String htmlText = findParam( pageContext, "htmlPageText" );
         if( htmlText != null && cancel == null ) {
-        	commentText = new HtmlStringToWikiTranslator().translate(htmlText,wikiContext);
+        	commentText = new HtmlStringToWikiTranslator( wiki ).translate(htmlText,wikiContext);
         }
 
         pageText.append( commentText );
 
         log.debug("Author name ="+author);
-        if( author != null && author.length() > 0 ) {
+        if( author != null && !author.isEmpty()) {
             String signature = author;
-            if( link != null && link.length() > 0 ) {
+            if( link != null && !link.isEmpty()) {
                 link = HttpUtil.guessValidURI( link );
                 signature = "["+author+"|"+link+"]";
             }

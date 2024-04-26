@@ -46,7 +46,7 @@ public final class Release {
 
     /**
      *  This should be empty when doing a release - otherwise keep it as "-git-" so that whenever someone checks out the code, they know
-     *  it is a bleeding-edge version.  Other possible values are "alpha" and "beta" for alpha and beta versions, respectively.
+     *  it is a bleeding-edge version.  Other possible values are "-alpha-" and "-beta-" for alpha and beta versions, respectively.
      *  <p>
      *  If the POSTFIX is empty, it is not added to the version string.
      */
@@ -56,10 +56,10 @@ public final class Release {
     public static final int        VERSION       = 2;
 
     /** The JSPWiki revision. */
-    public static final int        REVISION      = 11;
+    public static final int        REVISION      = 12;
 
     /** The minor revision.  */
-    public static final int        MINORREVISION = 0;
+    public static final int        MINORREVISION = 2;
 
     /** The build number/identifier.  This is a String as opposed to an integer, just so that people can add other identifiers to it.
      * The build number is incremented every time a committer checks in code, and reset when a release is made.
@@ -69,7 +69,7 @@ public final class Release {
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "12";
+    public static final String     BUILD         = "11";
 
     /**
      *  This is the generic version string you should use when printing out the version.  It is of

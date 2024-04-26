@@ -36,7 +36,7 @@
 <html lang="en" id="top" xmlns="http://www.w3.org/1999/xhtml" xmlns:jspwiki="http://jspwiki.apache.org">
 
 <head>
-  <title><fmt:message key="upload.title"><fmt:param><wiki:Variable var="applicationname"/></fmt:param></fmt:message></title>
+  <title><fmt:message key="upload.title"><fmt:param><wiki:Variable var="applicationname" default="Apache JSPWiki"/></fmt:param></fmt:message></title>
   <wiki:Include page="commonheader.jsp"/>
   <meta name="robots" content="noindex,nofollow" />
 </head>

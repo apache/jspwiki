@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class LinkParsingOperations {
 
-    private static final Logger log = LoggerFactory.getLogger( LinkParsingOperations.class );
+    private static final Logger LOG = LoggerFactory.getLogger( LinkParsingOperations.class );
     private final Context wikiContext;
 
     /**
@@ -173,7 +173,7 @@ public class LinkParsingOperations {
         try {
             return wikiContext.getEngine().getFinalPageName( page ) != null;
         } catch( final ProviderException e ) {
-            log.warn( "TranslatorReader got a faulty page name [" + page + "]!", e );
+            LOG.warn( "TranslatorReader got a faulty page name [" + page + "]!", e );
             return false;
         }
     }
@@ -191,7 +191,7 @@ public class LinkParsingOperations {
         try {
             return wikiContext.getEngine().getFinalPageName( page );
         } catch( final ProviderException e ) {
-            log.warn( "TranslatorReader got a faulty page name [" + page + "]!", e );
+            LOG.warn( "TranslatorReader got a faulty page name [" + page + "]!", e );
             return null;
         }
     }

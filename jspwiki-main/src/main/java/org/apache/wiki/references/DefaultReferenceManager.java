@@ -47,6 +47,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /*
   BUGS
@@ -64,12 +65,12 @@ import java.util.concurrent.ConcurrentHashMap;
    A word about synchronizing:
 
    I expect this object to be accessed in three situations:
-   - when a Engine is created and it scans its wikipages
-   - when the WE saves a page
-   - when a JSP page accesses one of the WE's ReferenceManagers to display a list of (un)referenced pages.
+   - when an Engine is created, and it scans its wikipages
+   - when the Engine saves a page
+   - when a JSP page accesses one of the Engine's ReferenceManagers to display a list of (un)referenced pages.
 
    So, access to this class is fairly rare, and usually triggered by user interaction. OTOH, the methods in this class use their storage
-   objects intensively (and, sorry to say, in an unoptimized manner =). My deduction: using unsynchronized HashMaps etc and syncing methods
+   objects intensively (and, sorry to say, in an unoptimized manner =). My deduction: using unsynchronized HashMaps etc. and syncing methods
    or code blocks is preferrable to using slow, synced storage objects. We don't have iterative code here, so I'm going to use synced
    methods for now.
 
@@ -104,9 +105,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 // FIXME: The way that we save attributes is now a major booboo, and must be
-//        replace forthwith.  However, this is a workaround for the great deal
+//        replaced forthwith.  However, this is a workaround for the great deal
 //        of problems that occur here...
-public class DefaultReferenceManager extends BasePageFilter implements ReferenceManager {
+public class DefaultReferenceManager extends BasePageFilter implements ReferenceManager, Serializable {
 
     /**
      *  Maps page wikiname to a Collection of pages it refers to. The Collection must contain Strings. The Collection may contain
@@ -124,7 +125,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
 
     private final boolean m_matchEnglishPlurals;
 
-    private static final Logger log = LoggerFactory.getLogger( DefaultReferenceManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger( DefaultReferenceManager.class);
     private static final String SERIALIZATION_FILE = "refmgr.ser";
     private static final String SERIALIZATION_DIR  = "refmgr-attr";
     private static final String SERIALIZATION_PROPERTY  = "jspwiki.referenceManager.serialize";
@@ -175,16 +176,16 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      */
     @Override
     public void initialize( final Collection< Page > pages ) throws ProviderException {
-        log.debug( "Initializing new ReferenceManager with " + pages.size() + " initial pages." );
+        LOG.debug( "Initializing new ReferenceManager with {} initial pages.", pages.size() );
         final StopWatch sw = new StopWatch();
         sw.start();
-        log.info( "Starting cross reference scan of WikiPages" );
+        LOG.info( "Starting cross reference scan of WikiPages" );
 
         //  First, try to serialize old data from disk.  If that fails, we'll go and update the entire reference lists (which'll take time)
         try {
             //  Unserialize things.  The loop below cannot be combined with the other loop below, simply because
             //  engine.getPage() has side effects such as loading initializing the user databases, which in turn want all
-            //  of the pages to be read already...
+            //  the pages to be read already...
             //
             //  Yes, this is a kludge.  We know.  Will be fixed.
             final long saved = unserializeFromDisk();
@@ -201,7 +202,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
                     final Page wp = m_engine.getManager( PageManager.class ).getPage( page.getName() );
 
                     if( wp.getLastModified() == null ) {
-                        log.error( "Provider returns null lastModified.  Please submit a bug report." );
+						LOG.fatal( "Provider returns null lastModified.  Please submit a bug report." );
                     } else if( wp.getLastModified().getTime() > saved ) {
                         updatePageReferences( wp );
                     }
@@ -209,7 +210,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
             }
 
         } catch( final Exception e ) {
-            log.info( "Unable to unserialize old refmgr information, rebuilding database: " + e.getMessage() );
+            LOG.info( "Unable to unserialize old refmgr information, rebuilding database: {}", e.getMessage() );
             buildKeyLists( pages );
 
             // Scan the existing pages from disk and update references in the manager.
@@ -225,7 +226,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
         }
 
         sw.stop();
-        log.info( "Cross reference scan done in "+sw );
+        LOG.info( "Cross reference scan done in {}", sw );
 
         WikiEventManager.addWikiEventListener( m_engine.getManager( PageManager.class ), this );
     }
@@ -259,7 +260,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
             m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
 
             sw.stop();
-            log.debug("Read serialized data successfully in "+sw);
+            LOG.debug( "Read serialized data successfully in {}", sw );
         }
 
         return saved;
@@ -284,9 +285,9 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
 
             sw.stop();
 
-            log.debug("serialization done - took "+sw);
+            LOG.debug( "serialization done - took {}", sw );
         } catch( final IOException ioe ) {
-            log.error("Unable to serialize!", ioe);
+            LOG.error( "Unable to serialize!", ioe );
         }
     }
 
@@ -300,7 +301,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
 
 	        return TextUtil.toHexString( dig ) + ".cache";
 		} catch( final NoSuchAlgorithmException e ) {
-			log.error( "What do you mean - no such algorithm?", e );
+			LOG.error( "What do you mean - no such algorithm?", e );
 			return null;
 		}
     }
@@ -330,18 +331,18 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
             try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
                 final StopWatch sw = new StopWatch();
                 sw.start();
-                log.debug( "Deserializing attributes for " + p.getName() );
+                LOG.debug( "Deserializing attributes for {}", p.getName() );
 
                 final long ver = in.readLong();
                 if( ver != serialVersionUID ) {
-                    log.debug("File format has changed; cannot deserialize.");
+                    LOG.debug( "File format has changed; cannot deserialize." );
                     return 0L;
                 }
 
                 saved = in.readLong();
                 final String name  = in.readUTF();
                 if( !name.equals( p.getName() ) ) {
-                    log.debug("File name does not match (" + name + "), skipping...");
+                    LOG.debug( "File name does not match ({}), skipping...", name );
                     return 0L; // Not here
                 }
 
@@ -350,11 +351,11 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
                     final String key   = in.readUTF();
                     final Object value = in.readObject();
                     p.setAttribute( key, value );
-                    log.debug("   attr: "+key+"="+value);
+                    LOG.debug( "   attr: {}={}", key, value );
                 }
 
                 sw.stop();
-                log.debug("Read serialized data for "+name+" successfully in "+sw);
+                LOG.debug( "Read serialized data for {} successfully in {}", name, sw );
                 p.setHasMetadata();
             }
         }
@@ -386,7 +387,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
                 // new Set to avoid concurrency issues
                 final Set< Map.Entry < String, Object > > entries = new HashSet<>( p.getAttributes().entrySet() );
 
-                if( entries.size() == 0 ) {
+                if(entries.isEmpty()) {
                     //  Nothing to serialize, therefore we will just simply remove the serialization file so that the
                     //  next time we boot, we don't deserialize old data.
                     f.delete();
@@ -406,10 +407,10 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
                 }
 
             } catch( final IOException e ) {
-                log.error( "Unable to serialize!", e );
+                LOG.error( "Unable to serialize!", e );
             } finally {
                 sw.stop();
-                log.debug( "serialization for " + p.getName() + " done - took " + sw );
+                LOG.debug( "serialization for {} done - took {}", p.getName(), sw );
             }
         }
 
@@ -459,7 +460,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  @param page Name of the page to remove from the maps.
      */
     @Override
-    public synchronized void pageRemoved( final Page page ) {
+    public void pageRemoved( final Page page ) {
         pageRemoved( page.getName() );
     }
 
@@ -483,7 +484,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
                 }
             }
 
-            log.debug("Removing from m_refersTo HashMap key:value "+pageName+":"+m_refersTo.get( pageName ));
+            LOG.debug( "Removing from m_refersTo HashMap key:value {}:{}", pageName, m_refersTo.get( pageName ) );
             m_refersTo.remove( pageName );
         }
 
@@ -520,14 +521,14 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  Updates the referred pages of a new or edited WikiPage. If a refersTo entry for this page already exists, it is removed
      *  and a new one is built from scratch. Also calls updateReferredBy() for each referenced page.
      *  <P>
-     *  This is the method to call when a new page has been created and we want to a) set up its references and b) notify the
+     *  This is the method to call when a new page has been created, and we want to a) set up its references and b) notify the
      *  referred pages of the references. Use this method during run-time.
      *
      *  @param page Name of the page to update.
      *  @param references A Collection of Strings, each one pointing to a page this page references.
      */
     @Override
-    public synchronized void updateReferences( final String page, final Collection< String > references ) {
+    public void updateReferences( final String page, final Collection< String > references ) {
         internalUpdateReferences( page, references );
         serializeToDisk();
     }
@@ -548,11 +549,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
         final Collection< String > oldRefTo = m_refersTo.get( page );
         m_refersTo.remove( page );
 
-        final TreeSet< String > cleanedRefs = new TreeSet<>();
-        for( final String ref : references ) {
-            final String reference = getFinalPageName( ref );
-            cleanedRefs.add( reference );
-        }
+        final TreeSet< String > cleanedRefs = references.stream().map(this::getFinalPageName).collect(Collectors.toCollection(TreeSet::new));
 
         m_refersTo.put( page, cleanedRefs );
 
@@ -564,7 +561,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
 
         //  Get all pages that used to be referred to by 'page' and remove that reference. (We don't want to try to figure out
         //  which particular references were removed...)
-        cleanReferredBy( page, oldRefTo, cleanedRefs );
+        cleanReferredBy( page, oldRefTo);
 
         //  Notify all referred pages of their referinesshoodicity.
         for( final String referredPageName : cleanedRefs ) {
@@ -602,8 +599,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      * We'll just try the first for now. Need to come back and optimize this a bit.
      */
     private void cleanReferredBy( final String referrer,
-                                  final Collection< String > oldReferred,
-                                  final Collection< String > newReferred ) {
+                                  final Collection< String > oldReferred ) {
         if( oldReferred == null ) {
             return;
         }
@@ -631,7 +627,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *
      * @param pages a Collection containing WikiPage objects.
      */
-    private synchronized void buildKeyLists( final Collection< Page > pages ) {
+    private void buildKeyLists( final Collection< Page > pages ) {
         m_refersTo.clear();
         m_referredBy.clear();
         if( pages == null ) {
@@ -646,7 +642,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
                 m_refersTo.put( page.getName(), new TreeSet<>() );
             }
         } catch( final ClassCastException e ) {
-            log.error( "Invalid collection entry in ReferenceManager.buildKeyLists().", e );
+			LOG.error( "Invalid collection entry in ReferenceManager.buildKeyLists().", e );
         }
     }
 
@@ -654,9 +650,6 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
     /**
      * Marks the page as referred to by the referrer. If the page does not exist previously, nothing is done. (This means
      * that some page, somewhere, has a link to a page that does not exist.)
-     * <P>
-     * This method is NOT synchronized. It should only be referred to from within a synchronized method, or it should be
-     * made synced if necessary.
      */
     private void updateReferredBy( final String page, final String referrer ) {
         // We're not really interested in first level self-references.
@@ -682,12 +675,12 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
 
 
     /**
-     * Clears the references to a certain page so it's no longer in the map.
+     * Clears the references to a certain page, so it's no longer in the map.
      *
      * @param pagename  Name of the page to clear references for.
      */
     @Override
-    public synchronized void clearPageEntries( String pagename ) {
+    public void clearPageEntries( String pagename ) {
         pagename = getFinalPageName( pagename );
 
         //  Remove this item from the referredBy list of any page which this item refers to.
@@ -711,7 +704,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  @return The Collection of Strings
      */
     @Override
-    public synchronized Collection< String > findUnreferenced() {
+    public Collection< String > findUnreferenced() {
         final ArrayList< String > unref = new ArrayList<>();
         for( final String key : m_referredBy.keySet() ) {
             final Set< ? > refs = getReferenceList( m_referredBy, key );
@@ -734,21 +727,13 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      * @return A Collection of Strings
      */
     @Override
-    public synchronized Collection< String > findUncreated() {
-        final TreeSet< String > uncreated = new TreeSet<>();
+    public Collection< String > findUncreated() {
+        final TreeSet< String > uncreated;
 
         // Go through m_refersTo values and check that m_refersTo has the corresponding keys.
         // We want to reread the code to make sure our HashMaps are in sync...
         final Collection< Collection< String > > allReferences = m_refersTo.values();
-        for( final Collection<String> refs : allReferences ) {
-            if( refs != null ) {
-                for( final String aReference : refs ) {
-                    if( !m_engine.getManager( PageManager.class ).wikiPageExists( aReference ) ) {
-                        uncreated.add( aReference );
-                    }
-                }
-            }
-        }
+        uncreated = allReferences.stream().filter(Objects::nonNull).flatMap(Collection::stream).filter(aReference -> !m_engine.getManager(PageManager.class).wikiPageExists(aReference)).collect(Collectors.toCollection(TreeSet::new));
 
         return uncreated;
     }
@@ -793,7 +778,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      * @return A Set of Strings.  May return null, if the page does not exist, or if it has no references.
      */
     @Override
-    public synchronized Set< String > findReferrers( final String pagename ) {
+    public Set< String > findReferrers( final String pagename ) {
         final Set< String > refs = getReferenceList( m_referredBy, pagename );
         if( refs == null || refs.isEmpty() ) {
             return null;
@@ -888,7 +873,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
             final String s = m_engine.getFinalPageName( orig );
             return s != null ? s : orig;
         } catch( final ProviderException e ) {
-            log.error("Error while trying to fetch a page name; trying to cope with the situation.",e);
+            LOG.error( "Error while trying to fetch a page name; trying to cope with the situation.", e );
             return orig;
         }
     }

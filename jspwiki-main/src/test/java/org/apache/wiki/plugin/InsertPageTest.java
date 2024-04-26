@@ -22,22 +22,12 @@ import org.apache.wiki.TestEngine;
 import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Properties;
 
+public class InsertPageTest {
 
-public class InsertPageTest
-{
-    protected TestEngine testEngine;
-    Properties props = TestEngine.getTestProperties();
-
-    @BeforeEach
-    public void setUp() throws Exception
-    {
-        testEngine = new TestEngine(props);
-    }
+    static protected TestEngine testEngine = TestEngine.build();
 
     @AfterEach
     public void tearDown() throws Exception
@@ -56,10 +46,9 @@ public class InsertPageTest
 
         testEngine.saveText("ThisPage",src);
 
-        // Just check that it contains a proper error message; don't bother do HTML
-        // checking.
+        // Just check that it contains a proper error message; don't bother do HTML checking.
         final String res = testEngine.getManager( RenderingManager.class ).getHTML("ThisPage");
-        Assertions.assertTrue( res.indexOf("Circular reference") != -1 );
+        Assertions.assertTrue( res.contains( "Circular reference" ) );
     }
 
     @Test
@@ -71,9 +60,8 @@ public class InsertPageTest
         testEngine.saveText("ThisPage",src);
         testEngine.saveText("ThisPage2",src2);
 
-        // Just check that it contains a proper error message; don't bother do HTML
-        // checking.
-        Assertions.assertTrue( testEngine.getManager( RenderingManager.class ).getHTML("ThisPage").indexOf("Circular reference") != -1 );
+        // Just check that it contains a proper error message; don't bother do HTML checking.
+        Assertions.assertTrue( testEngine.getManager( RenderingManager.class ).getHTML( "ThisPage" ).contains( "Circular reference" ) );
     }
 
     @Test

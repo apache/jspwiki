@@ -43,26 +43,26 @@ public class JSPWikiLinkRenderer implements NodeRenderer {
     @Override
     public Set< NodeRenderingHandler< ? > > getNodeRenderingHandlers() {
         final HashSet< NodeRenderingHandler< ? > > set = new HashSet<>();
-        set.add( new NodeRenderingHandler<>( JSPWikiLink.class, new NodeRenderingHandler.CustomNodeRenderer< JSPWikiLink >() {
+        set.add( new NodeRenderingHandler<>( JSPWikiLink.class, new NodeRenderingHandler.CustomNodeRenderer<>() {
 
             /**
              * {@inheritDoc}
              */
             @Override
-            public void render( final JSPWikiLink node, final NodeRendererContext context, final HtmlWriter html ) {
-                if( context.isDoNotRenderLinks() ) {
-                    context.renderChildren( node );
+            public void render(final JSPWikiLink node, final NodeRendererContext context, final HtmlWriter html) {
+                if (context.isDoNotRenderLinks()) {
+                    context.renderChildren(node);
                 } else {
                     // standard Link Rendering
-                    final ResolvedLink resolvedLink = context.resolveLink( LinkType.LINK, node.getUrl().unescape(), null );
+                    final ResolvedLink resolvedLink = context.resolveLink(LinkType.LINK, node.getUrl().unescape(), null);
 
-                    html.attr( "href", resolvedLink.getUrl() );
-                    if( node.getTitle().isNotNull() ) {
-                        html.attr( "title", node.getTitle().unescape() );
+                    html.attr("href", resolvedLink.getUrl());
+                    if (node.getTitle().isNotNull()) {
+                        html.attr("title", node.getTitle().unescape());
                     }
-                    html.srcPos( node.getChars() ).withAttr( resolvedLink ).tag( "a" );
-                    context.renderChildren( node );
-                    html.tag( "/a" );
+                    html.srcPos(node.getChars()).withAttr(resolvedLink).tag("a");
+                    context.renderChildren(node);
+                    html.tag("/a");
                 }
             }
         } ) );

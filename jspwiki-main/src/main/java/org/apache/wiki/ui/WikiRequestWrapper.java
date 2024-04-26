@@ -26,6 +26,7 @@ import org.apache.wiki.auth.authorize.Role;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.security.Principal;
+import java.util.Arrays;
 
 /**
  * Servlet request wrapper that encapsulates an incoming HTTP request and overrides its security methods so that the request returns
@@ -101,17 +102,9 @@ public class WikiRequestWrapper extends HttpServletRequestWrapper {
 
         // Iterate through all of the built-in roles and look for a match
         final Principal[] principals = m_session.getRoles();
-        for( final Principal value : principals ) {
-            if( value instanceof Role ) {
-                final Role principal = ( Role )value;
-                if( Role.isBuiltInRole( principal ) && principal.getName().equals( role ) ) {
-                    return true;
-                }
-            }
-        }
 
         // None of the built-in roles match, so no luck
-        return false;
+        return Arrays.stream(principals).filter(value -> value instanceof Role).map(value -> (Role) value).anyMatch(principal -> Role.isBuiltInRole(principal) && principal.getName().equals(role));
     }
 
 }

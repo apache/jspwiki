@@ -40,7 +40,7 @@ import java.util.Map;
  */
 public abstract class AbstractLoginModule implements LoginModule {
 
-    private static final Logger log = LoggerFactory.getLogger( AbstractLoginModule.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AbstractLoginModule.class );
 
     protected CallbackHandler m_handler;
     protected Map< String, ? > m_options;
@@ -70,6 +70,7 @@ public abstract class AbstractLoginModule implements LoginModule {
      * @see javax.security.auth.spi.LoginModule#abort()
      * @return True, always.
      */
+    @Override
     public final boolean abort()
     {
         removePrincipals( m_principals );
@@ -96,13 +97,12 @@ public abstract class AbstractLoginModule implements LoginModule {
      *         failed
      * @see javax.security.auth.spi.LoginModule#commit()
      */
+    @Override
     public final boolean commit() {
         if ( succeeded() ) {
             for ( final Principal principal : m_principals ) {
                 m_subject.getPrincipals().add( principal );
-                if ( log.isDebugEnabled() ) {
-                    log.debug("Committed Principal " + principal.getName() );
-                }
+                LOG.debug("Committed Principal {}", principal.getName() );
             }
             return true;
         }
@@ -128,7 +128,8 @@ public abstract class AbstractLoginModule implements LoginModule {
      * @param sharedState {@inheritDoc}
      * @param options {@inheritDoc}
      */
-    public final void initialize( final Subject subject, final CallbackHandler callbackHandler, final Map<String,?> sharedState, final Map<String,?> options ) {
+    @Override
+    public final void initialize(final Subject subject, final CallbackHandler callbackHandler, final Map<String,?> sharedState, final Map<String,?> options ) {
         m_principals = new HashSet<>();
         m_subject = subject;
         m_handler = callbackHandler;
@@ -151,6 +152,7 @@ public abstract class AbstractLoginModule implements LoginModule {
      * @throws LoginException if the authentication fails
      * @see javax.security.auth.spi.LoginModule#login()
      */
+    @Override
     public abstract boolean login() throws LoginException;
 
     /**
@@ -160,6 +162,7 @@ public abstract class AbstractLoginModule implements LoginModule {
      *         <code>false</code> if this LoginModule should be ignored
      * @see javax.security.auth.spi.LoginModule#logout()
      */
+    @Override
     public final boolean logout() {
         removePrincipals( m_principals );
 
@@ -177,7 +180,7 @@ public abstract class AbstractLoginModule implements LoginModule {
      */
     private boolean succeeded()
     {
-        return m_principals.size() > 0;
+        return !m_principals.isEmpty();
     }
 
     /**
@@ -186,12 +189,10 @@ public abstract class AbstractLoginModule implements LoginModule {
      * @param principals the principals to remove
      */
     private void removePrincipals( final Collection<Principal> principals ) {
-        for ( final Principal principal : principals ) {
+        for( final Principal principal : principals ) {
             if ( m_subject.getPrincipals().contains( principal ) ) {
                 m_subject.getPrincipals().remove( principal );
-                if ( log.isDebugEnabled() ) {
-                    log.debug("Removed Principal " + principal.getName() );
-                }
+                LOG.debug("Removed Principal {}", principal.getName() );
             }
         }
     }

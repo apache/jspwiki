@@ -39,6 +39,7 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.user.UserProfile;
+import org.apache.wiki.cache.CachingManager;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
@@ -89,16 +90,14 @@ public class DefaultPageManager implements PageManager {
     private static final Logger LOG = LoggerFactory.getLogger( DefaultPageManager.class );
 
     private final PageProvider m_provider;
-
     private final Engine m_engine;
 
     protected ConcurrentHashMap< String, PageLock > m_pageLocks = new ConcurrentHashMap<>();
 
     private final int m_expiryTime;
-
-    private LockReaper m_reaper;
-
+    protected final ConcurrentHashMap< String, PageLock > m_pageLocks = new ConcurrentHashMap<>();
     private final PageSorter pageSorter = new PageSorter();
+    private LockReaper m_reaper;
 
     /**
      * Creates a new PageManager.
@@ -111,7 +110,7 @@ public class DefaultPageManager implements PageManager {
     public DefaultPageManager(final Engine engine, final Properties props) throws NoSuchElementException, WikiException {
         m_engine = engine;
         final String classname;
-        final boolean useCache = "true".equals( props.getProperty( PROP_USECACHE ) );
+        final boolean useCache = m_engine.getManager( CachingManager.class ).enabled( CachingManager.CACHE_PAGES );
         m_expiryTime = TextUtil.parseIntParameter( props.getProperty( PROP_LOCKEXPIRY ), 60 );
 
         //  If user wants to use a cache, then we'll use the CachingProvider.
@@ -124,26 +123,18 @@ public class DefaultPageManager implements PageManager {
         pageSorter.initialize( props );
 
         try {
-            LOG.debug("Page provider class: '" + classname + "'");
-            final Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", classname);
-            m_provider = ( PageProvider ) providerclass.newInstance();
-
-            LOG.debug("Initializing page provider class " + m_provider);
-            m_provider.initialize(m_engine, props);
-        } catch (final ClassNotFoundException e) {
-            LOG.error("Unable to locate provider class '" + classname + "' (" + e.getMessage() + ")", e);
-            throw new WikiException("No provider class. (" + e.getMessage() + ")", e);
-        } catch (final InstantiationException e) {
-            LOG.error("Unable to create provider class '" + classname + "' (" + e.getMessage() + ")", e);
-            throw new WikiException("Faulty provider class. (" + e.getMessage() + ")", e);
-        } catch (final IllegalAccessException e) {
-            LOG.error("Illegal access to provider class '" + classname + "' (" + e.getMessage() + ")", e);
-            throw new WikiException("Illegal provider class. (" + e.getMessage() + ")", e);
-        } catch (final NoRequiredPropertyException e) {
-            LOG.error("Provider did not found a property it was looking for: " + e.getMessage(), e);
+            LOG.debug( "Page provider class: '{}'", classname );
+            m_provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
+            LOG.debug( "Initializing page provider class {}", m_provider );
+            m_provider.initialize( m_engine, props );
+        } catch( final ReflectiveOperationException e ) {
+            LOG.error( "Unable to instantiate provider class '{}' ({})", classname, e.getMessage(), e );
+            throw new WikiException( "Illegal provider class. (" + e.getMessage() + ")", e );
+        } catch( final NoRequiredPropertyException e ) {
+            LOG.error("Provider did not found a property it was looking for: {}", e.getMessage(), e);
             throw e;  // Same exception works.
-        } catch (final IOException e) {
-            LOG.error("An I/O exception occurred while trying to create a new page provider: " + classname, e);
+        } catch( final IOException e ) {
+            LOG.error("An I/O exception occurred while trying to create a new page provider: {}", classname, e);
             throw new WikiException("Unable to start page provider: " + e.getMessage(), e);
         }
 

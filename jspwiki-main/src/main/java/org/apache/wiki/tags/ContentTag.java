@@ -40,7 +40,7 @@ import java.util.Map;
 public class ContentTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LoggerFactory.getLogger( ContentTag.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContentTag.class );
     
     private final Map<String, String> m_mappings = new HashMap<>();
 
@@ -183,13 +183,13 @@ public class ContentTag extends WikiTagBase {
         }
         catch( final ServletException e )
         {
-            log.warn( "Including failed, got a servlet exception from sub-page. "+
+            LOG.warn( "Including failed, got a servlet exception from sub-page. "+
                       "Rethrowing the exception to the JSP engine.", e );
             throw new JspException( e.getMessage() );
         }
         catch( final IOException e )
         {
-            log.warn( "I/O exception - probably the connection was broken. "+
+            LOG.warn( "I/O exception - probably the connection was broken. "+
                       "Rethrowing the exception to the JSP engine.", e );
             throw new JspException( e.getMessage() );
         }

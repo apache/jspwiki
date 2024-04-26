@@ -24,6 +24,7 @@ import org.apache.wiki.ui.admin.AdminBeanManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  *  Provides an iterator for all AdminBeans of a given type.
@@ -54,12 +55,7 @@ public class AdminBeanIteratorTag extends IteratorTag {
     public void resetIterator() {
         final AdminBeanManager mgr = m_wikiContext.getEngine().getManager( AdminBeanManager.class );
         final Collection< AdminBean > beans = mgr.getAllBeans();
-        final ArrayList< AdminBean > typedBeans = new ArrayList<>();
-        for( final AdminBean ab : beans ) {
-            if( ab.getType() == m_type ) {
-                typedBeans.add( ab );
-            }
-        }
+        final ArrayList< AdminBean > typedBeans = beans.stream().filter(ab -> ab.getType() == m_type).collect(Collectors.toCollection(ArrayList::new));
 
         setList( typedBeans );
     }

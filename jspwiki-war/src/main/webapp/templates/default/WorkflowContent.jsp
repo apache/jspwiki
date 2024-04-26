@@ -24,157 +24,163 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
-<fmt:setLocale value="${prefs.Language}"/>
+<fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <div class="page-content table-filter-sort">
 
-	<wiki:UserCheck status="authenticated">
-		<h3><fmt:message key="workflow.heading"/></h3>
-		<p><fmt:message key="workflow.instructions"/></p>
+<wiki:UserCheck status="authenticated">
+<h3><fmt:message key="workflow.heading" /></h3>
+<p><fmt:message key="workflow.instructions"/></p>
 
-		<%-- Pending Decisions --%>
-		<div class="tabs">
-			<h4>
-				<fmt:message key="workflow.decisions.heading"/>
-				<span class="badge">${empty decisions ? "empty" : fn:length(decisions)}</span>
-			</h4>
+<%-- Pending Decisions --%>
+<div class="tabs">
+<h4>
+  <fmt:message key="workflow.decisions.heading" />&nbsp;
+  <c:if test="${!empty decisions}"><span class="badge">${fn:length(decisions)}</span></c:if>
+</h4>
 
-			<c:if test="${empty decisions}">
-				<div class="information"><fmt:message key="workflow.noinstructions"/></div>
-			</c:if>
+<c:if test="${empty decisions}">
+  <div class="information"><fmt:message key="workflow.noinstructions"/></div>
+</c:if>
 
-			<c:if test="${!empty decisions}">
+<c:if test="${!empty decisions}">
 
-				<p id="workflow-actor-instructions"><fmt:message key="workflow.actor.instructions"/></p>
+  <p id="workflow-actor-instructions"><fmt:message key="workflow.actor.instructions"/></p>
 
-				<table class="table table-striped table-condensed" aria-describedby="workflow-actor-instructions">
-					<thead><%-- 5/45/15/15/20--%>
-					<th scope="col"><fmt:message key="workflow.id"/></th>
-					<th scope="col"><fmt:message key="workflow.item"/></th>
-					<th scope="col"><fmt:message key="workflow.startTime"/></th>
-					<th scope="col"><fmt:message key="workflow.actions"/></th>
-					</thead>
-					<tbody>
-					<c:forEach var="decision" items="${decisions}">
-						<tr>
+  <table class="table table-striped table-condensed" aria-describedby="workflow-actor-instructions">
+    <thead><%-- 5/45/15/15/20--%>
+      <th scope="col"><fmt:message key="workflow.id"/></th>
+      <th scope="col"><fmt:message key="workflow.item"/></th>
+      <th scope="col"><fmt:message key="workflow.requester"/></th>
+      <th scope="col"><fmt:message key="workflow.startTime"/></th>
+      <th scope="col"><fmt:message key="workflow.actions"/></th>
+    </thead>
+    <tbody>
+      <c:forEach var="decision" items="${decisions}">
+        <tr>
 
-								<%-- Workflow ID --%>
-							<td>${decision.workflowId}</td>
+          <%-- Workflow ID --%>
+          <td>${decision.workflowId}</td>
 
-								<%-- Name of item --%>
-							<td>
-								New user profile
-							</td>
+          <%-- Name of item --%>
+          <td>
+            <fmt:message key="${decision.messageKey}">
+              <c:forEach var="messageArg" items="${activeWorkflows[decision.workflowId].messageArguments}">
+                <fmt:param>${messageArg}</fmt:param>
+              </c:forEach>
+            </fmt:message>
+          </td>
 
-								<%-- When did the actor start this step? --%>
-							<td>
-								<fmt:formatDate value="${decision.startTime}" pattern="${prefs.DateFormat}"
-												timeZone="${prefs.TimeZone}"/>
-							</td>
+          <%-- Requester --%>
+          <td>${activeWorkflows[decision.workflowId].owner.name}</td>
 
-								<%-- Possible actions (outcomes) --%>
-							<td class="nowrap">
-								<form action="<wiki:Link jsp='Workflow.jsp' format='url'/>"
-									  id="decision.${decision.id}"
-									  method="POST" accept-charset="UTF-8">
-									<input type="hidden" name="action" value="decide"/>
-									<input type="hidden" name="id" value="${decision.id}"/>
-									<c:forEach var="outcome" items="${decision.availableOutcomes}">
-										<button class="btn btn-xs btn-default" type="submit" name="outcome"
-												value="${outcome.messageKey}">
-											<fmt:message key="${outcome.messageKey}"/>
-										</button>
-									</c:forEach>
-								</form>
-							</td>
+          <%-- When did the actor start this step? --%>
+          <td>
+            <fmt:formatDate value="${decision.startTime}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+		  </td>
 
-						</tr>
+          <%-- Possible actions (outcomes) --%>
+          <td class="nowrap">
+            <form action="<wiki:Link jsp='Workflow.jsp' format='url'/>"
+                      id="decision.${decision.id}"
+                  method="POST" accept-charset="UTF-8">
+              <wiki:CsrfProtection/>
+              <input type="hidden" name="action" value="decide" />
+              <input type="hidden" name="id" value="${decision.id}" />
+              <c:forEach var="outcome" items="${decision.availableOutcomes}">
+                <button class="btn btn-xs btn-default" type="submit" name="outcome" value="${outcome.messageKey}">
+                  <fmt:message key="${outcome.messageKey}"/>
+                </button>
+              </c:forEach>
+            </form>
+          </td>
 
-						<c:if test="${!empty decision.facts}">
-							<tr class="workflow-details">
-								<td colspan="5">
-									<c:forEach var="fact" items="${decision.facts}">
-										<p><fmt:message key="${fact.messageKey}"/></p>
-										<pre><c:out escapeXml="false" value="${fn:trim(fact.value)}"/></pre>
-										<%-- may contain a full dump for a version diff,  ico save-wiki-page   approval flow --%>
-									</c:forEach>
-								</td>
-							</tr>
-						</c:if>
+        </tr>
 
-					</c:forEach>
-					</tbody>
-				</table>
-			</c:if>
+        <c:if test="${!empty decision.facts}">
+        <tr class="workflow-details">
+          <td colspan="5">
+                <c:forEach var="fact" items="${decision.facts}">
+                  <p><fmt:message key="${fact.messageKey}" /></p>
+                    <pre><c:out escapeXml="false" value="${fn:trim(fact.value)}" /></pre>
+                    <%-- may contain a full dump for a version diff,  ico save-wiki-page   approval flow --%>
+                </c:forEach>
+          </td>
+        </tr>
+        </c:if>
 
-			<!-- Running workflows for which current user is the owner -->
-			<h4>
-				<fmt:message key="workflow.workflows.heading"/>
-				<span class="badge">${empty workflows ? "empty" : fn:length(workflows)}</span>
-			</h4>
+      </c:forEach>
+    </tbody>
+  </table>
+</c:if>
 
-			<c:if test="${empty workflows}">
-				<div class="information"><fmt:message key="workflow.noinstructions"/></div>
-			</c:if>
+<!-- Running workflows for which current user is the owner -->
+<h4>
+  <fmt:message key="workflow.workflows.heading" />&nbsp;
+  <c:if test="${!empty workflows}"><span class="badge">${fn:length(workflows)}</span></c:if>
+</h4>
 
-			<c:if test="${!empty workflows}">
+<c:if test="${empty workflows}">
+  <div class="information"><fmt:message key="workflow.noinstructions"/></div>
+</c:if>
 
-				<p id="workflow-owner-instructions"><fmt:message key="workflow.owner.instructions"/></p>
+<c:if test="${!empty workflows}">
 
-				<table class="table" aria-describedby="workflow-owner-instructions">
-					<thead>
-					<th scope="col"><fmt:message key="workflow.id"/></th>
-					<th scope="col"><fmt:message key="workflow.item"/></th>
-					<th scope="col"><fmt:message key="workflow.actor"/></th>
-					<th scope="col"><fmt:message key="workflow.startTime"/></th>
-					<th scope="col"><fmt:message key="workflow.actions"/></th>
-					</thead>
-					<tbody>
-					<c:forEach var="workflow" items="${workflows}">
-						<tr>
-								<%-- Workflow ID --%>
-							<td>${workflow.id}</td>
+  <p id="workflow-owner-instructions"><fmt:message key="workflow.owner.instructions"/></p>
 
-								<%-- Name of item --%>
-							<td>
-								<fmt:message key="${workflow.messageKey}">
-									<c:forEach var="messageArg" items="${workflow.messageArguments}">
-										<fmt:param><c:out value="${messageArg}"/></fmt:param>
-									</c:forEach>
-								</fmt:message>
-							</td>
+  <table class="table" aria-describedby="workflow-owner-instructions">
+    <thead>
+      <th scope="col"><fmt:message key="workflow.id"/></th>
+      <th scope="col"><fmt:message key="workflow.item"/></th>
+      <th scope="col"><fmt:message key="workflow.actor"/></th>
+      <th scope="col"><fmt:message key="workflow.startTime"/></th>
+      <th scope="col"><fmt:message key="workflow.actions"/></th>
+    </thead>
+    <tbody>
+      <c:forEach var="workflow" items="${workflows}">
+        <tr>
+          <%-- Workflow ID --%>
+          <td>${workflow.id}</td>
 
-								<%-- Current actor --%>
-							<td>${workflow.currentActor.name}</td>
+          <%-- Name of item --%>
+          <td>
+            <fmt:message key="${workflow.messageKey}">
+              <c:forEach var="messageArg" items="${workflow.messageArguments}">
+                <fmt:param><c:out value="${messageArg}"/></fmt:param>
+              </c:forEach>
+            </fmt:message>
+          </td >
 
-								<%-- When did the actor start this step? --%>
-							<td>
-								<fmt:formatDate value="${workflow.currentStep.startTime}" pattern="${prefs.DateFormat}"
-												timeZone="${prefs.TimeZone}"/>
-							</td>
+          <%-- Current actor --%>
+          <td>${workflow.currentActor.name}</td>
 
-								<%-- Actions --%>
-							<td>
-								<form id="workflow.${workflow.id}"
-									  action="<wiki:Link jsp='Workflow.jsp' format='url'/>"
-									  method="POST" accept-charset="UTF-8">
-									<input class="btn btn-danger btn-xs" type="submit" name="submit"
-										   value="<fmt:message key="outcome.step.abort" />"/>
-									<input type="hidden" name="action" value="abort"/>
-									<input type="hidden" name="id" value="${workflow.id}"/>
-								</form>
-							</td>
+          <%-- When did the actor start this step? --%>
+          <td>
+            <fmt:formatDate value="${workflow.currentStep.startTime}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" />
+          </td>
 
-						</tr>
-					</c:forEach>
-					</tbody>
-				</table>
-			</c:if>
+          <%-- Actions --%>
+          <td>
+            <form id="workflow.${workflow.id}"
+              action="<wiki:Link jsp='Workflow.jsp' format='url'/>"
+              method="POST" accept-charset="UTF-8">
+              <wiki:CsrfProtection/>
+              <input class="btn btn-danger btn-xs" type="submit" name="submit" value="<fmt:message key="outcome.step.abort" />" />
+              <input type="hidden" name="action" value="abort" />
+              <input type="hidden" name="id" value="${workflow.id}" />
+            </form>
+          </td>
 
-		</div><%-- class=tabs --%>
-	</wiki:UserCheck>
+        </tr>
+      </c:forEach>
+    </tbody>
+  </table>
+</c:if>
 
-	<wiki:UserCheck status="notAuthenticated">
-		<div class="info"><fmt:message key="workflow.beforelogin"/></div>
-	</wiki:UserCheck>
+</div><%-- class=tabs --%>
+</wiki:UserCheck>
+
+<wiki:UserCheck status="notAuthenticated">
+  <div class="info"><fmt:message key="workflow.beforelogin"/></div>
+</wiki:UserCheck>
 </div>

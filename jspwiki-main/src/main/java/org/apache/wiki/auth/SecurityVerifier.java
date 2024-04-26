@@ -220,9 +220,8 @@ public final class SecurityVerifier {
         s.append( "  <colgroup span=\"" ).append( pageActionsLength * rolesLength ).append( "\" width=\"" ).append( colWidth ).append( "\" align=\"center\"/>\n" );
         s.append( "  <tr>\n" );
         s.append( "    <th rowspan=\"2\" valign=\"bottom\">Permission</th>\n" );
-        for( int i = 0; i < rolesLength; i++ )
-        {
-            s.append( "    <th colspan=\"" ).append( pageActionsLength ).append( "\" title=\"" ).append( roles[i].getClass().getName() ).append( "\">" ).append( roles[i].getName() ).append( "</th>\n" );
+        for (final Principal principal : roles) {
+            s.append("    <th colspan=\"").append(pageActionsLength).append("\" title=\"").append(principal.getClass().getName()).append("\">").append(principal.getName()).append("</th>\n");
         }
         s.append( "  </tr>\n" );
 
@@ -585,7 +584,7 @@ public final class SecurityVerifier {
      */
     File getFileFromProperty( final String property )
     {
-        String propertyValue = null;
+        String propertyValue;
         try
         {
             propertyValue = System.getProperty( property );
@@ -674,7 +673,7 @@ public final class SecurityVerifier {
             // Verify the file
             policy.read();
             final List<Exception> errors = policy.getMessages();
-            if ( errors.size() > 0 ) {
+            if (!errors.isEmpty()) {
                 for( final Exception e : errors ) {
                     m_session.addMessage( ERROR_POLICY, e.getMessage() );
                 }

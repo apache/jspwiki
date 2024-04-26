@@ -31,7 +31,7 @@ class FilterSupportOperations {
     private static final Logger LOG = LoggerFactory.getLogger( FilterSupportOperations.class );
 
     /**
-     * Checks if a given object is using old, non public API for a given Filter. This check is two-fold:
+     * Checks if a given object is using old, non-public API for a given Filter. This check is two-fold:
      * <ul>
      *     <li>if the page filter class name starts with JSPWiki base package we assume we're using latest JSPWiki, and the public API</li>
      *     <li>we try to execute the old, non public API equivalent method passed as parameters. If it exists, well, it is using the
@@ -41,7 +41,7 @@ class FilterSupportOperations {
      * @param pf given object to check
      * @param method requested method
      * @param params class names denoting method parameters
-     * @return old, non public api method if it exists, {@code null} otherwise
+     * @return old, non-public api method if it exists, {@code null} otherwise
      */
     static Method methodOfNonPublicAPI( final PageFilter pf, final String method, final String... params ) {
         if( !pf.getClass().getName().startsWith( "org.apache.wiki" ) ) {
@@ -59,6 +59,7 @@ class FilterSupportOperations {
         return null;
     }
 
+    @SuppressWarnings( "unchecked" )
     static < R > R executePageFilterPhase( final Supplier< R > s, final Method m, final PageFilter pf, final Object... params ) {
         if( m != null ) {
             try {

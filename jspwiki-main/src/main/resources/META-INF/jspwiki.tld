@@ -197,6 +197,15 @@
   </tag>
 
   <tag>
+    <name>CsrfProtection</name>
+    <tag-class>org.apache.wiki.tags.CsrfProtectionTag</tag-class>
+    <body-content>empty</body-content>
+    <attribute>
+      <name>format</name>
+    </attribute>
+  </tag>
+
+  <tag>
     <name>DiffLink</name>
     <tag-class>org.apache.wiki.tags.DiffLinkTag</tag-class>
     <body-content>JSP</body-content>

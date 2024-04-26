@@ -31,9 +31,10 @@ import org.apache.wiki.event.WikiSecurityEvent;
  */
 public class SecurityEventTrap implements WikiEventListener
 {
-    private WikiSecurityEvent m_lastEvent = null;
+    private WikiSecurityEvent m_lastEvent;
     private final List<WikiSecurityEvent> m_events    = new ArrayList<WikiSecurityEvent>();
 
+    @Override
     public void actionPerformed(final WikiEvent event )
     {
         if ( event instanceof WikiSecurityEvent )

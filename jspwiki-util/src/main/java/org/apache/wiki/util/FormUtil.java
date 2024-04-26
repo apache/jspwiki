@@ -91,13 +91,13 @@ public final class FormUtil
     public static List< ? > getNumberedValues(final Map< ?, ? > params, final String keyPrefix )
     {
         final ArrayList<Object> rval = new ArrayList<>();
-        if( params == null || 
-            params.size() == 0 || 
+        if( params == null ||
+                params.isEmpty() ||
             keyPrefix == null || 
             keyPrefix.isEmpty() )
             return rval;
 
-        String fullPrefix = null;
+        String fullPrefix;
         if( keyPrefix.charAt( keyPrefix.length() - 1 ) == '.' )
             fullPrefix = keyPrefix;
         else

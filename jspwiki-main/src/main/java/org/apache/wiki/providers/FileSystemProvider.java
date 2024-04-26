@@ -40,7 +40,7 @@ import java.util.Properties;
  */
 public class FileSystemProvider extends AbstractFileProvider {
 
-    private static final Logger log = LoggerFactory.getLogger( FileSystemProvider.class );
+    private static final Logger LOG = LoggerFactory.getLogger( FileSystemProvider.class );
 
     /** All metadata is stored in a file with this extension. */
     public static final String PROP_EXT = ".properties";
@@ -54,7 +54,7 @@ public class FileSystemProvider extends AbstractFileProvider {
             super.putPageText( page, text );
             putPageProperties( page );
         } catch( final IOException e ) {
-            log.error( "Saving failed" );
+            LOG.error( "Saving failed" );
         }
     }
 
@@ -125,7 +125,7 @@ public class FileSystemProvider extends AbstractFileProvider {
             try {
                 getPageProperties( p );
             } catch( final IOException e ) {
-                log.error( "Unable to read page properties", e );
+                LOG.error( "Unable to read page properties", e );
                 throw new ProviderException( "Unable to read page properties, check logs." );
             }
         }

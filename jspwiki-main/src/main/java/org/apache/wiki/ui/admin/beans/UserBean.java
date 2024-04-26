@@ -76,7 +76,7 @@ public class UserBean extends SimpleAdminBean {
             return "";
         }
 
-        if( password != null && password.length() > 0 && !password.equals( password2 ) ) {
+        if( password != null && !password.isEmpty() && !password.equals( password2 ) ) {
             session.addMessage( "Passwords do not match!" );
             return "";
         }

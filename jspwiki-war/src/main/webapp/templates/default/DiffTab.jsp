@@ -22,7 +22,6 @@
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.tags.InsertDiffTag" %>
-<%@ page import="org.apache.wiki.variables.VariableManager" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
@@ -32,12 +31,13 @@
   Context c = Context.findContext( pageContext );
 %>
 <c:set var="history" value="<%= c.getEngine().getManager( PageManager.class ).getVersionHistory(c.getPage().getName()) %>" />
-<c:set var="diffprovider" value='<%= c.getEngine().getManager( VariableManager.class ).getVariable(c,"jspwiki.diffProvider") %>' />
+<c:set var="diffprovider"><wiki:Variable var="jspwiki.diffProvider" /></c:set>
 <wiki:PageExists>
 <form action="<wiki:Link jsp='Diff.jsp' format='url' />"
        class="diffbody form-inline"
       method="get" accept-charset="UTF-8">
   <input type="hidden" name="page" value="<wiki:PageName />" />
+  <wiki:CsrfProtection/>
 
   <p class="btn btn-default btn-block">
        <fmt:message key="diff.difference">

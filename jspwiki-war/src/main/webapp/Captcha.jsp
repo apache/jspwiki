@@ -70,7 +70,7 @@
 <html lang="<c:out value='${prefs.Language}' default='en'/>" name="top">
 
 <head>
-  <title><wiki:Variable var="applicationname" />: <wiki:PageName /></title>
+  <title><wiki:Variable var="applicationname" default="Apache JSPWiki" />: <wiki:PageName /></title>
   <%-- <wiki:Include page="commonheader.jsp"/> --%>
   <meta name="robots" content="noindex,nofollow" />
   <script type="text/javascript">
@@ -105,6 +105,7 @@
    <p><fmt:message key="captcha.description" /></p>
 
    <form action="<wiki:Link jsp='Captcha.jsp' format='url'/>" method="post" id="mainForm" style="display: none;">
+      <wiki:CsrfProtection/>
       <input type="hidden" value="foo" name="text" />
       <input type="hidden" value='<%=reqPage%>' name='page'/>
       <script type="text/javascript" src="http://challenge.asirra.com/js/AsirraClientSide.js"></script>

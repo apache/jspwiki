@@ -311,7 +311,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
                 final String groupName = rs.getString( m_name );
                 if( groupName == null )
                 {
-                    log.warn( "Detected null group name in JDBCGroupDataBase. Check your group database." );
+                    LOG.warn( "Detected null group name in JDBCGroupDataBase. Check your group database." );
                 }
                 else
                 {
@@ -412,11 +412,9 @@ public class JDBCGroupDatabase implements GroupDatabase {
             // Insert group member records
             ps = conn.prepareStatement( m_insertGroupMembers );
             final Principal[] members = group.members();
-            for( int i = 0; i < members.length; i++ )
-            {
-                final Principal member = members[i];
-                ps.setString( 1, group.getName() );
-                ps.setString( 2, member.getName() );
+            for (final Principal member : members) {
+                ps.setString(1, group.getName());
+                ps.setString(2, member.getName());
                 ps.execute();
             }
 
@@ -488,7 +486,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
         }
         catch( final NamingException e )
         {
-            log.error( "JDBCGroupDatabase initialization error: " + e );
+            LOG.error( "JDBCGroupDatabase initialization error: " + e );
             throw new NoRequiredPropertyException( PROP_GROUPDB_DATASOURCE, "JDBCGroupDatabase initialization error: " + e);
         }
 
@@ -505,14 +503,14 @@ public class JDBCGroupDatabase implements GroupDatabase {
         catch( final SQLException e )
         {
         	closeQuietly( conn, ps, null );
-            log.error( "DB connectivity error: " + e.getMessage() );
+            LOG.error( "DB connectivity error: " + e.getMessage() );
             throw new WikiSecurityException("DB connectivity error: " + e.getMessage(), e );
         }
         finally
         {
             closeQuietly( conn, ps, null );
         }
-        log.info( "JDBCGroupDatabase initialized from JNDI DataSource: " + jndiName );
+        LOG.info( "JDBCGroupDatabase initialized from JNDI DataSource: " + jndiName );
 
         // Determine if the datasource supports commits
         try
@@ -523,13 +521,13 @@ public class JDBCGroupDatabase implements GroupDatabase {
             {
                 m_supportsCommits = true;
                 conn.setAutoCommit( false );
-                log.info( "JDBCGroupDatabase supports transactions. Good; we will use them." );
+                LOG.info( "JDBCGroupDatabase supports transactions. Good; we will use them." );
             }
         }
         catch( final SQLException e )
         {
         	closeQuietly( conn, null, null );
-            log.warn( "JDBCGroupDatabase warning: user database doesn't seem to support transactions. Reason: " + e);
+            LOG.warn( "JDBCGroupDatabase warning: user database doesn't seem to support transactions. Reason: " + e);
         }
         finally
         {

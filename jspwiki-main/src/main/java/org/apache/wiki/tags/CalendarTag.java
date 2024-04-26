@@ -56,7 +56,7 @@ import java.util.Date;
 public class CalendarTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
-    private static final Logger log = LoggerFactory.getLogger( CalendarTag.class );
+    private static final Logger LOG = LoggerFactory.getLogger( CalendarTag.class );
     
     private SimpleDateFormat m_pageFormat;
     private SimpleDateFormat m_urlFormat;
@@ -90,7 +90,7 @@ public class CalendarTag extends WikiTagBase {
      *  Sets the page format.  If a page corresponding to the format is found when
      *  the calendar is being rendered, a link to that page is created.  E.g. if the
      *  format is set to <tt>'Main_blogentry_'ddMMyy</tt>, it works nicely in
-     *  conjuction to the WeblogPlugin.
+     *  conjunction to the WeblogPlugin.
      *  
      *  @param format The format in the SimpleDateFormat fashion.
      *  
@@ -263,7 +263,7 @@ public class CalendarTag extends WikiTagBase {
                 prevCal.setTime( d );
                 nextCal.setTime( d );
             } catch( final ParseException e ) {
-                log.warn( "date format wrong: " + calendarDate );
+                LOG.warn( "date format wrong: " + calendarDate );
             }
         }
 

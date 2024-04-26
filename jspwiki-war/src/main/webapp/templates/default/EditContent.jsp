@@ -44,9 +44,9 @@
   </wiki:CheckLock>
 
   <wiki:CheckVersion mode="notlatest">
-    <div class="alert alert-danger">
+    <div class="alert alert-warning center">
       <fmt:message key="edit.restoring">
-        <fmt:param><wiki:PageVersion/></fmt:param>
+        <fmt:param><span class="version-badge"><wiki:PageVersion/></span></fmt:param>
       </fmt:message>
     </div>
   </wiki:CheckVersion>

@@ -66,7 +66,7 @@ import java.util.TreeSet;
  */
 public abstract class AbstractFileProvider implements PageProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(AbstractFileProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractFileProvider.class);
     private String m_pageDirectory = "/tmp/";
     protected String m_encoding;
 
@@ -114,7 +114,7 @@ public abstract class AbstractFileProvider implements PageProvider {
      */
     @Override
     public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException, FileNotFoundException {
-        log.debug( "Initing FileSystemProvider" );
+		LOG.debug( "Initing FileSystemProvider" );
         m_pageDirectory = TextUtil.getCanonicalFilePathProperty( properties, PROP_PAGEDIR,
                                                           System.getProperty( "user.home" ) + File.separator + "jspwiki-files" );
 
@@ -144,7 +144,7 @@ public abstract class AbstractFileProvider implements PageProvider {
         MAX_PROPKEYLENGTH = TextUtil.getIntegerProperty( properties, PROP_CUSTOMPROP_MAXKEYLENGTH, DEFAULT_MAX_PROPKEYLENGTH );
         MAX_PROPVALUELENGTH = TextUtil.getIntegerProperty( properties, PROP_CUSTOMPROP_MAXVALUELENGTH, DEFAULT_MAX_PROPVALUELENGTH );
 
-        log.info( "Wikipages are read from '" + m_pageDirectory + "'" );
+		LOG.info( "Wikipages are read from '" + m_pageDirectory + "'" );
     }
 
 
@@ -250,14 +250,14 @@ public abstract class AbstractFileProvider implements PageProvider {
                 try( final InputStream in = Files.newInputStream( pagedata.toPath() ) ) {
                     result = FileUtil.readContents( in, m_encoding );
                 } catch( final IOException e ) {
-                    log.error( "Failed to read", e );
+                    LOG.error( "Failed to read", e );
                 }
             } else {
-                log.warn( "Failed to read page '" + page + "' from '" + pagedata.getAbsolutePath() + "', possibly a permissions problem" );
+                LOG.warn( "Failed to read page '" + page + "' from '" + pagedata.getAbsolutePath() + "', possibly a permissions problem" );
             }
         } else {
             // This is okay.
-            log.info( "New page '" + page + "'" );
+            LOG.info( "New page '" + page + "'" );
         }
 
         return result;
@@ -272,7 +272,7 @@ public abstract class AbstractFileProvider implements PageProvider {
         try( final PrintWriter out = new PrintWriter( new OutputStreamWriter( Files.newOutputStream( file.toPath() ), m_encoding ) ) ) {
             out.print( text );
         } catch( final IOException e ) {
-            log.error( "Saving failed", e );
+            LOG.error( "Saving failed", e );
         }
     }
 
@@ -281,13 +281,13 @@ public abstract class AbstractFileProvider implements PageProvider {
      */
     @Override
     public Collection< Page > getAllPages()  throws ProviderException {
-        log.debug("Getting all pages...");
+        LOG.debug("Getting all pages...");
         final ArrayList< Page > set = new ArrayList<>();
         final File wikipagedir = new File( m_pageDirectory );
         final File[] wikipages = wikipagedir.listFiles( new WikiFileFilter() );
 
         if( wikipages == null ) {
-            log.error("Wikipages directory '" + m_pageDirectory + "' does not exist! Please check " + PROP_PAGEDIR + " in jspwiki.properties.");
+            LOG.error("Wikipages directory '" + m_pageDirectory + "' does not exist! Please check " + PROP_PAGEDIR + " in jspwiki.properties.");
             throw new ProviderException( "Page directory does not exist" );
         }
 
@@ -298,7 +298,7 @@ public abstract class AbstractFileProvider implements PageProvider {
             if( page == null ) {
                 // This should not really happen.
                 // FIXME: Should we throw an exception here?
-                log.error( "Page " + wikiname + " was found in directory listing, but could not be located individually." );
+                LOG.error( "Page " + wikiname + " was found in directory listing, but could not be located individually." );
                 continue;
             }
 
@@ -354,7 +354,7 @@ public abstract class AbstractFileProvider implements PageProvider {
                         res.add( comparison );
                     }
                 } catch( final IOException e ) {
-                    log.error( "Failed to read " + filename, e );
+                    LOG.error( "Failed to read " + filename, e );
                 }
             }
         }

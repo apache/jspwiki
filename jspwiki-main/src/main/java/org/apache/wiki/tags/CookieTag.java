@@ -99,7 +99,7 @@ public class CookieTag
 {
     private static final long serialVersionUID = 0L;
 
-    private static final Logger log = LoggerFactory.getLogger( CookieTag.class );
+    private static final Logger LOG = LoggerFactory.getLogger( CookieTag.class );
 
     /** Name of the cookie value. Required. */
     private String m_name;
@@ -177,6 +177,7 @@ public class CookieTag
     /**
      *  {@inheritDoc}
      */
+    @Override
     public void release()
     {
         m_name = m_item = m_var = m_value = m_clear = m_scope = null;
@@ -214,6 +215,7 @@ public class CookieTag
     /**
      *  {@inheritDoc}
      */
+    @Override
     public int doEndTag()
     {
         String out = null;
@@ -259,7 +261,7 @@ public class CookieTag
                 }
                 catch( final IOException ioe )
                 {
-                    log.warn( "Failed to write to JSP page: " + ioe.getMessage(), ioe );
+                    LOG.warn( "Failed to write to JSP page: " + ioe.getMessage(), ioe );
                 }
             }
         }
@@ -327,7 +329,7 @@ public class CookieTag
      */
     private Map<String, String> parseCookieValues(final String s )
     {
-        final Map< String, String > rval = new HashMap< String, String >();
+        final Map< String, String > rval = new HashMap<>();
         if( s == null ) {
             return rval;
         }
@@ -335,12 +337,11 @@ public class CookieTag
         if( nvps.length == 0 ) {
             return rval;
         }
-        for( int i = 0; i < nvps.length; i++ ) {
-            final String nvp = decode( nvps[i] );
-            final String[] nv = nvp.split( "=" );
-            if( nv[0] != null && !nv[0].trim().isEmpty() )
-            {
-                rval.put( nv[0], nv[1] );
+        for (final String value : nvps) {
+            final String nvp = decode(value);
+            final String[] nv = nvp.split("=");
+            if (nv[0] != null && !nv[0].trim().isEmpty()) {
+                rval.put(nv[0], nv[1]);
             }
         }
 
@@ -354,7 +355,7 @@ public class CookieTag
     private String encodeValues(final Map<String, String> values )
     {
         final StringBuilder rval = new StringBuilder();
-        if( values == null || values.size() == 0 ) {
+        if( values == null || values.isEmpty()) {
             return rval.toString();
         }
 
@@ -378,16 +379,7 @@ public class CookieTag
      */
     private String encode(final String nvp )
     {
-        String coded = "";
-        try
-        {
-            coded = URLEncoder.encode( nvp, StandardCharsets.UTF_8.name() );
-        }
-        catch( final UnsupportedEncodingException e )
-        {
-            /* never happens */
-            log.info( "Failed to encode UTF-8", e );
-        }
+        final String coded = URLEncoder.encode( nvp, StandardCharsets.UTF_8 );
         return coded.replaceAll( "\\+", "%20" );
     }
 
@@ -398,16 +390,8 @@ public class CookieTag
     private String decode(final String envp )
     {
         final String rval;
-        try
-        {
-            rval = URLDecoder.decode( envp , StandardCharsets.UTF_8.name() );
-            return rval;
-        }
-        catch( final UnsupportedEncodingException e )
-        {
-            log.error( "Failed to decode cookie", e );
-            return envp;
-        }
+        rval = URLDecoder.decode( envp , StandardCharsets.UTF_8);
+        return rval;
     }
 
     /**
@@ -422,11 +406,9 @@ public class CookieTag
             final Cookie[] cookies = req.getCookies();
             if( cookies != null )
             {
-                for( int i = 0; i < cookies.length; i++ )
-                {
-                    if( cookies[i].getName().equals( cname ) )
-                    {
-                        return cookies[i];
+                for (final Cookie cookie : cookies) {
+                    if (cookie.getName().equals(cname)) {
+                        return cookie;
                     }
                 }
             }

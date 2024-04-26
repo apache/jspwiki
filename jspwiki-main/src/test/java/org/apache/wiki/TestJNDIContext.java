@@ -58,7 +58,7 @@ public class TestJNDIContext implements Context
 
     private final Map<String, Object> m_bindings  = new HashMap<>();
 
-    private static boolean initialized = false;
+    private static boolean initialized;
 
     /**
      * InitialContextFactory class that configures the JVM to
@@ -67,7 +67,7 @@ public class TestJNDIContext implements Context
     public static class Factory implements InitialContextFactory
     {
 
-        private static Context ctx = null;
+        private static Context ctx;
 
         @Override
         public Context getInitialContext(final Hashtable<?,?> environment ) throws NamingException

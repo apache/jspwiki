@@ -42,6 +42,7 @@ import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
 
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -63,7 +64,7 @@ import java.util.StringTokenizer;
  */
 public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventListener {
 
-    private static final Logger log = LoggerFactory.getLogger( DefaultGroupManager.class );
+    private static final Logger error = LoggerFactory.getLogger( DefaultGroupManager.class );
 
     protected Engine m_engine;
 
@@ -111,25 +112,16 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             if( dbClassName == null ) {
                 dbClassName = XMLGroupDatabase.class.getName();
             }
-            log.info( "Attempting to load group database class " + dbClassName );
-            final Class< ? > dbClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", dbClassName );
-            m_groupDatabase = ( GroupDatabase )dbClass.newInstance();
+            LOG.info( "Attempting to load group database class {}", dbClassName );
+            m_groupDatabase = ClassUtil.buildInstance( "org.apache.wiki.auth.authorize", dbClassName );
             m_groupDatabase.initialize( m_engine, m_engine.getWikiProperties() );
-            log.info( "Group database initialized." );
-        } catch( final ClassNotFoundException e ) {
-            log.error( "GroupDatabase class " + dbClassName + " cannot be found.", e );
-            dbInstantiationError = "Failed to locate GroupDatabase class " + dbClassName;
-            cause = e;
-        } catch( final InstantiationException e ) {
-            log.error( "GroupDatabase class " + dbClassName + " cannot be created.", e );
-            dbInstantiationError = "Failed to create GroupDatabase class " + dbClassName;
-            cause = e;
-        } catch( final IllegalAccessException e ) {
-            log.error( "You are not allowed to access group database class " + dbClassName + ".", e );
+            LOG.info( "Group database initialized." );
+        } catch( final ReflectiveOperationException e ) {
+            LOG.error( "UserDatabase {} cannot be instantiated", dbClassName, e );
             dbInstantiationError = "Access GroupDatabase class " + dbClassName + " denied";
             cause = e;
         } catch( final NoRequiredPropertyException e ) {
-            log.error( "Missing property: " + e.getMessage() + "." );
+            LOG.error( "Missing property: " + e.getMessage() + "." );
             dbInstantiationError = "Missing property: " + e.getMessage();
             cause = e;
         }
@@ -172,7 +164,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         engine.getManager( UserManager.class ).addWikiEventListener( this );
 
         // Success!
-        log.info( "Authorizer GroupManager initialized successfully; loaded " + groups.length + " group(s)." );
+        LOG.info( "Authorizer GroupManager initialized successfully; loaded " + groups.length + " group(s)." );
     }
 
     /** {@inheritDoc} */
@@ -190,12 +182,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         }
 
         // Check each user principal to see if it belongs to the group
-        for( final Principal principal : session.getPrincipals() ) {
-            if( AuthenticationManager.isUserPrincipal( principal ) && group.isMember( principal ) ) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(session.getPrincipals()).anyMatch(principal -> AuthenticationManager.isUserPrincipal(principal) && group.isMember(principal));
     }
 
     /** {@inheritDoc} */
@@ -424,9 +411,9 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
                 }
             } catch( final WikiException e ) {
                 // Oooo! This is really bad...
-                log.error( "Could not change user name in Group lists because of GroupDatabase error:" + e.getMessage() );
+                LOG.error( "Could not change user name in Group lists because of GroupDatabase error:" + e.getMessage() );
             }
-            log.info( "Profile name change for '" + newPrincipal + "' caused " + groupsChanged + " groups to change also." );
+            LOG.info( "Profile name change for '" + newPrincipal + "' caused " + groupsChanged + " groups to change also." );
         }
     }
 

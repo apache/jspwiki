@@ -65,7 +65,7 @@ public class PluginContent extends Text implements PluginElement {
     private static final String SPACE = " ";
 
     private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(PluginContent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PluginContent.class);
 
     private final String m_pluginName;
     private final Map< String, String > m_params;
@@ -120,7 +120,7 @@ public class PluginContent extends Text implements PluginElement {
 
         final Context context = doc.getContext();
         if( context == null ) {
-            log.info( "WikiContext garbage-collected, cannot proceed" );
+            LOG.info( "WikiContext garbage-collected, cannot proceed" );
             return getPluginName();
         }
 
@@ -172,7 +172,7 @@ public class PluginContent extends Text implements PluginElement {
             if( wysiwygEditorMode ) {
                 result = "";
             } else {
-                // log.info("Failed to execute plugin",e);
+                // LOG.info("Failed to execute plugin",e);
                 final ResourceBundle rb = Preferences.getBundle( context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
                 result = MarkupParser.makeError( MessageFormat.format( rb.getString( "plugin.error.insertionfailed" ), 
                 		                                               context.getRealPage().getWiki(), 
@@ -234,15 +234,15 @@ public class PluginContent extends Text implements PluginElement {
                 return new PluginContent( plugin, arglist );
             }
         } catch( final ClassCastException e ) {
-            log.error( "Invalid type offered in parsing plugin arguments.", e );
+            LOG.error( "Invalid type offered in parsing plugin arguments.", e );
             throw new InternalWikiException( "Oops, someone offered !String!", e );
         } catch( final NoSuchElementException e ) {
             final String msg = "Missing parameter in plugin definition: " + commandline;
-            log.warn( msg, e );
+            LOG.warn( msg, e );
             throw new PluginException( msg );
         } catch( final IOException e ) {
             final String msg = "Zyrf.  Problems with parsing arguments: " + commandline;
-            log.warn( msg, e );
+            LOG.warn( msg, e );
             throw new PluginException( msg );
         }
 

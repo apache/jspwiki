@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * <code>jspwiki.properties</code>.</p>
  * <p>To enable e-mail functions within JSPWiki, administrators must do three things:
  * ensure that the required JavaMail JARs are on the runtime classpath, configure
- * JavaMail appropriately, and (recommdended) configure the JNDI JavaMail session factory.</p>
+ * JavaMail appropriately, and (recommended) configure the JNDI JavaMail session factory.</p>
  * <strong>JavaMail runtime JARs</strong>
  * <p>The first step is easy: JSPWiki bundles
  * recent versions of the required JavaMail <code>mail.jar</code> and
@@ -202,7 +202,7 @@ public final class MailUtil {
 
     private static final String PROP_MAIL_AUTH = "mail.smtp.auth";
 
-    static final Logger log = LoggerFactory.getLogger(MailUtil.class);
+    static final Logger LOG = LoggerFactory.getLogger(MailUtil.class);
 
     static final String DEFAULT_MAIL_JNDI_NAME       = "mail/Session";
 
@@ -276,8 +276,7 @@ public final class MailUtil {
         final Session session = getMailSession( props );
         getSenderEmailAddress(session, props);
 
-        try
-        {
+        try {
             // Create and address the message
             final MimeMessage msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(c_fromAddress));
@@ -288,90 +287,84 @@ public final class MailUtil {
 
             // Send and log it
             Transport.send(msg);
-            if (log.isInfoEnabled())
-            {
-                log.info("Sent e-mail to=" + to + ", subject=\"" + subject + "\", used "
-                         + (c_useJndi ? "JNDI" : "standalone") + " mail session.");
-            }
-        }
-        catch (final MessagingException e)
-        {
-            log.error("Error while sending", e);
+            LOG.info("Sent e-mail to={}, subject=\"{}\", used {} mail session.", to, subject, (c_useJndi ? "JNDI" : "standalone") );
+        } catch (final MessagingException e) {
+            LOG.error("Error while sending", e);
             throw e;
         }
     }
 
-    public static void sendMultiPartMessage(Properties props, String to, String subject, String plainContent,
-                                            String htmlContent, Map<String, URL> imageUrlsByCid) throws MessagingException{
-        Session session = getMailSession( props );
-        getSenderEmailAddress(session, props);
+	public static void sendMultiPartMessage(Properties props, String to, String subject, String plainContent,
+											String htmlContent, Map<String, URL> imageUrlsByCid) throws MessagingException{
+		Session session = getMailSession( props );
+		getSenderEmailAddress(session, props);
 
-        try
-        {
-            // Create and address the message
-            MimeMessage msg = new MimeMessage(session);
-            msg.setFrom(new InternetAddress(c_fromAddress));
-            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
-            msg.setSubject(subject, "UTF-8");
-            msg.setSentDate(new Date());
+		try
+		{
+			// Create and address the message
+			MimeMessage msg = new MimeMessage(session);
+			msg.setFrom(new InternetAddress(c_fromAddress));
+			msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to, false));
+			msg.setSubject(subject, "UTF-8");
+			msg.setSentDate(new Date());
 
-            // most of the code here taken from
-            // https://stackoverflow.com/questions/3902455/mail-multipart-alternative-vs-multipart-mixed
-            // but slightly easier organized and renamed
-            final MimeMultipart rootMp = new MimeMultipart("mixed");
-            msg.setContent(rootMp);
-            {
-                // alternative
-                final MimeMultipart alternativeMp = newChild(rootMp, "alternative");
-                {
-                    // Note: MUST RENDER HTML LAST otherwise iPad mail client only renders the last image and no email
+			// most of the code here taken from
+			// https://stackoverflow.com/questions/3902455/mail-multipart-alternative-vs-multipart-mixed
+			// but slightly easier organized and renamed
+			final MimeMultipart rootMp = new MimeMultipart("mixed");
+			msg.setContent(rootMp);
+			{
+				// alternative
+				final MimeMultipart alternativeMp = newChild(rootMp, "alternative");
+				{
+					// Note: MUST RENDER HTML LAST otherwise iPad mail client only renders the last image and no email
 
-                    // text
-                    if (plainContent != null && !plainContent.isEmpty()) {
-                        final MimeBodyPart textBodyPart = new MimeBodyPart();
-                        textBodyPart.setText(plainContent, "UTF-8");
-                        textBodyPart.setHeader("Content-Type", "text/plain; charset=UTF-8");
-                        alternativeMp.addBodyPart(textBodyPart);
-                    }
+					// text
+					if (plainContent != null && !plainContent.isEmpty()) {
+						final MimeBodyPart textBodyPart = new MimeBodyPart();
+						textBodyPart.setText(plainContent, "UTF-8");
+						textBodyPart.setHeader("Content-Type", "text/plain; charset=UTF-8");
+						alternativeMp.addBodyPart(textBodyPart);
+					}
 
-                    // html
-                    final MimeMultipart relatedMp = newChild(alternativeMp,"related");
+					// html
+					final MimeMultipart relatedMp = newChild(alternativeMp,"related");
 
-                    final MimeBodyPart htmlBodyPart = new MimeBodyPart();
-                    htmlBodyPart.setText(htmlContent, "UTF-8");
-                    htmlBodyPart.setHeader("Content-Type", "text/html; charset=UTF-8");
-                    relatedMp.addBodyPart(htmlBodyPart);
+					final MimeBodyPart htmlBodyPart = new MimeBodyPart();
+					htmlBodyPart.setText(htmlContent, "UTF-8");
+					htmlBodyPart.setHeader("Content-Type", "text/html; charset=UTF-8");
+					relatedMp.addBodyPart(htmlBodyPart);
 
-                    // add multi-part for image
-                    for (Map.Entry<String, URL> entry : imageUrlsByCid.entrySet()) {
-                        MimeBodyPart part = new MimeBodyPart();
-                        DataHandler dh = new DataHandler(entry.getValue());
-                        part.setDataHandler(dh);
-                        part.addHeader("Content-ID", "<" + entry.getKey() + ">");
-                        part.addHeader("Content-Type", dh.getContentType());
-                        part.setDisposition(Part.INLINE);
-                        relatedMp.addBodyPart(part);
-                    }
-                }
+					// add multi-part for image
+					for (Map.Entry<String, URL> entry : imageUrlsByCid.entrySet()) {
+						MimeBodyPart part = new MimeBodyPart();
+						DataHandler dh = new DataHandler(entry.getValue());
+						part.setDataHandler(dh);
+						part.addHeader("Content-ID", "<" + entry.getKey() + ">");
+						part.addHeader("Content-Type", dh.getContentType());
+						part.setDisposition(Part.INLINE);
+						relatedMp.addBodyPart(part);
+					}
+				}
 
-                // attachments
-                // TODO.. (~ addAttachments(mpMixed,attachments))
-            }
+				// attachments
+				// TODO.. (~ addAttachments(mpMixed,attachments))
+			}
 
-            // Send and log it
-            Transport.send(msg);
-            if (log.isInfoEnabled())
-            {
-                log.info("Sent e-mail to=" + to + ", subject=\"" + subject + "\", used "
-                        + (c_useJndi ? "JNDI" : "standalone") + " mail session.");
-            }
-        }
-        catch (MessagingException e)
-        {
-            log.error("Error while sending multipart message", e);
-            throw e;
-        }
-    }
+			// Send and log it
+			Transport.send(msg);
+			if (LOG.isInfoEnabled())
+			{
+				LOG.info("Sent e-mail to=" + to + ", subject=\"" + subject + "\", used "
+						 + (c_useJndi ? "JNDI" : "standalone") + " mail session.");
+			}
+		}
+		catch (MessagingException e)
+		{
+			LOG.error("Error while sending multipart message", e);
+			throw e;
+		}
+	}
     
     // --------- JavaMail Session Helper methods  --------------------------------
 
@@ -395,30 +388,20 @@ public final class MailUtil {
      * @param pProperties <code>Properties</code>
      * @return <code>String</code>
      */
-    static String getSenderEmailAddress(final Session pSession, final Properties pProperties)
-    {
+    static String getSenderEmailAddress(final Session pSession, final Properties pProperties) {
         if( c_fromAddress == null )
         {
-            // First, attempt to get the email address from the JNDI Mail
-            // Session.
-            if( pSession != null && c_useJndi )
-            {
+            // First, attempt to get the email address from the JNDI Mail Session.
+            if( pSession != null && c_useJndi ) {
                 c_fromAddress = pSession.getProperty( MailUtil.PROP_MAIL_SENDER );
             }
-            // If unsuccessful, get the email address from the properties or
-            // default.
-            if( c_fromAddress == null )
-            {
+            // If unsuccessful, get the email address from the properties or default.
+            if( c_fromAddress == null ) {
                 c_fromAddress = pProperties.getProperty( PROP_MAIL_SENDER, DEFAULT_SENDER ).trim();
-                if( log.isDebugEnabled() )
-                    log.debug( "Attempt to get the sender's mail address from the JNDI mail session failed, will use \""
-                               + c_fromAddress + "\" (configured via jspwiki.properties or the internal default)." );
-            }
-            else
-            {
-                if( log.isDebugEnabled() )
-                    log.debug( "Attempt to get the sender's mail address from the JNDI mail session was successful (" + c_fromAddress
-                               + ")." );
+                LOG.debug( "Attempt to get the sender's mail address from the JNDI mail session failed, will use \"{}" +
+                           "\" (configured via jspwiki.properties or the internal default).", c_fromAddress );
+            } else {
+                LOG.debug( "Attempt to get the sender's mail address from the JNDI mail session was successful ({}).", c_fromAddress );
             }
         }
         return c_fromAddress;
@@ -426,7 +409,7 @@ public final class MailUtil {
 
     /**
      * Returns the Mail Session from either JNDI or creates a stand-alone.
-     * @param props a the properties that contain mail session properties
+     * @param props the properties that contain mail session properties
      * @return <code>Session</code>
      */
     private static Session getMailSession(final Properties props)
@@ -437,26 +420,20 @@ public final class MailUtil {
         if (c_useJndi)
         {
             // Try getting the Session from the JNDI factory first
-            if ( log.isDebugEnabled() )
-                log.debug("Try getting a mail session via JNDI name \"" + jndiName + "\".");
-            try
-            {
+            LOG.debug("Try getting a mail session via JNDI name \"{}\".", jndiName);
+            try {
                 result = getJNDIMailSession(jndiName);
-            }
-            catch (final NamingException e)
-            {
+            } catch (final NamingException e) {
                 // Oops! JNDI factory must not be set up
                 c_useJndi = false;
-                if ( log.isInfoEnabled() )
-                    log.info("Unable to get a mail session via JNDI, will use custom settings at least until next startup.");
+                LOG.info("Unable to get a mail session via JNDI, will use custom settings at least until next startup.");
             }
         }
 
         // JNDI failed; so, get the Session from the standalone factory
         if (result == null)
         {
-            if ( log.isDebugEnabled() )
-                log.debug("Getting a standalone mail session configured by jspwiki.properties and/or internal default values.");
+            LOG.debug("Getting a standalone mail session configured by jspwiki.properties and/or internal default values.");
             result = getStandaloneMailSession(props);
         }
         return result;
@@ -495,26 +472,20 @@ public final class MailUtil {
         mailProps.put(PROP_MAIL_SSL_PROTOCOLS, "TLSv1.2");  // required for JavaMail 1.4.7, not required for >= 1.6.2
 
         // Add SMTP authentication if required
-        Session session = null;
-        if ( useAuthentication )
-        {
+        final Session session;
+        if ( useAuthentication ) {
             mailProps.put( PROP_MAIL_AUTH, TRUE );
             final SmtpAuthenticator auth = new SmtpAuthenticator( account, password );
 
             session = Session.getInstance( mailProps, auth );
-        }
-        else
-        {
+        } else {
             session = Session.getInstance( mailProps );
         }
 
-        if ( log.isDebugEnabled() )
-        {
-            final String mailServer = host + ":" + port + ", account=" + account + ", password not displayed, timeout="
-            + timeout + ", connectiontimeout=" + conntimeout + ", starttls.enable=" + starttls
-            + ", use authentication=" + ( useAuthentication ? TRUE : FALSE );
-            log.debug( "JavaMail session obtained from standalone mail factory: " + mailServer );
-        }
+        final String mailServer = host + ":" + port + ", account=" + account + ", password not displayed, timeout=" +
+                                  timeout + ", connectiontimeout=" + conntimeout + ", starttls.enable=" + starttls +
+                                  ", use authentication=" + ( useAuthentication ? TRUE : FALSE );
+        LOG.debug( "JavaMail session obtained from standalone mail factory: {}", mailServer );
         return session;
     }
 
@@ -528,22 +499,16 @@ public final class MailUtil {
      */
     static Session getJNDIMailSession(final String jndiName ) throws NamingException
     {
-        Session session = null;
-        try
-        {
+        final Session session;
+        try {
             final Context initCtx = new InitialContext();
             final Context ctx = (Context) initCtx.lookup( JAVA_COMP_ENV );
             session = (Session) ctx.lookup( jndiName );
-        }
-        catch( final NamingException e )
-        {
-            log.warn( "JNDI mail session initialization error: " + e.getMessage() );
+        } catch( final NamingException e ) {
+            LOG.warn( "JNDI mail session initialization error: {}", e.getMessage() );
             throw e;
         }
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "mail session obtained from JNDI mail factory: " + jndiName );
-        }
+        LOG.debug( "mail session obtained from JNDI mail factory: {}", jndiName );
         return session;
     }
 
@@ -559,7 +524,7 @@ public final class MailUtil {
 
         /**
          * Constructs a new SmtpAuthenticator with a supplied username and password.
-         * @param login the user name
+         * @param login the username
          * @param pass the password
          */
         public SmtpAuthenticator(final String login, final String pass)
@@ -573,6 +538,7 @@ public final class MailUtil {
          * Returns the password used to authenticate to the SMTP server.
          * @return <code>PasswordAuthentication</code>
          */
+        @Override
         public PasswordAuthentication getPasswordAuthentication()
         {
             if ( BLANK.equals(m_pass) )

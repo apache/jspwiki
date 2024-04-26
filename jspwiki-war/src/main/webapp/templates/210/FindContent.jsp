@@ -36,7 +36,7 @@
        class="wikiform"
           id="searchform2"
          accept-charset="<wiki:ContentEncoding/>">
-
+  <wiki:CsrfProtection/>
   <h4><fmt:message key="find.input" /></h4>
   <p>
     <input type="text"

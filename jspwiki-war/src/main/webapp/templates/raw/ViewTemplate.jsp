@@ -18,6 +18,7 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<meta charset="<wiki:ContentEncoding />">
 <meta name="robots" content="noindex,nofollow" />
 <link rel="shortcut icon" type="image/x-icon" href="<wiki:Link format='url' jsp='images/favicon.ico'/>" />
 <%-- ie6 needs next line --%>

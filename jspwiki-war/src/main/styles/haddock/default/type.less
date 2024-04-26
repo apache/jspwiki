@@ -373,13 +373,17 @@ tt {
     position: relative;
     color: @code-color;
     background-color: @code-bg;
-    white-space: nowrap;
+    white-space: pre-wrap; /*JSPWIKI-1165*/
     border-radius: @border-radius-base;
+    font-family: @font-family-monospace;
+    font-size: 90%;
 }
 //used for inline {{{code snippets}}}
 span.inline-code {
-	font-family:monospace;
-    white-space:pre;
+    font-family: @font-family-monospace;
+    font-size: 90%;
+    line-height: normal;
+    white-space: pre-wrap; /*JSPWIKI-1165*/
 }
 
 //list-unstyled : bootstrap
@@ -662,7 +666,7 @@ div.dropcaps {
         font-size: @dropcaps-font-size;
         font-weight: @dropcaps-font-weight;
         line-height: 80%;
-        text-shadow: 2px 2px 1px rgba(0,0,0,.25);
+        text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.2);
     }
 }
 

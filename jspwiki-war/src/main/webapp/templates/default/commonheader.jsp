@@ -97,9 +97,10 @@ String.I18N.PREFIX = "javascript.";
 <meta name="wikiCloneUrl" content='<wiki:EditLink format="url" page="#$%"/>&clone=<wiki:Variable var="pagename" />' />
 <meta name="wikiJsonUrl" content='<%= Context.findContext(pageContext).getURL( ContextEnum.PAGE_NONE.getRequestContext(), "ajax" ) %>' /><%--unusual pagename--%>
 <meta name="wikiPageName" content='<wiki:Variable var="pagename" />' /><%--pagename without blanks--%>
-<meta name="wikiUserName" content='<wiki:UserName />' />
+<meta name="wikiUserName" content="<wiki:UserName />" />
 <meta name="wikiTemplateUrl" content='<wiki:Link format="url" templatefile="" />' />
 <meta name="wikiApplicationName" content='<wiki:Variable var="ApplicationName" />' />
+<wiki:CsrfProtection format="meta" />
 <%--CHECKME
     <wiki:link> seems not to lookup the right jsp from the right template directory
     EG when a templatefile is not present, the generated link should point to the default template.

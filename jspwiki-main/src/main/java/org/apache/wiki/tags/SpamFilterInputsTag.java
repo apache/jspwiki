@@ -32,6 +32,8 @@ import javax.servlet.jsp.PageContext;
  */
 public class SpamFilterInputsTag extends WikiTagBase {
 
+    private static final long serialVersionUID = -5224949821664626978L;
+
     /**
      * {@inheritDoc}
      */

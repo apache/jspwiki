@@ -166,7 +166,7 @@ public interface Step extends Serializable {
     void start() throws WikiException;
 
     /**
-     * Sets the current Outcome for the step. If the Outcome is a "completion" Outcome, it should also sets the completon time and mark the
+     * Sets the current Outcome for the step. If the Outcome is a "completion" Outcome, it should also sets the completion time and mark the
      * Step as complete. Once a Step has been marked complete, this method cannot be called again. If the supplied Outcome is not in the
      * set returned by {@link #getAvailableOutcomes()}, or is not  {@link Outcome#STEP_CONTINUE} or {@link Outcome#STEP_ABORT}, this method
      * returns an IllegalArgumentException. If the caller attempts to set an Outcome and the Step has already completed, this method throws

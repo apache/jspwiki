@@ -69,6 +69,7 @@ public class SetPaginationTag
     private String m_href;
     private String m_onclick;
 
+    @Override
     public void initTag()
     {
         super.initTag();
@@ -122,6 +123,7 @@ public class SetPaginationTag
     // 0 20 40 60 80 next last
     // first previous 20 40 *60* 80 100 next last
     // fist previous 40 60 80 100 120
+    @Override
     public int doWikiStartTag()
         throws IOException
     {

@@ -29,6 +29,7 @@ import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.SearchManager;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.XHTML;
 import org.apache.wiki.util.XhtmlUtil;
 import org.jdom2.Element;
@@ -52,7 +53,7 @@ import java.util.Map;
  */
 public class Search implements Plugin {
 
-    private static final Logger log = LoggerFactory.getLogger(Search.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Search.class);
 
     /** Parameter name for setting the query string.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_QUERY = "query";
@@ -88,7 +89,7 @@ public class Search implements Plugin {
                 results = doBasicQuery( context, queryString );
                 context.setVariable( set, results );
             } catch( final Exception e ) {
-                return "<div class='error'>" + e.getMessage() + "</div>\n";
+                return "<div class='error'>" + TextUtil.replaceEntities(e.getMessage()) + "</div>\n";
             }
         }
 
@@ -102,7 +103,7 @@ public class Search implements Plugin {
     }
 
     private Collection<SearchResult> doBasicQuery( final Context context, final String query ) throws ProviderException, IOException {
-        log.debug( "Searching for string " + query );
+        LOG.debug( "Searching for string " + query );
         return context.getEngine().getManager( SearchManager.class ).findPages( query, context );
     }
 

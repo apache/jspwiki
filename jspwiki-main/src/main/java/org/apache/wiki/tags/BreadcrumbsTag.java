@@ -50,7 +50,7 @@ public class BreadcrumbsTag extends WikiTagBase
 {
     private static final long serialVersionUID = 0L;
 
-    private static final Logger log = LoggerFactory.getLogger(BreadcrumbsTag.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BreadcrumbsTag.class);
     /** The name of the session attribute representing the breadcrumbtrail */
     public static final String BREADCRUMBTRAIL_KEY = "breadCrumbTrail";
     private int m_maxQueueSize = 11;
@@ -138,7 +138,7 @@ public class BreadcrumbsTag extends WikiTagBase
                     }
                 }
             } else {
-                log.debug( "didn't add page because it doesn't exist: " + page );
+                LOG.debug( "didn't add page because it doesn't exist: " + page );
             }
         }
 
@@ -154,7 +154,7 @@ public class BreadcrumbsTag extends WikiTagBase
         final JspWriter out     = pageContext.getOut();
         final int queueSize     = trail.size();
         final String linkclass  = "wikipage";
-        String curPage    = null;
+        String curPage;
 
         for( int i = 0; i < queueSize - 1; i++ ) {
             curPage = trail.get(i);

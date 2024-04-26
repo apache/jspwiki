@@ -29,7 +29,6 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.ClassUtil;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
 
@@ -38,7 +37,7 @@ import java.util.Properties;
  */
 public class DefaultDifferenceManager implements DifferenceManager {
 
-    private static final Logger log = LoggerFactory.getLogger( DefaultDifferenceManager.class );
+    private static final Logger error = LoggerFactory.getLogger( DefaultDifferenceManager.class );
 
     private DiffProvider m_provider;
 
@@ -52,16 +51,15 @@ public class DefaultDifferenceManager implements DifferenceManager {
         loadProvider( props );
         initializeProvider( engine, props );
 
-        log.info( "Using difference provider: " + m_provider.getProviderInfo() );
+        LOG.info( "Using difference provider: " + m_provider.getProviderInfo() );
     }
 
     private void loadProvider( final Properties props ) {
         final String providerClassName = props.getProperty( PROP_DIFF_PROVIDER, TraditionalDiffProvider.class.getName() );
         try {
-            final Class< ? > providerClass = ClassUtil.findClass("org.apache.wiki.diff", providerClassName );
-            m_provider = (DiffProvider) providerClass.getDeclaredConstructor().newInstance();
-        } catch( final ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e ) {
-            log.warn("Failed loading DiffProvider, will use NullDiffProvider.", e);
+            m_provider = ClassUtil.buildInstance( "org.apache.wiki.diff", providerClassName );
+        } catch( final ReflectiveOperationException e ) {
+            LOG.warn( "Failed loading DiffProvider, will use NullDiffProvider.", e );
         }
 
         if( m_provider == null ) {
@@ -74,7 +72,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
         try {
             m_provider.initialize( engine, props );
         } catch( final NoRequiredPropertyException | IOException e ) {
-            log.warn( "Failed initializing DiffProvider, will use NullDiffProvider.", e );
+            LOG.warn( "Failed initializing DiffProvider, will use NullDiffProvider.", e );
             m_provider = new DiffProvider.NullDiffProvider(); //doesn't need init'd
         }
     }
@@ -98,7 +96,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
             }
         } catch( final Exception e ) {
             diff = "Failed to create a diff, check the logs.";
-            log.warn( diff, e );
+            LOG.warn( diff, e );
         }
         return diff;
     }

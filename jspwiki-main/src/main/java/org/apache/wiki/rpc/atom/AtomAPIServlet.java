@@ -58,7 +58,7 @@ import java.util.Date;
 // FIXME: Rewrite using some other library
 public class AtomAPIServlet extends HttpServlet {
 
-    private static final Logger log = LoggerFactory.getLogger( AtomAPIServlet.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AtomAPIServlet.class );
 
     private static final long serialVersionUID = 0L;
 
@@ -101,7 +101,7 @@ public class AtomAPIServlet extends HttpServlet {
      */
     @Override
     public void doPost( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
-        log.debug( "Received POST to AtomAPIServlet" );
+        LOG.debug( "Received POST to AtomAPIServlet" );
 
         try {
             final String blogid = getPageName( request );
@@ -132,16 +132,16 @@ public class AtomAPIServlet extends HttpServlet {
                 .append( title.getBody() )
                 .append( "\n\n" )
                 .append( content.getBody() );
-            log.debug( "Writing entry: " + text );
+            LOG.debug( "Writing entry: " + text );
             m_engine.getManager( PageManager.class ).saveText( context, text.toString() );
         } catch( final FeedMarshallException e ) {
-            log.error("Received faulty Atom entry",e);
+            LOG.error("Received faulty Atom entry",e);
             throw new ServletException("Faulty Atom entry",e);
         } catch( final IOException e ) {
-            log.error("I/O exception",e);
+            LOG.error("I/O exception",e);
             throw new ServletException("Could not get body of request",e);
         } catch( final WikiException e ) {
-            log.error("Provider exception while posting",e);
+            LOG.error("Provider exception while posting",e);
             throw new ServletException("JSPWiki cannot save the entry",e);
         }
     }
@@ -154,9 +154,9 @@ public class AtomAPIServlet extends HttpServlet {
      */
     @Override
     public void doGet( final HttpServletRequest request, final HttpServletResponse response ) throws ServletException {
-        log.debug( "Received HTTP GET to AtomAPIServlet" );
+        LOG.debug( "Received HTTP GET to AtomAPIServlet" );
         final String blogid = getPageName( request );
-        log.debug( "Requested page " + blogid );
+        LOG.debug( "Requested page " + blogid );
         try {
             if( blogid == null ) {
                 final Feed feed = listBlogs();
@@ -169,7 +169,7 @@ public class AtomAPIServlet extends HttpServlet {
             }
             response.getWriter().flush();
         } catch( final Exception e ) {
-            log.error( "Unable to generate response", e );
+            LOG.error( "Unable to generate response", e );
             throw new ServletException( "Internal problem - whack Janne on the head to get a better error report", e );
         }
     }
@@ -216,7 +216,7 @@ public class AtomAPIServlet extends HttpServlet {
         for( final Page p : pages ) {
             //  List only weblogs
             //  FIXME: Unfortunately, a weblog is not known until it has een executed once, because plugins are off during the initial startup phase.
-            log.debug( p.getName() + " = " + p.getAttribute( WeblogPlugin.ATTR_ISWEBLOG ) );
+            LOG.debug( p.getName() + " = " + p.getAttribute( WeblogPlugin.ATTR_ISWEBLOG ) );
 
             if( !( "true".equals( p.getAttribute( WeblogPlugin.ATTR_ISWEBLOG ) ) ) ) {
                 continue;
@@ -252,7 +252,7 @@ public class AtomAPIServlet extends HttpServlet {
      */
     @Override
     public void doDelete( final HttpServletRequest request, final HttpServletResponse response ) {
-        log.debug( "Received HTTP DELETE" );
+        LOG.debug( "Received HTTP DELETE" );
     }
 
     /**
@@ -260,7 +260,7 @@ public class AtomAPIServlet extends HttpServlet {
      */
     @Override
     public void doPut( final HttpServletRequest request, final HttpServletResponse response ) {
-        log.debug( "Received HTTP PUT" );
+        LOG.debug( "Received HTTP PUT" );
     }
 
 }

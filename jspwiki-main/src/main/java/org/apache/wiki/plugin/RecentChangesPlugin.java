@@ -61,7 +61,7 @@ import java.util.Map;
  */
 public class RecentChangesPlugin extends AbstractReferralPlugin implements Plugin {
 	
-    private static final Logger log = LoggerFactory.getLogger( RecentChangesPlugin.class );
+    private static final Logger LOG = LoggerFactory.getLogger( RecentChangesPlugin.class );
     
     /** Parameter name for the separator format.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_FORMAT      = "format";
@@ -102,7 +102,7 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements Plugi
         final Calendar sincedate = new GregorianCalendar();
         sincedate.add( Calendar.DAY_OF_MONTH, -since );
 
-        log.debug("Calculating recent changes from "+sincedate.getTime());
+        LOG.debug("Calculating recent changes from "+sincedate.getTime());
 
         // FIXME: Should really have a since date on the getRecentChanges method.
         Collection< Page > changes = engine.getManager( PageManager.class ).getRecentChanges();

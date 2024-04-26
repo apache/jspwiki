@@ -89,5 +89,11 @@ pre.prettylines {
     -moz-hyphens: none;
     -ms-hyphens: none;
     hyphens: none;
+    
+    code {
+        //was set to pre-wrap;  better is pre;
+        //to avoid wrapping around; and losing alignment with the pretty-lines line-numbers
+        white-space: inherit;
+    }
 
 }

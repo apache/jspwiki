@@ -25,7 +25,7 @@ import java.security.Principal;
 
 
 /**
- * Extends the {@link org.apache.wiki.auth.Authorizer} interface by including a delgate method for
+ * Extends the {@link org.apache.wiki.auth.Authorizer} interface by including a delegate method for
  * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}.
  */
 public interface WebAuthorizer extends Authorizer {

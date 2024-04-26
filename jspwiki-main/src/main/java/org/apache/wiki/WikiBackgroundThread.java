@@ -116,7 +116,7 @@ public abstract class WikiBackgroundThread extends Thread implements WikiEventLi
             // Perform the background task; check every second for thread death
             while( !m_killMe ) {
                 // Perform the background task
-                // log.debug( "Running background task: " + name + "." );
+                // LOG.debug( "Running background task: " + name + "." );
                 backgroundTask();
                 
                 // Sleep for the interval we're supposed to, but wake up every POLLING_INTERVAL to see if thread should die

@@ -1,5 +1,20 @@
 /*
- * Copyright (C) 2022 denkbares GmbH. All rights reserved.
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
  */
 package org.apache.wiki.ui;
 
@@ -91,7 +106,7 @@ public interface TemplateManager extends ModuleManager {
     boolean templateExists( String templateName );
 
     /**
-     *  An utility method for finding a JSP page.  It searches only under either current context or by the absolute name.
+     *  A utility method for finding a JSP page.  It searches only under either current context or by the absolute name.
      *
      *  @param pageContext the JSP PageContext
      *  @param name The name of the JSP page to look for (e.g "Wiki.jsp")
@@ -238,7 +253,7 @@ public interface TemplateManager extends ModuleManager {
     }
 
     /**
-     *  Returns the include resources marker for a given type.  This is in a
+     *  Returns the include resources marker for a given type.  This is in an
      *  HTML or Javascript comment format.
      *
      *  @param context the wiki context
@@ -287,7 +302,7 @@ public interface TemplateManager extends ModuleManager {
      *  Adds a resource request to the current request context. The content will be added at the resource-type marker
      *  (see IncludeResourcesTag) in WikiJSPFilter.
      *  <p>
-     *  The resources can be of different types.  For RESOURCE_SCRIPT and RESOURCE_STYLESHEET this is an URI path to the resource
+     *  The resources can be of different types.  For RESOURCE_SCRIPT and RESOURCE_STYLESHEET this is a URI path to the resource
      *  (a script file or an external stylesheet) that needs to be included.  For RESOURCE_INLINECSS the resource should be something
      *  that can be added between &lt;style>&lt;/style> in the header file (commonheader.jsp).  For RESOURCE_JSFUNCTION it is the name
      *  of the Javascript function that should be run at page load.
@@ -300,7 +315,7 @@ public interface TemplateManager extends ModuleManager {
      *  rendered.  It's thus a good idea to make this request only once during the page life cycle.
      *
      *  @param ctx The current wiki context
-     *  @param type What kind of a request should be added?
+     *  @param type What kind of resource should be added?
      *  @param resource The resource to add.
      */
     static void addResourceRequest( final Context ctx, final String type, final String resource ) {
@@ -316,6 +331,13 @@ public interface TemplateManager extends ModuleManager {
         if( resources == null ) {
             resources = new Vector<>();
         }
+        String resolvedResource = resource;
+        if( StringUtils.startsWith( resource, "engine://" ) ) {
+            final String val = ctx.getEngine().getWikiProperties().getProperty( resource.substring( 9 ) ); // "engine//:".length() == 9
+            if( StringUtils.isNotBlank( val ) ) {
+                resolvedResource = val;
+            }
+        }
 
         String resourceString = null;
         switch( type ) {
@@ -323,17 +345,17 @@ public interface TemplateManager extends ModuleManager {
             resourceString = "<script type='module' src='" + resource + "'></script>";
             break;
         case RESOURCE_SCRIPT:
-            resourceString = "<script type='text/javascript' src='" + resource + "'></script>";
+            resourceString = "<script type='text/javascript' src='" + resolvedResource + "'></script>";
             break;
         case RESOURCE_STYLESHEET:
-            resourceString = "<link rel='stylesheet' type='text/css' href='" + resource + "' />";
+            resourceString = "<link rel='stylesheet' type='text/css' href='" + resolvedResource + "' />";
             break;
         case RESOURCE_INLINECSS:
-            resourceString = "<style type='text/css'>\n" + resource + "\n</style>\n";
+            resourceString = "<style type='text/css'>\n" + resolvedResource + "\n</style>\n";
             break;
         case RESOURCE_JSFUNCTION:
         case RESOURCE_HTTPHEADER:
-            resourceString = resource;
+            resourceString = resolvedResource;
             break;
         }
 

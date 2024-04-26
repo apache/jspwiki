@@ -66,6 +66,7 @@
 
     <h4><fmt:message key="newgroup.heading.create"/></h4>
     <input type="hidden" name="action"  value="save" />
+    <wiki:CsrfProtection/>
 
     <fmt:message key='newgroup.errorprefix' var="msg"/>
     <wiki:Messages div="alert alert-danger form-col-offset-20 form-col-50" topic="group" prefix="${msg}"/>
@@ -102,6 +103,7 @@
         name="deleteGroupForm" id="deleteGroupForm"
       method="POST" accept-charset="UTF-8">
   <input type="hidden" name="group" value="${group.name}" />
+  <wiki:CsrfProtection/>
   <input type="submit" name="ok"
    data-modal="+ .modal"
         value="<fmt:message key="actions.deletegroup"/>" />

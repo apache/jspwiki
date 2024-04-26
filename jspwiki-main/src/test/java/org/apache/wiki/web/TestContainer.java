@@ -53,8 +53,7 @@ import java.util.Map;
  * hard-coded port {@link #HTTP_PORT}. The server can be shut down by sending a
  * request containing the hard-coded string {@link #SHUTDOWN_CMD}.
  */
-public class TestContainer
-{
+public class TestContainer {
     private final Server server;
 
     /**
@@ -70,11 +69,11 @@ public class TestContainer
 
     private static final HsqlDbUtils m_hu   = new HsqlDbUtils();
 
-    private static final Logger log = LoggerFactory.getLogger( TestContainer.class );
+    private static final Logger LOG = LoggerFactory.getLogger( TestContainer.class );
 
     private static Context initCtx ;
-    private static Resource userDB = null;        
-    private static Resource groupDB = null;        
+    private static Resource userDB;
+    private static Resource groupDB;
 
     private static final ContextHandlerCollection handlerCollection = new ContextHandlerCollection();
     
@@ -85,12 +84,10 @@ public class TestContainer
      * @param args the command-line arguments
      * @throws Exception - you know, just in case.
      */
-    public static void main(final String[] args ) throws Exception
-    {
+    public static void main(final String[] args ) throws Exception {
         // Extract key-value pairs that represent test contexts and directories
         final Map<String, String> apps = extractApps( args );
-        if( apps.size() == 0 )
-        {
+        if( apps.size() == 0 ) {
             throw new IllegalArgumentException( "No apps supplied!" );
         }
 
@@ -98,17 +95,16 @@ public class TestContainer
 
         // Create a new server and load up the webapps
         final TestContainer container = new TestContainer();
-        for( final Map.Entry<String, String> app : apps.entrySet() )
-        {
+        for( final Map.Entry<String, String> app : apps.entrySet() ) {
             final String context = app.getKey();
             final String path = app.getValue();
-            log.error( "Adding context " + context + " at path " + path );
+            LOG.error( "Adding context " + context + " at path " + path );
             container.addWebApp( context, path );
         }
 
         handlerCollection.addHandler( new DefaultHandler() );
 
-        // setup the hsqldb database engine
+        // set up the hsqldb database engine
         m_hu.setUp();
 
         // Create the connection pool
@@ -120,21 +116,20 @@ public class TestContainer
 
         // Configure and bind DataSource to JNDI for user database
         userDB = new Resource( "jdbc/UserDatabase", cpds );
-        log.error( "Configured datasource " + userDB);
+        LOG.error( "Configured datasource " + userDB);
         userDB.bindToENC("jdbc/UserDatabase");
         
         // Configure and bind DataSource to JNDI for group database
         groupDB = new Resource( "jdbc/GroupDatabase", cpds );        
-        log.error( "Configured datasource " + groupDB);
+        LOG.error( "Configured datasource " + groupDB);
         userDB.bindToENC("jdbc/GroupDatabase");
         
         // Start the server
-        try
-        {
-            log.error( "Starting up test container." );
+        try {
+            LOG.error( "Starting up test container." );
             container.server.setHandler( handlerCollection );
             final Handler[] currentHandlers = container.server.getHandlers();
-            log.error( "dumping current handlers" );
+            LOG.error( "dumping current handlers" );
             for( final Handler handler : currentHandlers )
             {
                 if( handler instanceof HandlerCollection )
@@ -142,18 +137,16 @@ public class TestContainer
                     final Handler[] collection = ((HandlerCollection) handler).getHandlers();
                     for( final Handler h : collection )
                     {
-                        log.error( "handler: " + h );
+                        LOG.error( "handler: " + h );
                     }
                 }
             }
             container.start();
-        }
-        catch( final Throwable t )
-        {
+        } catch( final Throwable t ) {
             // userDB.unbindENC();
             // groupDB.unbindENC();
             t.printStackTrace();
-            log.error( t.getMessage() );
+            LOG.error( t.getMessage() );
             System.exit( 1 );
         }
     }
@@ -161,32 +154,27 @@ public class TestContainer
     private static Map<String, String> extractApps(final String[] args )
     {
         final Map<String, String> apps = new HashMap<String, String>();
-        for( int i = 0; i < args.length; i++ )
-        {
-            final String[] pair = args[i].split( "=" );
+        for( final String arg : args ) {
+            final String[] pair = arg.split( "=" );
 
             // Right length?
-            if( pair.length != 2 )
-            {
-                throw new IllegalArgumentException( "Malformed argument '" + args[i] + "'; expected 'context=path' pattern." );
+            if( pair.length != 2 ) {
+                throw new IllegalArgumentException( "Malformed argument '" + arg + "'; expected 'context=path' pattern." );
             }
 
             // Extract and sanitize first arg
-            String context = pair[0].trim();
-            if( !context.startsWith( "/" ) )
-            {
+            String context = pair[ 0 ].trim();
+            if( !context.startsWith( "/" ) ) {
                 context = "/" + context;
             }
 
             // Extract and verify the path
-            final String path = pair[1].trim();
+            final String path = pair[ 1 ].trim();
             final File file = new File( path );
-            if( !file.exists() )
-            {
+            if( !file.exists() ) {
                 throw new IllegalArgumentException( "Path " + path + " does not exist." );
             }
-            if( !file.isDirectory() )
-            {
+            if( !file.isDirectory() ) {
                 throw new IllegalArgumentException( "Path " + path + " cannot be a file; it must be a directory." );
             }
 
@@ -197,40 +185,34 @@ public class TestContainer
     }
 
     /**
-     * Prepares a Jetty server with its HTTP and shutdown handlers. Callers must
-     * start the server by calling {@link #start()}.
+     * Prepares a Jetty server with its HTTP and shutdown handlers. Callers must start the server by calling {@link #start()}.
      * 
      * @throws Exception you know, just in case
      */
-    public TestContainer() throws Exception
-    {
+    public TestContainer() throws Exception {
         // Initialize JNDI for the server, using the Jetty JNDI packages if not set yet
         // Normally this is set at JVM startup by property -Djava.naming.factory.initial=classname
         String contextFactoryClass = System.getProperty( INITIAL_CONTEXT_FACTORY );
-        if ( contextFactoryClass == null )
-        {
+        if ( contextFactoryClass == null ) {
             System.setProperty( INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY_JETTY );
 //            ContextFactory.setNameParser( new InitialContextFactory.DefaultParser() );
-            log.error( "No JNDI context factory found; using org.eclipse.jndi.InitialContextFactory." );
+            LOG.error( "No JNDI context factory found; using org.eclipse.jndi.InitialContextFactory." );
             contextFactoryClass = INITIAL_CONTEXT_FACTORY_JETTY;
         }
-        log.error( "Initialized JNDI with context factory class=" + contextFactoryClass + "." );
+        LOG.error( "Initialized JNDI with context factory class=" + contextFactoryClass + "." );
         
         // Bind the "java:comp/env" namespace if not bound already
         initCtx = new InitialContext();
-        try 
-        {
+        try {
             initCtx.lookup( JNDI_ENV_ROOT );
-        }
-        catch ( final NameNotFoundException e )
-        {
+        } catch( final NameNotFoundException e ) {
             initCtx.bind( JNDI_ENV_ROOT, new NamingContext(new Hashtable<String, Object>(), JNDI_ENV_ROOT, null, new InitialContextFactory.DefaultParser()) );
-            log.error( "No JNDI " + JNDI_ENV_ROOT + " namespace found; creating it," );
+            LOG.error( "No JNDI " + JNDI_ENV_ROOT + " namespace found; creating it," );
         }
-        log.info( "Initialized JNDI " + JNDI_ENV_ROOT + " namespace.=" + contextFactoryClass );
+        LOG.info( "Initialized JNDI " + JNDI_ENV_ROOT + " namespace.=" + contextFactoryClass );
         
         // Initialize new Jetty server
-        log.info( "Creating new test container." );
+        LOG.info( "Creating new test container." );
         System.setProperty( "org.eclipse.xml.XmlParser.NotValidating", "true" );
         server = new Server();
         server.setStopAtShutdown( true );
@@ -242,7 +224,7 @@ public class TestContainer
         connector.setIdleTimeout( 60_000 );
 
         server.setConnectors( new Connector[] {connector} );
-        log.info( "added HTTP listener for port " + HTTP_PORT );
+        LOG.info( "added HTTP listener for port " + HTTP_PORT );
 
         // add the shutdown handler
         final ContextHandler shutDownContextHandler = new ContextHandler(SHUTDOWN_CMD);
@@ -255,7 +237,6 @@ public class TestContainer
      * 
      * @param context the name of the web m_context; must start with "/"
      * @param path the file path for the WAR file, or expanded WAR directory
-     * @throws IOException
      */
     public void addWebApp( final String context, final String path ) {
         // Set the default users and roles for the realm (note that realm name *must* match web.xml <realm-name>
@@ -272,55 +253,43 @@ public class TestContainer
         csh.setLoginService( loginService );
         webAppContext.setSecurityHandler( csh );
 
-        log.error( "Adding webapp " + context + " for path " + path );
+        LOG.error( "Adding webapp " + context + " for path " + path );
         handlerCollection.addHandler( webAppContext );
     }
 
     /**
      * Starts the Jetty server
      */
-    public void start() throws Exception
-    {
+    public void start() throws Exception {
         System.setProperty( "org.eclipse.http.HttpRequest.maxFormContentSize", "0" );
         server.start();
-        log.error("jetty server started");
+        LOG.error("jetty server started");
     }
 
     /**
      * Stops the Jetty server
      */
-    public void stop()
-    {
-        try
-        {
+    public void stop() {
+        try {
             server.stop();
-            log.error("jetty server stopped");
-        }
-        catch( final Exception ex )
-        {
+            LOG.error("jetty server stopped");
+        } catch( final Exception ex ) {
             throw new RuntimeException( ex );
         }
     }
-    
-    
-    
+
     /**
      * Handler that shuts down the Jetty server if a request is received containing the shutdown string {@link TestContainer#SHUTDOWN_CMD} .
      */
+    public static final class ShutdownHandler extends AbstractHandler {
 
-    public static final class ShutdownHandler extends AbstractHandler
-    {
-
-        public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response )
-                                                                                                                          throws IOException,
-                                                                                                                              ServletException
-        {
-            if( request.getRequestURI().indexOf( SHUTDOWN_CMD ) != -1 )
-            {
-                log.error( "stop cmd received, shutting down server" );
+        @Override
+        public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response ) throws IOException, ServletException {
+            if( request.getRequestURI().contains( SHUTDOWN_CMD ) ) {
+                LOG.error( "stop cmd received, shutting down server" );
                 System.exit( 0 );
             } else {
-                log.error("ignoring request " + request.getRequestURI());
+                LOG.error("ignoring request " + request.getRequestURI());
             }
         }
     }

@@ -66,14 +66,14 @@ import java.util.Properties;
  *  Simple test engine that always assumes pages are found.
  */
 public class TestEngine extends WikiEngine {
-    private static final Logger log = LoggerFactory.getLogger( TestEngine.class );
+    private static final Logger LOG = LoggerFactory.getLogger( TestEngine.class );
 
-    private Session m_adminWikiSession = null;
-    private Session m_janneWikiSession = null;
-    private Session m_guestWikiSession = null;
+    private Session m_adminWikiSession;
+    private Session m_janneWikiSession;
+    private Session m_guestWikiSession;
 
     // combined properties file (jspwiki.properties + custom override, if any)
-    private static Properties combinedProperties = null;
+    private static Properties combinedProperties;
 
     /**
      * Creates WikiSession with the privileges of the administrative user. For testing purposes, obviously.
@@ -175,11 +175,16 @@ public class TestEngine extends WikiEngine {
     }
 
     public TestEngine( final Properties props ) throws WikiException {
-        super( createServletContext( "test" ), "test", cleanTestProps( props ) );
+        super( createServletContext( "test" ), "test" );
+        try {
+            start( cleanTestProps( props ) );
+        } catch( final Exception e ) {
+            throw new WikiException( Release.APPNAME + ": Unable to load and setup properties from jspwiki.properties. " + e.getMessage(), e );
+        }
 
         // Stash the WikiEngine in the servlet context
         final ServletContext servletContext = this.getServletContext();
-        servletContext.setAttribute("org.apache.wiki.WikiEngine", this);
+        servletContext.setAttribute( "org.apache.wiki.WikiEngine", this );
     }
 
     public static MockServletContext createServletContext( final String contextName ) {
@@ -216,12 +221,7 @@ public class TestEngine extends WikiEngine {
         final MockHttpServletRequest request = new MockHttpServletRequest( "/JSPWiki", path ) {
             @Override
             public ServletContext getServletContext() { // stripes mock returns null
-                return new MockServletContext( "/JSPWiki" ) {
-                    @Override
-                    public String getRealPath( final String path ) { // stripes mock returns null
-                        return path ;
-                    }
-                };
+                return createServletContext( "/JSPWiki" );
             }
         };
         request.setSession( new MockHttpSession( this.getServletContext() ) );
@@ -229,20 +229,28 @@ public class TestEngine extends WikiEngine {
         return request;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void shutdown() {
+        super.shutdown();
+        TestEngine.emptyWikiDir( getWikiProperties() );
+        TestEngine.emptyWorkDir( getWikiProperties() );
+    }
+
     public static void emptyWorkDir() {
         emptyWorkDir( null );
     }
 
     public static void emptyWorkDir(Properties properties) {
-        if (properties == null) {
+        if( properties == null ) {
             properties = getTestProperties();
         }
 
         final String workdir = properties.getProperty( WikiEngine.PROP_WORKDIR );
-        if ( workdir != null ) {
+        if( workdir != null ) {
             final File f = new File( workdir );
 
-            if (f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists()) {
+            if( f.exists() && f.isDirectory() && new File( f, "refmgr.ser" ).exists() ) {
                 // System.out.println( "Deleting " + f.getAbsolutePath() );
                 deleteAll( f );
             }
@@ -253,67 +261,49 @@ public class TestEngine extends WikiEngine {
         emptyWikiDir( null );
     }
 
-    public static void emptyWikiDir(Properties properties) {
-        if (properties == null) {
+    public static void emptyWikiDir( Properties properties ) {
+        if( properties == null ) {
             properties = getTestProperties();
         }
+        emptyDir( properties.getProperty( AbstractFileProvider.PROP_PAGEDIR ) );
+        emptyDir( properties.getProperty( AttachmentProvider.PROP_STORAGEDIR ) );
+    }
 
-        final String wikidir = properties.getProperty( AbstractFileProvider.PROP_PAGEDIR );
-        if ( wikidir != null ) {
-            final File f = new File( wikidir );
-
-            if (f.exists() && f.isDirectory()) {
+    static void emptyDir( final String dir ) {
+        if ( dir != null ) {
+            final File f = new File( dir );
+            if( f.exists() && f.isDirectory() ) {
                 deleteAll( f );
             }
         }
     }
 
     public static Properties getTestProperties() {
-        if (combinedProperties == null) {
+        if( combinedProperties == null ) {
             combinedProperties = PropertyReader.getCombinedProperties(PropertyReader.CUSTOM_JSPWIKI_CONFIG);
         }
         // better to make a copy via putAll instead of Properties(properties)
         // constructor, see http://stackoverflow.com/a/2004900
         final Properties propCopy = new Properties();
-        propCopy.putAll(combinedProperties);
+        propCopy.putAll( combinedProperties );
         return propCopy;
     }
 
-    public static Properties getTestProperties( final String customPropFile) {
-        return PropertyReader.getCombinedProperties(customPropFile);
-    }
-/*
-    public static final InputStream findTestProperties()
-    {
-        return findTestProperties( "/jspwiki.properties" );
+    public static Properties getTestProperties( final String customPropFile ) {
+        return PropertyReader.getCombinedProperties( customPropFile );
     }
 
-    public static final InputStream findTestProperties( String properties )
-    {
-        InputStream in = TestEngine.class.getResourceAsStream( properties );
-
-        if( in == null ) throw new InternalWikiException("Unable to locate test property resource: "+properties);
-
-        return in;
-    }
-*/
     /**
      *  Deletes all files under this directory, and does them recursively.
      */
-    public static void deleteAll( final File file )
-    {
-        if( file != null )
-        {
-            if( file.isDirectory() )
-            {
+    public static void deleteAll( final File file ) {
+        if( file != null ) {
+            if( file.isDirectory() ) {
                 final File[] files = file.listFiles();
-
-                if( files != null )
-                {
-                    for ( final File file2 : files) {
-                        if( file2.isDirectory() )
-                        {
-                            deleteAll(file2);
+                if( files != null ) {
+                    for( final File file2 : files ) {
+                        if( file2.isDirectory() ) {
+                            deleteAll( file2 );
                         }
 
                         file2.delete();
@@ -360,7 +350,7 @@ public class TestEngine extends WikiEngine {
             deleteAttachments( name );
             firePageEvent( WikiPageEvent.PAGE_DELETED, name );
         } catch( final Exception e ) {
-            log.error("Couldn't delete "+name, e );
+            LOG.error("Couldn't delete "+name, e );
         }
     }
 
@@ -376,7 +366,7 @@ public class TestEngine extends WikiEngine {
 
             deleteAll( f );
         } catch( final Exception e ) {
-            log.error("Could not remove attachments.",e);
+            LOG.error("Could not remove attachments.",e);
         }
     }
 
@@ -402,7 +392,7 @@ public class TestEngine extends WikiEngine {
      * @param data attachment data
      */
     public void addAttachment( final String pageName, final String attachmentName, final byte[] data ) throws ProviderException, IOException {
-        final Attachment att = Wiki.contents().attachment( this,pageName,attachmentName );
+        final Attachment att = Wiki.contents().attachment( this, pageName, attachmentName );
         getManager( AttachmentManager.class ).storeAttachment( att, new ByteArrayInputStream( data ) );
     }
 
@@ -453,14 +443,6 @@ public class TestEngine extends WikiEngine {
         return getManager( RenderingManager.class ).getHTML( context, page );
     }
 
-    public static void trace() {
-        try {
-            throw new Exception("Foo");
-        } catch( final Exception e ) {
-            e.printStackTrace();
-        }
-    }
-
     /**
      * Supplies a clean set of test properties for the TestEngine constructor.
      * @param props the properties supplied by callers
@@ -468,10 +450,13 @@ public class TestEngine extends WikiEngine {
      */
     private static Properties cleanTestProps( final Properties props ) {
         final long millis = System.currentTimeMillis();
-        props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
-        props.setProperty( "jspwiki.fileSystemProvider.pageDir", cleanNewDirFrom( props.getProperty( "jspwiki.fileSystemProvider.pageDir" ), millis ) );
-        props.setProperty( "jspwiki.basicAttachmentProvider.storageDir", cleanNewDirFrom( props.getProperty( "jspwiki.basicAttachmentProvider.storageDir" ), millis ) );
-        props.setProperty( "jspwiki.workDir", cleanNewDirFrom( props.getProperty( "jspwiki.workDir" ), millis ) );
+        if( !"true".equalsIgnoreCase( props.getProperty( "jspwiki.test.disable-clean-props" ) ) ) {
+            props.put( AuthenticationManager.PROP_LOGIN_THROTTLING, "false" );
+            props.setProperty( "jspwiki.fileSystemProvider.pageDir", cleanNewDirFrom( props.getProperty( "jspwiki.fileSystemProvider.pageDir" ), millis ) );
+            props.setProperty( "jspwiki.basicAttachmentProvider.storageDir", cleanNewDirFrom( props.getProperty( "jspwiki.basicAttachmentProvider.storageDir" ), millis ) );
+            props.setProperty( "jspwiki.workDir", cleanNewDirFrom( props.getProperty( "jspwiki.workDir" ), millis ) );
+        }
+
         return props;
     }
 

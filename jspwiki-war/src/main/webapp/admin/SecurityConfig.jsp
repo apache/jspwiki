@@ -51,7 +51,7 @@
   {
       %>
       <head>
-        <title><wiki:Variable var="applicationname" />: JSPWiki Security Configuration Verifier</title>
+        <title><wiki:Variable var="applicationname" default="Apache JSPWiki" />: JSPWiki Security Configuration Verifier</title>
         <base href="../"/>
         <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
         <wiki:IncludeResources type="stylesheet"/>
@@ -77,7 +77,7 @@
 %>
 
 <head>
-  <title><wiki:Variable var="applicationname" />: JSPWiki Security Configuration Verifier</title>
+  <title><wiki:Variable var="applicationname" default="Apache JSPWiki" />: JSPWiki Security Configuration Verifier</title>
   <base href="../"/>
   <link rel="stylesheet" media="screen, projection" type="text/css" href="<wiki:Link format="url" templatefile="jspwiki.css"/>"/>
   <wiki:IncludeResources type="stylesheet"/>

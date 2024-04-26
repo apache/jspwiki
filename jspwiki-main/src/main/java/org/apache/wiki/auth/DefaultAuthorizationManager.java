@@ -77,7 +77,7 @@ import java.util.WeakHashMap;
  */
 public class DefaultAuthorizationManager implements AuthorizationManager {
 
-    private static final Logger log = LoggerFactory.getLogger( DefaultAuthorizationManager.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DefaultAuthorizationManager.class );
 
     private Authorizer m_authorizer;
 
@@ -139,10 +139,10 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         // any of these, the action is allowed.
         final Principal[] aclPrincipals = acl.findPrincipals( permission );
 
-        log.debug( "Checking ACL entries..." );
-        log.debug( "Acl for this page is: " + acl );
-        log.debug( "Checking for principal: " + Arrays.toString( aclPrincipals ) );
-        log.debug( "Permission: " + permission );
+        LOG.debug( "Checking ACL entries..." );
+        LOG.debug( "Acl for this page is: {}", acl );
+        LOG.debug( "Checking for principal: {}", Arrays.toString( aclPrincipals ) );
+        LOG.debug( "Permission: {}", permission );
 
         for( Principal aclPrincipal : aclPrincipals ) {
             // If the ACL principal we're looking at is unresolved, try to resolve it here & correct the Acl
@@ -189,11 +189,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         if( session.isAuthenticated() && AuthenticationManager.isUserPrincipal( principal ) ) {
             final String principalName = principal.getName();
             final Principal[] userPrincipals = session.getPrincipals();
-            for( final Principal userPrincipal : userPrincipals ) {
-                if( userPrincipal.getName().equals( principalName ) ) {
-                    return true;
-                }
-            }
+            return Arrays.stream(userPrincipals).anyMatch(userPrincipal -> userPrincipal.getName().equals(principalName));
         }
         return false;
     }
@@ -202,7 +198,6 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
     @Override
     public boolean hasAccess( final Context context, final HttpServletResponse response, final boolean redirect ) throws IOException {
         final boolean allowed = checkPermission( context.getWikiSession(), context.requiredPermission() );
-        final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
 
         // Stash the wiki context
         if ( context.getHttpRequest() != null && context.getHttpRequest().getAttribute( Context.ATTR_CONTEXT ) == null ) {
@@ -211,15 +206,15 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
 
         // If access not allowed, redirect
         if( !allowed && redirect ) {
+            final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
             final Principal currentUser  = context.getWikiSession().getUserPrincipal();
             final String pageurl = context.getPage().getName();
             if( context.getWikiSession().isAuthenticated() ) {
-                log.info( "User " + currentUser.getName() + " has no access - forbidden (permission=" + context.requiredPermission() + ")" );
-                context.getWikiSession().addMessage( MessageFormat.format( rb.getString( "security.error.noaccess.logged" ),
-                                                     context.getName()) );
+                LOG.info( "User {} has no access - forbidden (permission={})", currentUser.getName(), context.requiredPermission() );
+                context.getWikiSession().addMessage( MessageFormat.format( rb.getString( "security.error.noaccess.logged" ), context.getName()) );
             } else {
-                log.info( "User " + currentUser.getName() + " has no access - redirecting (permission=" + context.requiredPermission() + ")" );
-                context.getWikiSession().addMessage( MessageFormat.format( rb.getString("security.error.noaccess"), context.getName() ) );
+                LOG.info( "User {} has no access - redirecting (permission={})", currentUser.getName(), context.requiredPermission() );
+                context.getWikiSession().addMessage( MessageFormat.format( rb.getString( "security.error.noaccess" ), context.getName() ) );
             }
             response.sendRedirect( m_engine.getURL( ContextEnum.WIKI_LOGIN.getRequestContext(), pageurl, null ) );
         }
@@ -254,52 +249,45 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
 
             if (policyURL != null) {
                 final File policyFile = new File( policyURL.toURI().getPath() );
-                log.info("We found security policy URL: " + policyURL + " and transformed it to file " + policyFile.getAbsolutePath());
+                LOG.info("We found security policy URL: {} and transformed it to file {}",policyURL, policyFile.getAbsolutePath());
                 m_localPolicy = new LocalPolicy( policyFile, engine.getContentEncoding().displayName() );
                 m_localPolicy.refresh();
-                log.info( "Initialized default security policy: " + policyFile.getAbsolutePath() );
+                LOG.info( "Initialized default security policy: {}", policyFile.getAbsolutePath() );
             } else {
                 final String sb = "JSPWiki was unable to initialize the default security policy (WEB-INF/jspwiki.policy) file. " +
                                   "Please ensure that the jspwiki.policy file exists in the default location. " +
                 		          "This file should exist regardless of the existance of a global policy file. " +
                                   "The global policy file is identified by the java.security.policy variable. ";
                 final WikiSecurityException wse = new WikiSecurityException( sb );
-                log.error( sb, wse );
+                LOG.error( sb, wse );
                 throw wse;
             }
         } catch ( final Exception e) {
-            log.error("Could not initialize local security policy: " + e.getMessage() );
+            LOG.error("Could not initialize local security policy: {}", e.getMessage() );
             throw new WikiException( "Could not initialize local security policy: " + e.getMessage(), e );
         }
     }
 
     /**
-     * Attempts to locate and initialize a Authorizer to use with this manager. Throws a WikiException if no entry is found, or if one
+     * Attempts to locate and initialize an Authorizer to use with this manager. Throws a WikiException if no entry is found, or if one
      * fails to initialize.
      *
      * @param props jspwiki.properties, containing a 'jspwiki.authorization.provider' class name.
-     * @return a Authorizer used to get page authorization information.
+     * @return an Authorizer used to get page authorization information.
      * @throws WikiException if there are problems finding the authorizer implementation.
      */
     private Authorizer getAuthorizerImplementation( final Properties props ) throws WikiException {
         final String authClassName = props.getProperty( PROP_AUTHORIZER, DEFAULT_AUTHORIZER );
-        return ( Authorizer )locateImplementation( authClassName );
+        return locateImplementation( authClassName );
     }
 
-    private Object locateImplementation( final String clazz ) throws WikiException {
+    private Authorizer locateImplementation( final String clazz ) throws WikiException {
         if ( clazz != null ) {
             try {
-                final Class< ? > authClass = ClassUtil.findClass( "org.apache.wiki.auth.authorize", clazz );
-                return authClass.newInstance();
-            } catch( final ClassNotFoundException e ) {
-                log.error( "Authorizer " + clazz + " cannot be found", e );
-                throw new WikiException( "Authorizer " + clazz + " cannot be found", e );
-            } catch( final InstantiationException e ) {
-                log.error( "Authorizer " + clazz + " cannot be created", e );
-                throw new WikiException( "Authorizer " + clazz + " cannot be created", e );
-            } catch( final IllegalAccessException e ) {
-                log.error( "You are not allowed to access this authorizer class", e );
-                throw new WikiException( "You are not allowed to access this authorizer class", e );
+                return ClassUtil.buildInstance( "org.apache.wiki.auth.authorize", clazz );
+            } catch( final ReflectiveOperationException e ) {
+                LOG.fatal( "Authorizer {} cannot be instantiated", clazz, e );
+                throw new WikiException( "Authorizer " + clazz + " cannot be instantiated", e );
             }
         }
 

@@ -16,10 +16,8 @@
     specific language governing permissions and limitations
     under the License.
  */
-
 package org.apache.wiki.pages;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.core.Attachment;
@@ -28,6 +26,7 @@ import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.cache.CachingManager;
 import org.apache.wiki.providers.CachingProvider;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.providers.VerySimpleProvider;
@@ -50,15 +49,7 @@ public class DefaultPageManagerTest {
 
     @AfterEach
     public void tearDown() {
-        final String files = engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
-
-        if( files != null ) {
-            final File f = new File( files );
-            TestEngine.deleteAll( f );
-        }
-
-        TestEngine.emptyWorkDir();
-        CacheManager.getInstance().removeAllCaches();
+        engine.stop();
     }
 
     /**
@@ -80,7 +71,7 @@ public class DefaultPageManagerTest {
 
     @Test
     public void testPageCacheExists() throws Exception {
-        engine.getWikiProperties().setProperty( "jspwiki.usePageCache", "true" );
+        engine.getWikiProperties().setProperty( "jspwiki.cache.enable", "true" );
         final PageManager m = new DefaultPageManager( engine, engine.getWikiProperties() );
 
         Assertions.assertTrue( m.getProvider() instanceof CachingProvider );
@@ -88,7 +79,7 @@ public class DefaultPageManagerTest {
 
     @Test
     public void testPageCacheNotInUse() throws Exception {
-        engine.getWikiProperties().setProperty( "jspwiki.usePageCache", "false" );
+        engine.getManager( CachingManager.class ).shutdown();
         final PageManager m = new DefaultPageManager( engine, engine.getWikiProperties() );
 
         Assertions.assertFalse( m.getProvider() instanceof CachingProvider );
@@ -198,7 +189,7 @@ public class DefaultPageManagerTest {
     public void testLatestGet() throws Exception {
         final Properties props = engine.getWikiProperties();
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
-        props.setProperty( "jspwiki.usePageCache", "false" );
+        props.setProperty( "jspwiki.cache.enable", "false" );
         final WikiEngine engine = new TestEngine( props );
         final Page p = engine.getManager( PageManager.class ).getPage( "test", -1 );
         final VerySimpleProvider vsp = (VerySimpleProvider) engine.getManager( PageManager.class ).getProvider();
@@ -212,7 +203,7 @@ public class DefaultPageManagerTest {
     public void testLatestGet2() throws Exception {
         final Properties props = engine.getWikiProperties();
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
-        props.setProperty( "jspwiki.usePageCache", "false" );
+        props.setProperty( "jspwiki.cache.enable", "false" );
         final WikiEngine engine = new TestEngine( props );
         final String p = engine.getManager( PageManager.class ).getText( "test", -1 );
         final VerySimpleProvider vsp = (VerySimpleProvider) engine.getManager( PageManager.class ).getProvider();
@@ -226,7 +217,7 @@ public class DefaultPageManagerTest {
     public void testLatestGet3() throws Exception {
         final Properties props = engine.getWikiProperties();
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
-        props.setProperty( "jspwiki.usePageCache", "false" );
+        props.setProperty( "jspwiki.cache.enable", "false" );
         final WikiEngine engine = new TestEngine( props );
         final String p = engine.getManager( RenderingManager.class ).getHTML( "test", -1 );
         final VerySimpleProvider vsp = (VerySimpleProvider) engine.getManager( PageManager.class ).getProvider();
@@ -240,7 +231,7 @@ public class DefaultPageManagerTest {
     public void testLatestGet4() throws Exception {
         final Properties props = engine.getWikiProperties();
         props.setProperty( "jspwiki.pageProvider", "org.apache.wiki.providers.VerySimpleProvider" );
-        props.setProperty( "jspwiki.usePageCache", "true" );
+        props.setProperty( "jspwiki.cache.enable", "true" );
         final WikiEngine engine = new TestEngine( props );
         final String p = engine.getManager( RenderingManager.class ).getHTML( VerySimpleProvider.PAGENAME, -1 );
         final CachingProvider cp = (CachingProvider)engine.getManager( PageManager.class ).getProvider();

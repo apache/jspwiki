@@ -38,9 +38,11 @@ import org.suigeneris.jrcs.diff.myers.MyersDiff;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 
 /**
@@ -50,7 +52,7 @@ import java.util.StringTokenizer;
  */
 public class ContextualDiffProvider implements DiffProvider {
 
-    private static final Logger log = LoggerFactory.getLogger( ContextualDiffProvider.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ContextualDiffProvider.class );
 
     /**
      *  A jspwiki.properties value to define how many characters are shown around the change context.
@@ -120,7 +122,7 @@ public class ContextualDiffProvider implements DiffProvider {
         try {
             limit = Integer.parseInt( configuredLimit );
         } catch( final NumberFormatException e ) {
-            log.warn("Failed to parseInt " + PROP_UNCHANGED_CONTEXT_LIMIT + "=" + configuredLimit + " Will use a huge number as limit.", e );
+            LOG.warn("Failed to parseInt " + PROP_UNCHANGED_CONTEXT_LIMIT + "=" + configuredLimit + " Will use a huge number as limit.", e );
         }
         m_unchangedContextLimit = limit;
     }
@@ -146,7 +148,7 @@ public class ContextualDiffProvider implements DiffProvider {
         try {
             rev = Diff.diff( alpha, beta, new MyersDiff() );
         } catch( final DifferentiationFailedException dfe ) {
-            log.error( "Diff generation failed", dfe );
+            LOG.error( "Diff generation failed", dfe );
             return "Error while creating version diff.";
         }
 
@@ -253,25 +255,18 @@ public class ContextualDiffProvider implements DiffProvider {
                     if (m_firstElem > 0) {
                         final int endIndex = Math.min( m_firstElem + m_unchangedContextLimit, m_origStrings.length -1 );
 
-                        for( int j = m_firstElem; j < endIndex; j++ ) {
-                            m_sb.append( m_origStrings[ j ] );
-                        }
+                        m_sb.append(Arrays.stream(m_origStrings, m_firstElem, endIndex).collect(Collectors.joining("", "", ELIDED_TAIL_INDICATOR_HTML)));
 
-                        m_sb.append( ELIDED_TAIL_INDICATOR_HTML );
                     }
 
                     m_sb.append( ELIDED_HEAD_INDICATOR_HTML );
 
                     final int startIndex = Math.max(orig.first() - m_unchangedContextLimit, 0);
-                    for (int j = startIndex; j < orig.first(); j++) {
-                        m_sb.append( m_origStrings[ j ] );
-                    }
+                    m_sb.append(Arrays.stream(m_origStrings, startIndex, orig.first()).collect(Collectors.joining()));
 
                 } else {
                     // No need to skip anything, just output the whole range...
-                    for( int j = m_firstElem; j < orig.first(); j++ ) {
-                        m_sb.append( m_origStrings[ j ] );
-                    }
+                    m_sb.append(Arrays.stream(m_origStrings, m_firstElem, orig.first()).collect(Collectors.joining()));
                 }
             }
             m_firstElem = orig.last() + 1;
@@ -346,16 +341,11 @@ public class ContextualDiffProvider implements DiffProvider {
                 // If there's more than the limit of the orginal left just emit limit and elided...
                 if( ( m_origStrings.length - m_firstElem ) > m_unchangedContextLimit ) {
                     final int endIndex = Math.min( m_firstElem + m_unchangedContextLimit, m_origStrings.length -1 );
-                    for (int j = m_firstElem; j < endIndex; j++) {
-                        m_sb.append( m_origStrings[ j ] );
-                    }
+                    m_sb.append(Arrays.stream(m_origStrings, m_firstElem, endIndex).collect(Collectors.joining("", "", ELIDED_TAIL_INDICATOR_HTML)));
 
-                    m_sb.append( ELIDED_TAIL_INDICATOR_HTML );
                 } else {
                 // emit entire tail of original...
-                    for( int j = m_firstElem; j < m_origStrings.length; j++ ) {
-                        m_sb.append( m_origStrings[ j ] );
-                    }
+                    m_sb.append(Arrays.stream(m_origStrings, m_firstElem, m_origStrings.length).collect(Collectors.joining()));
                 }
             }
         }

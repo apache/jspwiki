@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.search;
 
-import net.sf.ehcache.CacheManager;
 import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
@@ -56,14 +55,13 @@ public class SearchManagerTest {
         props.setProperty( "jspwiki.workDir", workDir + System.currentTimeMillis() );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", workRepo + System.currentTimeMillis() );
 
-        CacheManager.getInstance().removeAllCaches();
-        m_engine = new TestEngine( props );
+        m_engine = TestEngine.build( props );
         m_mgr = m_engine.getManager( SearchManager.class );
     }
 
     @AfterEach
     public void tearDown() {
-    	TestEngine.emptyWorkDir( props );
+        m_engine.stop();
     }
 
     @Test

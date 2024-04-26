@@ -25,6 +25,7 @@ import org.apache.wiki.event.WikiEventListener;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 
@@ -77,6 +78,13 @@ public interface WorkflowManager extends WikiEventListener, Initializable {
      * @return the current workflows
      */
     Set< Workflow > getWorkflows();
+
+    /**
+     * Returns a map of the currently active workflows.
+     *
+     * @return the current workflows as workflowId -> workflow tuples
+     */
+    Map< Integer, Workflow > getWorkflowsAsMap();
 
     /**
      * Returns a collection of finished workflows; that is, those that have aborted or completed.

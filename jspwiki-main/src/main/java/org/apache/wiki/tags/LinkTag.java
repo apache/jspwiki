@@ -50,7 +50,7 @@ import java.util.Map;
 public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
 
 	static final long serialVersionUID = 0L;
-    private static final Logger log = LoggerFactory.getLogger( LinkTag.class );
+    private static final Logger LOG = LoggerFactory.getLogger( LinkTag.class );
 
     private String m_version;
     private String m_cssClass;
@@ -262,7 +262,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     }
 
     private String addParamsForRecipient( final String addTo, final Map< String, String > params ) {
-        if( params == null || params.size() == 0 ) {
+        if( params == null || params.isEmpty()) {
             return addTo;
         }
         final StringBuilder buf = new StringBuilder();
@@ -372,7 +372,7 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
             if( m_format == ANCHOR ) out.print("</a>");
         } catch( final Exception e ) {
             // Yes, we want to catch all exceptions here, including RuntimeExceptions
-            log.error( "Tag failed", e );
+            LOG.error( "Tag failed", e );
         }
 
         return EVAL_PAGE;

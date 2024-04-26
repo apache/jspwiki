@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.apache.wiki.WatchDog;
-import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
@@ -30,12 +30,21 @@ import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.TextUtil;
 import org.slf4j.MDC;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import java.io.*;
-import java.nio.charset.Charset;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 
 /**
@@ -63,7 +72,7 @@ import java.nio.charset.Charset;
  */
 public class WikiJSPFilter extends WikiServletFilter {
 
-    private static final Logger log = LoggerFactory.getLogger( WikiJSPFilter.class );
+    private static final Logger LOG = LoggerFactory.getLogger( WikiJSPFilter.class );
     private String m_wiki_encoding;
     private boolean useEncoding;
 
@@ -83,19 +92,20 @@ public class WikiJSPFilter extends WikiServletFilter {
 
             w.enterState("Filtering for URL "+((HttpServletRequest)request).getRequestURI(), 90 );
             final HttpServletResponseWrapper responseWrapper = new JSPWikiServletResponseWrapper( ( HttpServletResponse )response, m_wiki_encoding, useEncoding );
+            request.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
 
             // fire PAGE_REQUESTED event
-            final String pagename = URLConstructor.parsePageFromURL( ( HttpServletRequest )request, Charset.forName( response.getCharacterEncoding() ) );
-            fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename );
+            final String pagename = URLConstructor.parsePageFromURL( ( HttpServletRequest )request, m_engine.getContentEncoding() );
+            fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename != null ? pagename : m_engine.getFrontPage() );
             super.doFilter( request, responseWrapper, chain );
 
-            // The response is now complete. Lets replace the markers now.
+            // The response is now complete. Let's replace the markers now.
 
             // WikiContext is only available after doFilter! (That is after interpreting the jsp)
 
             try {
                 w.enterState( "Delivering response", 30 );
-                final WikiContext wikiContext = getWikiContext( request );
+                final Context wikiContext = getWikiContext( request );
                 final String r = filter( wikiContext, responseWrapper );
 
                 if( useEncoding ) {
@@ -130,7 +140,7 @@ public class WikiJSPFilter extends WikiServletFilter {
      * @param response The source string
      * @return The modified string with all the insertions in place.
      */
-    private String filter( final WikiContext wikiContext, final HttpServletResponse response ) {
+    private String filter( final Context wikiContext, final HttpServletResponse response ) {
         String string = response.toString();
 
         if( wikiContext != null ) {
@@ -166,7 +176,7 @@ public class WikiJSPFilter extends WikiServletFilter {
      *  @param type Type identifier for insertion
      *  @return The filtered string.
      */
-    private String insertResources( final WikiContext wikiContext, final String string, final String type ) {
+    private String insertResources( final Context wikiContext, final String string, final String type ) {
         if( wikiContext == null ) {
             return string;
         }
@@ -177,13 +187,13 @@ public class WikiJSPFilter extends WikiServletFilter {
             return string;
         }
 
-        log.debug("...Inserting...");
+        LOG.debug("...Inserting...");
 
         final String[] resources = TemplateManager.getResourceRequests( wikiContext, type );
         final StringBuilder concat = new StringBuilder( resources.length * 40 );
 
         for( final String resource : resources ) {
-            log.debug( "...:::" + resource );
+            LOG.debug( "...:::" + resource );
             concat.append( resource );
         }
 
@@ -267,7 +277,7 @@ public class WikiJSPFilter extends WikiServletFilter {
             try {
 				flushBuffer();
 			} catch( final IOException e ) {
-                log.error("Error while flushing", e );
+				LOG.error("Error while flushing", e );
                 return StringUtils.EMPTY;
 			}
 
@@ -278,7 +288,7 @@ public class WikiJSPFilter extends WikiServletFilter {
 
 				return m_output.toString();
 			} catch( final UnsupportedEncodingException e ) {
-                log.error("Unable to convert to string", e );
+				LOG.error("Unable to convert to string", e );
                 return StringUtils.EMPTY;
              }
         }

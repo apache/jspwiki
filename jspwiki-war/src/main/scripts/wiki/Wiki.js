@@ -533,16 +533,14 @@ var Wiki = {
     },
 
     /*
-    Property: cleanPageName
-        Remove all not-allowed chars from a pagename.
-        Trim all whitespace, allow letters, digits and punctuation chars: ()&+, -=._$
-        Mirror of org.apache.wiki.parser.MarkupParser.cleanPageName()
-    */
-    cleanPageName: function( pagename ){
-
+      Property: cleanPageName
+          Remove all not-allowed chars from a pagename.
+          Trim all whitespace, allow letters, digits and punctuation chars: ()&+, -=._$/ (Note: '/' is now allowed)
+          Mirror of org.apache.wiki.parser.MarkupParser.cleanPageName()
+  */
+    cleanPageName: function(pagename) {
         //\w is short for [A-Z_a-z0-9_]
-        return pagename.clean().replace(/[^\w\u00C0-\u1FFF\u2800-\uFFFD()&+,\-=.$ ]/g, "");
-
+        return pagename.clean().replace(/[^\w\u00C0-\u1FFF\u2800-\uFFFD()&+,\-=.$/ ]/g, "");
     },
 
     /*
@@ -674,7 +672,8 @@ var Wiki = {
             new Request({
                 url: wiki.XHRHtml2Markup,
                 data: {
-                    htmlPageText: getContent()
+                    htmlPageText: getContent(),
+                    'X-XSRF-TOKEN': wiki.CsrfProtection
                 },
                 onSuccess: function(responseText){
                     preview( responseText.trim() );
@@ -836,7 +835,7 @@ var Wiki = {
                     throw new Error("Wiki rpc error: " + error);
                 }
 
-            }).send( "params=" + params );
+            }).send( "X-XSRF-TOKEN=" + this.CsrfProtection + "&params=" + params );
 
         }
 

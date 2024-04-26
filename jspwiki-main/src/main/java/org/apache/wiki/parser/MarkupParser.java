@@ -67,7 +67,7 @@ public abstract class MarkupParser {
     protected List< Pattern > m_inlineImagePatterns;
     protected final LinkParsingOperations m_linkParsingOperations;
 
-    private static final Logger log = LoggerFactory.getLogger( MarkupParser.class );
+    private static final Logger LOG = LoggerFactory.getLogger( MarkupParser.class );
 
     /** If set to "true", allows using raw HTML within Wiki text.  Be warned, this is a VERY dangerous option to set -
        never turn this on in a publicly allowable Wiki, unless you are absolutely certain of what you're doing. */
@@ -263,7 +263,7 @@ public abstract class MarkupParser {
                 try {
                     compiledpatterns.add( compiler.compile( pattern, GlobCompiler.DEFAULT_MASK | GlobCompiler.READ_ONLY_MASK ) );
                 } catch( final MalformedPatternException e ) {
-                    log.error( "Malformed pattern [" + pattern + "] in properties: ", e );
+                    LOG.error( "Malformed pattern [" + pattern + "] in properties: ", e );
                 }
             }
 

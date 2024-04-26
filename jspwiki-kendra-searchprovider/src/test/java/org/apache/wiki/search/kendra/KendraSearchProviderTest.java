@@ -58,7 +58,7 @@ public class KendraSearchProviderTest {
     void setUp( final TestInfo testInfo ) throws Exception {
         TestEngine.emptyWorkDir( props );
 
-        // before each test I setup the Kendra Client
+        // before each test I set up the Kendra Client
         searchProvider = new KendraSearchProvider() {
             @Override
             protected AWSkendra buildClient() {

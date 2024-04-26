@@ -292,6 +292,15 @@ public class TextUtilTest {
     }
 
     @Test
+    public void testGetStringPropertyDeprecated() {
+        final String[] vals = { "foo", " this is a property ", "foo-dep", "deprecated" };
+        final Properties props = TextUtil.createProperties(vals);
+        Assertions.assertEquals( "deprecated", TextUtil.getStringProperty( props, "foo", "foo-dep", "err" ) );
+        Assertions.assertEquals( "this is a property", TextUtil.getStringProperty( props, "foo", "bar-dep", "err" ) );
+        Assertions.assertEquals( "err", TextUtil.getStringProperty( props, "fooo", "bar-dep", "err" ) );
+    }
+
+    @Test
     public void testGetStringPropertyDefaultValue() {
         final String defaultValue = System.getProperty( "user.home" ) + File.separator + "jspwiki-files";
         final String[] vals = { "foo", " this is a property " };
@@ -329,6 +338,15 @@ public class TextUtilTest {
         final String[] vals = { "foo", " this is a property ", "bar", "60" };
         final Properties props = TextUtil.createProperties(vals);
         Assertions.assertThrows( NoSuchElementException.class, () -> TextUtil.getRequiredProperty( props, "ber" ) );
+    }
+
+    @Test
+    public void testGetRequiredPropertyDeprecated() {
+        final String[] vals = { "foo", " this is a property ", "foo-dep", "deprecated" };
+        final Properties props = TextUtil.createProperties( vals );
+        Assertions.assertEquals( "deprecated", TextUtil.getRequiredProperty( props, "foo", "foo-dep" ) );
+        Assertions.assertEquals( "this is a property", TextUtil.getRequiredProperty( props, "foo", "bar-dep" ) );
+        Assertions.assertThrows( NoSuchElementException.class, () -> TextUtil.getRequiredProperty( props, "fooo", "bar-dep" ) );
     }
 
     @Test

@@ -39,7 +39,7 @@
 
   if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
 
-  response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+  response.setContentType("text/plain; charset="+wiki.getContentEncoding() );
   //response.setHeader( "Cache-control", "max-age=0" );
   //response.setDateHeader( "Expires", new Date().getTime() );
   //response.setDateHeader( "Last-Modified", new Date().getTime() );
@@ -48,6 +48,6 @@
 
   if( htmlText != null )
   {
-%><%= new HtmlStringToWikiTranslator().translate(htmlText, wikiContext) %><%
+%><%= new HtmlStringToWikiTranslator( wiki ).translate( htmlText, wikiContext ) %><%
   }
 %>

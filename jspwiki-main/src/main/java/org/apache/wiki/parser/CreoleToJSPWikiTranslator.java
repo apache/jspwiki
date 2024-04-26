@@ -163,9 +163,9 @@ public class CreoleToJSPWikiTranslator
 
     private static final String ESCAPE_PROTECTED = "~(\\*\\*|~|//|-|#|\\{\\{|}}|\\\\|~\\[~~[|]]|----|=|\\|)";
 
-    private static final Map<String, String> c_protectionMap = new HashMap<String, String>();
+    private static final Map<String, String> c_protectionMap = new HashMap<>();
 
-    private        ArrayList<String> m_hashList = new ArrayList<String>();
+    private        ArrayList<String> m_hashList = new ArrayList<>();
 
     /**
      *  I have no idea what this method does.  Could someone please tell me?
@@ -185,7 +185,7 @@ public class CreoleToJSPWikiTranslator
             dateFormat = DEFAULT_DATEFORMAT;
         }
 
-        SimpleDateFormat df = null;
+        SimpleDateFormat df;
         try
         {
             df = new SimpleDateFormat(dateFormat);
@@ -295,10 +295,7 @@ public class CreoleToJSPWikiTranslator
             }
             if ((inList == -1 && counter != 1) || (inList != -1 && inList + 1 < counter))
             {
-                for (int c = 0; c < counter; c++)
-                {
-                    result.append(actSourceSymbol);
-                }
+                result.append(actSourceSymbol.repeat(Math.max(0, counter)));
                 inList = -1;
             }
             else
@@ -383,7 +380,7 @@ public class CreoleToJSPWikiTranslator
     private String protectMarkup(String content)
     {
         c_protectionMap.clear();
-        m_hashList = new ArrayList<String>();
+        m_hashList = new ArrayList<>();
         content = protectMarkup(content, PREFORMATTED_PROTECTED, "", "");
         content = protectMarkup(content, URL_PROTECTED, "", "");
         content = protectMarkup(content, ESCAPE_PROTECTED, "", "");
@@ -398,18 +395,16 @@ public class CreoleToJSPWikiTranslator
     {
         final Set< Object > keySet = wikiProps.keySet();
         final Object[] keys = keySet.toArray();
-        final ArrayList<String[]> result = new ArrayList<String[]>();
+        final ArrayList<String[]> result = new ArrayList<>();
 
-        for( int i = 0; i < keys.length; i++ )
-        {
-            final String key = keys[i] + "";
-            final String value = wikiProps.getProperty( keys[i] + "" );
-            if( key.indexOf( "creole.imagePlugin.para.%" ) > -1 )
-            {
+        for (final Object o : keys) {
+            final String key = o + "";
+            final String value = wikiProps.getProperty(o + "");
+            if (key.contains("creole.imagePlugin.para.%")) {
                 final String[] pair = new String[2];
-                pair[0] = key.replaceAll( "creole.imagePlugin.para.%", "" );
+                pair[0] = key.replaceAll("creole.imagePlugin.para.%", "");
                 pair[1] = value;
-                result.add( pair );
+                result.add(pair);
             }
         }
         return result;
@@ -433,14 +428,11 @@ public class CreoleToJSPWikiTranslator
             {
                 final String[] params = paramsField.split(",");
 
-                for (int i = 0; i < params.length; i++)
-                {
-                    final String param = params[i].replaceAll("\\||\\s", "").toUpperCase();
+                for (final String s : params) {
+                    final String param = s.replaceAll("\\||\\s", "").toUpperCase();
 
                     // Replace placeholder params
-                    for (int j = 0; j < plProperties.size(); j++)
-                    {
-                        final String[] pair = plProperties.get(j);
+                    for (final String[] pair : plProperties) {
                         final String key = pair[0];
                         final String value = pair[1];
                         String code = param.replaceAll("(?i)([0-9]+)" + key, value + "<check>" + "$1" + "</check>");
@@ -451,13 +443,10 @@ public class CreoleToJSPWikiTranslator
                     }
 
                     // Check if it is a number
-                    try
-                    {
+                    try {
                         Integer.parseInt(param);
                         paramsString.append(" width='").append(param).append("px'");
-                    }
-                    catch (final Exception e)
-                    {
+                    } catch (final Exception e) {
 
                         if (wikiProps.getProperty("creole.imagePlugin.para." + param) != null)
                             paramsString.append(" ").append(wikiProps.getProperty("creole.imagePlugin.para." + param)
@@ -514,7 +503,7 @@ public class CreoleToJSPWikiTranslator
             {
                 final MessageDigest digest = MessageDigest.getInstance("MD5");
                 digest.reset();
-                digest.update(protectedMarkup.getBytes(StandardCharsets.UTF_8.name()));
+                digest.update(protectedMarkup.getBytes(StandardCharsets.UTF_8));
                 final String hash = bytesToHash(digest.digest());
                 matcher.appendReplacement(result, hash);
                 c_protectionMap.put(hash, protectedMarkup);
@@ -525,11 +514,6 @@ public class CreoleToJSPWikiTranslator
                 // FIXME: Should log properly
                 e.printStackTrace();
             }
-            catch (final UnsupportedEncodingException e)
-            {
-                // FIXME: Auto-generated catch block
-                e.printStackTrace();
-            }
         }
         matcher.appendTail(result);
         return result.toString();
@@ -538,9 +522,8 @@ public class CreoleToJSPWikiTranslator
     private String bytesToHash(final byte[] b)
     {
         final StringBuilder hash = new StringBuilder();
-        for (int i = 0; i < b.length; i++)
-        {
-            hash.append(Integer.toString((b[i] & 0xff) + 0x100, 16).substring(1));
+        for (final byte value : b) {
+            hash.append(Integer.toString((value & 0xff) + 0x100, 16).substring(1));
         }
         return hash.toString();
     }

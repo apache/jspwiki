@@ -40,6 +40,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  *  Utility class to parse XML files.
@@ -63,16 +64,15 @@ public final class XmlUtil  {
 	 * @param requestedNodes requested nodes on the xml file
 	 * @return the requested nodes of the XML file.
 	 */
-	public static List<Element> parse( final String xml, final String requestedNodes )
-	{
+	public static List< Element > parse( final String xml, final String requestedNodes ) {
 		if( StringUtils.isNotEmpty( xml ) && StringUtils.isNotEmpty( requestedNodes ) ) {
-			final Set<Element> readed = new HashSet<>();
+			final Set< Element > readed = new HashSet<>();
 			final SAXBuilder builder = new SAXBuilder();
 			try {
 				final Enumeration< URL > resources = XmlUtil.class.getClassLoader().getResources( xml );
 				while( resources.hasMoreElements() ) {
 					final URL resource = resources.nextElement();
-					LOG.debug( "reading " + resource.toString() );
+					LOG.debug( "reading {}", resource.toString() );
 					final Document doc = builder.build( resource );
 					final XPathFactory xpfac = XPathFactory.instance();
 					final XPathExpression<Element> xp = xpfac.compile( requestedNodes, Filters.element() );
@@ -80,9 +80,9 @@ public final class XmlUtil  {
 	            }
 				return new ArrayList<>( readed );
 			} catch( final IOException ioe ) {
-				LOG.error( "Couldn't load all " + xml + " resources", ioe );
+				LOG.error( "Couldn't load all {} resources", xml, ioe );
 			} catch( final JDOMException jdome ) {
-				LOG.error( "error parsing " + xml + " resources", jdome );
+				LOG.error( "error parsing {} resources", xml, jdome );
 			}
 		}
 		return Collections.emptyList();
@@ -102,19 +102,19 @@ public final class XmlUtil  {
 			try {
 				final Document doc = builder.build( xmlStream );
 				final XPathFactory xpfac = XPathFactory.instance();
-				final XPathExpression< Element > xp = xpfac.compile( requestedNodes,Filters.element() );
+				final XPathExpression< Element > xp = xpfac.compile( requestedNodes, Filters.element() );
 				return xp.evaluate( doc );
 			} catch( final IOException ioe ) {
-				LOG.error( "Couldn't load all " + xmlStream + " resources", ioe );
+				LOG.error( "Couldn't load all {} resources", xmlStream, ioe );
 			} catch( final JDOMException jdome ) {
-				LOG.error( "error parsing " + xmlStream + " resources", jdome );
+				LOG.error( "error parsing {} resources", xmlStream,  jdome );
 			}
 		}		
 		return Collections.emptyList();
 	}
 
 	/**
-	 * Renders all the text() nodes from the DOM tree. This is very useful for cleaning away all of the XHTML.
+	 * Renders all the text() nodes from the DOM tree. This is very useful for cleaning away all the XHTML.
 	 *
 	 * @param doc Dom tree
 	 * @return String containing only the text from the provided Dom tree.
@@ -123,20 +123,16 @@ public final class XmlUtil  {
 		if( doc == null ) {
 			return "";
 		}
-		final StringBuilder sb = new StringBuilder();
+		final String sb;
 		final List< ? > nodes = XPathFactory.instance().compile( ALL_TEXT_NODES ).evaluate( doc );
-		for( final Object el : nodes ) {
-			if( el instanceof Text ) {
-				sb.append( ( ( Text )el ).getValue() );
-			}
-		}
+        sb = nodes.stream().filter(el -> el instanceof Text).map(el -> ((Text) el).getValue()).collect(Collectors.joining());
 
-		return sb.toString();
+		return sb;
 	}
 
 	public static Element getXPathElement( final Element base, final String expression ) {
 		final List< ? > nodes = XPathFactory.instance().compile( expression ).evaluate( base );
-		if( nodes == null || nodes.size() == 0 ) {
+		if( nodes == null || nodes.isEmpty()) {
 			return null;
 		} else {
 			return ( Element )nodes.get( 0 );

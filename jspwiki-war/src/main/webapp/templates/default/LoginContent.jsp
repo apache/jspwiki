@@ -55,7 +55,7 @@
           id="login"
        class="login-form"
       method="post" accept-charset="<wiki:ContentEncoding />" >
-
+    <wiki:CsrfProtection/>
     <p class="login-header">
       <fmt:message key="login.heading.login">
         <fmt:param><wiki:Variable var="applicationname" /></fmt:param>
@@ -122,6 +122,7 @@
        class="login-form"
       method="post" accept-charset="<wiki:ContentEncoding />" >
 
+  <wiki:CsrfProtection/>
   <p class="login-header"><fmt:message key="login.lostpw.title" /></p>
 
   <c:choose>
@@ -190,6 +191,7 @@
        class="login-form"
       method="post" accept-charset="UTF-8">
 
+  <wiki:CsrfProtection/>
   <input type="hidden" name="redirect" value="<wiki:Variable var='redirect' default='' />" />
 
   <p class="login-header"><fmt:message key="login.registernow.title" /></p>

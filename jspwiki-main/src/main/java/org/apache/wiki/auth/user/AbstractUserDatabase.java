@@ -44,7 +44,7 @@ import java.util.UUID;
  */
 public abstract class AbstractUserDatabase implements UserDatabase {
 
-    protected static final Logger log = LoggerFactory.getLogger( AbstractUserDatabase.class );
+    protected static final Logger LOG = LoggerFactory.getLogger( AbstractUserDatabase.class );
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String SSHA_PREFIX = "{SSHA}";
     protected static final String SHA256_PREFIX = "{SHA-256}";
@@ -189,7 +189,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      */
     @Override
     public boolean validatePassword( final String loginName, final String password ) {
-        String hashedPassword;
+        final String hashedPassword;
         try {
             final UserProfile profile = findByLoginName( loginName );
             String storedPassword = profile.getPassword();
@@ -216,9 +216,9 @@ public abstract class AbstractUserDatabase implements UserDatabase {
             return verified;
         } catch( final NoSuchPrincipalException e ) {
         } catch( final NoSuchAlgorithmException e ) {
-            log.error( "Unsupported algorithm: " + e.getMessage() );
+            LOG.error( "Unsupported algorithm: " + e.getMessage() );
         } catch( final WikiSecurityException e ) {
-            log.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage(), e );
+            LOG.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage(), e );
         }
         return false;
     }
@@ -252,14 +252,13 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      * calculates a <em>salted</em> hash rather than a plain hash.
      *
      * @param text the text to hash
-     * @param text the algorithm used for the hash
      * @return the result hash
      */
     protected String getHash( final String text ) {
         try {
             return CryptoUtil.getSaltedPassword( text.getBytes(StandardCharsets.UTF_8), SHA256_PREFIX );
         } catch( final NoSuchAlgorithmException e ) {
-            log.error( String.format( "Error creating salted password hash: %s", e.getMessage() ) );
+            LOG.error( "Error creating salted password hash: {}", e.getMessage() );
             return text;
         }
     }
@@ -269,7 +268,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      *
      * @param text the text to hash
      * @return the result hash
-     * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String, String)} instead
+     * @deprecated this method is retained for backwards compatibility purposes; use {@link #getHash(String)} instead
      */
     @Deprecated
     String getShaHash(final String text ) {
@@ -279,7 +278,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
             final byte[] digestedBytes = md.digest();
             return ByteUtils.bytes2hex( digestedBytes );
         } catch( final NoSuchAlgorithmException e ) {
-            log.error( "Error creating SHA password hash:" + e.getMessage() );
+            LOG.error( "Error creating SHA password hash:" + e.getMessage() );
             return text;
         }
     }

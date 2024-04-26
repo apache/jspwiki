@@ -16,16 +16,16 @@
     specific language governing permissions and limitations
     under the License.
  */
-
 package org.apache.wiki;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.engine.RenderApi;
+import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.cache.CachingManager;
 import org.apache.wiki.content.PageRenamer;
 import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.pages.PageManager;
@@ -34,7 +34,6 @@ import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -43,48 +42,35 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Properties;
 
-public class WikiEngineTest {
+import static org.apache.wiki.TestEngine.with;
 
-    public static final String NAME1 = "Test1";
+
+class WikiEngineTest {
+
+    static final String NAME1 = "Test1";
 
     Properties props = TestEngine.getTestProperties();
-    TestEngine m_engine;
-
-    @BeforeEach
-    public void setUp() {
-        props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
-        m_engine = TestEngine.build( props );
-    }
+    TestEngine m_engine = TestEngine.build( with( WikiEngine.PROP_MATCHPLURALS, "true" ) );
 
     @AfterEach
-    public void tearDown() {
-        final String files = m_engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR );
-
-        if( files != null ) {
-            final File f = new File( files );
-            TestEngine.deleteAll( f );
-        }
-
-        TestEngine.emptyWorkDir();
-        CacheManager.getInstance().removeAllCaches();
+    void tearDown() {
+        m_engine.stop();
     }
 
     @Test
-    public void testNonExistentDirectory() throws Exception {
+    void testNonExistentDirectory() {
         final String newdir = "." + File.separator + "target" + File.separator + "non-existent-directory";
 
         props.setProperty( FileSystemProvider.PROP_PAGEDIR, newdir );
-        m_engine = new TestEngine( props );
+        m_engine = TestEngine.build( props );
 
         final File f = new File( m_engine.getWikiProperties().getProperty( FileSystemProvider.PROP_PAGEDIR ) );
         Assertions.assertTrue( f.exists(), "didn't create it" );
         Assertions.assertTrue( f.isDirectory(), "isn't a dir" );
-
-        f.delete();
     }
 
     @Test
-    public void testFinalPageName() throws Exception {
+    void testFinalPageName() throws Exception {
         m_engine.saveText( "Foobar", "1" );
         m_engine.saveText( "Foobars", "2" );
 
@@ -93,7 +79,7 @@ public class WikiEngineTest {
     }
 
     @Test
-    public void testFinalPageNameSingular() throws Exception {
+    void testFinalPageNameSingular() throws Exception {
         m_engine.saveText( "Foobar", "1" );
 
         Assertions.assertEquals( "Foobar", m_engine.getFinalPageName( "Foobars" ), "plural mistake" );
@@ -101,7 +87,7 @@ public class WikiEngineTest {
     }
 
     @Test
-    public void testFinalPageNamePlural() throws Exception {
+    void testFinalPageNamePlural() throws Exception {
         m_engine.saveText( "Foobars", "1" );
 
         Assertions.assertEquals( "Foobars", m_engine.getFinalPageName( "Foobars" ), "plural mistake" );
@@ -109,13 +95,13 @@ public class WikiEngineTest {
     }
 
     @Test
-    public void testEncodeNameLatin1() {
+    void testEncodeNameLatin1() {
         final String name = "abc\u00e5\u00e4\u00f6";
         Assertions.assertEquals( "abc%E5%E4%F6", m_engine.encodeName(name) );
     }
 
     @Test
-    public void testEncodeNameUTF8() throws Exception {
+    void testEncodeNameUTF8() throws Exception {
         final String name = "\u0041\u2262\u0391\u002E";
         props.setProperty( WikiEngine.PROP_ENCODING, StandardCharsets.UTF_8.name() );
         final WikiEngine engine = new TestEngine( props );
@@ -127,7 +113,7 @@ public class WikiEngineTest {
      *  Checks, if ReferenceManager is informed of new attachments.
      */
     @Test
-    public void testAttachmentRefs() throws Exception {
+    void testAttachmentRefs() throws Exception {
         final ReferenceManager refMgr = m_engine.getManager( ReferenceManager.class );
         final AttachmentManager attMgr = m_engine.getManager( AttachmentManager.class );
         m_engine.saveText( NAME1, "fooBar");
@@ -170,7 +156,7 @@ public class WikiEngineTest {
     */
 
     @Test
-    public void testAttachmentRefs2() throws Exception {
+    void testAttachmentRefs2() throws Exception {
         final ReferenceManager refMgr = m_engine.getManager( ReferenceManager.class );
         final AttachmentManager attMgr = m_engine.getManager( AttachmentManager.class );
 
@@ -211,7 +197,7 @@ public class WikiEngineTest {
      *  Checks, if ReferenceManager is informed if a link to an attachment is added.
      */
     @Test
-    public void testAttachmentRefs3() throws Exception {
+    void testAttachmentRefs3() throws Exception {
         final ReferenceManager refMgr = m_engine.getManager( ReferenceManager.class );
         final AttachmentManager attMgr = m_engine.getManager( AttachmentManager.class );
 
@@ -236,7 +222,7 @@ public class WikiEngineTest {
      *  Checks, if ReferenceManager is informed if a third page references an attachment.
      */
     @Test
-    public void testAttachmentRefs4() throws Exception {
+    void testAttachmentRefs4() throws Exception {
         final ReferenceManager refMgr = m_engine.getManager( ReferenceManager.class );
         final AttachmentManager attMgr = m_engine.getManager( AttachmentManager.class );
 
@@ -260,9 +246,9 @@ public class WikiEngineTest {
      *  Tests BugReadingOfVariableNotWorkingForOlderVersions
      */
     @Test
-    public void testOldVersionVars() throws Exception {
+    void testOldVersionVars() throws Exception {
         final Properties props = TestEngine.getTestProperties("/jspwiki-vers-custom.properties");
-        props.setProperty( PageManager.PROP_USECACHE, "true" );
+        props.setProperty( CachingManager.PROP_CACHE_ENABLE, "true" );
         final TestEngine engine = new TestEngine( props );
         engine.saveText( NAME1, "[{SET foo=bar}]" );
         engine.saveText( NAME1, "[{SET foo=notbar}]");
@@ -277,13 +263,13 @@ public class WikiEngineTest {
     }
 
     @Test
-    public void testSpacedNames1() throws Exception {
+    void testSpacedNames1() throws Exception {
         m_engine.saveText("This is a test", "puppaa");
         Assertions.assertEquals( "puppaa", m_engine.getManager( PageManager.class ).getText("This is a test").trim(), "normal" );
     }
 
     @Test
-    public void testParsedVariables() throws Exception {
+    void testParsedVariables() throws Exception {
         m_engine.saveText( "TestPage", "[{SET foo=bar}][{SamplePlugin text='{$foo}'}]");
         final String res = m_engine.getManager( RenderingManager.class ).getHTML( "TestPage" );
 
@@ -294,7 +280,7 @@ public class WikiEngineTest {
      * Tests BugReferenceToRenamedPageNotCleared
      */
     @Test
-    public void testRename() throws Exception {
+    void testRename() throws Exception {
         m_engine.saveText( "RenameBugTestPage", "Mary had a little generic object" );
         m_engine.saveText( "OldNameTestPage", "Linked to RenameBugTestPage" );
 
@@ -313,7 +299,7 @@ public class WikiEngineTest {
     }
 
     @Test
-    public void testChangeNoteOldVersion2() throws Exception {
+    void testChangeNoteOldVersion2() throws Exception {
         final Page p = Wiki.contents().page( m_engine, NAME1 );
         final Context context = Wiki.context().create( m_engine,p );
         context.getPage().setAttribute( Page.CHANGENOTE, "Test change" );
@@ -331,7 +317,7 @@ public class WikiEngineTest {
     }
 
     @Test
-    public void testGetManagers() {
+    void testGetManagers() {
         Assertions.assertNull( m_engine.getManager( String.class ) );
         Assertions.assertNotNull( m_engine.getManager( RenderApi.class ) );
         Assertions.assertNotNull( m_engine.getManager( PageManager.class ) );
@@ -341,6 +327,13 @@ public class WikiEngineTest {
         Assertions.assertEquals( 1, m_engine.getManagers( RenderApi.class ).size() );
         Assertions.assertEquals( 1, m_engine.getManagers( PageManager.class ).size() );
         Assertions.assertEquals( 4, m_engine.getManagers( ModuleManager.class ).size() );
+    }
+
+    @Test
+    void testCheckWorkingDirectory() {
+        Assertions.assertDoesNotThrow( () -> m_engine.checkWorkingDirectory( false, "boo" ) );
+        final WikiException we = Assertions.assertThrows( WikiException.class, () -> m_engine.checkWorkingDirectory( true, "boo" ) );
+        Assertions.assertEquals( "boo", we.getMessage() );
     }
 
 }

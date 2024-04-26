@@ -30,7 +30,13 @@ import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.slf4j.MDC;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
@@ -47,7 +53,7 @@ import java.io.PrintWriter;
  */
 public class WikiServletFilter implements Filter {
 
-    private static final Logger log = LoggerFactory.getLogger( WikiServletFilter.class );
+    private static final Logger LOG = LoggerFactory.getLogger( WikiServletFilter.class );
     protected Engine m_engine;
 
     /**
@@ -129,9 +135,7 @@ public class WikiServletFilter implements Filter {
                 m_engine.getManager( AuthenticationManager.class ).login( httpRequest );
                 final Session wikiSession = SessionMonitor.getInstance( m_engine ).find( httpRequest.getSession() );
                 httpRequest = new WikiRequestWrapper( m_engine, httpRequest );
-                if ( log.isDebugEnabled() ) {
-                    log.debug( "Executed security filters for user=" + wikiSession.getLoginPrincipal().getName() + ", path=" + httpRequest.getRequestURI() );
-                }
+                LOG.debug( "Executed security filters for user={}, path={}",wikiSession.getLoginPrincipal().getName(), httpRequest.getRequestURI() );
             } catch( final WikiSecurityException e ) {
                 throw new ServletException( e );
             }
@@ -140,7 +144,6 @@ public class WikiServletFilter implements Filter {
 		try (MDC.MDCCloseable ignored = MDC.putCloseable(m_engine.getApplicationName(), httpRequest.getRequestURL().toString() )) {
 			chain.doFilter( httpRequest, response );
 		}
-
 	}
 
     /**
@@ -149,9 +152,9 @@ public class WikiServletFilter implements Filter {
      *  @param request The request to examine
      *  @return A valid WikiContext value (or null, if the context could not be located).
      */
-    protected WikiContext getWikiContext( final ServletRequest request ) {
+    protected Context getWikiContext( final ServletRequest request ) {
         final HttpServletRequest httpRequest = (HttpServletRequest) request;
-        return ( WikiContext )httpRequest.getAttribute( Context.ATTR_CONTEXT );
+        return ( Context )httpRequest.getAttribute( Context.ATTR_CONTEXT );
     }
 
     /** 

@@ -22,7 +22,7 @@ import java.security.Permission;
 
 
 /**
- * Ususal permission checks
+ * Usual permission checks
  */
 class PermissionChecks {
 

@@ -23,7 +23,6 @@ import java.security.AccessControlContext;
 import java.security.AccessController;
 import java.security.DomainCombiner;
 import java.security.Permission;
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.Set;
 
@@ -208,6 +207,7 @@ public final class GroupPermission extends Permission implements Serializable
      * @return the actions
      * @see java.security.Permission#getActions()
      */
+    @Override
     public String getActions()
     {
         return m_actionString;
@@ -269,6 +269,7 @@ public final class GroupPermission extends Permission implements Serializable
      * supplied Permission; <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
+    @Override
     public boolean implies(final Permission permission )
     {
         // Permission must be a GroupPermission
@@ -486,13 +487,7 @@ public final class GroupPermission extends Permission implements Serializable
             // GroupPrincipal with same name as target
             final Subject subject = ( (SubjectDomainCombiner) dc ).getSubject();
             final Set<GroupPrincipal> principals = subject.getPrincipals( GroupPrincipal.class );
-            for( final Principal principal : principals )
-            {
-                if ( principal.getName().equals( gp.m_group ) )
-                {
-                    return true;
-                }
-            }
+            return principals.stream().anyMatch(principal -> principal.getName().equals(gp.m_group));
         }
         return false;
     }

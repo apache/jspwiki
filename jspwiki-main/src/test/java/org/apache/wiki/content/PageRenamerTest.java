@@ -18,11 +18,10 @@
  */
 package org.apache.wiki.content;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.api.providers.WikiProvider;
@@ -32,45 +31,20 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.references.ReferenceManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
-import java.util.Properties;
 
-public class PageRenamerTest
-{
-    TestEngine m_engine;
+import static org.apache.wiki.TestEngine.with;
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        final Properties props = TestEngine.getTestProperties();
-        props.setProperty( WikiEngine.PROP_MATCHPLURALS, "true" );
-        CacheManager.getInstance().removeAllCaches();
-        TestEngine.emptyWorkDir();
-        m_engine = new TestEngine(props);
-    }
+
+public class PageRenamerTest {
+
+    TestEngine m_engine = TestEngine.build( with( Engine.PROP_MATCHPLURALS, "true" ) );
 
     @AfterEach
     public void tearDown() {
-        m_engine.deleteTestPage("TestPage");
-        m_engine.deleteTestPage("TestPage2");
-        m_engine.deleteTestPage("FooTest");
-        m_engine.deleteTestPage("Test");
-        m_engine.deleteTestPage("CdauthNew");
-        m_engine.deleteTestPage("Cdauth");
-        m_engine.deleteTestPage("TestPageReferring");
-        m_engine.deleteTestPage("TestPageReferredNew");
-        m_engine.deleteTestPage("Main");
-        m_engine.deleteTestPage("Main8887");
-        m_engine.deleteTestPage("TestPage1234");
-        m_engine.deleteTestPage("TestPageReferred");
-        m_engine.deleteTestPage("RenameTest");
-        m_engine.deleteTestPage("Link one");
-        m_engine.deleteTestPage("Link uno");
-        m_engine.deleteTestPage("Link two");
-
-        TestEngine.emptyWorkDir();
+        m_engine.stop();
     }
 
     @Test
@@ -100,51 +74,82 @@ public class PageRenamerTest
     }
 
     @Test
-    public void testReferrerChange()
-       throws Exception
-    {
+    public void testReferrerChange() throws Exception  {
         m_engine.saveText("TestPage", "foofoo" );
         m_engine.saveText("TestPage2", "[TestPage]");
 
         final Page p = m_engine.getManager( PageManager.class ).getPage("TestPage");
-
         final Context context = Wiki.context().create(m_engine, p);
-
         m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
         final String data = m_engine.getManager( PageManager.class ).getPureText("TestPage2", WikiProvider.LATEST_VERSION);
-
         Assertions.assertEquals( "[FooTest]", data.trim(), "no rename" );
 
         Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findReferrers("TestPage");
-
         Assertions.assertNull( refs, "oldpage" );
-
         refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "FooTest" );
         Assertions.assertEquals( 1, refs.size(), "new size" );
         Assertions.assertEquals( "TestPage2", refs.iterator().next(), "wrong ref" );
     }
 
     @Test
-    public void testReferrerChangeCC()
-        throws Exception
-    {
+    public void testReferrerChangeMultiRename() throws Exception  {
+        m_engine.saveText("TestPage", "foofoo" );
+        m_engine.saveText("TestPage2", "[TestPage]");
+
+        final Page p = m_engine.getManager( PageManager.class ).getPage("TestPage");
+        final Context context = Wiki.context().create(m_engine, p);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, "FooTest", "BarTest", true);
+
+        final String data = m_engine.getManager( PageManager.class ).getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        Assertions.assertEquals( "[BarTest]", data.trim(), "no rename" );
+
+        Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findReferrers("TestPage");
+        Assertions.assertNull( refs, "oldpage" );
+        refs = m_engine.getManager( ReferenceManager.class ).findReferrers("FooPage");
+        Assertions.assertNull( refs, "oldpage" );
+        refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "BarTest" );
+        Assertions.assertEquals( 1, refs.size(), "new size" );
+        Assertions.assertEquals( "TestPage2", refs.iterator().next(), "wrong ref" );
+    }
+
+    @Test
+    public void testReferrerChangeMultiRename2() throws Exception  {
+        m_engine.saveText("TestPage", "foofoo" );
+        m_engine.saveText("TestPage2", "[Test|TestPage]");
+
+        final Page p = m_engine.getManager( PageManager.class ).getPage("TestPage");
+        final Context context = Wiki.context().create(m_engine, p);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
+        m_engine.getManager( PageRenamer.class ).renamePage(context, "FooTest", "BarTest", true);
+
+        final String data = m_engine.getManager( PageManager.class ).getPureText("TestPage2", WikiProvider.LATEST_VERSION);
+        Assertions.assertEquals( "[Test|BarTest]", data.trim(), "no rename" );
+
+        Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findReferrers("TestPage");
+        Assertions.assertNull( refs, "oldpage" );
+        refs = m_engine.getManager( ReferenceManager.class ).findReferrers("FooPage");
+        Assertions.assertNull( refs, "oldpage" );
+        refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "BarTest" );
+        Assertions.assertEquals( 1, refs.size(), "new size" );
+        Assertions.assertEquals( "TestPage2", refs.iterator().next(), "wrong ref" );
+    }
+
+    @Test
+    public void testReferrerChangeCC() throws Exception {
         m_engine.saveText("TestPage", "foofoo" );
         m_engine.saveText("TestPage2", "TestPage");
 
         final Page p = m_engine.getManager( PageManager.class ).getPage("TestPage");
-
         final Context context = Wiki.context().create(m_engine, p);
-
         m_engine.getManager( PageRenamer.class ).renamePage(context, "TestPage", "FooTest", true);
 
         final String data = m_engine.getManager( PageManager.class ).getPureText("TestPage2", WikiProvider.LATEST_VERSION);
-
         Assertions.assertEquals( "FooTest", data.trim(), "no rename" );
+
         Collection< String > refs = m_engine.getManager( ReferenceManager.class ).findReferrers("TestPage");
-
         Assertions.assertNull( refs, "oldpage" );
-
         refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "FooTest" );
         Assertions.assertEquals( 1, refs.size(), "new size" );
         Assertions.assertEquals( "TestPage2", refs.iterator().next(), "wrong ref" );

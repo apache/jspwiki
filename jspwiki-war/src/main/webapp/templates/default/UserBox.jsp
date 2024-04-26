@@ -116,10 +116,13 @@
       --%>
       <wiki:UserCheck status="authenticated">
         <a href="<wiki:Link jsp='Logout.jsp' format='url' />"
-          class="btn btn-default btn-block logout" data-modal=".modal">
+          class="btn btn-default btn-block logout" data-modal="+ .modal">
             <span class="icon-signout"></span> <fmt:message key="actions.logout"/>
-          <div class="modal"><fmt:message key='actions.confirmlogout'/></div>
         </a>
+        <div class="modal">
+          <h4><fmt:message key="actions.logout"/></h4>
+          <p><fmt:message key='actions.confirmlogout'/></p>
+        </div>
       </wiki:UserCheck>
     </li>
   </ul>

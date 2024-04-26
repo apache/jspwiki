@@ -40,7 +40,7 @@ import java.util.Date;
  */
 public final class HttpUtil {
 
-    private static final Logger log = LoggerFactory.getLogger( HttpUtil.class );
+    private static final Logger LOG = LoggerFactory.getLogger( HttpUtil.class );
     private static final int    ONE                   = 48;
     private static final int    NINE                  = 57;
     private static final int    DOT                   = 46;
@@ -147,7 +147,7 @@ public final class HttpUtil {
                             }
                         }
                     } catch( final ParseException e ) {
-                        log.warn( e.getLocalizedMessage(), e );
+                        LOG.warn( e.getLocalizedMessage(), e );
                     }
                 }
             } catch( final IllegalArgumentException e ) {
@@ -259,6 +259,66 @@ public final class HttpUtil {
         final Cookie cookie = new Cookie( cookieName, "" );
         cookie.setMaxAge( 0 );
         response.addCookie( cookie );
+    }
+
+    /**
+     * Generates an absolute URL based on the given HttpServletRequest and a relative URL.
+     * This method takes into account various headers like X-Forwarded-Host, X-Forwarded-Proto,
+     * and X-Forwarded-Server to construct the absolute URL.
+     *
+     * @param request The HttpServletRequest object, used to obtain scheme, server name, and port.
+     * @param relativeUrl The relative URL to be appended to the base URL. Can be null.
+     * @return The absolute URL as a String.
+     * @since 2.12.2
+     */
+    public static String getAbsoluteUrl(final HttpServletRequest request, final String relativeUrl) {
+        StringBuilder baseUrl = new StringBuilder();
+
+        // Check for proxy headers
+        final String forwardedHost = request.getHeader("X-Forwarded-Host");
+        final String forwardedProto = request.getHeader("X-Forwarded-Proto");
+        final String forwardedServer = request.getHeader("X-Forwarded-Server");
+
+        if (forwardedHost != null && forwardedProto != null) {
+            baseUrl.append(forwardedProto).append("://").append(forwardedHost);
+        } else if (forwardedServer != null && forwardedProto != null) {
+            baseUrl.append(forwardedProto).append("://").append(forwardedServer);
+        } else {
+            // Fallback to HttpServletRequest
+            final String scheme = request.getScheme();
+            final String serverName = request.getServerName();
+            final int port = request.getServerPort();
+
+            baseUrl.append(scheme).append("://").append(serverName);
+
+            // Include port only if it's not the default port for the scheme
+            if ((URIScheme.HTTP.same(scheme) && port != 80)
+                    || (URIScheme.HTTPS.same(scheme) && port != 443)) {
+                baseUrl.append(':');
+                baseUrl.append(port);
+            }
+        }
+
+        if (relativeUrl != null) {
+            baseUrl.append(relativeUrl);
+        }
+
+        return baseUrl.toString();
+    }
+
+
+    /**
+     * Generate an absolute URL based solely on the given HttpServletRequest.
+     * This is a convenience method that calls {@link #getAbsoluteUrl(HttpServletRequest, String)}
+     * with a null relative URL.
+     *
+     * @param request The HttpServletRequest object, used to obtain scheme, server name, and port.
+     * @return The absolute URL as a String.
+     * @see #getAbsoluteUrl(HttpServletRequest, String)
+     * @since 2.12.2
+     */
+    public static String getAbsoluteUrl(final HttpServletRequest request) {
+        return getAbsoluteUrl(request, null);
     }
 
 }

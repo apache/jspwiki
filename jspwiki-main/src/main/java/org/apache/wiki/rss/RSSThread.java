@@ -42,7 +42,7 @@ import java.nio.file.Files;
  */
 public class RSSThread extends WikiBackgroundThread {
 
-    private static final Logger log = LoggerFactory.getLogger( RSSThread.class );
+    private static final Logger LOG = LoggerFactory.getLogger( RSSThread.class );
     private final File m_rssFile;
     private final RSSGenerator m_generator;
     private WatchDog m_watchdog;
@@ -59,8 +59,8 @@ public class RSSThread extends WikiBackgroundThread {
         m_generator = engine.getManager( RSSGenerator.class );
         m_rssFile = rssFile;
         setName("JSPWiki RSS Generator");
-        log.debug( "RSS file will be at "+m_rssFile.getAbsolutePath() );
-        log.debug( "RSS refresh interval (seconds): "+rssInterval );
+        LOG.debug( "RSS file will be at "+m_rssFile.getAbsolutePath() );
+        LOG.debug( "RSS refresh interval (seconds): "+rssInterval );
     }
     
     /**
@@ -84,14 +84,14 @@ public class RSSThread extends WikiBackgroundThread {
         if( m_generator.isEnabled() ) {
             m_watchdog.enterState( "Generating RSS feed", 60 );
             final String feed = m_generator.generate();
-            log.debug( "Regenerating RSS feed to " + m_rssFile );
+            LOG.debug( "Regenerating RSS feed to " + m_rssFile );
 
             // Generate RSS file, output it to default "rss.rdf".
             try( final Reader in  = new StringReader( feed );
                 final Writer out = new BufferedWriter( new OutputStreamWriter( Files.newOutputStream( m_rssFile.toPath() ), StandardCharsets.UTF_8 ) ) ) {
                 FileUtil.copyContents( in, out );
             } catch( final IOException e ) {
-                log.error( "Cannot generate RSS feed to " + m_rssFile.getAbsolutePath(), e );
+                LOG.error( "Cannot generate RSS feed to " + m_rssFile.getAbsolutePath(), e );
                 m_generator.setEnabled( false );
             } finally {
                 m_watchdog.exitState();

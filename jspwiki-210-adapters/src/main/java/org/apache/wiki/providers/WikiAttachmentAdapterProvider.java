@@ -18,9 +18,15 @@
  */
 package org.apache.wiki.providers;
 
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
-import org.apache.wiki.WikiPage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+import java.util.stream.Collectors;
+
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -30,16 +36,8 @@ import org.apache.wiki.api.providers.AttachmentProvider;
 import org.apache.wiki.api.search.QueryItem;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
-import java.util.stream.Collectors;
 
 
 /**
@@ -53,7 +51,8 @@ import java.util.stream.Collectors;
 public class WikiAttachmentAdapterProvider implements AttachmentProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger( WikiAttachmentAdapterProvider.class );
-    private static final String PROP_ADAPTER_IMPL = "jspwiki.attachmentProvider.adapter.impl";
+	private static final String PROP_ADAPTER_IMPL = "jspwiki.attachment.provider.adapter.impl";
+	@Deprecated private static final String PROP_ADAPTER_IMPL_DEPRECATED = "jspwiki.attachmentProvider.adapter.impl";
 
     WikiAttachmentProvider provider;
 
@@ -63,17 +62,16 @@ public class WikiAttachmentAdapterProvider implements AttachmentProvider {
         LOG.warn( "Using an attachment provider through org.apache.wiki.providers.WikiAttachmentAdapterProvider" );
         LOG.warn( "Please contact the attachment provider's author so there can be a new release of the provider " +
                   "implementing the new org.apache.wiki.api.providers.AttachmentProvider public API" );
-        final String classname = TextUtil.getRequiredProperty( properties, PROP_ADAPTER_IMPL );
+        final String classname = TextUtil.getRequiredProperty( properties, PROP_ADAPTER_IMPL, PROP_ADAPTER_IMPL_DEPRECATED );
         try {
-            LOG.debug( "Page provider class: '" + classname + "'" );
-            final Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", classname);
-            provider = ( WikiAttachmentProvider ) providerclass.newInstance();
-        } catch( final IllegalAccessException | InstantiationException | ClassNotFoundException e ) {
-            LOG.error( "Could not instantiate " + classname, e );
+            LOG.debug( "Page provider class: '{}'", classname );
+            provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
+        } catch( final ReflectiveOperationException e ) {
+            LOG.error( "Could not instantiate {}", classname, e );
             throw new IOException( e.getMessage(), e );
         }
 
-        LOG.debug( "Initializing attachment provider class " + provider );
+        LOG.debug( "Initializing attachment provider class {}", provider );
         provider.initialize( engine, properties );
     }
 

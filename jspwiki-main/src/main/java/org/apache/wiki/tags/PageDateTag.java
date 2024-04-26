@@ -48,6 +48,7 @@ public class PageDateTag extends WikiTagBase {
 
     private String m_format;
 
+    @Override
     public void initTag() {
         super.initTag();
         m_format = null;
@@ -61,6 +62,7 @@ public class PageDateTag extends WikiTagBase {
         m_format = arg;
     }
 
+    @Override
     public final int doWikiStartTag() throws IOException {
         final Page page = m_wikiContext.getPage();
         if( page != null ) {

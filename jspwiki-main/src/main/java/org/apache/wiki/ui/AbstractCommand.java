@@ -42,7 +42,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * Constructs a new Command with a specified wiki context, URL pattern, content template and target. The URL pattern is used to derive
      * the JSP; if it is a "local" JSP (that is, it does not contain the <code>http://</code> or <code>https://</code> prefixes),
-     * then the JSP will be a cleansed version of the URL pattern; symbols (such as <code>%u</code>) will removed. If it the supplied
+     * then the JSP will be a cleansed version of the URL pattern; symbols (such as <code>%u</code>) will be removed. If the supplied
      * URL pattern points to a non-local destination, the JSP will be set to the value supplied, unmodified.
      *
      * @param requestContext the request context
@@ -102,11 +102,13 @@ public abstract class AbstractCommand implements Command {
     /**
      * @see org.apache.wiki.api.core.Command#targetedCommand(Object)
      */
-    public abstract Command targetedCommand( final Object target );
+    @Override
+    public abstract Command targetedCommand(final Object target );
 
     /**
      * @see org.apache.wiki.api.core.Command#getContentTemplate()
      */
+    @Override
     public final String getContentTemplate() {
         return m_contentTemplate;
     }
@@ -114,6 +116,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * @see org.apache.wiki.api.core.Command#getJSP()
      */
+    @Override
     public final String getJSP() {
         return m_jsp;
     }
@@ -121,11 +124,13 @@ public abstract class AbstractCommand implements Command {
     /**
      * @see org.apache.wiki.api.core.Command#getName()
      */
+    @Override
     public abstract String getName();
 
     /**
      * @see org.apache.wiki.api.core.Command#getRequestContext()
      */
+    @Override
     public final String getRequestContext() {
         return m_requestContext;
     }
@@ -133,6 +138,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * @see org.apache.wiki.api.core.Command#getTarget()
      */
+    @Override
     public final Object getTarget() {
         return m_target;
     }
@@ -140,6 +146,7 @@ public abstract class AbstractCommand implements Command {
     /**
      * @see org.apache.wiki.api.core.Command#getURLPattern()
      */
+    @Override
     public final String getURLPattern() {
         return m_urlPattern;
     }

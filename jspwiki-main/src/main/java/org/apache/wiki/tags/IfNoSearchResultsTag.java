@@ -31,9 +31,10 @@ import javax.servlet.jsp.PageContext;
 public class IfNoSearchResultsTag extends WikiTagBase {
     private static final long serialVersionUID = 0L;
     
+    @Override
     public final int doWikiStartTag() throws IOException {
         final Collection< ? > list = (Collection< ? >)pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
-        if( list == null || list.size() == 0 ) {
+        if( list == null || list.isEmpty()) {
             return EVAL_BODY_INCLUDE;
         }
 

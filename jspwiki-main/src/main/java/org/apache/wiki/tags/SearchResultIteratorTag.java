@@ -52,7 +52,7 @@ public class SearchResultIteratorTag extends IteratorTag {
     private   int         m_count;
     private   int         m_start;
     
-    private static final Logger log = LoggerFactory.getLogger(SearchResultIteratorTag.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SearchResultIteratorTag.class);
 
     /** {@inheritDoc} */
     @Override
@@ -123,7 +123,7 @@ public class SearchResultIteratorTag extends IteratorTag {
                 out.print(bodyContent.getString());
                 bodyContent.clearBody();
             } catch( final IOException e ) {
-                log.error("Unable to get inner tag text", e);
+                LOG.error("Unable to get inner tag text", e);
                 // FIXME: throw something?
             }
         }

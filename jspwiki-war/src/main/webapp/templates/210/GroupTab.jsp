@@ -107,6 +107,7 @@
               id="groupForm"
           method="post" accept-charset="<wiki:ContentEncoding />" >
       <div>
+      <wiki:CsrfProtection/>
       <input type="hidden" name="group"   value="" />
       <input type="hidden" name="members" value="" />
       <input type="hidden" name="action"  value="save" />

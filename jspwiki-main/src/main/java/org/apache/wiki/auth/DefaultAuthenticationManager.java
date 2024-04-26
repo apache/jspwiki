@@ -36,6 +36,7 @@ import org.apache.wiki.auth.login.WikiCallbackHandler;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.TimedCounterList;
 
@@ -45,7 +46,6 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.lang.reflect.InvocationTargetException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,7 +69,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     private static final long MAX_LOGIN_DELAY = 20 * 1_000L; // 20 seconds
 
-    private static final Logger log = LoggerFactory.getLogger( DefaultAuthenticationManager.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DefaultAuthenticationManager.class );
 
     /** Empty Map passed to JAAS {@link #doJAASLogin(Class, CallbackHandler, Map)} method. */
     protected static final Map< String, String > EMPTY_MAP = Collections.unmodifiableMap( new HashMap<>() );
@@ -123,9 +123,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         // Look up the LoginModule class
         final String loginModuleClassName = TextUtil.getStringProperty( props, PROP_LOGIN_MODULE, DEFAULT_LOGIN_MODULE );
         try {
-            m_loginModuleClass = ( Class< ? extends LoginModule > )Class.forName( loginModuleClassName );
+            m_loginModuleClass = ClassUtil.findClass( "", loginModuleClassName );
         } catch( final ClassNotFoundException e ) {
-            log.error( e.getMessage(), e );
+            LOG.error( e.getMessage(), e );
             throw new WikiException( "Could not instantiate LoginModule class.", e );
         }
 
@@ -169,12 +169,12 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
             // Execute the container login module, then (if that fails) the cookie auth module
             Set< Principal > principals = authenticationMgr.doJAASLogin( WebContainerLoginModule.class, handler, options );
-            if ( principals.size() == 0 && authenticationMgr.allowsCookieAuthentication() ) {
+            if (principals.isEmpty() && authenticationMgr.allowsCookieAuthentication() ) {
                 principals = authenticationMgr.doJAASLogin( CookieAuthenticationLoginModule.class, handler, options );
             }
 
-            // If the container logged the user in successfully, tell the Session (and add all of the Principals)
-            if ( principals.size() > 0 ) {
+            // If the container logged the user in successfully, tell the Session (and add all the Principals)
+            if (!principals.isEmpty()) {
                 fireEvent( WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );
                 for( final Principal principal : principals ) {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
@@ -189,7 +189,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         if ( !session.isAuthenticated() && authenticationMgr.allowsCookieAssertions() ) {
             // Execute the cookie assertion login module
             final Set< Principal > principals = authenticationMgr.doJAASLogin( CookieAssertionLoginModule.class, handler, options );
-            if ( principals.size() > 0 ) {
+            if (!principals.isEmpty()) {
                 fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, getLoginPrincipal( principals ), session);
             }
         }
@@ -197,7 +197,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         // If user still anonymous, use the remote address
         if( session.isAnonymous() ) {
             final Set< Principal > principals = authenticationMgr.doJAASLogin( AnonymousLoginModule.class, handler, options );
-            if( principals.size() > 0 ) {
+            if(!principals.isEmpty()) {
                 fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, getLoginPrincipal( principals ), session );
                 return true;
             }
@@ -213,7 +213,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     @Override
     public boolean login( final Session session, final HttpServletRequest request, final String username, final String password ) throws WikiSecurityException {
         if ( session == null ) {
-            log.error( "No wiki session provided, cannot log in." );
+            LOG.error( "No wiki session provided, cannot log in." );
             return false;
         }
 
@@ -226,7 +226,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
         // Execute the user's specified login module
         final Set< Principal > principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions );
-        if( principals.size() > 0 ) {
+        if(!principals.isEmpty()) {
             fireEvent(WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );
             for ( final Principal principal : principals ) {
                 fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
@@ -254,7 +254,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             final int count = m_lastLoginAttempts.count( username );
 
             final long delay = Math.min( 1L << count, MAX_LOGIN_DELAY );
-            log.debug( "Sleeping for " + delay + " ms to allow login." );
+            LOG.debug( "Sleeping for " + delay + " ms to allow login." );
             Thread.sleep( delay );
 
             m_lastLoginAttempts.add( username );
@@ -269,15 +269,13 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     @Override
     public void logout( final HttpServletRequest request ) {
         if( request == null ) {
-            log.error( "No HTTP reqest provided; cannot log out." );
+            LOG.error( "No HTTP reqest provided; cannot log out." );
             return;
         }
 
         final HttpSession session = request.getSession();
         final String sid = ( session == null ) ? "(null)" : session.getId();
-        if( log.isDebugEnabled() ) {
-            log.debug( "Invalidating Session for session ID=" + sid );
-        }
+        LOG.debug( "Invalidating Session for session ID= {}", sid );
         // Retrieve the associated Session and clear the Principal set
         final Session wikiSession = Wiki.session().find( m_engine, request );
         final Principal originalPrincipal = wikiSession.getLoginPrincipal();
@@ -321,8 +319,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         // Instantiate the login module
         final LoginModule loginModule;
         try {
-            loginModule = clazz.getDeclaredConstructor().newInstance();
-        } catch( final InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e ) {
+            loginModule = ClassUtil.buildInstance( clazz );
+        } catch( final ReflectiveOperationException e ) {
             throw new WikiSecurityException( e.getMessage(), e );
         }
 
@@ -412,17 +410,13 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             // Test the Authorizer
             if( authorizer.isUserInRole( session, role ) ) {
                 fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
-                if( log.isDebugEnabled() ) {
-                    log.debug( "Added authorizer role " + role.getName() + "." );
-                }
+                LOG.debug( "Added authorizer role {}.", role.getName() );
             // If web authorizer, test the request.isInRole() method also
             } else if ( request != null && authorizer instanceof WebAuthorizer ) {
                 final WebAuthorizer wa = ( WebAuthorizer )authorizer;
                 if ( wa.isUserInRole( request, role ) ) {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
-                    if ( log.isDebugEnabled() ) {
-                        log.debug( "Added container role " + role.getName() + "." );
-                    }
+                    LOG.debug( "Added container role {}.",role.getName() );
                 }
             }
         }

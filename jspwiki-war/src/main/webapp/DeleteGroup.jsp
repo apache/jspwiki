@@ -25,6 +25,7 @@
 <%@ page import="org.apache.wiki.auth.NoSuchPrincipalException" %>
 <%@ page import="org.apache.wiki.auth.WikiSecurityException" %>
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -48,6 +49,11 @@
         // Group parameter was null
         wikiSession.addMessage( GroupManager.MESSAGES_KEY, "Parameter 'group' cannot be null." );
         response.sendRedirect( "Group.jsp" );
+    }
+
+    if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+        response.sendRedirect( "/error/Forbidden.html" );
+        return;
     }
 
     // Check that the group exists first

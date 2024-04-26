@@ -40,9 +40,10 @@
        value='profile'/></wiki:Link></wiki:CheckRequestContext>" 
           id="editProfile" 
        class="wikiform"
-    onsubmit="return Wiki.submitOnce( this );"
+     onsubmit="return Wiki.submitOnce( this );"
       method="post" accept-charset="UTF-8">
 
+      <wiki:CsrfProtection/>
       <h3>
       <wiki:UserProfile property="exists"><fmt:message key="prefs.oldprofile"/></wiki:UserProfile>
       <wiki:UserProfile property="new"><fmt:message key="prefs.newprofile"/></wiki:UserProfile>
@@ -80,12 +81,12 @@
      <!-- Password; not displayed if container auth used -->
      <wiki:UserProfile property="canChangePassword">
        <tr>
+         <td><label for="password0">Old</label>&nbsp;</label></td>
+         <td><input type="password" name="password0" id="password0" size="20" value="" />&nbsp;&nbsp;</td>
+       </tr>
+       <tr>
          <td><label for="password"><fmt:message key="prefs.password"/></label></td>
          <td>
-            <%--FIXME Enter Old PW to validate change flow, not yet treated by JSPWiki
-            <label for="password0">Old</label>&nbsp;
-            <input type="password" name="password0" id="password0" size="20" value="" />
-            &nbsp;&nbsp;--%>
             <input type="password" name="password" id="password" size="20" value="" />
           </td>
         </tr>

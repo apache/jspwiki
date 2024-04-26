@@ -52,7 +52,7 @@ public final class WatchDog {
     private boolean m_enabled = true;
     private final Engine m_engine;
 
-    private static final Logger log = LoggerFactory.getLogger( WatchDog.class );
+    private static final Logger LOG = LoggerFactory.getLogger( WatchDog.class );
 
     private static final Map< Integer, WeakReference< WatchDog > > c_kennel = new ConcurrentHashMap<>();
     private static WikiBackgroundThread c_watcherThread;
@@ -70,7 +70,7 @@ public final class WatchDog {
         WeakReference< WatchDog > w = c_kennel.get( t.hashCode() );
         WatchDog wd = null;
         if( w != null ) {
-        	wd = w.get();
+            wd = w.get();
         }
 
         if( w == null || wd == null ) {
@@ -116,8 +116,8 @@ public final class WatchDog {
     private static void scrub() {
         //  During finalization, the object may already be cleared (depending on the finalization order). Therefore, it's
         //  possible that this method is called from another thread after the WatchDog itself has been cleared.
-        if( c_kennel == null ) {
-        	return;
+        if( c_kennel.isEmpty() ) {
+            return;
         }
 
         for( final Map.Entry< Integer, WeakReference< WatchDog > > e : c_kennel.entrySet() ) {
@@ -185,11 +185,7 @@ public final class WatchDog {
      *  @param expectedCompletionTime The timeout in seconds.
      */
     public void enterState( final String state, final int expectedCompletionTime ) {
-        if( log.isDebugEnabled() ){
-        	log.debug( m_watchable.getName() + ": Entering state " + state +
-        			                           ", expected completion in " + expectedCompletionTime + " s");
-        }
-
+        LOG.debug(  "{}: Entering state {}, expected completion in {} s", m_watchable.getName(), state, expectedCompletionTime );
         synchronized( m_stateStack ) {
             final State st = new State( state, expectedCompletionTime );
             m_stateStack.push( st );
@@ -217,16 +213,14 @@ public final class WatchDog {
                 if( state == null || st.getState().equals( state ) ) {
                     m_stateStack.pop();
 
-                    if( log.isDebugEnabled() ) {
-                    	log.debug( m_watchable.getName() + ": Exiting state " + st.getState() );
-                    }
+                    LOG.debug( "{}: Exiting state {}", m_watchable.getName(), st.getState() );
                 } else {
                     // FIXME: should actually go and fix things for that
-                    log.error( "exitState() called before enterState()" );
+                    LOG.error( "exitState() called before enterState()" );
                 }
             }
         } else {
-            log.warn( "Stack for " + m_watchable.getName() + " is empty!" );
+            LOG.warn( "Stack for " + m_watchable.getName() + " is empty!" );
         }
     }
 
@@ -236,8 +230,8 @@ public final class WatchDog {
      * @return {@code true} if not empty, {@code false} otherwise.
      */
     public boolean isStateStackNotEmpty() {
-		return !m_stateStack.isEmpty();
-	}
+        return !m_stateStack.isEmpty();
+    }
 
     /**
      * helper to see if the associated watchable is alive.
@@ -245,13 +239,11 @@ public final class WatchDog {
      * @return {@code true} if it's alive, {@code false} otherwise.
      */
     public boolean isWatchableAlive() {
-    	return m_watchable != null && m_watchable.isAlive();
+        return m_watchable != null && m_watchable.isAlive();
     }
 
     private void check() {
-        if( log.isDebugEnabled() ) {
-        	log.debug( "Checking watchdog '" + m_watchable.getName() + "'" );
-        }
+        LOG.debug( "Checking watchdog '{}'", m_watchable.getName() );
 
         synchronized( m_stateStack ) {
             if( !m_stateStack.empty() ) {
@@ -259,15 +251,15 @@ public final class WatchDog {
                 final long now = System.currentTimeMillis();
 
                 if( now > st.getExpiryTime() ) {
-                    log.info( "Watchable '" + m_watchable.getName() + "' exceeded timeout in state '" + st.getState() +
-                    		  "' by " + (now - st.getExpiryTime()) / 1000 + " seconds" +
-                    		 ( log.isDebugEnabled() ? "" : "Enable DEBUG-level logging to see stack traces." ) );
+                    LOG.info( "Watchable '" + m_watchable.getName() + "' exceeded timeout in state '" + st.getState() +
+                              "' by " + (now - st.getExpiryTime()) / 1000 + " seconds" +
+                             ( LOG.isDebugEnabled() ? "" : "Enable DEBUG-level logging to see stack traces." ) );
                     dumpStackTraceForWatchable();
 
                     m_watchable.timeoutExceeded( st.getState() );
                 }
             } else {
-            	log.warn( "Stack for " + m_watchable.getName() + " is empty!" );
+                LOG.warn( "Stack for " + m_watchable.getName() + " is empty!" );
             }
         }
     }
@@ -276,8 +268,8 @@ public final class WatchDog {
      *  Dumps the stack traces as DEBUG level events.
      */
     private void dumpStackTraceForWatchable() {
-        if( !log.isDebugEnabled() ) {
-        	return;
+        if( !LOG.isDebugEnabled() ) {
+            return;
         }
 
         final Map< Thread, StackTraceElement[] > stackTraces = Thread.getAllStackTraces();
@@ -300,7 +292,7 @@ public final class WatchDog {
             }
         }
 
-        log.debug( stacktrace.toString() );
+        LOG.debug( stacktrace.toString() );
     }
 
     /**
@@ -345,12 +337,12 @@ public final class WatchDog {
         /**
          *  Checks if the watchable is alive, and if it is, checks if the stack is finished.
          *
-         *  If the watchable has been deleted in the mean time, will simply shut down itself.
+         *  If the watchable has been deleted in the meantime, will simply shut down itself.
          */
         @Override
         public void backgroundTask() {
-            if( c_kennel == null ) {
-            	return;
+            if( c_kennel.isEmpty() ) {
+                return;
             }
 
             for( final Map.Entry< Integer, WeakReference< WatchDog > > entry : c_kennel.entrySet() ) {

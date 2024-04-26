@@ -39,7 +39,7 @@ import javax.servlet.jsp.tagext.TryCatchFinally;
 public abstract class WikiTagBase extends TagSupport implements TryCatchFinally {
 
     private static final long serialVersionUID = -1409836349293777141L;
-    private static final Logger log = LoggerFactory.getLogger( WikiTagBase.class );
+    private static final Logger LOG = LoggerFactory.getLogger( WikiTagBase.class );
 
     protected Context m_wikiContext;
 
@@ -47,6 +47,7 @@ public abstract class WikiTagBase extends TagSupport implements TryCatchFinally 
      * This method calls the parent setPageContext() but it also provides a way for a tag to initialize itself before
      * any of the setXXX() methods are called.
      */
+    @Override
     public void setPageContext( final PageContext arg0 ) {
         super.setPageContext( arg0 );
         initTag();
@@ -70,7 +71,7 @@ public abstract class WikiTagBase extends TagSupport implements TryCatchFinally 
 
             return doWikiStartTag();
         } catch( final Exception e ) {
-            log.error( "Tag failed", e );
+            LOG.error( "Tag failed", e );
             throw new JspException( "Tag failed, check logs: "+e.getMessage() );
         }
     }
@@ -85,8 +86,9 @@ public abstract class WikiTagBase extends TagSupport implements TryCatchFinally 
         return EVAL_PAGE;
     }
 
+    @Override
     public void doCatch( final Throwable th ) throws Throwable {
-    	log.error( th.getMessage(), th );
+    	LOG.error( th.getMessage(), th );
     }
 
     public void doFinally()

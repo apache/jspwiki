@@ -25,17 +25,17 @@ import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.util.FileUtil;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionFactory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.StringReader;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.Callable;
 
 
@@ -43,9 +43,7 @@ public class BasicAttachmentProviderTest {
 
     public static final String NAME1 = "FirstTestPage";
     public static final String NAME2 = "AfterFirstTestPage";
-
-    Properties props = TestEngine.getTestProperties();
-    TestEngine m_engine = TestEngine.build( props );
+    TestEngine m_engine;
     BasicAttachmentProvider m_provider;
 
     /** This is the sound of my head hitting the keyboard. */
@@ -53,11 +51,17 @@ public class BasicAttachmentProviderTest {
 
     @BeforeEach
     public void setUp() throws Exception {
+        m_engine = TestEngine.build();
         m_provider = new BasicAttachmentProvider();
-        m_provider.initialize( m_engine, props );
+        m_provider.initialize( m_engine, m_engine.getWikiProperties() );
 
         m_engine.saveText( NAME1, "Foobar" );
         m_engine.saveText( NAME2, "Foobar2" );
+    }
+    
+    @AfterEach
+    void tearDown() {
+        m_engine.stop();
     }
 
     private File makeAttachmentFile() throws Exception {
@@ -123,7 +127,7 @@ public class BasicAttachmentProviderTest {
         final File in = makeAttachmentFile();
         final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "\u3072\u3048\u308b\u00e5\u00e4\u00f6test.f\u00fc\u00fc" );
 
-        m_provider.putAttachmentData( att, new FileInputStream(in) );
+        m_provider.putAttachmentData( att, Files.newInputStream( in.toPath() ) );
         final List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
         final Attachment a0 = res.get(0);
 
@@ -163,12 +167,12 @@ public class BasicAttachmentProviderTest {
     public void testListAll() throws Exception {
         final File in = makeAttachmentFile();
         final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1.txt" );
-        m_provider.putAttachmentData( att, new FileInputStream(in) );
+        m_provider.putAttachmentData( att, Files.newInputStream( in.toPath() ) );
 
         awaitility().await( "testListAll" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = Wiki.contents().attachment( m_engine, NAME2, "test2.txt" );
-        m_provider.putAttachmentData( att2, new FileInputStream(in) );
+        m_provider.putAttachmentData( att2, Files.newInputStream( in.toPath() ) );
 
         final List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
 
@@ -192,12 +196,12 @@ public class BasicAttachmentProviderTest {
         makeExtraFile( sDir, "foobar.blob" );
 
         final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1.txt" );
-        m_provider.putAttachmentData( att, new FileInputStream(in) );
+        m_provider.putAttachmentData( att, Files.newInputStream( in.toPath() ) );
 
         awaitility().await( "testListAllExtrafile" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = Wiki.contents().attachment( m_engine, NAME2, "test2.txt" );
-        m_provider.putAttachmentData( att2, new FileInputStream(in) );
+        m_provider.putAttachmentData( att2, Files.newInputStream( in.toPath() ) );
 
         final List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
 
@@ -220,14 +224,14 @@ public class BasicAttachmentProviderTest {
         final File attDir = new File( sDir, NAME1+"-att" );
 
         final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1.txt" );
-        m_provider.putAttachmentData( att, new FileInputStream(in) );
+        m_provider.putAttachmentData( att, Files.newInputStream( in.toPath() ) );
         makeExtraFile( attDir, "ping.pong" );
 
         awaitility().await( "testListAllExtrafileInAttachmentDir" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = Wiki.contents().attachment( m_engine, NAME2, "test2.txt" );
 
-        m_provider.putAttachmentData( att2, new FileInputStream(in) );
+        m_provider.putAttachmentData( att2, Files.newInputStream( in.toPath() ) );
 
         final List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
 
@@ -249,7 +253,7 @@ public class BasicAttachmentProviderTest {
         final File sDir = new File(m_engine.getWikiProperties().getProperty( BasicAttachmentProvider.PROP_STORAGEDIR ));
         final File attDir = new File( sDir, NAME1+"-att" );
         final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1.txt" );
-        m_provider.putAttachmentData( att, new FileInputStream(in) );
+        m_provider.putAttachmentData( att, Files.newInputStream( in.toPath() ) );
 
         // This is our extraneous directory.
         final File extrafile = new File( attDir, "ping.pong" );
@@ -259,7 +263,7 @@ public class BasicAttachmentProviderTest {
 
         final Attachment att2 = Wiki.contents().attachment( m_engine, NAME2, "test2.txt" );
 
-        m_provider.putAttachmentData( att2, new FileInputStream(in) );
+        m_provider.putAttachmentData( att2, Files.newInputStream( in.toPath() ) );
 
         final List< Attachment > res = m_provider.listAllChanged( new Date(0L) );
 
@@ -276,12 +280,12 @@ public class BasicAttachmentProviderTest {
     public void testListAllNoExtension() throws Exception {
         final File in = makeAttachmentFile();
         final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1." );
-        m_provider.putAttachmentData( att, new FileInputStream(in) );
+        m_provider.putAttachmentData( att, Files.newInputStream( in.toPath() ) );
 
         awaitility().await( "testListAllNoExtension" ).until( attachmentIsSaved( att ) );
 
         final Attachment att2 = Wiki.contents().attachment( m_engine, NAME2, "test2." );
-        m_provider.putAttachmentData( att2, new FileInputStream(in) );
+        m_provider.putAttachmentData( att2, Files.newInputStream( in.toPath() ) );
 
         final List< Attachment > res = m_provider.listAllChanged( new Date( 0L ) );
 

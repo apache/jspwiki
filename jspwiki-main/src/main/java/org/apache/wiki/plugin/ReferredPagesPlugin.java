@@ -58,25 +58,26 @@ import java.util.Map;
  */
 public class ReferredPagesPlugin implements Plugin {
 
-    private static final Logger log = LoggerFactory.getLogger( ReferredPagesPlugin.class );
-    private Engine         m_engine;
-    private int            m_depth;
-    private final HashSet<String> m_exists  = new HashSet<>();
-    private final StringBuffer   m_result  = new StringBuffer(1024);
+    private static final Logger LOG = LoggerFactory.getLogger( ReferredPagesPlugin.class );
+    private Engine m_engine;
+    private int m_depth;
+    private final HashSet< String > m_exists  = new HashSet<>();
+    private final StringBuffer m_result  = new StringBuffer( 1024 );
     private final PatternMatcher m_matcher = new Perl5Matcher();
-    private Pattern        m_includePattern;
-    private Pattern        m_excludePattern;
-    private boolean m_formatCompact  = true;
+    private Pattern m_includePattern;
+    private Pattern m_excludePattern;
+    private int items;
+    private boolean m_formatCompact = true;
     private boolean m_formatSort;
 
     /** The parameter name for the root page to start from.  Value is <tt>{@value}</tt>. */
-    public static final String PARAM_ROOT    = "page";
+    public static final String PARAM_ROOT = "page";
 
     /** The parameter name for the depth.  Value is <tt>{@value}</tt>. */
-    public static final String PARAM_DEPTH   = "depth";
+    public static final String PARAM_DEPTH = "depth";
 
     /** The parameter name for the type of the references.  Value is <tt>{@value}</tt>. */
-    public static final String PARAM_TYPE    = "type";
+    public static final String PARAM_TYPE = "type";
 
     /** The parameter name for the included pages.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_INCLUDE = "include";
@@ -85,19 +86,22 @@ public class ReferredPagesPlugin implements Plugin {
     public static final String PARAM_EXCLUDE = "exclude";
 
     /** The parameter name for the format.  Value is <tt>{@value}</tt>. */
-    public static final String PARAM_FORMAT  = "format";
+    public static final String PARAM_FORMAT = "format";
+
+    /** Parameter name for setting the number of columns that will be displayed by the plugin.  Value is <tt>{@value}</tt>. Available since 2.11.0. */
+    public static final String PARAM_COLUMNS = "columns";
 
     /** The minimum depth. Value is <tt>{@value}</tt>. */
-    public static final int    MIN_DEPTH = 1;
+    public static final int MIN_DEPTH = 1;
 
     /** The maximum depth. Value is <tt>{@value}</tt>. */
-    public static final int    MAX_DEPTH = 8;
+    public static final int MAX_DEPTH = 8;
 
     /**
      *  {@inheritDoc}
      */
     @Override
-    public String execute( final Context context, final Map<String, String> params ) throws PluginException {
+    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
         m_engine = context.getEngine();
         final Page page = context.getPage();
         if( page == null ) {
@@ -122,18 +126,30 @@ public class ReferredPagesPlugin implements Plugin {
         }
 
         m_depth = TextUtil.parseIntParameter( params.get( PARAM_DEPTH ), MIN_DEPTH );
-        if( m_depth > MAX_DEPTH )  m_depth = MAX_DEPTH;
+        if( m_depth > MAX_DEPTH ) {
+            m_depth = MAX_DEPTH;
+        }
 
         String includePattern = params.get(PARAM_INCLUDE);
-        if( includePattern == null ) includePattern = ".*";
+        if( includePattern == null ) {
+            includePattern = ".*";
+        }
 
         String excludePattern = params.get(PARAM_EXCLUDE);
-        if( excludePattern == null ) excludePattern = "^$";
+        if( excludePattern == null ) {
+            excludePattern = "^$";
+        }
 
-        log.debug( "Fetching referred pages for "+ rootname +
+        final String columns = params.get( PARAM_COLUMNS );
+        if( columns != null ) {
+            items = TextUtil.parseIntParameter( columns, 0 );
+        }
+
+        LOG.debug( "Fetching referred pages for "+ rootname +
                    " with a depth of "+ m_depth +
                    " with include pattern of "+ includePattern +
-                   " with exclude pattern of "+ excludePattern );
+                   " with exclude pattern of "+ excludePattern +
+                   " with " + columns + " items" );
 
         //
         // do the actual work
@@ -144,7 +160,15 @@ public class ReferredPagesPlugin implements Plugin {
                              "] format[" + ( m_formatCompact ? "compact" : "full" ) +
                              ( m_formatSort ? " sort" : "" ) + "]";
 
-        m_result.append( "<div class=\"ReferredPagesPlugin\">\n" );
+        if( items > 1 ) {
+            m_result.append( "<div class=\"ReferredPagesPlugin\" style=\"" )
+                    .append( "columns:" ).append( columns ).append( ";" )
+                    .append( "moz-columns:" ).append( columns ).append( ";" )
+                    .append( "webkit-columns:" ).append( columns ).append( ";" )
+                    .append( "\">\n" );
+        } else {
+            m_result.append( "<div class=\"ReferredPagesPlugin\">\n" );
+        }
         m_result.append( "<a class=\"wikipage\" href=\"" )
                 .append( href ).append( "\" title=\"" )
                 .append( TextUtil.replaceEntities( title ) )
@@ -181,7 +205,6 @@ public class ReferredPagesPlugin implements Plugin {
         return m_result.toString() ;
     }
 
-
     /**
      * Retrieves a list of all referred pages. Is called recursively depending on the depth parameter.
      */
@@ -201,10 +224,9 @@ public class ReferredPagesPlugin implements Plugin {
         handleLinks( context, allPages, ++depth, pagename );
     }
 
-    private void handleLinks( final Context context, final Collection<String> links, final int depth, final String pagename) {
+    private void handleLinks( final Context context, final Collection<String> links, final int depth, final String pagename ) {
         boolean isUL = false;
-        final HashSet< String > localLinkSet = new HashSet<>();  // needed to skip multiple
-        // links to the same page
+        final HashSet< String > localLinkSet = new HashSet<>();  // needed to skip multiple links to the same page
         localLinkSet.add( pagename );
 
         final ArrayList< String > allLinks = new ArrayList<>();
@@ -221,7 +243,7 @@ public class ReferredPagesPlugin implements Plugin {
             localLinkSet.add( link );
 
             if( !m_engine.getManager( PageManager.class ).wikiPageExists( link ) ) {
-                continue; // hide links to non existing pages
+                continue; // hide links to non-existing pages
             }
             if(  m_matcher.matches( link , m_excludePattern ) ) {
                 continue;

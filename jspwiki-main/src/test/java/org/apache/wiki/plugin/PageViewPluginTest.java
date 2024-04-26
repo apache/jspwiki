@@ -18,9 +18,7 @@
  */
 package org.apache.wiki.plugin;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.spi.Wiki;
@@ -31,34 +29,21 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Properties;
+import static org.apache.wiki.TestEngine.with;
 
-public class PageViewPluginTest
-{
-    Properties props = TestEngine.getTestProperties();
+public class PageViewPluginTest {
 
-    TestEngine testEngine;
-
-    WikiContext context;
-
-    PluginManager manager;
+    TestEngine testEngine = TestEngine.build( with( "jspwiki.cache.enable", "false" ) );
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
-        CacheManager.getInstance().removeAllCaches();
-        testEngine = new TestEngine( props );
-
+    public void setUp() throws Exception {
         // create pages that should be counted
         testEngine.saveText( "TestPage01", "this is test page 01 [{PageViewPlugin}]" );
         testEngine.saveText( "TestPage02", "this is test page 02 [{PageViewPlugin}]" );
-
-        manager = new DefaultPluginManager( testEngine, props );
     }
 
     @AfterEach
-    public void tearDown()
-    {
+    public void tearDown() {
         testEngine.deleteTestPage( "TestPage01" );
         testEngine.deleteTestPage( "TestPage02" );
         testEngine.deleteTestPage( "PageViews" );
@@ -66,8 +51,7 @@ public class PageViewPluginTest
     }
 
     @Test
-    public void testShowCountsBasic() throws Exception
-    {
+    public void testShowCountsBasic() throws Exception {
         final Page page1 = testEngine.getManager( PageManager.class ).getPage( "TestPage01" );
         final Context context1 = Wiki.context().create( testEngine, page1 );
         final Page page2 = testEngine.getManager( PageManager.class ).getPage( "TestPage02" );

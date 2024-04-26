@@ -15,15 +15,17 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-FROM maven:3.8-jdk-8 as package
+FROM maven:3.8-jdk-11 as package
 
 WORKDIR /tmp
 
 COPY . .
 
+RUN mvn -B dependency:go-offline
+
 RUN set -x \
 # fastest, minimum build
-  && mvn clean package -pl jspwiki-war,jspwiki-wikipages/en -am -Dmaven.test.skip
+  && mvn -B clean package -pl jspwiki-war,jspwiki-wikipages/en -am -DskipTests
 
 FROM tomcat:9.0
 
@@ -47,6 +49,8 @@ ENV jspwiki_xmlGroupDatabaseFile /var/jspwiki/etc/groupdatabase.xml
 
 RUN set -x \
  && export DEBIAN_FRONTEND=noninteractive \
+ && apt update \
+ && apt upgrade -y \
  && apt install --fix-missing --quiet --yes unzip
 
 #

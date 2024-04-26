@@ -58,7 +58,7 @@
       method="post" accept-charset="<wiki:ContentEncoding />" >
 
 <div class="center">
-
+  <wiki:CsrfProtection/>
   <h3><fmt:message key="login.heading.login"><fmt:param><wiki:Variable var="applicationname" /></fmt:param></fmt:message></h3>
 
   <div class="formhelp"><fmt:message key="login.help"></fmt:message></div>
@@ -129,7 +129,7 @@
       method="post" accept-charset="<wiki:ContentEncoding />" >
 
   <h3><fmt:message key="login.lostpw.heading" /></h3>
-
+  <wiki:CsrfProtection/>
   <c:choose>
   <c:when test="${passwordreset == 'done' }">
       <wiki:Messages div="information" topic="resetpw" prefix="" />

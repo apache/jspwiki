@@ -35,6 +35,7 @@
            name="query" id="query"
            size="20" 
       accesskey="f" />
+  <wiki:CsrfProtection/>
   <button type="submit"
   		 name="searchSubmit" id="searchSubmit"
   		value="<fmt:message key='find.submit.go'/>"

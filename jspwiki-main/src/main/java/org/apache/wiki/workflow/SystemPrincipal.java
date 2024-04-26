@@ -22,7 +22,7 @@ import java.security.Principal;
 
 
 /**
- * System users asociated with workflow Task steps.
+ * System users associated with workflow Task steps.
  */
 public final class SystemPrincipal implements Principal {
 
@@ -43,6 +43,7 @@ public final class SystemPrincipal implements Principal {
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return m_name;
     }

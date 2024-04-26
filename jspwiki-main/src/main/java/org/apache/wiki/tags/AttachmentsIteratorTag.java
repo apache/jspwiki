@@ -48,7 +48,7 @@ import java.util.List;
 public class AttachmentsIteratorTag extends IteratorTag {
     private static final long serialVersionUID = 0L;
     
-    private static final Logger log = LoggerFactory.getLogger( AttachmentsIteratorTag.class );
+    private static final Logger LOG = LoggerFactory.getLogger( AttachmentsIteratorTag.class );
 
     /**
      *  {@inheritDoc}
@@ -72,7 +72,7 @@ public class AttachmentsIteratorTag extends IteratorTag {
                 final List< Attachment > atts = mgr.listAttachments( page );
 
                 if( atts == null ) {
-                    log.debug("No attachments to display.");
+                    LOG.debug("No attachments to display.");
                     // There are no attachments included
                     return SKIP_BODY;
                 }
@@ -94,7 +94,7 @@ public class AttachmentsIteratorTag extends IteratorTag {
 
             return EVAL_BODY_BUFFERED;
         } catch( final ProviderException e ) {
-            log.error("Provider failed while trying to iterator through history",e);
+			LOG.error("Provider failed while trying to iterator through history",e);
             // FIXME: THrow something.
         }
 
@@ -112,7 +112,7 @@ public class AttachmentsIteratorTag extends IteratorTag {
                 out.print(bodyContent.getString());
                 bodyContent.clearBody();
             } catch( final IOException e ) {
-                log.error("Unable to get inner tag text", e);
+                LOG.error("Unable to get inner tag text", e);
                 // FIXME: throw something?
             }
         }

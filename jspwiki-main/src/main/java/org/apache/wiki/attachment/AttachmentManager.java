@@ -47,7 +47,10 @@ import java.util.List;
 public interface AttachmentManager {
 
     /** The property name for defining the attachment provider class name. */
-    String PROP_PROVIDER = "jspwiki.attachmentProvider";
+    String PROP_PROVIDER = "jspwiki.attachment.provider";
+
+    /** The property name for defining the attachment provider class name. */
+    @Deprecated String PROP_PROVIDER_DEPRECATED = "jspwiki.attachmentProvider";
 
     /** The maximum size of attachments that can be uploaded. */
     String PROP_MAXSIZE  = "jspwiki.attachment.maxsize";
@@ -58,14 +61,8 @@ public interface AttachmentManager {
     /** A space-separated list of attachment types which cannot be uploaded */
     String PROP_FORBIDDENEXTENSIONS = "jspwiki.attachment.forbidden";
 
-    /** A space-separated list of attachment types which never will open in the browser. */
+    /** A space-separated list of attachment types which will never open in the browser. */
     String PROP_FORCEDOWNLOAD = "jspwiki.attachment.forceDownload";
-
-    /** Name of the page cache. */
-    String CACHE_NAME = "jspwiki.dynamicAttachmentCache";
-
-    /** The capacity of the cache, if you want something else, tweak ehcache.xml. */
-    int DEFAULT_CACHECAPACITY = 1_000;
 
     /**
      *  Returns true, if attachments are enabled and running.
@@ -151,7 +148,7 @@ public interface AttachmentManager {
      */
     default boolean hasAttachments( final Page wikipage ) {
         try {
-            return listAttachments( wikipage ).size() > 0;
+            return !listAttachments(wikipage).isEmpty();
         } catch( final Exception e ) {
             LoggerFactory.getLogger( AttachmentManager.class ).info( e.getMessage(), e );
         }
@@ -294,7 +291,7 @@ public interface AttachmentManager {
             throw new WikiException(  "attach.empty.file" );
         }
 
-        //  Some browser send the full path info with the filename, so we need
+        //  Some browsers send the full path info with the filename, so we need
         //  to remove it here by simply splitting along slashes and then taking the path.
         final String[] splitpath = filename.split( "[/\\\\]" );
         filename = splitpath[splitpath.length-1];

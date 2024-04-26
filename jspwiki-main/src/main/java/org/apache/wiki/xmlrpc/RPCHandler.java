@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Set;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 /**
  *  Provides handlers for all RPC routines.
@@ -79,15 +80,8 @@ public class RPCHandler extends AbstractRPCHandler {
     public Vector< String > getAllPages() {
         checkPermission( PagePermission.VIEW );
         final Collection< Page > pages = m_engine.getManager( PageManager.class ).getRecentChanges();
-        final Vector< String > result = new Vector<>();
 
-        for( final Page p : pages ) {
-            if( !( p instanceof Attachment ) ) {
-                result.add( toRPCString( p.getName() ) );
-            }
-        }
-
-        return result;
+        return pages.stream().filter(p -> !(p instanceof Attachment)).map(p -> toRPCString(p.getName())).collect(Collectors.toCollection(Vector::new));
     }
 
     /**
@@ -174,12 +168,12 @@ public class RPCHandler extends AbstractRPCHandler {
         return pagename;
     }
 
-    public Hashtable getPageInfo( String pagename ) throws XmlRpcException {
+    public Hashtable< String, Object > getPageInfo( String pagename ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
         return encodeWikiPage( m_engine.getManager( PageManager.class ).getPage(pagename) );
     }
 
-    public Hashtable getPageInfoVersion( String pagename, final int version ) throws XmlRpcException {
+    public Hashtable< String, Object > getPageInfoVersion( String pagename, final int version ) throws XmlRpcException {
         pagename = parsePageCheckCondition( pagename );
 
         return encodeWikiPage( m_engine.getManager( PageManager.class ).getPage( pagename, version ) );

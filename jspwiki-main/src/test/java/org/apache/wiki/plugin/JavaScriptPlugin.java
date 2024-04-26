@@ -34,7 +34,7 @@ import java.util.Map;
  */
 public class JavaScriptPlugin implements Plugin, InitializablePlugin {
 
-    protected static boolean c_inited = false;
+    protected static boolean c_inited;
     
     @Override
     public String execute( final Context context, final Map< String, String > params ) throws PluginException {

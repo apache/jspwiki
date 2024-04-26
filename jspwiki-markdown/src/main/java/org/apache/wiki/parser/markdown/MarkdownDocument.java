@@ -18,7 +18,10 @@
  */
 package org.apache.wiki.parser.markdown;
 
+import com.vladsch.flexmark.ext.attributes.AttributesExtension;
+import com.vladsch.flexmark.ext.definition.DefinitionExtension;
 import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.ext.toc.TocExtension;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.parser.ParserEmulationProfile;
@@ -41,34 +44,38 @@ import java.util.List;
  */
 public class MarkdownDocument extends WikiDocument {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final Node md;
+    private final Node md;
 
-	public MarkdownDocument( final Page page, final Node md ) {
-		super( page );
-		this.md = md;
-	}
+    public MarkdownDocument( final Page page, final Node md ) {
+        super( page );
+        this.md = md;
+    }
 
-	public Node getMarkdownNode() {
-		return md;
-	}
+    public Node getMarkdownNode() {
+        return md;
+    }
 
-	/**
-	 * configuration options for MarkdownRenderers.
-	 *
-	 * @param context current wikicontext
-	 * @return configuration options for MarkdownRenderers.
-	 */
-	public static MutableDataSet options( final Context context, final boolean isImageInlining, final List< Pattern > inlineImagePatterns ) {
-		final MutableDataSet options = new MutableDataSet();
-		options.setFrom( ParserEmulationProfile.COMMONMARK );
-		// align style of Markdown's footnotes extension with jspwiki footnotes refs
-		options.set( FootnoteExtension.FOOTNOTE_LINK_REF_CLASS, JSPWikiMarkupParser.CLASS_FOOTNOTE_REF );
-		options.set( Parser.EXTENSIONS, Arrays.asList( new Extension[] { new MarkdownForJSPWikiExtension( context, isImageInlining, inlineImagePatterns ),
-		                                                                 FootnoteExtension.create(),
-		                                                                 TocExtension.create() } ) );
-		return options;
-	}
+    /**
+     * Configuration options for MarkdownRenderers.
+     *
+     * @param context current wiki context
+     * @return configuration options for MarkdownRenderers.
+     */
+    public static MutableDataSet options( final Context context, final boolean isImageInlining, final List< Pattern > inlineImagePatterns ) {
+        final MutableDataSet options = new MutableDataSet();
+        options.setFrom( ParserEmulationProfile.COMMONMARK );
+        options.set( AttributesExtension.ASSIGN_TEXT_ATTRIBUTES, true );
+        // align style of Markdown's footnotes extension with jspwiki footnotes refs
+        options.set( FootnoteExtension.FOOTNOTE_LINK_REF_CLASS, JSPWikiMarkupParser.CLASS_FOOTNOTE_REF );
+        options.set( Parser.EXTENSIONS, Arrays.asList( new Extension[] { new MarkdownForJSPWikiExtension( context, isImageInlining, inlineImagePatterns ),
+                                                                         AttributesExtension.create(),
+                                                                         DefinitionExtension.create(),
+                                                                         FootnoteExtension.create(),
+                                                                         TablesExtension.create(),
+                                                                         TocExtension.create() } ) );
+        return options;
+    }
 
 }

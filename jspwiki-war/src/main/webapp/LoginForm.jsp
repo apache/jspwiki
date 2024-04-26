@@ -47,10 +47,12 @@
         wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_LOGIN.getRequestContext() );
         pageContext.setAttribute( Context.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE );
     }
-    
-    response.setContentType("text/html; charset="+wiki.getContentEncoding() );
+
+    if( !response.isCommitted() ) {
+        response.setContentType( "text/html; charset=" + wiki.getContentEncoding() );
+    }
     String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "ViewTemplate.jsp" );
                                                             
-    log.debug("Login template content is: " + contentPage);
+    log.debug( "Login template content is: {}", contentPage );
     
 %><wiki:Include page="<%=contentPage%>" />

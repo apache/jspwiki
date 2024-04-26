@@ -33,13 +33,12 @@ import org.jdom2.Namespace;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * A Plugin that creates an index of pages according to a certain pattern.
@@ -60,7 +59,7 @@ import java.util.regex.Pattern;
  */
 public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
 
-	private static final Logger log = LoggerFactory.getLogger(IndexPlugin.class);
+	private static final Logger LOG = LoggerFactory.getLogger(IndexPlugin.class);
 
 	private final Namespace xmlns_XHTML = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
 
@@ -109,7 +108,7 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
 			}
 		}
 		catch (final ProviderException e) {
-			log.warn("could not load page index", e);
+			LOG.warn("could not load page index", e);
 			throw new PluginException(e.getMessage());
 		}
 		// serialize to raw format string (no changes to whitespace)
@@ -153,7 +152,7 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
 	private List<String> listPages(final Context context, final String include, final String exclude, final Pattern pattern) throws ProviderException {
 		final Pattern includePtrn = include != null ? Pattern.compile(include) : Pattern.compile(".*");
 		final Pattern excludePtrn = exclude != null ? Pattern.compile(exclude) : Pattern.compile("\\p{Cntrl}"); // there are no control characters in page names
-		final List<String> result = new ArrayList<>();
+        final List< String > result;
 		final Set<String> pages = context.getEngine().getManager(ReferenceManager.class).findCreated();
 		Map<String, String> pageNamePrefix = new HashMap<>();
 		for (final String pageName : pages) {

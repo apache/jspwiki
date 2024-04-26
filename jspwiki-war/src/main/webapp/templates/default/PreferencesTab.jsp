@@ -47,6 +47,7 @@
       method="post" accept-charset="<wiki:ContentEncoding />" >
 
   <input type="hidden" name="redirect" value="${redirect}" />
+  <wiki:CsrfProtection/>
 
   <div class="form-group ">
 

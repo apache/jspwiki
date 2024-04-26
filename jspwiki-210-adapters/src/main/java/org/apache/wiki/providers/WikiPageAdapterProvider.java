@@ -65,15 +65,14 @@ public class WikiPageAdapterProvider implements PageProvider {
                   "implementing the new org.apache.wiki.api.providers.PageProvider public API" );
         final String classname = TextUtil.getRequiredProperty( properties, PROP_ADAPTER_IMPL );
         try {
-            LOG.debug( "Page provider class: '" + classname + "'" );
-            final Class<?> providerclass = ClassUtil.findClass("org.apache.wiki.providers", classname);
-            provider = ( WikiPageProvider ) providerclass.newInstance();
-        } catch( final IllegalAccessException | InstantiationException | ClassNotFoundException e ) {
-            LOG.error( "Could not instantiate " + classname, e );
+            LOG.debug( "Page provider class: '{}'", classname );
+            provider = ClassUtil.buildInstance( "org.apache.wiki.providers", classname );
+        } catch( final ReflectiveOperationException e ) {
+            LOG.error( "Could not instantiate {}", classname, e );
             throw new IOException( e.getMessage(), e );
         }
 
-        LOG.debug( "Initializing page provider class " + provider );
+        LOG.debug( "Initializing page provider class {}", provider );
         provider.initialize( engine, properties );
     }
 

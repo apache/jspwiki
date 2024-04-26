@@ -187,12 +187,7 @@ public interface AuthenticationManager extends Initializable {
      * @return the login principal
      */
     default Principal getLoginPrincipal( final Set< Principal > principals ) {
-        for( final Principal principal : principals ) {
-            if ( isUserPrincipal( principal ) ) {
-                return principal;
-            }
-        }
-        return null;
+        return principals.stream().filter(AuthenticationManager::isUserPrincipal).findFirst().orElse(null);
     }
 
     // events processing .......................................................

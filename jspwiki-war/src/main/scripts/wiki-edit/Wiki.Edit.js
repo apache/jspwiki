@@ -21,7 +21,7 @@
 /*
 Class: Wiki.Edit
     Wiki.Edit implements the JSPWiki plain editor, with support
-    for JSPWIki's markup, suggestion popups, ajax based page preview, etc...
+    for JSPWiki's markup, suggestion popups, ajax based page preview, etc...
 
     It uses [Snipe] to enhance the plain textarea.
 */
@@ -195,7 +195,8 @@ function livepreview(content, preview, previewToggle){
             url: wiki.XHRPreview,
             data: {
                 page: wiki.PageName,
-                wikimarkup: content
+                wikimarkup: content,
+                'X-XSRF-TOKEN': wiki.CsrfProtection
             },
             update: preview,
             onRequest: renderPreview,

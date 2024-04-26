@@ -28,6 +28,7 @@
   id="searchForm" tabindex="0" role="search"
   accept-charset="<wiki:ContentEncoding />">
 
+  <wiki:CsrfProtection/>
   <%-- FFS <div onclick="" class="btn">
     the onclick="" is needed for hover effect on ipad https://www.codehaven.co.uk/fix-css-hover-on-iphone-ipad/ --%>
   <a href="#" aria-label="<fmt:message key='sbox.search.button'/>" class="btn" data-click-parent=".searchbox">

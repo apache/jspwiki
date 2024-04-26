@@ -42,6 +42,8 @@
    String usertext = EditorManager.getEditedText( pageContext );
 %>
 <wiki:RequestResource type="script" resource="scripts/haddock-edit.js" />
+<wiki:RequestResource type="script" resource="engine://jspwiki.syntax.plain" />
+<wiki:RequestResource type="script" resource="scripts/haddock-wiki-edit.js" />
 <c:set var='context'><wiki:Variable var='requestcontext' /></c:set>
 <wiki:CheckRequestContext context="edit">
 <wiki:NoSuchPage> <%-- this is a new page, check if we're cloning --%>
@@ -82,6 +84,7 @@
           id="editform"
      enctype="application/x-www-form-urlencoded" >
 
+  <wiki:CsrfProtection/>
   <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
   <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
   <input type="hidden" name="action" value="save" />

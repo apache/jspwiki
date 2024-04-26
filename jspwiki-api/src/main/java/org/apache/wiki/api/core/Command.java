@@ -27,13 +27,13 @@ import java.security.Permission;
  * <p> Commands come in two flavors: "static" and "targeted." </p>
  * <ul>
  * <li><strong>Static commands</strong> are exactly what they sound like: static. They are <code>final</code>, threadsafe, and immutable.
- * They have no intrinsic idea of the context they are acting in. For example, the static command {@link org.apache.wiki.ui.PageCommand#VIEW} embodies the
+ * They have no intrinsic idea of the context they are acting in. For example, the static command {@code org.apache.wiki.ui.PageCommand#VIEW} embodies the
  * idea of viewing a page &#8212; but exactly <em>which</em> page is left undefined. Static commands exist so that they can be freely
  * shared and passed around without incurring the penalties of object creation. Static commands are a lot like naked request contexts
  * ("edit", "view", etc.) except that they include additional, essential properties such as the associated URL pattern and content JSP.</li>
  * <li><strong>Targeted commands</strong> "decorate" static commands by scoping a static Command at a specific target such as a WikiPage or
  * GroupPrincipal. Targeted commands are created by calling an existing Command's {@link #targetedCommand(Object)} and supplying the target
- * object. Implementing classes generally require a specific target type. For example, the {@link org.apache.wiki.ui.PageCommand} class requires that the
+ * object. Implementing classes generally require a specific target type. For example, the {@code org.apache.wiki.ui.PageCommand} class requires that the
  * target object be of type {@link org.apache.wiki.api.core.Page}.</li>
  * </ul>
  * <p> Concrete implementations of Command include: </p>
@@ -102,10 +102,10 @@ public interface Command {
     String getRequestContext();
 
     /**
-     * Returns the Permission required to successfully execute this Command. If no Permission is requred, this method returns
-     * <code>null</code>. For example, the static command {@link org.apache.wiki.ui.PageCommand#VIEW} doesn't require a permission because
+     * Returns the Permission required to successfully execute this Command. If no Permission is required, this method returns
+     * <code>null</code>. For example, the static command {@code org.apache.wiki.ui.PageCommand#VIEW} doesn't require a permission because
      * it isn't referring to a particular WikiPage. However, if this command targets a WikiPage called <code>Main</code>(via
-     * {@link org.apache.wiki.ui.PageCommand#targetedCommand(Object)}, the resulting Command would require the permission
+     * {@code org.apache.wiki.ui.PageCommand#targetedCommand(Object)}, the resulting Command would require the permission
      * <code>PagePermission "<em>yourWiki</em>:Main", "view"</code>.
      *
      * @return the required permission, or <code>null</code> if not required

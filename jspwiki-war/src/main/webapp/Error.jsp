@@ -41,7 +41,7 @@
     Throwable realcause = null;
 
     msg = exception.getMessage();
-    if( msg == null || msg.length() == 0 )
+    if( msg == null || msg.isEmpty())
     {
         msg = "An unknown exception "+exception.getClass().getName()+" was caught by Error.jsp.";
     }
@@ -70,7 +70,7 @@
 <!doctype html>
 <html lang="<c:out value='${prefs.Language}' default='en'/>" name="top">
   <head>
-    <title><wiki:Variable var="applicationname" />: ERROR Page</title>
+    <title><wiki:Variable var="applicationname" default="Apache JSPWiki" />: ERROR Page</title>
   </head>
 
   <body>

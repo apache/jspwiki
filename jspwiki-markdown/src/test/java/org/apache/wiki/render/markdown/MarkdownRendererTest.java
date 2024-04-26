@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.render.markdown;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
@@ -31,24 +30,24 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.markdown.MarkdownParser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 
 public class MarkdownRendererTest {
 
-    Properties props = TestEngine.getTestProperties();
-    List<String> created = new ArrayList<>();
+    List< String > created = new ArrayList<>();
 
     static final String PAGE_NAME = "testpage";
 
-    TestEngine testEngine;
+    TestEngine testEngine = TestEngine.build( TestEngine.with( "jspwiki.translatorReader.matchEnglishPlurals", "true" ),
+                                              TestEngine.with( "jspwiki.fileSystemProvider.pageDir", "./target/md-pageDir" ),
+                                              TestEngine.with( "jspwiki.renderingManager.markupParser", MarkdownParser.class.getName() ),
+                                              TestEngine.with( "jspwiki.renderingManager.renderer", MarkdownRenderer.class.getName() ) );
 
     @Test
     public void testMarkupSimpleMarkdown() throws Exception {
@@ -98,6 +97,46 @@ public class MarkdownRendererTest {
 
         Assertions.assertEquals( "<p>This should be an <span class=\"error\">No InterWiki reference defined in properties for Wiki called \"JSPWiko\"!</span></p>\n",
                                  translate( src ) );
+    }
+
+    @Test
+    public void testMarkupLinkWithCustomAttributes() throws Exception {
+        final String src = "This should be a [link with custom attributes](http://google.com){target=blank}";
+
+        Assertions.assertEquals( "<p>This should be a <a href=\"http://google.com\" class=\"external\" target=\"blank\">link with custom attributes</a></p>\n", translate( src ) );
+    }
+
+    @Test
+    public void testMarkupPWithCustomAttributes() throws Exception {
+        // {..} are separated from the link, so they apply to the nearest p or span containing them
+        final String src0 = "This should be a [link](http://google.com) {style='background-color:#ddd'}";
+        Assertions.assertEquals( "<p style=\"background-color:#ddd\">This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src0 ) );
+
+        final String src1 = "This should be a [link](http://google.com) {#a1}";
+        Assertions.assertEquals( "<p id=\"a1\">This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src1 ) );
+
+        final String src2 = "This should be a [link](http://google.com) {.warning}";
+        Assertions.assertEquals( "<p class=\"warning\">This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src2 ) );
+    }
+
+    @Test
+    public void testMarkupDefinitionList() throws Exception {
+        final String src = "Definition Term\n" +
+                           ": definition description";
+
+        Assertions.assertEquals( "<dl>\n<dt>Definition Term</dt>\n<dd>definition description</dd>\n</dl>\n", translate( src ) );
+    }
+
+    @Test
+    public void testMarkupTable() throws Exception {
+        final String src = "|  a  |  b  |  c  \n" +
+                           "|:--- |:---:|---  \n" +
+                           "| d   | e   | f   \n" +
+                           "||| g, h and f ";
+
+        Assertions.assertEquals( "<table>\n<thead>\n<tr><th align=\"left\">a</th><th align=\"center\">b</th><th>c</th></tr>\n</thead>\n" +
+                                 "<tbody>\n<tr><td align=\"left\">d</td><td align=\"center\">e</td><td>f</td></tr>\n" +
+                                 "<tr><td align=\"left\" colspan=\"2\"></td><td>g, h and f</td></tr>\n</tbody>\n</table>\n", translate( src ) );
     }
 
     @Test
@@ -270,24 +309,10 @@ public class MarkdownRendererTest {
                                  translate( src ) );
     }
 
-    @BeforeEach
-    public void setUp() throws Exception {
-        props.setProperty( "jspwiki.translatorReader.matchEnglishPlurals", "true" );
-        props.setProperty( "jspwiki.fileSystemProvider.pageDir", "./target/md-pageDir" );
-        props.setProperty( "jspwiki.renderingManager.markupParser", MarkdownParser.class.getName() );
-        props.setProperty( "jspwiki.renderingManager.renderer", MarkdownRenderer.class.getName() );
-        testEngine = new TestEngine( props );
-    }
-
     @AfterEach
     public void tearDown() {
-        for( final String name : created ) {
-            testEngine.deleteTestPage( name );
-            TestEngine.deleteAttachments( name );
-        }
-
         created.clear();
-        CacheManager.getInstance().removeAllCaches();
+        testEngine.stop();
     }
 
     String translate( final String src ) throws Exception {

@@ -63,7 +63,7 @@
 
   <form id="createGroup" action="<wiki:Link format="url" jsp="NewGroup.jsp"/>"
     method="POST" accept-charset="UTF-8">
-
+  <wiki:CsrfProtection/>
   <div class="formhelp">
      <fmt:message key="newgroup.instructions.start"/>
   </div>

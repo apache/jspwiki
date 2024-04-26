@@ -33,12 +33,12 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  *  <p>Manages Sessions for different Engines.</p>
@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SessionMonitor implements HttpSessionListener {
 
-    private static final Logger log = LoggerFactory.getLogger( SessionMonitor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( SessionMonitor.class );
 
     /** Map with Engines as keys, and SessionMonitors as values. */
     private static final ConcurrentHashMap< Engine, SessionMonitor > c_monitors = new ConcurrentHashMap<>();
@@ -114,9 +114,7 @@ public class SessionMonitor implements HttpSessionListener {
 
         // If the weak reference returns a wiki session, return it
         if( storedSession != null ) {
-            if( log.isDebugEnabled() ) {
-                log.debug( "Looking up WikiSession for session ID=" + sid + "... found it" );
-            }
+            LOG.debug( "Looking up WikiSession for session ID={}... found it", sid );
             wikiSession = storedSession;
         }
 
@@ -169,9 +167,7 @@ public class SessionMonitor implements HttpSessionListener {
      * @return a new guest session
      */
     private Session createGuestSessionFor( final String sessionId ) {
-        if( log.isDebugEnabled() ) {
-            log.debug( "Session for session ID=" + sessionId + "... not found. Creating guestSession()" );
-        }
+        LOG.debug( "Session for session ID={}... not found. Creating guestSession()", sessionId );
         final Session wikiSession = Wiki.session().guest( m_engine );
         synchronized( m_sessions ) {
             m_sessions.put( sessionId, wikiSession );
@@ -224,11 +220,9 @@ public class SessionMonitor implements HttpSessionListener {
      * @return the array of user principals
      */
     public final Principal[] userPrincipals() {
-        final Collection<Principal> principals = new ArrayList<>();
+        final Collection<Principal> principals;
         synchronized ( m_sessions ) {
-            for ( final Session session : m_sessions.values()) {
-                principals.add( session.getUserPrincipal() );
-            }
+            principals = m_sessions.values().stream().map(Session::getUserPrincipal).collect(Collectors.toList());
         }
         final Principal[] p = principals.toArray( new Principal[0] );
         Arrays.sort( p, m_comparator );
@@ -277,7 +271,7 @@ public class SessionMonitor implements HttpSessionListener {
     @Override
     public void sessionCreated( final HttpSessionEvent se ) {
         final HttpSession session = se.getSession();
-        log.debug( "Created session: " + session.getId() + "." );
+        LOG.debug( "Created session: " + session.getId() + "." );
     }
 
     /**
@@ -291,7 +285,7 @@ public class SessionMonitor implements HttpSessionListener {
         for( final SessionMonitor monitor : c_monitors.values() ) {
             final Session storedSession = monitor.findSession( session );
             monitor.remove( session );
-            log.debug( "Removed session " + session.getId() + "." );
+            LOG.debug( "Removed session " + session.getId() + "." );
             if( storedSession != null ) {
                 fireEvent( WikiSecurityEvent.SESSION_EXPIRED, storedSession.getLoginPrincipal(), storedSession );
             }

@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -103,7 +102,7 @@ public class CommentedProperties extends Properties
     @Override
     public synchronized void store(final OutputStream out, final String comments ) throws IOException
     {
-        final byte[] bytes = m_propertyString.getBytes(StandardCharsets.ISO_8859_1.name());
+        final byte[] bytes = m_propertyString.getBytes( StandardCharsets.ISO_8859_1 );
         FileUtil.copyContents( new ByteArrayInputStream( bytes ), out );
         out.flush();
     }
@@ -128,10 +127,9 @@ public class CommentedProperties extends Properties
     public synchronized void putAll(final Map< ? , ? > arg0 )
     {
         // Shove all of the entries into the property string
-        for(final Iterator< ? > it = arg0.entrySet().iterator(); it.hasNext(); )
-        {
-            @SuppressWarnings("unchecked") final Entry< Object, Object > entry = ( Entry< Object, Object > )it.next();
-            writeProperty( entry.getKey(), entry.getValue() );
+        for (final Entry<?, ?> value : arg0.entrySet()) {
+            @SuppressWarnings("unchecked") final Entry<Object, Object> entry = (Entry<Object, Object>) value;
+            writeProperty(entry.getKey(), entry.getValue());
         }
 
         // Call the superclass method

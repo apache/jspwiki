@@ -36,6 +36,7 @@ public class JavaNaturalComparator implements Comparator<String>
      * (non-Javadoc)
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
+    @Override
     public int compare(final String str1, final String str2 ) {
         if (StringUtils.equals( str1, str2 ) ) {
         	return 0; // the same object

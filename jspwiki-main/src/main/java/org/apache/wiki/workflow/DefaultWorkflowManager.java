@@ -47,7 +47,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * users or groups expected to approve particular Workflows.
  * </p>
  */
-public class DefaultWorkflowManager implements WorkflowManager {
+public class DefaultWorkflowManager implements WorkflowManager, Serializable {
 
     private static final Logger LOG = LoggerFactory.getLogger( DefaultWorkflowManager.class );
     static final String SERIALIZATION_FILE = "wkflmgr.ser";
@@ -86,6 +86,16 @@ public class DefaultWorkflowManager implements WorkflowManager {
      * {@inheritDoc}
      */
     @Override
+    public Map< Integer, Workflow > getWorkflowsAsMap() {
+        final Map< Integer, Workflow > workflows = new ConcurrentHashMap<>();
+        m_workflows.forEach( w -> workflows.put( w.getId(), w ) );
+        return workflows;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List< Workflow > getCompletedWorkflows() {
         return new CopyOnWriteArrayList< >( m_completed );
     }
@@ -111,7 +121,7 @@ public class DefaultWorkflowManager implements WorkflowManager {
             if( prop.startsWith( PROPERTY_APPROVER_PREFIX ) ) {
                 // For the key, everything after the prefix is the workflow name
                 final String key = prop.substring( PROPERTY_APPROVER_PREFIX.length() );
-                if( key.length() > 0 ) {
+                if(!key.isEmpty()) {
                     // Only use non-null/non-blank approvers
                     final String approver = props.getProperty( prop );
                     if( approver != null && !approver.isEmpty() ) {
@@ -241,11 +251,8 @@ public class DefaultWorkflowManager implements WorkflowManager {
             final Principal[] sessionPrincipals = session.getPrincipals();
             for( final Workflow w : m_workflows ) {
                 final Principal owner = w.getOwner();
-                for ( final Principal sessionPrincipal : sessionPrincipals ) {
-                    if ( sessionPrincipal.equals( owner ) ) {
-                        workflows.add( w );
-                        break;
-                    }
+                if (Arrays.stream(sessionPrincipals).anyMatch(sessionPrincipal -> sessionPrincipal.equals(owner))) {
+                    workflows.add(w);
                 }
             }
         }

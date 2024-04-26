@@ -137,6 +137,7 @@ public final class WikiPermission extends Permission implements Serializable
      * @return the actions
      * @see java.security.Permission#getActions()
      */
+    @Override
     public String getActions()
     {
         return m_actionString;
@@ -172,6 +173,7 @@ public final class WikiPermission extends Permission implements Serializable
      * <code>false</code> otherwise
      * @see java.security.Permission#implies(java.security.Permission)
      */
+    @Override
     public boolean implies(final Permission permission )
     {
         // Permission must be a WikiPermission
@@ -195,6 +197,7 @@ public final class WikiPermission extends Permission implements Serializable
      * Returns a new {@link AllPermissionCollection}.
      * @return {@inheritDoc}
      */
+    @Override
     public PermissionCollection newPermissionCollection()
     {
         return new AllPermissionCollection();
@@ -238,32 +241,19 @@ public final class WikiPermission extends Permission implements Serializable
         }
         int mask = 0;
         final String[] actionList = actions.split( "," );
-        for( int i = 0; i < actionList.length; i++ )
-        {
-            final String action = actionList[i];
-            if ( action.equalsIgnoreCase( CREATE_GROUPS_ACTION ) )
-            {
+        for (final String action : actionList) {
+            if (action.equalsIgnoreCase(CREATE_GROUPS_ACTION)) {
                 mask |= CREATE_GROUPS_MASK;
-            }
-            else if ( action.equalsIgnoreCase( CREATE_PAGES_ACTION ) )
-            {
+            } else if (action.equalsIgnoreCase(CREATE_PAGES_ACTION)) {
                 mask |= CREATE_PAGES_MASK;
-            }
-            else if ( action.equalsIgnoreCase( LOGIN_ACTION ) )
-            {
+            } else if (action.equalsIgnoreCase(LOGIN_ACTION)) {
                 mask |= LOGIN_MASK;
-            }
-            else if ( action.equalsIgnoreCase( EDIT_PREFERENCES_ACTION ) )
-            {
+            } else if (action.equalsIgnoreCase(EDIT_PREFERENCES_ACTION)) {
                 mask |= EDIT_PREFERENCES_MASK;
-            }
-            else if ( action.equalsIgnoreCase( EDIT_PROFILE_ACTION ) )
-            {
+            } else if (action.equalsIgnoreCase(EDIT_PROFILE_ACTION)) {
                 mask |= EDIT_PROFILE_MASK;
-            }
-            else
-            {
-                throw new IllegalArgumentException( "Unrecognized action: " + action );
+            } else {
+                throw new IllegalArgumentException("Unrecognized action: " + action);
             }
         }
         return mask;

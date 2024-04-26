@@ -42,7 +42,6 @@ import javax.security.auth.Subject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -50,6 +49,7 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -62,7 +62,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class WikiSession implements Session {
 
-    private static final Logger log = LoggerFactory.getLogger( WikiSession.class );
+    private static final Logger LOG = LoggerFactory.getLogger( WikiSession.class );
 
     private static final String ALL = "*";
 
@@ -75,6 +75,7 @@ public class WikiSession implements Session {
     /** The Engine that created this session. */
     private Engine m_engine;
 
+    private String antiCsrfToken;
     private String m_status            = ANONYMOUS;
 
     private Principal m_userPrincipal  = WikiPrincipal.GUEST;
@@ -91,12 +92,7 @@ public class WikiSession implements Session {
      * @return the result
      */
     protected boolean isInGroup( final Group group ) {
-        for( final Principal principal : getPrincipals() ) {
-            if( isAuthenticated() && group.isMember( principal ) ) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(getPrincipals()).anyMatch(principal -> isAuthenticated() && group.isMember(principal));
     }
 
     /**
@@ -147,6 +143,12 @@ public class WikiSession implements Session {
     @Override
     public Principal getUserPrincipal() {
         return m_userPrincipal;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String antiCsrfToken() {
+        return antiCsrfToken;
     }
 
     /** {@inheritDoc} */
@@ -205,16 +207,7 @@ public class WikiSession implements Session {
     /** {@inheritDoc} */
     @Override
     public Principal[] getPrincipals() {
-        final ArrayList< Principal > principals = new ArrayList<>();
-
-        // Take the first non Role as the main Principal
-        for( final Principal principal : new ArrayList<>(m_subject.getPrincipals()) ) {
-            if ( AuthenticationManager.isUserPrincipal( principal ) ) {
-                principals.add( principal );
-            }
-        }
-
-        return principals.toArray( new Principal[0] );
+        return m_subject.getPrincipals().stream().filter(AuthenticationManager::isUserPrincipal).toArray(Principal[]::new);
     }
 
     /** {@inheritDoc} */
@@ -223,7 +216,7 @@ public class WikiSession implements Session {
         final Set< Principal > roles = new HashSet<>();
 
         // Add all the Roles possessed by the Subject directly
-        roles.addAll( m_subject.getPrincipals( Role.class ) );
+        roles.addAll(m_subject.getPrincipals(Role.class));
 
         // Add all the GroupPrincipals possessed by the Subject directly
         roles.addAll( m_subject.getPrincipals( GroupPrincipal.class ) );
@@ -413,7 +406,7 @@ public class WikiSession implements Session {
         final String searchId = m_loginPrincipal.getName();
         if ( searchId == null ) {
             // Oh dear, this wasn't an authenticated user after all
-            log.info("Refresh principals failed because WikiSession had no user Principal; maybe not logged in?");
+            LOG.info("Refresh principals failed because WikiSession had no user Principal; maybe not logged in?");
             return;
         }
 
@@ -441,7 +434,7 @@ public class WikiSession implements Session {
         } catch ( final NoSuchPrincipalException e ) {
             // We will get here if the user has a principal but not a profile
             // For example, it's a container-managed user who hasn't set up a profile yet
-            log.warn("User profile '" + searchId + "' not found. This is normal for container-auth users who haven't set up a profile yet.");
+            LOG.warn("User profile '" + searchId + "' not found. This is normal for container-auth users who haven't set up a profile yet.");
         }
     }
 
@@ -488,9 +481,7 @@ public class WikiSession implements Session {
      */
     public static Session getWikiSession( final Engine engine, final HttpServletRequest request ) {
         if ( request == null ) {
-            if ( log.isDebugEnabled() ) {
-                log.debug( "Looking up WikiSession for NULL HttpRequest: returning guestSession()" );
-            }
+            LOG.debug( "Looking up WikiSession for NULL HttpRequest: returning guestSession()" );
             return staticGuestSession( engine );
         }
 
@@ -517,6 +508,7 @@ public class WikiSession implements Session {
         final WikiSession session = new WikiSession();
         session.m_engine = engine;
         session.invalidate();
+        session.antiCsrfToken = UUID.randomUUID().toString();
 
         // Add the session as listener for GroupManager, AuthManager, UserManager events
         final GroupManager groupMgr = engine.getManager( GroupManager.class );

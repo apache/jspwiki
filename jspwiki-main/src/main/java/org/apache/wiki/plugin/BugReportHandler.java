@@ -14,7 +14,7 @@
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
-    under the License.  
+    under the License.
  */
 package org.apache.wiki.plugin;
 
@@ -31,6 +31,7 @@ import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -58,7 +59,7 @@ import java.util.StringTokenizer;
  */
 public class BugReportHandler implements Plugin {
 
-    private static final Logger log = LoggerFactory.getLogger( BugReportHandler.class );
+    private static final Logger LOG = LoggerFactory.getLogger( BugReportHandler.class );
     private static final String DEFAULT_DATEFORMAT = "dd-MMM-yyyy HH:mm:ss zzz";
 
     /** Parameter name for setting the title.  Value is <tt>{@value}</tt>. */
@@ -141,7 +142,7 @@ public class BugReportHandler implements Plugin {
             out.close();
 
             //  Now create a new page for this bug report
-            final String pageName = findNextPage( context, title, params.get( PARAM_PAGE ) );
+            final String pageName = findNextPage( context, title, TextUtil.replaceEntities(params.get( PARAM_PAGE )) );
             final Page newPage = Wiki.contents().page( context.getEngine(), pageName );
             final Context newContext = context.clone();
             newContext.setPage( newPage );
@@ -153,10 +154,10 @@ public class BugReportHandler implements Plugin {
 
             return formatter.format( args );
         } catch( final RedirectException e ) {
-            log.info("Saving not allowed, reason: '"+e.getMessage()+"', can't redirect to "+e.getRedirect());
+            LOG.info("Saving not allowed, reason: '"+e.getMessage()+"', can't redirect to "+e.getRedirect());
             throw new PluginException("Saving not allowed, reason: "+e.getMessage());
         } catch( final WikiException e ) {
-            log.error( "Unable to save page!", e );
+            LOG.error( "Unable to save page!", e );
             return rb.getString("bugreporthandler.unable" );
         }
     }

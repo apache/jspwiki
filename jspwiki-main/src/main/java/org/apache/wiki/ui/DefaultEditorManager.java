@@ -61,7 +61,7 @@ public class DefaultEditorManager extends BaseModuleManager implements EditorMan
 
     private Map< String, WikiEditorInfo > m_editors;
 
-    private static final Logger log = LoggerFactory.getLogger( DefaultEditorManager.class );
+    private static final Logger error = LoggerFactory.getLogger( DefaultEditorManager.class );
 
     public DefaultEditorManager( final Engine engine ) {
         super( engine );
@@ -79,7 +79,7 @@ public class DefaultEditorManager extends BaseModuleManager implements EditorMan
 
     /** This method goes through the jspwiki_module.xml files and hunts for editors. Any editors found are put in the registry. */
     private void registerEditors() {
-        log.info( "Registering editor modules" );
+        LOG.info( "Registering editor modules" );
         m_editors = new HashMap<>();
 
         // Register all editors which have created a resource containing its properties. Get all resources of all modules
@@ -90,9 +90,9 @@ public class DefaultEditorManager extends BaseModuleManager implements EditorMan
 
             if( checkCompatibility( info ) ) {
                 m_editors.put( name, info );
-                log.debug( "Registered editor " + name );
+                LOG.debug( "Registered editor " + name );
             } else {
-                log.info( "Editor '" + name + "' not compatible with this version of JSPWiki." );
+                LOG.info( "Editor '" + name + "' not compatible with this version of JSPWiki." );
             }
         }
     }

@@ -36,6 +36,7 @@ import org.apache.wiki.util.TextUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 
@@ -87,9 +88,9 @@ public class InsertPage implements Plugin {
 
         final StringBuilder res = new StringBuilder();
 
-        final String clazz        = params.get( PARAM_CLASS );
-        final String includedPage = params.get( PARAM_PAGENAME );
-        String style              = params.get( PARAM_STYLE );
+        final String clazz        = TextUtil.replaceEntities(params.get( PARAM_CLASS ));
+        final String includedPage = TextUtil.replaceEntities(params.get( PARAM_PAGENAME ));
+        String style              = TextUtil.replaceEntities(params.get( PARAM_STYLE ));
         final boolean showOnce    = "once".equals( params.get( PARAM_SHOW ) );
         final String defaultstr   = params.get( PARAM_DEFAULT );
         final int section         = TextUtil.parseIntParameter(params.get( PARAM_SECTION ), -1 );
@@ -109,11 +110,7 @@ public class InsertPage implements Plugin {
             final Page page;
             try {
                 final String pageName = engine.getFinalPageName( includedPage );
-                if( pageName != null ) {
-                    page = engine.getManager( PageManager.class ).getPage( pageName );
-                } else {
-                    page = engine.getManager( PageManager.class ).getPage( includedPage );
-                }
+                page = engine.getManager(PageManager.class).getPage(Objects.requireNonNullElse(pageName, includedPage));
             } catch( final ProviderException e ) {
                 res.append( "<span class=\"error\">Page could not be found by the page provider.</span>" );
                 return res.toString();

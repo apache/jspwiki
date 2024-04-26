@@ -1,3 +1,21 @@
+/*
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+ */
 package org.apache.wiki.tasks.auth;
 
 import org.slf4j.LoggerFactory;
@@ -9,6 +27,7 @@ import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.tasks.TasksManager;
+import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.MailUtil;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
@@ -60,12 +79,15 @@ public class SaveUserProfileTask extends Task {
                                                  "notification.createUserProfile.accept.subject", app );
 
                 final String loginUrl = context.getEngine().getURL( ContextEnum.WIKI_LOGIN.getRequestContext(), null, null );
+
+                final String absoluteLoginUrl = HttpUtil.getAbsoluteUrl(context.getHttpRequest(), loginUrl);
+
                 final String content = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc,
                                                  "notification.createUserProfile.accept.content", app,
                                                  profile.getLoginName(),
                                                  profile.getFullname(),
                                                  profile.getEmail(),
-                                                 loginUrl );
+                                                 absoluteLoginUrl );
                 MailUtil.sendMessage( context.getEngine().getWikiProperties(), to, subject, content );
             } catch ( final AddressException e) {
                 LOG.debug( e.getMessage(), e );

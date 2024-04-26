@@ -84,6 +84,7 @@ function addNew()
     onsubmit="return Wiki.submitOnce(this);"
       method="post" accept-charset="<wiki:ContentEncoding/>"
      enctype="application/x-www-form-urlencoded" >
+     <wiki:CsrfProtection/>
      <input type="hidden" name='bean' value='org.apache.wiki.ui.admin.beans.UserBean'/>
      <input type="hidden" id="loginid" name="loginid" value="" />
      <table>

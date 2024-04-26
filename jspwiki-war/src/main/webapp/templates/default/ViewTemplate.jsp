@@ -29,7 +29,7 @@
 
   <title>
     <fmt:message key="view.title.view">
-      <fmt:param><wiki:Variable var="ApplicationName" /></fmt:param>
+      <fmt:param><wiki:Variable var="ApplicationName" default="Apache JSPWiki" /></fmt:param>
       <fmt:param><wiki:PageName /></fmt:param>
     </fmt:message>
   </title>
@@ -57,7 +57,7 @@
     <c:set var="sidebarCookie" value="" />
   </wiki:CheckRequestContext>
 
-  <div class="content ${sidebarState}" data-toggle="li#menu,.sidebar>.close"
+  <div class="content ${sidebarState}" data-toggle="li#menu"
                                        data-toggle-pref="${sidebarCookie}" >
     <div class="page" role="main">
       <wiki:Content/>

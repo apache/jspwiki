@@ -13,7 +13,6 @@
  */
 package org.apache.wiki.attachment;
 
-import net.sf.ehcache.CacheManager;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Attachment;
@@ -40,16 +39,13 @@ public class AttachmentManagerTest {
     public static final String NAME1 = "TestPage";
     public static final String NAMEU = "TestPage\u00e6";
 
-    TestEngine m_engine;
-    AttachmentManager m_manager;
+    TestEngine m_engine = TestEngine.build();
+    AttachmentManager m_manager = m_engine.getManager( AttachmentManager.class );
 
     static String c_fileContents = "ABCDEFGHIJKLMNOPQRSTUVWxyz";
 
     @BeforeEach
     public void setUp() throws Exception {
-        m_engine  = TestEngine.build();
-        m_manager = m_engine.getManager( AttachmentManager.class );
-
         m_engine.saveText( NAME1, "Foobar" );
         m_engine.saveText( NAMEU, "Foobar" );
     }
@@ -66,17 +62,7 @@ public class AttachmentManagerTest {
 
     @AfterEach
     public void tearDown() {
-        m_engine.deleteTestPage( NAME1 );
-        m_engine.deleteTestPage( NAMEU );
-
-        TestEngine.deleteAttachments(NAME1);
-        TestEngine.deleteAttachments(NAMEU);
-
-        TestEngine.emptyWorkDir();
-
-        final CacheManager m_cacheManager = CacheManager.getInstance();
-        m_cacheManager.clearAll();
-        m_cacheManager.removeAllCaches();
+        m_engine.stop();
     }
 
     @Test
@@ -363,15 +349,11 @@ public class AttachmentManagerTest {
         Assertions.assertEquals( "test.jpg", AttachmentManager.validateFileName( "C:\\Windows\\test.jpg" ), "C:\\Windows\\test.jpg" );
 
         final WikiException thrown1 =
-        Assertions.assertThrows( WikiException.class, () -> {
-            AttachmentManager.validateFileName( "C:\\Windows\\test.jsp" );
-        });
+        Assertions.assertThrows( WikiException.class, () -> AttachmentManager.validateFileName( "C:\\Windows\\test.jsp" ) );
         Assertions.assertTrue(thrown1.getMessage().contains("attach.unwanted.file"), thrown1.getMessage());
 
         final WikiException thrown2 =
-        Assertions.assertThrows( WikiException.class, () -> {
-            AttachmentManager.validateFileName( "C:\\Windows\\test.jsp\\" );
-        });
+        Assertions.assertThrows( WikiException.class, () -> AttachmentManager.validateFileName( "C:\\Windows\\test.jsp\\" ) );
         Assertions.assertTrue(thrown2.getMessage().contains("attach.unwanted.file"), thrown2.getMessage());
 
         Assertions.assertEquals( "test__test.jpg", AttachmentManager.validateFileName( "C:\\Windows\\test#?test.jpg" ), "test#?test.jpg" );

@@ -40,6 +40,7 @@ import org.apache.wiki.variables.VariableManager;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
@@ -52,7 +53,7 @@ import java.util.Set;
 // FIXME: Limit diff and page content size.
 public class DefaultRSSGenerator implements RSSGenerator {
 
-    private static final Logger log = LoggerFactory.getLogger( DefaultRSSGenerator.class );
+    private static final Logger LOG = LoggerFactory.getLogger( DefaultRSSGenerator.class );
     private final Engine m_engine;
 
     /** The RSS file to generate. */
@@ -306,16 +307,10 @@ public class DefaultRSSGenerator implements RSSGenerator {
     /** {@inheritDoc} */
     @Override
     public String generateBlogRSS( final Context wikiContext, final List< Page > changed, final Feed feed ) {
-        if( log.isDebugEnabled() ) {
-            log.debug( "Generating RSS for blog, size=" + changed.size() );
-        }
+        LOG.debug( "Generating RSS for blog, size={}", changed.size() );
 
         final String ctitle = m_engine.getManager( VariableManager.class ).getVariable( wikiContext, PROP_CHANNEL_TITLE );
-        if( ctitle != null ) {
-            feed.setChannelTitle( ctitle );
-        } else {
-            feed.setChannelTitle( m_engine.getApplicationName() + ":" + wikiContext.getPage().getName() );
-        }
+        feed.setChannelTitle(Objects.requireNonNullElseGet(ctitle, () -> m_engine.getApplicationName() + ":" + wikiContext.getPage().getName()));
 
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
 

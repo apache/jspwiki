@@ -27,3 +27,12 @@ github:
     - java
     - jspwiki
     - wiki
+
+notifications:
+  commits: commits@jspwiki.apache.org
+  discussions: dev@jspwiki.apache.org
+  issues: dev@jspwiki.apache.org
+  jobs: dev@jspwiki.apache.org
+  pullrequests: dev@jspwiki.apache.org
+  # Send dependabot PRs to commits@ instead
+  pullrequests_bot_dependabot: commits@jspwiki.apache.org

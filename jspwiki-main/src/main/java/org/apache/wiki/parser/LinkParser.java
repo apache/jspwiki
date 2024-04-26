@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+import java.util.stream.IntStream;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
@@ -153,7 +154,7 @@ import org.jdom2.Attribute;
  */
 public class LinkParser
 {
-    private static final Logger log = LoggerFactory.getLogger(LinkParser.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LinkParser.class);
 
     /** Permitted attributes on links.  Keep this sorted. */
     private static final String[] PERMITTED_ATTRIBUTES = new String[] {
@@ -232,7 +233,7 @@ public class LinkParser
 
             // parse attributes
             // contains "='" that looks like attrib spec
-            if( attribs.indexOf(EQSQUO) != -1 )
+            if(attribs.contains(EQSQUO))
             {
                 try
                 {
@@ -296,18 +297,18 @@ public class LinkParser
                 }
                 catch( final ParseException pe )
                 {
-                    log.warn("syntax error parsing link attributes '"+attribs+"': " + pe.getMessage());
+                    LOG.warn("syntax error parsing link attributes '"+attribs+"': " + pe.getMessage());
                 }
                 catch( final NoSuchElementException nse )
                 {
-                    log.warn("expected more tokens while parsing link attributes '" + attribs + "'");
+                    LOG.warn("expected more tokens while parsing link attributes '" + attribs + "'");
                 }
             }
 
         }
         catch( final Exception e )
         {
-            log.warn( e.getClass().getName() + " thrown by link parser: " + e.getMessage() );
+            LOG.warn( e.getClass().getName() + " thrown by link parser: " + e.getMessage() );
         }
 
         return link;
@@ -335,11 +336,7 @@ public class LinkParser
      */
     public static final boolean isSpace(final String s )
     {
-        for( int i = 0 ; i < s.length() ; i++ )
-        {
-            if( !isSpace( s.charAt(i)) ) return false;
-        }
-        return true;
+        return IntStream.range(0, s.length()).allMatch(i -> isSpace(s.charAt(i)));
     }
 
 

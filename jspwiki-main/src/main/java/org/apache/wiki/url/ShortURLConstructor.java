@@ -38,7 +38,7 @@ import java.util.Properties;
 public class ShortURLConstructor extends DefaultURLConstructor {
     
     private static final String DEFAULT_PREFIX = "wiki/";
-    private static final Logger log = LoggerFactory.getLogger( ShortURLConstructor.class );
+    private static final Logger LOG = LoggerFactory.getLogger( ShortURLConstructor.class );
     
     /** Contains the path part after the JSPWiki base URL */
     protected String m_urlPrefix = "";
@@ -60,7 +60,7 @@ public class ShortURLConstructor extends DefaultURLConstructor {
             m_urlPrefix = DEFAULT_PREFIX;
         }
 
-        log.info("Short URL prefix path="+m_urlPrefix+" (You can use "+PROP_PREFIX+" to override this)");
+        LOG.info("Short URL prefix path="+m_urlPrefix+" (You can use "+PROP_PREFIX+" to override this)");
     }
 
     /**

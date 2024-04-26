@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 
@@ -91,7 +92,7 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
 
     private final Map< String, PageFilterInfo > m_filterClassMap = new HashMap<>();
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultFilterManager.class);
+    private static final Logger error = LoggerFactory.getLogger(DefaultFilterManager.class);
 
     /**
      *  Constructs a new FilterManager object.
@@ -129,27 +130,20 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
         try {
             final PageFilterInfo info = m_filterClassMap.get( className );
             if( info != null && !checkCompatibility( info ) ) {
-                log.warn( "Filter '" + info.getName() + "' not compatible with this version of JSPWiki" );
+                LOG.warn( "Filter '{}' not compatible with this version of JSPWiki", info.getName() );
                 return;
             }
 
-            final int priority = 0; // FIXME: Currently fixed.
-            final Class< ? > cl = ClassUtil.findClass( "org.apache.wiki.filters", className );
-            final PageFilter filter = (PageFilter)cl.newInstance();
+            final int priority = 0;
+            final PageFilter filter = ClassUtil.buildInstance( "org.apache.wiki.filters", className );
             filter.initialize( m_engine, props );
 
             addPageFilter( filter, priority );
-            log.info("Added page filter "+cl.getName()+" with priority "+priority);
-        } catch( final ClassNotFoundException e ) {
-            log.error("Unable to find the filter class: "+className);
-        } catch( final InstantiationException e ) {
-            log.error("Cannot create filter class: "+className);
-        } catch( final IllegalAccessException e ) {
-            log.error("You are not allowed to access class: "+className);
-        } catch( final ClassCastException e ) {
-            log.error("Suggested class is not a PageFilter: "+className);
+            LOG.info( "Added page filter {} with priority {}", filter.getClass().getName(), priority );
+        } catch( final ReflectiveOperationException e ) {
+            LOG.error( "Unable to instantiate PageFilter: {}", className );
         } catch( final FilterException e ) {
-            log.error("Filter "+className+" failed to initialize itself.", e);
+            LOG.error( "Filter {} failed to initialize itself.", className, e );
         }
     }
 
@@ -157,7 +151,7 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
     /**
      *  Initializes the filters from an XML file.
      *
-     *  @param props The list of properties.  Typically jspwiki.properties
+     *  @param props The list of properties. Typically, jspwiki.properties
      *  @throws WikiException If something goes wrong.
      */
     protected void initialize( final Properties props ) throws WikiException {
@@ -168,38 +162,30 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
             registerFilters();
 
             if( m_engine.getServletContext() != null ) {
-                log.debug( "Attempting to locate " + DEFAULT_XMLFILE + " from servlet context." );
-                if( xmlFile == null ) {
-                    xmlStream = m_engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
-                } else {
-                    xmlStream = m_engine.getServletContext().getResourceAsStream( xmlFile );
-                }
+                LOG.debug( "Attempting to locate " + DEFAULT_XMLFILE + " from servlet context." );
+                xmlStream = m_engine.getServletContext().getResourceAsStream(Objects.requireNonNullElse(xmlFile, DEFAULT_XMLFILE));
             }
 
             if( xmlStream == null ) {
                 // just a fallback element to the old behaviour prior to 2.5.8
-                log.debug( "Attempting to locate filters.xml from class path." );
+                LOG.debug( "Attempting to locate filters.xml from class path." );
 
-                if( xmlFile == null ) {
-                    xmlStream = getClass().getResourceAsStream( "/filters.xml" );
-                } else {
-                    xmlStream = getClass().getResourceAsStream( xmlFile );
-                }
+                xmlStream = getClass().getResourceAsStream(Objects.requireNonNullElse(xmlFile, "/filters.xml"));
             }
 
             if( (xmlStream == null) && (xmlFile != null) ) {
-                log.debug("Attempting to load property file "+xmlFile);
+                LOG.debug("Attempting to load property file "+xmlFile);
                 xmlStream = Files.newInputStream( new File(xmlFile).toPath() );
             }
 
             if( xmlStream == null ) {
-                log.info( "Cannot find property file for filters (this is okay, expected to find it as: '" + DEFAULT_XMLFILE + "')" );
+                LOG.info( "Cannot find property file for filters (this is okay, expected to find it as: '" + DEFAULT_XMLFILE + "')" );
                 return;
             }
 
             parseConfigFile( xmlStream );
         } catch( final IOException e ) {
-            log.error("Unable to read property file", e);
+            LOG.error("Unable to read property file", e);
         } finally {
             try {
                 if( xmlStream != null ) {
@@ -308,7 +294,7 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
     public void doPostSaveFiltering( final Context context, final String pageData ) throws FilterException {
         fireEvent( WikiPageEvent.POST_SAVE_BEGIN, context );
         for( final PageFilter f : m_pageFilters ) {
-            // log.info("POSTSAVE: "+f.toString() );
+            // LOG.info("POSTSAVE: "+f.toString() );
             f.postSave( context, pageData );
         }
 
@@ -371,7 +357,7 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
     }
 
     private void registerFilters() {
-        log.info( "Registering filters" );
+        LOG.info( "Registering filters" );
         final List< Element > filters = XmlUtil.parse( PLUGIN_RESOURCE_LOCATION, "/modules/filter" );
 
         //
