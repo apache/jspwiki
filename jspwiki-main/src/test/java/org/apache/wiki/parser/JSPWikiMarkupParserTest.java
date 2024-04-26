@@ -1384,10 +1384,10 @@ public class JSPWikiMarkupParserTest {
     public void testTableLink() throws Exception {
         final String src = "|Cell 1| Cell 2\n|[Cell 3|ReallyALink]|Cell 4\n\n";
         newPage( "ReallyALink" );
-        Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">" +
+        Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\"><tbody>" +
                         "<tr class=\"odd\"><td>Cell 1</td><td> Cell 2</td></tr>\n" +
                         "<tr><td><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n" +
-                        "</table><p />",
+                        "</tbody></table><p />",
                 translate( src ) );
     }
 
@@ -1396,9 +1396,9 @@ public class JSPWikiMarkupParserTest {
         final String src = "|Cell 1| Cell~| 2\n|[Cell 3|ReallyALink]|Cell 4\n\n";
         newPage( "ReallyALink" );
         Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">" +
-                        "<tr class=\"odd\"><td>Cell 1</td><td> Cell| 2</td></tr>\n" +
+                        "<tbody><tr class=\"odd\"><td>Cell 1</td><td> Cell| 2</td></tr>\n" +
                         "<tr><td><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ReallyALink\">Cell 3</a></td><td>Cell 4</td></tr>\n" +
-                        "</table><p />",
+                        "</tbody></table><p />",
                 translate( src ) );
     }
 
@@ -1729,7 +1729,7 @@ public class JSPWikiMarkupParserTest {
     @Test
     public void testSpanStyleTable() throws Exception {
         final String src = "|%%(foo:bar;)test%%|no test\n";
-        Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\"><tr class=\"odd\"><td><span style=\"foo:bar;\">test</span></td><td>no test</td></tr>\n</table>", translate( src ) );
+        Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\"><tbody><tr class=\"odd\"><td><span style=\"foo:bar;\">test</span></td><td>no test</td></tr>\n</tbody></table>", translate( src ) );
     }
 
     @Test
