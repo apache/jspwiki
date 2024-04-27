@@ -17,6 +17,25 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2024-04-27  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-13_
+
+* [JSPWIKI-1188](https://issues.apache.org/jira/browse/JSPWIKI-1188) - Support system property / env replacement for JSPWiki configuration properties
+    * [PR #330](https://github.com/apache/jspwiki/pull/330) provided by Alex O'Ree, thanks! 
+
+* `MailUtil` now uses every `mail.smtp` / `mail.smtps` property provided through your `jspwiki[-custom].properties` file
+    * This allows to set f.ex., `mail.smtp.ssl.protocols=TLSv1.2` or `mail.smtp.ssl.trust=your.domain.org`
+    * Keep in mind that, to you use `mail.smtps`, you should override to blank default `mail.smtp` properties at `jspwiki.properties`
+
+* Dependency updates
+    * Apache parent to 32
+    * Commons Text to 1.12.0
+    * JavaMail to 1.6.2 
+    * Jetty to 9.4.54.v20240208 (closes [PR #334](https://github.com/apache/jspwiki/pull/334), thanks to Dependabot)
+    * Tomcat to 9.0.88
+    * Maven plugins: jar to 3.4.1, cargo to 1.10.12 (closes [PR #331](https://github.com/apache/jspwiki/pull/331), thanks to Dependabot), sonar to 3.11.0.3922 (closes [PR #333](https://github.com/apache/jspwiki/pull/333), thanks to Dependabot)
+
 **2024-04-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-12_

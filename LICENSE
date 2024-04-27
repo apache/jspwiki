@@ -219,7 +219,7 @@ commons-httpclient-3.1.jar                  LICENSE
 commons-io-2.16.1.jar                       LICENSE
 commons-lang-3.14.0.jar                     LICENSE
 commons-logging-1.0.4.jar                   LICENSE
-commons-text-1.11.0.jar                     LICENSE
+commons-text-1.12.0.jar                     LICENSE
 ehcache-2.10.9.2.jar                        LICENSE
 flexmark-0.64.8.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 flexmark-ext-attributes-0.64.8.jar          ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
@@ -253,6 +253,7 @@ jdom2-2.0.6.jar                             ./jspwiki-war/src/main/config/doc/LI
 jmespath-java-1.12.565                      LICENSE
 joda-time-2.8.1                             LICENSE
 jstl-1.2.jar                                LICENSE
+logging-mailhandler-1.6.2.jar               ./jspwiki-war/src/main/config/doc/LICENSE.cddl
 log4j-1.2-api-2.23.0.jar                    LICENSE
 log4j-api-2.23.0.jar                        LICENSE
 log4j-core-2.23.0.jar                       LICENSE
@@ -265,7 +266,7 @@ lucene-memory-9.10.0.jar                    LICENSE
 lucene-queries-9.10.0.jar                   LICENSE
 lucene-queryparser-9.10.0.jar               LICENSE
 lucene-sandbox-9.10.0.jar                   LICENSE
-mail-1.4.7.jar                              ./jspwiki-war/src/main/config/doc/LICENSE.cddl
+javax.mail-1.6.2.jar                        ./jspwiki-war/src/main/config/doc/LICENSE.cddl
 nekohtml-2.0.2.jar (codelibs fork)          LICENSE
 org.suigeneris.jrcs.diff-0.4.2              LICENSE
 oro-2.0.8.jar                               LICENSE
@@ -305,7 +306,7 @@ SlimBox                                     ./jspwiki-war/src/main/config/doc/LI
 
 RESOURCES                                   LICENSE FILE
 =============================================================================================================
-Apache Tomcat 9.0.87                        LICENSE
+Apache Tomcat 9.0.88                        LICENSE
 Font Awesome (CSS & LESS files)             ./jspwiki-war/src/main/config/doc/LICENSE.mit
 Font Awesome (Fonts)                        ./jspwiki-war/src/main/config/doc/LICENSE.ofl
 SilkIconSet                                 ./jspwiki-war/src/main/config/doc/LICENSE.SilkIconSet
