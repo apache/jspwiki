@@ -18,10 +18,26 @@
  */
 package org.apache.wiki.parser;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.EmptyStackException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.Stack;
+
+import javax.xml.transform.Result;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 import org.apache.oro.text.regex.MalformedPatternException;
 import org.apache.oro.text.regex.MatchResult;
 import org.apache.oro.text.regex.Pattern;
@@ -54,23 +70,8 @@ import org.jdom2.Element;
 import org.jdom2.IllegalDataException;
 import org.jdom2.ProcessingInstruction;
 import org.jdom2.Verifier;
-
-import javax.xml.transform.Result;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.Stack;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the heart and soul of JSPWiki : make
@@ -1818,6 +1819,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             popElement( "dl" ); // Close definition lists.
             if( m_istable ) {
                 popElement("tr");
+                popElement("thead");
             }
             m_isdefinition = false;
             if( m_newLine ) {
