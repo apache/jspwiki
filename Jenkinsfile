@@ -71,14 +71,19 @@ def buildSonarAndDeployIfSnapshotWith( jdk ) {
             cleanWs()
             git url: buildRepo, poll: true
             withMaven( jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [ jacocoPublisher(), junitPublisher() ] ) {
+                sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report -T 1C"
+            }
+            withMaven( jdk: buildJdk17, maven: buildMvn ) {
                 withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
                     def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
                     echo 'Will use SonarQube instance at https://sonarcloud.io'
-                    sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report sonar:sonar $sonarOptions -T 1C"
-                    def pom = readMavenPom( file: 'pom.xml' )
-                    if( pom.version.endsWith( '-SNAPSHOT' ) ) {
-                        sh 'mvn deploy'
-                    }
+                    sh "mvn sonar:sonar $sonarOptions"
+                }
+            }
+            def pom = readMavenPom( file: 'pom.xml' )
+            if( pom.version.endsWith( '-SNAPSHOT' ) ) {
+                withMaven( jdk: jdk, maven: buildMvn ) {
+                    sh 'mvn deploy'
                 }
             }
         }
