@@ -61,11 +61,11 @@
     <jamm.version>0.4.0</jamm.version>
     <jaxen.version>2.0.0</jaxen.version>
     <javax-jstl.version>1.2</javax-jstl.version>
-    <javax-mail.version>1.4.7</javax-mail.version>
+    <javax-mail.version>1.6.2</javax-mail.version>
     <javax-jsp-api.version>2.3.3</javax-jsp-api.version>
     <javax-servlet-api.version>3.1.0</javax-servlet-api.version>
     <jdom2.version>2.0.6</jdom2.version>
-    <jetty.version>9.4.53.v20231009</jetty.version>
+    <jetty.version>9.4.54.v20240208</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.10.2</junit.version>
     <log4j2.version>2.23.0</log4j2.version>
@@ -157,6 +157,18 @@
         <groupId>com.codeborne</groupId>
         <artifactId>selenide</artifactId>
         <version>${selenide.version}</version>
+      </dependency>
+
+      <dependency><!-- as of 1.6.2 not included by javax.mail-api, see https://javaee.github.io/javamail/docs/COMPAT.txt -->
+        <groupId>com.sun.mail</groupId>
+        <artifactId>logging-mailhandler</artifactId>
+        <version>${javax-mail.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.sun.mail</groupId>
+        <artifactId>javax.mail</artifactId>
+        <version>${javax-mail.version}</version>
       </dependency>
 
       <dependency>
@@ -259,12 +271,6 @@
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-slf4j-impl</artifactId>
         <version>${log4j2.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.mail</groupId>
-        <artifactId>mail</artifactId>
-        <version>${javax-mail.version}</version>
       </dependency>
 
       <dependency>
