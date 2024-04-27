@@ -26,7 +26,7 @@ under the License.
 
 * `MailUtil` now uses every `mail.smtp` / `mail.smtps` property provided through your `jspwiki[-custom].properties` file
     * This allows to set f.ex., `mail.smtp.ssl.protocols=TLSv1.2` or `mail.smtp.ssl.trust=your.domain.org`
-    * Keep in mind that, to you use `mail.smtps`, you should override to blank default `mail.smtp` properties at `jspwiki.properties`
+    * Keep in mind that, in order to use `mail.smtps`, you should override to blank the default `mail.smtp` properties at `jspwiki.properties`
 
 * Dependency updates
     * Apache parent to 32
