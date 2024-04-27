@@ -34,36 +34,55 @@ import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 import static org.apache.wiki.TestEngine.with;
+import org.junit.jupiter.api.Assertions;
 
 
 public class WikiSyntaxConverter {
 
+    /**
+     * unit test setup only
+     * @throws Exception 
+     */
     @Test
     void jspwikiToMarkdownConverter() throws Exception {
-        final Engine jspw = buildEngine( "jspwiki", "../jspwiki-wikipages/en/src/main/resources" );
-        final Engine md = buildEngine( "markdown", "./target/pages-markdown" );
+        List<String> errors = convert("../jspwiki-wikipages/en/src/main/resources", "jspwiki",
+                "./target/pages-markdown", "markdown");
+        Assertions.assertEquals(true, errors.isEmpty(), StringUtils.join(errors));
+    }
+    
+    public List<String> convert(String sourceDirectory, String sourceFormat, String destinationDirectory, String destinationFormat) throws Exception {
+        final Engine jspw = buildEngine( sourceFormat, sourceDirectory );
+        final Engine md = buildEngine( destinationFormat, destinationDirectory );
         jspw.getManager( PluginManager.class ).enablePlugins( false );
+        List<String> errors = new ArrayList<>();
 
         final Collection< Page > pages = jspw.getManager( PageManager.class ).getAllPages();
         for( final Page p : pages ) {
-            final Context context = Wiki.context().create( jspw, p );
-            context.setRequestContext( ContextEnum.PAGE_NONE.getRequestContext() );
-            context.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
-            final String pagedata = jspw.getManager( PageManager.class ).getPureText( p.getName(), p.getVersion() );
-            final String html = jspw.getManager( RenderingManager.class ).textToHTML( context, pagedata, null, null, null, false, false );
-            final String syntax = new HtmlStringToWikiTranslator( md ).translate( html );
-            final Context contextMD = Wiki.context().create( md, p );
-            md.getManager( PageManager.class ).saveText( contextMD, clean( syntax ) );
-            final List< Attachment > attachments = jspw.getManager( AttachmentManager.class ).listAttachments( p );
-            for( final Attachment attachment : attachments ) {
-                final InputStream bytes = jspw.getManager( AttachmentManager.class ).getAttachmentStream( context, attachment );
-                md.getManager( AttachmentManager.class ).storeAttachment( attachment, bytes );
+            try{
+                final Context context = Wiki.context().create( jspw, p );
+                context.setRequestContext( ContextEnum.PAGE_NONE.getRequestContext() );
+                context.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
+                final String pagedata = jspw.getManager( PageManager.class ).getPureText( p.getName(), p.getVersion() );
+                final String html = jspw.getManager( RenderingManager.class ).textToHTML( context, pagedata, null, null, null, false, false );
+                final String syntax = new HtmlStringToWikiTranslator( md ).translate( html );
+                final Context contextMD = Wiki.context().create( md, p );
+                md.getManager( PageManager.class ).saveText( contextMD, clean( syntax ) );
+                final List< Attachment > attachments = jspw.getManager( AttachmentManager.class ).listAttachments( p );
+                for( final Attachment attachment : attachments ) {
+                    final InputStream bytes = jspw.getManager( AttachmentManager.class ).getAttachmentStream( context, attachment );
+                    md.getManager( AttachmentManager.class ).storeAttachment( attachment, bytes );
+                }
+            } catch ( Exception ex ) {
+                errors.add( p.getWiki() + " " + p.getName() + " failed to convert " + ex.getMessage() );
             }
         }
+        return errors;
     }
 
     Engine buildEngine( final String syntax, final String pageDir ) {
