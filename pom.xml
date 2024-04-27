@@ -650,7 +650,13 @@
               <disable>true</disable>
             </consoleOutputReporter>
             <reportFormat>plain</reportFormat>
-            <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter" />
+            <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+              <printStacktraceOnError>true</printStacktraceOnError>
+              <printStacktraceOnFailure>true</printStacktraceOnFailure>
+              <printStderrOnError>true</printStderrOnError>
+              <printStdoutOnError>true</printStdoutOnError>
+              <printStdoutOnFailure>true</printStdoutOnFailure>
+            </statelessTestsetInfoReporter>
             <systemPropertyVariables>
               <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
             </systemPropertyVariables>
