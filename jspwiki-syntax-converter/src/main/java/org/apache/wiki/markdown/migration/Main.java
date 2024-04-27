@@ -33,7 +33,6 @@ import org.apache.commons.cli.Options;
  * unit test function that performs the conversion. Use -help to get syntax
  * info.
  *
- * @author AO
  */
 public class Main {
 
