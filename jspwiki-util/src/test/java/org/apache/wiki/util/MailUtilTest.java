@@ -92,10 +92,10 @@ class MailUtilTest  {
                 return;
             }
             e.printStackTrace();
-            Assertions.fail( "Unknown problem, cause=" + e.getCause() + " (check the console for error report)" );
+            Assertions.fail( "Unknown problem, cause=" + e.getCause() + " (check the console for error report)", e );
         } catch (final Exception e) {
             e.printStackTrace();
-            Assertions.fail( "Could not send mail: " + e.getMessage() );
+            Assertions.fail( "Could not send mail: " + e.getMessage(), e );
         }
     }
 
