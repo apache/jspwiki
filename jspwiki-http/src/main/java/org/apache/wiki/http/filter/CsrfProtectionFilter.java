@@ -18,11 +18,7 @@
  */
 package org.apache.wiki.http.filter;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.wiki.api.core.Engine;
-import org.apache.wiki.api.core.Session;
-import org.apache.wiki.api.spi.Wiki;
+import java.io.IOException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,8 +28,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.spi.Wiki;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CSRF protection Filter which uses the synchronizer token pattern – an anti-CSRF token is created and stored in the
@@ -42,51 +42,56 @@ import java.io.IOException;
  */
 public class CsrfProtectionFilter implements Filter {
 
-    private static final Logger LOG = LogManager.getLogger( CsrfProtectionFilter.class );
+	private static final Logger LOG = LoggerFactory.getLogger(CsrfProtectionFilter.class);
 
-    public static final String ANTICSRF_PARAM = "X-XSRF-TOKEN";
+	public static final String ANTICSRF_PARAM = "X-XSRF-TOKEN";
 
-    /** {@inheritDoc} */
-    @Override
-    public void init( final FilterConfig filterConfig ) {
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void init(final FilterConfig filterConfig) {
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
-        if( isPost( ( HttpServletRequest ) request ) ) {
-            final Engine engine = Wiki.engine().find( request.getServletContext(), null );
-            final Session session = Wiki.session().find( engine, ( HttpServletRequest ) request );
-            if( !requestContainsValidCsrfToken( request, session ) ) {
-                LOG.error( "Incorrect {} param with value '{}' received for {}",
-                           ANTICSRF_PARAM, request.getParameter( ANTICSRF_PARAM ), ( ( HttpServletRequest ) request ).getPathInfo() );
-                ( ( HttpServletResponse ) response ).sendRedirect( "/error/Forbidden.html" );
-                return;
-            }
-        }
-        chain.doFilter( request, response );
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
+		if (isPost((HttpServletRequest) request)) {
+			final Engine engine = Wiki.engine().find(request.getServletContext(), null);
+			final Session session = Wiki.session().find(engine, (HttpServletRequest) request);
+			if (!requestContainsValidCsrfToken(request, session)) {
+				LOG.error("Incorrect {} param with value '{}' received for {}",
+						ANTICSRF_PARAM, request.getParameter(ANTICSRF_PARAM), ((HttpServletRequest) request).getPathInfo());
+				((HttpServletResponse) response).sendRedirect("/error/Forbidden.html");
+				return;
+			}
+		}
+		chain.doFilter(request, response);
+	}
 
-    public static boolean isCsrfProtectedPost( final HttpServletRequest request ) {
-        if( isPost( request ) ) {
-            final Engine engine = Wiki.engine().find( request.getServletContext(), null );
-            final Session session = Wiki.session().find( engine, request );
-            return requestContainsValidCsrfToken( request, session );
-        }
-        return false;
-    }
+	public static boolean isCsrfProtectedPost(final HttpServletRequest request) {
+		if (isPost(request)) {
+			final Engine engine = Wiki.engine().find(request.getServletContext(), null);
+			final Session session = Wiki.session().find(engine, request);
+			return requestContainsValidCsrfToken(request, session);
+		}
+		return false;
+	}
 
-    private static boolean requestContainsValidCsrfToken( final ServletRequest request, final Session session ) {
-        return session.antiCsrfToken().equals( request.getParameter( ANTICSRF_PARAM ) );
-    }
+	private static boolean requestContainsValidCsrfToken(final ServletRequest request, final Session session) {
+		return session.antiCsrfToken().equals(request.getParameter(ANTICSRF_PARAM));
+	}
 
-    static boolean isPost( final HttpServletRequest request ) {
-        return "POST".equalsIgnoreCase( request.getMethod() );
-    }
+	static boolean isPost(final HttpServletRequest request) {
+		return "POST".equalsIgnoreCase(request.getMethod());
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public void destroy() {
-    }
-
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void destroy() {
+	}
 }

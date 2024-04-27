@@ -63,7 +63,7 @@
 
       <dependency>
         <groupId>org.apache.jspwiki</groupId>
-        <artifactId>jspwiki-cache</artifactId>
+        <artifactId>jspwiki-knowwe-cache</artifactId>
         <version>${jspwiki.version}</version>
       </dependency>
 
@@ -75,7 +75,7 @@
 
       <dependency>
         <groupId>org.apache.jspwiki</groupId>
-        <artifactId>jspwiki-http</artifactId>
+        <artifactId>jspwiki-knowwe-http</artifactId>
         <version>${jspwiki.version}</version>
       </dependency>
 

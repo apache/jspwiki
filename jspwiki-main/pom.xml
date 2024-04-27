@@ -49,19 +49,19 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jspwiki-cache</artifactId>
+			<artifactId>jspwiki-knowwe-cache</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jspwiki-http</artifactId>
+			<artifactId>jspwiki-knowwe-http</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>jspwiki-wysiwyg</artifactId>
+			<artifactId>jspwiki-knowwe-wysiwyg</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
