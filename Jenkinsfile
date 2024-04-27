@@ -83,7 +83,7 @@ def buildSonarAndDeployIfSnapshotWith( jdk ) {
             def pom = readMavenPom( file: 'pom.xml' )
             if( pom.version.endsWith( '-SNAPSHOT' ) ) {
                 withMaven( jdk: jdk, maven: buildMvn ) {
-                    sh 'mvn deploy'
+                    sh 'mvn deploy -Dmaven.test.skip=true'
                 }
             }
         }
