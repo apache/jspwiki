@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>31</version>
+    <version>32</version>
   </parent>
 
   <groupId>org.apache.jspwiki</groupId>
@@ -52,7 +52,7 @@
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.16.1</commons-io.version>
     <commons-lang.version>3.14.0</commons-lang.version>
-    <commons-text.version>1.11.0</commons-text.version>
+    <commons-text.version>1.12.0</commons-text.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.64.8</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
@@ -78,7 +78,7 @@
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>2.9.2</tika.version>
-    <tomcat.version>9.0.87</tomcat.version>
+    <tomcat.version>9.0.88</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
@@ -89,7 +89,7 @@
     <plugin.dependency.version>3.6.1</plugin.dependency.version>
     <plugin.enforcer.version>3.4.1</plugin.enforcer.version>
     <plugin.install.version>3.1.1</plugin.install.version>
-    <plugin.jar.version>3.3.0</plugin.jar.version>
+    <plugin.jar.version>3.4.1</plugin.jar.version>
     <plugin.javadoc.version>3.6.3</plugin.javadoc.version>
     <plugin.jxr.version>3.3.2</plugin.jxr.version>
     <plugin.project-info-reports.version>3.5.0</plugin.project-info-reports.version>
@@ -787,6 +787,7 @@
               <exclude>**/src/main/webapp/templates/default/images/SilkIconSet-readme.txt</exclude> <!-- license, required by Silk Icon set cfr. NOTICE, LICENSE, etc. -->
               <exclude>**/PkgInfo</exclude>  <!-- PkgInfo files, per http://docs.oracle.com/cd/E19683-01/816-0219/6m6njqbat/index.html doesn't seem to accept comments -->
               <exclude>jspwiki-kendra-searchprovider/src/main/resources/org/apache/wiki/search/kendra/content_types.json</exclude> <!-- Json File -->
+              <exclude>**/.eslintrc</exclude> <!-- Json File -->
               <exclude>**src/main/styles/haddock/bootstrap/**</exclude>
               <exclude>**src/main/styles/haddock/default/*.crunch</exclude>
               <exclude>**/src/main/webapp/templates/default/fonts/*.svg</exclude>
