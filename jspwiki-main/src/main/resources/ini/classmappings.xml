@@ -146,5 +146,9 @@
   <mapping>
     <requestedClass>org.apache.wiki.workflow.WorkflowManager</requestedClass>
     <mappedClass>org.apache.wiki.workflow.DefaultWorkflowManager</mappedClass>
+	</mapping>
+	<mapping>
+		<requestedClass>org.apache.wiki.cache.CachingManager</requestedClass>
+		<mappedClass>org.apache.wiki.cache.EhcacheCachingManager</mappedClass>
   </mapping>
 </classmappings>
