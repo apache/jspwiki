@@ -41,12 +41,12 @@ import java.nio.file.Files;
  * @since 2.5.x
  */
 public final class PropertyReader {
-	
+
 	private static final Logger LOG = LoggerFactory.getLogger( PropertyReader.class );
-	
+
     /**
-     * Path to the base property file, usually overridden by values provided in
-     * a jspwiki-custom.properties file {@value #DEFAULT_JSPWIKI_CONFIG}
+     * Path to the base property file, {@value}, usually overridden by values provided in
+     * a jspwiki-custom.properties file.
      */
     public static final String DEFAULT_JSPWIKI_CONFIG = "/ini/jspwiki.properties";
 
@@ -58,8 +58,8 @@ public final class PropertyReader {
     public static final String PARAM_CUSTOMCONFIG = "jspwiki.custom.config";
 
     /**
-     *  The prefix when you are cascading properties.  
-     *  
+     *  The prefix when you are cascading properties.
+     *
      *  @see #loadWebAppProps(ServletContext)
      */
     public static final String PARAM_CUSTOMCONFIG_CASCADEPREFIX = "jspwiki.custom.cascade.";
@@ -114,7 +114,7 @@ public final class PropertyReader {
      *  and so on. You have to number your cascade in a descending way starting
      *  with "1". This means you cannot leave out numbers in your cascade. This
      *  method is based on an idea by Olaf Kaus, see [JSPWiki:MultipleWikis].
-     *  
+     *
      *  @param context A Servlet Context which is used to find the properties
      *  @return A filled Properties object with all the cascaded properties in place
      */
@@ -138,6 +138,9 @@ public final class PropertyReader {
 
             // now load the cascade (new in 2.5)
             loadWebAppPropsCascade( context, props );
+
+            // property expansion so we can resolve things like ${TOMCAT_HOME}
+            propertyExpansion( props );
 
             // sets the JSPWiki working directory (jspwiki.workDir)
             setWorkDir( context, props );
@@ -167,24 +170,24 @@ public final class PropertyReader {
 
     /**
      * Figure out where our properties lie.
-     * 
+     *
      * @param context servlet context
      * @param propertyFile property file
-     * @return inputstream holding the properties file
+     * @return InputStream holding the properties file
      * @throws FileNotFoundException properties file not found
      */
-	static InputStream loadCustomPropertiesFile( final ServletContext context, final String propertyFile ) throws IOException {
+    static InputStream loadCustomPropertiesFile( final ServletContext context, final String propertyFile ) throws IOException {
         final InputStream propertyStream;
-		if( propertyFile == null ) {
-		    LOG.debug( "No " + PARAM_CUSTOMCONFIG + " defined for this context, looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
-		    //  Use the custom property file at the default location
-		    propertyStream =  locateClassPathResource(context, CUSTOM_JSPWIKI_CONFIG);
-		} else {
+        if( propertyFile == null ) {
+            LOG.debug( "No " + PARAM_CUSTOMCONFIG + " defined for this context, looking for custom properties file with default name of: " + CUSTOM_JSPWIKI_CONFIG );
+            //  Use the custom property file at the default location
+            propertyStream =  locateClassPathResource(context, CUSTOM_JSPWIKI_CONFIG);
+        } else {
 		    LOG.info( PARAM_CUSTOMCONFIG + " defined, using " + propertyFile + " as the custom properties file." );
             propertyStream = Files.newInputStream( new File(propertyFile).toPath() );
-		}
-		return propertyStream;
-	}
+        }
+        return propertyStream;
+    }
 
 
     /**
@@ -199,9 +202,9 @@ public final class PropertyReader {
                 props.load( in );
             }
         } catch( final IOException e ) {
-            LOG.error( "Unable to load default propertyfile '" + DEFAULT_JSPWIKI_CONFIG + "'" + e.getMessage(), e );
+            LOG.error( "Unable to load default propertyfile '{}' {}", DEFAULT_JSPWIKI_CONFIG, e.getMessage(), e );
         }
-        
+
         return props;
     }
 
@@ -233,8 +236,7 @@ public final class PropertyReader {
      */
     private static String getInitParameter( final ServletContext context, final String name ) {
         final String value = context.getInitParameter( name );
-        return value != null ? value
-                             : System.getProperty( name ) ;
+        return value != null ? value : System.getProperty( name ) ;
     }
 
 
@@ -261,28 +263,65 @@ public final class PropertyReader {
             }
 
             try( final InputStream propertyStream = Files.newInputStream(Paths.get(( propertyFile ) ))) {
-                LOG.info( " Reading additional properties from " + propertyFile + " and merge to cascade." );
+                LOG.info( " Reading additional properties from {} and merge to cascade.", propertyFile );
                 final Properties additionalProps = new Properties();
                 additionalProps.load( propertyStream );
                 defaultProperties.putAll( additionalProps );
             } catch( final Exception e ) {
-                LOG.error( "JSPWiki: Unable to load and setup properties from " + propertyFile + "." + e.getMessage() );
+                LOG.error( "JSPWiki: Unable to load and setup properties from {}. {}", propertyFile, e.getMessage() );
             }
         }
     }
 
     /**
-     *  You define a property variable by using the prefix "var.x" as a property. In property values you can then use the "$x" identifier
-     *  to use this variable.
+     * <p>Try to resolve properties whose value is something like {@code ${SOME_VALUE}} from a system property first and,
+     * if not found, from a system environment variable. If not found on neither, the property value will remain as
+     * {@code ${SOME_VALUE}}, and no more expansions will be processed.</p>
      *
-     *  For example, you could declare a base directory for all your files like this and use it in all your other property definitions with
-     *  a "$basedir". Note that it does not matter if you define the variable before its usage.
+     * <p>Several expansions per property is OK, but no we're not supporting fancy things like recursion. Reference to
+     * other properties is achieved through {@link #expandVars(Properties)}. More than one property expansion per entry
+     * is allowed.</p>
+     *
+     * @param properties properties to expand;
+     */
+    public static void propertyExpansion( final Properties properties ) {
+        final Enumeration< ? > propertyList = properties.propertyNames();
+        while( propertyList.hasMoreElements() ) {
+            final String propertyName = ( String )propertyList.nextElement();
+            String propertyValue = properties.getProperty( propertyName );
+            while( propertyValue.contains( "${" ) && propertyValue.contains( "}" ) ) {
+                final int start = propertyValue.indexOf( "${" );
+                final int end = propertyValue.indexOf( "}", start );
+                if( start >= 0 && end >= 0 && end > start ) {
+                    final String substring = propertyValue.substring( start, end ).replace( "${", "" ).replace( "}", "" );
+                    final String expansion = Objects.toString( System.getProperty( substring ), System.getenv( substring ) );
+                    if( expansion != null ) {
+                        propertyValue =  propertyValue.replace( "${" + substring + "}", expansion );
+                        properties.setProperty( propertyName, propertyValue );
+                    } else {
+                        LOG.warn( "{} referenced on {} ({}) but not found on System props or env", substring, propertyName, propertyValue );
+                        break;
+                    }
+                } else {
+                    // no more matches or value like foo}${bar
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     *  <p>You define a property variable by using the prefix {@code var.x} as a property. In property values you can then use the "$x" identifier
+     *  to use this variable.</p>
+     *
+     *  <p>For example, you could declare a base directory for all your files like this and use it in all your other property definitions with
+     *  a {@code $basedir}. Note that it does not matter if you define the variable before its usage.
      *  <pre>
-     *  var.basedir = /p/mywiki;
+     *  var.basedir = /p/mywiki; # var.basedir = ${TOMCAT_HOME} would also be fine
      *  jspwiki.fileSystemProvider.pageDir =         $basedir/www/
      *  jspwiki.basicAttachmentProvider.storageDir = $basedir/www/
      *  jspwiki.workDir =                            $basedir/wrk/
-     *  </pre>
+     *  </pre></p>
      *
      * @param properties - properties to expand;
      */

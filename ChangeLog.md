@@ -17,6 +17,43 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2024-04-27  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-13_
+
+* [JSPWIKI-1188](https://issues.apache.org/jira/browse/JSPWIKI-1188) - Support system property / env replacement for JSPWiki configuration properties
+    * [PR #330](https://github.com/apache/jspwiki/pull/330) provided by Alex O'Ree, thanks! 
+
+* `MailUtil` now uses every `mail.smtp` / `mail.smtps` property provided through your `jspwiki[-custom].properties` file
+    * This allows to set f.ex., `mail.smtp.ssl.protocols=TLSv1.2` or `mail.smtp.ssl.trust=your.domain.org`
+    * Keep in mind that, in order to use `mail.smtps`, you should override to blank the default `mail.smtp` properties at `jspwiki.properties`
+
+* Dependency updates
+    * Apache parent to 32
+    * Commons Text to 1.12.0
+    * JavaMail to 1.6.2 
+    * Jetty to 9.4.54.v20240208 (closes [PR #334](https://github.com/apache/jspwiki/pull/334), thanks to Dependabot)
+    * Tomcat to 9.0.88
+    * Maven plugins: jar to 3.4.1, cargo to 1.10.12 (closes [PR #331](https://github.com/apache/jspwiki/pull/331), thanks to Dependabot), sonar to 3.11.0.3922 (closes [PR #333](https://github.com/apache/jspwiki/pull/333), thanks to Dependabot)
+
+**2024-04-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-12_
+
+* `BasicAttachmentProvider` doesn't throw an Exception if attachment metadata files are not correctly formed, aligning behaviour with metadata files not being present. This ensures plugin relying on this functionality, like f.ex RecentChanges, keep working if this condition is met.
+
+* Publish SBOMs artifacts as part of the build.
+
+* Dependency updates
+    * Commons IO to 2.16.1
+    * JUnit to 5.10.2
+    * Log4J2 to 2.23.0
+    * Lucene to 9.10.0
+    * Mockito to 5.11.0
+    * Tika to 2.9.2
+    * Tomcat to 9.0.87
+    * Maven plugins: assembly to 3.7.1, compiler to 3.13.0, jxr to 3.3.2, remote-resources to 3.2.0, source to 3.3.1, surefire to 3.2.5, jdk-doclet to 2.1.2
+
 **2023-12-04  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-11_

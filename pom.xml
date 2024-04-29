@@ -22,7 +22,7 @@
 	<parent>
 		<groupId>org.apache</groupId>
 		<artifactId>apache</artifactId>
-		<version>31</version>
+    <version>32</version>
 	</parent>
 
 	<groupId>org.apache.jspwiki</groupId>
@@ -40,10 +40,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<project.build.outputTimestamp>2023-08-07T19:55:12Z
-		</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
+		<project.build.outputTimestamp>2023-08-07T19:55:12Z</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
 		<jdk.version>17</jdk.version>
-		<jdk.javadoc.doclet.version>2.1.1</jdk.javadoc.doclet.version>
+		<jdk.javadoc.doclet.version>2.1.2</jdk.javadoc.doclet.version>
 		<maven.version>3.5</maven.version>
 
 		<akismet-java.version>1.02</akismet-java.version>
@@ -52,9 +51,9 @@
 		<commons-collections.version>4.4</commons-collections.version>
 		<commons-fileupload.version>1.5</commons-fileupload.version>
 		<commons-httpclient.version>3.1</commons-httpclient.version>
-		<commons-io.version>2.15.0</commons-io.version>
+    <commons-io.version>2.16.1</commons-io.version>
 		<commons-lang.version>3.14.0</commons-lang.version>
-		<commons-text.version>1.11.0</commons-text.version>
+    <commons-text.version>1.12.0</commons-text.version>
 		<ehcache.version>2.10.9.2</ehcache.version>
 		<flexmark.version>0.64.8</flexmark.version>
 		<freshcookies-security.version>0.60</freshcookies-security.version>
@@ -70,12 +69,12 @@
 		<javax-jsp-api.version>2.3.3</javax-jsp-api.version>
 		<javax-servlet-api.version>3.1.0</javax-servlet-api.version>
 		<jdom2.version>2.0.6</jdom2.version>
-		<jetty.version>9.4.53.v20231009</jetty.version>
+    <jetty.version>9.4.54.v20240208</jetty.version>
 		<jrcs-diff.version>0.4.2</jrcs-diff.version>
-		<junit.version>5.10.1</junit.version>
-		<log4j2.version>2.20.0</log4j2.version>
-		<lucene.version>9.9.0</lucene.version>
-		<mockito.version>5.8.0</mockito.version>
+    <junit.version>5.10.2</junit.version>
+    <log4j2.version>2.23.0</log4j2.version>
+    <lucene.version>9.10.0</lucene.version>
+    <mockito.version>5.11.0</mockito.version>
 		<nekohtml.version>2.1.2</nekohtml.version>
 		<oro.version>2.0.8</oro.version>
 		<sandler.version>0.5</sandler.version>
@@ -83,28 +82,28 @@
 		<slf4j.version>2.0.9</slf4j.version>
 		<logback.version>1.4.14</logback.version>
 		<stripes.version>1.7.0-async-beta</stripes.version>
-		<tika.version>2.9.1</tika.version>
-		<tomcat.version>9.0.83</tomcat.version>
+    	<tika.version>2.9.2</tika.version>
+  	  <tomcat.version>9.0.88</tomcat.version>
 		<wro4j.version>1.9.0</wro4j.version>
 		<xmlrpc.version>2.0.1</xmlrpc.version>
 		<jackson.version>2.13.5</jackson.version>
 
 		<plugin.antrun.version>3.1.0</plugin.antrun.version>
-		<plugin.assembly.version>3.6.0</plugin.assembly.version>
+    <plugin.assembly.version>3.7.1</plugin.assembly.version>
 		<plugin.clean.version>3.3.2</plugin.clean.version>
-		<plugin.compiler.version>3.11.0</plugin.compiler.version>
+    <plugin.compiler.version>3.13.0</plugin.compiler.version>
 		<plugin.dependency.version>3.6.1</plugin.dependency.version>
 		<plugin.enforcer.version>3.4.1</plugin.enforcer.version>
 		<plugin.install.version>3.1.1</plugin.install.version>
-		<plugin.jar.version>3.3.0</plugin.jar.version>
+    <plugin.jar.version>3.4.1</plugin.jar.version>
 		<plugin.javadoc.version>3.6.3</plugin.javadoc.version>
-		<plugin.jxr.version>3.3.1</plugin.jxr.version>
+    <plugin.jxr.version>3.3.2</plugin.jxr.version>
 		<plugin.project-info-reports.version>3.5.0</plugin.project-info-reports.version>
 		<plugin.release.version>3.0.1</plugin.release.version>
-		<plugin.remote-resources.version>3.1.0</plugin.remote-resources.version>
+    <plugin.remote-resources.version>3.2.0</plugin.remote-resources.version>
 		<plugin.resources.version>3.3.1</plugin.resources.version>
-		<plugin.source.version>3.3.0</plugin.source.version>
-		<plugin.surefire.version>3.2.2</plugin.surefire.version>
+    <plugin.source.version>3.3.1</plugin.source.version>
+    <plugin.surefire.version>3.2.5</plugin.surefire.version>
 		<plugin.surefire.junit5-tree-reporter.version>1.2.1</plugin.surefire.junit5-tree-reporter.version>
 		<plugin.war.version>3.4.0</plugin.war.version>
 		<plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
@@ -114,6 +113,7 @@
 		<plugin.cargo.version>1.10.11</plugin.cargo.version>
 		<plugin.clirr.version>2.8</plugin.clirr.version>
 		<plugin.cobertura.version>2.7</plugin.cobertura.version>
+    <plugin.cyclonedx.version>2.8.0</plugin.cyclonedx.version>
 		<plugin.sonar.version>3.10.0.2594</plugin.sonar.version>
 		<plugin.sonar-report.version>0.1</plugin.sonar-report.version>
 		<plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
@@ -164,6 +164,18 @@
 				<artifactId>selenide</artifactId>
 				<version>${selenide.version}</version>
 			</dependency>
+
+      <dependency><!-- as of 1.6.2 not included by javax.mail-api, see https://javaee.github.io/javamail/docs/COMPAT.txt -->
+        <groupId>com.sun.mail</groupId>
+        <artifactId>logging-mailhandler</artifactId>
+        <version>${javax-mail.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.sun.mail</groupId>
+        <artifactId>javax.mail</artifactId>
+        <version>${javax-mail.version}</version>
+      </dependency>
 
 			<dependency>
 				<groupId>com.google.code.gson</groupId>
@@ -515,6 +527,29 @@
 				<groupId>net.nicoulaj.maven.plugins</groupId>
 				<artifactId>checksum-maven-plugin</artifactId>
 			</plugin>
+
+      <plugin>
+        <groupId>org.cyclonedx</groupId>
+        <artifactId>cyclonedx-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-sbom</id>
+            <goals>
+              <goal>makeAggregateBom</goal>
+            </goals>
+            <phase>package</phase>
+            <configuration>
+              <externalReferences>
+                <externalReference>
+                  <type>vulnerability-assertion</type>
+                  <url>https://jspwiki.apache.org/cyclonedx/vdr.xml</url>
+                </externalReference>
+              </externalReferences>
+              <outputFormat>xml</outputFormat>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 		</plugins>
 
 		<pluginManagement> <!-- defines what configuration is going to be used if, and only if, the plugin is used                          -->
@@ -659,8 +694,13 @@
 							<disable>true</disable>
 						</consoleOutputReporter>
 						<reportFormat>plain</reportFormat>
-						<statelessTestsetInfoReporter
-							implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter" />
+						<statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+						  <printStacktraceOnError>true</printStacktraceOnError>
+						  <printStacktraceOnFailure>true</printStacktraceOnFailure>
+						  <printStderrOnError>true</printStderrOnError>
+						  <printStdoutOnError>true</printStdoutOnError>
+						  <printStdoutOnFailure>true</printStdoutOnFailure>
+						</statelessTestsetInfoReporter>
 						<systemPropertyVariables>
 							<java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
 						</systemPropertyVariables>
@@ -805,15 +845,11 @@
 							<exclude>**/src/test/resources/META-INF/services/*
 							</exclude>      <!-- Java SPI implementations files -->
 							<exclude>**/src/test/resources/TextFormattingRules.txt</exclude>  <!-- test input data -->
-							<exclude>**/src/test/resources/test-repo/*.txt
-							</exclude>          <!-- web tests input data -->
-							<exclude>**/src/main/webapp/templates/default/images/SilkIconSet-readme.txt
-							</exclude> <!-- license, required by Silk Icon set cfr. NOTICE, LICENSE, etc. -->
-							<exclude>**/PkgInfo
-							</exclude>  <!-- PkgInfo files, per http://docs.oracle.com/cd/E19683-01/816-0219/6m6njqbat/index.html doesn't seem to accept comments -->
-							<exclude>
-								jspwiki-kendra-searchprovider/src/main/resources/org/apache/wiki/search/kendra/content_types.json
-							</exclude> <!-- Json File -->
+						  <exclude>**/src/test/resources/test-repo/*.txt</exclude>          <!-- web tests input data -->
+						  <exclude>**/src/main/webapp/templates/default/images/SilkIconSet-readme.txt</exclude> <!-- license, required by Silk Icon set cfr. NOTICE, LICENSE, etc. -->
+						  <exclude>**/PkgInfo</exclude>  <!-- PkgInfo files, per http://docs.oracle.com/cd/E19683-01/816-0219/6m6njqbat/index.html doesn't seem to accept comments -->
+						  <exclude>jspwiki-kendra-searchprovider/src/main/resources/org/apache/wiki/search/kendra/content_types.json</exclude> <!-- Json File -->
+						  <exclude>**/.eslintrc</exclude> <!-- Json File -->
 							<exclude>**src/main/styles/haddock/bootstrap/**</exclude>
 							<exclude>**src/main/styles/haddock/default/*.crunch</exclude>
 							<exclude>**/src/main/webapp/templates/default/fonts/*.svg</exclude>
@@ -886,6 +922,12 @@
 						</formats>
 					</configuration>
 				</plugin>
+
+        <plugin>
+          <groupId>org.cyclonedx</groupId>
+          <artifactId>cyclonedx-maven-plugin</artifactId>
+          <version>${plugin.cyclonedx.version}</version>
+        </plugin>
 
 				<plugin>
 					<groupId>org.sonarsource.scanner.maven</groupId>
