@@ -309,7 +309,7 @@ public final class MailUtil {
 	public static void sendMultiPartMessage(Properties props, String to, String subject, String plainContent,
 											String htmlContent, Map<String, URL> imageUrlsByCid) throws MessagingException{
 		Session session = getMailSession( props );
-		getSenderEmailAddress(session, props);
+		setSenderEmailAddress(session, props);
 
 		try
 		{
