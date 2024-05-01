@@ -134,6 +134,10 @@
     </dependency>
   </dependencies>
 
+  <properties>
+    <skip-markdown-pages-generation>false</skip-markdown-pages-generation>
+  </properties>
+
   <build>
     <plugins>
       <plugin>
@@ -162,6 +166,7 @@
             <id>generate-markdown-pages</id>
             <goals><goal>test</goal></goals>
             <configuration>
+              <skipTests>${skip-markdown-pages-generation}</skipTests>
               <test>WikiSyntaxConverter</test>
             </configuration>
           </execution>
