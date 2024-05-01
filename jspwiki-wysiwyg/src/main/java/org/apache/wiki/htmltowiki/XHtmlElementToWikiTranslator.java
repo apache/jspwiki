@@ -225,7 +225,7 @@ public class XHtmlElementToWikiTranslator {
 
         final Map< Object, Object > m = new LinkedHashMap<>();
         Arrays.stream( style.toLowerCase().split( ";" ) )
-              .filter( StringUtils::isNotEmpty )
+              .filter( StringUtils::isNotBlank )
               .forEach( prop -> m.put( prop.split( ":" )[ 0 ].trim(), prop.split( ":" )[ 1 ].trim() ) );
         return m;
     }
