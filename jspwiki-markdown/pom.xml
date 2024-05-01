@@ -154,6 +154,19 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-markdown-pages</id>
+            <goals><goal>test</goal></goals>
+            <configuration>
+              <test>WikiSyntaxConverter</test>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>
