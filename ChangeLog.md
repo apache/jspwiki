@@ -17,6 +17,19 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2024-05-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-14_
+
+* [JSPWIKI-1190](https://issues.apache.org/jira/browse/JSPWIKI-1190) - Changing `jspwiki.syntax=markdown` breaks all the predefined/default wiki content
+    * Markdown wikipages are now generated from default wikipages as part of the build
+    * This generation allowed to uncover and fix a small bug in `XHtmlElementToWikiTranslator`, where an `ArrayIndexOutOfBOundsException` could occur when translating `style` tags
+
+* Dependency updates
+    * Awaitility to 4.2.1 (closes [PR #337](https://github.com/apache/jspwiki/pull/337), thanks to Dependabot)
+    * Log4J to 2.23.1 (closes [PR #338](https://github.com/apache/jspwiki/pull/338), thanks to Dependabot)
+    * Maven plugins: install to 3.1.2, cargo to 1.10.13 (closes [PR #339](https://github.com/apache/jspwiki/pull/339), thanks to Dependabot)
+
 **2024-04-27  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-13_
