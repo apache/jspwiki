@@ -70,7 +70,7 @@
     <junit.version>5.10.2</junit.version>
     <log4j2.version>2.23.1</log4j2.version>
     <lucene.version>9.10.0</lucene.version>
-    <mockito.version>5.11.0</mockito.version>
+    <mockito.version>5.12.0</mockito.version>
     <nekohtml.version>2.1.2</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
