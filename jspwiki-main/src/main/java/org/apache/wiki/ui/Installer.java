@@ -156,10 +156,8 @@ public class Installer {
      * @return the string
      */
     public String getPropertiesList() {
-        final String result;
         final Set< String > keys = m_props.stringPropertyNames();
-        result = keys.stream().map(key -> key + " = " + m_props.getProperty(key) + "\n").collect(Collectors.joining());
-        return result;
+        return keys.stream().map( key -> key + " = " + m_props.getProperty( key ) + "\n" ).collect( Collectors.joining() );
     }
 
     public String getPropertiesPath() {
@@ -183,16 +181,14 @@ public class Installer {
         String nullValue = m_props.getProperty( APP_NAME, rb.getString( "install.installer.default.appname" ) );
         parseProperty( APP_NAME, nullValue );
 
-        // Get/sanitize page directory
-        nullValue = m_props.getProperty( PAGE_DIR, rb.getString( "install.installer.default.pagedir" ) );
-        parseProperty( PAGE_DIR, nullValue );
-        sanitizePath( PAGE_DIR );
-
-        // Get/sanitize work directory
+        // Get work directory
         nullValue = m_props.getProperty( WORK_DIR, TMP_DIR );
         parseProperty( WORK_DIR, nullValue );
-        sanitizePath( WORK_DIR );
-        
+
+        // Get page directory
+        nullValue = m_props.getProperty( PAGE_DIR, m_props.getProperty( WORK_DIR, TMP_DIR ) + File.separatorChar + "data" );
+        parseProperty( PAGE_DIR, nullValue );
+
         // Set a few more default properties, for easy setup
         m_props.setProperty( STORAGE_DIR, m_props.getProperty( PAGE_DIR ) );
         m_props.setProperty( PageManager.PROP_PAGEPROVIDER, "VersioningFileProvider" );
@@ -216,11 +212,15 @@ public class Installer {
         final ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE, m_session.getLocale() );
         m_session.clearMessages( INSTALL_ERROR );
         parseProperties();
+        // sanitize pages, attachments and work directories
+        sanitizePath( PAGE_DIR );
+        sanitizePath( STORAGE_DIR );
+        sanitizePath( WORK_DIR );
         validateNotNull( PAGE_DIR, rb.getString( "install.installer.validate.pagedir" ) );
         validateNotNull( APP_NAME, rb.getString( "install.installer.validate.appname" ) );
         validateNotNull( WORK_DIR, rb.getString( "install.installer.validate.workdir" ) );
 
-        if ( m_session.getMessages( INSTALL_ERROR ).length == 0 ) {
+        if( m_session.getMessages( INSTALL_ERROR ).length == 0 ) {
             m_validated = true;
         }
         return m_validated;
@@ -248,6 +248,24 @@ public class Installer {
     private void sanitizePath( final String key ) {
         String s = m_props.getProperty( key );
         s = TextUtil.replaceString(s, "\\", "\\\\" );
+        s = s.trim();
+        m_props.put( key, s );
+    }
+
+    public void restoreUserValues() {
+        desanitizePath( PAGE_DIR );
+        desanitizePath( STORAGE_DIR );
+        desanitizePath( WORK_DIR );
+    }
+
+    /**
+     * Simply removes sanitizations so values can be shown back to the user as they were entered
+     *
+     * @param key the key of the property to sanitize
+     */
+    private void desanitizePath( final String key ) {
+        String s = m_props.getProperty( key );
+        s = TextUtil.replaceString(s, "\\\\", "\\" );
         s = s.trim();
         m_props.put( key, s );
     }

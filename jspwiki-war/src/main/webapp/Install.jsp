@@ -59,6 +59,7 @@ if( request.getParameter("submit") != null )
     {
         installer.saveProperties();
         password = installer.createAdministrator();
+        installer.restoreUserValues();
         if ( password != null )
         {
         	Object[] args = { Installer.ADMIN_ID, password, Installer.ADMIN_GROUP };
