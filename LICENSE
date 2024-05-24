@@ -240,7 +240,7 @@ flexmark-util-options-0.64.8.jar            ./jspwiki-war/src/main/config/doc/LI
 flexmark-util-sequence-0.64.8.jar           ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 flexmark-util-visitor-0.64.8.jar            ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 freshcookies-security-0.60.jar              LICENSE
-gson-2.10.1                                 LICENSE
+gson-2.11.0                                 LICENSE
 httpclient-4.5.13                           LICENSE
 httpcore-4.4.13                             LICENSE
 ion-java-1.0.2                              LICENSE
@@ -289,7 +289,7 @@ sqltool-2.7.2.jar                           ./jspwiki-war/src/main/config/doc/LI
 jamm-0.4.0.jar                              LICENSE
 jetty-all-9.4.53.v20231009.jar              LICENSE
 junit-5.10.2                                ./jspwiki-war/src/main/config/doc/LICENSE.cpl
-mockito-core-5.11.0.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.mit
+mockito-core-5.12.0.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.mit
 selenide-6.19.0.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
 stripes-1.7.0-async.jar                     LICENSE
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui
@@ -306,7 +306,7 @@ SlimBox                                     ./jspwiki-war/src/main/config/doc/LI
 
 RESOURCES                                   LICENSE FILE
 =============================================================================================================
-Apache Tomcat 9.0.88                        LICENSE
+Apache Tomcat 9.0.89                        LICENSE
 Font Awesome (CSS & LESS files)             ./jspwiki-war/src/main/config/doc/LICENSE.mit
 Font Awesome (Fonts)                        ./jspwiki-war/src/main/config/doc/LICENSE.ofl
 SilkIconSet                                 ./jspwiki-war/src/main/config/doc/LICENSE.SilkIconSet
