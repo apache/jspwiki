@@ -17,6 +17,17 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2024-05-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-15_
+
+* [JSPWIKI-1186](https://issues.apache.org/jira/browse/JSPWIKI-1186) - Windows, `Install.jsp` double escapes the `jspwiki.workDir` and nothing else
+
+* Dependency updates
+    * Gson to 2.11.0 (closes [PR #343](https://github.com/apache/jspwiki/pull/343), thanks to Dependabot)
+    * Mockito to 5.12.0 (closes [PR #341](https://github.com/apache/jspwiki/pull/341), thanks to Dependabot)
+    * Tomcat to 9.0.89
+
 **2024-05-01  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-14_
