@@ -270,6 +270,7 @@
                 <exclude>**/*Test$*.class</exclude>
                 <exclude>**/*Tests.class</exclude>
               </excludes>
+              <skip>false</skip>
               <skipIfEmpty>true</skipIfEmpty>
             </configuration>
           </execution>
