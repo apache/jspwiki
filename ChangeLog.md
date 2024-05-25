@@ -23,6 +23,8 @@ under the License.
 
 * [JSPWIKI-1186](https://issues.apache.org/jira/browse/JSPWIKI-1186) - Windows, `Install.jsp` double escapes the `jspwiki.workDir` and nothing else
 
+* Fix Dockerfile build, broken on 2.12.2-git-14
+
 * Dependency updates
     * Gson to 2.11.0 (closes [PR #343](https://github.com/apache/jspwiki/pull/343), thanks to Dependabot)
     * Mockito to 5.12.0 (closes [PR #341](https://github.com/apache/jspwiki/pull/341), thanks to Dependabot)
