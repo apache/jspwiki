@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-FROM maven:3.9-jdk-11 as package
+FROM maven:3.9-eclipse-temurin-11 as package
 
 WORKDIR /tmp
 
