@@ -69,7 +69,7 @@
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.10.2</junit.version>
     <log4j2.version>2.23.1</log4j2.version>
-    <lucene.version>9.10.0</lucene.version>
+    <lucene.version>9.11.0</lucene.version>
     <mockito.version>5.12.0</mockito.version>
     <nekohtml.version>2.1.2</nekohtml.version>
     <oro.version>2.0.8</oro.version>
@@ -86,12 +86,12 @@
     <plugin.assembly.version>3.7.1</plugin.assembly.version>
     <plugin.clean.version>3.3.2</plugin.clean.version>
     <plugin.compiler.version>3.13.0</plugin.compiler.version>
-    <plugin.dependency.version>3.6.1</plugin.dependency.version>
-    <plugin.enforcer.version>3.4.1</plugin.enforcer.version>
+    <plugin.dependency.version>3.7.0</plugin.dependency.version>
+    <plugin.enforcer.version>3.5.0</plugin.enforcer.version>
     <plugin.install.version>3.1.2</plugin.install.version>
     <plugin.jar.version>3.4.1</plugin.jar.version>
-    <plugin.javadoc.version>3.6.3</plugin.javadoc.version>
-    <plugin.jxr.version>3.3.2</plugin.jxr.version>
+    <plugin.javadoc.version>3.7.0</plugin.javadoc.version>
+    <plugin.jxr.version>3.4.0</plugin.jxr.version>
     <plugin.project-info-reports.version>3.5.0</plugin.project-info-reports.version>
     <plugin.release.version>3.0.1</plugin.release.version>
     <plugin.remote-resources.version>3.2.0</plugin.remote-resources.version>
@@ -108,7 +108,7 @@
     <plugin.clirr.version>2.8</plugin.clirr.version>
     <plugin.cobertura.version>2.7</plugin.cobertura.version>
     <plugin.cyclonedx.version>2.8.0</plugin.cyclonedx.version>
-    <plugin.sonar.version>3.10.0.2594</plugin.sonar.version>
+    <plugin.sonar.version>4.0.0.4121</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
     <plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
     <maven.compiler.source>${jdk.version}</maven.compiler.source> <!-- override values from parent pom -->

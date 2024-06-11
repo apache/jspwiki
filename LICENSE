@@ -258,14 +258,14 @@ log4j-1.2-api-2.23.1.jar                    LICENSE
 log4j-api-2.23.1.jar                        LICENSE
 log4j-core-2.23.1.jar                       LICENSE
 log4j-slf4j-impl-2.23.1                     LICENSE
-lucene-analyzers-common-9.10.0.jar          LICENSE
-lucene-backward-codecs-9.10.0.jar           LICENSE
-lucene-core-9.10.0.jar                      LICENSE
-lucene-highlighter-9.10.0.jar               LICENSE
-lucene-memory-9.10.0.jar                    LICENSE
-lucene-queries-9.10.0.jar                   LICENSE
-lucene-queryparser-9.10.0.jar               LICENSE
-lucene-sandbox-9.10.0.jar                   LICENSE
+lucene-analyzers-common-9.11.0.jar          LICENSE
+lucene-backward-codecs-9.11.0.jar           LICENSE
+lucene-core-9.11.0.jar                      LICENSE
+lucene-highlighter-9.11.0.jar               LICENSE
+lucene-memory-9.11.0.jar                    LICENSE
+lucene-queries-9.11.0.jar                   LICENSE
+lucene-queryparser-9.11.0.jar               LICENSE
+lucene-sandbox-9.11.0.jar                   LICENSE
 javax.mail-1.6.2.jar                        ./jspwiki-war/src/main/config/doc/LICENSE.cddl
 nekohtml-2.0.2.jar (codelibs fork)          LICENSE
 org.suigeneris.jrcs.diff-0.4.2              LICENSE
@@ -284,8 +284,8 @@ TEST LIBRARY                                LICENSE FILE
 awaitility-4.2.1.jar                        LICENSE
 commons-el-1.0.jar                          LICENSE
 custom_rhino-0.4.3.jar                      ./jspwiki-war/src/main/config/doc/LICENSE.mpl
-hsqldb-2.7.2.jar                            ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
-sqltool-2.7.2.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
+hsqldb-2.7.3.jar                            ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
+sqltool-2.7.3.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 jamm-0.4.0.jar                              LICENSE
 jetty-all-9.4.53.v20231009.jar              LICENSE
 junit-5.10.2                                ./jspwiki-war/src/main/config/doc/LICENSE.cpl
