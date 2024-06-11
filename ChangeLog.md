@@ -17,6 +17,15 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2024-06-11  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.2-git-16_
+
+* Last minute dependencies and plugin updates
+    * HSQLDB to 2.7.3 (closes [PR #344](https://github.com/apache/jspwiki/pull/344), thanks to Dependabot)
+    * Lucene to 9.11.0
+    * Maven plugins: dependency to 3.7.0, enforcer to 3.5.0 (closes [PR #345](https://github.com/apache/jspwiki/pull/345), thanks to Dependabot), javadoc to 3.7.0, jxr to 3.4.0, sonar to 4.0.0.4121 (closes [PR #346](https://github.com/apache/jspwiki/pull/346), thanks to Dependabot)
+
 **2024-05-24  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-15_
