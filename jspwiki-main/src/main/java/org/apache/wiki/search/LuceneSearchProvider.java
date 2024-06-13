@@ -498,8 +498,9 @@ public class LuceneSearchProvider implements SearchProvider {
 
                         String[] fragments = new String[ 0 ];
                         if( text != null && highlighter != null ) {
-                            final TokenStream tokenStream = getLuceneAnalyzer().tokenStream( LUCENE_PAGE_CONTENTS, new StringReader( text ) );
-                            fragments = highlighter.getBestFragments( tokenStream, text, MAX_FRAGMENTS );
+                            try (TokenStream tokenStream = getLuceneAnalyzer().tokenStream(LUCENE_PAGE_CONTENTS, new StringReader(text))) {
+                                fragments = highlighter.getBestFragments(tokenStream, text, MAX_FRAGMENTS);
+                            }
                         }
 
                         final SearchResult result = new SearchResultImpl( page, score, fragments );
