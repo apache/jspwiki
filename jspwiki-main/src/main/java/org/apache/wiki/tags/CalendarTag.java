@@ -57,10 +57,12 @@ public class CalendarTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
     private static final Logger LOG = LogManager.getLogger( CalendarTag.class );
+    private static final int NUM_PAGES_TO_CHECK = 5;
     
     private SimpleDateFormat m_pageFormat;
     private SimpleDateFormat m_urlFormat;
     private SimpleDateFormat m_monthUrlFormat;
+    private boolean m_addIndex;
     private SimpleDateFormat m_dateFormat = new SimpleDateFormat( "ddMMyy" );
 
     /**
@@ -127,6 +129,19 @@ public class CalendarTag extends WikiTagBase {
         m_monthUrlFormat = new SimpleDateFormat( format );
     }
 
+    /**
+     *  Sets whether or not the pageFormat contains a page index at the end.
+	 *  This is the case for the WeblogPlugin.
+     *
+     *  @param addindex Whether a page index should be appended to the pageFormat
+     *
+     *  @see org.apache.wiki.plugin.WeblogPlugin
+     */
+    public void setAddindex( final boolean addIndex )
+    {
+        m_addIndex = addIndex;
+    }
+
     private String format( final String txt ) {
         final Page p = m_wikiContext.getPage();
         if( p != null ) {
@@ -145,8 +160,22 @@ public class CalendarTag extends WikiTagBase {
 
         if( m_pageFormat != null ) {
             final String pagename = m_pageFormat.format( day.getTime() );
-            
-            if( engine.getManager( PageManager.class ).wikiPageExists( pagename ) ) {
+
+			var somePageExistsOnThisDay = false;
+			if (m_addIndex) {
+				// Look at up to 5 pages for whether the page exists. This avoids an issue 
+				// with the WeblogPlugin when the first blog post(s) of a day gets deleted.
+				for (int pageIdx = 1; pageIdx <= NUM_PAGES_TO_CHECK; pageIdx++) {
+					if( engine.getManager( PageManager.class ).wikiPageExists( pagename+pageIdx ) ) {
+						somePageExistsOnThisDay = true;
+						break;
+					}
+				}
+			} else {
+				somePageExistsOnThisDay = engine.getManager( PageManager.class ).wikiPageExists( pagename );
+			}
+
+            if( somePageExistsOnThisDay ) {
                 if( m_urlFormat != null ) {
                     final String url = m_urlFormat.format( day.getTime() );
                     result = "<td class=\"link\"><a href=\""+url+"\">"+day.get( Calendar.DATE )+"</a></td>";
