@@ -40,8 +40,7 @@ import java.util.Date;
  *  Provides a nice calendar.  Responds to the following HTTP parameters:
  *  <ul>
  *  <li>calendar.date - If this parameter exists, then the calendar
- *  date is taken from the month and year.  The date must be in ddMMyy
- *  format.
+ *  date is taken from the month and year.  The date must be in ddMMyy format.
  *  <li>weblog.startDate - If calendar.date parameter does not exist,
  *  we then check this date.
  *  </ul>
@@ -57,7 +56,7 @@ public class CalendarTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
     private static final Logger LOG = LogManager.getLogger( CalendarTag.class );
-    private static final int NUM_PAGES_TO_CHECK = 5;
+    private static final int NUM_PAGES_TO_CHECK = 3;
     
     private SimpleDateFormat m_pageFormat;
     private SimpleDateFormat m_urlFormat;
@@ -161,19 +160,19 @@ public class CalendarTag extends WikiTagBase {
         if( m_pageFormat != null ) {
             final String pagename = m_pageFormat.format( day.getTime() );
 
-			var somePageExistsOnThisDay = false;
-			if (m_addIndex) {
-				// Look at up to 5 pages for whether the page exists. This avoids an issue 
-				// with the WeblogPlugin when the first blog post(s) of a day gets deleted.
-				for (int pageIdx = 1; pageIdx <= NUM_PAGES_TO_CHECK; pageIdx++) {
-					if( engine.getManager( PageManager.class ).wikiPageExists( pagename+pageIdx ) ) {
-						somePageExistsOnThisDay = true;
-						break;
-					}
-				}
-			} else {
-				somePageExistsOnThisDay = engine.getManager( PageManager.class ).wikiPageExists( pagename );
-			}
+            var somePageExistsOnThisDay = false;
+            if (m_addIndex) {
+                // Look at up to 3 pages for whether the page exists. This avoids an issue 
+                // with the WeblogPlugin when the first blog post(s) of a day gets deleted.
+		    for (int pageIdx = 1; pageIdx <= NUM_PAGES_TO_CHECK; pageIdx++) {
+                        if( engine.getManager( PageManager.class ).wikiPageExists( pagename+pageIdx ) ) {
+                            somePageExistsOnThisDay = true;
+                            break;
+                        }
+                }
+            } else {
+                somePageExistsOnThisDay = engine.getManager( PageManager.class ).wikiPageExists( pagename );
+            }
 
             if( somePageExistsOnThisDay ) {
                 if( m_urlFormat != null ) {
