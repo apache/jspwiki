@@ -29,7 +29,7 @@
 
   <c:set var="isweblog"><%= ( String )Context.findContext( pageContext ).getPage().getAttribute( /*ATTR_ISWEBLOG*/ "weblogplugin.isweblog" ) %></c:set>
   <c:if test="${isweblog}">
-  <wiki:Calendar pageformat="'${param.page}_blogentry_'ddMMyy'_1'"
+  <wiki:Calendar pageformat="'${param.page}_blogentry_'ddMMyy'_'" addindex="true"
                  urlformat="'Wiki.jsp?page=${param.page}&weblog.startDate='ddMMyy'&weblog.days=1'"/>
   </c:if>
 

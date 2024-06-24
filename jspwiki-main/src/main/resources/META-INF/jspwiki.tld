@@ -97,6 +97,10 @@
        <name>monthurlformat</name>
        <rtexprvalue>true</rtexprvalue>
     </attribute>
+    <attribute>
+       <name>addindex</name>
+       <rtexprvalue>true</rtexprvalue>
+    </attribute>
   </tag>
 
   <tag>
