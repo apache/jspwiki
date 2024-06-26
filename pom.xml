@@ -40,7 +40,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.outputTimestamp>2024-06-12T19:47:50Z</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
-    <jdk.version>11</jdk.version>
+    <jdk.version>17</jdk.version>
     <jdk.javadoc.doclet.version>2.1.2</jdk.javadoc.doclet.version>
     <maven.version>3.5</maven.version>
 
@@ -1062,6 +1062,24 @@
               <reportFormat>plain</reportFormat>
               <statelessTestsetInfoReporter combine.self="override" />
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>buildTestJar</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>test-jar</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

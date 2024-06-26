@@ -18,85 +18,90 @@
  */
 
 buildRepo = 'https://github.com/apache/jspwiki'
-buildJdk11 = 'jdk_11_latest'
 buildJdk17 = 'jdk_17_latest'
 buildJdk21 = 'jdk_21_latest'
 buildMvn = 'maven_3_latest'
 errMsg = ''
 
 try {
-
-    stage( 'build source' ) {
-        parallel jdk11Build: {
-            buildSonarAndDeployIfSnapshotWith( buildJdk11 )
-        },
-        jdk17Build: {
-            buildWith( buildJdk17 )
-        },
-        jdk21Build: {
-            // don't fail build if jdk-21 build doesn't succeed
-            catchError( buildResult: 'SUCCESS', stageResult: 'FAILURE' ) {
-                buildWith( buildJdk21 )
+    stage('Build and install test jars locally') {
+        node('ubuntu') {
+            cleanWs()
+            git url: buildRepo, poll: true
+            withMaven(jdk: buildJdk17, maven: buildMvn, publisherStrategy: 'EXPLICIT') {
+                sh 'mvn clean install -PbuildTestJar -DskipTests'
             }
         }
     }
 
-    if( env.BRANCH_NAME == 'master' ) {
-        build wait: false, job: 'JSPWiki/site', parameters: [ text( name: 'version', value: 'master' ) ]
+    stage('Build source') {
+        parallel jdk17Build: {
+            buildSonarAndDeployIfSnapshotWith(buildJdk17)
+        },
+        jdk21Build: {
+            // don't fail build if jdk-21 build doesn't succeed
+            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                buildWith(buildJdk21)
+            }
+        }
+    }
+
+    if (env.BRANCH_NAME == 'master') {
+        build(wait: false, job: 'JSPWiki/site', parameters: [text(name: 'version', value: 'master')])
     }
 
     currentBuild.result = 'SUCCESS'
 
-} catch( Exception err ) {
+} catch (Exception err) {
     currentBuild.result = 'FAILURE'
     echo err.message
     errMsg = '- ' + err.message
 } finally {
-    node( 'ubuntu' ) {
-        if( currentBuild.result == null ) {
+    node('ubuntu') {
+        if (currentBuild.result == null) {
             currentBuild.result = 'ABORTED'
         }
-        if( env.BRANCH_NAME == 'master' ) {
+        if (env.BRANCH_NAME == 'master') {
             emailext body: "See ${env.BUILD_URL} $errMsg",
-                     replyTo: 'dev@jspwiki.apache.org',
-                     to: 'commits@jspwiki.apache.org',
-                     subject: "[${env.JOB_NAME}] build ${env.BUILD_DISPLAY_NAME} - ${currentBuild.result}"
+                    replyTo: 'dev@jspwiki.apache.org',
+                    to: 'commits@jspwiki.apache.org',
+                    subject: "[${env.JOB_NAME}] build ${env.BUILD_DISPLAY_NAME} - ${currentBuild.result}"
         }
     }
 }
 
-def buildSonarAndDeployIfSnapshotWith( jdk ) {
-    node( 'ubuntu' ) {
-        stage( jdk ) {
+def buildSonarAndDeployIfSnapshotWith(jdk) {
+    node('ubuntu') {
+        stage(jdk) {
             cleanWs()
             git url: buildRepo, poll: true
-            withMaven( jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [ jacocoPublisher(), junitPublisher() ] ) {
+            withMaven(jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [jacocoPublisher(), junitPublisher()]) {
                 sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report -T 1C"
             }
-            withMaven( jdk: buildJdk17, maven: buildMvn ) {
-                withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
+            withMaven(jdk: buildJdk17, maven: buildMvn) {
+                withCredentials([string(credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN')]) {
                     def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
                     echo 'Will use SonarQube instance at https://sonarcloud.io'
                     sh "mvn sonar:sonar $sonarOptions"
                 }
             }
-            def pom = readMavenPom( file: 'pom.xml' )
-            if( pom.version.endsWith( '-SNAPSHOT' ) ) {
-                withMaven( jdk: jdk, maven: buildMvn ) {
-                    sh 'mvn deploy -Dmaven.test.skip=true'
+            def pom = readMavenPom(file: 'pom.xml')
+            if (pom.version.endsWith('-SNAPSHOT')) {
+                withMaven(jdk: jdk, maven: buildMvn) {
+                    sh 'mvn deploy -Dmaven.test.skip=true -DskipTests'
                 }
             }
         }
     }
 }
 
-def buildWith( jdk ) {
-    node( 'ubuntu' ) {
-        stage( jdk ) {
+def buildWith(jdk) {
+    node('ubuntu') {
+        stage(jdk) {
             cleanWs()
             git url: buildRepo, poll: true
-            withMaven( jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT' ) {
-                sh 'mvn clean package -T 1C'
+            withMaven(jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT') {
+                sh 'mvn clean package -T 1C -DskipTests'
             }
         }
     }
