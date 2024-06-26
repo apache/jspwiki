@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2024-07-08  Arturo Bernal (abernal AT apache DOT org)**
+
+* _2.12.3-git-02_
+
+* [JSPWIKI-1194](https://issues.apache.org/jira/browse/JSPWIKI-1194) - CI/CD Pipeline Optimization for Apache JSPWiki with JDK-17 Integration
+
+
 **2024-07-07  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-01_
