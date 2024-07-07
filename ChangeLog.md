@@ -24,7 +24,7 @@ under the License.
 * Fix problematic `CalendarTag` <-> `WeblogPlugin` interaction
     * Provided in [PR #350](https://github.com/apache/jspwiki/pull/350) by Ulf Dittmer, thanks! 
 
-* Fix issue in CI build not findind a test-jar
+* Fix issue with CI build not findind a test-jar
 
 * Last minute dependencies and plugin updates
     * Tomcat to 9.0.90
