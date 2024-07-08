@@ -99,6 +99,7 @@
                 <exclude>**/*Tests.class</exclude>
               </excludes>
               <skipIfEmpty>true</skipIfEmpty>
+              <skip>false</skip>
             </configuration>
           </execution>
         </executions>
