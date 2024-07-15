@@ -335,41 +335,42 @@ public class LinkTag extends WikiLinkTag implements ParamHandler, BodyTag {
     public int doEndTag() {
         try {
             final Engine engine = m_wikiContext.getEngine();
-            final JspWriter out = pageContext.getOut();
-            final String url = figureOutURL();
+            try (JspWriter out = pageContext.getOut()) {
+                final String url = figureOutURL();
 
-            final StringBuilder sb = new StringBuilder( 20 );
+                final StringBuilder sb = new StringBuilder(20);
 
-            sb.append( (m_cssClass != null)   ? "class=\""+m_cssClass+"\" " : "" );
-            sb.append( (m_style != null)   ? "style=\""+m_style+"\" " : "" );
-            sb.append( (m_target != null ) ? "target=\""+m_target+"\" " : "" );
-            sb.append( (m_title != null )  ? "title=\""+m_title+"\" " : "" );
-            sb.append( (m_rel != null )    ? "rel=\""+m_rel+"\" " : "" );
-            sb.append( (m_accesskey != null) ? "accesskey=\""+m_accesskey+"\" " : "" );
-            sb.append( (m_tabindex != null) ? "tabindex=\""+m_tabindex+"\" " : "" );
+                sb.append((m_cssClass != null) ? "class=\"" + m_cssClass + "\" " : "");
+                sb.append((m_style != null) ? "style=\"" + m_style + "\" " : "");
+                sb.append((m_target != null) ? "target=\"" + m_target + "\" " : "");
+                sb.append((m_title != null) ? "title=\"" + m_title + "\" " : "");
+                sb.append((m_rel != null) ? "rel=\"" + m_rel + "\" " : "");
+                sb.append((m_accesskey != null) ? "accesskey=\"" + m_accesskey + "\" " : "");
+                sb.append((m_tabindex != null) ? "tabindex=\"" + m_tabindex + "\" " : "");
 
-            if( engine.getManager( PageManager.class ).getPage( m_pageName ) instanceof Attachment ) {
-                sb.append( engine.getManager( AttachmentManager.class ).forceDownload( m_pageName ) ? "download " : "" );
+                if (engine.getManager(PageManager.class).getPage(m_pageName) instanceof Attachment) {
+                    sb.append(engine.getManager(AttachmentManager.class).forceDownload(m_pageName) ? "download " : "");
+                }
+
+                switch (m_format) {
+                    case URL:
+                        out.print(url);
+                        break;
+                    default:
+                    case ANCHOR:
+                        out.print("<a " + sb + " href=\"" + url + "\">");
+                        break;
+                }
+
+                // Add any explicit body content. This is not the intended use of LinkTag, but happens to be the way it has worked previously.
+                if (m_bodyContent != null) {
+                    final String linktext = m_bodyContent.getString().trim();
+                    out.write(linktext);
+                }
+
+                //  Finish off by closing opened anchor
+                if (m_format == ANCHOR) out.print("</a>");
             }
-
-            switch( m_format ) {
-              case URL:
-                out.print( url );
-                break;
-              default:
-              case ANCHOR:
-                out.print("<a "+ sb +" href=\""+url+"\">");
-                break;
-            }
-
-            // Add any explicit body content. This is not the intended use of LinkTag, but happens to be the way it has worked previously.
-            if( m_bodyContent != null ) {
-                final String linktext = m_bodyContent.getString().trim();
-                out.write( linktext );
-            }
-
-            //  Finish off by closing opened anchor
-            if( m_format == ANCHOR ) out.print("</a>");
         } catch( final Exception e ) {
             // Yes, we want to catch all exceptions here, including RuntimeExceptions
             LOG.error( "Tag failed", e );
