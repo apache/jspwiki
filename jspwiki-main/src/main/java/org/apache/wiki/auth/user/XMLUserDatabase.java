@@ -490,7 +490,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 if( StringUtils.isEmpty( lockExpiry ) || lockExpiry.isEmpty() ) {
                     profile.setLockExpiry( null );
                 } else {
-                    profile.setLockExpiry( new Date( Long.parseLong( lockExpiry ) ) );
+                    profile.setLockExpiry( parseDate( profile, lockExpiry ) );
                 }
 
                 // Extract all the user's attributes (should only be one attributes tag, but you never know!)
