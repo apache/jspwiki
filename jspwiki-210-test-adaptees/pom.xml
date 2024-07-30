@@ -91,6 +91,7 @@
             </goals>
             <phase>package</phase>
             <configuration>
+              <skip>false</skip>
               <excludes>
                 <exclude>**/test*/**</exclude>
                 <exclude>**/*Test.class</exclude>

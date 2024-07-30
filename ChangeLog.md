@@ -17,6 +17,19 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2024-07-07  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.3-git-01_
+
+* Fix problematic `CalendarTag` <-> `WeblogPlugin` interaction
+    * Provided in [PR #350](https://github.com/apache/jspwiki/pull/350) by Ulf Dittmer, thanks! 
+
+* Fix issue with CI build not findind a test-jar
+
+* Last minute dependencies and plugin updates
+    * Tomcat to 9.0.90
+    * Maven plugins: clean to 3.4.0, dependency to 3.7.1, jar to 3.4.2, release to 3.1.0 (closes [PR #347](https://github.com/apache/jspwiki/pull/347), thanks to Dependabot), project-info-reports to 3.6.1 (closes [PR #352](https://github.com/apache/jspwiki/pull/352), thanks to Dependabot). surefire to 3.3.0 (closes [PR #348](https://github.com/apache/jspwiki/pull/348), thanks to Dependabot)
+
 **2024-06-11  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.2-git-16_
