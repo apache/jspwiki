@@ -57,6 +57,7 @@ import java.util.List;
 public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanManager {
 
     private final Engine m_engine;
+    private final String applicationName;
     private ArrayList< AdminBean > m_allBeans;
     private final MBeanServer m_mbeanServer;
 
@@ -67,6 +68,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
         m_mbeanServer = MBeanServerFactory15.getServer();
 
         m_engine = engine;
+        applicationName = m_engine.getWikiProperties().getProperty("jspwiki.applicationName").trim();
 
         if( m_mbeanServer != null ) {
             LOG.info( m_mbeanServer.getClass().getName() );
@@ -131,7 +133,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
     private ObjectName getObjectName( final AdminBean ab ) throws MalformedObjectNameException {
         final String component = getJMXTitleString( ab.getType() );
         final String title     = ab.getTitle();
-        return new ObjectName( Release.APPNAME + ":component=" + component + ",name=" + title );
+        return new ObjectName(String.format("%s:component=%s,name=%s (%s)", Release.APPNAME, component, title, applicationName));
     }
 
     /**
