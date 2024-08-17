@@ -383,8 +383,9 @@ public class BasicAttachmentProvider implements AttachmentProvider {
                                 + " if you did not touch the repository, there is a serious bug somewhere or perhaps it"
                                 + " was deleted by antivirus software, etc. " + "Attachment = " + attachment
                                 + ", decoded = " + attachmentName );
-                    } else 
+                    } else {
                         result.add( att );
+                    }
                 }
             }
         }
