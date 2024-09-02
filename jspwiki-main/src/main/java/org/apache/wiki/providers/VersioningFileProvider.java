@@ -550,7 +550,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                         Date date = Date.from(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateString)));
                         p.setLastModified(date);
                     } catch (DateTimeException e) {
-						log.error("Cannot parse last modified date of page {}", page, e);
+						LOG.error("Cannot parse last modified date of page {}", page, e);
                         ZonedDateTime dateFromPropertiesComment = extractDateFromPropertiesFileComment(page);
                         if (dateFromPropertiesComment != null) {
                             p.setLastModified(Date.from(dateFromPropertiesComment.toInstant()));
