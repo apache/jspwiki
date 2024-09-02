@@ -317,7 +317,7 @@ public interface TemplateManager extends ModuleManager {
      *  rendered.  It's thus a good idea to make this request only once during the page life cycle.
      *
      *  @param ctx The current wiki context
-     *  @param type What kind of resource should be added?
+     *  @param type What kind of a request should be added?
      *  @param resource The resource to add.
      */
     static void addResourceRequest(final Context ctx, final String type, final String resource) {
@@ -340,13 +340,13 @@ public interface TemplateManager extends ModuleManager {
             if (resources == null) {
                 resources = new Vector<>();
             }
-        String resolvedResource = resource;
-        if( StringUtils.startsWith( resource, "engine://" ) ) {
-            final String val = ctx.getEngine().getWikiProperties().getProperty( resource.substring( 9 ) ); // "engine//:".length() == 9
-            if( StringUtils.isNotBlank( val ) ) {
-                resolvedResource = val;
+            String resolvedResource = resource;
+            if( StringUtils.startsWith( resource, "engine://" ) ) {
+                final String val = ctx.getEngine().getWikiProperties().getProperty( resource.substring( 9 ) ); // "engine//:".length() == 9
+                if( StringUtils.isNotBlank( val ) ) {
+                    resolvedResource = val;
+                }
             }
-        }
 
             String resourceString = null;
             switch (type) {
@@ -354,17 +354,17 @@ public interface TemplateManager extends ModuleManager {
                     resourceString = "<script type='module' src='" + resource + "'></script>";
                     break;
                 case RESOURCE_SCRIPT:
-            resourceString = "<script type='text/javascript' src='" + resolvedResource + "'></script>";
+                    resourceString = "<script type='text/javascript' src='" + resolvedResource + "'></script>";
                     break;
                 case RESOURCE_STYLESHEET:
-            resourceString = "<link rel='stylesheet' type='text/css' href='" + resolvedResource + "' />";
+                    resourceString = "<link rel='stylesheet' type='text/css' href='" + resolvedResource + "' />";
                     break;
                 case RESOURCE_INLINECSS:
-            resourceString = "<style type='text/css'>\n" + resolvedResource + "\n</style>\n";
+                    resourceString = "<style type='text/css'>\n" + resolvedResource + "\n</style>\n";
                     break;
                 case RESOURCE_JSFUNCTION:
                 case RESOURCE_HTTPHEADER:
-            resourceString = resolvedResource;
+                    resourceString = resolvedResource;
                     break;
             }
 
