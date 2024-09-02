@@ -18,11 +18,19 @@
  */
 package org.apache.wiki.providers;
 
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Properties;
+import java.util.TreeSet;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
+import net.sf.ehcache.event.CacheEventListenerAdapter;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -37,14 +45,8 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
-
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-import java.util.TreeSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -91,7 +93,7 @@ public class CachingProvider implements PageProvider {
 
     // FIXME: This MUST be cached somehow.
 
-    private boolean          m_gotall;
+    private volatile boolean          m_gotall;
 
     // The default settings of the caches, if you want something else, provide an "ehcache.xml" file
     // Please note that JSPWiki ships with a default "ehcache.xml" in the classpath
@@ -122,7 +124,13 @@ public class CachingProvider implements PageProvider {
             m_cache = m_cacheManager.getCache(cacheName);
         } else {
             log.info("cache with name " + cacheName +  " not found in ehcache.xml, creating it with defaults.");
-            m_cache = new Cache(cacheName, DEFAULT_CACHECAPACITY, false, false, DEFAULT_CACHETIMETOLIVESECONDS, DEFAULT_CACHETIMETOIDLESECONDS);
+            m_cache = new Cache(cacheName, DEFAULT_CACHECAPACITY, false, false, 20, 20);
+            m_cache.getCacheEventNotificationService().registerListener(new CacheEventListenerAdapter() {
+                @Override
+                public void notifyElementExpired(Ehcache cache, Element element) {
+                    m_gotall = false; // signal that the cache no longer contains all elements...
+                }
+            });
             m_cacheManager.addCache(m_cache);
         }
 
