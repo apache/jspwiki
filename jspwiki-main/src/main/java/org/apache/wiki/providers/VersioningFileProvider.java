@@ -42,6 +42,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.DateTimeException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -545,8 +546,18 @@ public class VersioningFileProvider extends AbstractFileProvider {
 
                 String dateString = props.getProperty(getDatePropertyKey(realVersion));
                 if ( dateString != null ) {
-                    Date date = Date.from(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateString)));
-                    p.setLastModified(date);
+                    try {
+                        Date date = Date.from(Instant.from(DateTimeFormatter.ISO_DATE_TIME.parse(dateString)));
+                        p.setLastModified(date);
+                    } catch (DateTimeException e) {
+						log.error("Cannot parse last modified date of page {}", page, e);
+                        ZonedDateTime dateFromPropertiesComment = extractDateFromPropertiesFileComment(page);
+                        if (dateFromPropertiesComment != null) {
+                            p.setLastModified(Date.from(dateFromPropertiesComment.toInstant()));
+                        } else {
+                            p.setLastModified(new Date());
+                        }
+                    }
                 }
 				// fallback
 				else if (realVersion == 1) {

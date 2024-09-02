@@ -994,8 +994,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                             addElement( outlinkImage() );
                         }
                     } else {
-                        final Object[] args = { escapeHTMLEntities( extWiki ) };
-                        addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.nointerwikiref" ), args ) ) );
+                        makeLink( READ, linkref, linktext, null, link.getAttributes() );
                     }
                 }
             } else if( linkref.startsWith( "#" ) ) {

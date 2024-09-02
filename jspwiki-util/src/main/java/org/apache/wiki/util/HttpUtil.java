@@ -111,6 +111,10 @@ public final class HttpUtil {
      *  @return the result of the check
      */
     public static boolean checkFor304( final HttpServletRequest req, final String pageName, final Date lastModified ) {
+        //if there is no date passed we assume that it has changed!
+        if(lastModified==null){
+            return false;
+        }
         // We'll do some handling for CONDITIONAL GET (and return a 304). If the client has set the following headers, do not try for a 304.
         //    pragma: no-cache
         //    cache-control: no-cache

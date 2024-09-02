@@ -98,6 +98,11 @@
             log.info("Page rename request failed because new page name is already in use");
             wikiSession.addMessage("rename", MessageFormat.format(rb.getString("rename.exists"),renameTo));
         }
+        else if (e.getMessage().startsWith("Page name contains prohibited characters "))
+        {
+            log.info(e.getMessage());
+            wikiSession.addMessage("rename", e.getMessage());
+        }
         else
         {
             wikiSession.addMessage("rename",  MessageFormat.format(rb.getString("rename.unknownerror"),e.toString()));

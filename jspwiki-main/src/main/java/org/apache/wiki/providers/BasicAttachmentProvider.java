@@ -191,6 +191,19 @@ public class BasicAttachmentProvider implements AttachmentProvider {
 				if (oldf.exists()) {
 					f = oldf;
 				}
+				else {
+					//case insensitive search, relevant for certain OS
+					File[] files = findPageDir(att.getParentName()).listFiles();
+					if (files == null) files = new File[0];
+					for (File file : files) {
+						if (file.getName().equalsIgnoreCase(mangleName(att.getFileName() + ATTDIR_EXTENSION))
+								|| file.getName().equalsIgnoreCase(mangleName(att.getFileName()))
+								|| file.getName().equalsIgnoreCase(att.getFileName())) {
+							f = file;
+							break;
+						}
+					}
+				}
 			}
 		}
 

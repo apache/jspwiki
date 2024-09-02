@@ -75,6 +75,7 @@ public class DefaultPageRenamer implements PageRenamer {
 		if (renameTo == null || renameTo.isEmpty()) {
 			throw new WikiException("To name may not be null or empty");
 		}
+		WikiPageUtils.checkIllegalCharacters(renameTo);
 
 		//  Clean up the "to" -name so that it does not contain anything illegal
 		final String renameToClean = MarkupParser.cleanLink(renameTo.trim());
