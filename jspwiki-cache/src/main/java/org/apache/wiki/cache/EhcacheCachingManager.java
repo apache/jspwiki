@@ -21,6 +21,7 @@ package org.apache.wiki.cache;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.event.CacheEventListener;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -159,6 +160,16 @@ public class EhcacheCachingManager implements CachingManager, Initializable {
 			cacheMap.get(cacheName).remove(key);
 		}
 	}
+
+	@Override
+	public boolean registerListener(final String cacheName, final CacheEventListener listener) {
+		if (enabled(cacheName)) {
+			return cacheMap.get(cacheName).getCacheEventNotificationService().registerListener(listener);
+		}
+		return false;
+	}
+
+
 
 	boolean keyAndCacheAreNotNull(final String cacheName, final Serializable key) {
 		return enabled(cacheName) && key != null;

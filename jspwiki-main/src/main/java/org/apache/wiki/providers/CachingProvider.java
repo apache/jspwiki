@@ -18,6 +18,9 @@
  */
 package org.apache.wiki.providers;
 
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
+import net.sf.ehcache.event.CacheEventListenerAdapter;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
@@ -67,7 +70,7 @@ public class CachingProvider implements PageProvider {
     private PageProvider provider;
     private Engine engine;
 
-    private boolean allRequested;
+    private volatile boolean allRequested;
     private final AtomicLong pages = new AtomicLong( 0L );
 
     /**
@@ -80,6 +83,12 @@ public class CachingProvider implements PageProvider {
         // engine is used for getting the search engine
         this.engine = engine;
         cachingManager = this.engine.getManager( CachingManager.class );
+        cachingManager.registerListener(  CachingManager.CACHE_PAGES, new CacheEventListenerAdapter() {
+            @Override
+            public void notifyElementExpired(Ehcache cache, Element element) {
+                allRequested = false; // signal that the cache no longer contains all elements...
+            }
+        });
 
         //  Find and initialize real provider.
         final String classname;
