@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
-    <version>2.12.4-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -34,44 +34,50 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-bootstrap</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-main</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-markdown</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-210-adapters</artifactId>
-      <version>${project.version}</version>
     </dependency>
     
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-kendra-searchprovider</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
+	<dependency>
+		<groupId>jakarta.servlet</groupId>
+		<artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+	</dependency>
 
-    <dependency>
-      <groupId>javax.servlet.jsp</groupId>
-      <artifactId>javax.servlet.jsp-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
+<dependency>
+    <groupId>jakarta.servlet.jsp</groupId>
+    <artifactId>jakarta.servlet.jsp-api</artifactId>
+    <scope>provided</scope>
+</dependency>
+
+<dependency>
+    <groupId>jakarta.servlet.jsp.jstl</groupId>
+    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.glassfish.web</groupId>
+    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+</dependency>
+
+
   </dependencies>
 
   <build>
@@ -80,12 +86,56 @@
       <plugin>
         <groupId>io.leonard.maven.plugins</groupId>
         <artifactId>jspc-maven-plugin</artifactId>
+   <version>4.2.0</version> 
+
         <dependencies>
+        
+        
           <dependency> <!-- so jspwiki custom taglibs can be seen by the jsp compiler -->
             <groupId>${project.groupId}</groupId>
             <artifactId>jspwiki-main</artifactId>
             <version>${project.version}</version>
           </dependency>
+          <dependency> 
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jspwiki-api</artifactId>
+            <version>${project.version}</version>
+          </dependency>    
+          <dependency> 
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jspwiki-http</artifactId>
+            <version>${project.version}</version>
+          </dependency>    
+
+
+		<dependency>
+		    <groupId>jakarta.servlet.jsp.jstl</groupId>
+		    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+		    <version>3.0.2</version>
+		</dependency>
+		
+		
+		<dependency>
+		    <groupId>org.glassfish.web</groupId>
+		    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+		    <version>3.0.1</version>
+		</dependency>
+		
+
+
+          <dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>2.10.9.2</version>
+          </dependency>
+          
+      <dependency>
+        <groupId>commons-httpclient</groupId>
+        <artifactId>commons-httpclient</artifactId>
+        <version>3.1</version>
+      </dependency>
+          
+                
         </dependencies>
       </plugin>
 

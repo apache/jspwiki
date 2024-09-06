@@ -21,7 +21,7 @@ package org.apache.wiki.api.spi;
 import org.apache.wiki.util.PropertyReader;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.nio.file.ProviderNotFoundException;
 import java.util.Properties;
 import java.util.ServiceLoader;

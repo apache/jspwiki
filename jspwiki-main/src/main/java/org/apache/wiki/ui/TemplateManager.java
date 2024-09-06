@@ -26,8 +26,8 @@ import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.ClassUtil;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.jstl.fmt.LocaleSupport;
+import jakarta.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.jstl.fmt.LocaleSupport;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;

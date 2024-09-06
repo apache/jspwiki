@@ -29,7 +29,7 @@ import org.apache.wiki.ui.admin.AdminBean;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 
 import javax.management.NotCompliantMBeanException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 

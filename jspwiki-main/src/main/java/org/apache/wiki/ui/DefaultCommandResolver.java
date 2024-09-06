@@ -33,7 +33,7 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

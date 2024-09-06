@@ -24,8 +24,8 @@ import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.http.HttpSession;
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedList;

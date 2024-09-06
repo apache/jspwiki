@@ -18,6 +18,12 @@
  */
 package org.apache.wiki.bootstrap;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -27,13 +33,9 @@ import org.apache.logging.log4j.core.config.properties.PropertiesConfigurationFa
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
+
+import jakarta.servlet.ServletContextEvent;
+import jakarta.servlet.ServletContextListener;
 
 
 public class WikiBootstrapServletContextListener implements ServletContextListener {

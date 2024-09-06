@@ -22,7 +22,7 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.modules.ModuleManager;
 
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.PageContext;
 
 
 /**
