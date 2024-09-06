@@ -23,7 +23,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 import javax.net.ssl.SSLHandshakeException;
 import java.net.ConnectException;
 import java.util.Properties;

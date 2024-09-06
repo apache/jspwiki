@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
-    <version>2.12.4-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -33,37 +33,31 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-util</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-event</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-cache</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-http</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-wysiwyg</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>
@@ -71,9 +65,15 @@
       <artifactId>gson</artifactId>
     </dependency>
 
+<!--
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
+    </dependency>
+-->
+    <dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-fileupload2-javax</artifactId>
     </dependency>
 
     <dependency>
@@ -84,11 +84,6 @@
     <dependency>
       <groupId>net.sourceforge</groupId>
       <artifactId>sandler</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
     </dependency>
 
     <dependency>
@@ -171,17 +166,32 @@
       <artifactId>xmlrpc</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
 
-    <dependency>
-      <groupId>javax.servlet.jsp</groupId>
-      <artifactId>javax.servlet.jsp-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
+	<dependency>
+		<groupId>jakarta.servlet</groupId>
+		<artifactId>jakarta.servlet-api</artifactId>
+		<scope>provided</scope>
+	</dependency>
+
+<dependency>
+    <groupId>jakarta.servlet.jsp</groupId>
+    <artifactId>jakarta.servlet.jsp-api</artifactId>
+    <scope>provided</scope>
+</dependency>
+
+<dependency>
+    <groupId>jakarta.servlet.jsp.jstl</groupId>
+    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+        <scope>provided</scope>
+</dependency>
+
+
+<dependency>
+    <groupId>jakarta.mail</groupId>
+    <artifactId>jakarta.mail-api</artifactId>
+        <scope>provided</scope>
+</dependency>
+
 
     <dependency>
       <groupId>com.github.jbellis</groupId>

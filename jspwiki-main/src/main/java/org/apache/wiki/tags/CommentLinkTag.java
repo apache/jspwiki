@@ -22,7 +22,7 @@ import org.apache.wiki.InternalWikiException;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Page;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.IOException;
 
 

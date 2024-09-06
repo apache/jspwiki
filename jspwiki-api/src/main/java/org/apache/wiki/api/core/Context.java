@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.api.core;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.PageContext;
 import java.security.Principal;
 
 

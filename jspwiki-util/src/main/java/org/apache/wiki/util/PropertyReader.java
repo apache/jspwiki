@@ -18,17 +18,26 @@
  */
 package org.apache.wiki.util;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.AbstractMap;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletContext;
-import java.io.*;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.nio.file.Files;
+import jakarta.servlet.ServletContext;
 
 
 /**
@@ -438,7 +447,7 @@ public final class PropertyReader {
     /**
      * This method sets the JSPWiki working directory (jspwiki.workDir). It first checks if this property
      * is already set. If it isn't, it attempts to use the servlet container's temporary directory
-     * (javax.servlet.context.tempdir). If that is also unavailable, it defaults to the system's temporary
+     * (jakarta.servlet.context.tempdir). If that is also unavailable, it defaults to the system's temporary
      * directory (java.io.tmpdir).
      * <p>
      * This method is package-private to allow for unit testing.
@@ -450,7 +459,7 @@ public final class PropertyReader {
     static void setWorkDir( final ServletContext servletContext, final Properties properties ) {
         final String workDir = TextUtil.getStringProperty(properties, "jspwiki.workDir", null);
         if (workDir == null) {
-            final File tempDir = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
+            final File tempDir = (File) servletContext.getAttribute("jakarta.servlet.context.tempdir");
             if (tempDir != null) {
                 properties.setProperty("jspwiki.workDir", tempDir.getAbsolutePath());
                 LOG.info("Setting jspwiki.workDir to ServletContext's temporary directory: {}", tempDir.getAbsolutePath());

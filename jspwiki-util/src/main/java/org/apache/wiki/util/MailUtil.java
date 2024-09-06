@@ -21,15 +21,15 @@ package org.apache.wiki.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.mail.Authenticator;
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -146,7 +146,7 @@ import java.util.Set;
  * <pre>&lt;resource-ref&gt;
  *   &lt;description>Resource reference to a container-managed JNDI JavaMail factory for sending e-mails.&lt;/description&gt;
  *   &lt;res-ref-name>mail/Session&lt;/res-ref-name&gt;
- *   &lt;res-type>javax.mail.Session&lt;/res-type&gt;
+ *   &lt;res-type>jakarta.mail.Session&lt;/res-type&gt;
  *   &lt;res-auth>Container&lt;/res-auth&gt;
  * &lt;/resource-ref&gt;</pre>
  * <p>To configure your container's resource factory, follow the directions supplied by
@@ -158,7 +158,7 @@ import java.util.Set;
  * <pre>&lt;Context ...&gt;
  * ...
  * &lt;Resource name="mail/Session" auth="Container"
- *           type="javax.mail.Session"
+ *           type="jakarta.mail.Session"
  *           mail.smtp.host="127.0.0.1"/&gt;
  *           mail.smtp.port="25"/&gt;
  *           mail.smtp.account="your-account-name"/&gt;
@@ -175,7 +175,7 @@ import java.util.Set;
  * <code><var>$CATALINA_HOME</var>/conf/server.xml</code> creates a global resource:</p>
  * <pre>&lt;GlobalNamingResources&gt;
  *   &lt;Resource name="mail/Session" auth="Container"
- *             type="javax.mail.Session"
+ *             type="jakarta.mail.Session"
  *             ...
  *             mail.smtp.starttls.enable="true"/&gt;
  * &lt;/GlobalNamingResources&gt;</pre>
@@ -264,7 +264,7 @@ public final class MailUtil {
      * See the top-level JavaDoc for this class for a description of
      * required properties and their default values.</p>
      * <p>The e-mail address used for the <code>to</code> parameter must be in
-     * RFC822 format, as described in the JavaDoc for {@link javax.mail.internet.InternetAddress}
+     * RFC822 format, as described in the JavaDoc for {@link jakarta.mail.internet.InternetAddress}
      * and more fully at
      * <a href="http://www.freesoft.org/CIE/RFC/822/index.htm">http://www.freesoft.org/CIE/RFC/822/index.htm</a>.
      * In other words, e-mail addresses should look like this:</p>
@@ -365,7 +365,7 @@ public final class MailUtil {
      * Returns a stand-alone JavaMail Session by looking up the correct mail account, password, host and others from a
      * supplied set of properties. If the JavaMail property {@value #PROP_MAIL_ACCOUNT} is set to a value that is
      * non-<code>null</code> and of non-zero length, the Session will be initialized with an instance of
-     * {@link javax.mail.Authenticator}.
+     * {@link jakarta.mail.Authenticator}.
      *
      * @param props the properties that contain mail session properties.
      * @return the initialized JavaMail Session.
@@ -434,7 +434,7 @@ public final class MailUtil {
     }
 
     /**
-     * Simple {@link javax.mail.Authenticator} subclass that authenticates a user to
+     * Simple {@link jakarta.mail.Authenticator} subclass that authenticates a user to
      * an SMTP server.
      */
     protected static class SmtpAuthenticator extends Authenticator {

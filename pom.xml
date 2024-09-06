@@ -29,7 +29,7 @@
   <artifactId>jspwiki-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <name>Apache JSPWiki</name>
-  <version>2.12.4-SNAPSHOT</version>
+  <version>3.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Apache JSPWiki is a leading open source WikiWiki engine, feature-rich
     and built around standard JEE components (Java, servlets, JSP).</description>
@@ -77,8 +77,8 @@
     <selenide.version>6.19.0</selenide.version>
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
-    <tika.version>3.2.1</tika.version>
-    <tomcat.version>9.0.107</tomcat.version>
+    <tika.version>3.2.3</tika.version>
+    <tomcat.version>10.1.46</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
     <xstream.version>1.4.21</xstream.version>
@@ -86,12 +86,12 @@
     <plugin.antrun.version>3.1.0</plugin.antrun.version>
     <plugin.assembly.version>3.7.1</plugin.assembly.version>
     <plugin.clean.version>3.5.0</plugin.clean.version>
-    <plugin.compiler.version>3.14.0</plugin.compiler.version>
+    <plugin.compiler.version>3.14.1</plugin.compiler.version>
     <plugin.dependency.version>3.8.1</plugin.dependency.version>
     <plugin.enforcer.version>3.6.1</plugin.enforcer.version>
     <plugin.install.version>3.1.4</plugin.install.version>
     <plugin.jar.version>3.4.2</plugin.jar.version>
-    <plugin.javadoc.version>3.11.1</plugin.javadoc.version>
+    <plugin.javadoc.version>3.12.0</plugin.javadoc.version>
     <plugin.jxr.version>3.6.0</plugin.jxr.version>
     <plugin.project-info-reports.version>3.9.0</plugin.project-info-reports.version>
     <plugin.release.version>3.1.1</plugin.release.version>
@@ -138,7 +138,7 @@
     <module>jspwiki-markdown</module>
     <module>jspwiki-tika-searchprovider</module>
     <module>jspwiki-kendra-searchprovider</module>
-    <module>jspwiki-210-test-adaptees</module>
+<!--    <module>jspwiki-210-test-adaptees</module> -->
     <module>jspwiki-210-adapters</module>
     <module>jspwiki-war</module>
     <module>jspwiki-portable</module>
@@ -147,7 +147,102 @@
   </modules>
 
   <dependencyManagement> <!-- defines what configuration is going to be used if, and only if, the dependency is used -->
-    <dependencies>       <!-- ordered alphabetically by scope:groupId:artifactId                                     -->
+  
+     <dependencies>   
+     
+       <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>    
+  
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-main</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-event</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-cache</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-http</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-wysiwyg</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+   <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-markdown</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+   <dependency>
+      <groupId>${project.groupId}</groupId>
+  	 <artifactId>jspwiki-kendra-searchprovider</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-main</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-210-adapters</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-210-adapters</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+    </dependency>
+
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-210-test-adaptees</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-bootstrap</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+  
+     <!-- ordered alphabetically by scope:groupId:artifactId                                     -->
       <!-- compile dependencies -->
       <dependency>
         <groupId>com.amazonaws</groupId>
@@ -167,11 +262,13 @@
         <version>${javax-mail.version}</version>
       </dependency>
 
-      <dependency>
-        <groupId>com.sun.mail</groupId>
-        <artifactId>javax.mail</artifactId>
-        <version>${javax-mail.version}</version>
-      </dependency>
+
+<dependency>
+    <groupId>jakarta.mail</groupId>
+    <artifactId>jakarta.mail-api</artifactId>
+    <version>2.1.3</version>
+</dependency>
+
 
       <dependency>
         <groupId>com.google.code.gson</groupId>
@@ -214,12 +311,19 @@
         <artifactId>flexmark-ext-toc</artifactId>
         <version>${flexmark.version}</version>
       </dependency>
-
+<!--
       <dependency>
         <groupId>commons-fileupload</groupId>
         <artifactId>commons-fileupload</artifactId>
         <version>${commons-fileupload.version}</version>
       </dependency>
+-->
+<dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-fileupload2-javax</artifactId>
+    <version>2.0.0-M2</version>
+</dependency>
+
 
       <dependency>
         <groupId>commons-httpclient</groupId>
@@ -273,12 +377,6 @@
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-slf4j-impl</artifactId>
         <version>${log4j2.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>jstl</artifactId>
-        <version>${javax-jstl.version}</version>
       </dependency>
 
       <dependency>
@@ -402,11 +500,13 @@
       </dependency>
 
       <!-- test dependencies -->
-      <dependency>
-        <groupId>net.sourceforge.stripes</groupId>
-        <artifactId>stripes</artifactId>
-        <version>${stripes.version}</version>
-      </dependency>
+
+<dependency>
+    <groupId>net.sourceforge.stripes</groupId>
+    <artifactId>stripes</artifactId>
+    <version>1.6.0</version>
+</dependency>
+
 
       <dependency>
         <groupId>com.github.jbellis</groupId>
@@ -455,18 +555,35 @@
         <scope>import</scope>
       </dependency>
 
-      <!-- provided dependencies -->
-      <dependency>
-        <groupId>javax.servlet.jsp</groupId>
-        <artifactId>javax.servlet.jsp-api</artifactId>
-        <version>${javax-jsp-api.version}</version>
-      </dependency>
 
-      <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>javax.servlet-api</artifactId>
-        <version>${javax-servlet-api.version}</version>
-      </dependency>
+
+<dependency>
+    <groupId>jakarta.servlet</groupId>
+    <artifactId>jakarta.servlet-api</artifactId>
+    <version>6.0.0</version>
+</dependency>
+
+<dependency>
+    <groupId>jakarta.servlet.jsp</groupId>
+    <artifactId>jakarta.servlet.jsp-api</artifactId>
+    <version>4.0.0</version>
+</dependency>
+
+<dependency>
+    <groupId>jakarta.servlet.jsp.jstl</groupId>
+    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+    <version>3.0.2</version>
+</dependency>
+
+
+<dependency>
+    <groupId>org.glassfish.web</groupId>
+    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+    <version>3.0.1</version>
+</dependency>
+
+
+
     </dependencies>
   </dependencyManagement>
 

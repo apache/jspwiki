@@ -22,8 +22,8 @@ package org.apache.wiki.tags;
 
 import org.apache.wiki.filters.SpamFilter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.PageContext;
 
 /**
  * Provides hidden input fields which are checked by the {@code SpamFilter}.
