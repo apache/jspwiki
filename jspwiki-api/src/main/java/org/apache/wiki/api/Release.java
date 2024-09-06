@@ -53,13 +53,13 @@ public final class Release {
     private static final String    POSTFIX       = "-git-";
 
     /** The JSPWiki major version. */
-    public static final int        VERSION       = 2;
+    public static final int        VERSION       = 3;
 
     /** The JSPWiki revision. */
-    public static final int        REVISION      = 12;
+    public static final int        REVISION      = 0;
 
     /** The minor revision.  */
-    public static final int        MINORREVISION = 3;
+    public static final int        MINORREVISION = 0;
 
     /** The build number/identifier.  This is a String as opposed to an integer, just so that people can add other identifiers to it.
      * The build number is incremented every time a committer checks in code, and reset when a release is made.

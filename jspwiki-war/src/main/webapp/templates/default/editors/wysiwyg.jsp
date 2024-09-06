@@ -30,9 +30,9 @@
 <%@ page import="org.apache.wiki.ui.*" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.variables.VariableManager" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <wiki:RequestResource type="stylesheet" resource="templates/default/haddock-wysiwyg.css" />

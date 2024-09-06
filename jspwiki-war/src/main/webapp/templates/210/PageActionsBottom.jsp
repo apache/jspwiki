@@ -19,8 +19,8 @@
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%

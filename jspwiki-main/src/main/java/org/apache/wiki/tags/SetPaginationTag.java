@@ -20,7 +20,7 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 
-import javax.servlet.jsp.jstl.fmt.LocaleSupport;
+import jakarta.servlet.jsp.jstl.fmt.LocaleSupport;
 
 import org.apache.wiki.util.TextUtil;
 

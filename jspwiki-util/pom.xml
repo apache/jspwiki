@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
-    <version>2.12.3-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -35,21 +35,24 @@
       <artifactId>logging-mailhandler</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>com.sun.mail</groupId>
-      <artifactId>javax.mail</artifactId>
-    </dependency>
+
+
+<dependency>
+    <groupId>jakarta.mail</groupId>
+    <artifactId>jakarta.mail-api</artifactId>
+</dependency>
+
 
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
+	<dependency>
+		<groupId>jakarta.servlet</groupId>
+		<artifactId>jakarta.servlet-api</artifactId>
+		<scope>provided</scope>
+	</dependency>
 
     <dependency>
       <groupId>jaxen</groupId>
@@ -69,7 +72,7 @@
     <dependency>
       <groupId>net.sourceforge.stripes</groupId>
       <artifactId>stripes</artifactId>
-      <scope>test</scope>
+      <!--<scope>test</scope> -->
     </dependency>
 
     <dependency>

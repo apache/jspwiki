@@ -21,8 +21,8 @@ package org.apache.wiki.ajax;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
 
 /**
  * Helpful utilities for the Ajax functions.

@@ -25,7 +25,7 @@ import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
 import java.util.Properties;
 

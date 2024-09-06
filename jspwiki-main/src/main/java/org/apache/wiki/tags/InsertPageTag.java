@@ -26,7 +26,7 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.IOException;
 
 /**

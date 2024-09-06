@@ -9,3 +9,5 @@ nb-configuration.xml
 .checkstyle
 **/node_modules/*
 .vscode
+src.old
+

@@ -26,7 +26,7 @@
 <%@ page import="org.apache.wiki.auth.permissions.*" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%! 
   public void jspInit()
   {
