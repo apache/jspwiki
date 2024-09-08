@@ -65,16 +65,15 @@
       <artifactId>gson</artifactId>
     </dependency>
 
-<!--
-    <dependency>
-      <groupId>commons-fileupload</groupId>
-      <artifactId>commons-fileupload</artifactId>
-    </dependency>
--->
     <dependency>
     <groupId>org.apache.commons</groupId>
     <artifactId>commons-fileupload2-javax</artifactId>
     </dependency>
+    
+    <dependency>
+    <groupId>org.apache.commons</groupId>
+    <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
+	</dependency>
 
     <dependency>
       <groupId>net.sourceforge</groupId>
