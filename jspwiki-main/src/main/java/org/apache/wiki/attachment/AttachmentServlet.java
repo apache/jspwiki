@@ -36,6 +36,7 @@ import org.apache.commons.fileupload2.core.FileItem;
 import org.apache.commons.fileupload2.core.FileItemFactory;
 import org.apache.commons.fileupload2.core.FileUploadException;
 import org.apache.commons.fileupload2.core.ProgressListener;
+import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletFileUpload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
@@ -385,14 +386,14 @@ public class AttachmentServlet extends HttpServlet {
         final String errorPage = m_engine.getURL( ContextEnum.WIKI_ERROR.getRequestContext(), "", null ); // If something bad happened, Upload should be able to take care of most stuff
         String nextPage = errorPage;
         final String progressId = req.getParameter( "progressid" );
-/*
+
         // Check that we have a file upload request
-        if( !ServletFileUpload.isMultipartContent(req) ) {
+        if( !JakartaServletFileUpload.isMultipartContent(req) ) {
             throw new RedirectException( "Not a file upload", errorPage );
         }
 
         try {
-            final FileItemFactory factory = new DiskFileItemFactory();
+            final FileItemFactory factory = DiskFileItemFactory.builder().get();
 
             // Create the context _before_ Multipart operations, otherwise strict servlet containers may fail when setting encoding.
             final Context context = Wiki.context().create( m_engine, req, ContextEnum.PAGE_ATTACH.getRequestContext() );
@@ -400,8 +401,8 @@ public class AttachmentServlet extends HttpServlet {
 
             m_engine.getManager( ProgressManager.class ).startProgress( pl, progressId );
 
-            final ServletFileUpload upload = new ServletFileUpload( factory );
-            upload.setHeaderEncoding( StandardCharsets.UTF_8.name() );
+            final JakartaServletFileUpload upload = new JakartaServletFileUpload( factory );
+            upload.setHeaderCharset(StandardCharsets.UTF_8);
             if( !context.hasAdminPermissions() ) {
                 upload.setFileSizeMax( m_maxSize );
             }
@@ -418,20 +419,20 @@ public class AttachmentServlet extends HttpServlet {
                     switch( item.getFieldName() ) {
                     case "page":
                         // FIXME: Kludge alert.  We must end up with the parent page name, if this is an upload of a new revision
-                        wikipage = item.getString( StandardCharsets.UTF_8.name() );
+                        wikipage = item.getString( StandardCharsets.UTF_8);
                         final int x = wikipage.indexOf( "/" );
                         if( x != -1 ) {
                             wikipage = wikipage.substring( 0, x );
                         }
                         break;
                     case "changenote":
-                        changeNote = item.getString( StandardCharsets.UTF_8.name() );
+                        changeNote = item.getString( StandardCharsets.UTF_8 );
                         if( changeNote != null ) {
                             changeNote = TextUtil.replaceEntities( changeNote );
                         }
                         break;
                     case "nextpage":
-                        nextPage = validateNextPage( item.getString( StandardCharsets.UTF_8.name() ), errorPage );
+                        nextPage = validateNextPage( item.getString( StandardCharsets.UTF_8 ), errorPage );
                         break;
                     }
                 } else {
@@ -457,26 +458,24 @@ public class AttachmentServlet extends HttpServlet {
             LOG.warn( msg + " (attachment: " + attName + ")", e );
 
             throw new IOException( msg );
-        } catch( final IOException e ) {
-            // Show the submit page again, but with a bit more intimidating output.
-            msg = "Upload failure: " + e.getMessage();
-            LOG.warn( msg + " (attachment: " + attName + ")", e );
-
-            throw e;
         } catch( final FileUploadException e ) {
             // Show the submit page again, but with a bit more intimidating output.
             msg = "Upload failure: " + e.getMessage();
             LOG.warn( msg + " (attachment: " + attName + ")", e );
 
             throw new IOException( msg, e );
+        } catch( final IOException e ) {
+            // Show the submit page again, but with a bit more intimidating output.
+            msg = "Upload failure: " + e.getMessage();
+            LOG.warn( msg + " (attachment: " + attName + ")", e );
+
+            throw e;
         } finally {
             m_engine.getManager( ProgressManager.class ).stopProgress( progressId );
             // FIXME: In case of exceptions should absolutely remove the uploaded file.
         }
 
         return nextPage;
-        */
-        return null;
     }
 
     /**
