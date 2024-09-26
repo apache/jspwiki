@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.attachment;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
@@ -102,7 +103,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
         }
 
         final String forceDownload = TextUtil.getStringProperty( props, PROP_FORCEDOWNLOAD, null );
-        if( forceDownload != null && !forceDownload.isEmpty() ) {
+        if( StringUtils.isNotEmpty( forceDownload ) ) {
             m_forceDownloadPatterns = forceDownload.toLowerCase().split( "\\s" );
         } else {
             m_forceDownloadPatterns = new String[ 0 ];
@@ -210,7 +211,7 @@ public class DefaultAttachmentManager implements AttachmentManager {
         }
 
         for( final String forceDownloadPattern : m_forceDownloadPatterns ) {
-            if( name.endsWith( forceDownloadPattern ) && !forceDownloadPattern.isEmpty() ) {
+            if( ( name.endsWith( forceDownloadPattern ) && !forceDownloadPattern.isEmpty() ) || "*".equals( forceDownloadPattern ) ) {
                 return true;
             }
         }
