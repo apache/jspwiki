@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>32</version>
+    <version>33</version>
   </parent>
 
   <groupId>org.apache.jspwiki</groupId>
@@ -41,7 +41,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.outputTimestamp>2024-06-12T19:47:50Z</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
     <jdk.version>11</jdk.version>
-    <jdk.javadoc.doclet.version>2.1.2</jdk.javadoc.doclet.version>
+    <jdk.javadoc.doclet.version>2.2.0</jdk.javadoc.doclet.version>
     <maven.version>3.5</maven.version>
 
     <akismet-java.version>1.02</akismet-java.version>
@@ -51,7 +51,7 @@
     <commons-fileupload.version>1.5</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.16.1</commons-io.version>
-    <commons-lang.version>3.14.0</commons-lang.version>
+    <commons-lang.version>3.17.0</commons-lang.version>
     <commons-text.version>1.12.0</commons-text.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.64.8</flexmark.version>
@@ -67,9 +67,9 @@
     <jdom2.version>2.0.6</jdom2.version>
     <jetty.version>9.4.54.v20240208</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
-    <junit.version>5.10.2</junit.version>
-    <log4j2.version>2.23.1</log4j2.version>
-    <lucene.version>9.11.0</lucene.version>
+    <junit.version>5.11.1</junit.version>
+    <log4j2.version>2.24.0</log4j2.version>
+    <lucene.version>9.11.1</lucene.version>
     <mockito.version>5.12.0</mockito.version>
     <nekohtml.version>2.1.2</nekohtml.version>
     <oro.version>2.0.8</oro.version>
@@ -78,7 +78,7 @@
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>2.9.2</tika.version>
-    <tomcat.version>9.0.90</tomcat.version>
+    <tomcat.version>9.0.95</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
@@ -86,25 +86,25 @@
     <plugin.assembly.version>3.7.1</plugin.assembly.version>
     <plugin.clean.version>3.4.0</plugin.clean.version>
     <plugin.compiler.version>3.13.0</plugin.compiler.version>
-    <plugin.dependency.version>3.7.1</plugin.dependency.version>
+    <plugin.dependency.version>3.8.0</plugin.dependency.version>
     <plugin.enforcer.version>3.5.0</plugin.enforcer.version>
-    <plugin.install.version>3.1.2</plugin.install.version>
+    <plugin.install.version>3.1.3</plugin.install.version>
     <plugin.jar.version>3.4.2</plugin.jar.version>
-    <plugin.javadoc.version>3.7.0</plugin.javadoc.version>
-    <plugin.jxr.version>3.4.0</plugin.jxr.version>
-    <plugin.project-info-reports.version>3.6.1</plugin.project-info-reports.version>
-    <plugin.release.version>3.1.0</plugin.release.version>
+    <plugin.javadoc.version>3.10.0</plugin.javadoc.version>
+    <plugin.jxr.version>3.5.0</plugin.jxr.version>
+    <plugin.project-info-reports.version>3.7.0</plugin.project-info-reports.version>
+    <plugin.release.version>3.1.1</plugin.release.version>
     <plugin.remote-resources.version>3.2.0</plugin.remote-resources.version>
     <plugin.resources.version>3.3.1</plugin.resources.version>
     <plugin.source.version>3.3.1</plugin.source.version>
-    <plugin.surefire.version>3.3.0</plugin.surefire.version>
-    <plugin.surefire.junit5-tree-reporter.version>1.2.1</plugin.surefire.junit5-tree-reporter.version>
+    <plugin.surefire.version>3.5.0</plugin.surefire.version>
+    <plugin.surefire.junit5-tree-reporter.version>1.3.0</plugin.surefire.junit5-tree-reporter.version>
     <plugin.war.version>3.4.0</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>3.2.2</plugin.jspc.version>
     <plugin.checksum.version>1.11</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
-    <plugin.cargo.version>1.10.13</plugin.cargo.version>
+    <plugin.cargo.version>1.10.15</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
     <plugin.cobertura.version>2.7</plugin.cobertura.version>
     <plugin.cyclonedx.version>2.8.0</plugin.cyclonedx.version>
