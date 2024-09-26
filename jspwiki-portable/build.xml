@@ -225,7 +225,7 @@
     <target name="woas:download-launch4j-for-win" description="Download the Win32 launch4j distribution">
         <delete dir="${jspwiki.launch4j.install.dir}"/>
         <mkdir dir="${jspwiki.launch4j.install.dir}"/>
-        <get src="https://netix.dl.sourceforge.net/project/launch4j/launch4j-3/3.14/launch4j-3.14-win32.zip" dest="${jspwiki.launch4j.install.dir}"/>
+        <get src="https://altushost-swe.dl.sourceforge.net/project/launch4j/launch4j-3/3.14/launch4j-3.14-win32.zip?viasf=1" dest="${jspwiki.launch4j.install.dir}"/>
         <unzip src="${jspwiki.launch4j.install.dir}/launch4j-3.14-win32.zip" dest="${jspwiki.launch4j.install.dir}/.."/>
         <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.14-win32.zip"/>
     </target>
@@ -233,7 +233,7 @@
     <target name="woas:download-launch4j-for-mac" description="Download the Mac OS X launch4j distribution">
         <delete dir="${jspwiki.launch4j.install.dir}"/>
         <mkdir dir="${jspwiki.launch4j.install.dir}"/>
-        <get src="https://netix.dl.sourceforge.net/project/launch4j/launch4j-3/3.14/launch4j-3.14-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}"/>
+        <get src="https://altushost-swe.dl.sourceforge.net/project/launch4j/launch4j-3/3.14/launch4j-3.14-macosx-x86.tgz?viasf=1" dest="${jspwiki.launch4j.install.dir}"/>
         <untar src="${jspwiki.launch4j.install.dir}/launch4j-3.14-macosx-x86.tgz" dest="${jspwiki.launch4j.install.dir}/.." compression="gzip"/>
         <delete file="${jspwiki.launch4j.install.dir}/launch4j-3.14-macosx-x86.tgz"/>
         <chmod dir="${jspwiki.launch4j.install.dir}/bin" includes="*" perm="ugo+x"/>
