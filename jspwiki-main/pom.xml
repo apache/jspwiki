@@ -160,11 +160,11 @@
       <artifactId>oro</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>xmlrpc</groupId>
-      <artifactId>xmlrpc</artifactId>
-    </dependency>
-
+	
+	<dependency>
+	    <groupId>xmlrpc</groupId>
+	    <artifactId>xmlrpc</artifactId>
+	</dependency>
 
 	<dependency>
 		<groupId>jakarta.servlet</groupId>
@@ -210,12 +210,36 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.eclipse.jetty.aggregate</groupId>
-      <artifactId>jetty-all</artifactId>
-      <scope>test</scope>
-      <type>pom</type>
-    </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty.ee10</groupId>
+        <artifactId>jetty-ee10-webapp</artifactId>
+        <scope>test</scope>
+      </dependency>
+
+
+
+<dependency>
+    <groupId>org.eclipse.jetty</groupId>
+    <artifactId>jetty-jndi</artifactId>
+    <version>12.0.14</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+    <groupId>org.eclipse.jetty</groupId>
+	<artifactId>jetty-plus</artifactId>
+    <version>12.0.14</version>
+    <scope>test</scope>
+</dependency>
+
+<dependency>
+    <groupId>org.eclipse.jetty</groupId>
+	<artifactId>jetty-security</artifactId>
+    <version>12.0.14</version>
+    <scope>test</scope>
+</dependency>
+
+
 
     <dependency>
       <groupId>org.hsqldb</groupId>

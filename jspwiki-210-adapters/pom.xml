@@ -36,14 +36,12 @@
       <scope>provided</scope>
     </dependency>
 
-<!--
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-main</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
--->
 
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -63,14 +61,14 @@
       <scope>test</scope>
     </dependency>
 
-<!--
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-210-test-adaptees</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
--->
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
