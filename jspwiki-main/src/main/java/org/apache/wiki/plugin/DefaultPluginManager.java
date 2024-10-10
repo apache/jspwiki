@@ -49,7 +49,7 @@ import org.apache.wiki.util.XhtmlUtil;
 import org.apache.wiki.util.XmlUtil;
 import org.jdom2.Element;
 
-import javax.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StreamTokenizer;

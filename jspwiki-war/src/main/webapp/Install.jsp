@@ -29,7 +29,7 @@
 <%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="java.text.MessageFormat" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 
 <%!

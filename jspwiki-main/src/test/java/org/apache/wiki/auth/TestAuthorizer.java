@@ -23,7 +23,7 @@ import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.authorize.WebAuthorizer;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Properties;
 
@@ -82,8 +82,8 @@ public class TestAuthorizer implements WebAuthorizer {
     /**
      * Returns <code>true</code> if the HTTP request contains 
      * a particular role principal. Delegates to
-     * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}.
-     * @see org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, java.security.Principal)
+     * {@link jakarta.servlet.http.HttpServletRequest#isUserInRole(String)}.
+     * @see org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole(jakarta.servlet.http.HttpServletRequest, java.security.Principal)
      */
     @Override public boolean isUserInRole( final HttpServletRequest request, final Principal role )
     {

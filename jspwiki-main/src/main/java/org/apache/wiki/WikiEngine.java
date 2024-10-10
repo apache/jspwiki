@@ -61,8 +61,8 @@ import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
 import org.apache.wiki.workflow.WorkflowManager;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;

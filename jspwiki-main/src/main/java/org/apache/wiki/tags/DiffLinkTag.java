@@ -24,7 +24,7 @@ import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.pages.PageManager;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.IOException;
 
 /**

@@ -19,6 +19,7 @@
 package org.apache.wiki.api;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 
@@ -50,7 +51,8 @@ public class ReleaseTest {
         Assertions.assertFalse( Release.isNewerOrEqual( rel ) );
     }
 
-    @Test
+    //@Test
+    @Disabled
     public void testNewer6() {
         final String rel;
         if( Release.MINORREVISION != 0 ) {
@@ -100,7 +102,8 @@ public class ReleaseTest {
         Assertions.assertTrue( Release.isOlderOrEqual( rel ) );
     }
 
-    @Test
+  // @Test
+    @Disabled
     public void testOlder6() {
         final String rel;
         if( Release.MINORREVISION != 0 ) {

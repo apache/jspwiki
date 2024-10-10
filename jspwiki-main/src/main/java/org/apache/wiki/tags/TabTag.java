@@ -21,7 +21,7 @@ package org.apache.wiki.tags;
 
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.jsp.JspTagException;
+import jakarta.servlet.jsp.JspTagException;
 import java.io.IOException;
 
 /**

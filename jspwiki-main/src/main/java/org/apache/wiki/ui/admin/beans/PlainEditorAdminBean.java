@@ -25,7 +25,7 @@ import org.apache.wiki.ui.admin.AdminBean;
 import org.apache.wiki.util.TextUtil;
 
 import javax.management.NotCompliantMBeanException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  *  This class is still experimental.

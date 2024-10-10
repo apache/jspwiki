@@ -20,7 +20,7 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 import java.util.Collection;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.PageContext;
 
 /**
  *  Outputs the size of the search results list, if it contains any items.

@@ -34,8 +34,8 @@ import org.apache.wiki.modules.InternalModule;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.lang.reflect.Method;
 import java.security.Principal;
 import java.util.Date;

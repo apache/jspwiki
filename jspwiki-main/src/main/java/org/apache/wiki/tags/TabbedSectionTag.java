@@ -18,8 +18,8 @@
  */
 package org.apache.wiki.tags;
 
-import javax.servlet.jsp.*;
-import javax.servlet.jsp.tagext.*;
+import jakarta.servlet.jsp.*;
+import jakarta.servlet.jsp.tagext.*;
 
 /**
  *  Generates tabbed page section: container for the Tab tag.

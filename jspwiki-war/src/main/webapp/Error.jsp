@@ -52,10 +52,10 @@
     //  imported in JSP pages.
     //
 
-    if( exception instanceof javax.servlet.jsp.JspException )
+    if( exception instanceof jakarta.servlet.jsp.JspException )
     {
         log.debug("IS JSPEXCEPTION");
-        realcause = ((javax.servlet.jsp.JspException)exception).getCause();
+        realcause = ((jakarta.servlet.jsp.JspException)exception).getCause();
         log.debug("REALCAUSE="+realcause);
     }
 

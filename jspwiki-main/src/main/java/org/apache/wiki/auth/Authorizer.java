@@ -32,7 +32,7 @@ import java.util.Properties;
  * injected, the Authorizer is queried for the roles it knows about by calling {@link org.apache.wiki.auth.Authorizer#getRoles()}. Then,
  * each role returned by the Authorizer is tested by calling {@link org.apache.wiki.auth.Authorizer#isUserInRole(Session, Principal)}.
  * If this check fails, and the Authorizer is of type WebAuthorizer, AuthenticationManager checks the role again by calling
- * {@link org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole(javax.servlet.http.HttpServletRequest, Principal)}).
+ * {@link org.apache.wiki.auth.authorize.WebAuthorizer#isUserInRole(jakarta.servlet.http.HttpServletRequest, Principal)}).
  * Any roles that pass the test are injected into the Subject by firing appropriate authentication events.
  * 
  * @since 2.3

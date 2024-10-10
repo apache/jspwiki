@@ -20,7 +20,7 @@ package org.apache.wiki.tags;
 
 import org.apache.wiki.api.core.ContextEnum;
 
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.IOException;
 
 

@@ -23,8 +23,8 @@ import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.SessionMonitor;
 import org.apache.wiki.auth.authorize.Role;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import java.security.Principal;
 import java.util.Arrays;
 

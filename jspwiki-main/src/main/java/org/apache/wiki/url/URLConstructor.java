@@ -21,7 +21,7 @@ package org.apache.wiki.url;
 import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.charset.Charset;
 

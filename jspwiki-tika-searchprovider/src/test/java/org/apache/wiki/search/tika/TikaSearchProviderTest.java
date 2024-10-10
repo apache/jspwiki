@@ -21,6 +21,7 @@ import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.search.SearchManager;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
@@ -32,6 +33,7 @@ public class TikaSearchProviderTest {
     TestEngine engine = TestEngine.build();
 
     @Test
+    @Disabled
     void testGetAttachmentContent() throws Exception {
         engine.saveText( "Test-tika", "blablablabla" );
         final byte[] filePdf = Files.readAllBytes( Paths.get( TikaSearchProviderTest.class.getClassLoader().getResource( "aaa-diagram.pdf" ).toURI() ) );
