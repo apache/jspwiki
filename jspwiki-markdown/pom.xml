@@ -41,7 +41,7 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-main</artifactId>
-      <scope>provided</scope>
+ <!--     <scope>provided</scope> -->
     </dependency>
     
     <dependency>
@@ -49,14 +49,14 @@
       <artifactId>jspwiki-wysiwyg</artifactId>
       <version>${project.version}</version>
     </dependency>    
- <!--   
+   
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-main</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
--->
+
     <dependency>
       <groupId>com.vladsch.flexmark</groupId>
       <artifactId>flexmark</artifactId>
