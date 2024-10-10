@@ -25,14 +25,15 @@ import org.apache.wiki.auth.Users;
 import org.eclipse.jetty.jndi.InitialContextFactory;
 import org.eclipse.jetty.jndi.NamingContext;
 import org.eclipse.jetty.plus.jndi.Resource;
-import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.ee10.servlet.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.UserStore;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.*;
+import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.security.Password;
-import org.eclipse.jetty.webapp.WebAppContext;
+import org.eclipse.jetty.ee10.webapp.WebAppContext;
 import org.hsqldb.jdbc.JDBCDataSource;
 
 import javax.naming.Context;
@@ -45,6 +46,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 
 
@@ -128,13 +130,13 @@ public class TestContainer {
         try {
             LOG.error( "Starting up test container." );
             container.server.setHandler( handlerCollection );
-            final Handler[] currentHandlers = container.server.getHandlers();
+            final List<Handler> currentHandlers = container.server.getHandlers();
             LOG.error( "dumping current handlers" );
             for( final Handler handler : currentHandlers )
             {
-                if( handler instanceof HandlerCollection )
+                if( handler instanceof Handler.Container )
                 {
-                    final Handler[] collection = ((HandlerCollection) handler).getHandlers();
+                    final List<Handler> collection = ((Handler.Container) handler).getHandlers();
                     for( final Handler h : collection )
                     {
                         LOG.error( "handler: " + h );
@@ -281,16 +283,20 @@ public class TestContainer {
     /**
      * Handler that shuts down the Jetty server if a request is received containing the shutdown string {@link TestContainer#SHUTDOWN_CMD} .
      */
-    public static final class ShutdownHandler extends AbstractHandler {
+    public static final class ShutdownHandler extends Handler.Abstract {
 
+
+    	
         @Override
-        public void handle(final String target, final Request baseRequest, final HttpServletRequest request, final HttpServletResponse response ) throws IOException, ServletException {
-            if( request.getRequestURI().contains( SHUTDOWN_CMD ) ) {
+		public boolean handle(Request request, Response response, Callback callback) throws Exception {
+            if( request.getHttpURI().toString().contains( SHUTDOWN_CMD ) ) {
                 LOG.error( "stop cmd received, shutting down server" );
                 System.exit( 0 );
             } else {
-                LOG.error("ignoring request " + request.getRequestURI());
+                LOG.error("ignoring request " + request.getHttpURI());
             }
+            
+            return true;
         }
     }
 }

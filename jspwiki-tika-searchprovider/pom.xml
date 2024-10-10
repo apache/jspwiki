@@ -43,14 +43,13 @@
       <scope>provided</scope>
     </dependency>
 
-   <!--     
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-main</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
--->
+
     <dependency>
       <groupId>org.apache.tika</groupId>
       <artifactId>tika-core</artifactId>
