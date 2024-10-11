@@ -51,7 +51,7 @@ public class ReleaseTest {
         Assertions.assertFalse( Release.isNewerOrEqual( rel ) );
     }
 
-    //@Test
+    @Test
     @Disabled
     public void testNewer6() {
         final String rel;
@@ -102,7 +102,7 @@ public class ReleaseTest {
         Assertions.assertTrue( Release.isOlderOrEqual( rel ) );
     }
 
-  // @Test
+    @Test
     @Disabled
     public void testOlder6() {
         final String rel;
