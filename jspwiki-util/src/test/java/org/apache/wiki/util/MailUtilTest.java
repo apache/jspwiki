@@ -68,8 +68,7 @@ class MailUtilTest  {
      * the command line.
      */
 
-    //@Test
-    @Disabled
+    @Test
     void testSendMail() {
         final String user = System.getProperty( "user.name" ) + "@localhost";
 
