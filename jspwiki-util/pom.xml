@@ -30,34 +30,14 @@
   <name>Apache JSPWiki utility classes</name>
 
   <dependencies>
-    <dependency>
-      <groupId>com.sun.mail</groupId>
-      <artifactId>logging-mailhandler</artifactId>
-    </dependency>
 
-
-
-<dependency>
-    <groupId>jakarta.mail</groupId>
-    <artifactId>jakarta.mail-api</artifactId>
-</dependency>
-
-<dependency>
-    <groupId>org.eclipse.angus</groupId>
-    <artifactId>angus-mail</artifactId>
-    <scope>test</scope>
-</dependency>
-
- <dependency>
-    <groupId>jakarta.activation</groupId>
-    <artifactId>jakarta.activation-api</artifactId>
-</dependency>
-
-<dependency>
-    <groupId>com.sun.activation</groupId>
-    <artifactId>jakarta.activation</artifactId>
-</dependency>
-
+<!-- https://jakartaee.github.io/mail-api/README-JakartaMail#Download_Jakarta_Mail_Release -->
+	
+	<dependency>
+	    <groupId>com.sun.mail</groupId>
+	    <artifactId>jakarta.mail</artifactId>
+	    <version>2.0.1</version>
+	</dependency>
 
     <dependency>
       <groupId>commons-io</groupId>
