@@ -17,6 +17,31 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2024-09-26  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.3-git-02_
+
+* Add `.pdf` and `.xml` to `jspwiki.attachment.forceDownload`, so by default those kind of attachments are downloaded rather than opened in browser
+
+* `jspwiki.attachment.forceDownload` now accepts `*` as a way to always enforce attachment download
+
+* Fix `SampleAjaxPlugin`
+    * Provided in [PR #357](https://github.com/apache/jspwiki/pull/357) by Ulf Dittmer, thanks!
+
+* Fix MBeans when multiple JSPWiki instances are running in a JVM
+    * Provided in [PR #358](https://github.com/apache/jspwiki/pull/358) by Ulf Dittmer, thanks!
+
+* Minor change to use the os utils class commons-lang3 that was already in the classpath
+    * Provided in [PR #363](https://github.com/apache/jspwiki/pull/363) by Alex O'Ree, thanks!
+
+* Dependency updates
+    * Commons Lang to 3.17.0
+    * JUnit to 5.11.1 (closes [PR #365](https://github.com/apache/jspwiki/pull/365), thanks to Dependabot)
+    * Log4J2 to 2.24.0
+    * Lucene to 9.11.1 (closes [PR #353](https://github.com/apache/jspwiki/pull/353), thanks to Dependabot)
+    * Tomcat to 9.0.95
+    * Maven plugins: dependency to 3.8.0, install to 3.1.3, javadoc to 3.10.0, jxr to 3.5.0, project-info-reports to 3.7.0, release to 3.1.1, surefire to 3.5.0, surefire.junit5-tree-reporter to 1.3.0, umldoclet to 2.2.0, cargo to 1.10.15 (closes [PR #364](https://github.com/apache/jspwiki/pull/364), thanks to Dependabot)
+
 **2024-07-07  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-01_

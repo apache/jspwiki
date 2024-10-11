@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
+import org.apache.commons.lang3.SystemUtils;
 
 
 /**
@@ -135,10 +136,7 @@ public abstract class AbstractFileProvider implements PageProvider {
 
         m_engine = engine;
         m_encoding = properties.getProperty( Engine.PROP_ENCODING, DEFAULT_ENCODING );
-        final String os = System.getProperty( "os.name" ).toLowerCase();
-        if( os.startsWith( "windows" ) || os.equals( "nt" ) ) {
-            m_windowsHackNeeded = true;
-        }
+        m_windowsHackNeeded = SystemUtils.IS_OS_WINDOWS;
 
         MAX_PROPLIMIT = TextUtil.getIntegerProperty( properties, PROP_CUSTOMPROP_MAXLIMIT, DEFAULT_MAX_PROPLIMIT );
         MAX_PROPKEYLENGTH = TextUtil.getIntegerProperty( properties, PROP_CUSTOMPROP_MAXKEYLENGTH, DEFAULT_MAX_PROPKEYLENGTH );
