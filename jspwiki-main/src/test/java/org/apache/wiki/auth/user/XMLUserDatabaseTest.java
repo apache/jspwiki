@@ -222,7 +222,6 @@ public class XMLUserDatabaseTest {
     }
 
     @Test
-    @Disabled
     public void testGetWikiNames() throws WikiSecurityException {
         // There are 8 test users in the database
         final Principal[] p = m_db.getWikiNames();
