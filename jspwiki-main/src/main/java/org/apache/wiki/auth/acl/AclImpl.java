@@ -24,9 +24,9 @@ import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
 
 
 /**
@@ -37,7 +37,7 @@ import java.util.Vector;
 public class AclImpl implements Acl, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private final Vector< AclEntry > m_entries = new Vector<>();
+    private final List< AclEntry > m_entries = Collections.synchronizedList( new ArrayList<>() );
 
     /**
      * Constructs a new AclImpl instance.
@@ -109,7 +109,7 @@ public class AclImpl implements Acl, Serializable {
     /** {@inheritDoc} */
     @Override
     public Enumeration< AclEntry > aclEntries() {
-        return m_entries.elements();
+        return Collections.enumeration(m_entries);
     }
 
     /** {@inheritDoc} */

@@ -69,13 +69,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.concurrent.ThreadLocalRandom;
 
 
@@ -199,11 +199,11 @@ public class SpamFilter extends BasePageFilter {
     private static final Logger C_SPAMLOG = LogManager.getLogger( "SpamLog" );
     private static final Logger LOG = LogManager.getLogger( SpamFilter.class );
 
-    private final Vector<Host>    m_temporaryBanList = new Vector<>();
+    private final List <Host>    m_temporaryBanList = Collections.synchronizedList( new ArrayList<>() );
 
     private int             m_banTime = 60; // minutes
 
-    private final Vector<Host>    m_lastModifications = new Vector<>();
+    private final List <Host>    m_lastModifications = Collections.synchronizedList( new ArrayList<>() );
 
     /** How many times a single IP address can change a page per minute? */
     private int             m_limitSinglePageChanges = 5;

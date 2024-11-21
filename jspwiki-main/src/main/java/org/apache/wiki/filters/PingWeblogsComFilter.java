@@ -29,7 +29,9 @@ import org.apache.xmlrpc.XmlRpcClient;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -80,13 +82,13 @@ public class PingWeblogsComFilter extends BasePageFilter {
 
         try {
             final XmlRpcClient xmlrpc = new XmlRpcClient(m_pingURL);
-            final Vector< String > params = new Vector<>();
-            params.addElement( "The Butt Ugly Weblog" ); // FIXME: Must be settable
-            params.addElement( engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), blogName, null ) );
+            final List< String > params = new ArrayList<>();
+            params.add( "The Butt Ugly Weblog" ); // FIXME: Must be settable
+            params.add( engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), blogName, null ) );
 
             LOG.debug( "Pinging weblogs.com with URL: {}", engine.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), blogName, null ) );
 
-            xmlrpc.executeAsync("weblogUpdates.ping", params, 
+            xmlrpc.executeAsync("weblogUpdates.ping", new Vector<>(params),
                                 new AsyncCallback() {
                                     @Override
                                     public void handleError( final Exception ex, final URL url, final String method ) {
