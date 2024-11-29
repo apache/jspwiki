@@ -107,7 +107,7 @@
     <plugin.cargo.version>1.10.15</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
     <plugin.cobertura.version>2.7</plugin.cobertura.version>
-    <plugin.cyclonedx.version>2.8.0</plugin.cyclonedx.version>
+    <plugin.cyclonedx.version>2.9.1</plugin.cyclonedx.version>
     <plugin.sonar.version>4.0.0.4121</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
     <plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
