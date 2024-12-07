@@ -43,7 +43,6 @@ public class XMLGroupDatabaseTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-
         final Properties props = TestEngine.getTestProperties();
         final WikiEngine engine = new TestEngine( props );
         m_db = new XMLGroupDatabase();

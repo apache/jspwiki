@@ -17,6 +17,7 @@
     under the License.
  */
 package org.apache.wiki.auth.login;
+
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Properties;
@@ -28,6 +29,7 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -39,26 +41,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
 
-/**
- */
-public class AnonymousLoginModuleTest
-{
+class AnonymousLoginModuleTest {
+
     UserDatabase m_db;
-
-    Subject      m_subject;
-
-    private TestEngine m_engine;
+    Subject m_subject;
+    TestEngine m_engine;
 
     @Test
-    public final void testLogin()
-    {
-        final HttpServletRequest request = m_engine.newHttpRequest();
-        try
-        {
+    void testLogin() {
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        try {
             // Test using IP address (AnonymousLoginModule succeeds)
             final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             final LoginModule module = new AnonymousLoginModule();
-            module.initialize( m_subject, handler, new HashMap<String, Object>(), new HashMap<String, Object>() );
+            module.initialize( m_subject, handler, new HashMap<>(), new HashMap<>() );
             module.login();
             module.commit();
             final Set< Principal > principals = m_subject.getPrincipals();
@@ -66,25 +62,18 @@ public class AnonymousLoginModuleTest
             Assertions.assertTrue( principals.contains( new WikiPrincipal( "127.0.0.1" ) ) );
             Assertions.assertFalse( principals.contains( Role.ANONYMOUS ) );
             Assertions.assertFalse( principals.contains( Role.ALL ) );
-        }
-        catch( final LoginException e )
-        {
-            System.err.println( e.getMessage() );
-            Assertions.fail();
+        } catch( final LoginException e ) {
+            Assertions.fail( e.getMessage() );
         }
     }
 
     @Test
-    public final void testLogout()
-    {
-        final HttpServletRequest request = m_engine.newHttpRequest();
-        try
-        {
+    void testLogout() {
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        try {
             final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             final LoginModule module = new AnonymousLoginModule();
-            module.initialize( m_subject, handler,
-                              new HashMap<String, Object>(),
-                              new HashMap<String, Object>() );
+            module.initialize( m_subject, handler, new HashMap<>(), new HashMap<>() );
             module.login();
             module.commit();
             final Set< Principal > principals = m_subject.getPrincipals();
@@ -94,33 +83,22 @@ public class AnonymousLoginModuleTest
             Assertions.assertFalse( principals.contains( Role.ALL ) );
             module.logout();
             Assertions.assertEquals( 0, principals.size() );
-        }
-        catch( final LoginException e )
-        {
-            System.err.println( e.getMessage() );
-            Assertions.fail();
+        } catch( final LoginException e ) {
+            Assertions.fail( e.getMessage() );
         }
     }
 
-    /**
-     *
-     */
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
         props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
         m_engine = new TestEngine(props);
         m_db = new XMLUserDatabase();
         m_subject = new Subject();
-        try
-        {
+        try {
             m_db.initialize( m_engine, props );
-        }
-        catch( final NoRequiredPropertyException e )
-        {
-            System.err.println( e.getMessage() );
-            Assertions.fail();
+        } catch( final NoRequiredPropertyException e ) {
+            Assertions.fail( e.getMessage() );
         }
     }
 

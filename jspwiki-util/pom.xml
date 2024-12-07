@@ -30,25 +30,21 @@
   <name>Apache JSPWiki utility classes</name>
 
   <dependencies>
-
-<!-- https://jakartaee.github.io/mail-api/README-JakartaMail#Download_Jakarta_Mail_Release -->
-	
-	<dependency>
-	    <groupId>com.sun.mail</groupId>
-	    <artifactId>jakarta.mail</artifactId>
-	    <version>2.0.1</version>
-	</dependency>
+    <dependency>
+      <groupId>com.sun.mail</groupId>
+      <artifactId>jakarta.mail</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
 
-	<dependency>
-		<groupId>jakarta.servlet</groupId>
-		<artifactId>jakarta.servlet-api</artifactId>
-		<scope>provided</scope>
-	</dependency>
+    <dependency>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>jaxen</groupId>
@@ -63,12 +59,6 @@
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>net.sourceforge.stripes</groupId>
-      <artifactId>stripes</artifactId>
-      <!--<scope>test</scope> -->
     </dependency>
 
     <dependency>
@@ -104,6 +94,5 @@
       <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
-
   </dependencies>
 </project>
