@@ -56,14 +56,6 @@ public class WikiServletFilter implements Filter {
     protected Engine m_engine;
 
     /**
-     *  Creates a Wiki Servlet Filter.
-     */
-    public WikiServletFilter()
-    {
-        super();
-    }
-
-    /**
      * Initializes the WikiServletFilter.
      * 
      * @param config The FilterConfig.

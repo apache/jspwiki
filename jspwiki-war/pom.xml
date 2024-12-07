@@ -17,276 +17,269 @@
   specific language governing permissions and limitations
   under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-  <parent>
-    <groupId>org.apache.jspwiki</groupId>
-    <artifactId>jspwiki-builder</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-builder</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
 
-  <modelVersion>4.0.0</modelVersion>
-  <artifactId>jspwiki-war</artifactId>
-  <name>Apache JSPWiki Main War</name>
-  <packaging>war</packaging>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>jspwiki-war</artifactId>
+    <name>Apache JSPWiki Main War</name>
+    <packaging>war</packaging>
 
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-bootstrap</artifactId>
-    </dependency>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jspwiki-bootstrap</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-main</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-markdown</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-210-adapters</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-kendra-searchprovider</artifactId>
-    </dependency>
-
-	<dependency>
-		<groupId>jakarta.servlet</groupId>
-		<artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
-	</dependency>
-
-<dependency>
-    <groupId>jakarta.servlet.jsp</groupId>
-    <artifactId>jakarta.servlet.jsp-api</artifactId>
-    <scope>provided</scope>
-</dependency>
-
-<dependency>
-    <groupId>jakarta.servlet.jsp.jstl</groupId>
-    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-</dependency>
-<dependency>
-    <groupId>org.glassfish.web</groupId>
-    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-</dependency>
-
-
-  </dependencies>
-
-  <build>
-    <finalName>JSPWiki</finalName>
-    <plugins>
-      <plugin>
-        <groupId>io.leonard.maven.plugins</groupId>
-        <artifactId>jspc-maven-plugin</artifactId>
-   <version>4.2.0</version> 
-
-        <dependencies>
-        
-        
-          <dependency> <!-- so jspwiki custom taglibs can be seen by the jsp compiler -->
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jspwiki-main</artifactId>
             <version>${project.version}</version>
-          </dependency>
-          <dependency> 
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jspwiki-api</artifactId>
+            <artifactId>jspwiki-markdown</artifactId>
             <version>${project.version}</version>
-          </dependency>    
-          <dependency> 
+        </dependency>
+
+        <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>jspwiki-http</artifactId>
+            <artifactId>jspwiki-210-adapters</artifactId>
             <version>${project.version}</version>
-          </dependency>    
+        </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>jspwiki-kendra-searchprovider</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-		<dependency>
-		    <groupId>jakarta.servlet.jsp.jstl</groupId>
-		    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-		    <version>3.0.2</version>
-		</dependency>
-		
-		
-		<dependency>
-		    <groupId>org.glassfish.web</groupId>
-		    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-		    <version>3.0.1</version>
-		</dependency>
-		
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
+        <dependency>
+            <groupId>jakarta.servlet.jsp</groupId>
+            <artifactId>jakarta.servlet.jsp-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-          <dependency>
-        <groupId>net.sf.ehcache</groupId>
-        <artifactId>ehcache</artifactId>
-        <version>2.10.9.2</version>
-          </dependency>
-          
-      <dependency>
-        <groupId>commons-httpclient</groupId>
-        <artifactId>commons-httpclient</artifactId>
-        <version>3.1</version>
-      </dependency>
-          
-                
-        </dependencies>
-      </plugin>
+        <dependency>
+            <groupId>jakarta.servlet.jsp.jstl</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+        </dependency>
 
-      <!-- wro4j Web Resource Optimizer for Java (http://http://code.google.com/p/wro4j/)
-        Merge and compress CSS and JS files using the WRO4J.
-        - use UglifyJS for JS compression
-        - use Less as advanced CSS preprocessor
-      -->
-      <plugin>
-        <groupId>ro.isdc.wro4j</groupId>
-        <artifactId>wro4j-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>buildDefaultJsAndCss</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>run</goal>
-              <!--<goal>jshint</goal>-->
-            </goals>
-            <configuration>
-              <!--
-              <targetGroups>all</targetGroups>
-              <minimize>true</minimize>
-              <cssDestinationFolder>d:/static/css/</cssDestinationFolder>
-              <jsDestinationFolder>d:/static/js/</jsDestinationFolder>
-              <ignoreMissingResources>false</ignoreMissingResources>
-              -->
-              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/210/</cssDestinationFolder>
-              <wroFile>src/main/config/wro/wro.xml</wroFile>
-            </configuration>
-          </execution>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+        </dependency>
+    </dependencies>
 
-          <!-- HADDOCK template -->
-          <execution>
-            <id>buildHaddockJsAndCss</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
-              <wroFile>src/main/config/wro/wro-haddock.xml</wroFile>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+    <build>
+        <finalName>JSPWiki</finalName>
+        <plugins>
+            <plugin>
+                <groupId>io.leonard.maven.plugins</groupId>
+                <artifactId>jspc-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency> <!-- so jspwiki custom taglibs can be seen by the jsp compiler -->
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>jspwiki-main</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>jspwiki-api</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>${project.groupId}</groupId>
+                        <artifactId>jspwiki-http</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>jakarta.servlet.jsp.jstl</groupId>
+                        <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+                        <version>${jakarta-jstl-api.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.glassfish.web</groupId>
+                        <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+                        <version>${jakarta-jstl.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>net.sf.ehcache</groupId>
+                        <artifactId>ehcache</artifactId>
+                        <version>${ehcache.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>commons-httpclient</groupId>
+                        <artifactId>commons-httpclient</artifactId>
+                        <version>${commons-httpclient.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
-      <!-- Compress certain CSS and JS files using the YUICompressor
-         (http://alchim.sourceforge.net/yuicompressor-maven-plugin/)
-      <plugin>
-        <groupId>net.alchim31.maven</groupId>
-        <artifactId>yuicompressor-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>compressJSfiles</id>
-            <goals>
-              <goal>compress</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration>
-          <excludeResources>true</excludeResources>
-          <nosuffix>true</nosuffix>
-          <webappDirectory>${project.build.directory}/generated-sources/yuicompress</webappDirectory>
-          *** relying on jslint-maven-plugin instead, which allows
-               better customization ***
-          <jswarn>false</jswarn>
-        </configuration>
-      </plugin>
-      -->
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jslint-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>checkJSPWikiFiles</id>
-            <goals>
-              <goal>jslint</goal>
-            </goals>
-            <configuration>
-              <sourceJsFolder>src/main/webapp/scripts</sourceJsFolder>
-              <failOnIssues>false</failOnIssues>
-              <excludes>
-                <exclude>prettify.js</exclude>
-              </excludes>
-            </configuration>
-          </execution>
-          <!-- Some third party JSs have many multiple number of VARs per function
-               block, are outside of our control so suppressing such messages -->
-          <execution>
-            <id>checkThirdParty</id>
-            <goals>
-              <goal>jslint</goal>
-            </goals>
-            <configuration>
-              <sourceJsFolder>src/main/webapp/scripts</sourceJsFolder>
-              <failOnIssues>false</failOnIssues>
-              <includes>
-                 <include>prettify.js</include>
-              </includes>
-              <allowOneVarStatementPerFunction>false</allowOneVarStatementPerFunction>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <artifactId>maven-war-plugin</artifactId>
-        <configuration>
-          <webResources>
-            <!-- Output directory configured above with the YUICompressor Maven plugin
-            <resource>
-              <directory>${project.build.directory}/generated-sources/yuicompress</directory>
-            </resource>
+            <!-- wro4j Web Resource Optimizer for Java (http://http://code.google.com/p/wro4j/)
+              Merge and compress CSS and JS files using the WRO4J.
+              - use UglifyJS for JS compression
+              - use Less as advanced CSS preprocessor
             -->
-            <resource>
-              <directory>${project.build.directory}/generated-sources/wro</directory>
-            </resource>
-            <resource>
-              <directory>src/main/styles/static</directory>
-            </resource>
-          </webResources>
-        </configuration>
-      </plugin>
+            <plugin>
+                <groupId>ro.isdc.wro4j</groupId>
+                <artifactId>wro4j-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>buildDefaultJsAndCss</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                            <!--<goal>jshint</goal>-->
+                        </goals>
+                        <configuration>
+                            <!--
+                            <targetGroups>all</targetGroups>
+                            <minimize>true</minimize>
+                            <cssDestinationFolder>d:/static/css/</cssDestinationFolder>
+                            <jsDestinationFolder>d:/static/js/</jsDestinationFolder>
+                            <ignoreMissingResources>false</ignoreMissingResources>
+                            -->
+                            <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/210/
+                            </cssDestinationFolder>
+                            <wroFile>src/main/config/wro/wro.xml</wroFile>
+                        </configuration>
+                    </execution>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <!-- Unpack the JSP Wiki Pages -->
-          <execution>
-            <id>unpack-wikipages-private</id>
-            <phase>package</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.jspwiki.wikipages</groupId>
-                  <artifactId>jspwiki-wikipages-en</artifactId>
-                  <version>${project.version}</version>
-                </artifactItem>
-              </artifactItems>
-              <excludes>META-INF/**</excludes>
-              <outputDirectory>${project.build.directory}/jspwiki/data/jspwiki-files</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+                    <!-- HADDOCK template -->
+                    <execution>
+                        <id>buildHaddockJsAndCss</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/
+                            </cssDestinationFolder>
+                            <wroFile>src/main/config/wro/wro-haddock.xml</wroFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Compress certain CSS and JS files using the YUICompressor
+               (http://alchim.sourceforge.net/yuicompressor-maven-plugin/)
+            <plugin>
+              <groupId>net.alchim31.maven</groupId>
+              <artifactId>yuicompressor-maven-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>compressJSfiles</id>
+                  <goals>
+                    <goal>compress</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+                <excludeResources>true</excludeResources>
+                <nosuffix>true</nosuffix>
+                <webappDirectory>${project.build.directory}/generated-sources/yuicompress</webappDirectory>
+                *** relying on jslint-maven-plugin instead, which allows
+                     better customization ***
+                <jswarn>false</jswarn>
+              </configuration>
+            </plugin>
+            -->
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jslint-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>checkJSPWikiFiles</id>
+                        <goals>
+                            <goal>jslint</goal>
+                        </goals>
+                        <configuration>
+                            <sourceJsFolder>src/main/webapp/scripts</sourceJsFolder>
+                            <failOnIssues>false</failOnIssues>
+                            <excludes>
+                                <exclude>prettify.js</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <!-- Some third party JSs have many multiple number of VARs per function
+                         block, are outside our control so suppressing such messages -->
+                    <execution>
+                        <id>checkThirdParty</id>
+                        <goals>
+                            <goal>jslint</goal>
+                        </goals>
+                        <configuration>
+                            <sourceJsFolder>src/main/webapp/scripts</sourceJsFolder>
+                            <failOnIssues>false</failOnIssues>
+                            <includes>
+                                <include>prettify.js</include>
+                            </includes>
+                            <allowOneVarStatementPerFunction>false</allowOneVarStatementPerFunction>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <configuration>
+                    <webResources>
+                        <!-- Output directory configured above with the YUICompressor Maven plugin
+                        <resource>
+                          <directory>${project.build.directory}/generated-sources/yuicompress</directory>
+                        </resource>
+                        -->
+                        <resource>
+                            <directory>${project.build.directory}/generated-sources/wro</directory>
+                        </resource>
+                        <resource>
+                            <directory>src/main/styles/static</directory>
+                        </resource>
+                    </webResources>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <!-- Unpack the JSP Wiki Pages -->
+                    <execution>
+                        <id>unpack-wikipages-private</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.jspwiki.wikipages</groupId>
+                                    <artifactId>jspwiki-wikipages-en</artifactId>
+                                    <version>${project.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                            <excludes>META-INF/**</excludes>
+                            <outputDirectory>${project.build.directory}/jspwiki/data/jspwiki-files</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

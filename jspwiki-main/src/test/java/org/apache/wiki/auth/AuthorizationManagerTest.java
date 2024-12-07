@@ -50,18 +50,14 @@ import java.util.Properties;
 /**
  * Tests the AuthorizationManager class.
  */
-public class AuthorizationManagerTest
-{
+public class AuthorizationManagerTest {
+
     private AuthorizationManager m_auth;
-
-    private TestEngine           m_engine;
-
-    private GroupManager         m_groupMgr;
-
+    private TestEngine m_engine;
+    private GroupManager m_groupMgr;
     private Session m_session;
 
-    private static class TestPrincipal implements Principal
-    {
+    private static class TestPrincipal implements Principal {
         private final String m_name;
 
         public TestPrincipal( final String name )
@@ -77,8 +73,7 @@ public class AuthorizationManagerTest
     }
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
 
         // Make sure we are using the default security policy file jspwiki.policy
@@ -99,8 +94,7 @@ public class AuthorizationManagerTest
      * @throws Exception test failed
      */
     @Test
-    public void testDefaultPermissions() throws Exception
-    {
+    public void testDefaultPermissions() throws Exception {
         // Save a page without an ACL
         m_engine.saveText( "TestDefaultPage", "Foo" );
         final Permission view = PermissionFactory.getPagePermission( "*:TestDefaultPage", "view" );
@@ -169,8 +163,7 @@ public class AuthorizationManagerTest
     }
 
     @Test
-    public void testAssertedSession() throws Exception
-    {
+    public void testAssertedSession() throws Exception {
         // Create Alice and her roles
         final Principal alice = new WikiPrincipal( Users.ALICE );
         final Role it = new Role( "IT" );
@@ -186,7 +179,7 @@ public class AuthorizationManagerTest
         m_groupMgr.setGroup( m_session, fooGroup );
         m_groupMgr.setGroup( m_session, barGroup );
 
-        // Test user principal posession: Alice isn't considered to
+        // Test user principal possession: Alice isn't considered to
         // have the "Alice" principal because she's not authenticated
         Assertions.assertFalse ( m_auth.hasRoleOrPrincipal( session, new WikiPrincipal( Users.ALICE ) ), "Alice has Alice" );
         Assertions.assertFalse ( m_auth.hasRoleOrPrincipal( session, new TestPrincipal( Users.ALICE ) ), "Alice has Alice" );

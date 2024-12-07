@@ -33,11 +33,13 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-api</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
 	<dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-util</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <dependency>

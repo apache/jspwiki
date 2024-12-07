@@ -48,7 +48,7 @@
     <awaitility.version>4.2.1</awaitility.version>
     <aws-java-sdk-kendra.version>1.12.565</aws-java-sdk-kendra.version>
     <commons-collections.version>4.4</commons-collections.version>
-    <commons-fileupload.version>1.5</commons-fileupload.version>
+    <commons-fileupload.version>2.0.0-M2</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.16.1</commons-io.version>
     <commons-lang.version>3.17.0</commons-lang.version>
@@ -58,14 +58,19 @@
     <freshcookies-security.version>0.60</freshcookies-security.version>
     <gson.version>2.11.0</gson.version>
     <hsqldb.version>2.7.2</hsqldb.version>
+    <jakarta-activation.version>2.0.1</jakarta-activation.version>
+    <jakarta-activation-api.version>2.1.3</jakarta-activation-api.version>
+    <jakarta-jsp-api.version>4.0.0</jakarta-jsp-api.version>
+    <jakarta-jstl.version>3.0.1</jakarta-jstl.version>
+    <jakarta-jstl-api.version>3.0.2</jakarta-jstl-api.version>
+    <jakarta-mail.version>2.0.1</jakarta-mail.version>
+    <jakarta-mail-api.version>2.1.3</jakarta-mail-api.version>
+    <jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
     <jamm.version>0.4.0</jamm.version>
     <jaxen.version>2.0.0</jaxen.version>
-    <javax-jstl.version>1.2</javax-jstl.version>
     <javax-mail.version>1.6.2</javax-mail.version>
     <javax-jsp-api.version>2.3.3</javax-jsp-api.version>
-    <javax-servlet-api.version>3.1.0</javax-servlet-api.version>
     <jdom2.version>2.0.6</jdom2.version>
-    <jetty.version>9.4.54.v20240208</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.11.1</junit.version>
     <log4j2.version>2.24.0</log4j2.version>
@@ -76,11 +81,8 @@
     <sandler.version>0.5</sandler.version>
     <selenide.version>6.19.0</selenide.version>
     <slf4j.version>1.7.36</slf4j.version>
-    <!-- <stripes.version>1.7.0-async-beta</stripes.version> -->
-    <stripes.version>1.6.0-JakartaEE10</stripes.version>
-    
     <tika.version>2.9.2</tika.version>
-    <tomcat.version>10.1.28</tomcat.version>
+    <tomcat.version>10.1.33</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
 
@@ -103,7 +105,7 @@
     <plugin.surefire.junit5-tree-reporter.version>1.3.0</plugin.surefire.junit5-tree-reporter.version>
     <plugin.war.version>3.4.0</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
-    <plugin.jspc.version>3.2.2</plugin.jspc.version>
+    <plugin.jspc.version>5.0.0</plugin.jspc.version>
     <plugin.checksum.version>1.11</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
     <plugin.cargo.version>1.10.15</plugin.cargo.version>
@@ -138,7 +140,7 @@
     <module>jspwiki-markdown</module>
     <module>jspwiki-tika-searchprovider</module>
     <module>jspwiki-kendra-searchprovider</module>
-    <module>jspwiki-210-test-adaptees</module> 
+    <module>jspwiki-210-test-adaptees</module>
     <module>jspwiki-210-adapters</module>
     <module>jspwiki-war</module>
     <module>jspwiki-portable</module>
@@ -147,102 +149,8 @@
   </modules>
 
   <dependencyManagement> <!-- defines what configuration is going to be used if, and only if, the dependency is used -->
-  
-     <dependencies>   
-     
-       <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-api</artifactId>
-      <version>${project.version}</version>
-    </dependency>    
-  
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-main</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-util</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-event</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-cache</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-http</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-wysiwyg</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-   <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-markdown</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-   <dependency>
-      <groupId>${project.groupId}</groupId>
-  	 <artifactId>jspwiki-kendra-searchprovider</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-main</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-210-adapters</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-210-adapters</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-    </dependency>
-
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-210-test-adaptees</artifactId>
-      <version>${project.version}</version>
-      <type>test-jar</type>
-    </dependency>
-
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-bootstrap</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-  
-     <!-- ordered alphabetically by scope:groupId:artifactId                                     -->
+    <dependencies>
+      <!-- ordered alphabetically by scope:groupId:artifactId -->
       <!-- compile dependencies -->
       <dependency>
         <groupId>com.amazonaws</groupId>
@@ -256,37 +164,17 @@
         <version>${selenide.version}</version>
       </dependency>
 
+      <dependency><!-- https://jakartaee.github.io/mail-api/README-JakartaMail#Download_Jakarta_Mail_Release -->
+        <groupId>com.sun.mail</groupId>
+        <artifactId>jakarta.mail</artifactId>
+        <version>${jakarta-mail.version}</version>
+      </dependency>
+
       <dependency><!-- as of 1.6.2 not included by javax.mail-api, see https://javaee.github.io/javamail/docs/COMPAT.txt -->
         <groupId>com.sun.mail</groupId>
         <artifactId>logging-mailhandler</artifactId>
         <version>${javax-mail.version}</version>
       </dependency>
-
-<dependency>
-    <groupId>jakarta.activation</groupId>
-    <artifactId>jakarta.activation-api</artifactId>
-    <version>2.1.3</version>
-</dependency>
-
-<dependency>
-    <groupId>com.sun.activation</groupId>
-    <artifactId>jakarta.activation</artifactId>
-    <version>2.0.1</version>
-</dependency>
-
-
-<dependency>
-    <groupId>jakarta.mail</groupId>
-    <artifactId>jakarta.mail-api</artifactId>
-    <version>2.1.3</version>
-</dependency>
-
-<dependency>
-    <groupId>org.eclipse.angus</groupId>
-    <artifactId>angus-mail</artifactId>
-    <version>2.0.3</version>
-</dependency>
-
 
       <dependency>
         <groupId>com.google.code.gson</groupId>
@@ -330,19 +218,6 @@
         <version>${flexmark.version}</version>
       </dependency>
 
-<dependency>
-    <groupId>org.apache.commons</groupId>
-    <artifactId>commons-fileupload2-javax</artifactId>
-    <version>2.0.0-M2</version>
-</dependency>
-
-<dependency>
-    <groupId>org.apache.commons</groupId>
-    <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
-    <version>2.0.0-M2</version>
-</dependency>
-
-
       <dependency>
         <groupId>commons-httpclient</groupId>
         <artifactId>commons-httpclient</artifactId>
@@ -356,9 +231,81 @@
       </dependency>
 
       <dependency>
+        <groupId>jakarta.activation</groupId>
+        <artifactId>jakarta.activation-api</artifactId>
+        <version>${jakarta-activation-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.sun.activation</groupId>
+        <artifactId>jakarta.activation</artifactId>
+        <version>${jakarta-activation.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>jakarta.mail</groupId>
+        <artifactId>jakarta.mail-api</artifactId>
+        <version>${jakarta-mail-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>${jakarta-servlet-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>jakarta.servlet.jsp</groupId>
+        <artifactId>jakarta.servlet.jsp-api</artifactId>
+        <version>${jakarta-jsp-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>jakarta.servlet.jsp.jstl</groupId>
+        <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+        <version>${jakarta-jstl-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>jaxen</groupId>
+        <artifactId>jaxen</artifactId>
+        <version>${jaxen.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sourceforge</groupId>
+        <artifactId>akismet-java</artifactId>
+        <version>${akismet-java.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sourceforge</groupId>
+        <artifactId>sandler</artifactId>
+        <version>${sandler.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>${ehcache.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-collections4</artifactId>
         <version>${commons-collections.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-fileupload2-javax</artifactId>
+        <version>${commons-fileupload.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
+        <version>${commons-fileupload.version}</version>
       </dependency>
 
       <dependency>
@@ -395,30 +342,6 @@
         <groupId>org.apache.logging.log4j</groupId>
         <artifactId>log4j-slf4j-impl</artifactId>
         <version>${log4j2.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>jaxen</groupId>
-        <artifactId>jaxen</artifactId>
-        <version>${jaxen.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>net.sourceforge</groupId>
-        <artifactId>akismet-java</artifactId>
-        <version>${akismet-java.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>net.sourceforge</groupId>
-        <artifactId>sandler</artifactId>
-        <version>${sandler.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>net.sf.ehcache</groupId>
-        <artifactId>ehcache</artifactId>
-        <version>${ehcache.version}</version>
       </dependency>
 
       <dependency>
@@ -470,6 +393,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.glassfish.web</groupId>
+        <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+        <version>${jakarta-jstl.version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>org.jdom</groupId>
         <artifactId>jdom2</artifactId>
         <version>${jdom2.version}</version>
@@ -479,18 +408,6 @@
         <groupId>org.jvnet.hudson</groupId>
         <artifactId>org.suigeneris.jrcs.diff</artifactId>
         <version>${jrcs-diff.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-        <version>${mockito.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-junit-jupiter</artifactId>
-        <version>${mockito.version}</version>
       </dependency>
 
       <dependency>
@@ -518,14 +435,6 @@
       </dependency>
 
       <!-- test dependencies -->
-
-<dependency>
-    <groupId>net.sourceforge.stripes</groupId>
-    <artifactId>stripes</artifactId>
-    <version>${stripes.version}</version>
-</dependency>
-
-
       <dependency>
         <groupId>com.github.jbellis</groupId>
         <artifactId>jamm</artifactId>
@@ -537,29 +446,6 @@
         <artifactId>awaitility</artifactId>
         <version>${awaitility.version}</version>
       </dependency>
-
-      <!--
-           Note: As Jetty activates during the build, can upgrade
-           only to the latest Jetty version that can run on the
-           minimum JDK JSPWiki supports:
-           http://www.eclipse.org/jetty/documentation/current/what-jetty-version.html
-      
-      <dependency>
-        <groupId>org.eclipse.jetty.aggregate</groupId>
-        <artifactId>jetty-all</artifactId>
-        <version>${jetty.version}</version>
-		<type>pom</type>
-      </dependency>
- -->
-
-<dependency>
-    <groupId>org.eclipse.jetty.ee10</groupId>
-    <artifactId>jetty-ee10-bom</artifactId>
-    <version>12.0.14</version>
-    <type>pom</type>
-    <scope>import</scope>
-</dependency>
-
 
       <dependency>
         <groupId>org.hsqldb</groupId>
@@ -583,40 +469,22 @@
         <scope>import</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-core</artifactId>
+        <version>${mockito.version}</version>
+      </dependency>
 
-
-<dependency>
-    <groupId>jakarta.servlet</groupId>
-    <artifactId>jakarta.servlet-api</artifactId>
-    <version>6.0.0</version>
-</dependency>
-
-<dependency>
-    <groupId>jakarta.servlet.jsp</groupId>
-    <artifactId>jakarta.servlet.jsp-api</artifactId>
-    <version>4.0.0</version>
-</dependency>
-
-<dependency>
-    <groupId>jakarta.servlet.jsp.jstl</groupId>
-    <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
-    <version>3.0.2</version>
-</dependency>
-
-
-<dependency>
-    <groupId>org.glassfish.web</groupId>
-    <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-    <version>3.0.1</version>
-</dependency>
-
-
-
+      <dependency>
+        <groupId>org.mockito</groupId>
+        <artifactId>mockito-junit-jupiter</artifactId>
+        <version>${mockito.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <build>
-    <defaultGoal>clean verify apache-rat:check</defaultGoal>
+    <defaultGoal>verify apache-rat:check</defaultGoal>
     <plugins>  <!-- plugins executed with every build -->
       <plugin>
         <artifactId>maven-enforcer-plugin</artifactId>
@@ -960,7 +828,7 @@
           <configuration>
             <container>
               <!-- https://codehaus-cargo.github.io/cargo/Maven2+Plugin+Reference+Guide.html#Maven2PluginReferenceGuide-container -->
-              <containerId>tomcat9x</containerId>
+              <containerId>tomcat10x</containerId>
               <zipUrlInstaller>
                 <url>https://repo1.maven.org/maven2/org/apache/tomcat/tomcat/${tomcat.version}/tomcat-${tomcat.version}.zip</url>
               </zipUrlInstaller>
@@ -972,7 +840,7 @@
             </container>
             <configuration>
               <type>standalone</type>
-              <home>${project.build.directory}/tomcat9x</home>
+              <home>${project.build.directory}/tomcat10x</home>
               <properties>
                 <cargo.servlet.port>8080</cargo.servlet.port>
                 <cargo.jvmargs>-Xms256m -Xmx3072m -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -XX:+DisableExplicitGC -Xverify:none -Djava.awt.headless=true</cargo.jvmargs>

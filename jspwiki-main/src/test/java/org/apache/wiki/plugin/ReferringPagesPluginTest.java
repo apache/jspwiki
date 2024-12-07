@@ -19,6 +19,7 @@
 
 package org.apache.wiki.plugin;
 
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
@@ -32,7 +33,7 @@ import java.text.SimpleDateFormat;
 
 import static org.apache.wiki.TestEngine.with;
 
-public class ReferringPagesPluginTest  {
+class ReferringPagesPluginTest  {
 
     static TestEngine engine = TestEngine.build( with( "jspwiki.breakTitleWithSpaces", "false" ),
                                                  with( "jspwiki.cache.enable", "false" ) );
@@ -40,7 +41,7 @@ public class ReferringPagesPluginTest  {
     Context context;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         engine.saveText( "TestPage", "Reference to [Foobar]." );
         engine.saveText( "Foobar", "Reference to [TestPage]." );
         engine.saveText( "Foobar2", "Reference to [TestPage]." );
@@ -50,11 +51,11 @@ public class ReferringPagesPluginTest  {
         engine.saveText( "Foobar6", "Reference to [TestPage]." );
         engine.saveText( "Foobar7", "Reference to [TestPage]." );
 
-        context = Wiki.context().create( engine, engine.newHttpRequest(), Wiki.contents().page( engine, "TestPage" ) );
+        context = Wiki.context().create( engine, HttpMockFactory.createHttpRequest(), Wiki.contents().page( engine, "TestPage" ) );
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         engine.deleteTestPage( "TestPage" );
         engine.deleteTestPage( "Foobar" );
         engine.deleteTestPage( "Foobar2" );
@@ -65,8 +66,7 @@ public class ReferringPagesPluginTest  {
         engine.deleteTestPage( "Foobar7" );
     }
 
-    private String mkLink( final String page )
-    {
+    private String mkLink( final String page ) {
         return mkFullLink( page, page );
     }
 
@@ -75,14 +75,14 @@ public class ReferringPagesPluginTest  {
     }
 
     @Test
-    public void testSingleReferral() throws Exception {
+    void testSingleReferral() throws Exception {
         final Context context2 = Wiki.context().create( engine, Wiki.contents().page(engine, "Foobar") );
         final String res = manager.execute( context2, "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
         Assertions.assertEquals( mkLink( "TestPage" )+"<br />", res );
     }
 
     @Test
-    public void testMaxReferences() throws Exception {
+    void testMaxReferences() throws Exception {
         final String res = manager.execute( context, "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE max=5}");
         int count = 0;
         int index = -1;
@@ -104,14 +104,14 @@ public class ReferringPagesPluginTest  {
     }
 
     @Test
-    public void testReferenceWidth() throws Exception {
+    void testReferenceWidth() throws Exception {
         final Context context2 = Wiki.context().create( engine, Wiki.contents().page(engine, "Foobar") );
         final String res = manager.execute( context2, "{INSERT org.apache.wiki.plugin.ReferringPagesPlugin WHERE maxwidth=5}");
         Assertions.assertEquals( mkFullLink( "TestP...", "TestPage" )+"<br />", res );
     }
 
     @Test
-    public void testInclude() throws Exception {
+    void testInclude() throws Exception {
         final String res = manager.execute( context, "{ReferringPagesPlugin include='*7'}" );
 
         Assertions.assertTrue( res.contains( "Foobar7" ), "7" );
@@ -123,19 +123,19 @@ public class ReferringPagesPluginTest  {
     }
 
     @Test
-    public void testExclude() throws Exception {
+    void testExclude() throws Exception {
         final String res = manager.execute( context, "{ReferringPagesPlugin exclude='*'}" );
         Assertions.assertEquals( "...nobody", res );
     }
 
     @Test
-    public void testExclude2() throws Exception {
+    void testExclude2() throws Exception {
         final String res = manager.execute( context, "{ReferringPagesPlugin exclude='*7'}" );
         Assertions.assertEquals( res.indexOf( "Foobar7" ), -1 );
     }
 
     @Test
-    public void testExclude3() throws Exception {
+    void testExclude3() throws Exception {
         final String res = manager.execute( context, "{ReferringPagesPlugin exclude='*7,*5,*4'}" );
 
         Assertions.assertEquals( res.indexOf( "Foobar7" ), -1, "7" );
@@ -147,7 +147,7 @@ public class ReferringPagesPluginTest  {
     }
 
     @Test
-    public void testCount() throws Exception {
+    void testCount() throws Exception {
         String result = manager.execute(context, "{ReferringPagesPlugin show=count}");
         Assertions.assertEquals("7",result);
 
@@ -160,7 +160,7 @@ public class ReferringPagesPluginTest  {
 
         final String dateString = result.substring(result.indexOf("(")+1,result.indexOf(")"));
         // the date should be parseable:
-        final SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss dd-MMM-yyyy zzz", engine.newHttpRequest().getLocale());
+        final SimpleDateFormat df = new SimpleDateFormat( "HH:mm:ss dd-MMM-yyyy zzz", HttpMockFactory.createHttpRequest().getLocale() );
         df.parse(dateString);
 
         // test if the proper exception is thrown:
@@ -176,7 +176,7 @@ public class ReferringPagesPluginTest  {
     }
 
     @Test
-    public void testColumns() throws Exception {
+    void testColumns() throws Exception {
         final String columnsWithLists = manager.execute( context, "{ReferringPagesPlugin columns=2 before='#' after='\\n'}" );
         Assertions.assertTrue( columnsWithLists.startsWith( "<div style=\"columns:2;-moz-columns:2;-webkit-columns:2;\"><ol><li>" ) );
 

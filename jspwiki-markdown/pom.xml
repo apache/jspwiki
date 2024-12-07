@@ -31,28 +31,29 @@
   <description>Apache JSPWiki markdown support</description>
 
   <dependencies>
-  
-      <dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-api</artifactId>
-    </dependency>    
-    
+      <version>${project.version}</version>
+    </dependency>
   
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-main</artifactId>
- <!--     <scope>provided</scope> -->
+      <version>${project.version}</version>
+      <scope>provided</scope>
     </dependency>
     
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-wysiwyg</artifactId>
       <version>${project.version}</version>
-    </dependency>    
-   
+    </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-main</artifactId>
+      <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -132,17 +133,9 @@
       <scope>test</scope>
     </dependency>
 
-
-
-	<dependency>
-		<groupId>jakarta.servlet</groupId>
-		<artifactId>jakarta.servlet-api</artifactId>
-		      <scope>test</scope>
-	</dependency>
-
     <dependency>
-      <groupId>net.sourceforge.stripes</groupId>
-      <artifactId>stripes</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

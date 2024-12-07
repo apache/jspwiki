@@ -17,6 +17,7 @@
     under the License.
  */
 package org.apache.wiki.auth.login;
+
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Properties;
@@ -27,6 +28,8 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.WikiPrincipal;
@@ -36,32 +39,25 @@ import org.apache.wiki.auth.user.XMLUserDatabase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.Mockito;
 
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
 
+class WebContainerLoginModuleTest {
 
-public class WebContainerLoginModuleTest
-{
     UserDatabase m_db;
-
-    Subject      m_subject;
-
-    private TestEngine m_engine;
+    Subject m_subject;
+    TestEngine m_engine;
 
     @Test
-    public final void testLogin()
-    {
+    void testLogin() {
         final Principal principal = new WikiPrincipal( "Andrew Jaquith" );
-        final MockHttpServletRequest request = m_engine.newHttpRequest();
-        request.setUserPrincipal( principal );
-        try
-        {
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        Mockito.doReturn( principal ).when( request ).getUserPrincipal();
+        try {
             // Test using Principal (WebContainerLoginModule succeeds)
             final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             final LoginModule module = new WebContainerLoginModule();
-            module.initialize( m_subject, handler,
-                              new HashMap<String, Object>(),
-                              new HashMap<String, Object>());
+            module.initialize( m_subject, handler, new HashMap<>(), new HashMap<>() );
             module.login();
             module.commit();
             final Set< Principal > principals = m_subject.getPrincipals();
@@ -71,27 +67,20 @@ public class WebContainerLoginModuleTest
             Assertions.assertFalse( principals.contains( Role.ASSERTED ) );
             Assertions.assertFalse( principals.contains( Role.AUTHENTICATED ) );
             Assertions.assertFalse( principals.contains( Role.ALL ) );
-        }
-        catch( final LoginException e )
-        {
-            System.err.println( e.getMessage() );
-            Assertions.fail();
+        } catch( final LoginException e ) {
+            Assertions.fail( e.getMessage() );
         }
     }
 
     @Test
-    public final void testLogout()
-    {
+    void testLogout() {
         final Principal principal = new WikiPrincipal( "Andrew Jaquith" );
-        final MockHttpServletRequest request = m_engine.newHttpRequest();
-        request.setUserPrincipal( principal );
-        try
-        {
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        Mockito.doReturn( principal ).when( request ).getUserPrincipal();
+        try {
             final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             final LoginModule module = new WebContainerLoginModule();
-            module.initialize( m_subject, handler,
-                              new HashMap<String, Object>(),
-                              new HashMap<String, Object>());
+            module.initialize( m_subject, handler, new HashMap<>(), new HashMap<>() );
             module.login();
             module.commit();
             final Set< Principal > principals = m_subject.getPrincipals();
@@ -101,30 +90,22 @@ public class WebContainerLoginModuleTest
             Assertions.assertFalse( principals.contains( Role.ALL ) );
             module.logout();
             Assertions.assertEquals( 0, principals.size() );
-        }
-        catch( final LoginException e )
-        {
-            System.err.println( e.getMessage() );
-            Assertions.fail();
+        } catch( final LoginException e ) {
+            Assertions.fail( e.getMessage() );
         }
     }
 
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
-        props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
-        m_engine = new TestEngine(props);
+        props.put( XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
+        m_engine = new TestEngine( props );
         m_db = new XMLUserDatabase();
         m_subject = new Subject();
-        try
-        {
+        try {
             m_db.initialize( m_engine, props );
-        }
-        catch( final NoRequiredPropertyException e )
-        {
-            System.err.println( e.getMessage() );
-            Assertions.fail();
+        } catch( final NoRequiredPropertyException e ) {
+            Assertions.fail( e.getMessage() );
         }
     }
 

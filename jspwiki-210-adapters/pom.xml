@@ -33,12 +33,14 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-main</artifactId>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-main</artifactId>
+      <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -46,25 +48,20 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-api</artifactId>
+      <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
 
-	<dependency>
-		<groupId>jakarta.servlet</groupId>
-		<artifactId>jakarta.servlet-api</artifactId>
-            <scope>provided</scope>
-	</dependency>
-
     <dependency>
-      <groupId>net.sourceforge.stripes</groupId>
-      <artifactId>stripes</artifactId>
-      <scope>test</scope>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
+      <scope>provided</scope>
     </dependency>
-
 
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-210-test-adaptees</artifactId>
+      <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -84,6 +81,12 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
