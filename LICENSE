@@ -291,7 +291,6 @@ jetty-all-9.4.54.v20240208.jar              LICENSE
 junit-5.13.4                                ./jspwiki-war/src/main/config/doc/LICENSE.cpl
 mockito-core-5.18.0.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.mit
 selenide-6.19.0.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
-stripes-1.7.0-async.jar                     LICENSE
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui
 
 JS LIBRARY                                  LICENSE FILE
