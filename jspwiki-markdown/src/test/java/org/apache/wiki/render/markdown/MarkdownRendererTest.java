@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.render.markdown;
 
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
@@ -358,7 +359,7 @@ public class MarkdownRendererTest {
     }
 
     String translate( final Engine e, final Page p, final String src ) throws Exception {
-        final Context context = Wiki.context().create( e, testEngine.newHttpRequest(), p );
+        final Context context = Wiki.context().create( e, HttpMockFactory.createHttpRequest(), p );
         final MarkdownParser tr = new MarkdownParser( context, new BufferedReader( new StringReader( src ) ) );
         final MarkdownRenderer conv = new MarkdownRenderer( context, tr.parse() );
         newPage( p.getName(), src );

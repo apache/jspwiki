@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.parser;
 
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.LinkCollector;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
@@ -49,7 +50,7 @@ import java.util.Vector;
 import static org.apache.wiki.TestEngine.with;
 
 
-public class JSPWikiMarkupParserTest {
+class JSPWikiMarkupParserTest {
 
     static final String PAGE_NAME = "testpage";
 
@@ -58,7 +59,7 @@ public class JSPWikiMarkupParserTest {
     TestEngine testEngine = TestEngine.build( with( "jspwiki.translatorReader.matchEnglishPlurals", "true" ) );
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         created.clear();
         testEngine.stop();
     }
@@ -81,7 +82,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     private String translate( final Engine e, final Page p, final String src ) throws IOException {
-        final WikiContext context = new WikiContext( e, testEngine.newHttpRequest(), p );
+        final WikiContext context = new WikiContext( e, HttpMockFactory.createHttpRequest(), p );
         final JSPWikiMarkupParser tr = new JSPWikiMarkupParser( context, new BufferedReader( new StringReader( src ) ) );
         final XHTMLRenderer conv = new XHTMLRenderer( context, tr.parse() );
         return conv.getString();
@@ -110,28 +111,28 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testHyperlinks3() throws Exception {
+    void testHyperlinks3() throws Exception {
         newPage( "HyperlinkToo" );
         final String src = "This should be a [hyperlink too]";
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperlinkToo\">hyperlink too</a>", translate( src ) );
     }
 
     @Test
-    public void testHyperlinks4() throws Exception {
+    void testHyperlinks4() throws Exception {
         newPage( "HyperLink" );
         final String src = "This should be a [HyperLink]";
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>", translate( src ) );
     }
 
     @Test
-    public void testHyperlinks5() throws Exception {
+    void testHyperlinks5() throws Exception {
         newPage( "HyperLink" );
         final String src = "This should be a [here|HyperLink]";
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">here</a>", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksNamed1() throws Exception {
+    void testHyperlinksNamed1() throws Exception {
         newPage( "HyperLink" );
         final String src = "This should be a [here|HyperLink#heading]";
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">here</a>",
@@ -139,14 +140,14 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testHyperlinksNamed2() throws Exception {
+    void testHyperlinksNamed2() throws Exception {
         newPage( "HyperLink" );
         final String src = "This should be a [HyperLink#heading]";
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-Heading\">HyperLink#heading</a>", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksNamed3() throws Exception {
+    void testHyperlinksNamed3() throws Exception {
         newPage( "HyperLink" );
         final String src = "!Heading Too\r\nThis should be a [HyperLink#heading too]";
         Assertions.assertEquals( "<h4 id=\"section-testpage-HeadingToo\">Heading Too<a class=\"hashlink\" href=\"#section-testpage-HeadingToo\">#</a></h4>\nThis should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-HeadingToo\">HyperLink#heading too</a>",
@@ -155,7 +156,7 @@ public class JSPWikiMarkupParserTest {
 
     // test hyperlink to a section with non-ASCII character in it
     @Test
-    public void testHyperlinksNamed4() throws Exception {
+    void testHyperlinksNamed4() throws Exception {
         newPage( "HyperLink" );
         final String src = "This should be a [HyperLink#headingwithnonASCIIZoltán]";
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink#section-HyperLink-HeadingwithnonASCIIZolt_E1n\">HyperLink#headingwithnonASCIIZoltán</a>",
@@ -164,7 +165,7 @@ public class JSPWikiMarkupParserTest {
 
     //  Testing CamelCase hyperlinks
     @Test
-    public void testHyperLinks6() throws Exception {
+    void testHyperLinks6() throws Exception {
         newPage( "DiscussionAboutWiki" );
         newPage( "WikiMarkupDevelopment" );
         final String src = "[DiscussionAboutWiki] [WikiMarkupDevelopment].";
@@ -173,14 +174,14 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testHyperlinksCC() throws Exception {
+    void testHyperlinksCC() throws Exception {
         newPage( "HyperLink" );
         final String src = "This should be a HyperLink.";
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>.", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksCCNonExistant() throws Exception {
+    void testHyperlinksCCNonExistant() throws Exception {
         final String src = "This should be a HyperLink.";
         Assertions.assertEquals( "This should be a <a class=\"createpage\" href=\"/test/Edit.jsp?page=HyperLink\" title=\"Create &quot;HyperLink&quot;\">HyperLink</a>.",
                 translate( src ) );
@@ -188,21 +189,21 @@ public class JSPWikiMarkupParserTest {
 
     /** Check if the CC hyperlink translator gets confused with unorthodox bracketed links. */
     @Test
-    public void testHyperlinksCC2() throws Exception {
+    void testHyperlinksCC2() throws Exception {
         newPage( "HyperLink" );
         final String src = "This should be a [  HyperLink  ].";
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">  HyperLink  </a>.", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksCC3() throws Exception {
+    void testHyperlinksCC3() throws Exception {
         final String src = "This should be a nonHyperLink.";
         Assertions.assertEquals( "This should be a nonHyperLink.", translate( src ) );
     }
 
     /** Two links on same line. */
     @Test
-    public void testHyperlinksCC4() throws Exception {
+    void testHyperlinksCC4() throws Exception {
         newPage( "HyperLink" );
         newPage( "ThisToo" );
         final String src = "This should be a HyperLink, and ThisToo.";
@@ -212,7 +213,7 @@ public class JSPWikiMarkupParserTest {
 
     /** Two mixed links on same line. */
     @Test
-    public void testHyperlinksCC5() throws Exception {
+    void testHyperlinksCC5() throws Exception {
         newPage( "HyperLink" );
         newPage( "ThisToo" );
         final String src = "This should be a [HyperLink], and ThisToo.";
@@ -222,7 +223,7 @@ public class JSPWikiMarkupParserTest {
 
     /** Closing tags only. */
     @Test
-    public void testHyperlinksCC6() throws Exception {
+    void testHyperlinksCC6() throws Exception {
         newPage( "HyperLink" );
         newPage( "ThisToo" );
         final String src = "] This ] should be a HyperLink], and ThisToo.";
@@ -232,7 +233,7 @@ public class JSPWikiMarkupParserTest {
 
     /** First and last words on same line. */
     @Test
-    public void testHyperlinksCCFirstAndLast() throws Exception {
+    void testHyperlinksCCFirstAndLast() throws Exception {
         newPage( "HyperLink" );
         newPage( "ThisToo" );
         final String src = "HyperLink, and ThisToo";
@@ -242,21 +243,21 @@ public class JSPWikiMarkupParserTest {
 
     /** Hyperlinks inside URIs. */
     @Test
-    public void testHyperlinksCCURLs() throws Exception {
+    void testHyperlinksCCURLs() throws Exception {
         final String src = "http://www.foo.bar/ANewHope/";
         Assertions.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>", translate( src ) );
     }
 
     /** Hyperlinks inside URIs. */
     @Test
-    public void testHyperlinksCCURLs2() throws Exception {
+    void testHyperlinksCCURLs2() throws Exception {
         final String src = "mailto:foo@bar.com";
         Assertions.assertEquals( "<a class=\"external\" href=\"mailto:foo@bar.com\">mailto:foo@bar.com</a>", translate( src ) );
     }
 
     /** Hyperlinks inside URIs. */
     @Test
-    public void testHyperlinksCCURLs3() throws Exception {
+    void testHyperlinksCCURLs3() throws Exception {
         final String src = "This should be a link: http://www.foo.bar/ANewHope/.  Is it?";
         Assertions.assertEquals( "This should be a link: <a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>.  Is it?",
                 translate( src ) );
@@ -264,7 +265,7 @@ public class JSPWikiMarkupParserTest {
 
     /** Hyperlinks in brackets. */
     @Test
-    public void testHyperlinksCCURLs4() throws Exception {
+    void testHyperlinksCCURLs4() throws Exception {
         final String src = "This should be a link: (http://www.foo.bar/ANewHope/)  Is it?";
         Assertions.assertEquals( "This should be a link: (<a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>)  Is it?",
                 translate( src ) );
@@ -272,7 +273,7 @@ public class JSPWikiMarkupParserTest {
 
     /** Hyperlinks end line. */
     @Test
-    public void testHyperlinksCCURLs5() throws Exception {
+    void testHyperlinksCCURLs5() throws Exception {
         final String src = "This should be a link: http://www.foo.bar/ANewHope/\nIs it?";
         Assertions.assertEquals( "This should be a link: <a class=\"external\" href=\"http://www.foo.bar/ANewHope/\">http://www.foo.bar/ANewHope/</a>\nIs it?",
                 translate( src ) );
@@ -280,91 +281,91 @@ public class JSPWikiMarkupParserTest {
 
     /** Hyperlinks with odd chars. */
     @Test
-    public void testHyperlinksCCURLs6() throws Exception {
+    void testHyperlinksCCURLs6() throws Exception {
         final String src = "This should not be a link: http://''some.server''/wiki//test/Wiki.jsp\nIs it?";
         Assertions.assertEquals( "This should not be a link: http://<i>some.server</i>/wiki//test/Wiki.jsp\nIs it?", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksCCURLs7() throws Exception {
+    void testHyperlinksCCURLs7() throws Exception {
         final String src = "http://www.foo.bar/ANewHope?q=foobar&gobble=bobble+gnoo";
         Assertions.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/ANewHope?q=foobar&amp;gobble=bobble+gnoo\">http://www.foo.bar/ANewHope?q=foobar&amp;gobble=bobble+gnoo</a>",
                 translate( src ) );
     }
 
     @Test
-    public void testHyperlinksCCURLs8() throws Exception {
+    void testHyperlinksCCURLs8() throws Exception {
         final String src = "http://www.foo.bar/~ANewHope/";
         Assertions.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/~ANewHope/\">http://www.foo.bar/~ANewHope/</a>", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksCCURLs9() throws Exception {
+    void testHyperlinksCCURLs9() throws Exception {
         final String src = "http://www.foo.bar/%7EANewHope/";
         Assertions.assertEquals( "<a class=\"external\" href=\"http://www.foo.bar/%7EANewHope/\">http://www.foo.bar/%7EANewHope/</a>", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksCCNegated() throws Exception {
+    void testHyperlinksCCNegated() throws Exception {
         final String src = "This should not be a ~HyperLink.";
         Assertions.assertEquals( "This should not be a HyperLink.", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksCCNegated2() throws Exception {
+    void testHyperlinksCCNegated2() throws Exception {
         final String src = "~HyperLinks should not be matched.";
         Assertions.assertEquals( "HyperLinks should not be matched.", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksCCNegated3() throws Exception {
+    void testHyperlinksCCNegated3() throws Exception {
         final String src = "The page ~ASamplePage is not a hyperlink.";
         Assertions.assertEquals( "The page ASamplePage is not a hyperlink.", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksCCNegated4() throws Exception {
+    void testHyperlinksCCNegated4() throws Exception {
         final String src = "The page \"~ASamplePage\" is not a hyperlink.";
         Assertions.assertEquals( "The page &quot;ASamplePage&quot; is not a hyperlink.", translate( src ) );
     }
 
     @Test
-    public void testCCLinkInList() throws Exception {
+    void testCCLinkInList() throws Exception {
         newPage( "HyperLink" );
         final String src = "*HyperLink";
         Assertions.assertEquals( "<ul><li><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a></li></ul>", translate( src ) );
     }
 
     @Test
-    public void testCCLinkBold() throws Exception {
+    void testCCLinkBold() throws Exception {
         newPage( "BoldHyperLink" );
         final String src = "__BoldHyperLink__";
         Assertions.assertEquals( "<b><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=BoldHyperLink\">BoldHyperLink</a></b>", translate( src ) );
     }
 
     @Test
-    public void testCCLinkBold2() throws Exception {
+    void testCCLinkBold2() throws Exception {
         newPage( "HyperLink" );
         final String src = "Let's see, if a bold __HyperLink__ is correct?";
         Assertions.assertEquals( "Let's see, if a bold <b><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a></b> is correct?", translate( src ) );
     }
 
     @Test
-    public void testCCLinkItalic() throws Exception {
+    void testCCLinkItalic() throws Exception {
         newPage( "ItalicHyperLink" );
         final String src = "''ItalicHyperLink''";
         Assertions.assertEquals( "<i><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ItalicHyperLink\">ItalicHyperLink</a></i>", translate( src ) );
     }
 
     @Test
-    public void testCCLinkWithPunctuation() throws Exception {
+    void testCCLinkWithPunctuation() throws Exception {
         newPage( "HyperLink" );
         final String src = "Test. Punctuation. HyperLink.";
         Assertions.assertEquals( "Test. Punctuation. <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLink</a>.", translate( src ) );
     }
 
     @Test
-    public void testCCLinkWithPunctuation2() throws Exception {
+    void testCCLinkWithPunctuation2() throws Exception {
         newPage( "HyperLink" );
         newPage( "ThisToo" );
 
@@ -374,7 +375,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testCCLinkWithScandics() throws Exception {
+    void testCCLinkWithScandics() throws Exception {
         newPage( "\u00c4itiSy\u00f6\u00d6ljy\u00e4" );
         final String src = "Onko t\u00e4m\u00e4 hyperlinkki: \u00c4itiSy\u00f6\u00d6ljy\u00e4?";
         Assertions.assertEquals( "Onko t\u00e4m\u00e4 hyperlinkki: <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=%C4itiSy%F6%D6ljy%E4\">\u00c4itiSy\u00f6\u00d6ljy\u00e4</a>?",
@@ -382,19 +383,19 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testHyperlinksExt() throws Exception {
+    void testHyperlinksExt() throws Exception {
         final String src = "This should be a [http://www.regex.fi/]";
         Assertions.assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\">http://www.regex.fi/</a>", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksExt2() throws Exception {
+    void testHyperlinksExt2() throws Exception {
         final String src = "This should be a [link|http://www.regex.fi/]";
         Assertions.assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\">link</a>", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksExtNofollow() throws Exception {
+    void testHyperlinksExtNofollow() throws Exception {
         final String src = "This should be a [link|http://www.regex.fi/]";
         Assertions.assertEquals( "This should be a <a class=\"external\" href=\"http://www.regex.fi/\" rel=\"nofollow\">link</a>",
                 translate_nofollow( src ) );
@@ -402,28 +403,28 @@ public class JSPWikiMarkupParserTest {
 
     // Testing various odds and ends about hyperlink matching.
     @Test
-    public void testHyperlinksPluralMatch() throws Exception {
+    void testHyperlinksPluralMatch() throws Exception {
         final String src = "This should be a [HyperLinks]";
         newPage( "HyperLink" );
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">HyperLinks</a>", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksPluralMatch2() throws Exception {
+    void testHyperlinksPluralMatch2() throws Exception {
         final String src = "This should be a [HyperLinks]";
         Assertions.assertEquals( "This should be a <a class=\"createpage\" href=\"/test/Edit.jsp?page=HyperLinks\" title=\"Create &quot;HyperLinks&quot;\">HyperLinks</a>",
                 translate( src ) );
     }
 
     @Test
-    public void testHyperlinksPluralMatch3() throws Exception {
+    void testHyperlinksPluralMatch3() throws Exception {
         final String src = "This should be a [HyperLink]";
         newPage( "HyperLinks" );
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLinks\">HyperLink</a>", translate( src ) );
     }
 
     @Test
-    public void testHyperlinksPluralMatch4() throws Exception {
+    void testHyperlinksPluralMatch4() throws Exception {
         final String src = "This should be a [Hyper links]";
         newPage( "HyperLink" );
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=HyperLink\">Hyper links</a>", translate( src ) );
@@ -431,28 +432,28 @@ public class JSPWikiMarkupParserTest {
 
 
     @Test
-    public void testHyperlinkJS1() throws Exception {
+    void testHyperlinkJS1() throws Exception {
         final String src = "This should be a [link|http://www.haxored.com/\" onMouseOver=\"alert('Hahhaa');\"]";
         Assertions.assertEquals( "This should be a <a class=\"external\" href=\"http://www.haxored.com/&quot; onMouseOver=&quot;alert('Hahhaa');&quot;\">link</a>",
                 translate( src ) );
     }
 
     @Test
-    public void testHyperlinksInterWiki1() throws Exception {
+    void testHyperlinksInterWiki1() throws Exception {
         final String src = "This should be a [link|JSPWiki:HyperLink]";
         Assertions.assertEquals( "This should be a <a class=\"interwiki\" href=\"http://jspwiki-wiki.apache.org/Wiki.jsp?page=HyperLink\">link</a>",
                 translate( src ) );
     }
 
     @Test
-    public void testHyperlinksInterWiki2() throws Exception {
+    void testHyperlinksInterWiki2() throws Exception {
         final String src = "This should be a [JSPWiki:HyperLink]";
         Assertions.assertEquals( "This should be a <a class=\"interwiki\" href=\"http://jspwiki-wiki.apache.org/Wiki.jsp?page=HyperLink\">JSPWiki:HyperLink</a>",
                 translate( src ) );
     }
 
     @Test
-    public void testAttachmentLink() throws Exception {
+    void testAttachmentLink() throws Exception {
         newPage( "Test" );
         final Attachment att = Wiki.contents().attachment( testEngine, "Test", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
@@ -465,7 +466,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testAttachmentLink2() throws Exception {
+    void testAttachmentLink2() throws Exception {
         final TestEngine testEngine2 = TestEngine.build( with( "jspwiki.encoding", StandardCharsets.ISO_8859_1.name() ) );
         testEngine2.saveText( "Test", "foo " );
         created.addElement( "Test" );
@@ -482,7 +483,7 @@ public class JSPWikiMarkupParserTest {
 
     /** Are attachments parsed correctly also when using gappy text? */
     @Test
-    public void testAttachmentLink3() throws Exception {
+    void testAttachmentLink3() throws Exception {
         final TestEngine testEngine2 = TestEngine.build();
         testEngine2.saveText( "TestPage", "foo " );
         created.addElement( "TestPage" );
@@ -498,7 +499,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testAttachmentLink4() throws Exception {
+    void testAttachmentLink4() throws Exception {
         final TestEngine testEngine2 = TestEngine.build();
         testEngine2.saveText( "TestPage", "foo " );
         created.addElement( "TestPage" );
@@ -514,103 +515,103 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testNoHyperlink() throws Exception {
+    void testNoHyperlink() throws Exception {
         newPage( "HyperLink" );
         final String src = "This should not be a [[HyperLink]";
         Assertions.assertEquals( "This should not be a [HyperLink]", translate( src ) );
     }
 
     @Test
-    public void testNoHyperlink2() throws Exception {
+    void testNoHyperlink2() throws Exception {
         final String src = "This should not be a [[[[HyperLink]";
         Assertions.assertEquals( "This should not be a [[[HyperLink]", translate( src ) );
     }
 
     @Test
-    public void testNoHyperlink3() throws Exception {
+    void testNoHyperlink3() throws Exception {
         final String src = "[[HyperLink], and this [[Neither].";
         Assertions.assertEquals( "[HyperLink], and this [Neither].", translate( src ) );
     }
 
     @Test
-    public void testNoPlugin() throws Exception {
+    void testNoPlugin() throws Exception {
         final String src = "There is [[{NoPlugin}] here.";
         Assertions.assertEquals( "There is [{NoPlugin}] here.", translate( src ) );
     }
 
     @Test
-    public void testErroneousHyperlink() throws Exception {
+    void testErroneousHyperlink() throws Exception {
         final String src = "What if this is the last char [";
         Assertions.assertEquals( "What if this is the last char ", translate( src ) );
     }
 
     @Test
-    public void testErroneousHyperlink2() throws Exception {
+    void testErroneousHyperlink2() throws Exception {
         final String src = "What if this is the last char [[";
         Assertions.assertEquals( "What if this is the last char [", translate( src ) );
     }
 
     @Test
-    public void testExtraPagename1() throws Exception {
+    void testExtraPagename1() throws Exception {
         final String src = "Link [test_page]";
         newPage( "Test_page" );
         Assertions.assertEquals( "Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Test_page\">test_page</a>", translate( src ) );
     }
 
     @Test
-    public void testExtraPagename2() throws Exception {
+    void testExtraPagename2() throws Exception {
         final String src = "Link [test.page]";
         newPage( "Test.page" );
         Assertions.assertEquals( "Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Test.page\">test.page</a>", translate( src ) );
     }
 
     @Test
-    public void testExtraPagename3() throws Exception {
+    void testExtraPagename3() throws Exception {
         final String src = "Link [.testpage_]";
         newPage( ".testpage_" );
         Assertions.assertEquals( "Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=.testpage_\">.testpage_</a>", translate( src ) );
     }
 
     @Test
-    public void testInlineImages() throws Exception {
+    void testInlineImages() throws Exception {
         final String src = "Link [test|http://www.ecyrd.com/test.png]";
         Assertions.assertEquals( "Link <img class=\"inline\" src=\"http://www.ecyrd.com/test.png\" alt=\"test\" />", translate( src ) );
     }
 
     @Test
-    public void testInlineImages2() throws Exception {
+    void testInlineImages2() throws Exception {
         final String src = "Link [test|http://www.ecyrd.com/test.ppm]";
         Assertions.assertEquals( "Link <a class=\"external\" href=\"http://www.ecyrd.com/test.ppm\">test</a>", translate( src ) );
     }
 
     @Test
-    public void testInlineImages3() throws Exception {
+    void testInlineImages3() throws Exception {
         final String src = "Link [test|http://images.com/testi]";
         Assertions.assertEquals( "Link <img class=\"inline\" src=\"http://images.com/testi\" alt=\"test\" />", translate( src ) );
     }
 
     @Test
-    public void testInlineImages4() throws Exception {
+    void testInlineImages4() throws Exception {
         final String src = "Link [test|http://foobar.jpg]";
         Assertions.assertEquals( "Link <img class=\"inline\" src=\"http://foobar.jpg\" alt=\"test\" />", translate( src ) );
     }
 
     // No link text should be just embedded link.
     @Test
-    public void testInlineImagesLink2() throws Exception {
+    void testInlineImagesLink2() throws Exception {
         final String src = "Link [http://foobar.jpg]";
         Assertions.assertEquals( "Link <img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://foobar.jpg\" />", translate( src ) );
     }
 
     @Test
-    public void testInlineImagesLink() throws Exception {
+    void testInlineImagesLink() throws Exception {
         final String src = "Link [http://link.to/|http://foobar.jpg]";
         Assertions.assertEquals( "Link <a class=\"external\" href=\"http://link.to/\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"http://link.to/\" /></a>",
                 translate( src ) );
     }
 
     @Test
-    public void testInlineImagesLink3() throws Exception {
+    void testInlineImagesLink3() throws Exception {
         final String src = "Link [SandBox|http://foobar.jpg]";
         newPage( "SandBox" );
         Assertions.assertEquals( "Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=SandBox\"><img class=\"inline\" src=\"http://foobar.jpg\" alt=\"SandBox\" /></a>",
@@ -618,20 +619,20 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testScandicPagename1() throws Exception {
+    void testScandicPagename1() throws Exception {
         final String src = "Link [\u00C5\u00E4Test]";
         newPage( "\u00C5\u00E4Test" ); // FIXME: Should be capital
         Assertions.assertEquals( "Link <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=%C5%E4Test\">\u00c5\u00e4Test</a>", translate( src ) );
     }
 
     @Test
-    public void testParagraph() throws Exception {
+    void testParagraph() throws Exception {
         final String src = "1\n\n2\n\n3";
         Assertions.assertEquals( "<p>1\n</p><p>2\n</p>\n<p>3</p>", translate( src ) );
     }
 
     @Test
-    public void testParagraph2() throws Exception {
+    void testParagraph2() throws Exception {
         final String src = "[WikiEtiquette]\r\n\r\n[Search]";
         newPage( "WikiEtiquette" );
         Assertions.assertEquals( "<p><a class=\"wikipage\" href=\"/test/Wiki.jsp?page=WikiEtiquette\">WikiEtiquette</a>\n</p>" +
@@ -639,14 +640,14 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testParagraph3() throws Exception {
+    void testParagraph3() throws Exception {
         final String src = "\r\n\r\n!Testi\r\n\r\nFoo.";
         Assertions.assertEquals( "<p />\n<h4 id=\"section-testpage-Testi\">Testi<a class=\"hashlink\" href=\"#section-testpage-Testi\">#</a></h4>\n<p>Foo.</p>",
                 translate( src ) );
     }
 
     @Test
-    public void testParagraph4() throws Exception {
+    void testParagraph4() throws Exception {
         final String src = "\r\n[Recent Changes]\\\\\r\n[WikiEtiquette]\r\n\r\n[Find pages|Search]\\\\\r\n[Unused pages|UnusedPages]";
         newPage( "WikiEtiquette" );
         newPage( "RecentChanges" );
@@ -660,7 +661,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testParagraph5() throws Exception {
+    void testParagraph5() throws Exception {
         final String src = "__File type sniffing__ is a way of identifying the content type of a document.\n\n" +
                 "In UNIX, the file(1) command can be used.";
         Assertions.assertEquals( "<p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>" +
@@ -669,7 +670,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testParagraph6() throws Exception {
+    void testParagraph6() throws Exception {
         final String src = "[{Counter}]\n\n__File type sniffing__ is a way of identifying the content type of a document.\n\n" +
                 "In UNIX, the file(1) command can be used.";
         Assertions.assertEquals( "<p>1\n</p><p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n" +
@@ -678,7 +679,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testParagraph7() throws Exception {
+    void testParagraph7() throws Exception {
         final String src = "[{$encoding}]\n\n__File type sniffing__ is a way of identifying the content type of a document.\n\n" +
                 "In UNIX, the file(1) command can be used.";
         Assertions.assertEquals( "<p>ISO-8859-1\n</p><p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n" +
@@ -687,7 +688,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testParagraph8() throws Exception {
+    void testParagraph8() throws Exception {
         final String src = "[{SET foo=bar}]\n\n__File type sniffing__ is a way of identifying the content type of a document.\n\n" +
                 "In UNIX, the file(1) command can be used.";
         Assertions.assertEquals( "<p><b>File type sniffing</b> is a way of identifying the content type of a document.\n</p>\n" +
@@ -696,111 +697,111 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testLinebreak() throws Exception {
+    void testLinebreak() throws Exception {
         final String src = "1\\\\2";
         Assertions.assertEquals( "1<br />2", translate( src ) );
     }
 
     @Test
-    public void testLinebreakEscape() throws Exception {
+    void testLinebreakEscape() throws Exception {
         final String src = "1~\\\\2";
         Assertions.assertEquals( "1\\\\2", translate( src ) );
     }
 
     @Test
-    public void testLinebreakClear() throws Exception {
+    void testLinebreakClear() throws Exception {
         final String src = "1\\\\\\2";
         Assertions.assertEquals( "1<br clear=\"all\" />2", translate( src ) );
     }
 
     @Test
-    public void testTT() throws Exception {
+    void testTT() throws Exception {
         final String src = "1{{2345}}6";
         Assertions.assertEquals( "1<tt>2345</tt>6", translate( src ) );
     }
 
     @Test
-    public void testTTAcrossLines() throws Exception {
+    void testTTAcrossLines() throws Exception {
         final String src = "1{{\n2345\n}}6";
         Assertions.assertEquals( "1<tt>\n2345\n</tt>6", translate( src ) );
     }
 
     @Test
-    public void testTTLinks() throws Exception {
+    void testTTLinks() throws Exception {
         final String src = "1{{\n2345\n[a link]\n}}6";
         newPage( "ALink" );
         Assertions.assertEquals( "1<tt>\n2345\n<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=ALink\">a link</a>\n</tt>6", translate( src ) );
     }
 
     @Test
-    public void testPre()
+    void testPre()
             throws Exception {
         final String src = "1{{{2345}}}6";
         Assertions.assertEquals( "1<span class=\"inline-code\">2345</span>6", translate( src ) );
     }
 
     @Test
-    public void testPre2() throws Exception {
+    void testPre2() throws Exception {
         final String src = "1 {{{ {{{ 2345 }}} }}} 6";
         Assertions.assertEquals( "1 <span class=\"inline-code\"> {{{ 2345 </span> }}} 6", translate( src ) );
     }
 
     @Test
-    public void testPre3() throws Exception {
+    void testPre3() throws Exception {
         final String src = "foo\n\nbar{{{2345}}}6";
         Assertions.assertEquals( "<p>foo\n</p><p>bar<span class=\"inline-code\">2345</span>6</p>", translate( src ) );
     }
 
     @Test
-    public void testPreEscape() throws Exception {
+    void testPreEscape() throws Exception {
         final String src = "1~{{{2345}}}6";
         Assertions.assertEquals( "1{{{2345}}}6", translate( src ) );
     }
 
     @Test
-    public void testPreEscape2() throws Exception {
+    void testPreEscape2() throws Exception {
         final String src = "1{{{{{{2345~}}}}}}6";
         Assertions.assertEquals( "1<span class=\"inline-code\">{{{2345}}}</span>6", translate( src ) );
     }
 
     @Test
-    public void testPreEscape3() throws Exception {
+    void testPreEscape3() throws Exception {
         final String src = "1 {{{ {{{ 2345 ~}}} }}} 6";
         Assertions.assertEquals( "1 <span class=\"inline-code\"> {{{ 2345 }}} </span> 6", translate( src ) );
     }
 
     @Test
-    public void testPreEscape4() throws Exception {
+    void testPreEscape4() throws Exception {
         final String src = "1{{{ {{{2345~}} }}}6";
         Assertions.assertEquals( "1<span class=\"inline-code\"> {{{2345~}} </span>6", translate( src ) );
     }
 
     @Test
-    public void testPreEscape5() throws Exception {
+    void testPreEscape5() throws Exception {
         final String src = "1{{{ ~ }}}6";
         Assertions.assertEquals( "1<span class=\"inline-code\"> ~ </span>6", translate( src ) );
     }
 
     @Test
-    public void testHTMLInPre() throws Exception {
+    void testHTMLInPre() throws Exception {
         final String src = "1\n{{{ <b> }}}";
         Assertions.assertEquals( "1\n<pre> &lt;b&gt; </pre>", translate( src ) );
     }
 
     @Test
-    public void testCamelCaseInPre() throws Exception {
+    void testCamelCaseInPre() throws Exception {
         final String src = "1\n{{{ CamelCase }}}";
         Assertions.assertEquals( "1\n<pre> CamelCase </pre>", translate( src ) );
     }
 
     @Test
-    public void testPreWithLines() throws Exception {
+    void testPreWithLines() throws Exception {
         final String src = "1\r\n{{{\r\nZippadii\r\n}}}";
         Assertions.assertEquals( "1\n<pre>\nZippadii\n</pre>", translate( src ) );
     }
 
     @Test
-    public void testList1() throws Exception {
+    void testList1() throws Exception {
         final String src = "A list:\n* One\n* Two\n* Three\n";
         Assertions.assertEquals( "A list:\n<ul><li>One\n</li><li>Two\n</li><li>Three\n</li></ul>", translate( src ) );
     }
@@ -815,31 +816,31 @@ public class JSPWikiMarkupParserTest {
      * </pre>
      */
     @Test
-    public void testMultilineList1() throws Exception {
+    void testMultilineList1() throws Exception {
         final String src = "A list:\n* One\n continuing.\n* Two\n* Three\n";
         Assertions.assertEquals( "A list:\n<ul><li>One\n continuing.\n</li><li>Two\n</li><li>Three\n</li></ul>", translate( src ) );
     }
 
     @Test
-    public void testMultilineList2() throws Exception {
+    void testMultilineList2() throws Exception {
         final String src = "A list:\n* One\n continuing.\n* Two\n* Three\nShould be normal.";
         Assertions.assertEquals( "A list:\n<ul><li>One\n continuing.\n</li><li>Two\n</li><li>Three\n</li></ul>Should be normal.", translate( src ) );
     }
 
     @Test
-    public void testHTML() throws Exception {
+    void testHTML() throws Exception {
         final String src = "<b>Test</b>";
         Assertions.assertEquals( "&lt;b&gt;Test&lt;/b&gt;", translate( src ) );
     }
 
     @Test
-    public void testHTML2() throws Exception {
+    void testHTML2() throws Exception {
         final String src = "<p>";
         Assertions.assertEquals( "&lt;p&gt;", translate( src ) );
     }
 
     @Test
-    public void testHTMLWhenAllowed() throws Exception {
+    void testHTMLWhenAllowed() throws Exception {
         final String src = "<p>";
         testEngine = TestEngine.build( with( "jspwiki.translatorReader.allowHTML", "true" ) );
         final Page page = Wiki.contents().page( testEngine, PAGE_NAME );
@@ -848,7 +849,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testHTMLWhenAllowedPre() throws Exception {
+    void testHTMLWhenAllowedPre() throws Exception {
         final String src = "{{{ <br /> }}}";
         testEngine = TestEngine.build( with( "jspwiki.translatorReader.allowHTML", "true" ) );
         final Page page = Wiki.contents().page( testEngine, PAGE_NAME );
@@ -857,43 +858,43 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testHTMLEntities() throws Exception {
+    void testHTMLEntities() throws Exception {
         final String src = "& &darr; foo&nbsp;bar &nbsp;&quot; &#2020;&";
         Assertions.assertEquals( "&amp; &darr; foo&nbsp;bar &nbsp;&quot; &#2020;&amp;", translate( src ) );
     }
 
     @Test
-    public void testItalicAcrossLinebreak() throws Exception {
+    void testItalicAcrossLinebreak() throws Exception {
         final String src = "''This is a\ntest.''";
         Assertions.assertEquals( "<i>This is a\ntest.</i>", translate( src ) );
     }
 
     @Test
-    public void testBoldAcrossLinebreak() throws Exception {
+    void testBoldAcrossLinebreak() throws Exception {
         final String src = "__This is a\ntest.__";
         Assertions.assertEquals( "<b>This is a\ntest.</b>", translate( src ) );
     }
 
     @Test
-    public void testBoldAcrossParagraph() throws Exception {
+    void testBoldAcrossParagraph() throws Exception {
         final String src = "__This is a\n\ntest.__";
         Assertions.assertEquals( "<p><b>This is a\n</b></p><p><b>test.</b></p>", translate( src ) );
     }
 
     @Test
-    public void testBoldItalic() throws Exception {
+    void testBoldItalic() throws Exception {
         final String src = "__This ''is'' a test.__";
         Assertions.assertEquals( "<b>This <i>is</i> a test.</b>", translate( src ) );
     }
 
     @Test
-    public void testFootnote1() throws Exception {
+    void testFootnote1() throws Exception {
         final String src = "Footnote[1]";
         Assertions.assertEquals( "Footnote<a class=\"footnoteref\" href=\"#ref-testpage-1\">[1]</a>", translate( src ) );
     }
 
     @Test
-    public void testFootnote2() throws Exception {
+    void testFootnote2() throws Exception {
         final String src = "[#2356] Footnote.";
         Assertions.assertEquals( "<a class=\"footnote\" name=\"ref-testpage-2356\">[#2356]</a> Footnote.", translate( src ) );
     }
@@ -907,14 +908,14 @@ public class JSPWikiMarkupParserTest {
 
     /** Check a reported error condition where empty list items could cause crashes */
     @Test
-    public void testEmptySecondLevelList() throws Exception {
+    void testEmptySecondLevelList() throws Exception {
         final String src = "A\n\n**\n\nB";
         // System.out.println(translate(src));
         Assertions.assertEquals( "<p>A\n</p><ul><li><ul><li>\n</li></ul></li></ul><p>B</p>", translate( src ) );
     }
 
     @Test
-    public void testEmptySecondLevelList2() throws Exception {
+    void testEmptySecondLevelList2() throws Exception {
         final String src = "A\n\n##\n\nB";
         // System.out.println(translate(src));
         Assertions.assertEquals( "<p>A\n</p><ol><li><ol><li>\n</li></ol></li></ol><p>B</p>", translate( src ) );
@@ -945,7 +946,7 @@ public class JSPWikiMarkupParserTest {
      *  (by Mahlen Morris).
      */
     @Test
-    public void testMixedList() throws Exception {
+    void testMixedList() throws Exception {
         final String src = "*Item A\n##Numbered 1\n##Numbered 2\n*Item B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
@@ -961,7 +962,7 @@ public class JSPWikiMarkupParserTest {
 
     /** Like testMixedList() but the list types have been reversed. */
     @Test
-    public void testMixedList2() throws Exception {
+    void testMixedList2() throws Exception {
         final String src = "#Item A\n**Numbered 1\n**Numbered 2\n#Item B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
@@ -998,7 +999,7 @@ public class JSPWikiMarkupParserTest {
      * </ul>
      */
     @Test
-    public void testMixedListOnSameLevel() throws Exception {
+    void testMixedListOnSameLevel() throws Exception {
         final String src = "* bullet A\n** bullet A_1\n*# number A_1\n* bullet B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
@@ -1040,7 +1041,7 @@ public class JSPWikiMarkupParserTest {
      * </ul>
      */
     @Test
-    public void testMixedListOnSameLevel2() throws Exception {
+    void testMixedListOnSameLevel2() throws Exception {
         final String src = "* bullet A\n** bullet A_1\n## number A_1\n* bullet B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
@@ -1080,7 +1081,7 @@ public class JSPWikiMarkupParserTest {
      * </ul>
      */
     @Test
-    public void testMixedListOnSameLevel3() throws Exception {
+    void testMixedListOnSameLevel3() throws Exception {
         final String src = "* bullet 1\n## number 2\n** bullet 3\n## number 4\n* bullet 5\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
@@ -1117,7 +1118,7 @@ public class JSPWikiMarkupParserTest {
      * </ol>
      */
     @Test
-    public void testMixedListOnSameLevel4() throws Exception {
+    void testMixedListOnSameLevel4() throws Exception {
         final String src = "# number 1\n** bullet 2\n## number 3\n** bullet 4\n# number 5\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
@@ -1134,7 +1135,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testNestedList() throws Exception {
+    void testNestedList() throws Exception {
         final String src = "*Item A\n**Numbered 1\n**Numbered 2\n*Item B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
@@ -1149,7 +1150,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testNestedList2() throws Exception {
+    void testNestedList2() throws Exception {
         final String src = "*Item A\n**Numbered 1\n**Numbered 2\n***Numbered3\n*Item B\n";
         String result = translate( src );
         // Remove newlines for easier parsing.
@@ -1167,150 +1168,150 @@ public class JSPWikiMarkupParserTest {
 
 
     @Test
-    public void testPluginInsert() throws Exception {
+    void testPluginInsert() throws Exception {
         final String src = "[{INSERT org.apache.wiki.plugin.SamplePlugin WHERE text=test}]";
         Assertions.assertEquals( "test", translate( src ) );
     }
 
     @Test
-    public void testPluginHTMLInsert() throws Exception {
+    void testPluginHTMLInsert() throws Exception {
         final String src = "[{INSERT org.apache.wiki.plugin.SamplePlugin WHERE text='<b>Foo</b>'}]";
         Assertions.assertEquals( "<b>Foo</b>", translate( src ) );
     }
 
     @Test
-    public void testPluginNoInsert() throws Exception {
+    void testPluginNoInsert() throws Exception {
         final String src = "[{SamplePlugin text=test}]";
         Assertions.assertEquals( "test", translate( src ) );
     }
 
     @Test
-    public void testPluginInsertJS() throws Exception {
+    void testPluginInsertJS() throws Exception {
         final String src = "Today: [{INSERT JavaScriptPlugin}] ''day''.";
         Assertions.assertEquals( "Today: <script language=\"JavaScript\"><!--\nfoo='';\n--></script>\n <i>day</i>.", translate( src ) );
     }
 
     @Test
-    public void testShortPluginInsert() throws Exception {
+    void testShortPluginInsert() throws Exception {
         final String src = "[{INSERT SamplePlugin WHERE text=test}]";
         Assertions.assertEquals( "test", translate( src ) );
     }
 
     /** Test two plugins on same row. */
     @Test
-    public void testShortPluginInsert2() throws Exception {
+    void testShortPluginInsert2() throws Exception {
         final String src = "[{INSERT SamplePlugin WHERE text=test}] [{INSERT SamplePlugin WHERE text=test2}]";
         Assertions.assertEquals( "test test2", translate( src ) );
     }
 
     @Test
-    public void testPluginQuotedArgs() throws Exception {
+    void testPluginQuotedArgs() throws Exception {
         final String src = "[{INSERT SamplePlugin WHERE text='test me now'}]";
         Assertions.assertEquals( "test me now", translate( src ) );
     }
 
     @Test
-    public void testPluginDoublyQuotedArgs() throws Exception {
+    void testPluginDoublyQuotedArgs() throws Exception {
         final String src = "[{INSERT SamplePlugin WHERE text='test \\'me too\\' now'}]";
         Assertions.assertEquals( "test 'me too' now", translate( src ) );
     }
 
     @Test
-    public void testPluginQuotedArgs2() throws Exception {
+    void testPluginQuotedArgs2() throws Exception {
         final String src = "[{INSERT SamplePlugin WHERE text=foo}] [{INSERT SamplePlugin WHERE text='test \\'me too\\' now'}]";
         Assertions.assertEquals( "foo test 'me too' now", translate( src ) );
     }
 
     /** Plugin output must not be parsed as Wiki text. */
     @Test
-    public void testPluginWikiText() throws Exception {
+    void testPluginWikiText() throws Exception {
         final String src = "[{INSERT SamplePlugin WHERE text=PageContent}]";
         Assertions.assertEquals( "PageContent", translate( src ) );
     }
 
     /** Nor should plugin input be interpreted as wiki text. */
     @Test
-    public void testPluginWikiText2() throws Exception {
+    void testPluginWikiText2() throws Exception {
         final String src = "[{INSERT SamplePlugin WHERE text='----'}]";
         Assertions.assertEquals( "----", translate( src ) );
     }
 
     @Test
-    public void testMultilinePlugin1() throws Exception {
+    void testMultilinePlugin1() throws Exception {
         final String src = "Test [{INSERT SamplePlugin WHERE\n text=PageContent}]";
         Assertions.assertEquals( "Test PageContent", translate( src ) );
     }
 
     @Test
-    public void testMultilinePluginBodyContent() throws Exception {
+    void testMultilinePluginBodyContent() throws Exception {
         final String src = "Test [{INSERT SamplePlugin\ntext=PageContent\n\n123\n456\n}]";
         Assertions.assertEquals( "Test PageContent (123+456+)", translate( src ) );
     }
 
     @Test
-    public void testMultilinePluginBodyContent2() throws Exception {
+    void testMultilinePluginBodyContent2() throws Exception {
         final String src = "Test [{INSERT SamplePlugin\ntext=PageContent\n\n\n123\n456\n}]";
         Assertions.assertEquals( "Test PageContent (+123+456+)", translate( src ) );
     }
 
     @Test
-    public void testMultilinePluginBodyContent3() throws Exception {
+    void testMultilinePluginBodyContent3() throws Exception {
         final String src = "Test [{INSERT SamplePlugin\n\n123\n456\n}]";
         Assertions.assertEquals( "Test  (123+456+)", translate( src ) );
     }
 
     /** Has an extra space after plugin name. */
     @Test
-    public void testMultilinePluginBodyContent4() throws Exception {
+    void testMultilinePluginBodyContent4() throws Exception {
         final String src = "Test [{INSERT SamplePlugin \n\n123\n456\n}]";
         Assertions.assertEquals( "Test  (123+456+)", translate( src ) );
     }
 
     /** Check that plugin end is correctly recognized. */
     @Test
-    public void testPluginEnd() throws Exception {
+    void testPluginEnd() throws Exception {
         final String src = "Test [{INSERT SamplePlugin text=']'}]";
         Assertions.assertEquals( "Test ]", translate( src ) );
     }
 
     @Test
-    public void testPluginEnd2() throws Exception {
+    void testPluginEnd2() throws Exception {
         final String src = "Test [{INSERT SamplePlugin text='a[]+b'}]";
         Assertions.assertEquals( "Test a[]+b", translate( src ) );
     }
 
     @Test
-    public void testPluginEnd3() throws Exception {
+    void testPluginEnd3() throws Exception {
         final String src = "Test [{INSERT SamplePlugin\n\na[]+b\n}]";
         Assertions.assertEquals( "Test  (a[]+b+)", translate( src ) );
     }
 
     @Test
-    public void testPluginEnd4() throws Exception {
+    void testPluginEnd4() throws Exception {
         final String src = "Test [{INSERT SamplePlugin text='}'}]";
         Assertions.assertEquals( "Test }", translate( src ) );
     }
 
     @Test
-    public void testPluginEnd5() throws Exception {
+    void testPluginEnd5() throws Exception {
         final String src = "Test [{INSERT SamplePlugin\n\na[]+b{}\nGlob.\n}]";
         Assertions.assertEquals( "Test  (a[]+b{}+Glob.+)", translate( src ) );
     }
 
     @Test
-    public void testPluginEnd6() throws Exception {
+    void testPluginEnd6() throws Exception {
         final String src = "Test [{INSERT SamplePlugin\n\na[]+b{}\nGlob.\n}}]";
         Assertions.assertEquals( "Test  (a[]+b{}+Glob.+})", translate( src ) );
     }
 
     @Test
-    public void testNestedPlugin1() throws Exception {
+    void testNestedPlugin1() throws Exception {
         final String src = "Test [{INSERT SamplePlugin\n\n[{SamplePlugin}]\nGlob.\n}}]";
         Assertions.assertEquals( "Test  ([{SamplePlugin}]+Glob.+})", translate( src ) );
     }
 
     @Test
-    public void testNestedPlugin2() throws Exception {
+    void testNestedPlugin2() throws Exception {
         final String src = "[{SET foo='bar'}]Test [{INSERT SamplePlugin\n\n[{SamplePlugin text='[{$foo}]'}]\nGlob.\n}}]";
         Assertions.assertEquals( "Test  ([{SamplePlugin text='[bar]'}]+Glob.+})", translate( src ) );
     }
@@ -1318,13 +1319,13 @@ public class JSPWikiMarkupParserTest {
     //  FIXME: I am not entirely certain if this is the right result
     //  Perhaps some sort of an error should be checked?
     @Test
-    public void testPluginNoEnd() throws Exception {
+    void testPluginNoEnd() throws Exception {
         final String src = "Test [{INSERT SamplePlugin\n\na+b{}\nGlob.\n}";
         Assertions.assertEquals( "Test {INSERT SamplePlugin\n\na+b{}\nGlob.\n}", translate( src ) );
     }
 
     @Test
-    public void testMissingPlugin() throws Exception {
+    void testMissingPlugin() throws Exception {
         final String src = "Test [{SamplePlugino foo='bar'}]";
         Assertions.assertEquals( "Test JSPWiki : testpage - Plugin insertion failed: Could not find plugin SamplePlugino" +
                                 "<span class=\"error\">JSPWiki : testpage - Plugin insertion failed: Could not find plugin SamplePlugino</span>",
@@ -1332,13 +1333,13 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testVariableInsert() throws Exception {
+    void testVariableInsert() throws Exception {
         final String src = "[{$pagename}]";
         Assertions.assertEquals( PAGE_NAME, translate( src ) );
     }
 
     @Test
-    public void testTable1() throws Exception {
+    void testTable1() throws Exception {
         final String src = "|| heading || heading2 \n| Cell 1 | Cell 2 \n| Cell 3 | Cell 4\n\n";
         Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">" +
                         "<tr class=\"odd\"><th> heading </th><th> heading2 </th></tr>\n" +
@@ -1349,7 +1350,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testTable2() throws Exception {
+    void testTable2() throws Exception {
         final String src = "||heading||heading2\n|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
         Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">" +
                         "<tr class=\"odd\"><th>heading</th><th>heading2</th></tr>\n" +
@@ -1360,7 +1361,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testTable3() throws Exception {
+    void testTable3() throws Exception {
         final String src = "|Cell 1| Cell 2\n| Cell 3 |Cell 4\n\n";
         Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">" +
                         "<tr class=\"odd\"><td>Cell 1</td><td> Cell 2</td></tr>\n" +
@@ -1370,7 +1371,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testTable4() throws Exception {
+    void testTable4() throws Exception {
         final String src = "|a\nbc";
         Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">" +
                         "<tr class=\"odd\"><td>a</td></tr>\n" +
@@ -1383,7 +1384,7 @@ public class JSPWikiMarkupParserTest {
      * Tests BugTableHeaderNotXHMTLCompliant
      */
     @Test
-    public void testTable5() throws Exception {
+    void testTable5() throws Exception {
         final String src = "Testtable\n||header|cell\n\n|cell||header";
         Assertions.assertEquals( "<p>Testtable\n</p>" +
                         "<table class=\"wikitable\" border=\"1\">" +
@@ -1395,7 +1396,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testTableLink() throws Exception {
+    void testTableLink() throws Exception {
         final String src = "|Cell 1| Cell 2\n|[Cell 3|ReallyALink]|Cell 4\n\n";
         newPage( "ReallyALink" );
         Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">" +
@@ -1406,7 +1407,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testTableLinkEscapedBar() throws Exception {
+    void testTableLinkEscapedBar() throws Exception {
         final String src = "|Cell 1| Cell~| 2\n|[Cell 3|ReallyALink]|Cell 4\n\n";
         newPage( "ReallyALink" );
         Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\">" +
@@ -1417,114 +1418,114 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testDescription() throws Exception {
+    void testDescription() throws Exception {
         final String src = ";:Foo";
         Assertions.assertEquals( "<dl><dt></dt><dd>Foo</dd></dl>", translate( src ) );
     }
 
     @Test
-    public void testDescription2() throws Exception {
+    void testDescription2() throws Exception {
         final String src = ";Bar:Foo";
         Assertions.assertEquals( "<dl><dt>Bar</dt><dd>Foo</dd></dl>", translate( src ) );
     }
 
     @Test
-    public void testDescription3() throws Exception {
+    void testDescription3() throws Exception {
         final String src = ";:";
         Assertions.assertEquals( "<dl><dt></dt><dd /></dl>", translate( src ) );
     }
 
     @Test
-    public void testDescription4() throws Exception {
+    void testDescription4() throws Exception {
         final String src = ";Bar:Foo :-)";
         Assertions.assertEquals( "<dl><dt>Bar</dt><dd>Foo :-)</dd></dl>", translate( src ) );
     }
 
     @Test
-    public void testDescription5() throws Exception {
+    void testDescription5() throws Exception {
         final String src = ";Bar:Foo :-) ;-) :*]";
         Assertions.assertEquals( "<dl><dt>Bar</dt><dd>Foo :-) ;-) :*]</dd></dl>", translate( src ) );
     }
 
     @Test
-    public void testRuler() throws Exception {
+    void testRuler() throws Exception {
         final String src = "----";
         Assertions.assertEquals( "<hr />", translate( src ) );
     }
 
     @Test
-    public void testRulerCombo() throws Exception {
+    void testRulerCombo() throws Exception {
         final String src = "----Foo";
         Assertions.assertEquals( "<hr />Foo", translate( src ) );
     }
 
     @Test
-    public void testRulerCombo2() throws Exception {
+    void testRulerCombo2() throws Exception {
         final String src = "Bar----Foo";
         Assertions.assertEquals( "Bar----Foo", translate( src ) );
     }
 
     @Test
-    public void testShortRuler1() throws Exception {
+    void testShortRuler1() throws Exception {
         final String src = "-";
         Assertions.assertEquals( "-", translate( src ) );
     }
 
     @Test
-    public void testShortRuler2() throws Exception {
+    void testShortRuler2() throws Exception {
         final String src = "--";
         Assertions.assertEquals( "--", translate( src ) );
     }
 
     @Test
-    public void testShortRuler3() throws Exception {
+    void testShortRuler3() throws Exception {
         final String src = "---";
         Assertions.assertEquals( "---", translate( src ) );
     }
 
     @Test
-    public void testLongRuler() throws Exception {
+    void testLongRuler() throws Exception {
         final String src = "------";
         Assertions.assertEquals( "<hr />", translate( src ) );
     }
 
     @Test
-    public void testHeading1() throws Exception {
+    void testHeading1() throws Exception {
         final String src = "!Hello\nThis is a test";
         Assertions.assertEquals( "<h4 id=\"section-testpage-Hello\">Hello<a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h4>\nThis is a test",
                 translate( src ) );
     }
 
     @Test
-    public void testHeading2() throws Exception {
+    void testHeading2() throws Exception {
         final String src = "!!Hello, testing 1, 2, 3";
         Assertions.assertEquals( "<h3 id=\"section-testpage-HelloTesting123\">Hello, testing 1, 2, 3<a class=\"hashlink\" href=\"#section-testpage-HelloTesting123\">#</a></h3>",
                 translate( src ) );
     }
 
     @Test
-    public void testHeading3() throws Exception {
+    void testHeading3() throws Exception {
         final String src = "!!!Hello there, how are you doing?";
         Assertions.assertEquals( "<h2 id=\"section-testpage-HelloThereHowAreYouDoing\">Hello there, how are you doing?<a class=\"hashlink\" href=\"#section-testpage-HelloThereHowAreYouDoing\">#</a></h2>",
                 translate( src ) );
     }
 
     @Test
-    public void testHeadingHyperlinks() throws Exception {
+    void testHeadingHyperlinks() throws Exception {
         final String src = "!!![Hello]";
         Assertions.assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"createpage\" href=\"/test/Edit.jsp?page=Hello\" title=\"Create &quot;Hello&quot;\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h2>",
                 translate( src ) );
     }
 
     @Test
-    public void testHeadingHyperlinks2() throws Exception {
+    void testHeadingHyperlinks2() throws Exception {
         final String src = "!!![Hello|http://www.google.com/]";
         Assertions.assertEquals( "<h2 id=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h2>",
                 translate( src ) );
     }
 
     @Test
-    public void testHeadingHyperlinks3() throws Exception {
+    void testHeadingHyperlinks3() throws Exception {
         final String src = "![Hello|http://www.google.com/?p=a&c=d]";
         Assertions.assertEquals( "<h4 id=\"section-testpage-Hello\"><a class=\"external\" href=\"http://www.google.com/?p=a&amp;c=d\">Hello</a><a class=\"hashlink\" href=\"#section-testpage-Hello\">#</a></h4>",
                 translate( src ) );
@@ -1532,34 +1533,34 @@ public class JSPWikiMarkupParserTest {
 
     /** in 2.0.0, this one throws OutofMemoryError. */
     @Test
-    public void testBrokenPageText() throws Exception {
+    void testBrokenPageText() throws Exception {
         final String translation = translate( brokenPageText );
         Assertions.assertNotNull( translation );
     }
 
     /** Shortened version of the previous one. */
     @Test
-    public void testBrokenPageTextShort() throws Exception {
+    void testBrokenPageTextShort() throws Exception {
         final String src = "{{{\ncode.}}\n";
         Assertions.assertEquals( "<pre>\ncode.}}\n</pre>", translate( src ) );
     }
 
     /** Shortened version of the previous one. */
     @Test
-    public void testBrokenPageTextShort2() throws Exception {
+    void testBrokenPageTextShort2() throws Exception {
         final String src = "{{{\ncode.}\n";
         Assertions.assertEquals( "<pre>\ncode.}\n</pre>", translate( src ) );
     }
 
     @Test
-    public void testExtraExclamation() throws Exception {
+    void testExtraExclamation() throws Exception {
         final String src = "Hello!";
         Assertions.assertEquals( "Hello!", translate( src ) );
     }
 
     /** Metadata tests */
     @Test
-    public void testSet1() throws Exception {
+    void testSet1() throws Exception {
         final String src = "Foobar.[{SET name=foo}]";
         final Page p = Wiki.contents().page( testEngine, PAGE_NAME );
         final String res = translate( p, src );
@@ -1568,7 +1569,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testSet2() throws Exception {
+    void testSet2() throws Exception {
         final String src = "Foobar.[{SET name = foo}]";
         final Page p = Wiki.contents().page( testEngine, PAGE_NAME );
         final String res = translate( p, src );
@@ -1577,7 +1578,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testSet3() throws Exception {
+    void testSet3() throws Exception {
         final String src = "Foobar.[{SET name= Janne Jalkanen}]";
         final Page p = Wiki.contents().page( testEngine, PAGE_NAME );
         final String res = translate( p, src );
@@ -1586,7 +1587,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testSet4() throws Exception {
+    void testSet4() throws Exception {
         final String src = "Foobar.[{SET name='Janne Jalkanen'}][{SET too='{$name}'}]";
         final Page p = Wiki.contents().page( testEngine, PAGE_NAME );
         final String res = translate( p, src );
@@ -1596,7 +1597,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testSetHTML() throws Exception {
+    void testSetHTML() throws Exception {
         final String src = "Foobar.[{SET name='<b>danger</b>'}] [{$name}]";
         final Page p = Wiki.contents().page( testEngine, PAGE_NAME );
         final String res = translate( p, src );
@@ -1608,7 +1609,7 @@ public class JSPWikiMarkupParserTest {
      * Test collection of links.
      */
     @Test
-    public void testCollectingLinks() throws Exception {
+    void testCollectingLinks() throws Exception {
         final LinkCollector coll = new LinkCollector();
         final String src = "[Test]";
         final WikiContext context = new WikiContext( testEngine, Wiki.contents().page( testEngine, PAGE_NAME ) );
@@ -1625,7 +1626,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testCollectingLinks2() throws Exception {
+    void testCollectingLinks2() throws Exception {
         final LinkCollector coll = new LinkCollector();
         final String src = "[" + PAGE_NAME + "/Test.txt]";
         final WikiContext context = new WikiContext( testEngine, Wiki.contents().page( testEngine, PAGE_NAME ) );
@@ -1642,7 +1643,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testCollectingLinksAttachment() throws Exception {
+    void testCollectingLinksAttachment() throws Exception {
         // First, make an attachment.
         try {
             testEngine.saveText( PAGE_NAME, "content" );
@@ -1675,115 +1676,115 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testDivStyle1() throws Exception {
+    void testDivStyle1() throws Exception {
         final String src = "%%foo\ntest\n%%\n";
         Assertions.assertEquals( "<div class=\"foo\">\ntest\n</div>\n", translate( src ) );
     }
 
     @Test
-    public void testDivStyle2() throws Exception {
+    void testDivStyle2() throws Exception {
         final String src = "%%foo.bar\ntest\n%%\n";
         Assertions.assertEquals( "<div class=\"foo bar\">\ntest\n</div>\n", translate( src ) );
     }
 
     @Test
-    public void testDivStyle3() throws Exception {
+    void testDivStyle3() throws Exception {
         final String src = "%%(foo:bar;)\ntest\n%%\n";
         Assertions.assertEquals( "<div style=\"foo:bar;\">\ntest\n</div>\n", translate( src ) );
     }
 
     @Test
-    public void testDivStyle4() throws Exception {
+    void testDivStyle4() throws Exception {
         final String src = "%%zoo(foo:bar;)\ntest\n%%\n";
         Assertions.assertEquals( "<div style=\"foo:bar;\" class=\"zoo\">\ntest\n</div>\n", translate( src ) );
     }
 
     @Test
-    public void testDivStyle5() throws Exception {
+    void testDivStyle5() throws Exception {
         final String src = "%%zoo1.zoo2(foo:bar;)\ntest\n%%\n";
         Assertions.assertEquals( "<div style=\"foo:bar;\" class=\"zoo1 zoo2\">\ntest\n</div>\n", translate( src ) );
     }
 
     @Test
-    public void testSpanStyle1() throws Exception {
+    void testSpanStyle1() throws Exception {
         final String src = "%%foo test%%\n";
         Assertions.assertEquals( "<span class=\"foo\">test</span>\n", translate( src ) );
     }
 
     @Test
-    public void testSpanStyle2() throws Exception {
+    void testSpanStyle2() throws Exception {
         final String src = "%%(foo:bar;)test%%\n";
         Assertions.assertEquals( "<span style=\"foo:bar;\">test</span>\n", translate( src ) );
     }
 
     @Test
-    public void testSpanStyle3() throws Exception {
+    void testSpanStyle3() throws Exception {
         final String src = "Johan %%(foo:bar;)test%%\n";
         Assertions.assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate( src ) );
     }
 
     @Test
-    public void testSpanStyle4() throws Exception {
+    void testSpanStyle4() throws Exception {
         final String src = "Johan %%(foo:bar;)test/%\n";
         Assertions.assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate( src ) );
     }
 
     @Test
-    public void testSpanEscape() throws Exception {
+    void testSpanEscape() throws Exception {
         final String src = "~%%foo test~%%\n";
         Assertions.assertEquals( "%%foo test%%\n", translate( src ) );
     }
 
     @Test
-    public void testSpanNested() throws Exception {
+    void testSpanNested() throws Exception {
         final String src = "Johan %%(color: rgb(1,2,3);)test%%\n";
         Assertions.assertEquals( "Johan <span style=\"color: rgb(1,2,3);\">test</span>\n", translate( src ) );
     }
 
     @Test
-    public void testSpanStyleTable() throws Exception {
+    void testSpanStyleTable() throws Exception {
         final String src = "|%%(foo:bar;)test%%|no test\n";
         Assertions.assertEquals( "<table class=\"wikitable\" border=\"1\"><tr class=\"odd\"><td><span style=\"foo:bar;\">test</span></td><td>no test</td></tr>\n</table>", translate( src ) );
     }
 
     @Test
-    public void testSpanJavascript() throws Exception {
+    void testSpanJavascript() throws Exception {
         final String src = "%%(visibility: hidden; background-image:url(javascript:alert('X')))%%\nTEST";
         Assertions.assertEquals( "<span class=\"error\">Attempt to output javascript!</span>\nTEST", translate( src ) );
     }
 
     @Test
-    public void testHTMLEntities1() throws Exception {
+    void testHTMLEntities1() throws Exception {
         final String src = "Janne&apos;s test";
         Assertions.assertEquals( "Janne&apos;s test", translate( src ) );
     }
 
     @Test
-    public void testHTMLEntities2() throws Exception {
+    void testHTMLEntities2() throws Exception {
         final String src = "&Auml;";
         Assertions.assertEquals( "&Auml;", translate( src ) );
     }
 
     @Test
-    public void testBlankEscape() throws Exception {
+    void testBlankEscape() throws Exception {
         final String src = "H2%%sub 2%%~ O";
         Assertions.assertEquals( "H2<span class=\"sub\">2</span>O", translate( src ) );
     }
 
     @Test
-    public void testEmptyBold() throws Exception {
+    void testEmptyBold() throws Exception {
         final String src = "____";
         Assertions.assertEquals( "<b></b>", translate( src ) );
     }
 
     @Test
-    public void testEmptyItalic() throws Exception {
+    void testEmptyItalic() throws Exception {
         final String src = "''''";
         Assertions.assertEquals( "<i></i>", translate( src ) );
     }
 
     @Test
-    public void testRenderingSpeed1() throws Exception {
+    void testRenderingSpeed1() throws Exception {
         final Benchmark sw = new Benchmark();
         sw.start();
         for ( int i = 0; i < 100; i++ ) {
@@ -1794,25 +1795,25 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testPunctuatedWikiNames() throws Exception {
+    void testPunctuatedWikiNames() throws Exception {
         final String src = "[-phobous]";
         Assertions.assertEquals( "<a class=\"createpage\" href=\"/test/Edit.jsp?page=-phobous\" title=\"Create &quot;-phobous&quot;\">-phobous</a>", translate( src ) );
     }
 
     @Test
-    public void testPunctuatedWikiNames2() throws Exception {
+    void testPunctuatedWikiNames2() throws Exception {
         final String src = "[?phobous]";
         Assertions.assertEquals( "<a class=\"createpage\" href=\"/test/Edit.jsp?page=Phobous\" title=\"Create &quot;Phobous&quot;\">?phobous</a>", translate( src ) );
     }
 
     @Test
-    public void testPunctuatedWikiNames3() throws Exception {
+    void testPunctuatedWikiNames3() throws Exception {
         final String src = "[Brightness (apical)]";
         Assertions.assertEquals( "<a class=\"createpage\" href=\"/test/Edit.jsp?page=Brightness%20%28apical%29\" title=\"Create &quot;Brightness (apical)&quot;\">Brightness (apical)</a>", translate( src ) );
     }
 
     @Test
-    public void testDeadlySpammer() throws Exception {
+    void testDeadlySpammer() throws Exception {
         final String deadlySpammerText = "zzz <a href=\"http://ring1.gmum.net/frog-ringtone.html\">frogringtone</a> zzz http://ring1.gmum.net/frog-ringtone.html[URL=http://ring1.gmum.net/frog-ringtone.html]frog ringtone[/URL] frogringtone<br>";
         final StringBuilder death = new StringBuilder( 20000 );
         death.append( deadlySpammerText.repeat( 1000 ) );
@@ -1825,7 +1826,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testSpacesInLinks1() throws Exception {
+    void testSpacesInLinks1() throws Exception {
         newPage( "Foo bar" );
         final String src = "[Foo bar]";
         Assertions.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Foo%20bar\">Foo bar</a>", translate( src ) );
@@ -1833,28 +1834,28 @@ public class JSPWikiMarkupParserTest {
 
     /** Too many spaces */
     @Test
-    public void testSpacesInLinks2() throws Exception {
+    void testSpacesInLinks2() throws Exception {
         newPage( "Foo bar" );
         final String src = "[Foo        bar]";
         Assertions.assertEquals( "<a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Foo%20bar\">Foo        bar</a>", translate( src ) );
     }
 
     @Test
-    public void testIllegalXML() throws Exception {
+    void testIllegalXML() throws Exception {
         final String src = "Test \u001d foo";
         final String dst = translate( src );
         Assertions.assertTrue( dst.contains( "JDOM" ), "No error" );
     }
 
     @Test
-    public void testXSS1() throws Exception {
+    void testXSS1() throws Exception {
         final String src = "[http://www.host.com/du=\"> <img src=\"foobar\" onerror=\"alert(document.cookie)\"/>]";
         final String dst = translate( src );
         Assertions.assertEquals( "<a class=\"external\" href=\"http://www.host.com/du=&quot;&gt; &lt;img src=&quot;foobar&quot; onerror=&quot;alert(document.cookie)&quot;/&gt;\">http://www.host.com/du=&quot;&gt; &lt;img src=&quot;foobar&quot; onerror=&quot;alert(document.cookie)&quot;/&gt;</a>", dst );
     }
 
     @Test
-    public void testAmpersand1() throws Exception {
+    void testAmpersand1() throws Exception {
         newPage( "Foo&Bar" );
         final String src = "[Foo&Bar]";
         final String dst = translate( src );
@@ -1862,7 +1863,7 @@ public class JSPWikiMarkupParserTest {
     }
 
     @Test
-    public void testAmpersand2() throws Exception {
+    void testAmpersand2() throws Exception {
         newPage( "Foo & Bar" );
         final String src = "[Foo & Bar]";
         final String dst = translate( src );

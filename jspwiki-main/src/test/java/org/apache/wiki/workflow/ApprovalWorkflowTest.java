@@ -29,6 +29,7 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.security.Principal;
@@ -40,11 +41,19 @@ import static org.apache.wiki.TestEngine.with;
 
 public class ApprovalWorkflowTest {
 
-    static TestEngine m_engine = TestEngine.build( with( "jspwiki.approver.workflow.saveWikiPage", "Admin" ),
-                                                   with( "jspwiki.approver.workflow.approvalWorkflow", Users.JANNE ) );
-    static WorkflowManager m_wm = m_engine.getManager( WorkflowManager.class );
-    static DecisionQueue m_dq = m_wm.getDecisionQueue();
-    static WorkflowBuilder m_builder = WorkflowBuilder.getBuilder( m_engine );
+    TestEngine m_engine;
+    WorkflowManager m_wm;
+    DecisionQueue m_dq;
+    WorkflowBuilder m_builder;
+
+    @BeforeEach
+    void setUp() {
+        m_engine = TestEngine.build( with( "jspwiki.approver.workflow.saveWikiPage", "Admin" ),
+                                     with( "jspwiki.approver.workflow.approvalWorkflow", Users.JANNE ) );
+        m_wm = m_engine.getManager( WorkflowManager.class );
+        m_dq = m_wm.getDecisionQueue();
+        m_builder = WorkflowBuilder.getBuilder( m_engine );
+    }
 
     @Test
     public void testBuildApprovalWorkflow() throws WikiException {
@@ -80,10 +89,10 @@ public class ApprovalWorkflowTest {
 
         // Presave complete attribute should be set now, and current step should be Decision
         final Step decision = w.getCurrentStep();
-        Assertions.assertTrue( decision instanceof Decision );
+        Assertions.assertInstanceOf( Decision.class, decision );
         Assertions.assertEquals( 2, w.getHistory().size() );
         Assertions.assertEquals( prepTask, w.getHistory().get( 0 ) );
-        Assertions.assertTrue( w.getHistory().get( 1 ) instanceof Decision );
+        Assertions.assertInstanceOf( Decision.class, w.getHistory().get( 1 ) );
         Assertions.assertNotNull( w.getAttribute( "task.preSaveWikiPage") );
         Assertions.assertEquals( new WikiPrincipal( Users.JANNE ), decision.getActor() );
         Assertions.assertEquals( decisionKey, decision.getMessageKey() );
@@ -106,7 +115,7 @@ public class ApprovalWorkflowTest {
         final Step notification = decision.getSuccessor( Outcome.DECISION_DENY );
         Assertions.assertNotNull( notification );
         Assertions.assertEquals( rejectedMessageKey, notification.getMessageKey() );
-        Assertions.assertTrue( notification instanceof SimpleNotification );
+        Assertions.assertInstanceOf( SimpleNotification.class, notification );
 
         // Now, approve the Decision and everything should complete
         ((Decision)decision).decide( Outcome.DECISION_APPROVE, null );
@@ -140,14 +149,14 @@ public class ApprovalWorkflowTest {
 
         // Now, deny the Decision and the submitter should see a notification
         Step step = w.getCurrentStep();
-        Assertions.assertTrue( step instanceof Decision );
+        Assertions.assertInstanceOf( Decision.class, step );
         final Decision decision = (Decision)step;
         decision.decide( Outcome.DECISION_DENY, null );
         Assertions.assertFalse( w.isCompleted() );
 
         // Check that the notification is ok, then acknowledge it
         step = w.getCurrentStep();
-        Assertions.assertTrue( step instanceof SimpleNotification );
+        Assertions.assertInstanceOf( SimpleNotification.class, step );
         Assertions.assertEquals( rejectedMessageKey, step.getMessageKey() );
         final SimpleNotification notification = (SimpleNotification)step;
         notification.acknowledge( null );

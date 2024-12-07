@@ -96,11 +96,5 @@
 		<artifactId>jakarta.servlet-api</artifactId>
       <scope>test</scope>
 	</dependency>
-
-    <dependency>
-      <groupId>net.sourceforge.stripes</groupId>
-      <artifactId>stripes</artifactId>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
 </project>
