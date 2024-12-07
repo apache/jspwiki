@@ -18,7 +18,10 @@
  */
 package org.apache.wiki.auth;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSessionTest;
 import org.apache.wiki.api.core.Context;
@@ -42,28 +45,27 @@ import org.apache.wiki.workflow.WorkflowManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
-/**
- */
-public class UserManagerTest {
 
-    private TestEngine m_engine;
-    private UserManager m_mgr;
-    private UserDatabase m_db;
-    private String m_groupName;
+class UserManagerTest {
+
+    TestEngine m_engine;
+    UserManager m_mgr;
+    UserDatabase m_db;
+    String m_groupName;
 
     /**
      *
      */
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
 
         // Make sure user profile save workflow is OFF
@@ -78,7 +80,7 @@ public class UserManagerTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    void tearDown() throws Exception {
         final GroupManager groupManager = m_engine.getManager( GroupManager.class );
         if( groupManager.findRole( m_groupName ) != null ) {
             groupManager.removeGroup( m_groupName );
@@ -100,7 +102,7 @@ public class UserManagerTest {
     }
 
     //@Test
-    public void testSetRenamedUserProfile() throws Exception {
+    void testSetRenamedUserProfile() throws Exception {
         // First, count the number of users, groups, and pages
         final int oldUserCount = m_db.getWikiNames().length;
         final GroupManager groupManager = m_engine.getManager( GroupManager.class );
@@ -110,7 +112,7 @@ public class UserManagerTest {
         final int oldPageCount = pageManager.getTotalPageCount();
 
         // Setup Step 1: create a new user with random name
-        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
+        final Context context = Wiki.context().create( m_engine, HttpMockFactory.createHttpRequest(), "" );
         final Session session = context.getWikiSession();
         final long now = System.currentTimeMillis();
         final String oldLogin = "TestLogin" + now;
@@ -268,13 +270,13 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testSetUserProfile() throws Exception {
+    void testSetUserProfile() throws Exception {
         // First, count the number of users in the db now.
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
-        final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        final Context context = Wiki.context().create( m_engine, HttpMockFactory.createHttpRequest(), "" );
+        final String loginName = "TestUser" + System.currentTimeMillis();
         UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
@@ -293,15 +295,20 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testSetUserProfileWithApproval() throws Exception {
+    void testSetUserProfileWithApproval() throws Exception {
         setUpWithWorkflow();
 
         // First, count the number of users in the db now.
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
-        final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        final HttpSession httpSession = Mockito.mock( HttpSession.class );
+        Mockito.doReturn( "mock-session-wf" ).when( httpSession ).getId();
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        Mockito.doReturn( httpSession ).when( request ).getSession();
+        Mockito.doReturn( httpSession ).when( request ).getSession( Mockito.anyBoolean() );
+        final Context context = Wiki.context().create( m_engine, request, "" );
+        final String loginName = "TestUser" + System.currentTimeMillis();
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
@@ -344,15 +351,20 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testSetUserProfileWithDenial() throws Exception {
+    void testSetUserProfileWithDenial() throws Exception {
         setUpWithWorkflow();
 
         // First, count the number of users in the db now.
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
-        final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
+        final HttpSession httpSession = Mockito.mock( HttpSession.class );
+        Mockito.doReturn( "mock-session-wf" ).when( httpSession ).getId();
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        Mockito.doReturn( httpSession ).when( request ).getSession();
+        Mockito.doReturn( httpSession ).when( request ).getSession( Mockito.anyBoolean() );
+        final Context context = Wiki.context().create( m_engine, request, "" );
+        final String loginName = "TestUser" + System.currentTimeMillis();
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
@@ -391,12 +403,12 @@ public class UserManagerTest {
     }
 
     @Test
-    public void testSetCollidingUserProfile() throws Exception {
+    void testSetCollidingUserProfile() throws Exception {
         // First, count the number of users in the db now.
         final int oldUserCount = m_db.getWikiNames().length;
 
         // Create a new user with random name
-        final Context context = Wiki.context().create( m_engine, m_engine.newHttpRequest(), "" );
+        final Context context = Wiki.context().create( m_engine, HttpMockFactory.createHttpRequest(), "" );
         final String loginName = "TestUser" + String.valueOf( System.currentTimeMillis() );
         final UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );

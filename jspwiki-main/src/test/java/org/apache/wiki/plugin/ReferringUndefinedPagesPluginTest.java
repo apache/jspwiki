@@ -18,6 +18,7 @@ under the License.
  */
 package org.apache.wiki.plugin;
 
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.spi.Wiki;
@@ -29,23 +30,23 @@ import org.junit.jupiter.api.Test;
 import static org.apache.wiki.TestEngine.with;
 
 
-public class ReferringUndefinedPagesPluginTest {
+class ReferringUndefinedPagesPluginTest {
 
 	static TestEngine testEngine = TestEngine.build( with( "jspwiki.cache.enable", "false" ) );
     static PluginManager manager = testEngine.getManager( PluginManager.class );
     Context context;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() throws Exception {
         testEngine.saveText( "TestPage01", "Some Text for testing 01 which refers [NonExistingPageA] " );
         testEngine.saveText( "TestPage02", "Some Text for testing 02 which refers [NonExistingPageB] " );
 		testEngine.saveText( "TestPage03", "Some Text for testing 03 which refers [NonExistingPageC] " );
 
-        context = Wiki.context().create( testEngine, testEngine.newHttpRequest(), Wiki.contents().page( testEngine,"TestPage" ) );
+        context = Wiki.context().create( testEngine, HttpMockFactory.createHttpRequest(), Wiki.contents().page( testEngine,"TestPage" ) );
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         testEngine.deleteTestPage( "TestPage01" );
 		testEngine.deleteTestPage( "TestPage02" );
 		testEngine.deleteTestPage( "TestPage03" );
@@ -59,7 +60,7 @@ public class ReferringUndefinedPagesPluginTest {
 	 * @throws Exception something went wrong
 	 */
     @Test
-	public void testSimple() throws Exception {
+	void testSimple() throws Exception {
 		final String res = manager.execute( context, "{INSERT ReferringUndefinedPagesPlugin}" );
 		Assertions.assertTrue( res.contains( "href=\"/test/Wiki.jsp?page=TestPage01\"" ) );
 	}
@@ -70,7 +71,7 @@ public class ReferringUndefinedPagesPluginTest {
 	 * @throws Exception something went wrong
 	 */
     @Test
-	public void testParamInclude() throws Exception {
+	void testParamInclude() throws Exception {
 		final String res = manager.execute( context, "{INSERT ReferringUndefinedPagesPlugin} include='TestPage02*'}" );
 		Assertions.assertFalse( res.contains("href=\"/test/Wiki.jsp?page=TestPage01\"" ) );
 		Assertions.assertTrue( res.contains("href=\"/test/Wiki.jsp?page=TestPage02\"" ) );
@@ -83,7 +84,7 @@ public class ReferringUndefinedPagesPluginTest {
      * @throws Exception something went wrong
      */
     @Test
-    public void testParamExclude() throws Exception {
+    void testParamExclude() throws Exception {
         final String res = manager.execute( context,"{ReferringUndefinedPagesPlugin} exclude='TestPage02*'}" );
 
         Assertions.assertTrue( res.contains( "href=\"/test/Wiki.jsp?page=TestPage01\"" ) );
@@ -97,7 +98,7 @@ public class ReferringUndefinedPagesPluginTest {
      * @throws Exception something went wrong
      */
     @Test
-    public void testParamMax() throws Exception {
+    void testParamMax() throws Exception {
         final String res = manager.execute( context,"{INSERT ReferringUndefinedPagesPlugin} max='2'}" );
 
         Assertions.assertTrue( res.contains( "href=\"/test/Wiki.jsp?page=TestPage01\"" ) );
@@ -107,7 +108,7 @@ public class ReferringUndefinedPagesPluginTest {
     }
 
     @Test
-    public void testUndefinedWithColumns() throws Exception {
+    void testUndefinedWithColumns() throws Exception {
         final String res = manager.execute( context,"{ReferringUndefinedPagesPlugin columns=2" );
 
         Assertions.assertTrue( res.startsWith( "<div style=\"columns:2;-moz-columns:2;-webkit-columns:2;\"><a " ) );

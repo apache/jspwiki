@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.tasks.pages;
 
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
@@ -38,7 +39,7 @@ import java.util.concurrent.Callable;
 
 import static org.apache.wiki.TestEngine.with;
 
-public class SaveWikiPageTaskTest {
+class SaveWikiPageTaskTest {
 
     TestEngine engine;
 
@@ -48,13 +49,13 @@ public class SaveWikiPageTaskTest {
     }
 
     @Test
-    public void testSaveWikiPageTask() throws Exception {
+    void testSaveWikiPageTask() throws Exception {
         engine = TestEngine.build( with( "jspwiki.lucene.initialdelay", "0" ),
                                    with( "jspwiki.lucene.indexdelay", "1" ) );
         final String pageName = "TestSaveWikiPageTestPage";
         final Page page = Wiki.contents().page( engine, pageName );
         engine.saveText( pageName, "initial text on first revision" );
-        final Context context = Wiki.context().create( engine, engine.newHttpRequest(), page );
+        final Context context = Wiki.context().create( engine, HttpMockFactory.createHttpRequest(), page );
         final SaveWikiPageTask task = new SaveWikiPageTask();
         task.setWorkflow( 1, new HashMap<>() );
         task.getWorkflowContext().put( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT, "correct horse battery staple" );
@@ -67,14 +68,14 @@ public class SaveWikiPageTaskTest {
     }
 
     @Test
-    public void testSaveWikiPageTaskWithVersioningFileProvider() throws Exception {
+    void testSaveWikiPageTaskWithVersioningFileProvider() throws Exception {
         engine = TestEngine.build( with( "jspwiki.pageProvider", "VersioningFileProvider" ),
                                    with( "jspwiki.lucene.initialdelay", "0" ),
                                    with( "jspwiki.lucene.indexdelay", "1" ) );
         final String pageName = "TestSaveWikiPageTestPageWithVersioningFileProvider";
         final Page page = Wiki.contents().page( engine, pageName );
         engine.saveText( pageName, "initial text on first revision" );
-        final Context context = Wiki.context().create( engine, engine.newHttpRequest(), page );
+        final Context context = Wiki.context().create( engine, HttpMockFactory.createHttpRequest(), page );
         final SaveWikiPageTask task = new SaveWikiPageTask();
         task.setWorkflow( 1, new HashMap<>() );
         task.getWorkflowContext().put( WorkflowManager.WF_WP_SAVE_FACT_PROPOSED_TEXT,

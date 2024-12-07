@@ -18,43 +18,41 @@
  */
 package org.apache.wiki;
 
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
-import net.sourceforge.stripes.mock.MockHttpServletResponse;
-import net.sourceforge.stripes.mock.MockServletConfig;
-import org.junit.jupiter.api.Assertions;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 
-public class WikiServletTest {
+class WikiServletTest {
     
     @Test
-    public void testDoGet() throws Exception {
-        final MockHttpServletRequest req = new MockHttpServletRequest( "/JSPWiki", "/wiki/Wiki.jsp" );
-        final MockHttpServletResponse res = new MockHttpServletResponse();
+    void testDoGet() throws Exception {
+        final HttpServletRequest req = HttpMockFactory.createHttpRequest( "/JSPWiki", "/wiki/Wiki.jsp" );
+        final HttpServletResponse res = HttpMockFactory.createHttpResponse();
         final WikiServlet wikiServlet = new WikiServlet();
-        final MockServletConfig config = new MockServletConfig();
-        config.setServletContext( TestEngine.createServletContext( "/JSPWiki" ) );
-        
+        final ServletConfig config = HttpMockFactory.createServletConfig( "/JSPWiki" );
+
         wikiServlet.init( config );
         wikiServlet.doGet( req, res );
         wikiServlet.destroy();
-        
-        Assertions.assertEquals( "/Wiki.jsp?page=Main&", req.getForwardUrl() );
+
+        Mockito.verify( req ).getRequestDispatcher( "/Wiki.jsp?page=Main&null" );
     }
     
     @Test
-    public void testNastyDoPost() throws Exception {
-        final MockHttpServletRequest req = new MockHttpServletRequest( "/JSPWiki", "/wiki/Edit.jsp" );
-        final MockHttpServletResponse res = new MockHttpServletResponse();
+    void testNastyDoPost() throws Exception {
+        final HttpServletRequest req = HttpMockFactory.createHttpRequest( "/JSPWiki", "/wiki/Edit.jsp" );
+        final HttpServletResponse res = HttpMockFactory.createHttpResponse();
         final WikiServlet wikiServlet = new WikiServlet();
-        final MockServletConfig config = new MockServletConfig();
-        config.setServletContext( TestEngine.createServletContext( "/JSPWiki" ) );
+        final ServletConfig config = HttpMockFactory.createServletConfig( "/JSPWiki" );
         
         wikiServlet.init( config );
         wikiServlet.doPost( req, res );
         wikiServlet.destroy();
-        
-        Assertions.assertEquals( "/Wiki.jsp?page=Main&", req.getForwardUrl() );
+
+        Mockito.verify( req ).getRequestDispatcher( "/Wiki.jsp?page=Main&null" );
     }
 
 }

@@ -17,7 +17,9 @@
     under the License.
  */
 package org.apache.wiki.auth.login;
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.AuthenticationManager;
@@ -34,33 +36,29 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import jakarta.servlet.http.Cookie;
+import org.mockito.Mockito;
+
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
 
-/**
- */
-public class CookieAssertionLoginModuleTest
-{
+class CookieAssertionLoginModuleTest {
+
     UserDatabase m_db;
-
-    Subject      m_subject;
-
-    private TestEngine m_engine;
+    Subject m_subject;
+    TestEngine m_engine;
 
     @Test
-    public final void testLogin()
-    {
-        final MockHttpServletRequest request = m_engine.newHttpRequest();
-        try
-        {
+    void testLogin() {
+        final HttpServletRequest request =HttpMockFactory.createHttpRequest();
+        try {
             // We can use cookies right?
             Assertions.assertTrue( m_engine.getManager( AuthenticationManager.class ).allowsCookieAssertions() );
 
             // Test using Cookie and IP address (AnonymousLoginModule succeeds)
             final Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
-            request.setCookies( new Cookie[] { cookie } );
+            Mockito.doReturn( new Cookie[] { cookie } ).when( request ).getCookies();
             m_subject = new Subject();
             final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             final LoginModule module = new CookieAssertionLoginModule();
@@ -72,22 +70,17 @@ public class CookieAssertionLoginModuleTest
             Assertions.assertTrue( principals.contains( new WikiPrincipal( "Bullwinkle" ) ) );
             Assertions.assertFalse( principals.contains( Role.ASSERTED ) );
             Assertions.assertFalse( principals.contains( Role.ALL ) );
-        }
-        catch( final LoginException e )
-        {
-            System.err.println( e.getMessage() );
-            Assertions.fail();
+        } catch( final LoginException e ) {
+            Assertions.fail( e.getMessage() );
         }
     }
 
     @Test
-    public final void testLogout()
-    {
-        final MockHttpServletRequest request = m_engine.newHttpRequest();
+    void testLogout() {
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
         final Cookie cookie = new Cookie( CookieAssertionLoginModule.PREFS_COOKIE_NAME, "Bullwinkle" );
-        request.setCookies( new Cookie[] { cookie } );
-        try
-        {
+        Mockito.doReturn( new Cookie[] { cookie } ).when( request ).getCookies();
+        try {
             final CallbackHandler handler = new WebContainerCallbackHandler( m_engine, request );
             final LoginModule module = new CookieAssertionLoginModule();
             module.initialize( m_subject, handler, new HashMap<>(), new HashMap<>() );
@@ -100,11 +93,8 @@ public class CookieAssertionLoginModuleTest
             Assertions.assertFalse( principals.contains( Role.ALL ) );
             module.logout();
             Assertions.assertEquals( 0, principals.size() );
-        }
-        catch( final LoginException e )
-        {
-            System.err.println( e.getMessage() );
-            Assertions.fail();
+        } catch( final LoginException e ) {
+            Assertions.fail( e.getMessage() );
         }
     }
 
@@ -112,21 +102,16 @@ public class CookieAssertionLoginModuleTest
      *
      */
     @BeforeEach
-    public void setUp() throws Exception
-    {
+    void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
-        props.put(XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
-        m_engine = new TestEngine(props);
+        props.put( XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
+        m_engine = new TestEngine( props );
         m_db = new XMLUserDatabase();
         m_subject = new Subject();
-        try
-        {
+        try {
             m_db.initialize( m_engine, props );
-        }
-        catch( final NoRequiredPropertyException e )
-        {
-            System.err.println( e.getMessage() );
-            Assertions.fail();
+        } catch( final NoRequiredPropertyException e ) {
+            Assertions.fail( e.getMessage() );
         }
     }
 

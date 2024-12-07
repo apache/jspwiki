@@ -43,8 +43,8 @@ class MemoryProfiling {
     void memorySize() {
         final Properties props = TestEngine.getTestProperties();
         props.put( "jspwiki.fileSystemProvider.pageDir", "../jspwiki-wikipages/en/src/main/resources" );
-        final Engine engine = Wiki.engine().find( TestEngine.createServletContext( "/test" ), TestEngine.getTestProperties() );
-        final Engine engineWithDefaultPages = Wiki.engine().find( TestEngine.createServletContext( "/test" ), props );
+        final Engine engine = Wiki.engine().find( HttpMockFactory.createServletContext( "/test" ), TestEngine.getTestProperties() );
+        final Engine engineWithDefaultPages = Wiki.engine().find( HttpMockFactory.createServletContext( "/test" ), props );
         final Page main = Wiki.contents().page( engine, "Main" );
         final Attachment att = Wiki.contents().attachment( engine, "Main", "file" );
         final Session session = Wiki.session().guest( engine );
