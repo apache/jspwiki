@@ -37,7 +37,7 @@ import java.util.Vector;
 
 /**
  * Mocks {@link TestEngine}'s http interactions. As this is a general usage class, tests using {@code MockitoExtension}
- * and {@link TestEngine} should also use {@code @MockitoSettings( strictness = Strictness.LENIENT}.
+ * and {@link TestEngine} should also use {@code @MockitoSettings( strictness = Strictness.LENIENT )}.
  */
 public class HttpMockFactory {
 
