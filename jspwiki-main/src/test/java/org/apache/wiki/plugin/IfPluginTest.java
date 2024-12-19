@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.plugin;
 
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiSession;
@@ -36,7 +37,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class IfPluginTest {
+class IfPluginTest {
 
     static TestEngine testEngine = TestEngine.build();
 
@@ -53,7 +54,7 @@ public class IfPluginTest {
      * @throws WikiException problems while logging in.
      */
     Context getJanneBasedWikiContextFor( final Page page ) throws WikiException {
-        final MockHttpServletRequest request = testEngine.newHttpRequest();
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
         final Session session =  WikiSession.getWikiSession( testEngine, request );
         testEngine.getManager( AuthenticationManager.class ).login( session, request, Users.JANNE, Users.JANNE_PASS );
         return Wiki.context().create( testEngine, request, page );
@@ -65,8 +66,7 @@ public class IfPluginTest {
      * @throws WikiException test Assertions.failing.
      */
     @Test
-    public void testIfPluginUserAllowed() throws WikiException
-    {
+    void testIfPluginUserAllowed() throws WikiException {
         final String src = "[{IfPlugin user='Janne Jalkanen'\n\nContent visible for Janne Jalkanen}]";
         final String expected = "<p>Content visible for Janne Jalkanen</p>\n";
 
@@ -84,8 +84,7 @@ public class IfPluginTest {
      * @throws WikiException test Assertions.failing.
      */
     @Test
-    public void testIfPluginUserNotAllowed() throws WikiException
-    {
+    void testIfPluginUserNotAllowed() throws WikiException {
         final String src = "[{IfPlugin user='!Janne Jalkanen'\n\nContent NOT visible for Janne Jalkanen}]";
         final String expected = "\n";
 
@@ -103,7 +102,7 @@ public class IfPluginTest {
      * @throws WikiException test Assertions.failing.
      */
     @Test
-    public void testIfPluginIPAllowed() throws WikiException {
+    void testIfPluginIPAllowed() throws WikiException {
         final String src = "[{IfPlugin ip='127.0.0.1'\n\nContent visible for 127.0.0.1}]";
         final String expected = "<p>Content visible for 127.0.0.1</p>\n";
 
@@ -121,7 +120,7 @@ public class IfPluginTest {
      * @throws WikiException test Assertions.failing.
      */
     @Test
-    public void testIfPluginIPNotAllowed() throws WikiException {
+    void testIfPluginIPNotAllowed() throws WikiException {
         final String src = "[{IfPlugin ip='!127.0.0.1'\n\nContent NOT visible for 127.0.0.1}]";
         final String expected = "\n";
 

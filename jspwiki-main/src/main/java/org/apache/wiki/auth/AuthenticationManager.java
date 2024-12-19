@@ -28,7 +28,7 @@ import org.apache.wiki.event.WikiSecurityEvent;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.spi.LoginModule;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Set;

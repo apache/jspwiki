@@ -18,9 +18,9 @@
  */
 package org.apache.wiki.tags;
 
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-import javax.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.tagext.BodyContent;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
+import jakarta.servlet.jsp.tagext.Tag;
 
 /**
  * ParamTag submits name-value pairs to the first enclosing 

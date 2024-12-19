@@ -20,7 +20,7 @@ package org.apache.wiki.api.spi;
 
 import org.apache.wiki.api.core.Engine;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.util.Properties;
 
 

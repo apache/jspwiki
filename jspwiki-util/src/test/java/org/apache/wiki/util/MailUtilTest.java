@@ -22,8 +22,9 @@ package org.apache.wiki.util;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 
-import javax.mail.MessagingException;
+import jakarta.mail.MessagingException;
 import javax.net.ssl.SSLHandshakeException;
 import java.net.ConnectException;
 import java.util.Properties;
@@ -66,6 +67,7 @@ class MailUtilTest  {
      * OS X, you can verify that this test ran successfully simply by typing "mail" at
      * the command line.
      */
+
     @Test
     void testSendMail() {
         final String user = System.getProperty( "user.name" ) + "@localhost";

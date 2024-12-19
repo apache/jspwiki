@@ -21,7 +21,7 @@ package org.apache.wiki.api.spi;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 
 /**

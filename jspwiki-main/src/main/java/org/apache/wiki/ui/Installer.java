@@ -35,8 +35,8 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.providers.FileSystemProvider;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;

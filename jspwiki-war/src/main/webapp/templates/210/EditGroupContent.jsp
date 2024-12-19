@@ -18,7 +18,7 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="java.util.Arrays" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
@@ -27,7 +27,7 @@
 <%@ page import="org.apache.wiki.util.comparators.PrincipalComparator" %>
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <%@ page import="org.apache.logging.log4j.LogManager" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ page import="jakarta.servlet.jsp.jstl.fmt.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
