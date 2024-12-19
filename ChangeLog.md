@@ -17,6 +17,23 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2024-12-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.3-git-03_
+
+* Fix for [JSPWIKI-1197](https://issues.apache.org/jira/browse/JSPWIKI-1197) - Deleting an attachment via filesystem causes jsp wiki to completey crash
+    * Provided in [PR #360](https://github.com/apache/jspwiki/pull/360) by Alex O'Ree, thanks!
+
+* Dependency updates
+    * Commons IO to 2.18.0 (closes [PR #371](https://github.com/apache/jspwiki/pull/371), thanks to Dependabot)
+    * Commons Text to 1.13.0
+    * JUnit to 5.11.4
+    * Log4J2 to 2.24.2
+    * Lucene to 9.12.0
+    * Mockito to 5.13.0 (closes [PR #367](https://github.com/apache/jspwiki/pull/367), thanks to Dependabot)
+    * Tomcat to 9.0.98
+    * Maven plugins: dependency to 3.8.1, javadoc to 3.11.1, jxr to 3.6.0, project-info-reports to 3.8.0, surefire to 3.5.2, surefire.junit5-tree-reporter to 1.4.0, umldoclet to 2.2.1, cyclonedx to 2.9.1 (closes [PR #372](https://github.com/apache/jspwiki/pull/372), thanks to Dependabot)
+
 **2024-09-26  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-02_
