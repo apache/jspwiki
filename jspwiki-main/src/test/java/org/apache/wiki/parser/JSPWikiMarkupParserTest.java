@@ -1947,4 +1947,32 @@ public class JSPWikiMarkupParserTest {
                     "----\n" +
                     "author: [Asser], [Ebu], [JanneJalkanen], [Jarmo|mailto:jarmo@regex.com.au]\n";
 
+
+    @Test
+    public void testEscapeHTMLWhenHTMLNotAllowed() throws Exception {
+        final String src = "This should be a [#1 <script>alert('XSS')</script>]";
+        testEngine = TestEngine.build(with("jspwiki.translatorReader.allowHTML", "false")); // Disable HTML
+        final Page page = Wiki.contents().page(testEngine, PAGE_NAME);
+        final String output = translate(testEngine, page, src);
+        Assertions.assertEquals(
+                "This should be a <a class=\"footnote\" name=\"ref-testpage-1 &lt;script&gt;alert('XSS')&lt;/script&gt;\">[#1 &lt;script&gt;alert('XSS')&lt;/script&gt;]</a>",
+                output
+        );
+    }
+
+
+    @Test
+    public void testNoEscapeHTMLWhenHTMLAllowed() throws Exception {
+        final String src = "This should be a [#1 <b>bold</b>]";
+        testEngine = TestEngine.build(with("jspwiki.translatorReader.allowHTML", "true")); // Enable HTML
+        final Page page = Wiki.contents().page(testEngine, PAGE_NAME);
+        final String output = translate(testEngine, page, src);
+        Assertions.assertEquals(
+                "This should be a <a class=\"footnote\" name=\"ref-testpage-1 &lt;b&gt;bold&lt;/b&gt;\">[#1 <b>bold</b>]</a>",
+                output
+        );
+    }
+
+
+
 }

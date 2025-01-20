@@ -17,6 +17,16 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2024-12-24  Arturo Bernal (abernal AT apache DOT org)**
+
+* _2.12.3-git-04_
+
+* Fix for [SECURITY][DISCUSS] XBOW-024-109 XSS in JSPWiki Header Link Name
+  * Addressed XSS vulnerability in JSPWiki header link name by ensuring proper HTML escaping when `jspwiki.translatorReader.allowHTML` is disabled.
+  * Fixed markdown module to respect `jspwiki.translatorReader.allowHTML` property, preventing XSS in markdown syntax.
+  * Changes include improved input sanitization and added appropriate tests for validation.
+
+
 **2024-12-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-03_
