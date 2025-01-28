@@ -19,6 +19,7 @@
 package org.apache.wiki.cache;
 
 
+import net.sf.ehcache.event.CacheEventListener;
 import org.apache.wiki.util.CheckedSupplier;
 
 import java.io.Serializable;
@@ -121,4 +122,12 @@ public interface CachingManager {
      */
     void remove( String cacheName, Serializable key );
 
+    /**
+     * Register a listener to a cache
+     *
+     * @param cacheName The cache to which the listener should be registered
+     * @param listener cache listener to register
+     * @return true if the listener is being added and was not already added
+     */
+    boolean registerListener( String cacheName, CacheEventListener listener );
 }
