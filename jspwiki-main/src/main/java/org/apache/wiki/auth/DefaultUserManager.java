@@ -64,6 +64,7 @@ import java.security.Permission;
 import java.security.Principal;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
@@ -292,10 +293,10 @@ public class DefaultUserManager implements UserManager {
         String password = request.getParameter( PARAM_PASSWORD );
         String fullname = request.getParameter( PARAM_FULLNAME );
         String email = request.getParameter( PARAM_EMAIL );
-        loginName = InputValidator.isBlank( loginName ) ? null : loginName;
+        loginName = InputValidator.isBlank( loginName ) ? null : loginName.trim();
         password = InputValidator.isBlank( password ) ? null : password;
-        fullname = InputValidator.isBlank( fullname ) ? null : fullname;
-        email = InputValidator.isBlank( email ) ? null : email;
+        fullname = InputValidator.isBlank( fullname ) ? null : fullname.trim();
+        email = InputValidator.isBlank( email ) ? null : email.trim();
 
         // A special case if we have container authentication: if authenticated, login name is always taken from container
         if ( m_engine.getManager( AuthenticationManager.class ).isContainerAuthenticated() && context.getWikiSession().isAuthenticated() ) {
