@@ -139,9 +139,10 @@ public class PluginTag
     {
         try
         {
-            final BodyContent bc = getBodyContent();
-            
-            getPreviousOut().write( executePlugin( m_plugin, m_args, (bc != null) ? bc.getString() : null) );
+            try (BodyContent bc = getBodyContent()) {
+
+                getPreviousOut().write(executePlugin(m_plugin, m_args, (bc != null) ? bc.getString() : null));
+            }
         }
         catch( final Exception e )
         {

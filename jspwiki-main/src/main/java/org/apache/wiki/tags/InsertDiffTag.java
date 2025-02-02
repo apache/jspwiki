@@ -96,14 +96,15 @@ public class InsertDiffTag extends WikiTagBase {
         LOG.debug("Request diff between version "+verold+" and "+vernew);
 
         if( ctx.getPage() != null ) {
-            final JspWriter out = pageContext.getOut();
-            final String diff = engine.getManager( DifferenceManager.class ).getDiff( ctx, vernew, verold);
+            try (JspWriter out = pageContext.getOut()) {
+                final String diff = engine.getManager(DifferenceManager.class).getDiff(ctx, vernew, verold);
 
-            if( diff.isEmpty() ) {
-                return EVAL_BODY_INCLUDE;
+                if (diff.isEmpty()) {
+                    return EVAL_BODY_INCLUDE;
+                }
+
+                out.write(diff);
             }
-
-            out.write( diff );
         }
 
         return SKIP_BODY;
