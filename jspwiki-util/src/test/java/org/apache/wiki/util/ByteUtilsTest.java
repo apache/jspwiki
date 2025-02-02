@@ -19,8 +19,6 @@
 
 package org.apache.wiki.util;
 
-import java.util.Arrays;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
