@@ -84,6 +84,36 @@ public class MarkdownRendererTest {
     }
 
     @Test
+    public void testMarkupExtensionHtmlEscaping() throws Exception {
+        testEngine.getWikiProperties().setProperty( "jspwiki.translatorReader.useOutlinkImage", "true" );
+        final String src = "This should be an [external <strong>link</strong>](https://jspwiki.apache.org)";
+
+        Assertions.assertEquals( "<p>This should be an <a href=\"https://jspwiki.apache.org\" class=\"external\">external &lt;strong&gt;link&lt;/strong&gt;</a><img class=\"outlink\" alt=\"\" src=\"/test/images/out.png\" /></p>\n",
+                translate( src ) );
+        testEngine.getWikiProperties().remove( "jspwiki.translatorReader.useOutlinkImage" );
+    }
+
+    @Test
+    public void testAttachmentLink1() throws Exception {
+        newPage( "Hyperlink" );
+        final String expected = "<p>This should be a <a href=\"/test/attach/Link%20%3Cstrong%3Ebold%3C/strong%3E\" class=\"attachment\">Link &lt;strong&gt;bold&lt;/strong&gt;</a><a href=\"/test/PageInfo.jsp?page=Link%20%3Cstrong%3Ebold%3C/strong%3E\" class=\"infolink\"><img src=\"/test/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a></p>\n";
+        Assertions.assertEquals( expected, translate( "This should be a [Link <strong>bold</strong>]()" ) );
+    }
+
+    @Test
+    public void testMarkupExtensionHtmlAllowsMDInsideLinks() throws Exception {
+        newPage( "Hyperlink" );
+        final String expected = "<p>This should be a <a href=\"/test/Edit.jsp?page=Link%20**bold**\" title=\"Create &quot;Link **bold**&quot;\" class=\"createpage\">Link <strong>bold</strong></a></p>\n";
+        Assertions.assertEquals( expected, translate( "This should be a [Link **bold**]()" ) );
+    }
+
+    @Test
+    public void testMarkupExtensionAllowsHtmlFromPlugins() throws Exception {
+        final String src = "<strong>string</strong> [{SamplePlugin text=test tag=strong}]()";
+        Assertions.assertEquals( "<p>&lt;strong&gt;string&lt;/strong&gt; <strong>test</strong></p>\n", translate( src ) );
+    }
+
+    @Test
     public void testMarkupExtensionInterWikiLink() throws Exception {
         final String src = "This should be an [interwiki link](JSPWiki:About)";
 
@@ -158,8 +188,8 @@ public class MarkdownRendererTest {
 
     @Test
     public void testMarkupExtensionPlugin() throws Exception {
-        final String src = "[{SamplePlugin text=test}]()";
-        Assertions.assertEquals( "<p>test</p>\n", translate( src ) );
+        final String src = "<strong>string</strong> [{SamplePlugin text=test}]()";
+        Assertions.assertEquals( "<p>&lt;strong&gt;string&lt;/strong&gt; test</p>\n", translate( src ) );
     }
 
     @Test
@@ -230,7 +260,7 @@ public class MarkdownRendererTest {
     }
 
     @Test
-    public void testAttachmentLink() throws Exception {
+    public void testAttachmentLink0() throws Exception {
         final String src = "This should be an [attachment link](Test/TestAtt.txt)";
         newPage( "Test" );
 

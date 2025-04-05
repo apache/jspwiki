@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.ext.toc.TocBlock;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
@@ -71,7 +70,7 @@ public class PluginLinkNodePostProcessorState implements NodePostProcessorState<
             //
             if( pluginContent != null ) {
                 final String pluginInvocation = pluginInvocation( link.getText().toString(), pluginContent );
-                final HtmlInline content = new HtmlInline( CharSubSequence.of( pluginInvocation ) );
+                final WikiHtmlInline content = WikiHtmlInline.of( pluginInvocation );
                 pluginContent.executeParse( wikiContext );
                 NodePostProcessorStateCommonOperations.addContent( state, link, content );
             }
@@ -110,12 +109,12 @@ public class PluginLinkNodePostProcessorState implements NodePostProcessorState<
     void handleTableOfContentsPlugin(final NodeTracker state, final JSPWikiLink link) {
         if( !m_wysiwygEditorMode ) {
             final ResourceBundle rb = Preferences.getBundle( wikiContext, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
-            final HtmlInline divToc = new HtmlInline( CharSubSequence.of( "<div class=\"toc\">\n" ) );
-            final HtmlInline divCollapseBox = new HtmlInline( CharSubSequence.of( "<div class=\"collapsebox\">\n" ) );
-            final HtmlInline divsClosing = new HtmlInline( CharSubSequence.of( "</div>\n</div>\n" ) );
-            final HtmlInline h4Title = new HtmlInline( CharSubSequence.of( "<h4 id=\"section-TOC\">" + // FIXME proper plugin parameters handling
-                                                                           rb.getString( "tableofcontents.title" ) +
-                                                                           "</h4>\n" ) );
+            final WikiHtmlInline divToc = WikiHtmlInline.of( "<div class=\"toc\">\n" );
+            final WikiHtmlInline divCollapseBox = WikiHtmlInline.of( "<div class=\"collapsebox\">\n" );
+            final WikiHtmlInline divsClosing = WikiHtmlInline.of( "</div>\n</div>\n" );
+            final WikiHtmlInline h4Title = WikiHtmlInline.of( "<h4 id=\"section-TOC\">" + // FIXME proper plugin parameters handling
+                                                                   rb.getString( "tableofcontents.title" ) +
+                                                                   "</h4>\n" );
             final TocBlock toc = new TocBlock( CharSubSequence.of( "[TOC]" ), CharSubSequence.of( "levels=1-3" ) );
 
             link.insertAfter( divToc );
