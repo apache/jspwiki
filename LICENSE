@@ -288,8 +288,8 @@ hsqldb-2.7.3.jar                            ./jspwiki-war/src/main/config/doc/LI
 sqltool-2.7.3.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 jamm-0.4.0.jar                              LICENSE
 jetty-all-9.4.54.v20240208.jar              LICENSE
-junit-5.11.4                                ./jspwiki-war/src/main/config/doc/LICENSE.cpl
-mockito-core-5.13.0.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.mit
+junit-5.12.1                                ./jspwiki-war/src/main/config/doc/LICENSE.cpl
+mockito-core-5.16.0.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.mit
 selenide-6.19.0.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
 stripes-1.7.0-async.jar                     LICENSE
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui
@@ -306,7 +306,7 @@ SlimBox                                     ./jspwiki-war/src/main/config/doc/LI
 
 RESOURCES                                   LICENSE FILE
 =============================================================================================================
-Apache Tomcat 9.0.98                        LICENSE
+Apache Tomcat 9.0.102                       LICENSE
 Font Awesome (CSS & LESS files)             ./jspwiki-war/src/main/config/doc/LICENSE.mit
 Font Awesome (Fonts)                        ./jspwiki-war/src/main/config/doc/LICENSE.ofl
 SilkIconSet                                 ./jspwiki-war/src/main/config/doc/LICENSE.SilkIconSet
