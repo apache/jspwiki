@@ -292,10 +292,10 @@ public class DefaultUserManager implements UserManager {
         String password = request.getParameter( PARAM_PASSWORD );
         String fullname = request.getParameter( PARAM_FULLNAME );
         String email = request.getParameter( PARAM_EMAIL );
-        loginName = InputValidator.isBlank( loginName ) ? null : loginName;
+        loginName = StringUtils.trim( loginName );
         password = InputValidator.isBlank( password ) ? null : password;
-        fullname = InputValidator.isBlank( fullname ) ? null : fullname;
-        email = InputValidator.isBlank( email ) ? null : email;
+        fullname = StringUtils.trim( fullname );
+        email = StringUtils.trim( email );
 
         // A special case if we have container authentication: if authenticated, login name is always taken from container
         if ( m_engine.getManager( AuthenticationManager.class ).isContainerAuthenticated() && context.getWikiSession().isAuthenticated() ) {
