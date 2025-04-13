@@ -19,57 +19,58 @@
 
 package org.apache.wiki.auth;
 
-import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.user.UserProfile;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class DefaultUserManagerTrimTest {
-
-    private TestEngine engine;
-    private DefaultUserManager userManager;
-
-    @BeforeEach
-    void setUp() {
-        Properties props = TestEngine.getTestProperties();
-        engine = TestEngine.build( props );
-        userManager = ( DefaultUserManager ) engine.getManager( UserManager.class );
-    }
+class DefaultUserManagerTest {
 
     @Test
     void testParseProfileTrimsFields() {
         // Mock HttpServletRequest
-        HttpServletRequest request = mock( HttpServletRequest.class );
+        final HttpServletRequest request = mock( HttpServletRequest.class );
         when( request.getParameter( "loginname" ) ).thenReturn( "  admin  " );
         when( request.getParameter( "password" ) ).thenReturn( "password" );
         when( request.getParameter( "fullname" ) ).thenReturn( "  Administrator  " );
         when( request.getParameter( "email" ) ).thenReturn( "  admin@example.com  " );
 
+        // Mock Engine and its dependencies
+        final AuthenticationManager aMgr = mock( AuthenticationManager.class );
+        when( aMgr.isContainerAuthenticated() ).thenReturn( false );
+        final Properties props = new Properties();
+        props.put( "jspwiki.userdatabase", "org.apache.wiki.auth.user.XMLUserDatabase" );
+        final Engine engine = mock( Engine.class );
+        when( engine.getManager( AuthenticationManager.class ) ).thenReturn( aMgr );
+        when( engine.getWikiProperties() ).thenReturn( props );
+
         // Mock Context
-        Context context = mock( Context.class );
+        final Context context = mock( Context.class );
         when( context.getHttpRequest() ).thenReturn( request );
 
         // Mock Session and ensure it's authenticated
-        Session session = mock( Session.class );
+        final Session session = mock( Session.class );
         when( session.isAuthenticated() ).thenReturn( true );
         when( session.getUserPrincipal() ).thenReturn( () -> "admin" );
         when( context.getWikiSession() ).thenReturn( session );
 
         // Call parseProfile
-        UserProfile profile = userManager.parseProfile( context );
+        final DefaultUserManager userManager = new DefaultUserManager();
+        userManager.initialize( engine, engine.getWikiProperties() );
+        final UserProfile profile = userManager.parseProfile( context );
 
         // Verify fields are trimmed
-        assertEquals( "admin", profile.getLoginName(), "Login name should be trimmed" );
-        assertEquals( "Administrator", profile.getFullname(), "Full name should be trimmed" );
-        assertEquals( "admin@example.com", profile.getEmail(), "Email should be trimmed" );
+        Assertions.assertEquals( "admin", profile.getLoginName(), "Login name should be trimmed" );
+        Assertions.assertEquals( "Administrator", profile.getFullname(), "Full name should be trimmed" );
+        Assertions.assertEquals( "admin@example.com", profile.getEmail(), "Email should be trimmed" );
     }
+
 }
