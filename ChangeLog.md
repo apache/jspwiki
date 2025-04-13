@@ -17,6 +17,22 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2025-04-13  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.3-git-06_
+
+* Proper digest comparison on `CryptoUtil.verifySaltedPassword`
+
+* PR [#377](https://github.com/apache/jspwiki/pull/377) Normalize User Input in Registration by Arturo Bernal
+
+* Dependency updates
+    * Commons IO to 2.19.0
+    * Commons Text to 1.13.1
+    * JUnit to 5.12.2
+    * HSQLDB to 2.7.4 (closes [PR #375](https://github.com/apache/jspwiki/pull/375), thanks to Dependabot)
+    * Tomcat to 9.0.104
+    * Maven plugins: javadoc to 3.11.2 (closes [PR #373](https://github.com/apache/jspwiki/pull/373), thanks to Dependabot)
+
 **2025-04-05  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-05_
