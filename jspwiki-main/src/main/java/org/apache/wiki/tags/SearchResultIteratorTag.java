@@ -119,8 +119,9 @@ public class SearchResultIteratorTag extends IteratorTag {
     public int doAfterBody() {
         if( bodyContent != null ) {
             try {
-                final JspWriter out = getPreviousOut();
-                out.print(bodyContent.getString());
+                try (JspWriter out = getPreviousOut()) {
+                    out.print(bodyContent.getString());
+                }
                 bodyContent.clearBody();
             } catch( final IOException e ) {
                 LOG.error("Unable to get inner tag text", e);

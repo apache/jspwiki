@@ -73,26 +73,27 @@ public class VariableTag extends WikiTagBase {
     @Override
     public final int doWikiStartTag() throws JspException, IOException {
         final Engine engine = m_wikiContext.getEngine();
-        final JspWriter out = pageContext.getOut();
-        String msg = null;
-        String value = null;
+        try (JspWriter out = pageContext.getOut()) {
+            String msg = null;
+            String value = null;
 
-        try {
-            value = engine.getManager( VariableManager.class ).getValue( m_wikiContext, getVar() );
-        } catch( final NoSuchVariableException e ) {
-            msg = "No such variable: " + e.getMessage();
-        } catch( final IllegalArgumentException e ) {
-            msg = "Incorrect variable name: " + e.getMessage();
-        }
+            try {
+                value = engine.getManager(VariableManager.class).getValue(m_wikiContext, getVar());
+            } catch (final NoSuchVariableException e) {
+                msg = "No such variable: " + e.getMessage();
+            } catch (final IllegalArgumentException e) {
+                msg = "Incorrect variable name: " + e.getMessage();
+            }
 
-        if( value == null ) {
-            value = m_default;
-        }
+            if (value == null) {
+                value = m_default;
+            }
 
-        if( value == null ) {
-            value = msg;
+            if (value == null) {
+                value = msg;
+            }
+            out.write(TextUtil.replaceEntities(value));
         }
-        out.write( TextUtil.replaceEntities(value) );
         return SKIP_BODY;
     }
 
