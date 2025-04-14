@@ -21,8 +21,10 @@ package org.apache.wiki.auth.authorize;
 import org.apache.wiki.auth.GroupPrincipal;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
 
 /**
  * <p>
@@ -61,7 +63,7 @@ public class Group {
 
     static final String[]  RESTRICTED_GROUPNAMES = new String[] { "Anonymous", "All", "Asserted", "Authenticated" };
 
-    private final Vector<Principal>    m_members = new Vector<>();
+    private final List<Principal> m_members = Collections.synchronizedList( new ArrayList<>() );
 
     private String          m_creator;
 
