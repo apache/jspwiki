@@ -68,7 +68,7 @@
     <jetty.version>9.4.54.v20240208</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.12.2</junit.version>
-    <log4j2.version>2.24.2</log4j2.version>
+    <log4j2.version>2.24.3</log4j2.version>
     <lucene.version>9.12.0</lucene.version>
     <mockito.version>5.16.0</mockito.version>
     <nekohtml.version>2.1.2</nekohtml.version>
