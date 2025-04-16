@@ -99,43 +99,6 @@
        <listener-class>org.apache.wiki.bootstrap.WikiBootstrapServletContextListener</listener-class>
    </listener>
 
-   <!--
-       Now, let's define the XML-RPC interfaces.  You probably don't have to
-       touch these.
-
-       First, we'll define the standard XML-RPC interface.
-     -->
-   <servlet>
-       <servlet-name>XMLRPC</servlet-name>
-       <servlet-class>org.apache.wiki.xmlrpc.RPCServlet</servlet-class>
-       <init-param>
-           <param-name>handler</param-name>
-           <param-value>org.apache.wiki.xmlrpc.RPCHandler</param-value>
-       </init-param>
-
-       <init-param>
-           <param-name>prefix</param-name>
-           <param-value>wiki</param-value>
-       </init-param>
-   </servlet>
-
-   <!--
-       OK, this then defines that our UTF-8 -capable server.
-     -->
-
-   <servlet>
-       <servlet-name>XMLRPC-UTF8</servlet-name>
-       <servlet-class>org.apache.wiki.xmlrpc.RPCServlet</servlet-class>
-       <init-param>
-           <param-name>handler</param-name>
-           <param-value>org.apache.wiki.xmlrpc.RPCHandlerUTF8</param-value>
-       </init-param>
-
-       <init-param>
-           <param-name>prefix</param-name>
-           <param-value>wiki</param-value>
-       </init-param>
-   </servlet>
 
     <!-- WikiAjaxDispatcherServlet -->
     <servlet>
@@ -182,30 +145,7 @@
         <url-pattern>/admin/ajax/*</url-pattern>
     </servlet-mapping>
 
-    <!--
-        And finally, let us tell the servlet container which
-        URLs should correspond to which XML RPC servlet.
-        By default, this is disabled.  If you want to enable it,
-        just uncomment the whole section.
-    -->
-
-    <!--  REMOVE ME TO ENABLE XML-RPC
-    <servlet-mapping>
-        <servlet-name>XMLRPC</servlet-name>
-        <url-pattern>/RPC2/</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>XMLRPC-UTF8</servlet-name>
-        <url-pattern>/RPCU/</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>ATOM</servlet-name>
-        <url-pattern>/atom/*</url-pattern>
-    </servlet-mapping>
-    AND REMOVE ME TOO -->
-
+ 
    <!-- This means that we don't have to use redirection
         from index.html anymore.  Yay! -->
    <welcome-file-list>
