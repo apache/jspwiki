@@ -23,6 +23,7 @@ import com.vladsch.flexmark.ext.definition.DefinitionExtension;
 import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.ext.toc.TocExtension;
+import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.ast.Node;
@@ -32,7 +33,7 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.markdown.MarkdownForJSPWikiExtension;
-import org.apache.wiki.parser.JSPWikiMarkupParser;
+import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 
 import java.util.Arrays;
@@ -68,7 +69,8 @@ public class MarkdownDocument extends WikiDocument {
         options.setFrom( ParserEmulationProfile.COMMONMARK );
         options.set( AttributesExtension.ASSIGN_TEXT_ATTRIBUTES, true );
         // align style of Markdown's footnotes extension with jspwiki footnotes refs
-        options.set( FootnoteExtension.FOOTNOTE_LINK_REF_CLASS, JSPWikiMarkupParser.CLASS_FOOTNOTE_REF );
+        options.set( FootnoteExtension.FOOTNOTE_LINK_REF_CLASS, MarkupParser.CLASS_FOOTNOTE_REF );
+        options.set( HtmlRenderer.ESCAPE_HTML, !context.getBooleanWikiProperty( MarkupParser.PROP_ALLOWHTML, false ) );
         options.set( Parser.EXTENSIONS, Arrays.asList( new Extension[] { new MarkdownForJSPWikiExtension( context, isImageInlining, inlineImagePatterns ),
                                                                          AttributesExtension.create(),
                                                                          DefinitionExtension.create(),

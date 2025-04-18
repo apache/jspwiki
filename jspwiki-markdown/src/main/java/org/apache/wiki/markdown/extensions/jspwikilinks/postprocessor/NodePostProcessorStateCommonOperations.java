@@ -18,10 +18,8 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
-import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
@@ -52,8 +50,7 @@ class NodePostProcessorStateCommonOperations {
 
         if( useOutlinkImage && !wysiwygEditorMode ) {
             final String m_outlinkImageURL = wikiContext.getURL( ContextEnum.PAGE_NONE.getRequestContext(), MarkupParser.OUTLINK_IMAGE );
-            final HtmlInline img = new HtmlInline( CharSubSequence.of( "<img class=\""+ MarkupParser.OUTLINK + "\" " +
-                                                                              "alt=\"\" src=\""+ m_outlinkImageURL + "\" />" ) );
+            final WikiHtmlInline img = WikiHtmlInline.of( "<img class=\""+ MarkupParser.OUTLINK + "\" " + "alt=\"\" src=\""+ m_outlinkImageURL + "\" />" ) ;
             node.insertAfter( img );
             state.nodeAdded( img );
         }
@@ -62,16 +59,14 @@ class NodePostProcessorStateCommonOperations {
     static String inlineLinkTextOnWysiwyg( final NodeTracker state, final JSPWikiLink link, final boolean wysiwygEditorMode ) {
         final String line = link.getUrl().toString();
         if( wysiwygEditorMode ) {
-            final HtmlInline content = new HtmlInline( CharSubSequence.of( "[" + line + "]()" ) );
+            final WikiHtmlInline content = WikiHtmlInline.of( "[" + line + "]()" );
             addContent( state, link, content );
         }
         return line;
     }
 
     static void makeError( final NodeTracker state, final Node node, final String errMsg ) {
-        final HtmlInline error = new HtmlInline( CharSubSequence.of( "<span class=\"error\">" +
-                                                                     errMsg +
-                                                                     "</span>" ) );
+        final WikiHtmlInline error = WikiHtmlInline.of( "<span class=\"error\">" + errMsg + "</span>" );
         addContent( state, node, error );
     }
 

@@ -1,4 +1,4 @@
-/*
+    /*
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
     distributed with this work for additional information
@@ -241,19 +241,18 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     /**
-     *  Creates a JDOM anchor element.  Can be overridden to change the URL creation,
-     *  if you really know what you are doing.
+     *  Creates a JDOM anchor element.  Can be overridden to change the URL creation, if you really know what you are doing.
      *
      *  @param type One of the types above
      *  @param link URL to which to link to
      *  @param text Link text
      *  @param section If a particular section identifier is required.
-     *  @return An A element.
+     *  @return An 'A' element.
      *  @since 2.4.78
      */
     private Element createAnchor( final int type, final String link, String text, String section ) {
-        text = escapeHTMLEntities( text );
-        section = escapeHTMLEntities( section );
+        text = TextUtil.escapeHTMLEntities( text );
+        section = TextUtil.escapeHTMLEntities( section );
         final Element el = new Element( "a" );
         el.setAttribute( "class", CLASS_TYPES[ type ] );
         el.setAttribute( "href", link + section );
@@ -298,7 +297,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
             case LOCAL:
                 el = new Element( "a" ).setAttribute( "class", CLASS_FOOTNOTE );
                 el.setAttribute( "name", "ref-" + m_context.getName() + "-" + link.substring( 1 ) );
-                el.addContent( "[" + text + "]" );
+                if( !m_allowHTML ) {
+                    el.addContent( "[" + TextUtil.escapeHTMLEntities( text ) + "]" );
+                } else {
+                    el.addContent( "[" + text + "]" );
+                }
                 break;
 
                 //  With the image, external and interwiki types we need to make sure nobody can put in Javascript or
@@ -420,7 +423,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             String buf;
 
             if( !m_allowHTML ) {
-                buf = escapeHTMLEntities(m_plainTextBuf.toString());
+                buf = TextUtil.escapeHTMLEntities( m_plainTextBuf.toString() );
             } else {
                 buf = m_plainTextBuf.toString();
             }
@@ -490,56 +493,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
         }
 
         return numChars;
-    }
-
-    /**
-     *  Escapes XML entities in a HTML-compatible way (i.e. does not escape entities that are already escaped).
-     *
-     *  @param buf
-     *  @return An escaped string.
-     */
-    private String escapeHTMLEntities( final String buf ) {
-        final StringBuilder tmpBuf = new StringBuilder( buf.length() + 20 );
-        for( int i = 0; i < buf.length(); i++ ) {
-            final char ch = buf.charAt(i);
-            if( ch == '<' ) {
-                tmpBuf.append("&lt;");
-            } else if( ch == '>' ) {
-                tmpBuf.append("&gt;");
-            } else if( ch == '\"' ) {
-                tmpBuf.append("&quot;");
-            } else if( ch == '&' ) {
-                // If the following is an XML entity reference (&#.*;) we'll leave it as it is; otherwise we'll replace it with an &amp;
-                boolean isEntity = false;
-                final StringBuilder entityBuf = new StringBuilder();
-                if( i < buf.length() -1 ) {
-                    for( int j = i; j < buf.length(); j++ ) {
-                        final char ch2 = buf.charAt( j );
-                        if( Character.isLetterOrDigit( ch2 ) || (ch2 == '#' && j == i+1) || ch2 == ';' || ch2 == '&' ) {
-                            entityBuf.append(ch2);
-                            if( ch2 == ';' ) {
-                                isEntity = true;
-                                break;
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                }
-
-                if( isEntity ) {
-                    tmpBuf.append( entityBuf );
-                    i = i + entityBuf.length() - 1;
-                } else {
-                    tmpBuf.append( "&amp;" );
-                }
-
-            } else {
-                tmpBuf.append( ch );
-            }
-        }
-
-        return tmpBuf.toString();
     }
 
     private Element pushElement( final Element e ) {
@@ -992,7 +945,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                             addElement( outlinkImage() );
                         }
                     } else {
-                        final Object[] args = { escapeHTMLEntities( extWiki ) };
+                        final Object[] args = { TextUtil.escapeHTMLEntities( extWiki ) };
                         addElement( makeError( MessageFormat.format( rb.getString( "markupparser.error.nointerwikiref" ), args ) ) );
                     }
                 }

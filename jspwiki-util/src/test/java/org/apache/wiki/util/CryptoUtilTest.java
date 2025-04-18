@@ -150,8 +150,7 @@ public class CryptoUtilTest {
         Assertions.assertTrue( CryptoUtil.verifySaltedPassword( password, "{SSHA}tAVisOOQGAeVyP8UMFQY9qi83lxsb09e" ) );
         Assertions.assertTrue( CryptoUtil.verifySaltedPassword( password, "{SSHA}BZaDYvB8czmNW3MjR2j7/mklODV0ZXN0eQ==" ) );
 
-        // Verify with three consecutive random generations (based on
-        // slappasswd)
+        // Verify with three consecutive random generations (based on slappasswd)
         password = "testPassword".getBytes();
         Assertions.assertTrue( CryptoUtil.verifySaltedPassword( password, "{SSHA}t2tfJHm/QZYUh0OZ8tkm05l2LLbuc3ZF" ) );
         Assertions.assertTrue( CryptoUtil.verifySaltedPassword( password, "{SSHA}0FKV9iM2cA5bAMws7mSgwg+zik/GT+wy" ) );

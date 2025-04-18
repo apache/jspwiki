@@ -24,6 +24,7 @@ import com.vladsch.flexmark.html.renderer.NodeRenderer;
 import com.vladsch.flexmark.html.renderer.NodeRendererContext;
 import com.vladsch.flexmark.html.renderer.NodeRenderingHandler;
 import com.vladsch.flexmark.html.renderer.ResolvedLink;
+import org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor.WikiHtmlInline;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 
 import java.util.HashSet;
@@ -49,7 +50,7 @@ public class JSPWikiLinkRenderer implements NodeRenderer {
              * {@inheritDoc}
              */
             @Override
-            public void render(final JSPWikiLink node, final NodeRendererContext context, final HtmlWriter html) {
+            public void render( final JSPWikiLink node, final NodeRendererContext context, final HtmlWriter html ) {
                 if (context.isDoNotRenderLinks()) {
                     context.renderChildren(node);
                 } else {
@@ -64,6 +65,16 @@ public class JSPWikiLinkRenderer implements NodeRenderer {
                     context.renderChildren(node);
                     html.tag("/a");
                 }
+            }
+        } ) );
+        set.add( new NodeRenderingHandler<>( WikiHtmlInline.class, new NodeRenderingHandler.CustomNodeRenderer<>() {
+
+            /**
+             * {@inheritDoc}
+             */
+            @Override
+            public void render( final WikiHtmlInline node, final NodeRendererContext context, final HtmlWriter html ) {
+                html.raw( node.getChars().normalizeEOL() );
             }
         } ) );
         return set;

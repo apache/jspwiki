@@ -17,6 +17,64 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2025-04-13  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.3-git-06_
+
+* Proper digest comparison on `CryptoUtil.verifySaltedPassword`
+
+* PR [#377](https://github.com/apache/jspwiki/pull/377) Normalize User Input in Registration by Arturo Bernal
+
+* Dependency updates
+    * Commons IO to 2.19.0
+    * Commons Text to 1.13.1
+    * JUnit to 5.12.2
+    * HSQLDB to 2.7.4 (closes [PR #375](https://github.com/apache/jspwiki/pull/375), thanks to Dependabot)
+    * Tomcat to 9.0.104
+    * Maven plugins: javadoc to 3.11.2 (closes [PR #373](https://github.com/apache/jspwiki/pull/373), thanks to Dependabot)
+
+**2025-04-05  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.3-git-05_
+
+* Allow `data:` or `javascript:` uris on `src` attribute of `Image` plugin only if `jspwiki.translatorReader.allowHTML` is enabled
+
+* Additional fixes on _2.12.3-git-04_
+
+* Dependency updates
+    * JUnit to 5.12.1
+    * Mockito to 5.16.0
+    * Tika to 3.1.0
+    * Tomcat to 9.0.102
+    * XStream to 1.4.21
+    * Maven plugins: compiler to 3.14.0, install to 3.1.4, project-info-reports to 3.9.0, remote-resources to 3.3.0, surefire to 3.5.3
+
+**2024-12-24  Arturo Bernal (abernal AT apache DOT org)**
+
+* _2.12.3-git-04_
+
+* Fix for XBOW-024-109 XSS in JSPWiki Header Link Name
+    * Addressed XSS vulnerability in JSPWiki header link name by ensuring proper HTML escaping when `jspwiki.translatorReader.allowHTML` is disabled.
+    * Fixed markdown module to respect `jspwiki.translatorReader.allowHTML` property, preventing XSS in Markdown syntax.
+    * Changes include improved input sanitization and added appropriate tests for validation.
+
+**2024-12-19  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.3-git-03_
+
+* Fix for [JSPWIKI-1197](https://issues.apache.org/jira/browse/JSPWIKI-1197) - Deleting an attachment via filesystem causes jsp wiki to completey crash
+    * Provided in [PR #360](https://github.com/apache/jspwiki/pull/360) by Alex O'Ree, thanks!
+
+* Dependency updates
+    * Commons IO to 2.18.0 (closes [PR #371](https://github.com/apache/jspwiki/pull/371), thanks to Dependabot)
+    * Commons Text to 1.13.0
+    * JUnit to 5.11.4
+    * Log4J2 to 2.24.2
+    * Lucene to 9.12.0
+    * Mockito to 5.13.0 (closes [PR #367](https://github.com/apache/jspwiki/pull/367), thanks to Dependabot)
+    * Tomcat to 9.0.98
+    * Maven plugins: dependency to 3.8.1, javadoc to 3.11.1, jxr to 3.6.0, project-info-reports to 3.8.0, surefire to 3.5.2, surefire.junit5-tree-reporter to 1.4.0, umldoclet to 2.2.1, cyclonedx to 2.9.1 (closes [PR #372](https://github.com/apache/jspwiki/pull/372), thanks to Dependabot)
+
 **2024-09-26  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-02_

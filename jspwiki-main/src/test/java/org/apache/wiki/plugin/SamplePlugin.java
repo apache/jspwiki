@@ -28,7 +28,11 @@ import java.util.Map;
 /**
  *  Implements a simple plugin that just returns its text.
  *  <P>
- *  Parameters: text - text to return.
+ *  Parameters:
+ *  <ul>
+ *      <li>text - text to return.</li>
+ *      <li>tag - optional tag to wrap text in</li>
+ *  </ul>
  *  Any _body content gets appended between brackets.
  */
 public class SamplePlugin implements Plugin, ParserStagePlugin {
@@ -39,9 +43,16 @@ public class SamplePlugin implements Plugin, ParserStagePlugin {
     public String execute( final Context context, final Map< String, String > params ) {
         final StringBuilder sb = new StringBuilder();
         final String text = params.get("text");
+        final String tag = params.get("tag");
 
         if( text != null ) {
+            if( tag != null ) {
+                sb.append( "<" ).append( tag ).append( ">" );
+            }
             sb.append( text );
+            if( tag != null ) {
+                sb.append( "</" ).append( tag ).append( ">" );
+            }
         }
 
         final String body = params.get("_body");

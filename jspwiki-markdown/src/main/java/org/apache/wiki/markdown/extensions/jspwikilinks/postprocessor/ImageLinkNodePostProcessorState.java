@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
-import com.vladsch.flexmark.ast.HtmlInline;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
@@ -49,9 +48,9 @@ public class ImageLinkNodePostProcessorState implements NodePostProcessorState< 
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
-        final HtmlInline img = new HtmlInline( CharSubSequence.of( "<img class=\"inline\" " +
-                                                                        "src=\"" + urlRef + "\" " +
-                                                                        "alt=\"" + link.getText().toString() + "\" />" ) );
+        final WikiHtmlInline img = WikiHtmlInline.of( "<img class=\"inline\" " +
+                                                               "src=\"" + urlRef + "\" " +
+                                                               "alt=\"" + link.getText().toString() + "\" />" );
         if( ( isLinkFromText && linkOperations.isExternalLink( link.getText().toString() ) ) ||
                 ( isLinkFromText && linkOperations.linkExists( link.getText().toString() ) ) ) {
             link.setUrl( CharSubSequence.of( urlRef ) );

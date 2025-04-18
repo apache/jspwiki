@@ -97,7 +97,14 @@ class JSPWikiMarkupParserTest {
     }
 
     @Test
-    void testHyperlinks2() throws Exception {
+    public void testEmptyLink() throws Exception {
+        newPage( "Hyperlink" );
+        final String src = "Empty link: []";
+        Assertions.assertEquals( "Empty link: <u></u>", translate( src ) );
+    }
+
+    @Test
+    public void testHyperlinks2() throws Exception {
         newPage( "Hyperlink" );
         final String src = "This should be a [hyperlink]";
         Assertions.assertEquals( "This should be a <a class=\"wikipage\" href=\"/test/Wiki.jsp?page=Hyperlink\">hyperlink</a>", translate( src ) );
@@ -892,6 +899,13 @@ class JSPWikiMarkupParserTest {
         Assertions.assertEquals( "<a class=\"footnote\" name=\"ref-testpage-2356\">[#2356]</a> Footnote.", translate( src ) );
     }
 
+    @Test
+    public void testFootnote3() throws Exception {
+        newPage( "Hyperlink" );
+        final String src = "This should be a [#1 <strong>bold</strong>]";
+        Assertions.assertEquals( "This should be a <a class=\"footnote\" name=\"ref-testpage-1 &lt;strong&gt;bold&lt;/strong&gt;\">[#1 &lt;strong&gt;bold&lt;/strong&gt;]</a>", translate( src ) );
+    }
+
     /** Check a reported error condition where empty list items could cause crashes */
     @Test
     void testEmptySecondLevelList() throws Exception {
@@ -1321,7 +1335,7 @@ class JSPWikiMarkupParserTest {
     @Test
     void testVariableInsert() throws Exception {
         final String src = "[{$pagename}]";
-        Assertions.assertEquals( PAGE_NAME + "", translate( src ) );
+        Assertions.assertEquals( PAGE_NAME, translate( src ) );
     }
 
     @Test
@@ -1802,16 +1816,13 @@ class JSPWikiMarkupParserTest {
     void testDeadlySpammer() throws Exception {
         final String deadlySpammerText = "zzz <a href=\"http://ring1.gmum.net/frog-ringtone.html\">frogringtone</a> zzz http://ring1.gmum.net/frog-ringtone.html[URL=http://ring1.gmum.net/frog-ringtone.html]frog ringtone[/URL] frogringtone<br>";
         final StringBuilder death = new StringBuilder( 20000 );
-        for ( int i = 0; i < 1000; i++ ) {
-            death.append( deadlySpammerText );
-        }
-
+        death.append( deadlySpammerText.repeat( 1000 ) );
         death.append( "\n\n" );
 
         System.out.println( "Trying to crash parser with a line which is " + death.length() + " chars in size" );
         //  This should not Assertions.fail
         final String res = translate( death.toString() );
-        Assertions.assertTrue( res.length() > 0 );
+        Assertions.assertFalse( res.isEmpty() );
     }
 
     @Test
@@ -1947,5 +1958,33 @@ class JSPWikiMarkupParserTest {
                     "code.}}\n" +
                     "----\n" +
                     "author: [Asser], [Ebu], [JanneJalkanen], [Jarmo|mailto:jarmo@regex.com.au]\n";
+
+
+    @Test
+    public void testEscapeHTMLWhenHTMLNotAllowed() throws Exception {
+        final String src = "This should be a [#1 <script>alert('XSS')</script>]";
+        testEngine = TestEngine.build(with("jspwiki.translatorReader.allowHTML", "false")); // Disable HTML
+        final Page page = Wiki.contents().page(testEngine, PAGE_NAME);
+        final String output = translate(testEngine, page, src);
+        Assertions.assertEquals(
+                "This should be a <a class=\"footnote\" name=\"ref-testpage-1 &lt;script&gt;alert('XSS')&lt;/script&gt;\">[#1 &lt;script&gt;alert('XSS')&lt;/script&gt;]</a>",
+                output
+        );
+    }
+
+
+    @Test
+    public void testNoEscapeHTMLWhenHTMLAllowed() throws Exception {
+        final String src = "This should be a [#1 <b>bold</b>]";
+        testEngine = TestEngine.build(with("jspwiki.translatorReader.allowHTML", "true")); // Enable HTML
+        final Page page = Wiki.contents().page(testEngine, PAGE_NAME);
+        final String output = translate(testEngine, page, src);
+        Assertions.assertEquals(
+                "This should be a <a class=\"footnote\" name=\"ref-testpage-1 &lt;b&gt;bold&lt;/b&gt;\">[#1 <b>bold</b>]</a>",
+                output
+        );
+    }
+
+
 
 }
