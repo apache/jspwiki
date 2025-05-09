@@ -26,7 +26,7 @@
   <property environment="env"/>
 
   <!-- the build version if not overwritten by the caller -->
-  <property name="jspwiki.woas.version" value="2.12.0" />
+  <property name="jspwiki.woas.version" value="${jspwiki.woas.version}" />
   
   <!-- define the temporary build directory -->
   <property name="jspwiki.woas.target.dir" value="${basedir}/target" />
@@ -139,6 +139,7 @@
   <!-- ############################################################## -->
 
   <target name="woas:create-windows-app" description="Create an windows application wrapper">
+      <echo>jspwiki.woas.version = ${jspwiki.woas.version} ****************************************************</echo>
     <taskdef 
       name="launch4j"
       classname="net.sf.launch4j.ant.Launch4jTask"
