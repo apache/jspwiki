@@ -20,7 +20,9 @@ package org.apache.wiki.cache;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.event.CacheEventListenerAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Engine;
@@ -36,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -157,6 +160,22 @@ public class EhcacheCachingManager implements CachingManager, Initializable {
         if( keyAndCacheAreNotNull( cacheName, key ) ) {
             cacheMap.get( cacheName ).remove( key );
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean registerListener( final String cacheName, final String listener, final Object... args ) {
+        if( enabled( cacheName ) && "expired".equals( listener ) ) {
+            final AtomicBoolean allRequested = ( AtomicBoolean )args[0];
+            final CacheEventListenerAdapter expiredCacheListenerAdapter = new CacheEventListenerAdapter() {
+                @Override
+                public void notifyElementExpired( final Ehcache cache, final Element element ) {
+                    allRequested.set( false ); // signal that the cache no longer contains all elements...
+                }
+            };
+            return cacheMap.get( cacheName ).getCacheEventNotificationService().registerListener( expiredCacheListenerAdapter );
+        }
+        return false;
     }
 
     boolean keyAndCacheAreNotNull( final String cacheName, final Serializable key ) {

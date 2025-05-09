@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.TreeSet;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 
@@ -67,7 +68,7 @@ public class CachingProvider implements PageProvider {
     private PageProvider provider;
     private Engine engine;
 
-    private boolean allRequested;
+    private final AtomicBoolean allRequested = new AtomicBoolean();
     private final AtomicLong pages = new AtomicLong( 0L );
 
     /**
@@ -80,6 +81,7 @@ public class CachingProvider implements PageProvider {
         // engine is used for getting the search engine
         this.engine = engine;
         cachingManager = this.engine.getManager( CachingManager.class );
+        cachingManager.registerListener( CachingManager.CACHE_PAGES, "expired", allRequested );
 
         //  Find and initialize real provider.
         final String classname;
@@ -240,14 +242,14 @@ public class CachingProvider implements PageProvider {
     @Override
     public Collection< Page > getAllPages() throws ProviderException {
         final Collection< Page > all;
-        if ( !allRequested ) {
+        if ( !allRequested.get() ) {
             all = provider.getAllPages();
             // Make sure that all pages are in the cache.
             synchronized( this ) {
                 for( final Page p : all ) {
                     cachingManager.put( CachingManager.CACHE_PAGES,  p.getName(), p );
                 }
-                allRequested = true;
+                allRequested.set( true );
             }
             pages.set( all.size() );
         } else {

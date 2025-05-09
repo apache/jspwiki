@@ -17,6 +17,21 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2025-05-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.3-git-07_
+
+* [PR #362](https://github.com/apache/jspwiki/pull/362) `CachingProvider#getAllPages()` returns all pages after cache ttl has expired, by Albrecht Striffler
+
+* Extract suitable `jspwiki.woas.version` property for portable build from `project.version` instead of hard coding it into `build.xml`
+
+* Dependency updates
+    * Apache Parent POM to 34 
+    * Commons Collections to 4.5.0
+    * Gson to 2.13.1 (closes [PR #383](https://github.com/apache/jspwiki/pull/383), thanks to Dependabot)
+    * Log4J2 to 2.24.3 (closes [PR #379](https://github.com/apache/jspwiki/pull/379), thanks to Dependabot)
+    * Mockito to 5.17.0 (closes [PR #382](https://github.com/apache/jspwiki/pull/382), thanks to Dependabot)
+
 **2025-04-13  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-06_

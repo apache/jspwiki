@@ -50,6 +50,24 @@
         </configuration>
       </plugin>
       <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>regex-property</id>
+            <goals>
+              <goal>regex-property</goal>
+            </goals>
+            <configuration>
+              <name>woas.version</name>
+              <regex>-SNAPSHOT</regex>
+              <value>${project.version}</value>
+              <failIfNoMatch>false</failIfNoMatch>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
@@ -106,7 +124,7 @@
             <phase>process-resources</phase>
             <configuration>
               <target>
-                <property name="jspwiki.woas.version" value="${project.version}" />
+                <property name="jspwiki.woas.version" value="${woas.version}" />
                 <property name="jspwiki.tomcat.version" value="${tomcat.version}" />
                 <ant antfile="${basedir}/build.xml" target="woas:info" />
                 <ant antfile="${basedir}/build.xml" target="woas:copy-woas" />
@@ -121,7 +139,7 @@
             <phase>prepare-package</phase>
             <configuration>
               <target>
-                <property name="jspwiki.woas.version" value="${project.version}" />
+                <property name="jspwiki.woas.version" value="${woas.version}" />
                 <property name="jspwiki.tomcat.version" value="${tomcat.version}" />
                 <ant antfile="${basedir}/build.xml" target="woas:copy-tomcat" />
               </target>
@@ -135,7 +153,7 @@
             <phase>prepare-package</phase>
             <configuration>
               <target>
-                <property name="jspwiki.woas.version" value="${project.version}" />
+                <property name="jspwiki.woas.version" value="${woas.version}" />
                 <property name="jspwiki.tomcat.version" value="${tomcat.version}" />
                 <ant antfile="${basedir}/build.xml" target="woas:info" />
                 <ant antfile="${basedir}/build.xml" target="woas:copy-tomcat-launchers" />
@@ -311,7 +329,7 @@
                 <phase>package</phase>
                 <configuration>
                   <target>
-                    <!-- <property name="jspwiki.woas.version" value="${project.version}" /> -->
+                    <property name="jspwiki.woas.version" value="${woas.version}" />
                     <property name="jspwiki.tomcat.version" value="${tomcat.version}" />
                     <ant antfile="${basedir}/build.xml" target="woas:info" />
                     <ant antfile="${basedir}/build.xml" target="${jspwiki.native-launchers.macos.download}" />
