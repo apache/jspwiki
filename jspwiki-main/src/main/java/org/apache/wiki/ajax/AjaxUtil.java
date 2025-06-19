@@ -62,6 +62,11 @@ public class AjaxUtil extends HttpServlet {
         if( StringUtils.isBlank( path ) ) {
 			return null;
 		}
+		
+                // if this is true, there's nothing left to be done
+                if (path.endsWith(lastPart))
+                        return lastPart;
+
 		if( !lastPart.endsWith( "/" ) ) {
 			lastPart += "/";
 		}
