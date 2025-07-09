@@ -17,6 +17,25 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2025-07-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.3-git-08_
+
+* [PR #388](https://github.com/apache/jspwiki/pull/388) Fix `StringIndexOutOfBoundsException` in `AjaxUtil`, by Ulf Dittmer, thanks!
+
+* es_ES translation tweaks
+
+* Dependency updates
+    * Apache Parent POM to 35
+    * Awaitility to 4.3.0
+    * Commons File upload to 1.6.0
+    * JUnit to 5.13.3
+	* Lucene to 9.12.2
+    * Mockito to 5.18.0
+    * Tika to 3.2.0
+    * Tomcat to 9.0.107
+    * Maven plugins: clean to 3.5.0, enforcer to 3.6.0, cargo to 1.10.20, umldoclet to 2.2.2
+
 **2025-05-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-07_
