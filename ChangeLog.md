@@ -27,14 +27,14 @@ under the License.
 
 * Dependency updates
     * Apache Parent POM to 35
-    * Awaitility to 4.3.0
+    * Awaitility to 4.3.0 (closes [PR #385](https://github.com/apache/jspwiki/pull/385), thanks to Dependabot)
     * Commons File upload to 1.6.0
     * JUnit to 5.13.3
-	* Lucene to 9.12.2
+	* Lucene to 9.12.2 (closes [PR #386](https://github.com/apache/jspwiki/pull/386))
     * Mockito to 5.18.0
     * Tika to 3.2.0
     * Tomcat to 9.0.107
-    * Maven plugins: clean to 3.5.0, enforcer to 3.6.0, cargo to 1.10.20, umldoclet to 2.2.2
+    * Maven plugins: clean to 3.5.0, enforcer to 3.6.0, cargo to 1.10.20 (closes [PR #387](https://github.com/apache/jspwiki/pull/387), thanks to Dependabot), umldoclet to 2.2.2
 
 **2025-05-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
