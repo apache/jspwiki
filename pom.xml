@@ -50,8 +50,8 @@
     <commons-collections.version>4.5.0</commons-collections.version>
     <commons-fileupload.version>1.6.0</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
-    <commons-io.version>2.19.0</commons-io.version>
-    <commons-lang.version>3.17.0</commons-lang.version>
+    <commons-io.version>2.20.0</commons-io.version>
+    <commons-lang.version>3.18.0</commons-lang.version>
     <commons-text.version>1.13.1</commons-text.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.64.8</flexmark.version>
@@ -68,7 +68,7 @@
     <jetty.version>9.4.54.v20240208</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>5.13.3</junit.version>
-    <log4j2.version>2.24.3</log4j2.version>
+    <log4j2.version>2.25.1</log4j2.version>
     <lucene.version>9.12.2</lucene.version>
     <mockito.version>5.18.0</mockito.version>
     <nekohtml.version>2.1.2</nekohtml.version>
@@ -77,7 +77,7 @@
     <selenide.version>6.19.0</selenide.version>
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
-    <tika.version>3.2.0</tika.version>
+    <tika.version>3.2.1</tika.version>
     <tomcat.version>9.0.107</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
@@ -88,7 +88,7 @@
     <plugin.clean.version>3.5.0</plugin.clean.version>
     <plugin.compiler.version>3.14.0</plugin.compiler.version>
     <plugin.dependency.version>3.8.1</plugin.dependency.version>
-    <plugin.enforcer.version>3.6.0</plugin.enforcer.version>
+    <plugin.enforcer.version>3.6.1</plugin.enforcer.version>
     <plugin.install.version>3.1.4</plugin.install.version>
     <plugin.jar.version>3.4.2</plugin.jar.version>
     <plugin.javadoc.version>3.11.1</plugin.javadoc.version>
@@ -103,7 +103,7 @@
     <plugin.war.version>3.4.0</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>3.2.2</plugin.jspc.version>
-    <plugin.build-helper.version>3.6.0</plugin.build-helper.version>
+    <plugin.build-helper.version>3.6.1</plugin.build-helper.version>
     <plugin.checksum.version>1.11</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
     <plugin.cargo.version>1.10.20</plugin.cargo.version>
