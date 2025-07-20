@@ -28,8 +28,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import java.util.Properties;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 @ExtendWith( MockitoExtension.class )
 public class WikiBootstrapServletContextListenerTest {

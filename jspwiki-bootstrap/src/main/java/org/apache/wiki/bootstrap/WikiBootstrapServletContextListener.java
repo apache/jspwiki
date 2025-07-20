@@ -27,12 +27,10 @@ import org.apache.logging.log4j.core.config.properties.PropertiesConfigurationFa
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -60,7 +58,7 @@ public class WikiBootstrapServletContextListener implements ServletContextListen
     }
 
     /**
-     * Initialize the logging framework(s). By default we try to load the log config statements from jspwiki.properties,
+     * Initialize the logging framework(s). By default, we try to load the log config statements from jspwiki.properties,
      * unless the property jspwiki.use.external.logconfig=true, in that case we let the logging framework figure out the
      * logging configuration.
      *
@@ -86,7 +84,13 @@ public class WikiBootstrapServletContextListener implements ServletContextListen
     ConfigurationSource createConfigurationSource( final Properties properties ) {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            properties.store( out, null );
+            final Properties log4JProperties = new Properties();
+            properties.forEach( ( k, v ) -> {
+                if( !k.toString().startsWith( "jspwiki" ) ) {
+                    log4JProperties.put( k, v );
+                }
+            } );
+            log4JProperties.store( out, null );
             final InputStream in = new ByteArrayInputStream( out.toByteArray() );
             return new ConfigurationSource( in );
         } catch( final IOException ioe ) {
