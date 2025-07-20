@@ -17,6 +17,18 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2025-07-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.3-git-09_
+
+* Ensure that Log4J2 configuration from `jspwiki[-custom].properties` only loads Log4J2 related properties, as it's needed when upgrading it to 2.25
+
+* Dependency updates
+    * Commons IO to 2.20.0
+    * Commons Lang to 3.18.0 (closes [PR #392](https://github.com/apache/jspwiki/pull/392), thanks to Dependabot)
+    * Log4J2 to 2.25.1 (closes [PR #389](https://github.com/apache/jspwiki/pull/389), thanks to Dependabot)
+	* Maven plugins: enforcer to 3.6.1, build-maven-helper to 3.6.1 (closes [PR #390](https://github.com/apache/jspwiki/pull/390), thanks to Dependabot)
+
 **2025-07-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-08_
