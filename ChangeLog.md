@@ -26,8 +26,9 @@ under the License.
 * Dependency updates
     * Commons IO to 2.20.0
     * Commons Lang to 3.18.0 (closes [PR #392](https://github.com/apache/jspwiki/pull/392), thanks to Dependabot)
+    * JUnit to 5.13.4
     * Log4J2 to 2.25.1 (closes [PR #389](https://github.com/apache/jspwiki/pull/389), thanks to Dependabot)
-	* Maven plugins: enforcer to 3.6.1, build-maven-helper to 3.6.1 (closes [PR #390](https://github.com/apache/jspwiki/pull/390), thanks to Dependabot)
+	* Maven plugins: enforcer to 3.6.1, build-maven-helper to 3.6.1 (closes [PR #390](https://github.com/apache/jspwiki/pull/390), thanks to Dependabot), sonar-maven-plugin to 5.1.0.4751 (closes [PR #393](https://github.com/apache/jspwiki/pull/393)
 
 **2025-07-09  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
