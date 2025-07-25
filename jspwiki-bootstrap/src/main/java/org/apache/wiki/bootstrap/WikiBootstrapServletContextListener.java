@@ -39,6 +39,7 @@ import java.util.Properties;
 public class WikiBootstrapServletContextListener implements ServletContextListener {
 
     private static final Logger LOG = LogManager.getLogger( WikiBootstrapServletContextListener.class );
+    private static final String[] LOG4J_CONF = new String[] { "appender", "logger", "rootLogger", "filter", "status", "dest", "name", "properties", "property", "log4j2" };
 
     /** {@inheritDoc} */
     @Override
@@ -86,8 +87,10 @@ public class WikiBootstrapServletContextListener implements ServletContextListen
         try {
             final Properties log4JProperties = new Properties();
             properties.forEach( ( k, v ) -> {
-                if( !k.toString().startsWith( "jspwiki" ) ) {
-                    log4JProperties.put( k, v );
+                for( final String log4JNsProp : LOG4J_CONF ) {
+                    if( k.toString().startsWith( log4JNsProp ) ) {
+                        log4JProperties.put( k, v );
+                    }
                 }
             } );
             log4JProperties.store( out, null );

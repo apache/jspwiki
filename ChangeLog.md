@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2025-07-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.3-git-10_
+
+* Further fixes on 2.12.3-git-10, to ensure that Log4J2 configuration from `jspwiki[-custom].properties` only loads Log4J2 related properties, that is, properties starting with one of: `appender`, `logger`, `rootLogger`, `filter`, `status`, `dest`, `name`, `properties`, `property` or `log4j2`
+    * An external Log4J2 config file can be used if additional properties are needed to be passed to Log4J2
+
 **2025-07-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-09_
