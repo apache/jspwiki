@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
-    <version>2.12.3-SNAPSHOT</version>
+    <version>2.12.3</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -31,7 +31,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <jspwiki.version>2.12.3-SNAPSHOT</jspwiki.version>
+    <jspwiki.version>2.12.3</jspwiki.version>
   </properties>
 
   <dependencyManagement>
