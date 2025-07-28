@@ -52,7 +52,7 @@
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.20.0</commons-io.version>
     <commons-lang.version>3.18.0</commons-lang.version>
-    <commons-text.version>1.13.1</commons-text.version>
+    <commons-text.version>1.14.0</commons-text.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.64.8</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
