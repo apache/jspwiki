@@ -50,7 +50,7 @@ public final class Release {
      *  <p>
      *  If the POSTFIX is empty, it is not added to the version string.
      */
-    private static final String    POSTFIX       = "";
+    private static final String    POSTFIX       = "-git-";
 
     /** The JSPWiki major version. */
     public static final int        VERSION       = 2;
@@ -59,7 +59,7 @@ public final class Release {
     public static final int        REVISION      = 12;
 
     /** The minor revision.  */
-    public static final int        MINORREVISION = 3;
+    public static final int        MINORREVISION = 4;
 
     /** The build number/identifier.  This is a String as opposed to an integer, just so that people can add other identifiers to it.
      * The build number is incremented every time a committer checks in code, and reset when a release is made.
@@ -69,7 +69,7 @@ public final class Release {
      *  <p>
      *  If the build identifier is empty, it is not added.
      */
-    public static final String     BUILD         = "";
+    public static final String     BUILD         = "00";
 
     /**
      *  This is the generic version string you should use when printing out the version.  It is of
