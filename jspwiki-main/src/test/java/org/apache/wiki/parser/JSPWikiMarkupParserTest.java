@@ -43,8 +43,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
+import java.util.List;
 
 import static org.apache.wiki.TestEngine.with;
 
@@ -53,7 +54,7 @@ public class JSPWikiMarkupParserTest {
 
     static final String PAGE_NAME = "testpage";
 
-    Vector< String > created = new Vector<>();
+    List< String > created = new ArrayList<>();
 
     TestEngine testEngine = TestEngine.build( with( "jspwiki.translatorReader.matchEnglishPlurals", "true" ) );
 
@@ -65,7 +66,7 @@ public class JSPWikiMarkupParserTest {
 
     private void newPage( final String name ) throws WikiException {
         testEngine.saveText( name, "<test>" );
-        created.addElement( name );
+        created.add( name );
     }
 
     private String translate( final String src ) throws IOException {
@@ -468,7 +469,7 @@ public class JSPWikiMarkupParserTest {
     public void testAttachmentLink2() throws Exception {
         final TestEngine testEngine2 = TestEngine.build( with( "jspwiki.encoding", StandardCharsets.ISO_8859_1.name() ) );
         testEngine2.saveText( "Test", "foo " );
-        created.addElement( "Test" );
+        created.add( "Test" );
 
         final Attachment att = Wiki.contents().attachment( testEngine2, "Test", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
@@ -485,7 +486,7 @@ public class JSPWikiMarkupParserTest {
     public void testAttachmentLink3() throws Exception {
         final TestEngine testEngine2 = TestEngine.build();
         testEngine2.saveText( "TestPage", "foo " );
-        created.addElement( "TestPage" );
+        created.add( "TestPage" );
 
         final Attachment att = Wiki.contents().attachment( testEngine2, "TestPage", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
@@ -501,7 +502,7 @@ public class JSPWikiMarkupParserTest {
     public void testAttachmentLink4() throws Exception {
         final TestEngine testEngine2 = TestEngine.build();
         testEngine2.saveText( "TestPage", "foo " );
-        created.addElement( "TestPage" );
+        created.add( "TestPage" );
 
         final Attachment att = Wiki.contents().attachment( testEngine2, "TestPage", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );

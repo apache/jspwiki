@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 public class RPCHandlerTest {
 
@@ -70,12 +70,12 @@ public class RPCHandlerTest {
     public void testRecentChanges()
             throws Exception {
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
-        final Vector< Hashtable< String, Object > > previousChanges = m_handler.getRecentChanges( time );
+        final List< Hashtable< String, Object > > previousChanges = m_handler.getRecentChanges( time );
 
         m_engine.saveText( NAME1, "Foo" );
         final Page directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
         time = getCalendarTime( directInfo.getLastModified() );
-        final Vector< Hashtable< String, Object > > recentChanges = m_handler.getRecentChanges( time );
+        final List< Hashtable< String, Object > > recentChanges = m_handler.getRecentChanges( time );
 
         Assertions.assertEquals( 1, recentChanges.size() - previousChanges.size(), "wrong number of changes" );
     }
@@ -84,7 +84,7 @@ public class RPCHandlerTest {
     public void testRecentChangesWithAttachments()
             throws Exception {
         Date time = getCalendarTime( Calendar.getInstance().getTime() );
-        final Vector< Hashtable< String, Object > > previousChanges = m_handler.getRecentChanges( time );
+        final List< Hashtable< String, Object > > previousChanges = m_handler.getRecentChanges( time );
 
         m_engine.saveText( NAME1, "Foo" );
         final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "TestAtt.txt" );
@@ -92,7 +92,7 @@ public class RPCHandlerTest {
         m_engine.getManager( AttachmentManager.class ).storeAttachment( att, m_engine.makeAttachmentFile() );
         final Page directInfo = m_engine.getManager( PageManager.class ).getPage( NAME1 );
         time = getCalendarTime( directInfo.getLastModified() );
-        final Vector< Hashtable< String, Object > > recentChanges = m_handler.getRecentChanges( time );
+        final List< Hashtable< String, Object > > recentChanges = m_handler.getRecentChanges( time );
 
         Assertions.assertEquals( 1, recentChanges.size() - previousChanges.size(), "wrong number of changes" );
     }
@@ -135,11 +135,11 @@ public class RPCHandlerTest {
 
         m_engine.saveText( pageName, text );
 
-        final Vector< Hashtable< String, String > > links = m_handler.listLinks( pageName );
+        final List< Hashtable< String, String > > links = m_handler.listLinks( pageName );
 
         Assertions.assertEquals( 1, links.size(), "link count" );
 
-        final Hashtable< String, String > linkinfo = links.elementAt( 0 );
+        final Hashtable< String, String > linkinfo = links.get( 0 );
 
         Assertions.assertEquals( "Foobar", linkinfo.get( "page" ), "name" );
         Assertions.assertEquals( "local", linkinfo.get( "type" ), "type" );
@@ -161,17 +161,17 @@ public class RPCHandlerTest {
 
         // Test.
 
-        final Vector< Hashtable< String, String > > links = m_handler.listLinks( pageName );
+        final List< Hashtable< String, String > > links = m_handler.listLinks( pageName );
 
         Assertions.assertEquals( 2, links.size(), "link count" );
 
-        Hashtable< String, String > linkinfo = links.elementAt( 0 );
+        Hashtable< String, String > linkinfo = links.get( 0 );
 
         Assertions.assertEquals( "Foobar", linkinfo.get( "page" ), "edit name" );
         Assertions.assertEquals( "local", linkinfo.get( "type" ), "edit type" );
         Assertions.assertEquals( "/test/Edit.jsp?page=Foobar", linkinfo.get( "href" ), "edit href" );
 
-        linkinfo = links.elementAt( 1 );
+        linkinfo = links.get( 1 );
 
         Assertions.assertEquals( NAME1 + "/TestAtt.txt", linkinfo.get( "page" ), "att name" );
         Assertions.assertEquals( "local", linkinfo.get( "type" ), "att type" );

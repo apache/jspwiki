@@ -28,6 +28,7 @@ import org.apache.wiki.util.ClassUtil;
 
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.fmt.LocaleSupport;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -37,7 +38,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.Vector;
 
 
 /**
@@ -316,14 +316,14 @@ public interface TemplateManager extends ModuleManager {
      *  @param resource The resource to add.
      */
     static void addResourceRequest( final Context ctx, final String type, final String resource ) {
-        HashMap< String, Vector< String > > resourcemap = ctx.getVariable( RESOURCE_INCLUDES );
+        HashMap< String, List< String > > resourcemap = ctx.getVariable( RESOURCE_INCLUDES );
         if( resourcemap == null ) {
             resourcemap = new HashMap<>();
         }
 
-        Vector< String > resources = resourcemap.get( type );
+        List< String > resources = resourcemap.get( type );
         if( resources == null ) {
-            resources = new Vector<>();
+            resources = new ArrayList<>();
         }
         String resolvedResource = resource;
         if( StringUtils.startsWith( resource, "engine://" ) ) {
@@ -368,12 +368,12 @@ public interface TemplateManager extends ModuleManager {
      *  @return a String array for the resource requests
      */
     static String[] getResourceRequests( final Context ctx, final String type ) {
-        final HashMap< String, Vector< String > > hm = ctx.getVariable( RESOURCE_INCLUDES );
+        final HashMap< String, List< String > > hm = ctx.getVariable( RESOURCE_INCLUDES );
         if( hm == null ) {
             return new String[0];
         }
 
-        final Vector<String> resources = hm.get( type );
+        final List<String> resources = hm.get( type );
         if( resources == null ){
             return new String[0];
         }
