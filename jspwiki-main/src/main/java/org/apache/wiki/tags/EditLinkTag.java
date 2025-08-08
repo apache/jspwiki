@@ -111,15 +111,16 @@ public class EditLinkTag extends WikiLinkTag {
         //
         //  Finally, print out the correct link, according to what user commanded.
         //
-        final JspWriter out = pageContext.getOut();
-        switch( m_format ) {
-          case ANCHOR:
-            out.print( "<a href=\"" + m_wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), pageName, versionString ) +
-                       "\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\">" );
-            break;
-          case URL:
-            out.print( m_wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), pageName, versionString ) );
-            break;
+        try (JspWriter out = pageContext.getOut()) {
+            switch (m_format) {
+                case ANCHOR:
+                    out.print("<a href=\"" + m_wikiContext.getURL(ContextEnum.PAGE_EDIT.getRequestContext(), pageName, versionString) +
+                            "\" accesskey=\"" + m_accesskey + "\" title=\"" + m_title + "\">");
+                    break;
+                case URL:
+                    out.print(m_wikiContext.getURL(ContextEnum.PAGE_EDIT.getRequestContext(), pageName, versionString));
+                    break;
+            }
         }
 
         return EVAL_BODY_INCLUDE;

@@ -50,15 +50,16 @@ public class UploadLinkTag extends WikiLinkTag {
             }
         }
 
-        final JspWriter out = pageContext.getOut();
-        final String url = m_wikiContext.getURL( ContextEnum.PAGE_UPLOAD.getRequestContext(), pageName );
-        switch( m_format ) {
-        case ANCHOR:
-            out.print( "<a target=\"_new\" class=\"uploadlink\" href=\"" + url + "\">" );
-            break;
-        case URL:
-            out.print( url );
-            break;
+        try (JspWriter out = pageContext.getOut()) {
+            final String url = m_wikiContext.getURL(ContextEnum.PAGE_UPLOAD.getRequestContext(), pageName);
+            switch (m_format) {
+                case ANCHOR:
+                    out.print("<a target=\"_new\" class=\"uploadlink\" href=\"" + url + "\">");
+                    break;
+                case URL:
+                    out.print(url);
+                    break;
+            }
         }
 
         return EVAL_BODY_INCLUDE;

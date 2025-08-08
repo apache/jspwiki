@@ -108,7 +108,7 @@ public class AttachmentsIteratorTag extends IteratorTag {
     public final int doAfterBody() {
         if( bodyContent != null ) {
             try {
-                final JspWriter out = getPreviousOut();
+                JspWriter out = getPreviousOut();
                 out.print(bodyContent.getString());
                 bodyContent.clearBody();
             } catch( final IOException e ) {

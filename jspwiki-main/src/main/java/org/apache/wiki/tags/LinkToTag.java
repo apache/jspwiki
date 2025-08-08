@@ -88,42 +88,43 @@ public class LinkToTag extends WikiLinkTag {
             }
         }
 
-        final JspWriter out = pageContext.getOut();
-        final String url;
-        final String linkclass;
-        String forceDownload = "";
+        try (JspWriter out = pageContext.getOut()) {
+            final String url;
+            final String linkclass;
+            String forceDownload = "";
 
-        if( isattachment ) {
-            url = m_wikiContext.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), pageName, ( getVersion() != null ) ? "version=" + getVersion() : null );
-            linkclass = "attachment";
+            if (isattachment) {
+                url = m_wikiContext.getURL(ContextEnum.PAGE_ATTACH.getRequestContext(), pageName, (getVersion() != null) ? "version=" + getVersion() : null);
+                linkclass = "attachment";
 
-            if( m_wikiContext.getEngine().getManager( AttachmentManager.class ).forceDownload( pageName ) ) {
-                forceDownload = "download ";
+                if (m_wikiContext.getEngine().getManager(AttachmentManager.class).forceDownload(pageName)) {
+                    forceDownload = "download ";
+                }
+
+            } else {
+                final StringBuilder params = new StringBuilder();
+                if (getVersion() != null) {
+                    params.append("version=").append(getVersion());
+                }
+                if (getTemplate() != null) {
+                    params.append(params.length() > 0 ? "&amp;" : "").append("skin=").append(getTemplate());
+                }
+
+                url = m_wikiContext.getURL(ContextEnum.PAGE_VIEW.getRequestContext(), pageName, params.toString());
+                linkclass = "wikipage";
             }
 
-        } else {
-            final StringBuilder params = new StringBuilder();
-            if( getVersion() != null ) {
-                params.append( "version=" ).append( getVersion() );
+            switch (m_format) {
+                case ANCHOR:
+                    out.print("<a class=\"" + linkclass +
+                            "\" href=\"" + url +
+                            "\" accesskey=\"" + m_accesskey +
+                            "\" title=\"" + m_title + "\" " + forceDownload + ">");
+                    break;
+                case URL:
+                    out.print(url);
+                    break;
             }
-            if( getTemplate() != null ) {
-                params.append( params.length() > 0 ? "&amp;" : "" ).append( "skin=" ).append( getTemplate() );
-            }
-
-            url = m_wikiContext.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), pageName, params.toString() );
-            linkclass = "wikipage";
-        }
-
-        switch( m_format ) {
-        case ANCHOR:
-            out.print( "<a class=\"" + linkclass +
-                       "\" href=\"" + url +
-                       "\" accesskey=\"" + m_accesskey +
-                       "\" title=\"" + m_title + "\" " + forceDownload + ">" );
-            break;
-        case URL:
-            out.print( url );
-            break;
         }
 
         return EVAL_BODY_INCLUDE;

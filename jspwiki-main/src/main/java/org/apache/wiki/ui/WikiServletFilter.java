@@ -107,18 +107,19 @@ public class WikiServletFilter implements Filter {
         }
         
         if( m_engine == null ) {
-            final PrintWriter out = response.getWriter();
-            out.print("<!DOCTYPE html><html lang=\"en\"><head><title>Fatal problem with JSPWiki</title></head>");
-            out.print("<body>");
-            out.print("<h1>JSPWiki has not been started</h1>");
-            out.print("<p>JSPWiki is not running.  This is probably due to a configuration error in your jspwiki.properties file, ");
-            out.print("or a problem with your servlet container.  Please double-check everything before issuing a bug report ");
-            out.print("at jspwiki.apache.org.</p>");
-            out.print("<p>We apologize for the inconvenience.  No, really, we do.  We're trying to ");
-            out.print("JSPWiki as easy as we can, but there is only so much we have time to test ");
-            out.print("platforms.</p>");
-            out.print( "<p>Please go to the <a href='Install.jsp'>installer</a> to continue.</p>" );
-            out.print("</body></html>");
+            try (PrintWriter out = response.getWriter()) {
+                out.print("<!DOCTYPE html><html lang=\"en\"><head><title>Fatal problem with JSPWiki</title></head>");
+                out.print("<body>");
+                out.print("<h1>JSPWiki has not been started</h1>");
+                out.print("<p>JSPWiki is not running.  This is probably due to a configuration error in your jspwiki.properties file, ");
+                out.print("or a problem with your servlet container.  Please double-check everything before issuing a bug report ");
+                out.print("at jspwiki.apache.org.</p>");
+                out.print("<p>We apologize for the inconvenience.  No, really, we do.  We're trying to ");
+                out.print("JSPWiki as easy as we can, but there is only so much we have time to test ");
+                out.print("platforms.</p>");
+                out.print("<p>Please go to the <a href='Install.jsp'>installer</a> to continue.</p>");
+                out.print("</body></html>");
+            }
             return;
         }   
         

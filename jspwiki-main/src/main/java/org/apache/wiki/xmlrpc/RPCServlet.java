@@ -124,9 +124,10 @@ public class RPCServlet extends HttpServlet {
             response.setContentType( "text/xml; charset=utf-8" );
             response.setContentLength( result.length );
 
-            final OutputStream out = response.getOutputStream();
-            out.write( result );
-            out.flush();
+            try (OutputStream out = response.getOutputStream()) {
+                out.write(result);
+                out.flush();
+            }
 
             // LOG.debug("Result = "+new String(result) );
         } catch( final IOException e ) {
