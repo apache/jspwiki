@@ -41,18 +41,18 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <project.build.outputTimestamp>2025-07-25T13:24:36Z</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
     <jdk.version>11</jdk.version>
-    <jdk.javadoc.doclet.version>2.2.2</jdk.javadoc.doclet.version>
+    <jdk.javadoc.doclet.version>2.2.3</jdk.javadoc.doclet.version>
     <maven.version>3.5</maven.version>
 
     <akismet-java.version>1.02</akismet-java.version>
     <awaitility.version>4.3.0</awaitility.version>
     <aws-java-sdk-kendra.version>1.12.565</aws-java-sdk-kendra.version>
     <commons-collections.version>4.5.0</commons-collections.version>
-    <commons-fileupload.version>2.0.0-M2</commons-fileupload.version>
+    <commons-fileupload.version>2.0.0-M4</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.20.0</commons-io.version>
     <commons-lang.version>3.18.0</commons-lang.version>
-    <commons-text.version>1.13.1</commons-text.version>
+    <commons-text.version>1.14.0</commons-text.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.64.8</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
@@ -81,7 +81,6 @@
     <sandler.version>0.5</sandler.version>
     <selenide.version>6.19.0</selenide.version>
     <slf4j.version>1.7.36</slf4j.version>
-    <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>3.2.3</tika.version>
     <tomcat.version>10.1.46</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
@@ -103,7 +102,7 @@
     <plugin.remote-resources.version>3.3.0</plugin.remote-resources.version>
     <plugin.resources.version>3.3.1</plugin.resources.version>
     <plugin.source.version>3.3.1</plugin.source.version>
-    <plugin.surefire.version>3.5.3</plugin.surefire.version>
+    <plugin.surefire.version>3.5.4</plugin.surefire.version>
     <plugin.surefire.junit5-tree-reporter.version>1.4.0</plugin.surefire.junit5-tree-reporter.version>
     <plugin.war.version>3.4.0</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
