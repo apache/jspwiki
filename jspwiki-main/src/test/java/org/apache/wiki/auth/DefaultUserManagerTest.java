@@ -26,7 +26,7 @@ import org.apache.wiki.auth.user.UserProfile;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Properties;
 
 import static org.mockito.Mockito.mock;
