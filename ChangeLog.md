@@ -17,6 +17,23 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2025-09-27  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _3.0.0-git-01_
+
+* [JSPWIKI-1170](https://issues.apache.org/jira/browse/JSPWIKI-1170): Support of Jakarta EE 9
+    * Huge thanks to Jürgen Weber, who provided all the [relevant code](https://github.com/apache/jspwiki/pull/397)
+    * Note that custom plugins, filter, etc., using the `javax` namespace should be recompiled to use the `jakarta` namespace instead
+    * Custom plugins, filters, etc., **NOT** using the `javax` namespace, can still be used without the need of recompiled it
+    * XML-RPC support has been dropped, with no current replacement 
+
+* Dependency updates
+    * Commons File Upload to 2.0.0-M4
+    * Commons Text to 1.14.0 (closes [PR #395](https://github.com/apache/jspwiki/pull/395), thanks to Dependabot)
+    * Tika to 3.2.3
+    * Tomcat to 10.1.46
+    * Maven plugins: compiler to 3.14.1, javadoc to 3.12.0, surefire to 3.5.4, umldoclet to 2.2.3
+
 **2025-07-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-10_
