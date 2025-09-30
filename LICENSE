@@ -271,7 +271,7 @@ nekohtml-2.0.2.jar (codelibs fork)          LICENSE
 org.suigeneris.jrcs.diff-0.4.2              LICENSE
 oro-2.0.8.jar                               LICENSE
 sandler-0.5.jar                             ./jspwiki-war/src/main/config/doc/LICENSE.sandler
-slf4-api-1.7.36.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
+slf4-api-2.0.17.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
 xercesImpl-2.10.0.jar                       LICENSE
 tika-core-3.2.3.jar                         LICENSE
 tika-parsers-3.2.3.jar                      LICENSE
@@ -287,10 +287,9 @@ custom_rhino-0.4.3.jar                      ./jspwiki-war/src/main/config/doc/LI
 hsqldb-2.7.4.jar                            ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 sqltool-2.7.4.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 jamm-0.4.0.jar                              LICENSE
-jetty-all-9.4.54.v20240208.jar              LICENSE
-junit-5.13.4                                ./jspwiki-war/src/main/config/doc/LICENSE.cpl
-mockito-core-5.18.0.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.mit
-selenide-6.19.0.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
+junit-6.0.0                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
+mockito-core-5.20.0.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.mit
+selenide-7.10.1.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui
 
 JS LIBRARY                                  LICENSE FILE
