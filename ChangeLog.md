@@ -17,6 +17,19 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2025-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _3.0.0-git-02_
+
+* JDK-17 as baseline
+
+* Dependency updates
+    * JUnit to 6.0.0
+    * Mockito to 5.20.0
+    * Selenide 7.10.1
+    * SLF4J to 2.0.17
+    * Maven plugins: wro4j to 2.1.1 (closes [PR #285](https://github.com/apache/jspwiki/pull/285))
+
 **2025-09-27  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _3.0.0-git-01_
