@@ -83,7 +83,7 @@
   </target>  
 
   <!-- ############################################################## -->
-  <!-- Tomcat 9 Distribution                                          -->
+  <!-- Tomcat 10 Distribution                                         -->
   <!-- ############################################################## -->
 
   <target name="woas:copy-tomcat" description="Prepares an unpacked Tomcat deployment">
@@ -139,7 +139,7 @@
   <!-- ############################################################## -->
 
   <target name="woas:create-windows-app" description="Create an windows application wrapper">
-      <echo>jspwiki.woas.version = ${jspwiki.woas.version} ****************************************************</echo>
+    <echo>jspwiki.woas.version = ${jspwiki.woas.version} ****************************************************</echo>
     <taskdef 
       name="launch4j"
       classname="net.sf.launch4j.ant.Launch4jTask"
