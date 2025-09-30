@@ -18,14 +18,14 @@
  */
 package org.apache.wiki.url;
 
-import org.apache.commons.lang3.StringUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.commons.lang3.Strings;
 import org.apache.wiki.api.core.Command;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.util.TextUtil;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
@@ -86,8 +86,8 @@ public class DefaultURLConstructor implements URLConstructor {
      */
     private String encodeURI( String uri ) {
         uri = m_engine.encodeName(uri);
-        uri = StringUtils.replace( uri, "+", "%20" );
-        uri = StringUtils.replace( uri, "%2F", "/" );
+        uri = Strings.CS.replace( uri, "+", "%20" );
+        uri = Strings.CS.replace( uri, "%2F", "/" );
 
         return uri;
     }

@@ -18,59 +18,59 @@
  */
 package org.apache.wiki.parser;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.StringEscapeUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.MatchResult;
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.PatternCompiler;
-import org.apache.oro.text.regex.PatternMatcher;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.Perl5Matcher;
-import org.apache.wiki.InternalWikiException;
-import org.apache.wiki.StringTransmutator;
-import org.apache.wiki.api.core.Acl;
-import org.apache.wiki.api.core.Context;
-import org.apache.wiki.api.core.ContextEnum;
-import org.apache.wiki.api.core.Page;
-import org.apache.wiki.api.exceptions.PluginException;
-import org.apache.wiki.api.plugin.Plugin;
-import org.apache.wiki.api.spi.Wiki;
-import org.apache.wiki.attachment.AttachmentManager;
-import org.apache.wiki.auth.AuthorizationManager;
-import org.apache.wiki.auth.UserManager;
-import org.apache.wiki.auth.WikiSecurityException;
-import org.apache.wiki.auth.acl.AclManager;
-import org.apache.wiki.i18n.InternationalizationManager;
-import org.apache.wiki.preferences.Preferences;
-import org.apache.wiki.util.TextUtil;
-import org.apache.wiki.util.XmlUtil;
-import org.apache.wiki.variables.VariableManager;
-import org.jdom2.Attribute;
-import org.jdom2.Content;
-import org.jdom2.Element;
-import org.jdom2.IllegalDataException;
-import org.jdom2.ProcessingInstruction;
-import org.jdom2.Verifier;
+    import org.apache.commons.lang3.Strings;
+    import org.apache.commons.text.StringEscapeUtils;
+    import org.apache.logging.log4j.LogManager;
+    import org.apache.logging.log4j.Logger;
+    import org.apache.oro.text.regex.MalformedPatternException;
+    import org.apache.oro.text.regex.MatchResult;
+    import org.apache.oro.text.regex.Pattern;
+    import org.apache.oro.text.regex.PatternCompiler;
+    import org.apache.oro.text.regex.PatternMatcher;
+    import org.apache.oro.text.regex.Perl5Compiler;
+    import org.apache.oro.text.regex.Perl5Matcher;
+    import org.apache.wiki.InternalWikiException;
+    import org.apache.wiki.StringTransmutator;
+    import org.apache.wiki.api.core.Acl;
+    import org.apache.wiki.api.core.Context;
+    import org.apache.wiki.api.core.ContextEnum;
+    import org.apache.wiki.api.core.Page;
+    import org.apache.wiki.api.exceptions.PluginException;
+    import org.apache.wiki.api.plugin.Plugin;
+    import org.apache.wiki.api.spi.Wiki;
+    import org.apache.wiki.attachment.AttachmentManager;
+    import org.apache.wiki.auth.AuthorizationManager;
+    import org.apache.wiki.auth.UserManager;
+    import org.apache.wiki.auth.WikiSecurityException;
+    import org.apache.wiki.auth.acl.AclManager;
+    import org.apache.wiki.i18n.InternationalizationManager;
+    import org.apache.wiki.preferences.Preferences;
+    import org.apache.wiki.util.TextUtil;
+    import org.apache.wiki.util.XmlUtil;
+    import org.apache.wiki.variables.VariableManager;
+    import org.jdom2.Attribute;
+    import org.jdom2.Content;
+    import org.jdom2.Element;
+    import org.jdom2.IllegalDataException;
+    import org.jdom2.ProcessingInstruction;
+    import org.jdom2.Verifier;
 
-import javax.xml.transform.Result;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.EmptyStackException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.ResourceBundle;
-import java.util.Stack;
+    import javax.xml.transform.Result;
+    import java.io.IOException;
+    import java.io.Reader;
+    import java.io.StringReader;
+    import java.text.MessageFormat;
+    import java.util.ArrayList;
+    import java.util.Arrays;
+    import java.util.Collection;
+    import java.util.EmptyStackException;
+    import java.util.HashMap;
+    import java.util.Iterator;
+    import java.util.List;
+    import java.util.Map;
+    import java.util.Properties;
+    import java.util.ResourceBundle;
+    import java.util.Stack;
 
 /**
  * Parses JSPWiki-style markup into a WikiDocument DOM tree.  This class is the heart and soul of JSPWiki : make
@@ -748,9 +748,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
         callMutatorChain( m_externalLinkMutatorChain, url );
 
         if( m_linkParsingOperations.isImageLink( url, isImageInlining(), getInlineImagePatterns() ) ) {
-            result = handleImageLink( StringUtils.replace( url, "&amp;", "&" ), url, false );
+            result = handleImageLink( Strings.CS.replace( url, "&amp;", "&" ), url, false );
         } else {
-            result = makeLink( EXTERNAL, StringUtils.replace( url, "&amp;", "&" ), url, null, null );
+            result = makeLink( EXTERNAL, Strings.CS.replace( url, "&amp;", "&" ), url, null, null );
             addElement( outlinkImage() );
         }
 
@@ -1625,8 +1625,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
                     if( handleClosebrace() == null ) m_plainTextBuf.append( (char) ch );
                 } else if( ch == -1 ) {
                     quitReading = true;
-                }
-                else if( ch == '\r' ) {
+                } else if( ch == '\r' ) {
                     // DOS line feeds we ignore.
                 } else if( ch == '<' ) {
                     m_plainTextBuf.append( "&lt;" );
