@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-FROM maven:3.9-eclipse-temurin-11 as package
+FROM maven:3.9-eclipse-temurin-17 as package
 
 WORKDIR /tmp
 
@@ -27,7 +27,7 @@ RUN set -x \
 # fastest, minimum build
   && mvn -B clean package -pl jspwiki-war,jspwiki-wikipages/en -am -DskipTests
 
-FROM tomcat:10.1
+FROM tomcat:10.1-jdk17
 
 COPY --from=package /tmp/jspwiki-war/target/JSPWiki.war /tmp
 COPY --from=package /tmp/jspwiki-wikipages/en/target/jspwiki-wikipages-en-*-jspwiki.zip /tmp

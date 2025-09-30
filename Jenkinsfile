@@ -18,25 +18,25 @@
  */
 
 buildRepo = 'https://github.com/apache/jspwiki'
-buildJdk11 = 'jdk_11_latest'
 buildJdk17 = 'jdk_17_latest'
 buildJdk21 = 'jdk_21_latest'
+buildJdk25 = 'jdk_25_latest'
 buildMvn = 'maven_3_latest'
 errMsg = ''
 
 try {
 
     stage( 'build source' ) {
-        parallel jdk11Build: {
-            buildSonarAndDeployIfSnapshotWith( buildJdk11 )
-        },
-        jdk17Build: {
-            buildWith( buildJdk17 )
+        parallel jdk17Build: {
+            buildSonarAndDeployIfSnapshotWith( buildJdk17 )
         },
         jdk21Build: {
-            // don't fail build if jdk-21 build doesn't succeed
+            buildWith( buildJdk21 )
+        },
+        jdk25Build: {
+            // don't fail build if jdk-25 build doesn't succeed
             catchError( buildResult: 'SUCCESS', stageResult: 'FAILURE' ) {
-                buildWith( buildJdk21 )
+                buildWith( buildJdk25 )
             }
         }
     }
@@ -72,8 +72,6 @@ def buildSonarAndDeployIfSnapshotWith( jdk ) {
             git url: buildRepo, poll: true
             withMaven( jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [ jacocoPublisher(), junitPublisher() ] ) {
                 sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report -T 1C"
-            }
-            withMaven( jdk: buildJdk17, maven: buildMvn ) {
                 withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
                     def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
                     echo 'Will use SonarQube instance at https://sonarcloud.io'
