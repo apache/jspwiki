@@ -115,6 +115,7 @@
     <plugin.cyclonedx.version>2.9.1</plugin.cyclonedx.version>
     <plugin.sonar.version>5.1.0.4751</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
+    <plugin.wro4j.version>2.1.1</plugin.wro4j.version>
     <plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
     <maven.compiler.source>${jdk.version}</maven.compiler.source> <!-- override values from parent pom -->
     <maven.compiler.target>${jdk.version}</maven.compiler.target>
@@ -761,7 +762,7 @@
         <plugin>
           <groupId>ro.isdc.wro4j</groupId>
           <artifactId>wro4j-maven-plugin</artifactId>
-          <version>${wro4j.version}</version>
+          <version>${plugin.wro4j.version}</version>
           <configuration>
             <contextFolder>${project.basedir}/src/main/</contextFolder>
             <extraConfigFile>${project.basedir}/src/main/config/wro/wro.properties</extraConfigFile>
