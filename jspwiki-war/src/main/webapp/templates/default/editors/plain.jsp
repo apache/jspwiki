@@ -94,9 +94,9 @@
 
     <dialog  id="localstoragemodal" >
       <div class="modal-footer">
-          Looks like you were previously editing this page. Would you like to resume editing or
-          discard the changes?
-          <input type="hidden" id="previouscontent">
+        <fmt:message key="editor.plain.localstorage.restore.prompt"/>
+          
+        <input type="hidden" id="previouscontent">
         <button id="previouscontentConfirm" class="btn btn-success"><fmt:message key="editor.plain.localstorage.restore"/></button>
         <button id="previouscontentAbandon"class="btn btn-danger"><fmt:message key="editor.plain.localstorage.delete"/></button>
       </div>
