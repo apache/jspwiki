@@ -94,12 +94,14 @@ wiki.add("textarea#editorarea", function( main ){
 
         if(LocalCache in localStorage){
 
-            var cache = localStorage.getItem(LocalCache),
-                modal = getFormElem(".localstorage");
-
-            modal.appendChild("pre".slick({text:cache}) )
-                .openModal( function(){
-                    snipe.set("value", cache);
+            var cache = localStorage.getItem(LocalCache);
+            const modal = document.getElementById("localstoragemodal");
+            document.getElementById("previouscontent").value = cache;
+            modal.openModal( function(content){
+                    snipe.set("value", content);
+                }, function(){
+                    //abort
+                    localStorage.removeItem(LocalCache);
                 });
         }
 

@@ -92,12 +92,15 @@
 
   <div class="snipe">
 
-    <div class="localstorage modal">
+    <dialog  id="localstoragemodal" >
       <div class="modal-footer">
-        <button class="btn btn-success"><fmt:message key="editor.plain.localstorage.restore"/></button>
-        <button class="btn btn-danger"><fmt:message key="editor.plain.localstorage.delete"/></button>
+          Looks like you were previously editing this page. Would you like to resume editing or
+          discard the changes?
+          <input type="hidden" id="previouscontent">
+        <button id="previouscontentConfirm" class="btn btn-success"><fmt:message key="editor.plain.localstorage.restore"/></button>
+        <button id="previouscontentAbandon"class="btn btn-danger"><fmt:message key="editor.plain.localstorage.delete"/></button>
       </div>
-    </div>
+    </dialog >
 
     <div class="form-inline form-group sticky">
 
