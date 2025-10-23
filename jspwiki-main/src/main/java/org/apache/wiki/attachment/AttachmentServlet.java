@@ -403,9 +403,6 @@ public class AttachmentServlet extends HttpServlet {
 
             final JakartaServletFileUpload upload = new JakartaServletFileUpload( factory );
             upload.setHeaderCharset(StandardCharsets.UTF_8);
-            if( !context.hasAdminPermissions() ) {
-                //upload.setFileSizeMax( m_maxSize );
-            }
             upload.setProgressListener( pl );
             final List<FileItem> items;
             try {
