@@ -55,49 +55,46 @@ Snipe.Snips = new Class({
         self.suggestions = {};
 
         for( cmd in snips ){
-            try{
-                snip = $.toFunction( snips[cmd] )( workarea, cmd );
 
-                // short format of snip
-                if( typeOf(snip) == "string" ){ snip = { snippet:snip }; }
+            snip = $.toFunction( snips[cmd] )( workarea, cmd );
 
-                //shortcut keys
-                if(snip.key && (key = snip.key) ){
+            // short format of snip
+            if( typeOf(snip) == "string" ){ snip = { snippet:snip }; }
 
-                    // key: "f" => "control+f" ;  key: "shift+enter" (no change)
-                    if( !key.contains( "+" ) ){ key = control + key; }
-                    self.keys[ key.toLowerCase() ] = cmd;
+            //shortcut keys
+            if( (key = snip.key) ){
 
-                }
+                // key: "f" => "control+f" ;  key: "shift+enter" (no change)
+                if( !key.contains( "+" ) ){ key = control + key; }
+                self.keys[ key.toLowerCase() ] = cmd;
 
-                if( snip.suggest && (suggest = snip.suggest) ){
+            }
 
-                    //this is a suggest snippets
-                    if( typeOf(suggest) == "string" ){
+            if( (suggest = snip.suggest) ){
 
-                        snip.suggest = {
-                            lback: RegExp( suggest + "$" ),
-                            match: RegExp( "^" + suggest )
-                        }
+                //this is a suggest snippets
+                if( typeOf(suggest) == "string" ){
 
+                    snip.suggest = {
+                        lback: RegExp( suggest + "$" ),
+                        match: RegExp( "^" + suggest )
                     }
 
-                    self.suggestions[cmd] = snip;
-
-                 //otherwise regular snippet
-                 //} else {
-
                 }
 
-                //check for snip dialogs -- they have the same name as the command
-                //TODO better:  use the dialog property !
-                if( snip[cmd] ){ self.dialogs[cmd] = snip[cmd]; }  //deprecated
-                if( snip.dialog ){ self.dialogs[cmd] = snip.dialog; }
+                self.suggestions[cmd] = snip;
 
-                snips[cmd] = snip;
-            } catch(e) {
-                console.debug(e);
+             //otherwise regular snippet
+             //} else {
+
             }
+
+            //check for snip dialogs -- they have the same name as the command
+            //TODO better:  use the dialog property !
+            if( snip[cmd] ){ self.dialogs[cmd] = snip[cmd]; }  //deprecated
+            if( snip.dialog ){ self.dialogs[cmd] = snip.dialog; }
+
+            snips[cmd] = snip;
 
         }
         //console.log(this.keys, this.suggest, this.snip);

@@ -48,33 +48,5 @@ public interface Plugin {
      *  @throws PluginException In case anything goes wrong.
      */
     String execute( Context context, Map< String, String > params ) throws PluginException;
-
-    /**
-     * Provides the ability for a plugin to provide a suggestion or template
-     * for execution within a wiki page. Default returns just the FQCN of the 
-     * plugin, which should enable it to fire off, however no parameters are 
-     * plugin.
-     * 
-     * Example: com.company.Plugin inputParamter='test'
-     * 
-     * @since 3.0.0
-     * @return String
-     */
-    default String getSnipExample() {
-        return this.getClass().getCanonicalName();
-    }
-    /**
-     * Provides the ability for a plugin to provide it's display name that 
-     * is visible via the [{}] autocomplete/suggestion mechanism within the 
-     * editor. 
-     * 
-     * Example: Calls My Custom plugin
-     * 
-     * @since 3.0.0
-     * @return String
-     */
-    default String getDisplayName() {
-        return this.getClass().getSimpleName();
-    }
     
 }

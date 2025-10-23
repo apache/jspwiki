@@ -52,7 +52,6 @@ Complementary Dynamic Styles (see jspwiki-commonstyles.js)
 *	270 WikiColumns: dynamic style
 *	300 Prettify: dynamic style
 
-Note this file gets minimied/compiled into haddock.js
 */
 
 /* extend mootools */
@@ -70,7 +69,7 @@ String.extend({
 		});
 		return text;
 	}
-});
+})
 
 // get text of a dhtml node
 function $getText(el) {

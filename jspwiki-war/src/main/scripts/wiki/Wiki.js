@@ -70,14 +70,7 @@ var Wiki = {
         wiki.add = behavior.add.bind(behavior);
         wiki.once = behavior.once.bind(behavior);
         wiki.update = behavior.update.bind(behavior);
-       
-        setTimeout(function(){
-        if (wiki.Snips) {
-            wiki.Snips.loadPlugins();
-        } else {
-            console.warn("snips are not loaded yet, cannot fetch the plugin list");
-        }
-        
+
         //add the standard jspwiki behaviors; needed to render the haddock JSP templates
         wiki.add( "body", wiki.caniuse )
 
@@ -177,7 +170,6 @@ var Wiki = {
             popstate: wiki.popstate,
             domready: wiki.domready.bind(wiki)
         });
-        }, 500);
 
     },
 
