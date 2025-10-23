@@ -257,6 +257,12 @@
       <type>war</type>
       <scope>provided</scope>
     </dependency>
+    <dependency><!-- added so we can issue safe, parallel builds -->
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-test-plugin</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>

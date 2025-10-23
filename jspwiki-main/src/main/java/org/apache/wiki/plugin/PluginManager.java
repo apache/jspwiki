@@ -25,6 +25,7 @@ import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.modules.ModuleManager;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -128,5 +129,14 @@ public interface PluginManager extends ModuleManager {
      * @throws PluginException if there is a problem building the {@link Plugin}.
      */
     Plugin newWikiPlugin( String pluginName, ResourceBundle rb ) throws PluginException;
+    
+    /**
+     * gets a list of plugins available via the java service provider discovery 
+     * mechanism. Helpful for populating autocomplete capabilities.
+     * 
+     * @since 3.0.0
+     * @return list of plugin instances.
+     */
+    List<Plugin> getDiscoveredPlugins();
     
 }

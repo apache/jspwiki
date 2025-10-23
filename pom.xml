@@ -148,6 +148,7 @@
     <module>jspwiki-portable</module>
     <module>jspwiki-it-tests</module><!-- IT tests are launched only if -Pintegration-tests is given -->
     <module>jspwiki-bom</module>
+    <module>jspwiki-test-plugin</module>
   </modules>
 
   <dependencyManagement> <!-- defines what configuration is going to be used if, and only if, the dependency is used -->

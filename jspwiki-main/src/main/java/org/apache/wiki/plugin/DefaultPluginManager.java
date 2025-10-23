@@ -59,12 +59,16 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
 
 /**
  *  Manages plugin classes.  There exists a single instance of PluginManager
@@ -713,6 +717,22 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
             throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.instantationfailed" ), pluginName ), e );
         }
         return plugin;
+    }
+
+    @Override
+    public List<Plugin> getDiscoveredPlugins() {
+        Collection<WikiModuleInfo> pluginModules = modules();
+        Set<Plugin> plugins = new HashSet<>();
+        for(WikiModuleInfo plugin : pluginModules) {
+            try {
+                Plugin p = (Plugin) Class.forName(((WikiPluginInfo)plugin).getClassName()).newInstance();
+                plugins.add(p);
+            } catch (Throwable ex) {
+                LOG.error("failed to load class " + plugin.getName(), ex);
+            }
+        }
+      
+        return new ArrayList<>(plugins);
     }
 
 }
