@@ -64,6 +64,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.fileupload2.core.FileUploadByteCountLimitException;
 
 
 /**
@@ -388,7 +389,7 @@ public class AttachmentServlet extends HttpServlet {
 
         // Check that we have a file upload request
         if( !JakartaServletFileUpload.isMultipartContent(req) ) {
-            throw new RedirectException( "Not a file upload", errorPage );
+            throw new RedirectException( "Not a file upload", nextPage );
         }
 
         try {
@@ -403,11 +404,15 @@ public class AttachmentServlet extends HttpServlet {
             final JakartaServletFileUpload upload = new JakartaServletFileUpload( factory );
             upload.setHeaderCharset(StandardCharsets.UTF_8);
             if( !context.hasAdminPermissions() ) {
-                upload.setFileSizeMax( m_maxSize );
+                //upload.setFileSizeMax( m_maxSize );
             }
             upload.setProgressListener( pl );
-            final List<FileItem> items = upload.parseRequest( req );
-
+            final List<FileItem> items;
+            try {
+                items = upload.parseRequest(req);
+            } catch (FileUploadByteCountLimitException ex) {
+                throw new RedirectException( "Too big " + ex.getMessage(), nextPage );
+            }
             String   wikipage   = null;
             String   changeNote = null;
             //FileItem actualFile = null;
@@ -440,10 +445,16 @@ public class AttachmentServlet extends HttpServlet {
             }
 
             if(fileItems.isEmpty()) {
-                throw new RedirectException( "Broken file upload", errorPage );
+                throw new RedirectException( "Broken file upload", nextPage );
 
             } else {
                 for( final FileItem actualFile : fileItems ) {
+                    if( !context.hasAdminPermissions() ) {
+                        if (actualFile.getSize()> m_maxSize) {
+                            throw new RedirectException("Too big " + actualFile.getName() + " " + actualFile.getSize() + " vs " + m_maxSize, nextPage);
+                        }
+                    }
+                    
                     final String filename = actualFile.getName();
                     final long   fileSize = actualFile.getSize();
                     try( final InputStream in  = actualFile.getInputStream() ) {
