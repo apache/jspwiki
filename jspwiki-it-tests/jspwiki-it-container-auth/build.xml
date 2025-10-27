@@ -1,0 +1,97 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+-->
+
+<!--
+  This project builds a "WikiOnAStick" based on JSPWiki.
+-->
+<project name="makeDistro" default="makeDistro" basedir=".">
+
+  <!-- import environment variables -->
+  <property environment="env"/>
+
+  <!-- the build version if not overwritten by the caller -->
+  <property name="jspwiki.woas.version" value="${jspwiki.woas.version}" />
+  
+  <!-- define the temporary build directory -->
+  <property name="jspwiki.woas.target.dir" value="${basedir}/target" />
+  
+  <!-- the directory where to build the exploded application -->
+  <property name="jspwiki.woas.assembly.dir" value="${jspwiki.woas.target.dir}/tomcat" />
+  
+  <!-- the temporary directory for the build -->
+  <property name="jspwiki.woas.unpack.dir" value="${jspwiki.woas.target.dir}/unpack" />
+
+  <!-- the Tomcat version to use --> 
+  <property name="jspwiki.tomcat.version" value="${jspwiki.tomcat.version}"/>
+
+  <!-- the Tomcat distribution to use --> 
+  <property name="jspwiki.tomcat.distribution" value="apache-tomcat-${jspwiki.tomcat.version}"/>
+
+  
+
+  <!-- ############################################################## -->
+  <!-- Tomcat 10 Distribution                                         -->
+  <!-- ############################################################## -->
+
+  <target name="makeDistro" description="Prepares an unpacked Tomcat deployment">
+	<mkdir dir="${jspwiki.woas.assembly.dir}"/>
+	<copy todir="${jspwiki.woas.assembly.dir}/" overwrite="true">
+      <fileset dir="${jspwiki.woas.unpack.dir}/tomcat/${jspwiki.tomcat.distribution}/" />
+    </copy>
+    <!-- delete some undesired Tomcat stuff -->
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/docs"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/examples"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/host-manager"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/manager"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/ROOT"/>    
+	
+	<!-- wiki storage directory -->
+	<mkdir dir ="${jspwiki.woas.assembly.dir}/wiki"/>
+	<copy todir="${jspwiki.woas.assembly.dir}/wiki" overwrite="true">
+      <fileset dir="${basedir}/../../jspwiki-wikipages/en/src/main/resources/">
+		<include name="*.txt"/>
+	  </fileset>
+    </copy>
+	
+    <!-- create a work dir for JSPs - see http://jetty.4.n6.nabble.com/jetty-users-How-to-change-the-extracted-directory-td4501308.html -->
+    <mkdir dir ="${jspwiki.woas.assembly.dir}/work"/>    
+    <!-- create a temp dir -->
+    <mkdir dir ="${jspwiki.woas.assembly.dir}/temp"/>    
+    <!-- copy customized Tomcat configuration data -->
+    <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
+      <fileset dir="${basedir}/src/overlay/tomcat"/>
+    </copy>
+    <!-- copy the JSPWiki libraries to tomcat -->
+	<mkdir dir ="${jspwiki.woas.assembly.dir}/webapps"/>  
+	<mkdir dir ="${jspwiki.woas.assembly.dir}/webapps/jspwiki"/>  
+    <copy todir="${jspwiki.woas.assembly.dir}/webapps/jspwiki/" overwrite="true">
+      <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/" />
+    </copy>
+	<copy todir="${jspwiki.woas.assembly.dir}/lib/" overwrite="true">
+      <fileset dir="${basedir}/src/main/resources/" >
+		<include name="jspwiki-custom.properties"/>
+	  </fileset>
+    </copy>
+    <!-- make the start scripts executable -->
+    <chmod dir="${jspwiki.woas.assembly.dir}" includes="*.sh" perm="ugo+x"/>        
+    <chmod dir="${jspwiki.woas.assembly.dir}/bin" includes="*.sh" perm="ugo+x"/>        
+  </target>
+
+
+</project>

@@ -74,9 +74,12 @@ public class RuleParserTest {
 
     @Test
     public void complexSetupNot() {
-        RuleParser instance = new RuleParser("accounting AND finance AND NOT(bob)");
-        instance = new RuleParser("(accounting AND finance AND NOT(bob))");
+        RuleParser instance = new RuleParser("accounting AND finance AND NOT (bob)");
+        instance.parse();
+
+        instance = new RuleParser("(accounting AND finance AND NOT (bob))");
         RuleNode result = instance.parse();
+
         Assertions.assertEquals(3, result.getAllRoles().size());
         Assertions.assertTrue(result.evaluate(Set.of("accounting", "finance")));
         Assertions.assertTrue(result.evaluate(Set.of("accounting", "finance", "otherDepartment")));

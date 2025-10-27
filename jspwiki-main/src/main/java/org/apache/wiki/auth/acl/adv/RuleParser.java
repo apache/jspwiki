@@ -21,8 +21,8 @@ import java.util.*;
  *
  * @author AO
  */
-
 public class RuleParser {
+
     private final List<String> tokens;
     private int pos = 0;
 
@@ -94,9 +94,10 @@ public class RuleParser {
     private String expectIdentifier() {
         if (pos < tokens.size()) {
             String tok = tokens.get(pos++);
-            if (!tok.equalsIgnoreCase("AND") && !tok.equalsIgnoreCase("OR")
-                    && !tok.equalsIgnoreCase("NOT")
-                    && !tok.equals("(") && !tok.equals(")")) {
+            if (!tok.equalsIgnoreCase("AND")
+                    && !tok.equalsIgnoreCase("OR")
+                    && !tok.equals("(")
+                    && !tok.equals(")")) {
                 return tok;
             }
         }
@@ -104,6 +105,11 @@ public class RuleParser {
     }
 
     private static List<String> tokenize(String expr) {
-        return Arrays.asList(expr.replaceAll("([()])", " $1 ").trim().split("\\s+"));
+        expr = expr
+                .replaceAll("([()])", " $1 ")
+                .replaceAll("(?i)(AND|OR|NOT)(?=\\()", "$1 ") // add space if operator followed by '('
+                .replaceAll("\\s+", " ")
+                .trim();
+        return Arrays.asList(expr.split(" "));
     }
 }
