@@ -101,7 +101,7 @@ class UserManagerTest {
         m_db = m_mgr.getUserDatabase();
     }
 
-    //@Test
+    //@Test - this fails with a duplicate entry somewhere
     void testSetRenamedUserProfile() throws Exception {
         // First, count the number of users, groups, and pages
         final int oldUserCount = m_db.getWikiNames().length;

@@ -66,6 +66,7 @@
     <jakarta-mail.version>2.0.1</jakarta-mail.version>
     <jakarta-mail-api.version>2.1.3</jakarta-mail-api.version>
     <jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
+    <jacoco-version>0.8.14</jacoco-version>
     <jamm.version>0.4.0</jamm.version>
     <jaxen.version>2.0.0</jaxen.version>
     <javax-mail.version>1.6.2</javax-mail.version>
@@ -502,7 +503,10 @@
         <groupId>net.nicoulaj.maven.plugins</groupId>
         <artifactId>checksum-maven-plugin</artifactId>
       </plugin>
-
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.cyclonedx</groupId>
         <artifactId>cyclonedx-maven-plugin</artifactId>
@@ -663,6 +667,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${plugin.surefire.version}</version>
           <configuration>
+            <argLine>@{argLine}</argLine>
             <consoleOutputReporter>
               <disable>true</disable>
             </consoleOutputReporter>
@@ -969,6 +974,26 @@
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-version}</version>
+            <executions>
+                <execution>
+                    <id>coverage-initialize</id>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>coverage-report</id>
+                    <phase>post-integration-test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -1078,7 +1103,7 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <argLine>-javaagent:${com.github.jbellis:jamm:jar}</argLine>
+              <argLine>@{argLine} -javaagent:${com.github.jbellis:jamm:jar}</argLine>
               <consoleOutputReporter>
                 <disable>false</disable>
               </consoleOutputReporter>
