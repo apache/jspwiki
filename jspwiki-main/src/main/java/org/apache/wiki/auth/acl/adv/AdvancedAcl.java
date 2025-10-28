@@ -29,7 +29,6 @@ import org.apache.wiki.auth.acl.AdvancedAclManager;
  * an extension to the base ACL classes that provides boolean logic, tyical use
  * case is for role/group membership
  *
- * @author AO
  * @since 3.0.0
  * @see AdvancedAclManager
  * @see AdvancedAuthorizationManager

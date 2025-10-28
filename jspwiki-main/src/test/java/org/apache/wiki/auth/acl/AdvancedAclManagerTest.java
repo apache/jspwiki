@@ -32,7 +32,6 @@ import org.mockito.internal.util.collections.Sets;
 
 /**
  *
- * @author AO
  */
 public class AdvancedAclManagerTest {
 

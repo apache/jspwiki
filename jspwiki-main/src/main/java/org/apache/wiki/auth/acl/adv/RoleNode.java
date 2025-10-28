@@ -20,8 +20,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * A role/username node
  *
- * @author AO
+ * @since 3.0.0
  */
 public class RoleNode extends RuleNode {
 
@@ -56,7 +57,7 @@ public class RoleNode extends RuleNode {
 
     @Override
     public Set<String> getAllRoles() {
-        Set<String>  set = new HashSet<>();
+        Set<String> set = new HashSet<>();
         set.add(role);
         return set;
     }

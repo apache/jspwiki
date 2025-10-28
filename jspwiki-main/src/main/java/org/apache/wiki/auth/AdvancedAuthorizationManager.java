@@ -37,7 +37,6 @@ import org.apache.wiki.pages.PageManager;
  * Advanced Authorization manager. This is the component that enforces the
  * access control rules defined by {@link AdvancedAcl} boolean logic.
  *
- * @author AO
  * @since 3.0.0
  * @see AdvancedAcl
  * @see AdvancedAclManager

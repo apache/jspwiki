@@ -19,19 +19,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
+ * AND/OR operator
  *
- * @author AO
+ * @since 3.0.0
+ *
  */
 public class OperatorNode extends RuleNode {
 
-   @Override
+    @Override
     public Set<String> getAllRoles() {
-        Set<String>  set = new HashSet<>();
+        Set<String> set = new HashSet<>();
         set.addAll(left.getAllRoles());
         set.addAll(right.getAllRoles());
         return set;
     }
-    public enum Operator { AND, OR }
+
+    public enum Operator {
+        AND, OR
+    }
 
     private final Operator operator;
     private final RuleNode left, right;
@@ -66,4 +71,3 @@ public class OperatorNode extends RuleNode {
         return "(" + left + " " + operator + " " + right + ")";
     }
 }
-

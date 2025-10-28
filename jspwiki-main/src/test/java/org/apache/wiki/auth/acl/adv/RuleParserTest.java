@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
  * @see AdvancedAclManager
  * @see AdvancedAuthorizationManager
  * @since 3.0.0
- * @author AO
  */
 public class RuleParserTest {
 

@@ -18,8 +18,9 @@ package org.apache.wiki.auth.acl.adv;
 import java.util.*;
 
 /**
+ * Advanced ACL rule parser
  *
- * @author AO
+ * @since 3.0.0
  */
 public class RuleParser {
 

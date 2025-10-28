@@ -21,7 +21,6 @@ import java.util.Set;
  * A rule node is a tree like representation of a boolean logic statement used
  * for access controls on a wiki page.
  *
- * @author AO
  * @since 3.0.0
  */
 public abstract class RuleNode {

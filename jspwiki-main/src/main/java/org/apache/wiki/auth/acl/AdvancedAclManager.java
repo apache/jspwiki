@@ -35,7 +35,6 @@ import org.apache.wiki.auth.acl.adv.RuleParser;
  * Advanced ACL manager. This is the component that parses the access control
  * rules defined by {@link AdvancedAcl} boolean logic.
  *
- * @author AO
  * @since 3.0.0
  * @see AdvancedAcl
  * @see AdvancedAuthorizationManager

@@ -18,10 +18,12 @@ package org.apache.wiki.auth.acl.adv;
 import java.util.Set;
 
 /**
+ * a NOT expression
  *
- * @author AO
+ * @since 3.0.0
  */
 public class NotNode extends RuleNode {
+
     private final RuleNode child;
 
     public RuleNode getChild() {
