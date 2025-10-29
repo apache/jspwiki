@@ -62,8 +62,8 @@ public abstract class WikiEvent extends EventObject {
      * Constructs an instance of this event.
      *
      * @param src the Object that is the source of the event. Typically, this is the Wiki {@link Engine}
-     * @param type the event type. Typically this is a constant references to {@link WikiPageEvent}
-     * @param args typically the first one is the page name that triggered the event.
+     * @param type the event type. Typically this is a constant reference to {@link WikiPageEvent}
+     * @param args typically the first arg is the page name that triggered the event.
      */
     public WikiEvent( final Object src, final int type, final Object... args ) {
         this( src, type );
