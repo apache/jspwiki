@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.util;
 
-import inet.ipaddr.IPAddressString;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +31,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.commons.net.util.SubnetUtils;
 
 
 /**
@@ -80,8 +80,9 @@ public final class HttpUtil {
     public static boolean ipIsInRange(final HttpServletRequest req, final String ipOrRange) {
         String requestIP = getRemoteAddress(req);
         if (ipOrRange.contains("/")) {
-            IPAddressString testRange = new IPAddressString(ipOrRange);
-            return testRange.contains(new IPAddressString(requestIP));
+            SubnetUtils subnet = new SubnetUtils(ipOrRange);
+            SubnetUtils.SubnetInfo subnetInfo = subnet.getInfo();
+            return subnetInfo.isInRange(requestIP);
         } else {
             return requestIP.equals(ipOrRange);
         }
