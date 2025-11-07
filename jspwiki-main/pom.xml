@@ -299,6 +299,9 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
+                    <runOrder>random</runOrder>
+                    <parallel>all</parallel> <!-- or classes, both, suites, etc. -->
+                    <perCoreThreadCount>1</perCoreThreadCount > <!-- Number of threads to use -->
                 </configuration>
             </plugin>
 

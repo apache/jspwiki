@@ -40,10 +40,11 @@ import static org.apache.wiki.TestEngine.with;
 
 public class RSSGeneratorTest {
 
-    TestEngine m_testEngine = TestEngine.build( with( RSSGenerator.PROP_GENERATE_RSS, "true" ) );
+    
 
     @Test
     public void testBlogRSS() throws Exception {
+        TestEngine m_testEngine = TestEngine.build( with( RSSGenerator.PROP_GENERATE_RSS, "true" ) );
         final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
         m_testEngine.saveText( "TestBlog", "Foo1" );
         String newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
@@ -64,6 +65,7 @@ public class RSSGeneratorTest {
 
     @Test
     public void testBlogRSS2() throws Exception {
+        TestEngine m_testEngine = TestEngine.build( with( RSSGenerator.PROP_GENERATE_RSS, "true" ) );
         final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
         m_testEngine.saveText( "TestBlog", "Foo1" );
         String newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );

@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
 
 public class GroupsTest {
 
-    static TestEngine testEngine = TestEngine.build();
+    TestEngine testEngine = TestEngine.build();
 
     @AfterEach
     public void tearDown() throws Exception {
