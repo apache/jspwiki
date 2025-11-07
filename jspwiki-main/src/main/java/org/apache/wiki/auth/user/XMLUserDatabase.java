@@ -54,6 +54,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import javax.xml.XMLConstants;
 
 /**
  * <p>Manages {@link DefaultUserProfile} objects using XML files for persistence. Passwords are hashed using SHA1. User entries are simple
@@ -204,8 +205,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         factory.setExpandEntityReferences( false );
         factory.setIgnoringComments( true );
         factory.setNamespaceAware( false );
-        //factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
-        //factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_SCHEMA, "" );
+        factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
+        factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_SCHEMA, "" );
         try {
             c_dom = factory.newDocumentBuilder().parse( c_file );
             LOG.debug( "Database successfully initialized" );
@@ -219,8 +220,10 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             LOG.info( "User database not found; creating from scratch..." );
         } catch( final IOException e ) {
             LOG.error( "IO error: {}", e.getMessage() );
+        } catch( final Exception e ) {
+            LOG.error( "Error initializing XML database from: {} {}", c_file.getAbsolutePath(), e.getMessage() );
         }
-        if( c_dom == null ) {
+        if ( c_dom == null ) {
             try {
                 //  Create the DOM from scratch
                 c_dom = factory.newDocumentBuilder().newDocument();

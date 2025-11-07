@@ -51,7 +51,8 @@
     <commons-fileupload.version>2.0.0-M4</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.20.0</commons-io.version>
-    <commons-lang.version>3.18.0</commons-lang.version>
+    <commons-lang.version>3.19.0</commons-lang.version>
+    <commons-net.version>3.12.0</commons-net.version>
     <commons-text.version>1.14.0</commons-text.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.64.8</flexmark.version>
@@ -165,6 +166,11 @@
         <groupId>com.codeborne</groupId>
         <artifactId>selenide</artifactId>
         <version>${selenide.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>commons-net</groupId>
+          <artifactId>commons-net</artifactId>
+          <version>${commons-net.version}</version>
       </dependency>
 
       <dependency><!-- https://jakartaee.github.io/mail-api/README-JakartaMail#Download_Jakarta_Mail_Release -->
@@ -669,7 +675,7 @@
           <configuration>
             <argLine>@{argLine}</argLine>
             <consoleOutputReporter>
-              <disable>true</disable>
+              <disable>false</disable>
             </consoleOutputReporter>
             <reportFormat>plain</reportFormat>
             <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
