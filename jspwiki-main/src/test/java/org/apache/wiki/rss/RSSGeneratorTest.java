@@ -36,9 +36,8 @@ import java.util.Date;
 import java.util.List;
 
 import static org.apache.wiki.TestEngine.with;
-import org.junit.jupiter.api.Disabled;
 
-@Disabled(value = "temporary disable")
+
 public class RSSGeneratorTest {
 
     
