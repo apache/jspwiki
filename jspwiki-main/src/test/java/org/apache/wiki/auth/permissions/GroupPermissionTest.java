@@ -109,6 +109,7 @@ public class GroupPermissionTest
         if (ver.indexOf(".")>=0) {
             ver = ver.substring(0, ver.indexOf("."));
         }
+        System.out.println("Running on JDK " + ver);
         Assumptions.assumeFalse(Integer.parseInt(ver) >=25, "skipping on 25 due to security manager changes");
         GroupPermission p1;
         Permission p2;
