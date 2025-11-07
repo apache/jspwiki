@@ -90,6 +90,11 @@ public class DefaultRSSGenerator implements RSSGenerator {
         } else { // relative path names are anchored from the webapp root path
             rssFile = new File( engine.getRootPath(), m_rssFile );
         }
+        if (!rssFile.getParentFile().exists()) {
+            if (!rssFile.getParentFile().mkdirs()) {
+                LOG.warn("Failed to mkdirs at " + rssFile.getParentFile().getAbsolutePath() + " rss feeds will probably fail");
+            }
+        }
         final int rssInterval = TextUtil.getIntegerProperty( properties, DefaultRSSGenerator.PROP_INTERVAL, 3600 );
         final RSSThread rssThread = new RSSThread( engine, rssFile, rssInterval );
         rssThread.start();
