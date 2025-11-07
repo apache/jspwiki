@@ -51,6 +51,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.xml.XMLConstants;
 
 
 /**
@@ -234,8 +235,8 @@ public class XMLGroupDatabase implements GroupDatabase {
         factory.setExpandEntityReferences( false );
         factory.setIgnoringComments( true );
         factory.setNamespaceAware( false );
-        //factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
-        //factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_SCHEMA, "" );
+        factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
+        factory.setAttribute( XMLConstants.ACCESS_EXTERNAL_SCHEMA, "" );
         try {
             m_dom = factory.newDocumentBuilder().parse( m_file );
             LOG.debug( "Database successfully initialized" );
@@ -249,6 +250,8 @@ public class XMLGroupDatabase implements GroupDatabase {
             LOG.info( "Group database not found; creating from scratch..." );
         } catch( final IOException e ) {
             LOG.error( "IO error: {}", e.getMessage() );
+        } catch( final Exception e ) {
+            LOG.error( "Error loading XML group database: {} {}", m_file.getAbsolutePath(), e.getMessage() );
         }
         if ( m_dom == null ) {
             try {

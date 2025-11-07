@@ -113,6 +113,42 @@ class IfPluginTest {
         final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
         Assertions.assertEquals( expected, res );
     }
+    
+     /**
+     * Checks that IP address is granted with netmask
+     *
+     * @throws WikiException test Assertions.failing.
+     */
+    @Test
+    void testIfPluginIPAllowedMask() throws WikiException {
+        final String src = "[{IfPlugin ip='127.0.0.0/24'\n\nContent visible for 127.0.0.0/24}]";
+        final String expected = "<p>Content visible for 127.0.0.0/24</p>\n";
+
+        testEngine.saveText( "Test", src );
+        final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
+        final Context context = getJanneBasedWikiContextFor( page );
+
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
+        Assertions.assertEquals( expected, res );
+    }
+    
+    /**
+     * Checks that IP address is granted with netmask
+     *
+     * @throws WikiException test Assertions.failing.
+     */
+    @Test
+    void testIfPluginIPAllowedMaskDeny() throws WikiException {
+        final String src = "[{IfPlugin ip='192.168.1.1/24'\n\nContent visible for 192.168.1.1/24}]";
+        final String expected = "\n";
+
+        testEngine.saveText( "Test", src );
+        final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
+        final Context context = getJanneBasedWikiContextFor( page );
+
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
+        Assertions.assertEquals( expected, res );
+    }
 
     /**
      * Checks that IP address is granted.

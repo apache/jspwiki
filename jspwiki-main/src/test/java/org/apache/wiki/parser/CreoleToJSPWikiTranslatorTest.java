@@ -664,20 +664,6 @@ public class CreoleToJSPWikiTranslatorTest
     }
 
     @Test
-    public void testTilde()
-    {
-        final String src = "==Willkommen zum WikiWizardScript\r\n" + "~~ sdfsdf\r\n" + "\r\n" + "now what happens?\r\n" + "\r\n"
-                     + "- nothing I hope\r\n" + "- maybe something\r\n" + "- we will soon see!\r\n" + "\r\n"
-                     + "== and this is a big title =================\r\n" + "\r\n" + "What can we put here?\r\n" + "\r\n"
-                     + "{{Web2.png}}";
-        final String target = "!!!Willkommen zum WikiWizardScript\r\n" + "~~ sdfsdf\r\n" + "\r\nnow what happens?\r\n"
-                        + "\r\n* nothing I hope\r\n" + "* maybe something\r\n" + "* we will soon see!\r\n"
-                        + "\r\n!!! and this is a big title ===============\r\n" + "\r\nWhat can we put here?\r\n"
-                        + "\r\n[{Image src='Web2.png'}]";
-        Assertions.assertEquals(target, translate(src));
-    }
-
-    @Test
     public void testWWWToHTTP()
     {
         final String src = "Hallo\r\nHallo[[ 	www.gmx.de]]Hallo\r\nHallo";

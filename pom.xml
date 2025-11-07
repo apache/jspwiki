@@ -51,7 +51,8 @@
     <commons-fileupload.version>2.0.0-M4</commons-fileupload.version>
     <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.20.0</commons-io.version>
-    <commons-lang.version>3.18.0</commons-lang.version>
+    <commons-lang.version>3.19.0</commons-lang.version>
+    <commons-net.version>3.12.0</commons-net.version>
     <commons-text.version>1.14.0</commons-text.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.64.8</flexmark.version>
@@ -66,6 +67,7 @@
     <jakarta-mail.version>2.0.1</jakarta-mail.version>
     <jakarta-mail-api.version>2.1.3</jakarta-mail-api.version>
     <jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
+    <jacoco-version>0.8.14</jacoco-version>
     <jamm.version>0.4.0</jamm.version>
     <jaxen.version>2.0.0</jaxen.version>
     <javax-mail.version>1.6.2</javax-mail.version>
@@ -164,6 +166,11 @@
         <groupId>com.codeborne</groupId>
         <artifactId>selenide</artifactId>
         <version>${selenide.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>commons-net</groupId>
+          <artifactId>commons-net</artifactId>
+          <version>${commons-net.version}</version>
       </dependency>
 
       <dependency><!-- https://jakartaee.github.io/mail-api/README-JakartaMail#Download_Jakarta_Mail_Release -->
@@ -502,7 +509,10 @@
         <groupId>net.nicoulaj.maven.plugins</groupId>
         <artifactId>checksum-maven-plugin</artifactId>
       </plugin>
-
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.cyclonedx</groupId>
         <artifactId>cyclonedx-maven-plugin</artifactId>
@@ -663,8 +673,9 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${plugin.surefire.version}</version>
           <configuration>
+            <argLine>@{argLine}</argLine>
             <consoleOutputReporter>
-              <disable>true</disable>
+              <disable>false</disable>
             </consoleOutputReporter>
             <reportFormat>plain</reportFormat>
             <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
@@ -969,6 +980,26 @@
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-version}</version>
+            <executions>
+                <execution>
+                    <id>coverage-initialize</id>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>coverage-report</id>
+                    <phase>post-integration-test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -1078,7 +1109,7 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <argLine>-javaagent:${com.github.jbellis:jamm:jar}</argLine>
+              <argLine>@{argLine} -javaagent:${com.github.jbellis:jamm:jar}</argLine>
               <consoleOutputReporter>
                 <disable>false</disable>
               </consoleOutputReporter>
