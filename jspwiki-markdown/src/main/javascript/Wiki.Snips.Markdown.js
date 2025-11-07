@@ -44,7 +44,7 @@ Function: snippets
 */
 
 Wiki.Snips = {
-
+    ready: false,
     // Snipe predefined commands
     find: { },
     undo: { event: "undo" },
@@ -628,5 +628,32 @@ Wiki.Snips = {
 
         }
         }]
+    },
+    
+    loadPlugins: function(){
+        const pluginDiscoveryRequest2 = new XMLHttpRequest();
+        pluginDiscoveryRequest2.open('GET', 'ajax/plugins/plugins', true); // true for asynchronous
+        pluginDiscoveryRequest2.onload = function() {
+          if (pluginDiscoveryRequest2.status >= 200 && pluginDiscoveryRequest2.status < 300) {
+            var data = JSON.parse(pluginDiscoveryRequest2.responseText);
+            //Wiki.Snips.pluginDlg["TableOfContents "] = "Table Of Contents ";
+            for (var i=0; i < data.length; i++) {
+                Wiki.Snips.pluginDlg.pluginDlg[1].body[data[i].snip] = data[i].displayName;
+            }
+            Wiki.Snips.ready = true;
+          } else {
+            console.error('Request failed.  Returned status of ' + pluginDiscoveryRequest2.status);
+            Wiki.Snips.ready = true;
+          }
+        };
+        pluginDiscoveryRequest2.onerror = function() {
+          console.error('Network error occurred');
+          Wiki.Snips.ready = true;
+        };
+        pluginDiscoveryRequest2.send();
     }
-}
+};
+
+window.addEventListener("load", function() {
+  Wiki.Snips.loadPlugins();
+});
