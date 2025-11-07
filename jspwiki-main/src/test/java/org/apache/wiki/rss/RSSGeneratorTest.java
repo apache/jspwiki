@@ -58,9 +58,10 @@ public class RSSGeneratorTest {
         final List< Page > entries = blogplugin.findBlogEntries( m_testEngine, "testBlogRSS", new Date( 0 ), new Date( Long.MAX_VALUE ) );
         final Feed feed = new RSS10Feed( context );
         final String blog = gen.generateBlogRSS( context, entries, feed );
-
+        m_testEngine.shutdown();
         Assertions.assertTrue( blog.contains( "<description>Foo</description>" ), "has Foo" );
         Assertions.assertTrue( blog.contains( "&lt;b&gt;Bar&lt;/b&gt;" ), "has proper Bar" );
+        
     }
 
     @Test
@@ -79,7 +80,7 @@ public class RSSGeneratorTest {
         final List< Page > entries = blogplugin.findBlogEntries( m_testEngine, "testBlogRSS2", new Date( 0 ), new Date( Long.MAX_VALUE ) );
         final Feed feed = new RSS20Feed( context );
         final String blog = gen.generateBlogRSS( context, entries, feed );
-
+        m_testEngine.shutdown();
         Assertions.assertTrue( blog.contains( "<description>Foo &amp;quot;blah&amp;quot;.</description>" ), "has Foo" );
         Assertions.assertTrue( blog.contains( "&lt;b&gt;Bar&lt;/b&gt;" ), "has proper Bar" );
     }
