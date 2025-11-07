@@ -17,6 +17,19 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+
+**2025-10-11 Juan Pablo Santos (abernal AT apache DOT org)**
+
+* _3.0.0-git-03_
+
+  * Security / API cleanup
+    * Remove the Security Manager–dependent Session#doPrivileged from jspwiki-api.
+    * Replace the only usage with Subject.doAsPrivileged in DefaultAuthorizationManager; behavior unchanged.
+    * Keep policy checks: global via AccessController, local via LocalPolicy. 
+    * Rationale: Security Manager is deprecated/disabled on modern JDKs; simplify 3.0 before release. 
+    * Migration: use Subject.doAs( session.getSubject(), action ) (or Subject.doAsPrivileged) in custom code.
+
+
 **2025-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _3.0.0-git-02_

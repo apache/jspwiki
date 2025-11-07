@@ -237,18 +237,4 @@ public interface Session extends WikiEventListener {
      */
     Subject getSubject();
 
-    /**
-     * Wrapper for {@link Subject#doAsPrivileged(Subject, PrivilegedAction, java.security.AccessControlContext)}
-     * that executes an action with the privileges possessed by a Session's Subject. The action executes with a <code>null</code>
-     * AccessControlContext, which has the effect of running it "cleanly" without the AccessControlContexts of the caller.
-     *
-     * @param session the wiki session
-     * @param action the privileged action
-     * @return the result of the privileged action; may be <code>null</code>
-     * @throws java.security.AccessControlException if the action is not permitted by the security policy
-     */
-    static Object doPrivileged( final Session session, final PrivilegedAction<?> action ) throws AccessControlException {
-        return Subject.doAsPrivileged( session.getSubject(), action, null );
-    }
-
 }
