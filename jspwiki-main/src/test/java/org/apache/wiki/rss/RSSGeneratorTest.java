@@ -46,16 +46,16 @@ public class RSSGeneratorTest {
     public void testBlogRSS() throws Exception {
         TestEngine m_testEngine = TestEngine.build( with( RSSGenerator.PROP_GENERATE_RSS, "true" ) );
         final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
-        m_testEngine.saveText( "TestBlog", "Foo1" );
-        String newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
+        m_testEngine.saveText( "testBlogRSS", "Foo1" );
+        String newPage = plugin.getNewEntryPage( m_testEngine, "testBlogRSS" );
         m_testEngine.saveText( newPage, "!Title1\r\nFoo" );
-        newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
+        newPage = plugin.getNewEntryPage( m_testEngine, "testBlogRSS" );
         m_testEngine.saveText( newPage, "!Title2\r\n__Bar__" );
 
         final RSSGenerator gen = m_testEngine.getManager( RSSGenerator.class );
-        final Context context = Wiki.context().create( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage( "TestBlog" ) );
+        final Context context = Wiki.context().create( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage( "testBlogRSS" ) );
         final WeblogPlugin blogplugin = new WeblogPlugin();
-        final List< Page > entries = blogplugin.findBlogEntries( m_testEngine, "TestBlog", new Date( 0 ), new Date( Long.MAX_VALUE ) );
+        final List< Page > entries = blogplugin.findBlogEntries( m_testEngine, "testBlogRSS", new Date( 0 ), new Date( Long.MAX_VALUE ) );
         final Feed feed = new RSS10Feed( context );
         final String blog = gen.generateBlogRSS( context, entries, feed );
 
@@ -67,16 +67,16 @@ public class RSSGeneratorTest {
     public void testBlogRSS2() throws Exception {
         TestEngine m_testEngine = TestEngine.build( with( RSSGenerator.PROP_GENERATE_RSS, "true" ) );
         final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
-        m_testEngine.saveText( "TestBlog", "Foo1" );
-        String newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
+        m_testEngine.saveText( "testBlogRSS2", "Foo1" );
+        String newPage = plugin.getNewEntryPage( m_testEngine, "testBlogRSS2" );
         m_testEngine.saveText( newPage, "!Title1\r\nFoo \"blah\"." );
-        newPage = plugin.getNewEntryPage( m_testEngine, "TestBlog" );
+        newPage = plugin.getNewEntryPage( m_testEngine, "testBlogRSS2" );
         m_testEngine.saveText( newPage, "!Title2\r\n__Bar__" );
 
         final RSSGenerator gen = m_testEngine.getManager( RSSGenerator.class );
-        final Context context = Wiki.context().create( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage( "TestBlog" ) );
+        final Context context = Wiki.context().create( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage( "testBlogRSS2" ) );
         final WeblogPlugin blogplugin = new WeblogPlugin();
-        final List< Page > entries = blogplugin.findBlogEntries( m_testEngine, "TestBlog", new Date( 0 ), new Date( Long.MAX_VALUE ) );
+        final List< Page > entries = blogplugin.findBlogEntries( m_testEngine, "testBlogRSS2", new Date( 0 ), new Date( Long.MAX_VALUE ) );
         final Feed feed = new RSS20Feed( context );
         final String blog = gen.generateBlogRSS( context, entries, feed );
 
