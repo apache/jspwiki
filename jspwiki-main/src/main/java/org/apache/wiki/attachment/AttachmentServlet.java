@@ -103,6 +103,8 @@ public class AttachmentServlet extends HttpServlet {
 
     /**
      *  Initializes the servlet from Engine properties.
+     * @param config
+     * @throws jakarta.servlet.ServletException
      */
     @Override
     public void init( final ServletConfig config ) throws ServletException {
@@ -400,7 +402,16 @@ public class AttachmentServlet extends HttpServlet {
             final UploadListener pl = new UploadListener();
 
             m_engine.getManager( ProgressManager.class ).startProgress( pl, progressId );
-
+            if ("chunked".equalsIgnoreCase(req.getHeader("Transfer-Encoding"))) {
+                //not sure how chunked encoding would work here, this should block it
+                //this is to prevent resource exhaustion
+                throw new RedirectException("Chunked encoding is not allowed for this service", nextPage);
+            }
+            if (req.getContentLengthLong() > m_maxSize) {
+                //we don't want total upload size to be larger than the max
+                //this is to prevent resource exhaustion
+                throw new RedirectException("Too big " +req.getContentLengthLong() + " vs " + m_maxSize, nextPage);
+            }
             final JakartaServletFileUpload upload = new JakartaServletFileUpload( factory );
             upload.setHeaderCharset(StandardCharsets.UTF_8);
             upload.setProgressListener( pl );
