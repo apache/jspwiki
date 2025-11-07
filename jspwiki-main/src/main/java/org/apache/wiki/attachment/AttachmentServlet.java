@@ -61,6 +61,7 @@ import org.apache.wiki.util.TextUtil;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -352,7 +353,17 @@ public class AttachmentServlet extends HttpServlet {
         } catch( final RedirectException e ) {
             final Session session = Wiki.session().find( m_engine, req );
             session.addMessage( e.getMessage() );
-
+            //drain the request body
+            try (ServletInputStream inputStream = req.getInputStream();) {
+                int data;
+                while ((data = inputStream.read()) != -1) {
+                    //we are just reading the stream to the end
+                }
+            } catch (Exception err) {
+                //ignore it
+            }
+            
+            
             req.getSession().setAttribute("msg", e.getMessage());
             res.sendRedirect( e.getRedirect() );
         }
@@ -376,6 +387,8 @@ public class AttachmentServlet extends HttpServlet {
 
     /**
      *  Uploads a specific mime multipart input set, intercepts exceptions.
+     * 
+     *  If the total request size is too big, the user will be redirected to the Error.jsp page
      *
      *  @param req The servlet request
      *  @return The page to which we should go next.
@@ -405,12 +418,13 @@ public class AttachmentServlet extends HttpServlet {
             if ("chunked".equalsIgnoreCase(req.getHeader("Transfer-Encoding"))) {
                 //not sure how chunked encoding would work here, this should block it
                 //this is to prevent resource exhaustion
-                throw new RedirectException("Chunked encoding is not allowed for this service", nextPage);
+                
+                throw new RedirectException("Chunked encoding is not allowed for this service", errorPage +"?Error=true");
             }
             if (req.getContentLengthLong() > m_maxSize) {
                 //we don't want total upload size to be larger than the max
                 //this is to prevent resource exhaustion
-                throw new RedirectException("Too big " +req.getContentLengthLong() + " vs " + m_maxSize, nextPage);
+                throw new RedirectException("Request too big" +req.getContentLengthLong() + " vs " + m_maxSize + " bytes", errorPage +"?Error=true");
             }
             final JakartaServletFileUpload upload = new JakartaServletFileUpload( factory );
             upload.setHeaderCharset(StandardCharsets.UTF_8);
@@ -419,7 +433,7 @@ public class AttachmentServlet extends HttpServlet {
             try {
                 items = upload.parseRequest(req);
             } catch (FileUploadByteCountLimitException ex) {
-                throw new RedirectException( "Too big " + ex.getMessage(), nextPage );
+                throw new RedirectException( "Request too big " + ex.getMessage(), nextPage );
             }
             String   wikipage   = null;
             String   changeNote = null;
@@ -459,7 +473,7 @@ public class AttachmentServlet extends HttpServlet {
                 for( final FileItem actualFile : fileItems ) {
                     if( !context.hasAdminPermissions() ) {
                         if (actualFile.getSize()> m_maxSize) {
-                            throw new RedirectException("Too big " + actualFile.getName() + " " + actualFile.getSize() + " vs " + m_maxSize, nextPage);
+                            throw new RedirectException("Attachment too big " + actualFile.getName() + " " + actualFile.getSize() + " vs " + m_maxSize + " bytes", nextPage);
                         }
                     }
                     
