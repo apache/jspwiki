@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 
@@ -59,7 +60,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
 
     private AttachmentProvider provider;
     private CachingManager cachingManager;
-    private boolean allRequested;
+    private final AtomicBoolean allRequested = new AtomicBoolean();
     private final AtomicLong attachments = new AtomicLong( 0L );
 
     /**
@@ -69,6 +70,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     public void initialize( final Engine engine, final Properties properties ) throws NoRequiredPropertyException, IOException {
         LOG.info( "Initing CachingAttachmentProvider" );
         cachingManager = engine.getManager( CachingManager.class );
+        cachingManager.registerListener( CachingManager.CACHE_ATTACHMENTS, "expired", allRequested );
 
         // Find and initialize real provider.
         final String classname;
@@ -137,7 +139,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     @Override
     public List< Attachment > listAllChanged( final Date timestamp ) throws ProviderException {
         final List< Attachment > all;
-        if ( !allRequested ) {
+        if ( !allRequested.get() ) {
             all = provider.listAllChanged( timestamp );
 
             // Make sure that all attachments are in the cache.
@@ -146,7 +148,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
                     cachingManager.put( CachingManager.CACHE_ATTACHMENTS, att.getName(), att );
                 }
                 if( timestamp.getTime() == 0L ) { // all attachments requested
-                    allRequested = true;
+                    allRequested.set( true );
                     attachments.set( all.size() );
                 }
             }

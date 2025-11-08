@@ -18,9 +18,9 @@
 --%>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ page import="jakarta.servlet.jsp.jstl.fmt.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%@ page import="org.apache.wiki.api.core.*" %>
@@ -29,7 +29,7 @@
 
   <c:set var="isweblog"><%= ( String )Context.findContext( pageContext ).getPage().getAttribute( /*ATTR_ISWEBLOG*/ "weblogplugin.isweblog" ) %></c:set>
   <c:if test="${isweblog}">
-  <wiki:Calendar pageformat="'${param.page}_blogentry_'ddMMyy'_1'"
+  <wiki:Calendar pageformat="'${param.page}_blogentry_'ddMMyy'_'" addindex="true"
                  urlformat="'Wiki.jsp?page=${param.page}&weblog.startDate='ddMMyy'&weblog.days=1'"/>
   </c:if>
 

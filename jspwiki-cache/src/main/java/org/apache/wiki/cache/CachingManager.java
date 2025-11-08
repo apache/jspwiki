@@ -121,4 +121,13 @@ public interface CachingManager {
      */
     void remove( String cacheName, Serializable key );
 
+    /**
+     * Register a listener associated with the given cache and type of listener.
+     * @param cacheName the name of the cache where the listener will be registered.
+     * @param listener the kind of listener to be registered
+     * @param args arguments needed to instantiate and register the listener.
+     * @return {@code true} if the listener is created & registered, {@code false} otherwise.
+     */
+    default boolean registerListener( String cacheName, String listener, Object... args ) { return false; }
+
 }

@@ -27,8 +27,8 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,8 +40,7 @@ import java.util.Date;
  *  Provides a nice calendar.  Responds to the following HTTP parameters:
  *  <ul>
  *  <li>calendar.date - If this parameter exists, then the calendar
- *  date is taken from the month and year.  The date must be in ddMMyy
- *  format.
+ *  date is taken from the month and year.  The date must be in ddMMyy format.
  *  <li>weblog.startDate - If calendar.date parameter does not exist,
  *  we then check this date.
  *  </ul>
@@ -57,10 +56,12 @@ public class CalendarTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;
     private static final Logger LOG = LogManager.getLogger( CalendarTag.class );
+    private static final int NUM_PAGES_TO_CHECK = 3;
     
     private SimpleDateFormat m_pageFormat;
     private SimpleDateFormat m_urlFormat;
     private SimpleDateFormat m_monthUrlFormat;
+    private boolean m_addIndex;
     private SimpleDateFormat m_dateFormat = new SimpleDateFormat( "ddMMyy" );
 
     /**
@@ -127,6 +128,19 @@ public class CalendarTag extends WikiTagBase {
         m_monthUrlFormat = new SimpleDateFormat( format );
     }
 
+    /**
+     *  Sets whether or not the pageFormat contains a page index at the end.
+	 *  This is the case for the WeblogPlugin.
+     *
+     *  @param addindex Whether a page index should be appended to the pageFormat
+     *
+     *  @see org.apache.wiki.plugin.WeblogPlugin
+     */
+    public void setAddindex( final boolean addIndex )
+    {
+        m_addIndex = addIndex;
+    }
+
     private String format( final String txt ) {
         final Page p = m_wikiContext.getPage();
         if( p != null ) {
@@ -145,8 +159,22 @@ public class CalendarTag extends WikiTagBase {
 
         if( m_pageFormat != null ) {
             final String pagename = m_pageFormat.format( day.getTime() );
-            
-            if( engine.getManager( PageManager.class ).wikiPageExists( pagename ) ) {
+
+            var somePageExistsOnThisDay = false;
+            if (m_addIndex) {
+                // Look at up to 3 pages for whether the page exists. This avoids an issue 
+                // with the WeblogPlugin when the first blog post(s) of a day gets deleted.
+		    for (int pageIdx = 1; pageIdx <= NUM_PAGES_TO_CHECK; pageIdx++) {
+                        if( engine.getManager( PageManager.class ).wikiPageExists( pagename+pageIdx ) ) {
+                            somePageExistsOnThisDay = true;
+                            break;
+                        }
+                }
+            } else {
+                somePageExistsOnThisDay = engine.getManager( PageManager.class ).wikiPageExists( pagename );
+            }
+
+            if( somePageExistsOnThisDay ) {
                 if( m_urlFormat != null ) {
                     final String url = m_urlFormat.format( day.getTime() );
                     result = "<td class=\"link\"><a href=\""+url+"\">"+day.get( Calendar.DATE )+"</a></td>";

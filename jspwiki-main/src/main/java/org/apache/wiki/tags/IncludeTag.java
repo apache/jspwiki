@@ -24,8 +24,8 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.ui.TemplateManager;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspException;
 import java.io.IOException;
 
 /**

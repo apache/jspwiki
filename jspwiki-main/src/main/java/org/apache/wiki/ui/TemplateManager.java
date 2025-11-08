@@ -19,6 +19,7 @@
 package org.apache.wiki.ui;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.i18n.InternationalizationManager;
@@ -26,8 +27,8 @@ import org.apache.wiki.modules.ModuleManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.ClassUtil;
 
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.jstl.fmt.LocaleSupport;
+import jakarta.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.jstl.fmt.LocaleSupport;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -326,7 +327,7 @@ public interface TemplateManager extends ModuleManager {
             resources = new Vector<>();
         }
         String resolvedResource = resource;
-        if( StringUtils.startsWith( resource, "engine://" ) ) {
+        if( Strings.CS.startsWith( resource, "engine://" ) ) {
             final String val = ctx.getEngine().getWikiProperties().getProperty( resource.substring( 9 ) ); // "engine//:".length() == 9
             if( StringUtils.isNotBlank( val ) ) {
                 resolvedResource = val;

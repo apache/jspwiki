@@ -22,7 +22,7 @@ import com.vladsch.flexmark.html.AttributeProvider;
 import com.vladsch.flexmark.html.renderer.AttributablePart;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.html.MutableAttributes;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
@@ -34,7 +34,7 @@ import java.util.List;
 
 /**
  * {@link AttributeProvider} to decorate {@link JSPWikiLink}s.
- *
+ * <p>
  * Acts as a factory of {@link NodeAttributeProviderState}s, which are the classes setting the attributes for each concrete type of link.
  */
 public class JSPWikiLinkAttributeProvider implements AttributeProvider {
@@ -60,14 +60,13 @@ public class JSPWikiLinkAttributeProvider implements AttributeProvider {
      */
     @Override
     public void setAttributes( final Node node, final AttributablePart part, final MutableAttributes attributes ) {
-        if( node instanceof JSPWikiLink ) {
-            final JSPWikiLink link = ( JSPWikiLink )node;
+        if( node instanceof JSPWikiLink link ) {
             final NodeAttributeProviderState< JSPWikiLink > linkState;
             if( linkOperations.isExternalLink( link.getWikiLink() ) ) {
                 linkState = new ExternalLinkAttributeProviderState( wikiContext, link.hasRef(), isImageInlining, inlineImagePatterns );
             } else if( linkOperations.isInterWikiLink( link.getWikiLink() ) ) {
                 linkState = new InterWikiLinkAttributeProviderState( wikiContext, link.hasRef(), isImageInlining, inlineImagePatterns );
-            } else if( StringUtils.startsWith( link.getWikiLink(), "#" ) ) {
+            } else if( Strings.CS.startsWith( link.getWikiLink(), "#" ) ) {
                 linkState = new LocalFootnoteLinkAttributeProviderState( wikiContext );
             } else if( TextUtil.isNumber( link.getWikiLink() ) ) {
                 linkState = new LocalFootnoteRefLinkAttributeProviderState( wikiContext );

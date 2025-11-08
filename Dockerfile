@@ -15,7 +15,7 @@
 #  specific language governing permissions and limitations
 #  under the License.
 
-FROM maven:3.8-jdk-11 as package
+FROM maven:3.9-eclipse-temurin-17 as package
 
 WORKDIR /tmp
 
@@ -27,10 +27,10 @@ RUN set -x \
 # fastest, minimum build
   && mvn -B clean package -pl jspwiki-war,jspwiki-wikipages/en -am -DskipTests
 
-FROM tomcat:9.0
+FROM tomcat:10.1-jdk17
 
 COPY --from=package /tmp/jspwiki-war/target/JSPWiki.war /tmp
-COPY --from=package /tmp/jspwiki-wikipages/en/target/jspwiki-wikipages-en-*.zip /tmp
+COPY --from=package /tmp/jspwiki-wikipages/en/target/jspwiki-wikipages-en-*-jspwiki.zip /tmp
 COPY docker-files/log4j2.properties /tmp
 COPY docker-files/tomcat-users.xml $CATALINA_HOME/conf/tomcat-users.xml
 
@@ -71,7 +71,7 @@ RUN set -x \
  && rm /tmp/JSPWiki.war \
 # deploy wiki pages
  && cd /tmp/ \
- && unzip -q jspwiki-wikipages-en-*.zip \
+ && unzip -q jspwiki-wikipages-en-*-jspwiki.zip \
  && mv jspwiki-wikipages-en-*/* /var/jspwiki/pages/ \
  && rm -rf jspwiki-wikipages-en-* \
 # move the userdatabase.xml and groupdatabase.xml to /var/jspwiki/etc

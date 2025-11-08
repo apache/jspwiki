@@ -18,12 +18,12 @@
  */
 package org.apache.wiki.util;
 
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -61,8 +61,8 @@ public class HttpUtilTest {
                                                 new Cookie( "cookie2", "\"value2\"" ),
                                                 new Cookie( "cookie3", "" ),
                                                 new Cookie( "cookie4", null ) };
-        final MockHttpServletRequest req = new MockHttpServletRequest( "/wiki", "/example" );
-        req.setCookies( cookies );
+        final HttpServletRequest req = Mockito.mock( HttpServletRequest.class );
+        Mockito.doReturn( cookies ).when( req ).getCookies();
 
         assertEquals( "value1", HttpUtil.retrieveCookieValue( req, "cookie1" ) );
         assertEquals( "value2", HttpUtil.retrieveCookieValue( req, "cookie2" ) );

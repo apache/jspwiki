@@ -19,6 +19,7 @@
 package org.apache.wiki.auth.user;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -589,7 +590,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
         }
 
         // If password changed, hash it before we save
-        if( !StringUtils.equals( password, existingPassword ) ) {
+        if( !Strings.CS.equals( password, existingPassword ) ) {
             password = getHash( password );
         }
 

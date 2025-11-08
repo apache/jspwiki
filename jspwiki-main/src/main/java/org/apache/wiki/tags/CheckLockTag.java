@@ -24,7 +24,7 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**

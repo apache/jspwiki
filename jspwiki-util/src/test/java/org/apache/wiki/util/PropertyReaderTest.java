@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletContext;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,10 +36,10 @@ import static org.mockito.Mockito.mock;
 /**
  * Unit test for PropertyReader.
  */
-public class PropertyReaderTest {
+class PropertyReaderTest {
 
     @Test
-    public void testLocateClassPathResource() {
+    void testLocateClassPathResource() {
         Assertions.assertEquals( "/ini/jspwiki.properties", PropertyReader.createResourceLocation( "ini", "jspwiki.properties" ) );
         Assertions.assertEquals( "/ini/jspwiki.properties", PropertyReader.createResourceLocation( null, "ini/jspwiki.properties" ) );
         Assertions.assertEquals( "/ini/jspwiki.properties", PropertyReader.createResourceLocation( null, "/ini/jspwiki.properties" ) );
@@ -51,7 +51,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    public void testVariableExpansion() {
+    void testVariableExpansion() {
         final Properties p = new Properties();
         p.put( "var.basedir", "/p/mywiki" );
         p.put( "jspwiki.fileSystemProvider.pageDir", "$basedir/www/" );
@@ -70,7 +70,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    public void testVariableExpansion2() {
+    void testVariableExpansion2() {
         final Properties p = new Properties();
 
         //this time, declare the var at the end... (should overwrite this one);
@@ -97,7 +97,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    public void testMultipleVariableExpansion() {
+    void testMultipleVariableExpansion() {
         final Properties p = new Properties();
 
         //this time, declare the var at the end... (should overwrite this one);
@@ -116,7 +116,7 @@ public class PropertyReaderTest {
     }
 
     @Test
-    public void testCollectPropertiesFrom() {
+    void testCollectPropertiesFrom() {
         final Map< String, String > sut = new HashMap<>();
         sut.put( "jspwiki_frontPage", "Main" );
         sut.put( "secretEnv", "asdasd" );
@@ -128,10 +128,11 @@ public class PropertyReaderTest {
     }
 
     @Test
-    public void testSetWorkDir() {
+    void testSetWorkDir() {
         final Properties properties = new Properties();
         final ServletContext servletContext = mock(ServletContext.class);
-        final String expectedTmpDir = System.getProperty("java.io.tmpdir");
+        final File tmp = new File( "/tmp" );
+        Mockito.when(servletContext.getAttribute( "jakarta.servlet.context.tempdir" ) ).thenReturn( tmp );
 
         Mockito.when(servletContext.getAttribute("javax.servlet.context.tempdir")).thenReturn(new File(expectedTmpDir));
 
@@ -147,12 +148,36 @@ public class PropertyReaderTest {
         Assertions.assertEquals("/custom/dir", workDir);
 
         // Test when the servlet's temporary directory is null, it should get set to system's temporary directory
-        Mockito.when(servletContext.getAttribute("javax.servlet.context.tempdir")).thenReturn(null);
-        properties.remove("jspwiki.workDir");
-        PropertyReader.setWorkDir(servletContext, properties);
-        workDir = properties.getProperty("jspwiki.workDir");
-        Assertions.assertEquals(expectedTmpDir, workDir);
+        Mockito.when( servletContext.getAttribute( "jakarta.servlet.context.tempdir" ) ).thenReturn( null );
+        properties.remove( "jspwiki.workDir" );
+        PropertyReader.setWorkDir( servletContext, properties );
+        workDir = properties.getProperty( "jspwiki.workDir" );
+        Assertions.assertEquals( System.getProperty( "java.io.tmpdir" ), workDir );
     }
 
+    @Test
+    void testSystemPropertyExpansion() {
+        try {
+            System.setProperty( "FOO", "BAR" );
+            System.setProperty( "TEST", "VAL" );
+            final Properties p = new Properties();
+            p.put( "jspwiki.fileSystemProvider.pageDir", "${FOO}/www/" );
+            p.put( "jspwiki.fileSystemProvider.workDir", "${FOO}/www/${TEST}" );
+            p.put( "jspwiki.fileSystemProvider.badVal1", "${FOO/www/${TEST}" );
+            p.put( "jspwiki.fileSystemProvider.badVal2", "}${FOO/www/${TEST}" );
+            p.put( "jspwiki.fileSystemProvider.badVal3", "${NONEXISTANTPROP}" );
+            p.put( "jspwiki.fileSystemProvider.badVal4", "${NONEXISTANTPROP}/${FOO}" );
+            PropertyReader.propertyExpansion( p );
+            Assertions.assertEquals( "BAR/www/", p.getProperty( "jspwiki.fileSystemProvider.pageDir" ) );
+            Assertions.assertEquals( "BAR/www/VAL", p.getProperty( "jspwiki.fileSystemProvider.workDir" ) );
+            Assertions.assertEquals( "${FOO/www/${TEST}", p.getProperty( "jspwiki.fileSystemProvider.badVal1" ) );
+            Assertions.assertEquals( "}${FOO/www/${TEST}", p.getProperty( "jspwiki.fileSystemProvider.badVal2" ) );
+            Assertions.assertEquals( "${NONEXISTANTPROP}", p.getProperty( "jspwiki.fileSystemProvider.badVal3" ) );
+            Assertions.assertEquals( "${NONEXISTANTPROP}/${FOO}", p.getProperty( "jspwiki.fileSystemProvider.badVal4" ) );
+        } finally {
+            System.setProperty( "FOO", "" );
+            System.setProperty( "TEST", "" );
+        }
+    }
 
 }

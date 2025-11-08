@@ -24,8 +24,8 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.ui.TemplateManager;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspException;
 import java.io.IOException;
 
 

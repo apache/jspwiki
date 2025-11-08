@@ -19,8 +19,9 @@
 package org.apache.wiki.url;
 
 import org.apache.wiki.api.engine.Initializable;
+import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
@@ -77,15 +78,13 @@ public interface URLConstructor extends Initializable {
     static String parsePageFromURL( final HttpServletRequest request, final Charset encoding ) {
         final String name = request.getPathInfo();
         if( name == null || name.length() <= 1 ) {
-            return null;
+            return request.getParameter("page");
         } else if( name.charAt(0) == '/' ) {
             return name.substring(1);
         }
 
         //  This is required, because by default all URLs are handled as Latin1, even if they are really UTF-8.
-        // name = TextUtil.urlDecode( name, encoding );
-
-        return name;
+        return TextUtil.urlDecode( name, encoding.name() );
     }
 
 }

@@ -56,9 +56,9 @@ import org.apache.wiki.workflow.Workflow;
 import org.apache.wiki.workflow.WorkflowBuilder;
 import org.apache.wiki.workflow.WorkflowManager;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Permission;
 import java.security.Principal;
@@ -292,10 +292,10 @@ public class DefaultUserManager implements UserManager {
         String password = request.getParameter( PARAM_PASSWORD );
         String fullname = request.getParameter( PARAM_FULLNAME );
         String email = request.getParameter( PARAM_EMAIL );
-        loginName = InputValidator.isBlank( loginName ) ? null : loginName;
+        loginName = StringUtils.trim( loginName );
         password = InputValidator.isBlank( password ) ? null : password;
-        fullname = InputValidator.isBlank( fullname ) ? null : fullname;
-        email = InputValidator.isBlank( email ) ? null : email;
+        fullname = StringUtils.trim( fullname );
+        email = StringUtils.trim( email );
 
         // A special case if we have container authentication: if authenticated, login name is always taken from container
         if ( m_engine.getManager( AuthenticationManager.class ).isContainerAuthenticated() && context.getWikiSession().isAuthenticated() ) {
