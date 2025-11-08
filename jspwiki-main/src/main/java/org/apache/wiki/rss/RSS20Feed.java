@@ -72,6 +72,7 @@ public class RSS20Feed extends Feed
             final Page p = e.getPage();
             final String url = e.getURL();
             final Element item = new Element( "item" );
+            //FIXME this needs to be an absolute url, not a relative one
             item.addContent( new Element( "link" ).setText( url ) );
             item.addContent( new Element( "title" ).setText( e.getTitle() ) );
             item.addContent( new Element( "description" ).setText( e.getContent() ) );

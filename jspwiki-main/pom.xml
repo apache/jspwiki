@@ -86,10 +86,10 @@
           <groupId>net.thauvin.erik</groupId>
           <artifactId>akismet-kotlin</artifactId>
         </dependency>
-
+        
         <dependency>
-            <groupId>net.sourceforge</groupId>
-            <artifactId>sandler</artifactId>
+            <groupId>com.rometools</groupId>
+            <artifactId>rome</artifactId>
         </dependency>
 
         <dependency>

@@ -26,6 +26,8 @@ under the License.
 
 * [JSPWIKI-1219](https://issues.apache.org/jira/browse/JSPWIKI-1219) SpamFilter removal of asirra.com due to service shutdown 10 years ago
 * [JSPWIKI-1218](https://issues.apache.org/jira/browse/JSPWIKI-1218) Removal of commons-http-client v2 
+* [JSPWIKI-1179](https://issues.apache.org/jira/browse/JSPWIKI-1179) Github Actions CI builders
+
 
 **2025-11-07 Alex O'Ree (alexoree AT apache DOT org)**
 
