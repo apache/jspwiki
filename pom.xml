@@ -44,7 +44,7 @@
     <jdk.javadoc.doclet.version>2.2.3</jdk.javadoc.doclet.version>
     <maven.version>3.5</maven.version>
 
-    <akismet-java.version>1.02</akismet-java.version>
+    <akismet-java.version>1.0.0</akismet-java.version>
     <awaitility.version>4.3.0</awaitility.version>
     <aws-java-sdk-kendra.version>1.12.565</aws-java-sdk-kendra.version>
     <commons-collections.version>4.5.0</commons-collections.version>
@@ -275,9 +275,9 @@
       </dependency>
 
       <dependency>
-        <groupId>net.sourceforge</groupId>
-        <artifactId>akismet-java</artifactId>
-        <version>${akismet-java.version}</version>
+          <groupId>net.thauvin.erik</groupId>
+          <artifactId>akismet-kotlin</artifactId>
+          <version>${akismet-java.version}</version>
       </dependency>
 
       <dependency>
