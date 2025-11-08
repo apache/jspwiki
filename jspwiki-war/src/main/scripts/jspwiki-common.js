@@ -305,7 +305,15 @@ var Wiki = {
 
 		if( this.BasePath == '' ) this.BasePath = '/';
 
-		this.prefs = new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
+		this.prefs = new Hash.Cookie('JSPWikiUserPrefs', 
+                    {
+                        path:Wiki.BasePath, 
+                        duration:400,
+                        sameSite: "strict",
+                        httpOnly: true,
+                        secure: true
+                    }
+                );
 
 		this.PermissionEdit = !!$$('a.edit')[0]; //deduct permission level
 		this.url = null;

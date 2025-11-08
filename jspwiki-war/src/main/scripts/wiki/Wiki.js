@@ -198,7 +198,14 @@ var Wiki = {
     */
     prefs: function(key, value){
 
-        return $.cookie.json({name:"JSPWikiUserPrefs", path:this.BaseUrl, expiry:20}, key, value);
+        return $.cookie.json({
+            name:"JSPWikiUserPrefs", 
+            path:this.BaseUrl, 
+            sameSite: "strict",
+            secure: true,
+            httpOnly: true,
+            expiry:400
+            }, key, value);
     },
 
     /*
