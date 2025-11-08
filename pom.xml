@@ -675,7 +675,7 @@
           <configuration>
             <argLine>@{argLine}</argLine>
             <consoleOutputReporter>
-              <disable>false</disable>
+              <disable>true</disable>
             </consoleOutputReporter>
             <reportFormat>plain</reportFormat>
             <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
