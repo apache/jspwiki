@@ -25,14 +25,16 @@ under the License.
 	* commons-lang updated to 3.19.0
 	* commons-net added at 3.12.0
 	* jakarta.mail-api from 2.1.3 to 2.1.5
+	* http-commons dependency removed
 	
 * [JSPWIKI-1213](https://issues.apache.org/jira/browse/JSPWIKI-1213) adds jacoco test coverage reporting to the build
 * [JSPWIKI-615](https://issues.apache.org/jira/browse/JSPWIKI-615) adds some javadocs to the WikiEvent class as requested
 * [JSPWIKI-1211](https://issues.apache.org/jira/browse/JSPWIKI-1211) fixed a bootup issue when the rss directory doesn't exist
 * [JSPWIKI-1207](https://issues.apache.org/jira/browse/JSPWIKI-1207) disables the ehcache causing bootup crashes on portable builds
-* [JSPWIKI-1183](https://issues.apache.org/jira/browse/JSPWIKI-1183) improvements to stabilize the automated build system
+* [JSPWIKI-1217](https://issues.apache.org/jira/browse/JSPWIKI-1217) improvements to stabilize the automated build system
 * [JSPWIKI-1216](https://issues.apache.org/jira/browse/JSPWIKI-1216) removes references to the WikiWizard template/editor, i18n improvements 
 * [JSPWIKI-1183](https://issues.apache.org/jira/browse/JSPWIKI-1183) The IfPlugin now supports IP address checks using CIDR style netmasks
+* [JSPWIKI-1283](https://issues.apache.org/jira/browse/JSPWIKI-1283) Removes the asirra.com based captcha filtering
 
 **2025-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)**
 

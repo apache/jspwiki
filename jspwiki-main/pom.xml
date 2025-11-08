@@ -83,8 +83,8 @@
         </dependency>
 
         <dependency>
-            <groupId>net.sourceforge</groupId>
-            <artifactId>akismet-java</artifactId>
+          <groupId>net.thauvin.erik</groupId>
+          <artifactId>akismet-kotlin</artifactId>
         </dependency>
 
         <dependency>
