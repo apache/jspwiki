@@ -134,12 +134,12 @@ class PropertyReaderTest {
         final File tmp = new File( "/tmp" );
         Mockito.when(servletContext.getAttribute( "jakarta.servlet.context.tempdir" ) ).thenReturn( tmp );
 
-        Mockito.when(servletContext.getAttribute("javax.servlet.context.tempdir")).thenReturn(new File(expectedTmpDir));
+        PropertyReader.setWorkDir( servletContext, properties );
 
         // Test when the "jspwiki.workDir" is not set, it should get set to servlet's temporary directory
         PropertyReader.setWorkDir(servletContext, properties);
         String workDir = properties.getProperty("jspwiki.workDir");
-        Assertions.assertEquals(expectedTmpDir, workDir);
+        Assertions.assertEquals(tmp.getAbsolutePath(), workDir);
 
         // Test when the "jspwiki.workDir" is set, it should remain as it is
         properties.setProperty("jspwiki.workDir", "/custom/dir");

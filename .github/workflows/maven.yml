@@ -28,9 +28,9 @@ jobs:
     strategy:
       matrix:
         # windows-latest is not used due to intermittent lucene failures
-        os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest]
         # All LTS versions plus the current version
-        java: [ 11, 17 ]
+        java: [ 17, 18, 19, 21, 22, 23, 24 ]
         experimental: [false]
 #        include:
 #          - java: 20-ea
