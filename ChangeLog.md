@@ -16,6 +16,16 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-11-08 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-04_
+
+* Dependency Updates 
+	* Akismet library change to a supported version
+	* Removal of commons-http v2 
+
+* [JSPWIKI-1219](https://issues.apache.org/jira/browse/JSPWIKI-1219) SpamFilter removal of asirra.com due to service shutdown 10 years ago
+* [JSPWIKI-1218](https://issues.apache.org/jira/browse/JSPWIKI-1218) Removal of commons-http-client v2 
 
 **2025-11-07 Alex O'Ree (alexoree AT apache DOT org)**
 
@@ -35,6 +45,7 @@ under the License.
 * [JSPWIKI-1216](https://issues.apache.org/jira/browse/JSPWIKI-1216) removes references to the WikiWizard template/editor, i18n improvements 
 * [JSPWIKI-1183](https://issues.apache.org/jira/browse/JSPWIKI-1183) The IfPlugin now supports IP address checks using CIDR style netmasks
 * [JSPWIKI-1283](https://issues.apache.org/jira/browse/JSPWIKI-1283) Removes the asirra.com based captcha filtering
+
 
 **2025-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
