@@ -304,14 +304,19 @@ var Wiki = {
 		// the cookie-cutter works properly here.
 
 		if( this.BasePath == '' ) this.BasePath = '/';
-
+                var flag = false;
+                var sameSite = "none";
+                if (window.location.href.startsWith("https://")) {
+                    flag = true;
+                    sameSite = "strict";
+                }
 		this.prefs = new Hash.Cookie('JSPWikiUserPrefs', 
                     {
                         path:Wiki.BasePath, 
                         duration:400,
-                        sameSite: "strict",
-                        httpOnly: true,
-                        secure: true
+                        sameSite: sameSite,
+                        httpOnly: flag,
+                        secure: flag
                     }
                 );
 
