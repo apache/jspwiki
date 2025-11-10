@@ -83,7 +83,7 @@
     <selenide.version>7.10.1</selenide.version>
     <slf4j.version>2.0.17</slf4j.version>
     <tika.version>3.2.3</tika.version>
-    <tomcat.version>10.1.46</tomcat.version>
+    <tomcat.version>11.0.13</tomcat.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
     <xstream.version>1.4.21</xstream.version>
 
