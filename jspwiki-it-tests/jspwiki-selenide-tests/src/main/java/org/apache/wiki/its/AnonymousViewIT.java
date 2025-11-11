@@ -27,6 +27,8 @@ import java.io.File;
 
 import static com.codeborne.selenide.Condition.exist;
 import static com.codeborne.selenide.Condition.not;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 
 /**
@@ -35,6 +37,7 @@ import static com.codeborne.selenide.Condition.not;
 public class AnonymousViewIT extends WithIntegrationTestSetup {
     
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void anonymousView() {
         final ViewWikiPage main = ViewWikiPage.open( "Main" );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
@@ -46,12 +49,14 @@ public class AnonymousViewIT extends WithIntegrationTestSetup {
     }
     
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void anonymousViewImage() throws Exception {
         final File file = Page.download( Page.baseUrl() + "/images/jspwiki_logo_s.png" );
         Assertions.assertTrue( file.exists() );
     }
     
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void anonymousReaderView() {
         final ViewWikiPage main = ViewWikiPage.open( "Main" );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );

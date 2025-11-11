@@ -26,7 +26,7 @@
   </parent>
 
   <groupId>org.apache.jspwiki.it</groupId>
-  <artifactId>jspwiki-it-builder</artifactId>
+  <artifactId>jspwiki-it-tests</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <description>selenium tests execution for jspwiki</description>
   <packaging>pom</packaging>
