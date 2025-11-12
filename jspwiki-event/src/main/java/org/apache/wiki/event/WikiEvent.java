@@ -20,6 +20,8 @@
 package org.apache.wiki.event;
 
 import java.util.EventObject;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Abstract parent class for wiki events.
@@ -42,14 +44,20 @@ public abstract class WikiEvent extends EventObject {
 
     /** objects associated to src which only make sense in the context of a given WikiEvent */
     private Object[] args;
+    
+    private Map<Object,Object> attributes = new HashMap<>();
+
+    public Map<Object, Object> getAttributes() {
+        return attributes;
+    }
 
     // ............
 
     /**
      * Constructs an instance of this event.
      *
-     * @param src the Object that is the source of the event.
-     * @param type the event type.
+     * @param src the Object that is the source of the event. Typically, this is the Wiki {@link Engine}
+     * @param type the event type. Typically this is a constant reference to {@link WikiPageEvent}
      */
     public WikiEvent( final Object src, final int type ) {
         super( src );
@@ -177,5 +185,7 @@ public abstract class WikiEvent extends EventObject {
     public String toString() {
         return "WikiEvent." + eventName() + " [source=" + getSource().toString() + "]";
     }
-
+    
+    
+   
 }

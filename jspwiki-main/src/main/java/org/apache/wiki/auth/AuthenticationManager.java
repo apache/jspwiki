@@ -23,7 +23,6 @@ import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
-import org.apache.wiki.event.WikiSecurityEvent;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
@@ -32,6 +31,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Set;
+import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.security.EventUtil;
 
 
 /**
@@ -216,7 +217,24 @@ public interface AuthenticationManager extends Initializable {
      */
     default void fireEvent( final int type, final Principal principal, final Object target ) {
         if ( WikiEventManager.isListening( this ) ) {
-            WikiEventManager.fireEvent( this, new WikiSecurityEvent( this, type, principal, target ) );
+            WikiEventManager.fireEvent( this,
+                    EventUtil.applyFrom(new WikiSecurityEvent( this, type, principal, target ) ) );
+        }
+    }
+    
+    /**
+     *  Fires a WikiSecurityEvent of the provided type, Principal and target Object to all registered listeners.
+     *
+     * @param request
+     * @see org.apache.wiki.event.WikiSecurityEvent
+     * @param type       the event type to be fired
+     * @param principal  the subject of the event, which may be <code>null</code>
+     * @param target     the changed Object, which may be <code>null</code>
+     */
+    default void fireEvent( final int type, final Principal principal, final Object target, final HttpServletRequest request ) {
+        if ( WikiEventManager.isListening( this ) ) {
+            WikiEventManager.fireEvent( this,
+                    EventUtil.applyFrom(new WikiSecurityEvent( this, type, principal, target ), request ) );
         }
     }
 

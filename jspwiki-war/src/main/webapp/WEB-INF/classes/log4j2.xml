@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Properties>
+        <Property name="logdir">${sys:catalina.base}/logs</Property>
+        <Property name="layout">%d [%t] %-5p %c- %m%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console"
+                 target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <RollingFile name="rollingFile"
+                     fileName="${logdir}/jspwiki.log"
+                     filePattern="${logdir}/jspwiki.%d{yyyy-MM-dd}.zip">
+            <PatternLayout pattern="${layout}"/>
+            <CronTriggeringPolicy schedule="0 0 0 * * ?"/>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logdir}" maxDepth="1">
+                    <IfFileName glob="jskwiki.*.log.zip" />
+                    <IfAccumulatedFileCount exceeds="30" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+         <RollingFile name="auditLogger"
+                     fileName="${logdir}/jspwiki-audit.log"
+                     filePattern="${logdir}/jspwiki-audit.%d{yyyy-MM-dd}.zip">
+            <PatternLayout pattern="${layout}"/>
+            <CronTriggeringPolicy schedule="0 0 0 * * ?"/>
+            <DefaultRolloverStrategy>
+                <Delete basePath="${logdir}" maxDepth="1">
+                    <IfFileName glob="jskwiki-audit.*.log.zip" />
+                    <IfAccumulatedFileCount exceeds="30" />
+                </Delete>
+            </DefaultRolloverStrategy>
+        </RollingFile>
+    </Appenders>
+    
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="rollingFile"/>
+        </Root>
+        <Logger name="org.apache.wiki.security.AuditLogger"  additivity="false">
+            <AppenderRef ref="auditLogger"/>
+        </Logger>
+    </Loggers>
+</Configuration>
