@@ -86,6 +86,66 @@
      <url-pattern>/wiki/*</url-pattern>
      <url-pattern>*.jsp</url-pattern>
    </filter-mapping>
+   <!-- optional set of servlet filters which inject OWASP recommended
+    http response headers into all outbound responses.
+    most have optional init parameters that can be used to customize the output
+   -->
+   <filter>
+     <filter-name>COEPFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.COEPFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>COEPFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   <filter>
+     <filter-name>CORPFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.CORPFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>CORPFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   <filter>
+     <filter-name>ClearSiteDataFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.ClearSiteDataFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>ClearSiteDataFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   <filter>
+     <filter-name>ContentTypeOptionsFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.ContentTypeOptionsFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>ContentTypeOptionsFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   <filter>
+     <filter-name>CrossDomainFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.CrossDomainFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>CrossDomainFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   <filter>
+     <filter-name>ReferrerPolicyFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.ReferrerPolicyFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>ReferrerPolicyFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+    <filter>
+     <filter-name>STSFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.STSFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>STSFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
 
    <!--
        HttpSessionListener used for managing WikiSession's.
