@@ -36,7 +36,7 @@ import java.util.List;
  *                   where each page is only listed once, even if it has changed multiple times.</li>
  *  <li><b>blog</b> - Each page change is assumed to be a blog entry, so no diffs are produced, but
  *                    the page content is always completely in the entry in rendered HTML.</li>
- *
+ *  </ul>
  *  @since  1.7.5.
  */
 public interface RSSGenerator extends Initializable {

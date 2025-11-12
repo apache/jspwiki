@@ -31,6 +31,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import org.apache.commons.net.util.SubnetUtils;
 
 
 /**
@@ -57,9 +58,35 @@ public final class HttpUtil {
      * @return remote address associated to the request.
      */
     public static String getRemoteAddress( final HttpServletRequest req ) {
-		return StringUtils.isNotEmpty ( req.getHeader( "X-Forwarded-For" ) ) ? req.getHeader( "X-Forwarded-For" ) : 
-			                                                                          req.getRemoteAddr();
-	}
+        String realIP = StringUtils.isNotEmpty ( req.getHeader( "X-Forwarded-For" ) ) ? req.getHeader( "X-Forwarded-For" ) :
+                                                                                          req.getRemoteAddr();
+        // can be a comma-separated list of IPs
+        if (realIP.contains(","))
+                realIP = realIP.substring(realIP.indexOf(","));
+
+        return realIP;
+	
+    }
+
+    /**
+     * Returns whether or not the IP address of the request equals a given IP,
+     * or is in a given IP range
+     *
+     * @param req http request
+     * @param ipOrRange IP address or IP range to test against
+     * @since 3.0.0
+     * @return
+     */
+    public static boolean ipIsInRange(final HttpServletRequest req, final String ipOrRange) {
+        String requestIP = getRemoteAddress(req);
+        if (ipOrRange.contains("/")) {
+            SubnetUtils subnet = new SubnetUtils(ipOrRange);
+            SubnetUtils.SubnetInfo subnetInfo = subnet.getInfo();
+            return subnetInfo.isInRange(requestIP);
+        } else {
+            return requestIP.equals(ipOrRange);
+        }
+    }
 
     /**
      *  Attempts to retrieve the given cookie value from the request. Returns the string value (which may or may not be decoded

@@ -83,8 +83,8 @@
         </dependency>
 
         <dependency>
-            <groupId>net.sourceforge</groupId>
-            <artifactId>akismet-java</artifactId>
+          <groupId>net.thauvin.erik</groupId>
+          <artifactId>akismet-kotlin</artifactId>
         </dependency>
 
         <dependency>
@@ -299,6 +299,9 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
+                    <runOrder>random</runOrder>
+                    <parallel>all</parallel> <!-- or classes, both, suites, etc. -->
+                    <perCoreThreadCount>1</perCoreThreadCount > <!-- Number of threads to use -->
                 </configuration>
             </plugin>
 
