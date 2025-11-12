@@ -2,7 +2,7 @@
 <Configuration status="INFO">
     <Properties>
         <Property name="logdir">${sys:catalina.base}/logs</Property>
-        <Property name="layout">%d [%t] %-5p %c- %m%n</Property>
+        <Property name="layout">%d{ISO8601}{GMT+0}Z [%t] %-5p %c- %m%n</Property>
     </Properties>
     <Appenders>
         <Console name="Console"
