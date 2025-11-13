@@ -33,6 +33,9 @@ COPY --from=package /tmp/jspwiki-war/target/JSPWiki.war /tmp
 COPY --from=package /tmp/jspwiki-wikipages/en/target/jspwiki-wikipages-en-*-jspwiki.zip /tmp
 COPY docker-files/log4j2.properties /tmp
 COPY docker-files/tomcat-users.xml $CATALINA_HOME/conf/tomcat-users.xml
+COPY docker-files/web.xml $CATALINA_HOME/conf/web.xml
+COPY docker-files/server.xml $CATALINA_HOME/conf/server.xml
+COPY docker-files/catalina.properties $CATALINA_HOME/conf/catalina.properties
 
 #
 # set default environment entries to configure jspwiki
