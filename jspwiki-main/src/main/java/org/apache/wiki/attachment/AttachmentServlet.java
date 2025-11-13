@@ -64,6 +64,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ResourceBundle;
 
 
 /**
@@ -258,12 +259,13 @@ public class AttachmentServlet extends HttpServlet {
                 res.sendError( HttpServletResponse.SC_NOT_FOUND, msg );
             }
         } catch( final ProviderException pe ) {
-            LOG.debug("Provider failed while reading", pe);
+            LOG.warn("Provider failed while reading", pe);
             //
             //  This might fail, if the response is already committed.  So in that
             //  case we just log it.
             //
-            sendError( res, "Provider error: "+ pe.getMessage() );
+            final ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE, req.getLocale() );
+            sendError( res, rb.getString("operation.failed") );
         } catch( final NumberFormatException nfe ) {
             LOG.warn( "Invalid version number: " + version );
             res.sendError( HttpServletResponse.SC_BAD_REQUEST, "Invalid version number" );
@@ -280,7 +282,8 @@ public class AttachmentServlet extends HttpServlet {
             //  try to send an error and catch it quietly if it doesn't quite work.
             //
             LOG.debug( "I/O exception during download", ioe );
-            sendError( res, "Error: " + ioe.getMessage() );
+            final ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE, req.getLocale() );
+            sendError( res, rb.getString("operation.failed") );
         }
     }
 

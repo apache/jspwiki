@@ -55,7 +55,7 @@ public class PageSizeTag extends WikiTagBase {
             }
         } catch( final ProviderException e ) {
             LOG.warn("Providers did not work: ",e);
-            pageContext.getOut().write("Error determining page size: "+e.getMessage());
+            pageContext.getOut().write("Error determining page size. More information is available in the system logs.");
         }
 
         return SKIP_BODY;

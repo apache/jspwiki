@@ -16,7 +16,7 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-
+<%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
 <%@ page import="java.text.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.logging.log4j.Logger" %>
@@ -52,7 +52,8 @@
         group = groupMgr.parseGroup( wikiContext, true );
         pageContext.setAttribute ( "Group", group, PageContext.REQUEST_SCOPE );
     } catch ( WikiSecurityException e ) {
-        wikiSession.addMessage( GroupManager.MESSAGES_KEY, e.getMessage() );
+        final ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE, wikiSession.getLocale() );
+        wikiSession.addMessage( GroupManager.MESSAGES_KEY, rb.getString("operation.failed") );
         response.sendRedirect( "Group.jsp" );
     }
     
@@ -82,7 +83,9 @@
                 groupMgr.setGroup( wikiSession, group );
             } catch( WikiSecurityException e ) {
                 // Something went horribly wrong! Maybe it's an I/O error...
-                wikiSession.addMessage( GroupManager.MESSAGES_KEY, e.getMessage() );
+                final ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE, wikiSession.getLocale() );
+                wikiSession.addMessage( GroupManager.MESSAGES_KEY, rb.getString("operation.failed") );
+                
             }
         }
         if ( wikiSession.getMessages( GroupManager.MESSAGES_KEY ).length == 0 ) {
