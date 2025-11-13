@@ -208,7 +208,6 @@
         <url-pattern>/admin/ajax/*</url-pattern>
     </servlet-mapping>
 
- 
    <!-- This means that we don't have to use redirection
         from index.html anymore.  Yay! -->
    <welcome-file-list>
@@ -301,7 +300,18 @@
        If you do not wish to use SSL, remove the "user-data-constraint"
        elements.
    -->
-
+   
+   <!-- this block will require TLS across all the board -->
+	<security-constraint>
+       <web-resource-collection>
+           <web-resource-name>All</web-resource-name>
+           <url-pattern>/*</url-pattern>
+       </web-resource-collection>
+       <user-data-constraint>
+           <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+       </user-data-constraint>
+   </security-constraint>
+   
    <!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH
 
    <security-constraint>

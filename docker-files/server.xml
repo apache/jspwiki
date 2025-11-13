@@ -66,14 +66,29 @@
          APR (HTTP/AJP) Connector: /docs/apr.html
          Define a non-SSL/TLS HTTP/1.1 Connector on port 8080
     -->
-    <Connector port="9627" 
+    <Connector port="8080" 
 		protocol="HTTP/1.1" 
 		connectionTimeout="20000" 
-		redirectPort="9643" 
+		redirectPort="8443" 
 		address="0.0.0.0"
 		xpoweredBy="false"
 		allowTrace="false"
 	 />
+	 <Connector port="8443" 
+		protocol="org.apache.coyote.http11.Http11NioProtocol"
+		sslImplementationName="org.apache.tomcat.util.net.jsse.JSSEImplementation"
+        maxThreads="150" 
+		scheme="https"
+		secure="true"
+		SSLEnabled="true"
+		sslProtocol="TLS"
+		>
+        <SSLHostConfig>
+            <Certificate certificateKeystoreFile="conf/test-use-only.p12"
+				certificateKeystorePassword="changeit"
+				type="RSA" />
+        </SSLHostConfig>
+    </Connector>
     <!-- A "Connector" using the shared thread pool-->
     <!--
     <Connector executor="tomcatThreadPool"

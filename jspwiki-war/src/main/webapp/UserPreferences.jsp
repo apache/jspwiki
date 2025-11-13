@@ -79,7 +79,7 @@
         if( wikiSession.getMessages( "profile" ).length == 0 ) {
             try {
                 userMgr.setUserProfile( wikiContext, profile );
-                CookieAssertionLoginModule.setUserCookie( response, profile.getFullname() );
+                CookieAssertionLoginModule.setUserCookie( pageContext, response, profile.getFullname() );
             } catch( DuplicateUserException due ) {
                 // User collision! (full name or wiki name already taken)
                 wikiSession.addMessage( "profile", wiki.getManager( InternationalizationManager.class )
@@ -112,7 +112,7 @@
         Preferences.reloadPreferences( pageContext );
         
         String assertedName = request.getParameter( "assertedName" );
-        CookieAssertionLoginModule.setUserCookie( response, assertedName );
+        CookieAssertionLoginModule.setUserCookie( pageContext, response, assertedName );
 
         String redirectPage = request.getParameter( "redirect" );
         if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) ) {
