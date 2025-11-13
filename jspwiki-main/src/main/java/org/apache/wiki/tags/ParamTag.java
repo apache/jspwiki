@@ -21,6 +21,8 @@ package org.apache.wiki.tags;
 import jakarta.servlet.jsp.tagext.BodyContent;
 import jakarta.servlet.jsp.tagext.BodyTagSupport;
 import jakarta.servlet.jsp.tagext.Tag;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * ParamTag submits name-value pairs to the first enclosing 
@@ -74,11 +76,19 @@ public class ParamTag
     @Override
     public int doEndTag()
     {
-        Tag t;
-        do
-        {
-            t = getParent();
-        } while (t != null && !(t instanceof ParamHandler));
+        // Start with the direct parent of this tag
+        Tag t = getParent();
+        final Set<Tag> visited = new HashSet<>();
+
+        // Keep moving up the tree until we find a parent that is a ParamHandler,
+        // or until we run out of parents. This prevents an infinite loop in case
+        // the parent of this tag is not a ParamHandler.
+        while (t != null && !(t instanceof ParamHandler)) {
+            if (!visited.add(t)) {
+                break; // We've seen this tag before, so break out of the loop
+            }
+            t = t.getParent();
+        }
 
         if( t != null )
         {
@@ -86,18 +96,16 @@ public class ParamTag
             if( val == null )
             {
                 final BodyContent bc = getBodyContent();
-                if( bc != null ) 
+                if( bc != null )
                 {
                     val = bc.getString();
                 }
             }
-            if( val != null ) 
+            if( val != null )
             {
                 ((ParamHandler)t).setContainedParameter( m_name, val );
             }
         }
-        
-        
         return EVAL_PAGE;
     }
 }
