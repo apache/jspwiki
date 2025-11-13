@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import org.apache.wiki.util.HttpUtil;
 
 
 /**
@@ -242,9 +243,9 @@ public class AtomAPIServlet extends HttpServlet {
             final Context context = Wiki.context().create( m_engine, p );
             final String title = TextUtil.replaceEntities( org.apache.wiki.rss.Feed.getSiteName( context ) );
             //FIXME this needs to be an absolute URL not a relative one
-            final SyndLink postlink = createLink( "service.post", m_engine.getBaseURL() + "/atom/" + encodedName, title );
-            final SyndLink editlink = createLink( "service.edit", m_engine.getBaseURL() + "/atom/" + encodedName, title );
-            final SyndLink feedlink = createLink( "service.feed", m_engine.getBaseURL() + "/rss.jsp?page=" + encodedName, title );
+            final SyndLink postlink = createLink( "service.post", HttpUtil.getAbsoluteUrl(context.getHttpRequest(), m_engine.getBaseURL()) + "/atom/" + encodedName, title );
+            final SyndLink editlink = createLink( "service.edit", HttpUtil.getAbsoluteUrl(context.getHttpRequest(), m_engine.getBaseURL()) + "/atom/" + encodedName, title );
+            final SyndLink feedlink = createLink( "service.feed", HttpUtil.getAbsoluteUrl(context.getHttpRequest(), m_engine.getBaseURL()) + "/rss.jsp?page=" + encodedName, title );
 
             feed.getLinks().add( postlink );
             feed.getLinks().add( feedlink );
