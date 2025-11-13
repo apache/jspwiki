@@ -32,6 +32,13 @@ import java.util.Locale;
 import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Checks to ensure all i18n keys have values is all languages
+ * 
+ * see also  https://jspwiki-wiki.apache.org/Wiki.jsp?page=HowToI18n
+ * and  https://jspwiki.apache.org/development/i18n.html
+ * @see TranslationsCheck
+ */
 public class InternationalizationManagerTest {
 
     InternationalizationManager i18n = new DefaultInternationalizationManager(null);
