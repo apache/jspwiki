@@ -142,13 +142,13 @@ public class AtomAPIServlet extends HttpServlet {
             m_engine.getManager( PageManager.class ).saveText( context, text.toString() );
         } catch( final IOException e ) {
             LOG.error("I/O exception",e);
-            throw new ServletException("Could not get body of request",e);
+            throw new ServletException("Could not get body of request");
         } catch( final WikiException e ) {
             LOG.error("Provider exception while posting",e);
-            throw new ServletException("JSPWiki cannot save the entry",e);
+            throw new ServletException("JSPWiki cannot save the entry");
         } catch( final Exception e ) {
             LOG.error("Received faulty Atom entry",e);
-            throw new ServletException("Faulty Atom entry",e);
+            throw new ServletException("Faulty Atom entry");
         } 
     }
 
@@ -165,7 +165,7 @@ public class AtomAPIServlet extends HttpServlet {
         LOG.debug( "Requested page " + blogid );
         try {
             if( blogid == null ) {
-                final  SyndFeed feed = listBlogs();
+                final  SyndFeed feed = listBlogs(request);
                 response.setContentType( "application/x.atom+xml; charset=UTF-8" );
                 response.setHeader("Content-Disposition", " attachment; filename=\"atom.xml\"");
                 feed.setFeedType("atom_0.3");
@@ -184,7 +184,7 @@ public class AtomAPIServlet extends HttpServlet {
             response.getWriter().flush();
         } catch( final Exception e ) {
             LOG.error( "Unable to generate response", e );
-            throw new ServletException( "Internal problem - whack Janne on the head to get a better error report", e );
+            throw new ServletException( "Internal problem - whack Janne on the head to get a better error report");
         }
     }
 
@@ -223,7 +223,7 @@ public class AtomAPIServlet extends HttpServlet {
     /**
      *  Creates and outputs a full list of all available blogs
      */
-    private SyndFeed listBlogs( ) throws ProviderException{
+    private SyndFeed listBlogs( final HttpServletRequest request ) throws ProviderException{
         final Collection< Page > pages = m_engine.getManager( PageManager.class ).getAllPages();
         final SyndFeed feed = new SyndFeedImpl();
         feed.setTitle("List of blogs at this site");
@@ -243,9 +243,9 @@ public class AtomAPIServlet extends HttpServlet {
             final Context context = Wiki.context().create( m_engine, p );
             final String title = TextUtil.replaceEntities( org.apache.wiki.rss.Feed.getSiteName( context ) );
             //FIXME this needs to be an absolute URL not a relative one
-            final SyndLink postlink = createLink( "service.post", HttpUtil.getAbsoluteUrl(context.getHttpRequest(), m_engine.getBaseURL()) + "/atom/" + encodedName, title );
-            final SyndLink editlink = createLink( "service.edit", HttpUtil.getAbsoluteUrl(context.getHttpRequest(), m_engine.getBaseURL()) + "/atom/" + encodedName, title );
-            final SyndLink feedlink = createLink( "service.feed", HttpUtil.getAbsoluteUrl(context.getHttpRequest(), m_engine.getBaseURL()) + "/rss.jsp?page=" + encodedName, title );
+            final SyndLink postlink = createLink( "service.post", HttpUtil.getAbsoluteUrl(request, m_engine.getBaseURL()) + "/atom/" + encodedName, title );
+            final SyndLink editlink = createLink( "service.edit", HttpUtil.getAbsoluteUrl(request, m_engine.getBaseURL()) + "/atom/" + encodedName, title );
+            final SyndLink feedlink = createLink( "service.feed", HttpUtil.getAbsoluteUrl(request, m_engine.getBaseURL()) + "/rss.jsp?page=" + encodedName, title );
 
             feed.getLinks().add( postlink );
             feed.getLinks().add( feedlink );
