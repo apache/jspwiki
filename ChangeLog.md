@@ -16,6 +16,27 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-05_
+* Dependency Updates 
+	* Tomcat updated to 10.1.49
+	
+* [JSPWIKI-388](https://issues.apache.org/jira/browse/JSPWIKI-388) ParamTag loops forever when parent tag is not ParamHandler
+* [JSPWIKI-1238](https://issues.apache.org/jira/browse/JSPWIKI-1238) I18N fixes
+* [JSPWIKI-1237](https://issues.apache.org/jira/browse/JSPWIKI-1237) OWASP http response headers, can be disabled and configured via web.xml
+* [JSPWIKI-1230](https://issues.apache.org/jira/browse/JSPWIKI-1230) Preconfigured tomcat configurations improvements
+* NOJIRA - additional CI testing enabled
+* [JSPWIKI-1228](https://issues.apache.org/jira/browse/JSPWIKI-1228) Preconfigured tomcat configurations improvements
+* [JSPWIKI-1129](https://issues.apache.org/jira/browse/JSPWIKI-1229) cookie security flags. new jspwiki properties added.
+* [JSPWIKI-1120](https://issues.apache.org/jira/browse/JSPWIKI-1220) replaces the sandler library with the rome rss/atom library for RSS/ATOM support
+* [JSPWIKI-1223](https://issues.apache.org/jira/browse/JSPWIKI-1223)  restores the /atom servlet api's capabilities, restores the ability to create and store weblog entries with the requisite attribute for the atom feed to work
+* [JSPWIKI-1225](https://issues.apache.org/jira/browse/JSPWIKI-1225)  fixes loading the preloaded data for the portable build
+* [JSPWIKI-1224](https://issues.apache.org/jira/browse/JSPWIKI-1224)  rss.jsp now sets the filename for download 
+
+
+
+
 **2025-11-08 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-04_
