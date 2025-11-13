@@ -25,8 +25,8 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.pages.PageManager;
 
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.PageContext;
 import java.io.IOException;
 
 /**

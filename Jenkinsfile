@@ -18,25 +18,25 @@
  */
 
 buildRepo = 'https://github.com/apache/jspwiki'
-buildJdk11 = 'jdk_11_latest'
 buildJdk17 = 'jdk_17_latest'
-buildJdk19 = 'jdk_19_latest'
+buildJdk21 = 'jdk_21_latest'
+buildJdk25 = 'jdk_25_latest'
 buildMvn = 'maven_3_latest'
 errMsg = ''
 
 try {
 
     stage( 'build source' ) {
-        parallel jdk11Build: {
-            buildSonarAndDeployIfSnapshotWith( buildJdk11 )
+        parallel jdk17Build: {
+            buildSonarAndDeployIfSnapshotWith( buildJdk17 )
         },
-        jdk17Build: {
-            buildWith( buildJdk17 )
+        jdk21Build: {
+            buildWith( buildJdk21 )
         },
-        jdk19Build: {
-            // don't fail build if jdk-19 build doesn't succeed
-            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-                buildWith( buildJdk19 )
+        jdk25Build: {
+            // don't fail build if jdk-25 build doesn't succeed
+            catchError( buildResult: 'SUCCESS', stageResult: 'FAILURE' ) {
+                buildWith( buildJdk25 )
             }
         }
     }
@@ -71,14 +71,17 @@ def buildSonarAndDeployIfSnapshotWith( jdk ) {
             cleanWs()
             git url: buildRepo, poll: true
             withMaven( jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [ jacocoPublisher(), junitPublisher() ] ) {
+                sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report -T 1C"
                 withCredentials( [ string( credentialsId: 'sonarcloud-jspwiki', variable: 'SONAR_TOKEN' ) ] ) {
                     def sonarOptions = "-Dsonar.projectKey=jspwiki-builder -Dsonar.organization=apache -Dsonar.branch.name=${env.BRANCH_NAME} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_TOKEN"
                     echo 'Will use SonarQube instance at https://sonarcloud.io'
-                    sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report sonar:sonar $sonarOptions -T 1C"
-                    def pom = readMavenPom( file: 'pom.xml' )
-                    if( pom.version.endsWith( '-SNAPSHOT' ) ) {
-                        sh 'mvn deploy'
-                    }
+                    sh "mvn sonar:sonar $sonarOptions"
+                }
+            }
+            def pom = readMavenPom( file: 'pom.xml' )
+            if( pom.version.endsWith( '-SNAPSHOT' ) ) {
+                withMaven( jdk: jdk, maven: buildMvn ) {
+                    sh 'mvn deploy -Dmaven.test.skip=true'
                 }
             }
         }
@@ -91,7 +94,7 @@ def buildWith( jdk ) {
             cleanWs()
             git url: buildRepo, poll: true
             withMaven( jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT' ) {
-                sh 'mvn clean package -T 1C'
+                sh 'mvn clean package -T 1C -Pintegration-tests'
             }
         }
     }

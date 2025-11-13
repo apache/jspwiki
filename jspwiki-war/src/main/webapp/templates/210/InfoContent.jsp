@@ -19,7 +19,7 @@
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.security.Permission" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ page import="jakarta.servlet.jsp.jstl.fmt.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.attachment.AttachmentManager" %>
 <%@ page import="org.apache.wiki.auth.*" %>
@@ -29,8 +29,8 @@
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.progress.ProgressManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
 <%
@@ -51,7 +51,7 @@
   {
     creationAuthor = firstPage.getAuthor();
 
-    if( creationAuthor != null && creationAuthor.length() > 0 )
+    if( creationAuthor != null && !creationAuthor.isEmpty())
     {
       creationAuthor = TextUtil.replaceEntities(creationAuthor);
     }

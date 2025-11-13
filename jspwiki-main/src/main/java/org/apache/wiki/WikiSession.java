@@ -39,8 +39,8 @@ import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.util.HttpUtil;
 
 import javax.security.auth.Subject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -196,7 +196,7 @@ public class WikiSession implements Session {
     @Override
     public String[] getMessages( final String topic ) {
         final Set< String > messages = m_messages.get( topic );
-        if( messages == null || messages.size() == 0 ) {
+        if( messages == null || messages.isEmpty()) {
             return new String[ 0 ];
         }
         return messages.toArray( new String[0] );

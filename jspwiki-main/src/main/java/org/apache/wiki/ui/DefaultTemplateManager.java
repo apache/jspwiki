@@ -29,9 +29,9 @@ import org.apache.wiki.modules.WikiModuleInfo;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.PageContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -231,16 +231,14 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
         }
 
         /* fetch actual formats */
-        if( tfArr.size() == 0 )  {/* no props found - make sure some default formats are avail */
+        if(tfArr.isEmpty())  {/* no props found - make sure some default formats are avail */
             tfArr.add( "dd-MMM-yy" );
             tfArr.add( "d-MMM-yyyy" );
             tfArr.add( "EEE, dd-MMM-yyyy, zzzz" );
         } else {
             Collections.sort( tfArr );
 
-            for (int i = 0; i < tfArr.size(); i++) {
-                tfArr.set(i, props.getProperty(tfArr.get(i)));
-            }
+            tfArr.replaceAll(props::getProperty);
         }
 
         final String prefTimeZone = Preferences.getPreference( context, "TimeZone" );

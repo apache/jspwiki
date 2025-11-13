@@ -66,7 +66,7 @@
         //  Did the user click on "go"?
         //
         if( go != null ) {
-            if( list != null && list.size() > 0 ) {
+            if( list != null && !list.isEmpty()) {
                 SearchResult sr = list.iterator().next();
                 Page wikiPage = sr.getPage();
                 String url = wikiContext.getViewURL( wikiPage.getName() );

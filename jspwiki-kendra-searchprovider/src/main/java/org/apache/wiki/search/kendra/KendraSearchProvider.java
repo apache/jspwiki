@@ -26,7 +26,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.InternalWikiException;
@@ -54,7 +54,13 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import static java.lang.String.format;
 
@@ -123,7 +129,7 @@ public class KendraSearchProvider implements SearchProvider {
                 return gson.fromJson( new InputStreamReader( in ), collectionType );
             }
         } catch ( final IOException e ) {
-            LOG.error( format( "Unable to load default propertyfile 'content_types.json': %s", e.getMessage() ), e );
+            LOG.error( "Unable to load default propertyfile 'content_types.json': {}", e.getMessage(), e );
         }
         return null;
     }
@@ -145,10 +151,10 @@ public class KendraSearchProvider implements SearchProvider {
         final BatchDeleteDocumentRequest request = new BatchDeleteDocumentRequest().withIndexId( indexId )
                 .withDocumentIdList( pageName );
         final BatchDeleteDocumentResult result = getKendra().batchDeleteDocument( request );
-        if ( result.getFailedDocuments().size() == 0 ) {
-            LOG.debug( format( "Page '%s' was removed from index", pageName ) );
+        if (result.getFailedDocuments().isEmpty()) {
+            LOG.debug( "Page '{}' was removed from index", pageName );
         } else {
-            LOG.error( format( "Failed to remove Page '%s' from index", pageName ) );
+            LOG.error( "Failed to remove Page '{}' from index", pageName );
         }
     }
 
@@ -243,7 +249,7 @@ public class KendraSearchProvider implements SearchProvider {
                 return null;
             }
             for ( final IndexConfigurationSummary item : items ) {
-                if ( StringUtils.equals( item.getName(), indexName ) ) {
+                if ( Strings.CS.equals( item.getName(), indexName ) ) {
                     return item.getId();
                 }
             }
@@ -267,12 +273,12 @@ public class KendraSearchProvider implements SearchProvider {
         String nextToken = "";
         while ( nextToken != null ) {
             final List< DataSourceSummary > items = result.getSummaryItems();
-            if ( items == null || items.isEmpty() ) {
+            if( items == null || items.isEmpty() ) {
                 return null;
             }
 
-            for ( final DataSourceSummary item : items ) {
-                if ( StringUtils.equals( item.getName(), dataSourceName ) ) {
+            for( final DataSourceSummary item : items ) {
+                if( Strings.CS.equals( item.getName(), dataSourceName ) ) {
                     return item.getId();
                 }
             }
@@ -287,18 +293,13 @@ public class KendraSearchProvider implements SearchProvider {
      * Converts a SCORE Confidence from Kendra to an "equivalent" integer score
      */
     private int confidence2score( final String scoreConfidence ) {
-        switch ( ScoreConfidence.fromValue( scoreConfidence ) ) {
-            case VERY_HIGH:
-                return 100;
-            case HIGH:
-                return 75;
-            case MEDIUM:
-                return 50;
-            case LOW:
-                return 25;
-            default:
-                return 0;
-        }
+        return switch( ScoreConfidence.fromValue( scoreConfidence ) ) {
+            case VERY_HIGH -> 100;
+            case HIGH -> 75;
+            case MEDIUM -> 50;
+            case LOW -> 25;
+            default -> 0;
+        };
     }
 
     /**
@@ -341,7 +342,7 @@ public class KendraSearchProvider implements SearchProvider {
         final String executionId = startExecution();
         synchronized ( updates ) {
             try {
-                while ( updates.size() > 0 ) {
+                while (!updates.isEmpty()) {
                     indexOnePage( updates.remove( 0 ), executionId );
                 }
             } finally {
@@ -384,7 +385,7 @@ public class KendraSearchProvider implements SearchProvider {
             final BatchPutDocumentRequest request = new BatchPutDocumentRequest().withIndexId( indexId )
                     .withDocuments( document );
             final BatchPutDocumentResult result = getKendra().batchPutDocument( request );
-            if ( result.getFailedDocuments().size() == 0 ) {
+            if (result.getFailedDocuments().isEmpty()) {
                 LOG.info( format( "Successfully indexed Page '%s' as %s", page.getName(), document.getContentType() ) );
             } else {
                 for ( final BatchPutDocumentResponseFailedDocument failedDocument : result.getFailedDocuments() ) {
@@ -417,8 +418,7 @@ public class KendraSearchProvider implements SearchProvider {
         final String title = TextUtil.beautifyString( pageName );
         ByteBuffer blob;
         ContentType contentType = ContentType.PLAIN_TEXT;
-        if ( page instanceof Attachment ) {
-            final Attachment attachment = ( Attachment ) page;
+        if ( page instanceof final Attachment attachment ) {
             InputStream is = null;
             try {
                 final String filename = attachment.getFileName();

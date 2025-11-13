@@ -31,7 +31,7 @@ import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
@@ -175,7 +175,7 @@ public class UserProfileTag extends WikiTagBase {
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
 
         tempRoles = Arrays.stream(roles).filter(role -> role instanceof GroupPrincipal).map(Principal::getName).collect(Collectors.toList());
-        if( tempRoles.size() == 0 ) {
+        if(tempRoles.isEmpty()) {
             return rb.getString( "userprofile.nogroups" );
         }
 
@@ -206,7 +206,7 @@ public class UserProfileTag extends WikiTagBase {
         final ResourceBundle rb = Preferences.getBundle( context, InternationalizationManager.CORE_BUNDLE );
 
         tempRoles = Arrays.stream(roles).filter(role -> role instanceof Role).map(Principal::getName).collect(Collectors.toList());
-        if( tempRoles.size() == 0 ) {
+        if(tempRoles.isEmpty()) {
             return rb.getString( "userprofile.noroles" );
         }
 

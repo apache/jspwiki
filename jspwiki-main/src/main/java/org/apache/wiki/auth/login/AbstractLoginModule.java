@@ -180,7 +180,7 @@ public abstract class AbstractLoginModule implements LoginModule {
      */
     private boolean succeeded()
     {
-        return m_principals.size() > 0;
+        return !m_principals.isEmpty();
     }
 
     /**

@@ -29,7 +29,7 @@ import org.apache.wiki.ui.admin.AdminBean;
 import org.apache.wiki.ui.admin.SimpleAdminBean;
 
 import javax.management.NotCompliantMBeanException;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Date;
 
 
@@ -76,7 +76,7 @@ public class UserBean extends SimpleAdminBean {
             return "";
         }
 
-        if( password != null && password.length() > 0 && !password.equals( password2 ) ) {
+        if( password != null && !password.isEmpty() && !password.equals( password2 ) ) {
             session.addMessage( "Passwords do not match!" );
             return "";
         }

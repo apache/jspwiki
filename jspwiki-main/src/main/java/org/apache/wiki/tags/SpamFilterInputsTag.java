@@ -22,8 +22,8 @@ package org.apache.wiki.tags;
 
 import org.apache.wiki.filters.SpamFilter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.jsp.PageContext;
 
 /**
  * Provides hidden input fields which are checked by the {@code SpamFilter}.
@@ -31,6 +31,8 @@ import javax.servlet.jsp.PageContext;
  * @since 2.11.0-M8
  */
 public class SpamFilterInputsTag extends WikiTagBase {
+
+    private static final long serialVersionUID = -5224949821664626978L;
 
     /**
      * {@inheritDoc}

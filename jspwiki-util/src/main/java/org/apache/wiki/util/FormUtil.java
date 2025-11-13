@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * A collection of (static) utilities used by the WikiForms code.
@@ -91,8 +91,8 @@ public final class FormUtil
     public static List< ? > getNumberedValues(final Map< ?, ? > params, final String keyPrefix )
     {
         final ArrayList<Object> rval = new ArrayList<>();
-        if( params == null || 
-            params.size() == 0 || 
+        if( params == null ||
+                params.isEmpty() ||
             keyPrefix == null || 
             keyPrefix.isEmpty() )
             return rval;

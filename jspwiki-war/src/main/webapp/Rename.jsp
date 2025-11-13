@@ -34,7 +34,7 @@
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 <%!
     Logger log = LogManager.getLogger("JSPWiki");
@@ -67,7 +67,7 @@
     Session wikiSession = wikiContext.getWikiSession();
     try
     {
-        if (renameTo.length() > 0)
+        if (!renameTo.isEmpty())
         {
             String renamedTo = wiki.getManager( PageRenamer.class ).renamePage(wikiContext, renameFrom, renameTo, changeReferences);
 

@@ -44,15 +44,6 @@
       <minVersion>2.10</minVersion>
    </editor>
 
-<!--
-   <editor name="WikiWizard">
-      <author>i3G Institut Hochschule Heilbronn</author>
-      <path>editors/WikiWizard.jsp</path>
-      <minVersion>2.4</minVersion>
-      <maxVersion>2.8</maxVersion>
-      <adminBean>org.apache.wiki.ui.admin.beans.WikiWizardAdminBean</adminBean>
-   </editor>
--->
    <plugin class="org.apache.wiki.plugin.IfPlugin">
       <author>Janne Jalkanen</author>
       <minVersion>2.4</minVersion>

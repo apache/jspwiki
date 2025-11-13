@@ -35,7 +35,7 @@ import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URL;
 import java.security.Principal;
@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
  */
 public class WebContainerAuthorizer implements WebAuthorizer  {
 
-    private static final String J2EE_SCHEMA_25_NAMESPACE = "http://xmlns.jcp.org/xml/ns/javaee";
+    private static final String J2EE_SCHEMA_25_NAMESPACE = "https://jakarta.ee/xml/ns/jakartaee";
 
     private static final Logger LOG = LogManager.getLogger( WebContainerAuthorizer.class );
 
@@ -128,7 +128,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
     /**
      * Determines whether a user associated with an HTTP request possesses
      * a particular role. This method simply delegates to
-     * {@link javax.servlet.http.HttpServletRequest#isUserInRole(String)}
+     * {@link jakarta.servlet.http.HttpServletRequest#isUserInRole(String)}
      * by converting the Principal's name to a String.
      * @param request the HTTP request
      * @param role the role to check
@@ -147,7 +147,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
      * return <code>false</code>.
      * This method simply examines the Session subject to see if it
      * possesses the desired Principal. We assume that the method
-     * {@link org.apache.wiki.ui.WikiServletFilter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}
+     * {@link org.apache.wiki.ui.WikiServletFilter#doFilter(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse, jakarta.servlet.FilterChain)}
      * previously executed, and that it has set the Session
      * subject correctly by logging in the user with the various login modules,
      * in particular {@link org.apache.wiki.auth.login.WebContainerLoginModule}}.
@@ -221,7 +221,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
                                                   .evaluate( root );
 
         // If we can't find either one, we must not be constrained
-        if( constraints.size() == 0 ) {
+        if(constraints.isEmpty()) {
             return false;
         }
 
@@ -231,7 +231,7 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         }
 
         // If no roles, we must not be constrained
-        if( roles.size() == 0 ) {
+        if(roles.isEmpty()) {
             return false;
         }
 

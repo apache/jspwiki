@@ -295,10 +295,7 @@ public class CreoleToJSPWikiTranslator
             }
             if ((inList == -1 && counter != 1) || (inList != -1 && inList + 1 < counter))
             {
-                for (int c = 0; c < counter; c++)
-                {
-                    result.append(actSourceSymbol);
-                }
+                result.append(actSourceSymbol.repeat(Math.max(0, counter)));
                 inList = -1;
             }
             else
@@ -506,7 +503,7 @@ public class CreoleToJSPWikiTranslator
             {
                 final MessageDigest digest = MessageDigest.getInstance("MD5");
                 digest.reset();
-                digest.update(protectedMarkup.getBytes(StandardCharsets.UTF_8.name()));
+                digest.update(protectedMarkup.getBytes(StandardCharsets.UTF_8));
                 final String hash = bytesToHash(digest.digest());
                 matcher.appendReplacement(result, hash);
                 c_protectionMap.put(hash, protectedMarkup);
@@ -515,11 +512,6 @@ public class CreoleToJSPWikiTranslator
             catch (final NoSuchAlgorithmException e)
             {
                 // FIXME: Should log properly
-                e.printStackTrace();
-            }
-            catch (final UnsupportedEncodingException e)
-            {
-                // FIXME: Auto-generated catch block
                 e.printStackTrace();
             }
         }

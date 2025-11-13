@@ -160,7 +160,7 @@ public final class InputValidator {
      * @return <code>true</code> if <code>null</code> or blank (zero-length); <code>false</code> otherwise
      */
     public static boolean isBlank( final String input ) {
-        return input == null || input.trim().length() < 1;
+        return input == null || input.trim().isEmpty();
     }
 
 }

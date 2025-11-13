@@ -56,7 +56,7 @@ public interface AttachmentProvider extends WikiProvider {
      *  Get attachment data.
      *  
      *  @param att The attachment
-     *  @return An InputStream which you contains the raw data of the object. It's your responsibility to close it.
+     *  @return An InputStream which contains the raw data of the object. It's your responsibility to close it.
      *  @throws ProviderException If the attachment cannot be found
      *  @throws IOException If the attachment cannot be opened
      */

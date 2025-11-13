@@ -27,22 +27,12 @@ github:
     - java
     - jspwiki
     - wiki
-  # Attempt to make the auto-generated github emails more easily readable in email clients.
-  custom_subjects:
-    new_pr: "[PR] {title} ({repository})"
-    close_pr: "Re: [PR] {title} ({repository})"
-    comment_pr: "Re: [PR] {title} ({repository})"
-    diffcomment: "Re: [PR] {title} ({repository})"
-    merge_pr: "Re: [PR] {title} ({repository})"
-    new_issue: "[I] {title} ({repository})"
-    comment_issue: "Re: [I] {title} ({repository})"
-    close_issue: "Re: [I] {title} ({repository})"
-    catchall: "[GH] {title} ({repository})"
 
 notifications:
-  commits:              commits@jspwiki.apache.org
-  issues:               dev@jspwiki.apache.org
-  pullrequests_status:  dev@jspwiki.apache.org
-  pullrequests_comment: dev@jspwiki.apache.org
+  commits: commits@jspwiki.apache.org
+  discussions: dev@jspwiki.apache.org
+  issues: dev@jspwiki.apache.org
+  jobs: dev@jspwiki.apache.org
+  pullrequests: dev@jspwiki.apache.org
   # Send dependabot PRs to commits@ instead
   pullrequests_bot_dependabot: commits@jspwiki.apache.org

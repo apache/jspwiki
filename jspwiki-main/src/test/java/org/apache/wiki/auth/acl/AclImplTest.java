@@ -53,7 +53,7 @@ public class AclImplTest {
     private Map< String, Group > m_groups;
 
     /**
-     * We setup the following rules: Alice = may view Bob = may view, may edit
+     * We set up the following rules: Alice = may view Bob = may view, may edit
      * Charlie = may view Dave = may view, may comment groupAcl: FooGroup =
      * Alice, Bob - may edit BarGroup = Bob, Charlie - may view
      */

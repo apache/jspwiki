@@ -27,13 +27,14 @@ import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.tasks.TasksManager;
+import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.MailUtil;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
 import org.apache.wiki.workflow.WorkflowManager;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.AddressException;
 import java.util.Locale;
 
 
@@ -78,12 +79,15 @@ public class SaveUserProfileTask extends Task {
                                                  "notification.createUserProfile.accept.subject", app );
 
                 final String loginUrl = context.getEngine().getURL( ContextEnum.WIKI_LOGIN.getRequestContext(), null, null );
+
+                final String absoluteLoginUrl = HttpUtil.getAbsoluteUrl(context.getHttpRequest(), loginUrl);
+
                 final String content = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc,
                                                  "notification.createUserProfile.accept.content", app,
                                                  profile.getLoginName(),
                                                  profile.getFullname(),
                                                  profile.getEmail(),
-                                                 loginUrl );
+                                                 absoluteLoginUrl );
                 MailUtil.sendMessage( context.getEngine().getWikiProperties(), to, subject, content );
             } catch ( final AddressException e) {
                 LOG.debug( e.getMessage(), e );

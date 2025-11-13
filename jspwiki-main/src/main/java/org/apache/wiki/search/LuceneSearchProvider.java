@@ -33,6 +33,7 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.index.StoredFields;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -41,6 +42,7 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
@@ -478,13 +480,13 @@ public class LuceneSearchProvider implements SearchProvider {
                                                new QueryScorer( luceneQuery ) );
             }
 
-            final ScoreDoc[] hits = searcher.search( luceneQuery, MAX_SEARCH_HITS ).scoreDocs;
             final AuthorizationManager mgr = m_engine.getManager( AuthorizationManager.class );
+            final TopDocs hits = searcher.search( luceneQuery, MAX_SEARCH_HITS );
+            final StoredFields storedFields = reader.storedFields();
 
-            list = new ArrayList<>( hits.length );
-            for( final ScoreDoc hit : hits ) {
-                final int docID = hit.doc;
-                final Document doc = searcher.doc( docID );
+            list = new ArrayList<>( hits.scoreDocs.length );
+            for( final ScoreDoc hit : hits.scoreDocs ) {
+                final Document doc = storedFields.document( hit.doc );
                 final String pageName = doc.get( LUCENE_ID );
                 final Page page = m_engine.getManager( PageManager.class ).getPage( pageName, PageProvider.LATEST_VERSION );
 
@@ -569,7 +571,7 @@ public class LuceneSearchProvider implements SearchProvider {
             m_watchdog.enterState( "Emptying index queue", 60 );
 
             synchronized( m_provider.m_updates ) {
-                while( m_provider.m_updates.size() > 0 ) {
+                while(!m_provider.m_updates.isEmpty()) {
                     final Object[] pair = m_provider.m_updates.remove( 0 );
                     final Page page = ( Page )pair[ 0 ];
                     final String text = ( String )pair[ 1 ];

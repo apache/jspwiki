@@ -52,6 +52,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Constructor;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Properties;
 
 
@@ -233,11 +234,7 @@ public class DefaultRenderingManager implements RenderingManager {
     public String getHTML( final Context context, final WikiDocument doc ) throws IOException {
         final Boolean wysiwygVariable = context.getVariable( Context.VAR_WYSIWYG_EDITOR_MODE );
         final boolean wysiwygEditorMode;
-        if( wysiwygVariable != null ) {
-            wysiwygEditorMode = wysiwygVariable;
-        } else {
-            wysiwygEditorMode = false;
-        }
+        wysiwygEditorMode = Objects.requireNonNullElse(wysiwygVariable, false);
         final WikiRenderer rend;
         if( wysiwygEditorMode ) {
             rend = getWysiwygRenderer( context, doc );

@@ -61,8 +61,8 @@ import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
 import org.apache.wiki.workflow.WorkflowManager;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -348,9 +348,6 @@ public class WikiEngine implements Engine {
 
     void createAndFindWorkingDirectory( final Properties props ) throws WikiException {
         m_workDir = TextUtil.getStringProperty( props, PROP_WORKDIR, null );
-        if( StringUtils.isBlank( m_workDir ) ) {
-            m_workDir = System.getProperty( "java.io.tmpdir", "." ) +  File.separator + Release.APPNAME + "-" + m_appid;
-        }
 
         final File f = new File( m_workDir );
         try {

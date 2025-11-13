@@ -21,16 +21,23 @@ package org.apache.wiki.util;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.mail.*;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.Authenticator;
+import jakarta.mail.Message;
+import jakarta.mail.MessagingException;
+import jakarta.mail.PasswordAuthentication;
+import jakarta.mail.Session;
+import jakarta.mail.Transport;
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
 
 
 /**
@@ -139,7 +146,7 @@ import java.util.Properties;
  * <pre>&lt;resource-ref&gt;
  *   &lt;description>Resource reference to a container-managed JNDI JavaMail factory for sending e-mails.&lt;/description&gt;
  *   &lt;res-ref-name>mail/Session&lt;/res-ref-name&gt;
- *   &lt;res-type>javax.mail.Session&lt;/res-type&gt;
+ *   &lt;res-type>jakarta.mail.Session&lt;/res-type&gt;
  *   &lt;res-auth>Container&lt;/res-auth&gt;
  * &lt;/resource-ref&gt;</pre>
  * <p>To configure your container's resource factory, follow the directions supplied by
@@ -151,7 +158,7 @@ import java.util.Properties;
  * <pre>&lt;Context ...&gt;
  * ...
  * &lt;Resource name="mail/Session" auth="Container"
- *           type="javax.mail.Session"
+ *           type="jakarta.mail.Session"
  *           mail.smtp.host="127.0.0.1"/&gt;
  *           mail.smtp.port="25"/&gt;
  *           mail.smtp.account="your-account-name"/&gt;
@@ -168,7 +175,7 @@ import java.util.Properties;
  * <code><var>$CATALINA_HOME</var>/conf/server.xml</code> creates a global resource:</p>
  * <pre>&lt;GlobalNamingResources&gt;
  *   &lt;Resource name="mail/Session" auth="Container"
- *             type="javax.mail.Session"
+ *             type="jakarta.mail.Session"
  *             ...
  *             mail.smtp.starttls.enable="true"/&gt;
  * &lt;/GlobalNamingResources&gt;</pre>
@@ -196,6 +203,7 @@ public final class MailUtil {
     private static boolean c_useJndi = true;
 
     private static final String PROP_MAIL_AUTH = "mail.smtp.auth";
+    private static final String PROP_MAILS_AUTH = "mail.smtps.auth";
 
     static final Logger LOG = LogManager.getLogger(MailUtil.class);
 
@@ -213,23 +221,32 @@ public final class MailUtil {
 
     static final String PROP_MAIL_JNDI_NAME          = "jspwiki.mail.jndiname";
 
+    static final String MAIL_PROPS                   = "mail.smtp";
+
     static final String PROP_MAIL_HOST               = "mail.smtp.host";
+    static final String PROP_MAILS_HOST              = "mail.smtps.host";
 
     static final String PROP_MAIL_PORT               = "mail.smtp.port";
+    static final String PROP_MAILS_PORT              = "mail.smtps.port";
 
     static final String PROP_MAIL_ACCOUNT            = "mail.smtp.account";
+    static final String PROP_MAILS_ACCOUNT           = "mail.smtps.account";
 
     static final String PROP_MAIL_PASSWORD           = "mail.smtp.password";
+    static final String PROP_MAILS_PASSWORD          = "mail.smtps.password";
 
     static final String PROP_MAIL_TIMEOUT            = "mail.smtp.timeout";
+    static final String PROP_MAILS_TIMEOUT           = "mail.smtps.timeout";
 
     static final String PROP_MAIL_CONNECTION_TIMEOUT = "mail.smtp.connectiontimeout";
+    static final String PROP_MAILS_CONNECTION_TIMEOUT= "mail.smtps.connectiontimeout";
 
     static final String PROP_MAIL_TRANSPORT          = "smtp";
 
     static final String PROP_MAIL_SENDER             = "mail.from";
 
     static final String PROP_MAIL_STARTTLS           = "mail.smtp.starttls.enable";
+    static final String PROP_MAILS_STARTTLS          = "mail.smtps.starttls.enable";
 
     private static String c_fromAddress;
     
@@ -247,7 +264,7 @@ public final class MailUtil {
      * See the top-level JavaDoc for this class for a description of
      * required properties and their default values.</p>
      * <p>The e-mail address used for the <code>to</code> parameter must be in
-     * RFC822 format, as described in the JavaDoc for {@link javax.mail.internet.InternetAddress}
+     * RFC822 format, as described in the JavaDoc for {@link jakarta.mail.internet.InternetAddress}
      * and more fully at
      * <a href="http://www.freesoft.org/CIE/RFC/822/index.htm">http://www.freesoft.org/CIE/RFC/822/index.htm</a>.
      * In other words, e-mail addresses should look like this:</p>
@@ -267,7 +284,7 @@ public final class MailUtil {
         throws AddressException, MessagingException
     {
         final Session session = getMailSession( props );
-        getSenderEmailAddress(session, props);
+        setSenderEmailAddress(session, props);
 
         try {
             // Create and address the message
@@ -294,11 +311,9 @@ public final class MailUtil {
      * from the jspwiki.properties or lastly the default value.
      * @param pSession <code>Session</code>
      * @param pProperties <code>Properties</code>
-     * @return <code>String</code>
      */
-    static String getSenderEmailAddress(final Session pSession, final Properties pProperties) {
-        if( c_fromAddress == null )
-        {
+    static void setSenderEmailAddress( final Session pSession, final Properties pProperties ) {
+        if( c_fromAddress == null ) {
             // First, attempt to get the email address from the JNDI Mail Session.
             if( pSession != null && c_useJndi ) {
                 c_fromAddress = pSession.getProperty( MailUtil.PROP_MAIL_SENDER );
@@ -312,7 +327,6 @@ public final class MailUtil {
                 LOG.debug( "Attempt to get the sender's mail address from the JNDI mail session was successful ({}).", c_fromAddress );
             }
         }
-        return c_fromAddress;
     }
 
     /**
@@ -348,40 +362,42 @@ public final class MailUtil {
     }
 
     /**
-     * Returns a stand-alone JavaMail Session by looking up the correct
-     * mail account, password and host from a supplied set of properties.
-     * If the JavaMail property {@value #PROP_MAIL_ACCOUNT} is set to
-     * a value that is non-<code>null</code> and of non-zero length, the
-     * Session will be initialized with an instance of
-     * {@link javax.mail.Authenticator}.
-     * @param props the properties that contain mail session properties
-     * @return the initialized JavaMail Session
+     * Returns a stand-alone JavaMail Session by looking up the correct mail account, password, host and others from a
+     * supplied set of properties. If the JavaMail property {@value #PROP_MAIL_ACCOUNT} is set to a value that is
+     * non-<code>null</code> and of non-zero length, the Session will be initialized with an instance of
+     * {@link jakarta.mail.Authenticator}.
+     *
+     * @param props the properties that contain mail session properties.
+     * @return the initialized JavaMail Session.
+     *
+     * @see <a href="https://javaee.github.io/javamail/docs/api/com/sun/mail/smtp/package-summary.html#properties">SMTP Properties</a>
+     * for a list of valid <code>mail.smtp</code> / <code>mail.smtps</code> properties, used to create the JavaMail session.
      */
-    static Session getStandaloneMailSession(final Properties props ) {
+    static Session getStandaloneMailSession( final Properties props ) {
         // Read the JSPWiki settings from the properties
-        final String host     = props.getProperty( PROP_MAIL_HOST, DEFAULT_MAIL_HOST );
-        final String port     = props.getProperty( PROP_MAIL_PORT, DEFAULT_MAIL_PORT );
-        final String account  = props.getProperty( PROP_MAIL_ACCOUNT );
-        final String password = props.getProperty( PROP_MAIL_PASSWORD );
-        final String timeout  = props.getProperty( PROP_MAIL_TIMEOUT, DEFAULT_MAIL_TIMEOUT);
-        final String conntimeout = props.getProperty( PROP_MAIL_CONNECTION_TIMEOUT, DEFAULT_MAIL_CONN_TIMEOUT );
-        final boolean starttls = TextUtil.getBooleanProperty( props, PROP_MAIL_STARTTLS, true);
-        
+        final String host     = Objects.toString( props.getProperty( PROP_MAIL_HOST, props.getProperty( PROP_MAILS_HOST, DEFAULT_MAIL_HOST ) ) );
+        final String port     = Objects.toString( props.getProperty( PROP_MAIL_PORT, props.getProperty( PROP_MAILS_PORT, DEFAULT_MAIL_PORT ) ) );
+        final String account  = Objects.toString( props.getProperty( PROP_MAIL_ACCOUNT ), props.getProperty( PROP_MAILS_ACCOUNT ) );
+        final String password = Objects.toString( props.getProperty( PROP_MAIL_PASSWORD ),props.getProperty( PROP_MAILS_PASSWORD ) );
+        final String timeout  = Objects.toString( props.getProperty( PROP_MAIL_TIMEOUT, props.getProperty( PROP_MAILS_TIMEOUT, DEFAULT_MAIL_TIMEOUT ) ) );
+        final String conntimeout = Objects.toString( props.getProperty( PROP_MAIL_CONNECTION_TIMEOUT, props.getProperty( PROP_MAILS_CONNECTION_TIMEOUT, DEFAULT_MAIL_CONN_TIMEOUT ) ) );
+        final String starttls = Boolean.toString( TextUtil.getBooleanProperty( props, PROP_MAIL_STARTTLS, TextUtil.getBooleanProperty( props, PROP_MAILS_STARTTLS, true ) ) );
         final boolean useAuthentication = account != null && !account.isEmpty();
 
-        final Properties mailProps = new Properties();
-
         // Set JavaMail properties
-        mailProps.put( PROP_MAIL_HOST, host );
-        mailProps.put( PROP_MAIL_PORT, port );
-        mailProps.put( PROP_MAIL_TIMEOUT, timeout );
-        mailProps.put( PROP_MAIL_CONNECTION_TIMEOUT, conntimeout );
-        mailProps.put( PROP_MAIL_STARTTLS, starttls ? TRUE : FALSE );
+        final Properties mailProps = new Properties();
+        final Set< String > keys = props.stringPropertyNames();
+        for( final String key : keys) {
+            if( key.startsWith( MAIL_PROPS ) ) {
+                mailProps.setProperty( key, props.getProperty( key ) );
+            }
+        }
 
         // Add SMTP authentication if required
         final Session session;
         if ( useAuthentication ) {
             mailProps.put( PROP_MAIL_AUTH, TRUE );
+            mailProps.put( PROP_MAILS_AUTH, TRUE ); // just in case, cover mail.stmps config as well
             final SmtpAuthenticator auth = new SmtpAuthenticator( account, password );
 
             session = Session.getInstance( mailProps, auth );
@@ -396,7 +412,6 @@ public final class MailUtil {
         return session;
     }
 
-
     /**
      * Returns a JavaMail Session instance from a JNDI container-managed factory.
      * @param jndiName the JNDI name for the resource. If <code>null</code>, the default value
@@ -404,15 +419,14 @@ public final class MailUtil {
      * @return the initialized JavaMail Session
      * @throws NamingException if the Session cannot be obtained; for example, if the factory is not configured
      */
-    static Session getJNDIMailSession(final String jndiName ) throws NamingException
-    {
+    static Session getJNDIMailSession( final String jndiName ) throws NamingException {
         final Session session;
         try {
             final Context initCtx = new InitialContext();
-            final Context ctx = (Context) initCtx.lookup( JAVA_COMP_ENV );
-            session = (Session) ctx.lookup( jndiName );
+            final Context ctx = ( Context ) initCtx.lookup( JAVA_COMP_ENV );
+            session = ( Session )ctx.lookup( jndiName );
         } catch( final NamingException e ) {
-            LOG.warn( "JNDI mail session initialization error: {}" + e.getMessage() );
+            LOG.warn( "JNDI mail session initialization error: {}", e.getMessage() );
             throw e;
         }
         LOG.debug( "mail session obtained from JNDI mail factory: {}", jndiName );
@@ -420,7 +434,7 @@ public final class MailUtil {
     }
 
     /**
-     * Simple {@link javax.mail.Authenticator} subclass that authenticates a user to
+     * Simple {@link jakarta.mail.Authenticator} subclass that authenticates a user to
      * an SMTP server.
      */
     protected static class SmtpAuthenticator extends Authenticator {
@@ -431,11 +445,11 @@ public final class MailUtil {
 
         /**
          * Constructs a new SmtpAuthenticator with a supplied username and password.
+         *
          * @param login the username
          * @param pass the password
          */
-        public SmtpAuthenticator(final String login, final String pass)
-        {
+        public SmtpAuthenticator( final String login, final String pass ) {
             super();
             m_login =   login == null ? BLANK : login;
             m_pass =     pass == null ? BLANK : pass;
@@ -443,16 +457,14 @@ public final class MailUtil {
 
         /**
          * Returns the password used to authenticate to the SMTP server.
-         * @return <code>PasswordAuthentication</code>
+         *
+         * @return <code>PasswordAuthentication</code>.
          */
         @Override
-        public PasswordAuthentication getPasswordAuthentication()
-        {
-            if ( BLANK.equals(m_pass) )
-            {
+        public PasswordAuthentication getPasswordAuthentication() {
+            if( BLANK.equals( m_pass ) ) {
                 return null;
             }
-
             return new PasswordAuthentication( m_login, m_pass );
         }
 

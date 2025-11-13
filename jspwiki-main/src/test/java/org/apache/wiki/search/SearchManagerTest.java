@@ -18,7 +18,8 @@
  */
 package org.apache.wiki.search;
 
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -30,21 +31,24 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 
 
-public class SearchManagerTest {
+class SearchManagerTest {
 
     TestEngine m_engine;
     SearchManager m_mgr;
     Properties props;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    void setUp() {
         final Properties props = TestEngine.getTestProperties();
         final String workDir = props.getProperty( "jspwiki.workDir" );
         final String workRepo = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
@@ -60,12 +64,12 @@ public class SearchManagerTest {
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         m_engine.stop();
     }
 
     @Test
-    public void testDefaultProvider() {
+    void testDefaultProvider() {
         Assertions.assertEquals( "org.apache.wiki.search.LuceneSearchProvider", m_mgr.getSearchEngine().getClass().getName() );
     }
 
@@ -80,7 +84,7 @@ public class SearchManagerTest {
 
     Callable< Boolean > findsResultsFor( final Collection< SearchResult > res, final String text ) {
         return () -> {
-            final MockHttpServletRequest request = m_engine.newHttpRequest();
+            final HttpServletRequest request = HttpMockFactory.createHttpRequest();
             final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
             final Collection< SearchResult > search = m_mgr.findPages( text, ctx );
             if( search != null && search.size() > 0 ) {
@@ -93,7 +97,7 @@ public class SearchManagerTest {
     }
 
     @Test
-    public void testSimpleSearch() throws Exception {
+    void testSimpleSearch() throws Exception {
         final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
         m_engine.saveText("TestPage", txt);
 
@@ -106,7 +110,7 @@ public class SearchManagerTest {
     }
 
     @Test
-    public void testSimpleSearch2() throws Exception {
+    void testSimpleSearch2() throws Exception {
         final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
         m_engine.saveText("TestPage", txt);
         m_engine.saveText("TestPage", txt + " 2");
@@ -120,10 +124,10 @@ public class SearchManagerTest {
     }
 
     @Test
-    public void testSimpleSearch3() throws Exception {
+    void testSimpleSearch3() throws Exception {
         final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
-        final MockHttpServletRequest request = m_engine.newHttpRequest();
-        request.getParameterMap().put( "page", new String[]{ "TestPage" } );
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        Mockito.doReturn( "TestPage" ).when( request ).getParameter( "page" );
         final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
         m_engine.getManager( PageManager.class ).saveText( ctx, txt );
         m_engine.getManager( PageManager.class ).saveText( ctx, "The Babylon Project was a dream given form. Its goal: to prevent another war by creating a place where humans and aliens could work out their differences peacefully." );
@@ -142,9 +146,9 @@ public class SearchManagerTest {
     }
 
     @Test
-    public void testSimpleSearch4() throws Exception {
+    void testSimpleSearch4() throws Exception {
         final String txt = "It was the dawn of the third age of mankind, ten years after the Earth-Minbari War.";
-        final MockHttpServletRequest request = m_engine.newHttpRequest();
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
         request.getParameterMap().put( "page", new String[]{ "TestPage" } );
         final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
         m_engine.getManager( PageManager.class ).saveText( ctx, txt );
@@ -164,7 +168,7 @@ public class SearchManagerTest {
     }
 
     @Test
-    public void testTitleSearch() throws Exception {
+    void testTitleSearch() throws Exception {
         final String txt = "Nonsensical content that should not match";
         m_engine.saveText("TestPage", txt);
 
@@ -177,7 +181,7 @@ public class SearchManagerTest {
     }
 
     @Test
-    public void testTitleSearch2() throws Exception {
+    void testTitleSearch2() throws Exception {
         final String txt = "Nonsensical content that should not match";
         m_engine.saveText("TestPage", txt);
 
@@ -190,7 +194,7 @@ public class SearchManagerTest {
     }
 
     @Test
-    public void testKeywordsSearch() throws Exception {
+    void testKeywordsSearch() throws Exception {
         final String txt = "[{SET keywords=perry,mason,attorney,law}] Nonsensical content that should not match";
 
         m_engine.saveText("TestPage", txt);

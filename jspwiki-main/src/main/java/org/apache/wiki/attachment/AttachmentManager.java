@@ -148,7 +148,7 @@ public interface AttachmentManager {
      */
     default boolean hasAttachments( final Page wikipage ) {
         try {
-            return listAttachments( wikipage ).size() > 0;
+            return !listAttachments(wikipage).isEmpty();
         } catch( final Exception e ) {
             LogManager.getLogger( AttachmentManager.class ).info( e.getMessage(), e );
         }

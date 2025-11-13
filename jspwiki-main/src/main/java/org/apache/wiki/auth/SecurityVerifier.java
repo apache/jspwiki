@@ -206,7 +206,7 @@ public final class SecurityVerifier {
         final int pageActionsLength = pageActions.length;
         // Calculate column widths
         final String colWidth;
-        if( pageActionsLength > 0 && rolesLength > 0 ) {
+        if( rolesLength > 0 ) {
             colWidth = ( 67f / ( pageActionsLength * rolesLength ) ) + "%";
         } else {
             colWidth = "67%";
@@ -344,7 +344,7 @@ public final class SecurityVerifier {
         final Authorizer authorizer = authorizationManager.getAuthorizer();
 
         // If authorizer not WebContainerAuthorizer, print error message
-        if ( !( authorizer instanceof WebContainerAuthorizer ) ) {
+        if ( !( authorizer instanceof final WebContainerAuthorizer wca ) ) {
             throw new IllegalStateException( "Authorizer should be WebContainerAuthorizer" );
         }
 
@@ -369,7 +369,6 @@ public final class SecurityVerifier {
         s.append( "</thead>\n" );
         s.append( "<tbody>\n" );
 
-        final WebContainerAuthorizer wca = (WebContainerAuthorizer) authorizer;
         for( int i = 0; i < CONTAINER_ACTIONS.length; i++ ) {
             final String action = CONTAINER_ACTIONS[i];
             final String jsp = CONTAINER_JSPS[i];
@@ -438,26 +437,20 @@ public final class SecurityVerifier {
      * container <code>web.xml</code> file.
      * @throws WikiException if the web authorizer cannot verify the roles
      */
-    void verifyPolicyAndContainerRoles() throws WikiException
-    {
+    void verifyPolicyAndContainerRoles() throws WikiException {
         final Authorizer authorizer = m_engine.getManager( AuthorizationManager.class ).getAuthorizer();
         final Principal[] containerRoles = authorizer.getRoles();
         boolean missing = false;
-        for( final Principal principal : m_policyPrincipals )
-        {
-            if ( principal instanceof Role )
-            {
-                final Role role = (Role) principal;
+        for( final Principal principal : m_policyPrincipals ) {
+            if( principal instanceof final Role role ) {
                 final boolean isContainerRole = ArrayUtils.contains( containerRoles, role );
-                if ( !Role.isBuiltInRole( role ) && !isContainerRole )
-                {
+                if ( !Role.isBuiltInRole( role ) && !isContainerRole ) {
                     m_session.addMessage( ERROR_ROLES, "Role '" + role.getName() + "' is defined in security policy but not in web.xml." );
                     missing = true;
                 }
             }
         }
-        if ( !missing )
-        {
+        if ( !missing ) {
             m_session.addMessage( INFO_ROLES, "Every non-standard role defined in the security policy was also found in web.xml." );
         }
     }
@@ -466,8 +459,7 @@ public final class SecurityVerifier {
      * Verifies that the group datbase was initialized properly, and that
      * user add and delete operations work as they should.
      */
-    void verifyGroupDatabase()
-    {
+    void verifyGroupDatabase() {
         final GroupManager mgr = m_engine.getManager( GroupManager.class );
         GroupDatabase db = null;
         try {
@@ -673,7 +665,7 @@ public final class SecurityVerifier {
             // Verify the file
             policy.read();
             final List<Exception> errors = policy.getMessages();
-            if ( errors.size() > 0 ) {
+            if (!errors.isEmpty()) {
                 for( final Exception e : errors ) {
                     m_session.addMessage( ERROR_POLICY, e.getMessage() );
                 }
@@ -735,20 +727,16 @@ public final class SecurityVerifier {
      * Verifies that the user datbase was initialized properly, and that
      * user add and delete operations work as they should.
      */
-    void verifyUserDatabase()
-    {
+    void verifyUserDatabase() {
         final UserDatabase db = m_engine.getManager( UserManager.class ).getUserDatabase();
 
         // Check for obvious error conditions
-        if ( db == null )
-        {
-            m_session.addMessage( ERROR_DB, "UserDatabase is null; JSPWiki could not " +
-                    "initialize it. Check the error logs." );
+        if ( db == null ) {
+            m_session.addMessage( ERROR_DB, "UserDatabase is null; JSPWiki could not initialize it. Check the error logs." );
             return;
         }
 
-        if ( db instanceof DummyUserDatabase )
-        {
+        if ( db instanceof DummyUserDatabase ) {
             m_session.addMessage( ERROR_DB, "UserDatabase is DummyUserDatabase; JSPWiki " +
                     "may not have been able to initialize the database you supplied in " +
                     "jspwiki.properties, or you left the 'jspwiki.userdatabase' property " +

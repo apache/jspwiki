@@ -18,7 +18,8 @@ package org.apache.wiki.search.kendra;
 
 import com.amazonaws.services.kendra.AWSkendra;
 import com.amazonaws.services.kendra.model.*;
-import net.sourceforge.stripes.mock.MockHttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -30,6 +31,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.platform.commons.util.StringUtils;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
@@ -45,6 +48,7 @@ import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
 @ExtendWith( MockitoExtension.class )
+@MockitoSettings( strictness = Strictness.LENIENT )
 public class KendraSearchProviderTest {
 
     static final Properties props = TestEngine.getTestProperties();
@@ -123,7 +127,7 @@ public class KendraSearchProviderTest {
 
     Callable< Boolean > findsResultsFor( final Collection< SearchResult > res, final String text ) {
         return () -> {
-            final MockHttpServletRequest request = engine.newHttpRequest();
+            final HttpServletRequest request = HttpMockFactory.createHttpRequest();
             final Context ctx = Wiki.context().create( engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
             final Collection< SearchResult > searchResults = searchProvider.findPages( text, ctx );
             if ( searchResults != null && !searchResults.isEmpty() ) {

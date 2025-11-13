@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Properties;
@@ -102,7 +102,7 @@ public class AuthenticationManagerTest {
     @Test
     public void testCustomAuthorizer() throws Exception {
         final Properties props = TestEngine.getTestProperties();
-        props.put( AuthorizationManager.PROP_AUTHORIZER, "org.apache.wiki.auth.AuthenticationManagerTest$DummyAuthorizer" );
+        props.put( AuthorizationManager.PROP_AUTHORIZER, DummyAuthorizer.class.getName() );
         m_engine = new TestEngine( props );
 
         // Start a session without any container roles: DummyAuthorizer should ALWAYS allow AuthorizerRole
@@ -117,6 +117,7 @@ public class AuthenticationManagerTest {
         Assertions.assertFalse( session.hasPrincipal( new Role( "DummyRole") ) );
 
         // Try again with a container-authenticated session: DummyAuthorizer should ALSO allow ContainerRole
+        m_engine = new TestEngine( props );
         session = WikiSessionTest.containerAuthenticatedSession( m_engine, Users.JANNE, new Principal[0] );
         Assertions.assertTrue( session.hasPrincipal( Role.ALL ) );
         Assertions.assertTrue( session.hasPrincipal( Role.AUTHENTICATED ) );

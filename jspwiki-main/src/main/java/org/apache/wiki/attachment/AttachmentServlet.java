@@ -18,12 +18,24 @@
  */
 package org.apache.wiki.attachment;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.ProgressListener;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
+import java.security.Permission;
+import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.commons.fileupload2.core.DiskFileItemFactory;
+import org.apache.commons.fileupload2.core.FileItem;
+import org.apache.commons.fileupload2.core.FileItemFactory;
+import org.apache.commons.fileupload2.core.FileUploadException;
+import org.apache.commons.fileupload2.core.ProgressListener;
+import org.apache.commons.fileupload2.jakarta.servlet6.JakartaServletFileUpload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
@@ -46,23 +58,12 @@ import org.apache.wiki.ui.progress.ProgressManager;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.SocketException;
-import java.nio.charset.StandardCharsets;
-import java.security.Permission;
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import jakarta.servlet.ServletConfig;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 
 /**
@@ -218,11 +219,8 @@ public class AttachmentServlet extends HttpServlet {
                 final String mimetype = getMimeType( context, att.getFileName() );
                 res.setContentType( mimetype );
 
-                //
-                //  We use 'inline' instead of 'attachment' so that user agents
-                //  can try to automatically open the file.
-                //
-                res.addHeader( "Content-Disposition", "inline; filename=\"" + att.getFileName() + "\";" );
+                final String contentDisposition = getContentDisposition( att );
+                res.addHeader( "Content-Disposition", contentDisposition );
                 res.addDateHeader("Last-Modified",att.getLastModified().getTime());
 
                 if( !att.isCacheable() ) {
@@ -284,6 +282,17 @@ public class AttachmentServlet extends HttpServlet {
             LOG.debug( "I/O exception during download", ioe );
             sendError( res, "Error: " + ioe.getMessage() );
         }
+    }
+
+    String getContentDisposition( final Attachment att ) {
+        // We use 'inline' instead of 'attachment' so that user agents can try to automatically open the file,
+        // except those cases in which we want to enforce the file download.
+        String contentDisposition = "inline; filename=\"";
+        if( m_engine.getManager( AttachmentManager.class ).forceDownload( att.getFileName() ) ) {
+            contentDisposition = "attachment; filename=\"";
+        }
+        contentDisposition += att.getFileName() + "\";";
+        return contentDisposition;
     }
 
     void sendError( final HttpServletResponse res, final String message ) throws IOException {
@@ -378,12 +387,12 @@ public class AttachmentServlet extends HttpServlet {
         final String progressId = req.getParameter( "progressid" );
 
         // Check that we have a file upload request
-        if( !ServletFileUpload.isMultipartContent(req) ) {
+        if( !JakartaServletFileUpload.isMultipartContent(req) ) {
             throw new RedirectException( "Not a file upload", errorPage );
         }
 
         try {
-            final FileItemFactory factory = new DiskFileItemFactory();
+            final FileItemFactory factory = DiskFileItemFactory.builder().get();
 
             // Create the context _before_ Multipart operations, otherwise strict servlet containers may fail when setting encoding.
             final Context context = Wiki.context().create( m_engine, req, ContextEnum.PAGE_ATTACH.getRequestContext() );
@@ -391,8 +400,8 @@ public class AttachmentServlet extends HttpServlet {
 
             m_engine.getManager( ProgressManager.class ).startProgress( pl, progressId );
 
-            final ServletFileUpload upload = new ServletFileUpload( factory );
-            upload.setHeaderEncoding( StandardCharsets.UTF_8.name() );
+            final JakartaServletFileUpload upload = new JakartaServletFileUpload( factory );
+            upload.setHeaderCharset(StandardCharsets.UTF_8);
             if( !context.hasAdminPermissions() ) {
                 upload.setFileSizeMax( m_maxSize );
             }
@@ -409,20 +418,20 @@ public class AttachmentServlet extends HttpServlet {
                     switch( item.getFieldName() ) {
                     case "page":
                         // FIXME: Kludge alert.  We must end up with the parent page name, if this is an upload of a new revision
-                        wikipage = item.getString( StandardCharsets.UTF_8.name() );
+                        wikipage = item.getString( StandardCharsets.UTF_8);
                         final int x = wikipage.indexOf( "/" );
                         if( x != -1 ) {
                             wikipage = wikipage.substring( 0, x );
                         }
                         break;
                     case "changenote":
-                        changeNote = item.getString( StandardCharsets.UTF_8.name() );
+                        changeNote = item.getString( StandardCharsets.UTF_8 );
                         if( changeNote != null ) {
                             changeNote = TextUtil.replaceEntities( changeNote );
                         }
                         break;
                     case "nextpage":
-                        nextPage = validateNextPage( item.getString( StandardCharsets.UTF_8.name() ), errorPage );
+                        nextPage = validateNextPage( item.getString( StandardCharsets.UTF_8 ), errorPage );
                         break;
                     }
                 } else {
@@ -430,7 +439,7 @@ public class AttachmentServlet extends HttpServlet {
                 }
             }
 
-            if( fileItems.size() == 0 ) {
+            if(fileItems.isEmpty()) {
                 throw new RedirectException( "Broken file upload", errorPage );
 
             } else {
@@ -448,18 +457,18 @@ public class AttachmentServlet extends HttpServlet {
             LOG.warn( msg + " (attachment: " + attName + ")", e );
 
             throw new IOException( msg );
-        } catch( final IOException e ) {
-            // Show the submit page again, but with a bit more intimidating output.
-            msg = "Upload failure: " + e.getMessage();
-            LOG.warn( msg + " (attachment: " + attName + ")", e );
-
-            throw e;
         } catch( final FileUploadException e ) {
             // Show the submit page again, but with a bit more intimidating output.
             msg = "Upload failure: " + e.getMessage();
             LOG.warn( msg + " (attachment: " + attName + ")", e );
 
             throw new IOException( msg, e );
+        } catch( final IOException e ) {
+            // Show the submit page again, but with a bit more intimidating output.
+            msg = "Upload failure: " + e.getMessage();
+            LOG.warn( msg + " (attachment: " + attName + ")", e );
+
+            throw e;
         } finally {
             m_engine.getManager( ProgressManager.class ).stopProgress( progressId );
             // FIXME: In case of exceptions should absolutely remove the uploaded file.

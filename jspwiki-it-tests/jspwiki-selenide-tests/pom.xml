@@ -21,9 +21,8 @@
 
   <parent>
     <groupId>org.apache.jspwiki.it</groupId>
-    <artifactId>jspwiki-it-builder</artifactId>
-    <version>2.12.1-SNAPSHOT</version>
-    <relativePath>../pom.xml</relativePath>
+    <artifactId>jspwiki-it-tests</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
   
   <artifactId>jspwiki-selenide-tests</artifactId>

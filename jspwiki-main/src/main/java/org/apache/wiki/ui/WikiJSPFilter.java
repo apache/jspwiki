@@ -30,22 +30,21 @@ import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.url.URLConstructor;
 import org.apache.wiki.util.TextUtil;
 
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.WriteListener;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.WriteListener;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 
 
 /**
@@ -93,13 +92,14 @@ public class WikiJSPFilter extends WikiServletFilter {
             ThreadContext.push( m_engine.getApplicationName() + ":" + ( ( HttpServletRequest )request ).getRequestURI() );
             w.enterState("Filtering for URL "+((HttpServletRequest)request).getRequestURI(), 90 );
             final HttpServletResponseWrapper responseWrapper = new JSPWikiServletResponseWrapper( ( HttpServletResponse )response, m_wiki_encoding, useEncoding );
+            request.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
 
             // fire PAGE_REQUESTED event
-            final String pagename = URLConstructor.parsePageFromURL( ( HttpServletRequest )request, Charset.forName( response.getCharacterEncoding() ) );
-            fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename );
+            final String pagename = URLConstructor.parsePageFromURL( ( HttpServletRequest )request, m_engine.getContentEncoding() );
+            fireEvent( WikiPageEvent.PAGE_REQUESTED, pagename != null ? pagename : m_engine.getFrontPage() );
             super.doFilter( request, responseWrapper, chain );
 
-            // The response is now complete. Lets replace the markers now.
+            // The response is now complete. Let's replace the markers now.
 
             // WikiContext is only available after doFilter! (That is after interpreting the jsp)
 

@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 
@@ -162,22 +163,14 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
 
             if( m_engine.getServletContext() != null ) {
                 LOG.debug( "Attempting to locate " + DEFAULT_XMLFILE + " from servlet context." );
-                if( xmlFile == null ) {
-                    xmlStream = m_engine.getServletContext().getResourceAsStream( DEFAULT_XMLFILE );
-                } else {
-                    xmlStream = m_engine.getServletContext().getResourceAsStream( xmlFile );
-                }
+                xmlStream = m_engine.getServletContext().getResourceAsStream(Objects.requireNonNullElse(xmlFile, DEFAULT_XMLFILE));
             }
 
             if( xmlStream == null ) {
                 // just a fallback element to the old behaviour prior to 2.5.8
                 LOG.debug( "Attempting to locate filters.xml from class path." );
 
-                if( xmlFile == null ) {
-                    xmlStream = getClass().getResourceAsStream( "/filters.xml" );
-                } else {
-                    xmlStream = getClass().getResourceAsStream( xmlFile );
-                }
+                xmlStream = getClass().getResourceAsStream(Objects.requireNonNullElse(xmlFile, "/filters.xml"));
             }
 
             if( (xmlStream == null) && (xmlFile != null) ) {

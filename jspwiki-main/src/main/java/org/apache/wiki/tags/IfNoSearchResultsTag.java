@@ -20,7 +20,7 @@ package org.apache.wiki.tags;
 
 import java.io.IOException;
 import java.util.Collection;
-import javax.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.PageContext;
 
 
 /**
@@ -34,7 +34,7 @@ public class IfNoSearchResultsTag extends WikiTagBase {
     @Override
     public final int doWikiStartTag() throws IOException {
         final Collection< ? > list = (Collection< ? >)pageContext.getAttribute( "searchresults", PageContext.REQUEST_SCOPE );
-        if( list == null || list.size() == 0 ) {
+        if( list == null || list.isEmpty()) {
             return EVAL_BODY_INCLUDE;
         }
 

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
-    <version>2.12.1-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
   </parent>
 
   <artifactId>jspwiki-markdown</artifactId>
@@ -33,6 +33,12 @@
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>jspwiki-main</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
@@ -40,9 +46,15 @@
     
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>jspwiki-main</artifactId>
-      <type>test-jar</type>
+      <artifactId>jspwiki-wysiwyg</artifactId>
       <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-main</artifactId>
+      <version>${project.version}</version>
+      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
 
@@ -122,17 +134,15 @@
     </dependency>
 
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>net.sourceforge.stripes</groupId>
-      <artifactId>stripes</artifactId>
+      <groupId>jakarta.servlet</groupId>
+      <artifactId>jakarta.servlet-api</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <properties>
+    <skip-markdown-pages-generation>false</skip-markdown-pages-generation>
+  </properties>
 
   <build>
     <plugins>
@@ -150,6 +160,20 @@
               <extraConfigFile>${project.basedir}/src/main/javascript/wro.properties</extraConfigFile>
               <jsDestinationFolder>${project.build.outputDirectory}/META-INF/resources/plain/</jsDestinationFolder>
               <wroFile>src/main/javascript/wro.xml</wroFile>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-markdown-pages</id>
+            <goals><goal>test</goal></goals>
+            <configuration>
+              <skipTests>${skip-markdown-pages-generation}</skipTests>
+              <test>WikiSyntaxConverter</test>
             </configuration>
           </execution>
         </executions>

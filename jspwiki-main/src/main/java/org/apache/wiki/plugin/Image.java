@@ -26,9 +26,11 @@ import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.TextUtil;
 
 import java.util.Map;
+
 
 /**
  *  Provides an image plugin for better control than is possible with a simple image inclusion.
@@ -53,12 +55,11 @@ import java.util.Map;
  *  @since 2.1.4.
  */
 // FIXME: It is not yet possible to do wiki internal links.  In order to do this cleanly, a TranslatorReader revamp is needed.
-
 public class Image implements Plugin {
 
     /** The parameter name for setting the src.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_SRC      = "src";
-    /** The parameter name for setting the align.  Value is <tt>{@value}</tt>. */
+    /** The parameter name for setting the align parameter.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_ALIGN    = "align";
     /** The parameter name for setting the height.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_HEIGHT   = "height";
@@ -76,11 +77,10 @@ public class Image implements Plugin {
     public static final String PARAM_STYLE    = "style";
     /** The parameter name for setting the class.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_CLASS    = "class";
-    //    public static final String PARAM_MAP      = "map";
     /** The parameter name for setting the border.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_BORDER   = "border";
     /** The parameter name for setting the title.  Value is <tt>{@value}</tt>. */
-    public static final String PARAM_TITLE   = "title";
+    public static final String PARAM_TITLE    = "title";
 
     /**
      *  This method is used to clean away things like quotation marks which
@@ -106,7 +106,6 @@ public class Image implements Plugin {
         String target        = getCleanParameter( params, PARAM_TARGET );
         final String style   = getCleanParameter( params, PARAM_STYLE );
         final String cssclass= getCleanParameter( params, PARAM_CLASS );
-        // String map        = getCleanParameter( params, PARAM_MAP );
         final String border  = getCleanParameter( params, PARAM_BORDER );
         final String title   = getCleanParameter( params, PARAM_TITLE );
 
@@ -164,7 +163,9 @@ public class Image implements Plugin {
             result.append( " style=\"" ).append( style );
 
             // Make sure that we add a ";" to the end of the style string
-            if( result.charAt( result.length()-1 ) != ';' ) result.append(";");
+            if( result.charAt( result.length()-1 ) != ';' ) {
+                result.append( ";" );
+            }
 
             result.append("\"");
         }
@@ -179,6 +180,11 @@ public class Image implements Plugin {
             result.append(">");
         }
 
+        if( !context.getBooleanWikiProperty( MarkupParser.PROP_ALLOWHTML, false ) ) {
+            if( src.startsWith( "data:" ) || src.startsWith( "javascript:" ) ) {
+                src = "http://invalid_url" + src;
+            }
+        }
         result.append( "<img src=\"" ).append( src ).append( "\"" );
 
         if( ht != null ) {
@@ -205,17 +211,13 @@ public class Image implements Plugin {
         return result.toString();
     }
 
-    private boolean validTargetValue( final String s )
-    {
+    private boolean validTargetValue( final String s ) {
         if( s.equals("_blank")
-                || s.equals("_self")
-                || s.equals("_parent")
-                || s.equals("_top") )
-        {
+            || s.equals("_self")
+            || s.equals("_parent")
+            || s.equals("_top") ) {
             return true;
-        }
-        else if( !s.isEmpty() ) // check [a-zA-z]
-        {
+        } else if( !s.isEmpty() ) { // check [a-zA-z]
             final char c = s.charAt(0);
             return Character.isLowerCase(c) || Character.isUpperCase(c);
         }

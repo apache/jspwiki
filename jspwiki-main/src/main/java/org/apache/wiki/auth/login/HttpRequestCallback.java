@@ -19,14 +19,14 @@
 package org.apache.wiki.auth.login;
 
 import javax.security.auth.callback.Callback;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Callback for requesting and supplying a HttpServletRequest required by a
  * LoginModule. This Callback is used by LoginModules needing access to the
  * servlet request.
- * @see javax.servlet.http.HttpServletRequest#getUserPrincipal() or
- * @see javax.servlet.http.HttpServletRequest#getRemoteUser() methods.
+ * @see jakarta.servlet.http.HttpServletRequest#getUserPrincipal() or
+ * @see jakarta.servlet.http.HttpServletRequest#getRemoteUser() methods.
  * @since 2.3
  */
 public class HttpRequestCallback implements Callback

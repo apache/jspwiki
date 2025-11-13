@@ -686,6 +686,56 @@ public final class TextUtil {
     }
 
     /**
+     *  Escapes XML entities in an HTML-compatible way (i.e. does not escape entities that are already escaped).
+     *
+     *  @param buf String to be escaped.
+     *  @return An escaped string.
+     */
+    public static String escapeHTMLEntities( final String buf ) {
+        final StringBuilder tmpBuf = new StringBuilder( buf.length() + 20 );
+        for( int i = 0; i < buf.length(); i++ ) {
+            final char ch = buf.charAt(i);
+            if( ch == '<' ) {
+                tmpBuf.append("&lt;");
+            } else if( ch == '>' ) {
+                tmpBuf.append("&gt;");
+            } else if( ch == '\"' ) {
+                tmpBuf.append("&quot;");
+            } else if( ch == '&' ) {
+                // If the following is an XML entity reference (&#.*;) we'll leave it as it is; otherwise we'll replace it with an &amp;
+                boolean isEntity = false;
+                final StringBuilder entityBuf = new StringBuilder();
+                if( i < buf.length() -1 ) {
+                    for( int j = i; j < buf.length(); j++ ) {
+                        final char ch2 = buf.charAt( j );
+                        if( Character.isLetterOrDigit( ch2 ) || (ch2 == '#' && j == i+1) || ch2 == ';' || ch2 == '&' ) {
+                            entityBuf.append(ch2);
+                            if( ch2 == ';' ) {
+                                isEntity = true;
+                                break;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+
+                if( isEntity ) {
+                    tmpBuf.append( entityBuf );
+                    i = i + entityBuf.length() - 1;
+                } else {
+                    tmpBuf.append( "&amp;" );
+                }
+
+            } else {
+                tmpBuf.append( ch );
+            }
+        }
+
+        return tmpBuf.toString();
+    }
+
+    /**
      *  Creates a Properties object based on an array which contains alternatively a key and a value.  It is useful
      *  for generating default mappings. For example:
      *  <pre>
@@ -779,7 +829,6 @@ public final class TextUtil {
      *  @since 2.1.98.
      */
     public static String repeatString( final String what, final int times ) {
-
         return IntStream.range(0, times).mapToObj(i -> what).collect(Collectors.joining());
     }
 

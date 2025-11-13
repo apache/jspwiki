@@ -23,11 +23,13 @@ import java.security.Permission;
 import java.security.PrivilegedAction;
 
 import javax.security.auth.Subject;
+import org.apache.commons.lang3.SystemUtils;
 
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 
 public class GroupPermissionTest
 {
@@ -103,6 +105,12 @@ public class GroupPermissionTest
     @Test
     public final void testImpliesMember()
     {
+        String ver = SystemUtils.JAVA_VERSION;
+        if (ver.indexOf(".")>=0) {
+            ver = ver.substring(0, ver.indexOf("."));
+        }
+        System.out.println("Running on JDK " + ver);
+        Assumptions.assumeFalse(Integer.parseInt(ver) >=25, "skipping on 25 due to security manager changes");
         GroupPermission p1;
         Permission p2;
         Subject s;

@@ -41,7 +41,7 @@
     Throwable realcause = null;
 
     msg = exception.getMessage();
-    if( msg == null || msg.length() == 0 )
+    if( msg == null || msg.isEmpty())
     {
         msg = "An unknown exception "+exception.getClass().getName()+" was caught by Error.jsp.";
     }
@@ -52,10 +52,10 @@
     //  imported in JSP pages.
     //
 
-    if( exception instanceof javax.servlet.jsp.JspException )
+    if( exception instanceof jakarta.servlet.jsp.JspException )
     {
         log.debug("IS JSPEXCEPTION");
-        realcause = ((javax.servlet.jsp.JspException)exception).getCause();
+        realcause = ((jakarta.servlet.jsp.JspException)exception).getCause();
         log.debug("REALCAUSE="+realcause);
     }
 

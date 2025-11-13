@@ -42,10 +42,10 @@
 <%@ page import="org.apache.wiki.variables.VariableManager" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
 <%@ page errorPage="/Error.jsp" %>
-<%@ page import="javax.servlet.http.Cookie" %>
+<%@ page import="jakarta.servlet.http.Cookie" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ page import="javax.servlet.jsp.jstl.fmt.*" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ page import="jakarta.servlet.jsp.jstl.fmt.*" %>
 <%!
     Logger log = LogManager.getLogger("JSPWiki");
 
@@ -120,7 +120,7 @@
     if( author == null ) {
         author = storedUser;
     }
-    if( author == null || author.length() == 0 ) {
+    if( author == null || author.isEmpty()) {
         author = StringUtils.capitalize( rb.getString( "varmgr.anonymous" ) );
     }
 
@@ -206,9 +206,9 @@
         pageText.append( commentText );
 
         log.debug("Author name ="+author);
-        if( author != null && author.length() > 0 ) {
+        if( author != null && !author.isEmpty()) {
             String signature = author;
-            if( link != null && link.length() > 0 ) {
+            if( link != null && !link.isEmpty()) {
                 link = HttpUtil.guessValidURI( link );
                 signature = "["+author+"|"+link+"]";
             }

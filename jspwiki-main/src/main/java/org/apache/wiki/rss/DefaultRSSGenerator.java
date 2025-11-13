@@ -40,6 +40,7 @@ import org.apache.wiki.variables.VariableManager;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
@@ -88,6 +89,11 @@ public class DefaultRSSGenerator implements RSSGenerator {
             rssFile = new File( m_rssFile );
         } else { // relative path names are anchored from the webapp root path
             rssFile = new File( engine.getRootPath(), m_rssFile );
+        }
+        if (!rssFile.getParentFile().exists()) {
+            if (!rssFile.getParentFile().mkdirs()) {
+                LOG.warn("Failed to mkdirs at " + rssFile.getParentFile().getAbsolutePath() + " rss feeds will probably fail");
+            }
         }
         final int rssInterval = TextUtil.getIntegerProperty( properties, DefaultRSSGenerator.PROP_INTERVAL, 3600 );
         final RSSThread rssThread = new RSSThread( engine, rssFile, rssInterval );
@@ -309,11 +315,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
         LOG.debug( "Generating RSS for blog, size={}", changed.size() );
 
         final String ctitle = m_engine.getManager( VariableManager.class ).getVariable( wikiContext, PROP_CHANNEL_TITLE );
-        if( ctitle != null ) {
-            feed.setChannelTitle( ctitle );
-        } else {
-            feed.setChannelTitle( m_engine.getApplicationName() + ":" + wikiContext.getPage().getName() );
-        }
+        feed.setChannelTitle(Objects.requireNonNullElseGet(ctitle, () -> m_engine.getApplicationName() + ":" + wikiContext.getPage().getName()));
 
         feed.setFeedURL( wikiContext.getViewURL( wikiContext.getPage().getName() ) );
 

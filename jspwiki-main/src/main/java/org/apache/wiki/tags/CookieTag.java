@@ -27,11 +27,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.jsp.PageContext;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.jsp.PageContext;
+import jakarta.servlet.jsp.tagext.TagSupport;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -355,7 +355,7 @@ public class CookieTag
     private String encodeValues(final Map<String, String> values )
     {
         final StringBuilder rval = new StringBuilder();
-        if( values == null || values.size() == 0 ) {
+        if( values == null || values.isEmpty()) {
             return rval.toString();
         }
 
@@ -379,16 +379,7 @@ public class CookieTag
      */
     private String encode(final String nvp )
     {
-        String coded = "";
-        try
-        {
-            coded = URLEncoder.encode( nvp, StandardCharsets.UTF_8.name() );
-        }
-        catch( final UnsupportedEncodingException e )
-        {
-            /* never happens */
-            LOG.info( "Failed to encode UTF-8", e );
-        }
+        final String coded = URLEncoder.encode( nvp, StandardCharsets.UTF_8 );
         return coded.replaceAll( "\\+", "%20" );
     }
 
@@ -399,16 +390,8 @@ public class CookieTag
     private String decode(final String envp )
     {
         final String rval;
-        try
-        {
-            rval = URLDecoder.decode( envp , StandardCharsets.UTF_8.name() );
-            return rval;
-        }
-        catch( final UnsupportedEncodingException e )
-        {
-            LOG.error( "Failed to decode cookie", e );
-            return envp;
-        }
+        rval = URLDecoder.decode( envp , StandardCharsets.UTF_8);
+        return rval;
     }
 
     /**
