@@ -208,6 +208,21 @@
         <url-pattern>/admin/ajax/*</url-pattern>
     </servlet-mapping>
 
+    <!--
+        And finally, let us tell the servlet container which
+        URLs should correspond to which XML RPC servlet.
+        By default, this is disabled.  If you want to enable it,
+        just uncomment the whole section.
+    -->
+ 
+    <!--  REMOVE ME TO ENABLE XML-RPC
+   
+    <servlet-mapping>
+        <servlet-name>ATOM</servlet-name>
+        <url-pattern>/atom/*</url-pattern>
+    </servlet-mapping>
+    AND REMOVE ME TOO -->
+
    <!-- This means that we don't have to use redirection
         from index.html anymore.  Yay! -->
    <welcome-file-list>

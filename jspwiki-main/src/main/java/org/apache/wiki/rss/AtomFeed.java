@@ -95,6 +95,7 @@ public class AtomFeed extends Feed {
 
             //  Optional elements
             entryEl.addContent( getElement( "author" ).addContent( getElement( "name" ).setText( e.getAuthor() ) ) );
+            //FIXME this needs to be an absolute url, not a relative one
             entryEl.addContent( getElement( "link" ).setAttribute( "rel", "alternate" ).setAttribute( "href", e.getURL() ) );
             entryEl.addContent( getElement( "content" ).setAttribute( "type", "html" ).setText( e.getContent() ) );
 

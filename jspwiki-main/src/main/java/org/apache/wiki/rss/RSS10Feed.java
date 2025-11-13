@@ -74,6 +74,7 @@ public class RSS10Feed extends Feed {
             final Element item = new Element( "item", NS_XMNLS );
             item.setAttribute( "about", url, NS_RDF );
             item.addContent( new Element( "title", NS_XMNLS ).addContent( entry.getTitle() ) );
+            //FIXME this needs to be an absolute url, not a relative one
             item.addContent( new Element( "link", NS_XMNLS ).addContent( url ) );
 
             final Element content = new Element( "description", NS_XMNLS );
