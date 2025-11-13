@@ -69,11 +69,11 @@
     <Connector port="9627" 
 		protocol="HTTP/1.1" 
 		connectionTimeout="20000" 
-		address="0.0.0.0"
 		redirectPort="9643" 
+		address="0.0.0.0"
 		xpoweredBy="false"
 		allowTrace="false"
-	/>
+	 />
     <!-- A "Connector" using the shared thread pool-->
     <!--
     <Connector executor="tomcatThreadPool"
@@ -171,9 +171,8 @@
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
                prefix="localhost_access_log" suffix=".txt"
                pattern="%h %l %u %t &quot;%r&quot; %s %b" />
-	   <Valve className="org.apache.catalina.valves.ErrorReportValve" 
+		<Valve className="org.apache.catalina.valves.ErrorReportValve" 
 			showServerInfo="false" showReport="false"/>
-
       </Host>
     </Engine>
   </Service>
