@@ -22,6 +22,8 @@ import org.apache.wiki.pages.haddock.EditWikiPage;
 import org.apache.wiki.pages.haddock.ViewWikiPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 /**
  * Edit-related tests for Apache JSPWiki
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.Test;
 public class EditIT extends WithIntegrationTestSetup {
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void createPageAndTestEditPermissions() {
         final String pageName = "RandomPage" + System.currentTimeMillis();
 

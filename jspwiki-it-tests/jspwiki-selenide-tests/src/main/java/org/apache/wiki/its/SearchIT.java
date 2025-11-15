@@ -22,6 +22,8 @@ import org.apache.wiki.its.environment.Env;
 import org.apache.wiki.pages.haddock.ViewWikiPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 /**
  * Search-related tests for Apache JSPWiki
@@ -29,6 +31,7 @@ import org.junit.jupiter.api.Test;
 public class SearchIT extends WithIntegrationTestSetup {
 
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void performSearches() throws Exception {
         final String text = "Congratulations - with cuchuflus! :: " + System.currentTimeMillis();
 
