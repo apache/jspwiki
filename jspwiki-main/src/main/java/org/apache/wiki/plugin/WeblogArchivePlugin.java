@@ -32,7 +32,9 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -53,6 +55,12 @@ public class WeblogArchivePlugin implements Plugin {
 
     private SimpleDateFormat m_monthUrlFormat;
 
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    } 
+    
     /**
      *  {@inheritDoc}
      */

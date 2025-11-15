@@ -72,7 +72,7 @@
     </copy>
 	<!-- copy our test hello world plugin for verifying plugin discoverability -->
 	<copy todir="${jspwiki.woas.assembly.dir}/jspwiki/lib" overwrite="true">
-	  <fileset dir="${basedir}/../jspwiki-test-plugin/target/">
+	  <fileset dir="${basedir}/../jspwiki-it-tests/jspwiki-test-plugin/target/">
 		<include name="*.jar"/>
 	  </fileset>
     </copy>

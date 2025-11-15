@@ -258,7 +258,7 @@
       <scope>provided</scope>
     </dependency>
     <dependency><!-- added so we can issue safe, parallel builds -->
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.jspwiki.it</groupId>
       <artifactId>jspwiki-test-plugin</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>

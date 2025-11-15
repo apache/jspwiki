@@ -27,44 +27,57 @@ import org.apache.wiki.util.TextUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- *  Just displays the current date and time.
- *  The time format is exactly like in the java.text.SimpleDateFormat class.
+ * Just displays the current date and time. The time format is exactly like in
+ * the java.text.SimpleDateFormat class.
  *
- *  <p>Parameters : </p>
- *  NONE
- *  @since 1.7.8
- *  @see java.text.SimpleDateFormat
+ * <p>
+ * Parameters : </p>
+ * NONE
+ *
+ * @since 1.7.8
+ * @see java.text.SimpleDateFormat
  */
 public class CurrentTimePlugin implements Plugin {
 
-    // private static Logger log = LogManager.getLogger( CurrentTimePlugin.class );
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+
+    }
+
+    @Override
+    public String getSnipExample() {
+        return "CurrentTimePlugin format='yyyy mm-dd'";
+    }
 
     /**
-     *  {@inheritDoc}
+     * {@inheritDoc}
      */
     @Override
-    public String execute( final Context context, final Map< String, String > params ) throws PluginException {
-        final String formatString = params.get( "format" );
+    public String execute(final Context context, final Map< String, String> params) throws PluginException {
+        final String formatString = params.get("format");
 
         try {
             final SimpleDateFormat fmt;
-            if( formatString != null ) {
-                fmt = new SimpleDateFormat( formatString );
+            if (formatString != null) {
+                fmt = new SimpleDateFormat(formatString);
             } else {
-                fmt = Preferences.getDateFormat( context, TimeFormat.DATETIME );
+                fmt = Preferences.getDateFormat(context, TimeFormat.DATETIME);
             }
 
             final Date d = new Date();  // Now.
 
-            return TextUtil.replaceEntities( fmt.format( d ) );
+            return TextUtil.replaceEntities(fmt.format(d));
 
-        } catch( final IllegalArgumentException e ) {
-            final ResourceBundle rb = Preferences.getBundle( context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
-            throw new PluginException( rb.getString( "currenttimeplugin.badformat" ) + e.getMessage() );
+        } catch (final IllegalArgumentException e) {
+            final ResourceBundle rb = Preferences.getBundle(context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE);
+            throw new PluginException(rb.getString("currenttimeplugin.badformat") + e.getMessage());
         }
     }
 

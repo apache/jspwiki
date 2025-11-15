@@ -37,7 +37,9 @@ import org.jdom2.Element;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  *  The "Search" plugin allows you to access the JSPWiki search routines and show the displays in an array on your page.
@@ -67,6 +69,18 @@ public class Search implements Plugin {
     /** The parameter name for setting the how many results will be fetched. Value is <tt>{@value}</tt>. */
     public static final String PARAM_MAX   = "max";
 
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
+    
+    @Override
+    public String getSnipExample() {
+        return "Search query='{Janne}' max='10'";
+    }
+    
+    
     /**
      * {@inheritDoc}
      */

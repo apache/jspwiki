@@ -51,11 +51,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import org.apache.wiki.api.plugin.Plugin;
+import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.plugin.PluginManager;
+import org.apache.wiki.preferences.Preferences;
 import static org.apache.wiki.search.SearchManager.PLUGIN_SEARCH;
 
 
@@ -133,6 +136,8 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                     PluginManager mgr = m_engine.getManager(PluginManager.class);
                     final List< Plugin > plugins = mgr.getDiscoveredPlugins();
                     List< SimpleSnipData > callResults = new ArrayList<>();
+                    final Context wikiContext = Wiki.context().create(m_engine, req, "pluginDisco");
+                    Locale locale =  Preferences.getLocale(wikiContext);
                     for (Plugin p : plugins) {
                         if ( itemId != null && StringUtils.isNotBlank(itemId) ) {
                             if ( !p.getSnipExample().startsWith(itemId) ) {
@@ -141,7 +146,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                         } else {
                             SimpleSnipData data = new SimpleSnipData();
                             data.snip = p.getSnipExample();
-                            data.displayName = p.getDisplayName();
+                            data.displayName = p.getDisplayName(locale);
                             callResults.add(data);
                         }
                         if ( callResults.size() > maxResults )

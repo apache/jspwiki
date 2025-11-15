@@ -35,6 +35,7 @@ import org.apache.wiki.util.TextUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -79,6 +80,17 @@ public class InsertPage implements Plugin {
     /** This attribute is stashed in the WikiContext to make sure that we don't have circular references. */
     public static final String ATTR_RECURSE    = "org.apache.wiki.plugin.InsertPage.recurseCheck";
 
+    
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
+
+    @Override
+    public String getSnipExample() {
+        return "InsertPage page='{pagename}'";
+    }
     /**
      *  {@inheritDoc}
      */

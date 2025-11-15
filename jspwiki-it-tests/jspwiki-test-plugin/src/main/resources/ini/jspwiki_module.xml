@@ -2,7 +2,7 @@
 <modules>
    <plugin class="org.apache.jspwiki.jspwiki.test.plugin.JspwikiTestPlugin">
       <author>Apache</author>
-      <minVersion>2.10.1</minVersion>
+      <minVersion>3.0.0</minVersion>
       <alias>JspwikiTestPlugin</alias>
    </plugin>
 </modules>

@@ -32,6 +32,7 @@ import org.apache.wiki.util.TextUtil;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -64,6 +65,17 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
     /** Parameter name for choosing the page.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_PAGE     = "page";
 
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
+    
+    @Override
+    public String getSnipExample() {
+        return "ReferringPagesPlugin page='{pagename}' separator=',' include='regexp' exclude='regexp'";
+    }
+    
     /**
      *  {@inheritDoc}
      */

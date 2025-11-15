@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.api.plugin;
 
+import java.util.Locale;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 
@@ -66,14 +67,14 @@ public interface Plugin {
     /**
      * Provides the ability for a plugin to provide it's display name that 
      * is visible via the [{}] autocomplete/suggestion mechanism within the 
-     * editor. 
+     * editor.Example: Calls My Custom plugin 
      * 
-     * Example: Calls My Custom plugin
-     * 
+     *
+     * @param locale 
      * @since 3.0.0
      * @return String
      */
-    default String getDisplayName() {
+    default String getDisplayName(Locale locale) {
         return this.getClass().getSimpleName();
     }
     

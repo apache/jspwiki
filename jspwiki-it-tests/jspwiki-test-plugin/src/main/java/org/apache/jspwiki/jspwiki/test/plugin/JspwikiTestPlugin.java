@@ -23,7 +23,6 @@ import org.apache.wiki.api.plugin.Plugin;
 /**
  * a simple hello world test plugin
  *
- * @author AO
  */
 public class JspwikiTestPlugin implements Plugin {
 

@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.plugin;
 
+import java.util.Locale;
 import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
@@ -30,6 +31,7 @@ import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.TextUtil;
 
 import java.util.Map;
+import java.util.ResourceBundle;
 
 
 /**
@@ -89,6 +91,19 @@ public class Image implements Plugin {
     private static String getCleanParameter( final Map< String, String > params, final String paramId ) {
         return TextUtil.replaceEntities( params.get( paramId ) );
     }
+    
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
+    
+    @Override
+    public String  getSnipExample() {
+        return  "Image src='{image.jpg}'";
+    }
+    
+   
 
     /**
      *  {@inheritDoc}
