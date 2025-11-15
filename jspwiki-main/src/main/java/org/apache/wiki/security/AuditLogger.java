@@ -16,11 +16,17 @@
 package org.apache.wiki.security;
 
 import com.google.gson.Gson;
+import jakarta.mail.MessagingException;
 import java.io.File;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.event.WikiEvent;
@@ -42,28 +48,16 @@ public final class AuditLogger implements WikiEventListener {
 
     private static AuditLogger INSTANCE;
 
-    //To be added
-    public static final int USER_ACCOUNT_CREATED = 100;
-    public static final int USER_ACCOUNT_LOCKED = 101;
-    public static final int USER_ACCOUNT_UNLOCKED = 102;
-    public static final int USER_ACCOUNT_PWD_CHANGED = 103;
-    //public static final int USER_ACCOUNT_EXPIRED = 104;
-    public static final int USER_ACCOUNT_ADMIN_DISABLE = 105;
-    public static final int USER_ACCOUNT_ADMIN_ENABLE = 106;
-    public static final int USER_ACCOUNT_DELETE = 107;
-    public static final int USER_ACCOUNT_PWD_RESET = 108;
-    public static final int USER_ACCOUNT_UPDATED = 109;
-
-    public static final int ADMIN_CONFIG_CHANGE = 110;
-    public static final int SYSTEM_BOOT_HASH_CHECK_FAILURE = 201;
-    public static final int LOW_DISK_SPACE = 203;
-
     public static void initialize(WikiEngine engine) {
-        INSTANCE = new AuditLogger();
-        INSTANCE.engine = engine;
-        String minuteCheck = engine.getWikiProperties().getProperty("audit.alert.lowDiskSpaceFrequency", "30");
 
-        INSTANCE.timer.scheduleAtFixedRate(new DiskSpaceCheck(), 0, Integer.parseInt(minuteCheck) * 60 * 1000L);
+        if ("true".equals(engine.getWikiProperties().get("audit.enabled"))) {
+            INSTANCE = new AuditLogger(true);
+            INSTANCE.engine = engine;
+            String minuteCheck = engine.getWikiProperties().getProperty("audit.alert.lowDiskSpaceFrequency", "30");
+            INSTANCE.timer.scheduleAtFixedRate(new DiskSpaceCheck(), 0, Integer.parseInt(minuteCheck) * 60 * 1000L);
+        } else {
+            INSTANCE = new AuditLogger(false);
+        }
     }
 
     public static AuditLogger getInstance() {
@@ -72,16 +66,37 @@ public final class AuditLogger implements WikiEventListener {
     private Timer timer;
     private WikiEngine engine;
     private final Gson gson = new Gson();
+    private ThreadPoolExecutor threadPool = null;
 
-    private AuditLogger() {
+    private AuditLogger(boolean enabled) {
         //listen to all events
-        WikiEventManager.addWikiEventListener(WikiEventManager.class, this);
-        timer = new Timer("AuditLogTasks", true);
-
+        if (enabled) {
+            WikiEventManager.addWikiEventListener(WikiEventManager.class, this);
+            timer = new Timer("AuditLogTasks", true);
+            threadPool = new ThreadPoolExecutor(1, Runtime.getRuntime().availableProcessors(),
+                    30, TimeUnit.SECONDS, new LinkedBlockingDeque<>(100), new ThreadFactory() {
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread t = new Thread(r);
+                    t.setName("Audit Log Email alert worker");
+                    t.setDaemon(true);
+                    return t;
+                }
+            }
+            );
+        } else {
+            LOG.info("Audit logging is disabled, as well as low disk space monitoring");
+        }
     }
 
     public void shutdown() {
-
+        engine = null;
+        if (timer != null) {
+            timer.cancel();
+        }
+        if (threadPool != null) {
+            threadPool.shutdown();
+        }
     }
 
     @Override
@@ -139,14 +154,23 @@ public final class AuditLogger implements WikiEventListener {
                         event.toString(),
                         gson.toJson(event.getAttributes()));
                 for (String to : addrs) {
+                    threadPool.submit(() -> {
+                        try {
+                            MailUtil.sendMessage(engine.getWikiProperties(),
+                                    to, subject, content);
+                        } catch (Exception ex) {
+                            LOG.warn("Audit alert email to " + to + " failed with " + ex.getMessage());
+                            if (LOG.isDebugEnabled()) {
+                                LOG.debug("Audit alert email to " + to + " failed with " + ex.getMessage(), ex);
+                            }
+                        }
+                    });
 
-                    MailUtil.sendMessage(engine.getWikiProperties(),
-                            to, subject, content);
                 }
             }
 
         } catch (Exception ex) {
-            LOG.error(ex.getMessage());
+            LOG.error("Failed to log audit event " + ex.getMessage(), ex);
         }
     }
 

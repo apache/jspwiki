@@ -45,8 +45,14 @@ public abstract class WikiEvent extends EventObject {
     /** objects associated to src which only make sense in the context of a given WikiEvent */
     private Object[] args;
     
+    /** additional attributes, primarily used for the audit logger */
     private Map<Object,Object> attributes = new HashMap<>();
 
+    /**
+     * gets a live reference to a hash map, primarily used for the audit logger
+     * @since 3.0.0
+     * @return 
+     */
     public Map<Object, Object> getAttributes() {
         return attributes;
     }
