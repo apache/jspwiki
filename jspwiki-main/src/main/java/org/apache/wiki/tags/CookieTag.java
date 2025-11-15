@@ -19,7 +19,6 @@
 package org.apache.wiki.tags;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -35,6 +34,7 @@ import jakarta.servlet.jsp.tagext.TagSupport;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.wiki.WikiEngine;
 
 
 /**
@@ -283,11 +283,25 @@ public class CookieTag
         final HttpServletResponse res = (HttpServletResponse)pageContext.getResponse();
         if( changed )
         {
+            if ("true".equalsIgnoreCase(
+                    WikiEngine.getInstance(pageContext.getServletConfig()).
+                            getWikiProperties().
+                            getProperty("jspwiki.securecookie", "false"))) {
+                cookie.setHttpOnly(true);
+                cookie.setSecure(true);
+            }
             res.addCookie( cookie );
         }
         if( cleared != null )
         {
-            res.addCookie( cleared );
+             if ("true".equalsIgnoreCase(
+                    WikiEngine.getInstance(pageContext.getServletConfig()).
+                            getWikiProperties().
+                            getProperty("jspwiki.securecookie", "false"))) {
+                cookie.setHttpOnly(true);
+                cookie.setSecure(true);
+            }
+            res.addCookie(cleared);
         }
 
         return EVAL_PAGE;
