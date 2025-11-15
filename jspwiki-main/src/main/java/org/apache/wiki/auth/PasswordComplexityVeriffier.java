@@ -15,9 +15,13 @@
  */
 package org.apache.wiki.auth;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.i18n.InternationalizationManager;
 
 /**
  * a simple password complexity checker
@@ -29,14 +33,28 @@ public final class PasswordComplexityVeriffier {
     private PasswordComplexityVeriffier() {
     }
 
-    public static List<String> validate(String pwd, Properties wikiProps) {
-        int minLength = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.length.min", "15"));
-        int maxLength = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.length.max", "128"));
-        int minUpper = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.minUpper", "2"));
-        int minLower = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.minLower", "2"));
-        int minDigits = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.minDigits", "2"));
-        int minSymbols = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.minSymbols", "2"));
-        boolean allowReapingChars = "true".equalsIgnoreCase(wikiProps.getProperty("jspwiki.credentials.allowRepeatingCharacters", "false"));
+    /**
+     * validates a password, returns a list of size 0 is all the checks
+     * pass.list of size > 0 = password is invalid with each item in the list
+     * containing the rule that failed.suitable to direct display to the user.
+     * i.e. the password was too short, or has too many repeating characters,
+     * etc.
+     *
+     * @param pwd
+     * @param context
+     * @return see above
+     */
+    public static List<String> validate(String pwd, Context context) {
+        Properties wikiProps = context.getEngine().getWikiProperties();
+        final ResourceBundle rb = ResourceBundle.getBundle(InternationalizationManager.CORE_BUNDLE, context.getWikiSession().getLocale());
+
+        int minLength = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.length.min", "8"));
+        int maxLength = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.length.max", "64"));
+        int minUpper = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.minUpper", "1"));
+        int minLower = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.minLower", "1"));
+        int minDigits = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.minDigits", "1"));
+        int minSymbols = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.minSymbols", "1"));
+        int maxRepeats = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.repeatingCharacters", "1"));
         //potential future enhancement, detect common patterns like keyboard walks, asdf, etc
         //boolean allowCommonPatterns = "true".equalsIgnoreCase(wikiProps.getProperty("jspwiki.credentials.allowCommonPatterns", "false"));
         //potential future enhancements, detect common numerical patterns, such as 1234 oe 4321
@@ -45,17 +63,20 @@ public final class PasswordComplexityVeriffier {
 
         List<String> problems = new ArrayList<>();
         if (pwd.length() > maxLength) {
-            problems.add("too long (" + maxLength + ")");
+             problems.add(MessageFormat.format(rb.getString( "pwdcheck.toolong") , maxLength) );
         }
-        if (pwd.length() > minLength) {
-            problems.add("too short (" + minLength + ")");
+        if (pwd.length() < minLength) {
+            problems.add(MessageFormat.format(rb.getString( "pwdcheck.tooshort") , minLength) );
         }
         char[] cred = pwd.toCharArray();
         int upper = 0;
         int lower = 0;
         int digits = 0;
         int other = 0;
-        boolean hasRepeats = false;
+        //the higest number of repeats
+        int repeats = 0;
+        int localrepeats = 0;
+        boolean repeatCheck = false;
         for (int i = 0; i < cred.length; i++) {
             if (Character.isDigit(cred[i])) {
                 digits++;
@@ -67,25 +88,47 @@ public final class PasswordComplexityVeriffier {
                 other++;
             }
             if (i > 0) {
-                if (!allowReapingChars && cred[i] == cred[i - 1]) {
-                    hasRepeats = true;
+                if (cred[i] == cred[i - 1]) {
+                    //ok we have a repeat
+                    if (repeatCheck) {
+                        //existing sequence
+                        localrepeats++;
+                    } else {
+                        //this is a new sequence
+                        repeatCheck = true;
+                        localrepeats = 1;
+                    }
+
+                } else {
+                    repeatCheck = false;
+                    if (localrepeats > repeats) {
+                        repeats = localrepeats;
+                    }
+                    localrepeats = 0;
                 }
             }
         }
-        if (hasRepeats) {
-            problems.add("repeating characters are not allowed");
+
+        if (repeatCheck) {
+            if (localrepeats > repeats) {
+                repeats = localrepeats;
+            }
+        }
+
+        if (repeats > maxRepeats) {
+            problems.add(MessageFormat.format(rb.getString( "pwdcheck.repeats") , maxRepeats) );
         }
         if (upper < minUpper) {
-            problems.add("not enough upper case (" + minUpper + ")");
+            problems.add(MessageFormat.format(rb.getString( "pwdcheck.minUpper") , minUpper) );
         }
         if (lower < minLower) {
-            problems.add("not enough lower case (" + minLower + ")");
+            problems.add(MessageFormat.format(rb.getString( "pwdcheck.minLower") , minUpper) );
         }
         if (digits < minDigits) {
-            problems.add("not enough digits (" + minDigits + ")");
+            problems.add(MessageFormat.format(rb.getString( "pwdcheck.minDigits") , minUpper) );
         }
         if (other < minSymbols) {
-            problems.add("not enough symbols (" + minSymbols + ")");
+            problems.add(MessageFormat.format(rb.getString( "pwdcheck.minOther") , other) );
         }
         return problems;
 
