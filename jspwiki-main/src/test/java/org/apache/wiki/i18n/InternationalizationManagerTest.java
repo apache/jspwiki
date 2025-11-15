@@ -32,6 +32,13 @@ import java.util.Locale;
 import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * Checks to ensure all i18n keys have values is all languages
+ * 
+ * see also  https://jspwiki-wiki.apache.org/Wiki.jsp?page=HowToI18n
+ * and  https://jspwiki.apache.org/development/i18n.html
+ * @see TranslationsCheck
+ */
 public class InternationalizationManagerTest {
 
     InternationalizationManager i18n = new DefaultInternationalizationManager(null);
@@ -99,6 +106,72 @@ public class InternationalizationManagerTest {
         }
         Assertions.assertTrue(missingMessages.isEmpty(), StringUtils.join(missingMessages, "\n"));
     }
+    
+    @Test
+    public void scanForMissingI18NStrings2() throws IOException {
+        Properties props = loadProperties(new File("src/main/resources/templates/default.properties"));
+        File[] propFiles = new File("src/main/resources/templates").listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                if (pathname.isDirectory()) {
+                    return false;
+                }
+                if (!pathname.getName().endsWith(".properties")) {
+                    return false;
+                }
+                if (pathname.getName().equals("default.properties")) {
+                    return false;
+                }
+                return true;
+
+            }
+        });
+        List<String> missingMessages = new ArrayList<>();
+
+        for (File propFile : propFiles) {
+            Properties target = loadProperties(propFile);
+            for (Object key : props.keySet()) {
+                if (!target.containsKey(key)) {
+                    missingMessages.add(propFile.getName() + " is missing key '" + key + "'");
+                }
+            }
+        }
+        Assertions.assertTrue(missingMessages.isEmpty(), StringUtils.join(missingMessages, "\n"));
+    }
+    
+    
+    @Test
+    public void scanForMissingI18NStrings3() throws IOException {
+        Properties props = loadProperties(new File("src/main/resources/plugin/PluginResources.properties"));
+        File[] propFiles = new File("src/main/resources/plugin").listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                if (pathname.isDirectory()) {
+                    return false;
+                }
+                if (!pathname.getName().endsWith(".properties")) {
+                    return false;
+                }
+                if (pathname.getName().equals("PluginResources.properties")) {
+                    return false;
+                }
+                return true;
+
+            }
+        });
+        List<String> missingMessages = new ArrayList<>();
+
+        for (File propFile : propFiles) {
+            Properties target = loadProperties(propFile);
+            for (Object key : props.keySet()) {
+                if (!target.containsKey(key)) {
+                    missingMessages.add(propFile.getName() + " is missing key '" + key + "'");
+                }
+            }
+        }
+        Assertions.assertTrue(missingMessages.isEmpty(), StringUtils.join(missingMessages, "\n"));
+    }
+    
 
     private Properties loadProperties(File propFile) throws IOException {
         Properties p = new Properties();
@@ -113,5 +186,5 @@ public class InternationalizationManagerTest {
         }
         return p;
     }
-
+    
 }
