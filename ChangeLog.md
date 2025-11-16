@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2025-11-16 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-08_
+
+* [JSPWIKI-75](https://issues.apache.org/jira/browse/JSPWIKI-75) - Undisclosed security issue
+
+
 **2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-07_
