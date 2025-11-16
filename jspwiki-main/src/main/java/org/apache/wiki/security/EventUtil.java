@@ -61,7 +61,9 @@ public final class EventUtil {
         }
         event.getAttributes().put("getLoginPrincipal", request.getLoginPrincipal().getName());
         event.getAttributes().put("getStatus", request.getStatus());
-        event.getAttributes().put("getSubject", request.getSubject());
+        if (request.getSubject() != null) {
+            event.getAttributes().put("getSubject", request.getSubject().toString());
+        }
 
         return event;
     }
