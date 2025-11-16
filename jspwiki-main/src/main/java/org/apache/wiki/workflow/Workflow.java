@@ -64,6 +64,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * When a Workflow's <code>start</code> method is invoked, the Workflow retrieves the first Step and processes it. This Step, and subsequent
  * ones, are processed as follows:
  * </p>
+ * <p>
  * <ul>
  * <li>The Step's {@link Step#start()} method executes, which sets the start time.</li>
  * <li>The Step's {@link Step#execute(Context)} method is called to begin processing, which will return an Outcome to indicate completion,
