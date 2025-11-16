@@ -30,7 +30,9 @@ import org.apache.wiki.util.comparators.PrincipalComparator;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  *  <p>Prints the groups managed by this wiki, separated by commas.
@@ -44,6 +46,13 @@ import java.util.Map;
 public class Groups implements Plugin {
 
     private static final Comparator<Principal> COMPARATOR = new PrincipalComparator();
+    
+    @Override
+    public String getDisplayName(Locale locale) {
+       
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
     
     /**
      *  {@inheritDoc}

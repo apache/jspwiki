@@ -35,7 +35,9 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -62,6 +64,12 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
     private static final Logger LOG = LogManager.getLogger(IndexPlugin.class);
 
     private final Namespace xmlns_XHTML = Namespace.getNamespace("http://www.w3.org/1999/xhtml");
+   
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
     
     /**
      * {@inheritDoc}

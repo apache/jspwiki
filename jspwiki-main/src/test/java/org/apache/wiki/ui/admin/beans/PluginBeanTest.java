@@ -28,29 +28,49 @@ import org.junit.jupiter.api.Test;
 import javax.management.NotCompliantMBeanException;
 import java.util.Properties;
 
-
 public class PluginBeanTest {
-    
+
     Properties props = TestEngine.getTestProperties();
 
     TestEngine testEngine;
-    
+
     @Test
     public void testDoGet() throws WikiException, NotCompliantMBeanException {
-        testEngine = new TestEngine( props );
-        final Context context = Wiki.context().create( testEngine, Wiki.contents().page( testEngine, "TestPage01" ) );
-        final PluginBean pb = new PluginBean( testEngine );
-        final String expectedHtml = "<div>" +
-                                      "<h4>Plugins</h4>" +
-                                      "<table border=\"1\">" +
-                                        "<tr><th>Name</th><th>Alias</th><th>Author</th><th>Notes</th></tr>" +
-                                        "<tr><td>IfPlugin</td><td>If</td><td>Janne Jalkanen</td><td></td></tr>" +
-                                        "<tr><td>Note</td><td></td><td>Janne Jalkanen</td><td></td></tr>" +
-                                        "<tr><td>SamplePlugin</td><td>samplealias</td><td>Janne Jalkanen</td><td></td></tr>" +
-                                        "<tr><td>SamplePlugin2</td><td>samplealias2</td><td>Janne Jalkanen</td><td></td></tr>" +
-                                      "</table>" +
-                                    "</div>";
-        Assertions.assertEquals( expectedHtml, pb.doGet( context ) );
+        testEngine = new TestEngine(props);
+        final Context context = Wiki.context().create(testEngine, Wiki.contents().page(testEngine, "TestPage01"));
+        final PluginBean pb = new PluginBean(testEngine);
+        final String expectedHtml = 
+                "<div>"
+                + "<h4>Plugins</h4>"
+                + "<table border=\"1\">"
+                    + "<tr><th>Name</th><th>Alias</th><th>Author</th><th>Notes</th></tr>"
+                    + "<tr><td>Counter</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>CurrentTimePlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>Denounce</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>Groups</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>IfPlugin</td><td>If</td><td>Janne Jalkanen</td><td></td></tr>"
+                    + "<tr><td>Image</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>IndexPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>InsertPage</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>ListLocksPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>Note</td><td></td><td>Janne Jalkanen</td><td></td></tr>"
+                    + "<tr><td>PageViewPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>RecentChangesPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>ReferredPagesPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>ReferringPagesPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>ReferringUndefinedPagesPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>SamplePlugin</td><td>samplealias</td><td>Janne Jalkanen</td><td></td></tr>"
+                    + "<tr><td>SamplePlugin2</td><td>samplealias2</td><td>Janne Jalkanen</td><td></td></tr>"
+                    + "<tr><td>Search</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>TableOfContents</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>UndefinedPagesPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>UnusedPagesPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>WeblogArchivePlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>WeblogEntryPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                    + "<tr><td>WeblogPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                + "</table>"
+                + "</div>";
+        Assertions.assertEquals(expectedHtml, pb.doGet(context));
     }
 
 }

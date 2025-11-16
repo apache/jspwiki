@@ -44,7 +44,7 @@ Function: snippets
 */
 
 Wiki.Snips = {
-
+    ready: false,
     // Snipe predefined commands
     find: { },
     undo: { event: "undo" },
@@ -519,41 +519,43 @@ Wiki.Snips = {
             //lback: "(^|[^\\[])\\[{([^\\[\\]\\n\\r]*)(?:\\|\\])?$",
             match: "^([^\\[\\]\\n\\r]*)\\}\\]"
         },
-        pluginDlg: [ Dialog.Selection, {
-        caption: "dialog.plugin".localize(),
-        body: {
-        "ALLOW {permission} principal ": "Page Access Rights <span class='icon-unlock-alt' />",
-        "SET {name}='value'":"Set a Wiki variable",
-        "${varname}":"Get a Wiki variable",
-        "If name='{value}' page='pagename' exists='true' contains='regexp'\n\nbody\n":"IF plugin",
-        "SET keywords={keyword1, keyword2}":"Set Page Keywords",
-        "SET alias='{pagename}'":"Set Page Alias",
-        "SET page-styles='prettify-nonum table-condensed-fit'":"Set Page Styles",
-        "SET sidebar='off'":"Hide Sidebar",
-        //"Table":"Advanced Tables",
-        //"Groups":"View all Wiki Groups",
-        "":"",
-        "Counter":"Insert a simple counter",
-        "PageViewPlugin":"Count Views of this page",
-        "CurrentTimePlugin format='yyyy mmm-dd'":"Insert Current Time",
-        "Denounce":"Denounce a link",
-        "Image src='{image.jpg}'":"Insert an Image <span class='icon-picture'></span>",
-        "IndexPlugin":"Index of all pages",
+        pluginDlg: [ Dialog.Selection, 
+            {
+            caption: "dialog.plugin".localize(),
+            body: {
+                "ALLOW {permission} principal ": "Page Access Rights <span class='icon-unlock-alt' />",
+                "SET {name}='value'":"Set a Wiki variable",
+                "${varname}":"Get a Wiki variable",
+                //"If name='{value}' page='pagename' exists='true' contains='regexp'\n\nbody\n":"IF plugin",
+                "SET keywords={keyword1, keyword2}":"Set Page Keywords",
+                "SET alias='{pagename}'":"Set Page Alias",
+                "SET page-styles='prettify-nonum table-condensed-fit'":"Set Page Styles",
+                "SET sidebar='off'":"Hide Sidebar",
+                //"Table":"Advanced Tables",
+                //"Groups":"View all Wiki Groups",
+                //"":"",
+                //deprecated "Counter":"Insert a simple counter",
+                //"PageViewPlugin":"Count Views of this page",
+                //"CurrentTimePlugin format='yyyy mmm-dd'":"Insert Current Time",
+                //"Denounce":"Denounce a link",
+                //"Image src='{image.jpg}'":"Insert an Image <span class='icon-picture'></span>",
+                //"IndexPlugin":"Index of all pages",
 
-        "InsertPage page='{pagename}'":"Insert another Page",
-        "ListLocksPlugin":"List page locks",
-        "RecentChangesPlugin":"Displays the recent changed pages",
-        "ReferringPagesPlugin page='{pagename}' separator=',' include='regexp' exclude='regexp'":"Incoming Links (referring pages)",
-        "ReferredPagesPlugin page='{pagename}' type='local|external|attachment' depth='1..8' include='regexp' exclude='regexp'":"Outgoing Links (referred pages)",
-        "Search query='{Janne}' max='10'":"Insert a Search query",
-        "TableOfContents ":"Table Of Contents ",
-        "UndefinedPagesPlugin":"List pages that are missing",
-        "UnusedPagesPlugin":"List pages that have been orphaned",
-        "WeblogArchivePlugin":"Displays a list of older weblog entries",
-        "WeblogEntryPlugin":"Makes a new weblog entry",
-        "WeblogPlugin page='{pagename}' startDate='300604' days='30' maxEntries='30' allowComments='false'":"Builds a weblog"
-        }
-        }]
+                //"InsertPage page='{pagename}'":"Insert another Page",
+                //"ListLocksPlugin":"List page locks",
+                //"RecentChangesPlugin":"Displays the recent changed pages",
+                //"ReferringPagesPlugin page='{pagename}' separator=',' include='regexp' exclude='regexp'":"Incoming Links (referring pages)",
+                //"ReferredPagesPlugin page='{pagename}' type='local|external|attachment' depth='1..8' include='regexp' exclude='regexp'":"Outgoing Links (referred pages)",
+                //"Search query='{Janne}' max='10'":"Insert a Search query",
+                //"TableOfContents ":"Table Of Contents ",
+                //"UndefinedPagesPlugin":"List pages that are missing",
+                //"UnusedPagesPlugin":"List pages that have been orphaned",
+                //"WeblogArchivePlugin":"Displays a list of older weblog entries",
+                //"WeblogEntryPlugin":"Makes a new weblog entry",
+                //"WeblogPlugin page='{pagename}' startDate='300604' days='30' maxEntries='30' allowComments='false'":"Builds a weblog"
+                }
+            }
+        ]
 
     },
 
@@ -628,5 +630,40 @@ Wiki.Snips = {
 
         }
         }]
+    },
+    
+//load up any server defined plugins
+//note this file is ran through wro4j maven plugin which is limited ES6 support
+//thus the usage of super old xhr requests and var vs let. 
+//see https://github.com/wro4j/wro4j/issues/1178 
+
+    loadPlugins: function(){
+        console.info("loading plugin list");
+        const pluginDiscoveryRequest2 = new XMLHttpRequest();
+        pluginDiscoveryRequest2.open('GET', 'ajax/plugins/plugins', true); // true for asynchronous
+        pluginDiscoveryRequest2.onload = function() {
+          if (pluginDiscoveryRequest2.status >= 200 && pluginDiscoveryRequest2.status < 300) {
+            var data = JSON.parse(pluginDiscoveryRequest2.responseText);
+            //Wiki.Snips.pluginDlg["TableOfContents "] = "Table Of Contents ";
+            for (var i=0; i < data.length; i++) {
+                Wiki.Snips.pluginDlg.pluginDlg[1].body[data[i].snip] = data[i].displayName;
+            }
+            Wiki.Snips.ready = true;
+            console.info("plugin list loaded");
+          } else {
+            console.error('Request failed.  Returned status of ' + pluginDiscoveryRequest2.status);
+            Wiki.Snips.ready = true;
+          }
+        };
+        pluginDiscoveryRequest2.onerror = function() {
+          console.error('Network error occurred');
+          Wiki.Snips.ready = true;
+        };
+        pluginDiscoveryRequest2.send();
     }
-}
+    
+    
+};
+window.addEventListener("load", function() {
+  Wiki.Snips.loadPlugins();
+});

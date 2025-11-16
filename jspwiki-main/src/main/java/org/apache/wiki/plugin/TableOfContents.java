@@ -37,6 +37,7 @@ import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
 
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -70,7 +71,7 @@ public class TableOfContents implements Plugin, HeadingListener {
 
     private static final String VAR_ALREADY_PROCESSING = "__TableOfContents.processing";
 
-    final StringBuffer m_buf = new StringBuffer();
+    private final StringBuffer m_buf = new StringBuffer();
     private boolean m_usingNumberedList;
     private String m_prefix = "";
     private int m_starting;
@@ -79,6 +80,19 @@ public class TableOfContents implements Plugin, HeadingListener {
     private int m_level3Index;
     private int m_lastLevel;
 
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    } 
+   
+    
+    
+    @Override
+    public String getSnipExample() {
+        return "TableOfContents";
+    }
+    
     /**
      *  {@inheritDoc}
      */

@@ -49,6 +49,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -156,6 +157,20 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
         return TextUtil.replaceString(DEFAULT_PAGEFORMAT,"%p",pageName)+date;
     }
 
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    } 
+    
+    @Override
+    public String getSnipExample() {
+        final SimpleDateFormat fmt = new SimpleDateFormat( DEFAULT_DATEFORMAT );
+        String date = fmt.format(new Date(System.currentTimeMillis()-(30*24*60*60*1000L)));
+        return "WeblogPlugin page='{pagename}' startDate='" + date + "' days='30' maxEntries='30' allowComments='false'";
+    }
+    
+
     /**
      *  {@inheritDoc}
      */
@@ -202,6 +217,11 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
 
         if( (startDay = params.get(PARAM_STARTDATE)) == null ) {
             startDay = context.getHttpParameter( "weblog."+PARAM_STARTDATE );
+        }
+        if ("ddMMyy".equalsIgnoreCase(startDay)) {
+            //if using the default snippet, this value is clearly the default
+            //and is not valid
+            startDay = null;
         }
 
         if( TextUtil.isPositive( params.get(PARAM_ALLOWCOMMENTS) ) ) {

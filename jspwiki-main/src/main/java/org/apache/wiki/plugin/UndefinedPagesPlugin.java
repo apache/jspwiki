@@ -23,7 +23,9 @@ import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.references.ReferenceManager;
 
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 
 /**
@@ -37,6 +39,12 @@ import java.util.Map;
  */
 public class UndefinedPagesPlugin extends AbstractReferralPlugin {
 
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    } 
+       
     /**
      *  {@inheritDoc}
      */

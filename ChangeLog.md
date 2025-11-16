@@ -16,6 +16,12 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-11-16 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-09_
+
+* [JSPWIKI-1198](https://issues.apache.org/jira/browse/JSPWIKI-1198) - Plugin API change that enables all plugins to be internationalized and visible in the auto complete suggestion/snippet menu
+
 
 **2025-11-16 Alex O'Ree (alexoree AT apache DOT org)**
 

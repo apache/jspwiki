@@ -39,7 +39,9 @@ import org.apache.wiki.util.TextUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 
 /**
@@ -97,6 +99,17 @@ public class ReferredPagesPlugin implements Plugin {
     /** The maximum depth. Value is <tt>{@value}</tt>. */
     public static final int MAX_DEPTH = 8;
 
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
+    
+    @Override
+    public String getSnipExample() {
+        return "ReferredPagesPlugin page='{pagename}' type='local|external|attachment' depth='1..8' include='regexp' exclude='regexp'";
+    }
+    
     /**
      *  {@inheritDoc}
      */

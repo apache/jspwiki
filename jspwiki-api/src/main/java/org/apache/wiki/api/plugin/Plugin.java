@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.api.plugin;
 
+import java.util.Locale;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 
@@ -48,5 +49,34 @@ public interface Plugin {
      *  @throws PluginException In case anything goes wrong.
      */
     String execute( Context context, Map< String, String > params ) throws PluginException;
+
+    /**
+     * Provides the ability for a plugin to provide a suggestion or template
+     * for execution within a wiki page. Default returns just the FQCN of the 
+     * plugin, which should enable it to fire off, however no parameters are 
+     * provided in this case. Override it to provide example inputs to aid users
+     * with configuring your plugin.
+     * 
+     * Example: com.company.Plugin inputParamter='test'
+     * 
+     * @since 3.0.0
+     * @return String
+     */
+    default String getSnipExample() {
+        return this.getClass().getCanonicalName();
+    }
+    /**
+     * Provides the ability for a plugin to provide it's display name that 
+     * is visible via the [{}] autocomplete/suggestion mechanism within the 
+     * editor.Example: Calls My Custom plugin 
+     * 
+     *
+     * @param locale 
+     * @since 3.0.0
+     * @return String
+     */
+    default String getDisplayName(Locale locale) {
+        return this.getClass().getSimpleName();
+    }
     
 }

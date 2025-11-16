@@ -27,6 +27,7 @@ import org.apache.wiki.util.TextUtil;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -48,6 +49,12 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
     /** Parameter name for setting the text to show when the maximum items is overruled. Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXTRAS = "extras";
 
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
+    
     @Override
     public String execute( final Context context, final Map<String, String> params) throws PluginException {
         final ResourceBundle rb = Preferences.getBundle(context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE);

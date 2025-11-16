@@ -55,9 +55,11 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 
@@ -129,6 +131,12 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
     /** Constant for storage interval in seconds. */
     private static final int STORAGE_INTERVAL = 60;
 
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
+    
     /**
      * Initialize the PageViewPlugin and its singleton.
      * 
