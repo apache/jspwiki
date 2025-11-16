@@ -36,6 +36,7 @@ import org.apache.wiki.util.TextUtil;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -70,6 +71,13 @@ public class WeblogEntryPlugin implements Plugin {
      * Parameter name for setting the page Value is <tt>{@value}</tt>.
      */
     public static final String PARAM_BLOGNAME = "page";
+    
+    
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    } 
 
     /**
      * Returns a new page name for entries.  It goes through the list of all blog pages, and finds out the next in line.

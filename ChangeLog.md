@@ -16,6 +16,93 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-11-16 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-09_
+
+* [JSPWIKI-1198](https://issues.apache.org/jira/browse/JSPWIKI-1198) - Plugin API change that enables all plugins to be internationalized and visible in the auto complete suggestion/snippet menu
+
+
+**2025-11-16 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-08_
+
+* [JSPWIKI-75](https://issues.apache.org/jira/browse/JSPWIKI-75) - Undisclosed security issue
+
+
+**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-07_
+
+* [JSPWIKI-1235](https://issues.apache.org/jira/browse/JSPWIKI-1235) password complexity checks for XML or JDBC based user data stores
+* [JSPWIKI-80](https://issues.apache.org/jira/browse/JSPWIKI-80) Related
+
+**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-06_
+
+* Dependency Updates 
+	* commons-validator (added) at 1.10.0
+	
+* [JSPWIKI-1239](https://issues.apache.org/jira/browse/JSPWIKI-1239) New user signup says the email is optional, but does not accept blank since it's already in use by the admin account
+* [JSPWIKI-1243](https://issues.apache.org/jira/browse/JSPWIKI-1243 Email validation rouine is incorrect (unicode symbols and more)
+* NOJIRA disables and removes the ClearSiteData Servlet Filter which broke CSRF token checks
+	
+
+
+**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-05_
+
+* Dependency Updates 
+	* Tomcat updated to 10.1.49
+	
+* [JSPWIKI-388](https://issues.apache.org/jira/browse/JSPWIKI-388) ParamTag loops forever when parent tag is not ParamHandler
+* [JSPWIKI-1238](https://issues.apache.org/jira/browse/JSPWIKI-1238) I18N fixes
+* [JSPWIKI-1237](https://issues.apache.org/jira/browse/JSPWIKI-1237) OWASP http response headers, can be disabled and configured via web.xml
+* [JSPWIKI-1230](https://issues.apache.org/jira/browse/JSPWIKI-1230) Preconfigured tomcat configurations improvements
+* NOJIRA - additional CI testing enabled
+* [JSPWIKI-1229](https://issues.apache.org/jira/browse/JSPWIKI-1229) cookie security flags. new jspwiki properties added.
+* [JSPWIKI-1220](https://issues.apache.org/jira/browse/JSPWIKI-1220) replaces the sandler library with the rome rss/atom library for RSS/ATOM support
+* [JSPWIKI-1223](https://issues.apache.org/jira/browse/JSPWIKI-1223)  restores the /atom servlet api's capabilities, restores the ability to create and store weblog entries with the requisite attribute for the atom feed to work
+* [JSPWIKI-1225](https://issues.apache.org/jira/browse/JSPWIKI-1225)  fixes loading the preloaded data for the portable build
+* [JSPWIKI-1224](https://issues.apache.org/jira/browse/JSPWIKI-1224)  rss.jsp now sets the filename for download 
+
+
+
+
+**2025-11-08 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-04_
+
+* Dependency Updates 
+	* Akismet library change to a supported version
+	* Removal of commons-http v2 
+
+* [JSPWIKI-1219](https://issues.apache.org/jira/browse/JSPWIKI-1219) SpamFilter removal of asirra.com due to service shutdown 10 years ago
+* [JSPWIKI-1218](https://issues.apache.org/jira/browse/JSPWIKI-1218) Removal of commons-http-client v2 
+* [JSPWIKI-1179](https://issues.apache.org/jira/browse/JSPWIKI-1179) Github Actions CI builders
+
+
+**2025-11-07 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-03_
+
+* Dependency updates
+	* commons-lang updated to 3.19.0
+	* commons-net added at 3.12.0
+	* jakarta.mail-api from 2.1.3 to 2.1.5
+	* http-commons dependency removed
+	
+* [JSPWIKI-1213](https://issues.apache.org/jira/browse/JSPWIKI-1213) adds jacoco test coverage reporting to the build
+* [JSPWIKI-615](https://issues.apache.org/jira/browse/JSPWIKI-615) adds some javadocs to the WikiEvent class as requested
+* [JSPWIKI-1211](https://issues.apache.org/jira/browse/JSPWIKI-1211) fixed a bootup issue when the rss directory doesn't exist
+* [JSPWIKI-1207](https://issues.apache.org/jira/browse/JSPWIKI-1207) disables the ehcache causing bootup crashes on portable builds
+* [JSPWIKI-1217](https://issues.apache.org/jira/browse/JSPWIKI-1217) improvements to stabilize the automated build system
+* [JSPWIKI-1216](https://issues.apache.org/jira/browse/JSPWIKI-1216) removes references to the WikiWizard template/editor, i18n improvements 
+* [JSPWIKI-1183](https://issues.apache.org/jira/browse/JSPWIKI-1183) The IfPlugin now supports IP address checks using CIDR style netmasks
+* [JSPWIKI-1283](https://issues.apache.org/jira/browse/JSPWIKI-1283) Removes the asirra.com based captcha filtering
+
 
 **2025-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)**
 

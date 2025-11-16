@@ -52,6 +52,7 @@ Complementary Dynamic Styles (see jspwiki-commonstyles.js)
 *	270 WikiColumns: dynamic style
 *	300 Prettify: dynamic style
 
+Note this file gets minimied/compiled into haddock.js
 */
 
 /* extend mootools */
@@ -69,7 +70,7 @@ String.extend({
 		});
 		return text;
 	}
-})
+});
 
 // get text of a dhtml node
 function $getText(el) {
@@ -304,8 +305,21 @@ var Wiki = {
 		// the cookie-cutter works properly here.
 
 		if( this.BasePath == '' ) this.BasePath = '/';
-
-		this.prefs = new Hash.Cookie('JSPWikiUserPrefs', {path:Wiki.BasePath, duration:20});
+                var flag = false;
+                var sameSite = "none";
+                if (window.location.href.startsWith("https://")) {
+                    flag = true;
+                    sameSite = "strict";
+                }
+		this.prefs = new Hash.Cookie('JSPWikiUserPrefs', 
+                    {
+                        path:Wiki.BasePath, 
+                        duration:400,
+                        sameSite: sameSite,
+                        httpOnly: flag,
+                        secure: flag
+                    }
+                );
 
 		this.PermissionEdit = !!$$('a.edit')[0]; //deduct permission level
 		this.url = null;

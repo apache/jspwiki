@@ -59,11 +59,13 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -266,7 +268,9 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
         }
 
         final ResourceBundle rb = Preferences.getBundle( context, Plugin.CORE_PLUGINS_RESOURCEBUNDLE );
-        final boolean debug = TextUtil.isPositive( params.get( PARAM_DEBUG ) );
+        //see JSPWIKI-75
+        final boolean debug = TextUtil.isPositive( params.get( PARAM_DEBUG ) ) && context.hasAdminPermissions();
+        
         try {
             //   Create...
             final Plugin plugin = newWikiPlugin( classname, rb );
@@ -278,6 +282,7 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
             try {
                 return plugin.execute( context, params );
             } catch( final PluginException e ) {
+                LOG.warn(e.getMessage(), e);
                 if( debug ) {
                     return stackTrace( params, e );
                 }
@@ -285,8 +290,9 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
                 // Just pass this exception onward.
                 throw ( PluginException )e.fillInStackTrace();
             } catch( final Throwable t ) {
+                
                 // But all others get captured here.
-                LOG.info( "Plugin failed while executing:", t );
+                LOG.warn( "Plugin failed while executing:", t );
                 if( debug ) {
                     return stackTrace( params, t );
                 }
@@ -713,6 +719,22 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
             throw new PluginException( MessageFormat.format( rb.getString( "plugin.error.instantationfailed" ), pluginName ), e );
         }
         return plugin;
+    }
+
+    @Override
+    public List<Plugin> getDiscoveredPlugins() {
+        Collection<WikiModuleInfo> pluginModules = modules();
+        Set<Plugin> plugins = new HashSet<>();
+        for(WikiModuleInfo plugin : pluginModules) {
+            try {
+                Plugin p = (Plugin) Class.forName(((WikiPluginInfo)plugin).getClassName()).getDeclaredConstructor().newInstance();
+                plugins.add(p);
+            } catch (Throwable ex) {
+                LOG.error("failed to load class " + plugin.getName(), ex);
+            }
+        }
+      
+        return new ArrayList<>(plugins);
     }
 
 }

@@ -75,6 +75,7 @@
     <copy todir="${jspwiki.woas.assembly.dir}/webapps/department" overwrite="true">
       <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/"/>
     </copy>
+
     <!-- overlay the custom configuration for JSPWiki -->  
     <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
       <fileset dir="${basedir}/src/overlay/woas"/>

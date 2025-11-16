@@ -21,7 +21,7 @@
 
   <parent> <!-- tests reuse [1/3]: reads common configuration for ITs and brings jspwiki-war as dependency -->
     <groupId>org.apache.jspwiki.it</groupId>
-    <artifactId>jspwiki-it-builder</artifactId>
+    <artifactId>jspwiki-it-tests</artifactId>
     <version>3.0.0-SNAPSHOT</version>
   </parent>
 

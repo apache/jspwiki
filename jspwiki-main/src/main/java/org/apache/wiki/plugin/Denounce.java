@@ -40,8 +40,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 /**
  *  Denounces a link by removing it from any search engine.
@@ -119,6 +121,12 @@ public class Denounce implements Plugin {
         }
     }
 
+    @Override
+    public String getDisplayName(Locale locale) {
+       
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
     /**
      *  {@inheritDoc}
      */

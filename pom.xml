@@ -44,15 +44,16 @@
     <jdk.javadoc.doclet.version>2.2.3</jdk.javadoc.doclet.version>
     <maven.version>3.5</maven.version>
 
-    <akismet-java.version>1.02</akismet-java.version>
+    <akismet-java.version>1.0.0</akismet-java.version>
     <awaitility.version>4.3.0</awaitility.version>
     <aws-java-sdk-kendra.version>1.12.565</aws-java-sdk-kendra.version>
     <commons-collections.version>4.5.0</commons-collections.version>
     <commons-fileupload.version>2.0.0-M4</commons-fileupload.version>
-    <commons-httpclient.version>3.1</commons-httpclient.version>
     <commons-io.version>2.20.0</commons-io.version>
-    <commons-lang.version>3.18.0</commons-lang.version>
+    <commons-lang.version>3.19.0</commons-lang.version>
+    <commons-net.version>3.12.0</commons-net.version>
     <commons-text.version>1.14.0</commons-text.version>
+    <commons-validator.version>1.10.0</commons-validator.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.64.8</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
@@ -64,8 +65,9 @@
     <jakarta-jstl.version>3.0.1</jakarta-jstl.version>
     <jakarta-jstl-api.version>3.0.2</jakarta-jstl-api.version>
     <jakarta-mail.version>2.0.1</jakarta-mail.version>
-    <jakarta-mail-api.version>2.1.3</jakarta-mail-api.version>
+    <jakarta-mail-api.version>2.1.5</jakarta-mail-api.version>
     <jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
+    <jacoco-version>0.8.14</jacoco-version>
     <jamm.version>0.4.0</jamm.version>
     <jaxen.version>2.0.0</jaxen.version>
     <javax-mail.version>1.6.2</javax-mail.version>
@@ -76,13 +78,14 @@
     <log4j2.version>2.25.1</log4j2.version>
     <lucene.version>9.12.2</lucene.version>
     <mockito.version>5.20.0</mockito.version>
-    <nekohtml.version>2.1.2</nekohtml.version>
+    <nekohtml.version>2.1.3</nekohtml.version>
     <oro.version>2.0.8</oro.version>
+    <rome.version>2.1.0</rome.version>
     <sandler.version>0.5</sandler.version>
     <selenide.version>7.10.1</selenide.version>
     <slf4j.version>2.0.17</slf4j.version>
     <tika.version>3.2.3</tika.version>
-    <tomcat.version>10.1.46</tomcat.version>
+    <tomcat.version>10.1.49</tomcat.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
     <xstream.version>1.4.21</xstream.version>
 
@@ -165,6 +168,17 @@
         <artifactId>selenide</artifactId>
         <version>${selenide.version}</version>
       </dependency>
+      <dependency>
+          <groupId>commons-net</groupId>
+          <artifactId>commons-net</artifactId>
+          <version>${commons-net.version}</version>
+      </dependency>
+      
+      <dependency>
+          <groupId>commons-validator</groupId>
+          <artifactId>commons-validator</artifactId>
+          <version>${commons-validator.version}</version>
+      </dependency>
 
       <dependency><!-- https://jakartaee.github.io/mail-api/README-JakartaMail#Download_Jakarta_Mail_Release -->
         <groupId>com.sun.mail</groupId>
@@ -221,12 +235,6 @@
       </dependency>
 
       <dependency>
-        <groupId>commons-httpclient</groupId>
-        <artifactId>commons-httpclient</artifactId>
-        <version>${commons-httpclient.version}</version>
-      </dependency>
-
-      <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io.version}</version>
@@ -275,9 +283,15 @@
       </dependency>
 
       <dependency>
-        <groupId>net.sourceforge</groupId>
-        <artifactId>akismet-java</artifactId>
-        <version>${akismet-java.version}</version>
+          <groupId>com.rometools</groupId>
+          <artifactId>rome</artifactId>
+          <version>${rome.version}</version>
+      </dependency>
+    
+      <dependency>
+          <groupId>net.thauvin.erik</groupId>
+          <artifactId>akismet-kotlin</artifactId>
+          <version>${akismet-java.version}</version>
       </dependency>
 
       <dependency>
@@ -502,7 +516,10 @@
         <groupId>net.nicoulaj.maven.plugins</groupId>
         <artifactId>checksum-maven-plugin</artifactId>
       </plugin>
-
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+      </plugin>
       <plugin>
         <groupId>org.cyclonedx</groupId>
         <artifactId>cyclonedx-maven-plugin</artifactId>
@@ -663,6 +680,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${plugin.surefire.version}</version>
           <configuration>
+            <argLine>@{argLine}</argLine>
             <consoleOutputReporter>
               <disable>true</disable>
             </consoleOutputReporter>
@@ -824,6 +842,7 @@
               <exclude>**/src/main/webapp/favicons/*.svg</exclude>
               <exclude>**/src/overlay/launchers/tomcat/woas.app/Contents/*.plist</exclude>
               <exclude>**/src/overlay/launchers/tomcat/woas.app/Contents/Resources/*.none</exclude>
+              <exclude>**/.eslintrc</exclude>
 
             </excludes>
           </configuration>
@@ -969,6 +988,26 @@
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
+        <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-version}</version>
+            <executions>
+                <execution>
+                    <id>coverage-initialize</id>
+                    <goals>
+                        <goal>prepare-agent</goal>
+                    </goals>
+                </execution>
+                <execution>
+                    <id>coverage-report</id>
+                    <phase>post-integration-test</phase>
+                    <goals>
+                        <goal>report</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -1078,7 +1117,7 @@
           <plugin>
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
-              <argLine>-javaagent:${com.github.jbellis:jamm:jar}</argLine>
+              <argLine>@{argLine} -javaagent:${com.github.jbellis:jamm:jar}</argLine>
               <consoleOutputReporter>
                 <disable>false</disable>
               </consoleOutputReporter>

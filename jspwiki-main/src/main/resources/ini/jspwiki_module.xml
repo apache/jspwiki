@@ -26,47 +26,129 @@
 -->
 <modules>
 
-   <!--
-       Define the editors that we ship with.
-   -->
-   <editor name="plain">
-      <author>Janne Jalkanen</author>
-      <path>editors/plain.jsp</path>
-      <minVersion>2.4</minVersion>
-      <adminBean>org.apache.wiki.ui.admin.beans.PlainEditorAdminBean</adminBean>
-   </editor>
-   <!--
-       Experimental wysiwyg editor, based on mooeditable
-   -->
-   <editor name="wysiwyg">
-      <author>MooEditable</author>
-      <path>editors/wysiwyg.jsp</path>
-      <minVersion>2.10</minVersion>
-   </editor>
+    <!--
+        Define the editors that we ship with.
+    -->
+    <editor name="plain">
+        <author>Janne Jalkanen</author>
+        <path>editors/plain.jsp</path>
+        <minVersion>2.4</minVersion>
+        <adminBean>org.apache.wiki.ui.admin.beans.PlainEditorAdminBean</adminBean>
+    </editor>
+    <!--
+        Experimental wysiwyg editor, based on mooeditable
+    -->
+    <editor name="wysiwyg">
+        <author>MooEditable</author>
+        <path>editors/wysiwyg.jsp</path>
+        <minVersion>2.10</minVersion>
+    </editor>
 
-<!--
-   <editor name="WikiWizard">
-      <author>i3G Institut Hochschule Heilbronn</author>
-      <path>editors/WikiWizard.jsp</path>
-      <minVersion>2.4</minVersion>
-      <maxVersion>2.8</maxVersion>
-      <adminBean>org.apache.wiki.ui.admin.beans.WikiWizardAdminBean</adminBean>
-   </editor>
--->
-   <plugin class="org.apache.wiki.plugin.IfPlugin">
-      <author>Janne Jalkanen</author>
-      <minVersion>2.4</minVersion>
-      <alias>If</alias>
-   </plugin>
+    <plugin class="org.apache.wiki.plugin.IfPlugin">
+        <author>Janne Jalkanen</author>
+        <minVersion>2.4</minVersion>
+        <alias>If</alias>
+    </plugin>
 
-   <plugin class="org.apache.wiki.plugin.Note">
-      <author>Janne Jalkanen</author>
-      <minVersion>2.4</minVersion>
-   </plugin>
+    <plugin class="org.apache.wiki.plugin.Note">
+        <author>Janne Jalkanen</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.CurrentTimePlugin">
+        <author>ASF</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
+     <plugin class="org.apache.wiki.plugin.Counter">
+        <author>ASF</author>
+        <minVersion>1.9.30</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.IndexPlugin">
+        <author>ASF</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.PageViewPlugin">
+        <author>ASF</author>
+        <minVersion>2.8</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.PageViewPlugin">
+        <author>ASF</author>
+        <minVersion>2.1.40</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.Denounce">
+        <author>ASF</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.InsertPage">
+        <author>ASF</author>
+        <minVersion>2.1.37</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.ListLocksPlugin">
+        <author>ASF</author>
+        <minVersion>2.0.22</minVersion>
+    </plugin>
+    
+    <plugin class="org.apache.wiki.plugin.RecentChangesPlugin">
+        <author>ASF</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.ReferringPagesPlugin">
+        <author>ASF</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.ReferredPagesPlugin">
+        <author>ASF</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.ReferringUndefinedPagesPlugin">
+        <author>ASF</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
+    
+    <plugin class="org.apache.wiki.plugin.Search">
+        <author>ASF</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.TableOfContents">
+        <author>ASF</author>
+        <minVersion>2.2</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.UndefinedPagesPlugin">
+        <author>ASF</author>
+        <minVersion>2.2</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.UnusedPagesPlugin">
+        <author>ASF</author>
+        <minVersion>2.2</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.WeblogArchivePlugin">
+        <author>ASF</author>
+        <minVersion>2.2</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.WeblogEntryPlugin">
+        <author>ASF</author>
+        <minVersion>2.2</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.WeblogPlugin">
+        <author>ASF</author>
+        <minVersion>2.2</minVersion>
+    </plugin>
+   
+    <plugin class="org.apache.wiki.plugin.IndexPlugin">
+        <author>ASF</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.Image">
+        <author>ASF</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.plugin.Groups">
+        <author>ASF</author>
+        <minVersion>2.4</minVersion>
+    </plugin>
 
-   <filter class="org.apache.wiki.filters.SpamFilter">
-      <author>Janne Jalkanen</author>
-      <minVersion>2.6</minVersion>
-   </filter>
+    <filter class="org.apache.wiki.filters.SpamFilter">
+        <author>Janne Jalkanen</author>
+        <minVersion>2.6</minVersion>
+    </filter>
 
 </modules>

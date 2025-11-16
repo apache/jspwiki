@@ -86,10 +86,12 @@
       <dd>
          <wiki:Messages div="error" />
       </dd>
+      <% if (wikiContext.hasAdminPermissions()) { %>
       <dt>Exception</dt>
       <dd><%=realcause!=null ? realcause.getClass().getName() : ""%></dd>
       <dt>Place where detected</dt>
       <dd><%=realcause!=null ? FileUtil.getThrowingMethod(realcause) : ""%></dd>
+      <% } %>
    </dl>
    <p>
    If you have changed the templates, please do check them.  This error message

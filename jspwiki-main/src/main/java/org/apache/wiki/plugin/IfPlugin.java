@@ -38,7 +38,10 @@ import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
 
 import java.security.Principal;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
+import org.apache.wiki.i18n.InternationalizationManager;
 
 /**
  *  The IfPlugin allows parts of a WikiPage to be executed conditionally, and is intended as a flexible way
@@ -49,14 +52,14 @@ import java.util.Map;
  *  
  *  Parameters:
  *  <ul>
- *    <li><b>group</b> - A "|" -separated list of group names.
- *    <li><b>user</b>  - A "|" -separated list of user names.
- *    <li><b>ip</b>    - A "|" -separated list of ip addresses.
- *    <li><b>var</b>   - A wiki variable
- *    <li><b>page</b>  - A page name
- *    <li><b>contains</b> - A Perl5 regexp pattern
- *    <li><b>is</b>    - A Perl5 regexp pattern
- *    <li><b>exists</b> - "true" or "false".
+ *    <li><b>group</b> - A "|" -separated list of group names.</li>
+ *    <li><b>user</b>  - A "|" -separated list of user names.</li>
+ *    <li><b>ip</b>    - A "|" -separated list of ip addresses.</li>
+ *    <li><b>var</b>   - A wiki variable</li>
+ *    <li><b>page</b>  - A page name</li>
+ *    <li><b>contains</b> - A Perl5 regexp pattern</li>
+ *    <li><b>is</b>    - A Perl5 regexp pattern</li>
+ *    <li><b>exists</b> - "true" or "false".</li>
  *  </ul>
  *
  *  <p>If any of them match, the body of the plugin is executed.  You can
@@ -140,6 +143,16 @@ public class IfPlugin implements Plugin {
     /** The parameter name for checking whether a page/var exists.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXISTS   = "exists";
 
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
+    
+    @Override
+    public String getSnipExample() {
+        return "If name='{value}' page='pagename' exists='true' contains='regexp'\n\nbody\n";
+    }
     /**
      *  {@inheritDoc}
      */
@@ -275,7 +288,7 @@ public class IfPlugin implements Plugin {
                 }
             }
 
-            include |= ipaddrToCheck.equals( HttpUtil.getRemoteAddress( context.getHttpRequest() ) ) ^ invert;
+            include |= HttpUtil.ipIsInRange( context.getHttpRequest(), ipaddrToCheck ) ^ invert;
         }
         return include;
     }

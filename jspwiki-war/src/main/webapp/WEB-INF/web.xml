@@ -86,7 +86,63 @@
      <url-pattern>/wiki/*</url-pattern>
      <url-pattern>*.jsp</url-pattern>
    </filter-mapping>
+   <!-- optional set of servlet filters which inject OWASP recommended
+    http response headers into all outbound responses.
+    most have optional init parameters that can be used to customize the output
+   -->
+   <filter>
+     <filter-name>COEPFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.COEPFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>COEPFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   <filter>
+     <filter-name>CORPFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.CORPFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>CORPFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   
+   <filter>
+     <filter-name>ContentTypeOptionsFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.ContentTypeOptionsFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>ContentTypeOptionsFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   <filter>
+     <filter-name>CrossDomainFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.CrossDomainFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>CrossDomainFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+   <filter>
+     <filter-name>ReferrerPolicyFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.ReferrerPolicyFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>ReferrerPolicyFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+    <filter>
+     <filter-name>STSFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.STSFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>STSFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
 
+   <session-config>
+       <session-timeout>10</session-timeout>
+   </session-config>
    <!--
        HttpSessionListener used for managing WikiSession's.
      -->
@@ -145,7 +201,21 @@
         <url-pattern>/admin/ajax/*</url-pattern>
     </servlet-mapping>
 
+    <!--
+        And finally, let us tell the servlet container which
+        URLs should correspond to which XML RPC servlet.
+        By default, this is disabled.  If you want to enable it,
+        just uncomment the whole section.
+    -->
  
+    <!--  REMOVE ME TO ENABLE XML-RPC
+   
+    <servlet-mapping>
+        <servlet-name>ATOM</servlet-name>
+        <url-pattern>/atom/*</url-pattern>
+    </servlet-mapping>
+    AND REMOVE ME TOO -->
+
    <!-- This means that we don't have to use redirection
         from index.html anymore.  Yay! -->
    <welcome-file-list>
@@ -238,7 +308,18 @@
        If you do not wish to use SSL, remove the "user-data-constraint"
        elements.
    -->
-
+   
+   <!-- this block will require TLS across all the board -->
+	<security-constraint>
+       <web-resource-collection>
+           <web-resource-name>All</web-resource-name>
+           <url-pattern>/*</url-pattern>
+       </web-resource-collection>
+       <user-data-constraint>
+           <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+       </user-data-constraint>
+   </security-constraint>
+   
    <!--  REMOVE ME TO ENABLE CONTAINER-MANAGED AUTH
 
    <security-constraint>
@@ -290,6 +371,8 @@
 
    <login-config>
        <auth-method>FORM</auth-method>
+       NOTE you can also use BASIC, DIGEST or 
+        CLIENT-CERT (if configured in the container, i.e. tomcat) to accept them)
        <form-login-config>
            <form-login-page>/LoginForm.jsp</form-login-page>
            <form-error-page>/LoginForm.jsp</form-error-page>

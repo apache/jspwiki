@@ -94,7 +94,7 @@ def buildWith( jdk ) {
             cleanWs()
             git url: buildRepo, poll: true
             withMaven( jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT' ) {
-                sh 'mvn clean package -T 1C'
+                sh 'mvn clean package -T 1C -Pintegration-tests'
             }
         }
     }
