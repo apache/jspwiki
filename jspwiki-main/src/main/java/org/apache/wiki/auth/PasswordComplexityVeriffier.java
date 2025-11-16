@@ -63,10 +63,10 @@ public final class PasswordComplexityVeriffier {
 
         List<String> problems = new ArrayList<>();
         if (pwd.length() > maxLength) {
-             problems.add(MessageFormat.format(rb.getString( "pwdcheck.toolong") , maxLength) );
+            problems.add(MessageFormat.format(rb.getString("pwdcheck.toolong"), maxLength));
         }
         if (pwd.length() < minLength) {
-            problems.add(MessageFormat.format(rb.getString( "pwdcheck.tooshort") , minLength) );
+            problems.add(MessageFormat.format(rb.getString("pwdcheck.tooshort"), minLength));
         }
         char[] cred = pwd.toCharArray();
         int upper = 0;
@@ -115,20 +115,20 @@ public final class PasswordComplexityVeriffier {
             }
         }
 
-        if (repeats > maxRepeats) {
-            problems.add(MessageFormat.format(rb.getString( "pwdcheck.repeats") , maxRepeats) );
+        if (maxRepeats > 0 && repeats > maxRepeats) {
+            problems.add(MessageFormat.format(rb.getString("pwdcheck.repeats"), maxRepeats));
         }
-        if (upper < minUpper) {
-            problems.add(MessageFormat.format(rb.getString( "pwdcheck.minUpper") , minUpper) );
+        if (minUpper > 0 && upper < minUpper) {
+            problems.add(MessageFormat.format(rb.getString("pwdcheck.minUpper"), minUpper));
         }
-        if (lower < minLower) {
-            problems.add(MessageFormat.format(rb.getString( "pwdcheck.minLower") , minUpper) );
+        if (minLower > 0 && lower < minLower) {
+            problems.add(MessageFormat.format(rb.getString("pwdcheck.minLower"), minUpper));
         }
-        if (digits < minDigits) {
-            problems.add(MessageFormat.format(rb.getString( "pwdcheck.minDigits") , minUpper) );
+        if (minDigits > 0 && digits < minDigits) {
+            problems.add(MessageFormat.format(rb.getString("pwdcheck.minDigits"), minUpper));
         }
-        if (other < minSymbols) {
-            problems.add(MessageFormat.format(rb.getString( "pwdcheck.minOther") , other) );
+        if (minSymbols > 0 && other < minSymbols) {
+            problems.add(MessageFormat.format(rb.getString("pwdcheck.minOther"), minSymbols));
         }
         return problems;
 
