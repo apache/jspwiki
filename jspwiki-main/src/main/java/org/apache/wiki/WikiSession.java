@@ -41,6 +41,7 @@ import org.apache.wiki.util.HttpUtil;
 import javax.security.auth.Subject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.net.http.HttpRequest;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -569,6 +570,17 @@ public class WikiSession implements Session {
     public static Principal[] userPrincipals( final Engine engine ) {
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.userPrincipals();
+    }
+    private HttpServletRequest httpSesssion = null;
+    
+   
+    @Override
+    public void setHttpRequestContext(HttpServletRequest session) {
+        this.httpSesssion = session;
+    }
+    @Override
+    public HttpServletRequest getHttpRequestContext() {
+        return httpSesssion;
     }
 
 }

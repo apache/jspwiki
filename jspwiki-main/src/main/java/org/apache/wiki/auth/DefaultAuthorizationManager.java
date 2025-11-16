@@ -84,7 +84,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
     private final Map< Principal, ProtectionDomain > m_cachedPds = new WeakHashMap<>();
 
-    private Engine m_engine;
+    protected Engine m_engine;
 
     private LocalPolicy m_localPolicy;
 
@@ -190,6 +190,12 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
             final String principalName = principal.getName();
             final Principal[] userPrincipals = session.getPrincipals();
             return Arrays.stream(userPrincipals).anyMatch(userPrincipal -> userPrincipal.getName().equals(principalName));
+        }
+        // this little hack enables use to use container defined roles that are not expllicitly
+        // listed in the web.xml of our war file. A common use case when the container is wired up
+        // to keycloak or a LDAP type capability.
+        if (session.getHttpRequestContext()!=null) {
+            return session.getHttpRequestContext().isUserInRole(principal.getName());
         }
         return false;
     }

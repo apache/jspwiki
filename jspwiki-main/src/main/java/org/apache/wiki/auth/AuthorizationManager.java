@@ -131,6 +131,9 @@ public interface AuthorizationManager extends Initializable {
         if ( session.isAuthenticated() && AuthenticationManager.isRolePrincipal( principal ) ) {
             return session.hasPrincipal( principal );
         }
+        if (session.getHttpRequestContext()!=null) {
+            return session.getHttpRequestContext().isUserInRole(principal.getName());
+        }
         return false;
     }
 

@@ -38,6 +38,7 @@
     <module>jspwiki-it-test-custom-jdbc</module>
     <module>jspwiki-it-test-cma</module>
     <module>jspwiki-it-test-cma-jdbc</module>
+	<module>jspwiki-it-container-auth</module>
   </modules>
 
   <dependencies>

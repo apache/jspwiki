@@ -192,6 +192,7 @@ public class WikiContext implements Context, Command {
         m_engine = engine;
         m_request = request;
         m_session = Wiki.session().find( engine, request );
+        m_session.setHttpRequestContext(request);
         m_command = command;
 
         // If PageCommand, get the WikiPage

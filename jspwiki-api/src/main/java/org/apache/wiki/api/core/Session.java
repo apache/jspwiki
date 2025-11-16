@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.api.core;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.apache.wiki.event.WikiEventListener;
 
 import javax.security.auth.Subject;
@@ -250,5 +252,21 @@ public interface Session extends WikiEventListener {
     static Object doPrivileged( final Session session, final PrivilegedAction<?> action ) throws AccessControlException {
         return Subject.doAsPrivileged( session.getSubject(), action, null );
     }
+    
+    /**
+     * sets the raw http servlet request object. typically used for 
+     * verifying externally defined access controls.
+     * @since 3.0.0
+     * @param session 
+     */
+    void setHttpRequestContext(HttpServletRequest session);
+
+    /**
+     * gets the raw http servlet request object. typically used for 
+     * verifying externally defined access controls. Result may be null
+     * @since 3.0.0
+     * @return HttpServletRequest
+     */
+    HttpServletRequest getHttpRequestContext();
 
 }
