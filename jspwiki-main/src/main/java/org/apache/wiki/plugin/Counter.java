@@ -38,9 +38,7 @@ import java.util.Map;
  *  </ul>
  *
  *  @since 1.9.30
- * @deprecated  use PageViewCounter
  */
-@Deprecated
 public class Counter implements Plugin {
     // private static Logger log = LogManager.getLogger( Counter.class );
 

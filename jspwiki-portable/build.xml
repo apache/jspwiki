@@ -70,12 +70,6 @@
     <copy todir="${jspwiki.woas.assembly.dir}/webapps/personal" overwrite="true">
       <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/"/>
     </copy>
-	<!-- copy our test hello world plugin for verifying plugin discoverability -->
-	<copy todir="${jspwiki.woas.assembly.dir}/jspwiki/lib" overwrite="true">
-	  <fileset dir="${basedir}/../jspwiki-it-tests/jspwiki-test-plugin/target/">
-		<include name="*.jar"/>
-	  </fileset>
-    </copy>
     <delete dir="${jspwiki.woas.assembly.dir}/webapps/personal/WEB-INF/lib"/>    
     <!-- copy the exploded war for the "department" wiki -->
     <copy todir="${jspwiki.woas.assembly.dir}/webapps/department" overwrite="true">

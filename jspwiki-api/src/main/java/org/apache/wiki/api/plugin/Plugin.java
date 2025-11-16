@@ -54,7 +54,8 @@ public interface Plugin {
      * Provides the ability for a plugin to provide a suggestion or template
      * for execution within a wiki page. Default returns just the FQCN of the 
      * plugin, which should enable it to fire off, however no parameters are 
-     * plugin.
+     * provided in this case. Override it to provide example inputs to aid users
+     * with configuring your plugin.
      * 
      * Example: com.company.Plugin inputParamter='test'
      * 
