@@ -106,14 +106,7 @@
      <filter-name>CORPFilter</filter-name>
      <url-pattern>/*</url-pattern>
    </filter-mapping>
-   <filter>
-     <filter-name>ClearSiteDataFilter</filter-name>
-     <filter-class>org.apache.wiki.http.filter.ClearSiteDataFilter</filter-class>
-   </filter>
-   <filter-mapping>
-     <filter-name>ClearSiteDataFilter</filter-name>
-     <url-pattern>/*</url-pattern>
-   </filter-mapping>
+   
    <filter>
      <filter-name>ContentTypeOptionsFilter</filter-name>
      <filter-class>org.apache.wiki.http.filter.ContentTypeOptionsFilter</filter-class>
