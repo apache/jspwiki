@@ -16,9 +16,24 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+
+**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-06_
+
+* Dependency Updates 
+	* commons-validator (added) at 1.10.0
+	
+* [JSPWIKI-1239](https://issues.apache.org/jira/browse/JSPWIKI-1239) New user signup says the email is optional, but does not accept blank since it's already in use by the admin account
+* [JSPWIKI-1243](https://issues.apache.org/jira/browse/JSPWIKI-1243 Email validation rouine is incorrect (unicode symbols and more)
+* NOJIRA disables and removes the ClearSiteData Servlet Filter which broke CSRF token checks
+	
+
+
 **2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-05_
+
 * Dependency Updates 
 	* Tomcat updated to 10.1.49
 	
