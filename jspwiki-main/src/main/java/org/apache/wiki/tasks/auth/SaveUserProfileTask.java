@@ -70,7 +70,7 @@ public class SaveUserProfileTask extends Task {
         context.getEngine().getManager( UserManager.class ).getUserDatabase().save( profile );
 
         // Send e-mail if user supplied an e-mail address
-        if ( profile != null && profile.getEmail() != null ) {
+        if ( profile != null && profile.getEmail() != null && profile.getEmail().length() > 0 ) {
             try {
                 final InternationalizationManager i18n = context.getEngine().getManager( InternationalizationManager.class );
                 final String app = context.getEngine().getApplicationName();
