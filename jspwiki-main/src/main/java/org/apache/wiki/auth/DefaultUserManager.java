@@ -355,6 +355,10 @@ public class DefaultUserManager implements UserManager {
                 if( !profile.isNew() && !getUserDatabase().validatePassword( profile.getLoginName(), password0 ) ) {
                     session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
                 }
+                List<String> msg = PasswordComplexityVeriffier.validate(password2, context);
+                for (String s : msg) {
+                    session.addMessage( SESSION_MESSAGES, s );
+                }
             }
         }
 
@@ -382,15 +386,17 @@ public class DefaultUserManager implements UserManager {
         } catch( final NoSuchPrincipalException e ) { /* It's clean */ }
 
         // It's illegal to use multiple accounts with the same email
-        try {
-            otherProfile = getUserDatabase().findByEmail( email );
-            if( otherProfile != null && !profile.getUid().equals( otherProfile.getUid() ) // Issue JSPWIKI-1042
-                    && !profile.equals( otherProfile ) && StringUtils.lowerCase( email )
-                    .equals( StringUtils.lowerCase( otherProfile.getEmail() ) ) ) {
-                final Object[] args = { email };
-                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.email.taken" ), args ) );
-            }
-        } catch( final NoSuchPrincipalException e ) { /* It's clean */ }
+        if (email != null && email.trim().length() > 0) {
+            try {
+                otherProfile = getUserDatabase().findByEmail( email );
+                if( otherProfile != null && !profile.getUid().equals( otherProfile.getUid() ) // Issue JSPWIKI-1042
+                        && !profile.equals( otherProfile ) && StringUtils.lowerCase( email )
+                        .equals( StringUtils.lowerCase( otherProfile.getEmail() ) ) ) {
+                    final Object[] args = { email };
+                    session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.email.taken" ), args ) );
+                }
+            } catch( final NoSuchPrincipalException e ) { /* It's clean */ }
+        }
     }
 
     /** {@inheritDoc} */

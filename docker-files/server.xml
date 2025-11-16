@@ -82,6 +82,7 @@
 		secure="true"
 		SSLEnabled="true"
 		sslProtocol="TLS"
+		SSLEnabledProtocols="TLSv1.2" 
 		>
         <SSLHostConfig>
             <Certificate certificateKeystoreFile="conf/test-use-only.p12"
