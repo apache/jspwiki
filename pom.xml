@@ -53,6 +53,7 @@
     <commons-lang.version>3.19.0</commons-lang.version>
     <commons-net.version>3.12.0</commons-net.version>
     <commons-text.version>1.14.0</commons-text.version>
+    <commons-validator.version>1.10.0</commons-validator.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.64.8</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
@@ -171,6 +172,12 @@
           <groupId>commons-net</groupId>
           <artifactId>commons-net</artifactId>
           <version>${commons-net.version}</version>
+      </dependency>
+      
+      <dependency>
+          <groupId>commons-validator</groupId>
+          <artifactId>commons-validator</artifactId>
+          <version>${commons-validator.version}</version>
       </dependency>
 
       <dependency><!-- https://jakartaee.github.io/mail-api/README-JakartaMail#Download_Jakarta_Mail_Release -->
