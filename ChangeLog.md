@@ -16,15 +16,21 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-11-15 Alex O'Ree (alexoree AT apache DOT org)**
 
-**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+* _3.0.0-git-08_
+
+* [JSPWIKI-1228](https://issues.apache.org/jira/browse/JSPWIKI-1228) audit logging capability with optional email based alert
+
+
+**2025-11-15 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-07_
 
 * [JSPWIKI-1235](https://issues.apache.org/jira/browse/JSPWIKI-1235) password complexity checks for XML or JDBC based user data stores
 * [JSPWIKI-80](https://issues.apache.org/jira/browse/JSPWIKI-80) Related
 
-**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+**2025-11-15 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-06_
 
