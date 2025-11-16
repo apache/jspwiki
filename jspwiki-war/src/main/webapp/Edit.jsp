@@ -35,6 +35,7 @@
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
+<%@ page import="org.apache.wiki.plugin.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
@@ -79,7 +80,8 @@
     String link    = TextUtil.replaceEntities( findParam( pageContext, "link") );
     String spamhash = findParam( pageContext, SpamFilter.getHashFieldName(request) );
     String captcha = (String)session.getAttribute("captcha");
-
+    boolean isWeblog = "true".equalsIgnoreCase(request.getParameter( WeblogPlugin.ATTR_ISWEBLOG) );
+    
     if ( !wikiSession.isAuthenticated() && wikiSession.isAnonymous() && author != null ) {
         user  = TextUtil.replaceEntities( findParam( pageContext, "author" ) );
     }
@@ -94,7 +96,11 @@
 
     Page wikipage = wikiContext.getPage();
     Page latestversion = wiki.getManager( PageManager.class ).getPage( pagereq );
-
+    if (isWeblog) {
+        //this happens at the intial page load when redirected from the NewBlogEntry.jsp page
+        session.setAttribute(wikipage.getName() + "-" + WeblogPlugin.ATTR_ISWEBLOG, true);
+    }
+    
     if( latestversion == null ) {
         latestversion = wikiContext.getPage();
     }
@@ -162,6 +168,11 @@
         } else {
             modifiedPage.removeAttribute( Page.CHANGENOTE );
         }
+        if (Boolean.TRUE ==  session.getAttribute(wikipage.getName() + "-" + WeblogPlugin.ATTR_ISWEBLOG)) {
+            //this is generally when the user is saving changes to a page
+            modifiedPage.setAttribute("@" + WeblogPlugin.ATTR_ISWEBLOG, true);
+            session.removeAttribute(wikipage.getName() + "-" + WeblogPlugin.ATTR_ISWEBLOG);
+        } 
 
         //
         //  Figure out the actual page text
@@ -181,7 +192,6 @@
                 wikiContext.setVariable( "captcha", Boolean.TRUE );
                 session.removeAttribute( "captcha" );
             }
-
             if( append != null ) {
                 StringBuffer pageText = new StringBuffer(wiki.getManager( PageManager.class ).getText( pagereq ));
                 pageText.append( text );

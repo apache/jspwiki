@@ -223,7 +223,7 @@
                 response.addCookie( linkcookie );
             }
 
-            CookieAssertionLoginModule.setUserCookie( response, author );
+            CookieAssertionLoginModule.setUserCookie( pageContext, response, author );
         } else {
             session.removeAttribute("link");
             session.removeAttribute("author");

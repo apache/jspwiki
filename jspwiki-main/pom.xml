@@ -86,10 +86,10 @@
           <groupId>net.thauvin.erik</groupId>
           <artifactId>akismet-kotlin</artifactId>
         </dependency>
-
+        
         <dependency>
-            <groupId>net.sourceforge</groupId>
-            <artifactId>sandler</artifactId>
+            <groupId>com.rometools</groupId>
+            <artifactId>rome</artifactId>
         </dependency>
 
         <dependency>
@@ -105,6 +105,11 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
         </dependency>
 
         <dependency>

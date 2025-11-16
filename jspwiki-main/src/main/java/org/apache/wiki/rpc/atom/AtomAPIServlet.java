@@ -18,6 +18,16 @@
  */
 package org.apache.wiki.rpc.atom;
 
+import com.rometools.rome.feed.synd.SyndContent;
+import com.rometools.rome.feed.synd.SyndContentImpl;
+import com.rometools.rome.feed.synd.SyndEntry;
+import com.rometools.rome.feed.synd.SyndEntryImpl;
+import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.feed.synd.SyndFeedImpl;
+import com.rometools.rome.feed.synd.SyndLink;
+import com.rometools.rome.feed.synd.SyndLinkImpl;
+import com.rometools.rome.io.SyndFeedInput;
+import com.rometools.rome.io.SyndFeedOutput;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Context;
@@ -30,15 +40,6 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.apache.wiki.util.TextUtil;
-import org.intabulas.sandler.Sandler;
-import org.intabulas.sandler.SyndicationFactory;
-import org.intabulas.sandler.elements.Content;
-import org.intabulas.sandler.elements.Entry;
-import org.intabulas.sandler.elements.Feed;
-import org.intabulas.sandler.elements.Link;
-import org.intabulas.sandler.elements.Person;
-import org.intabulas.sandler.elements.impl.LinkImpl;
-import org.intabulas.sandler.exceptions.FeedMarshallException;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
@@ -46,8 +47,12 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+import org.apache.wiki.util.HttpUtil;
 
 
 /**
@@ -111,39 +116,40 @@ public class AtomAPIServlet extends HttpServlet {
             }
 
             // FIXME: Do authentication here
-            final Entry entry = Sandler.unmarshallEntry( request.getInputStream() );
+            SyndFeed entry = new SyndFeedInput().build(new InputStreamReader(request.getInputStream() ));
+            
 
             //  Fetch the obligatory parts of the content.
-            final Content title = entry.getTitle();
-            final Content content = entry.getContent( 0 );
-            final Person author = entry.getAuthor();
+            final String title = entry.getTitle();
+            final SyndEntry content = entry.getEntries().get( 0 );
+            final String author = entry.getAuthor();
 
             // FIXME: Sandler 0.5 does not support generator
             // Generate new blog entry.
             final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
             final String pageName = plugin.getNewEntryPage( m_engine, blogid );
-            final String username = author.getName();
+            final String username = author;
             final Page entryPage = Wiki.contents().page( m_engine, pageName );
             entryPage.setAuthor( username );
 
             final Context context = Wiki.context().create( m_engine, request, entryPage );
             final StringBuilder text = new StringBuilder();
             text.append( "!" )
-                .append( title.getBody() )
+                .append( title )
                 .append( "\n\n" )
-                .append( content.getBody() );
+                .append( content );
             LOG.debug( "Writing entry: " + text );
             m_engine.getManager( PageManager.class ).saveText( context, text.toString() );
-        } catch( final FeedMarshallException e ) {
-            LOG.error("Received faulty Atom entry",e);
-            throw new ServletException("Faulty Atom entry",e);
         } catch( final IOException e ) {
             LOG.error("I/O exception",e);
-            throw new ServletException("Could not get body of request",e);
+            throw new ServletException("Could not get body of request");
         } catch( final WikiException e ) {
             LOG.error("Provider exception while posting",e);
-            throw new ServletException("JSPWiki cannot save the entry",e);
-        }
+            throw new ServletException("JSPWiki cannot save the entry");
+        } catch( final Exception e ) {
+            LOG.error("Received faulty Atom entry",e);
+            throw new ServletException("Faulty Atom entry");
+        } 
     }
 
     /**
@@ -159,25 +165,33 @@ public class AtomAPIServlet extends HttpServlet {
         LOG.debug( "Requested page " + blogid );
         try {
             if( blogid == null ) {
-                final Feed feed = listBlogs();
+                final  SyndFeed feed = listBlogs(request);
                 response.setContentType( "application/x.atom+xml; charset=UTF-8" );
-                response.getWriter().println( Sandler.marshallFeed( feed ) );
+                response.setHeader("Content-Disposition", " attachment; filename=\"atom.xml\"");
+                feed.setFeedType("atom_0.3");
+                SyndFeedOutput output = new SyndFeedOutput();
+                output.output(feed,response.getWriter());
             } else {
-                final Entry entry = getBlogEntry( blogid );
+                final SyndEntry entry = getBlogEntry( blogid );
                 response.setContentType( "application/x.atom+xml; charset=UTF-8" );
-                response.getWriter().println( Sandler.marshallEntry( entry ) );
+                response.setHeader("Content-Disposition", " attachment; filename=\"atom.xml\"");
+                SyndFeed atom = new SyndFeedImpl();
+                atom.setFeedType("atom_0.3");
+                atom.getEntries().add(entry);
+                SyndFeedOutput output = new SyndFeedOutput();
+                output.output(atom,response.getWriter());
             }
             response.getWriter().flush();
         } catch( final Exception e ) {
             LOG.error( "Unable to generate response", e );
-            throw new ServletException( "Internal problem - whack Janne on the head to get a better error report", e );
+            throw new ServletException( "Internal problem - whack Janne on the head to get a better error report");
         }
     }
 
-    private Entry getBlogEntry( final String entryid ) {
+    private SyndEntry getBlogEntry( final String entryid ) {
         final Page page = m_engine.getManager( PageManager.class ).getPage( entryid );
         final Page firstVersion = m_engine.getManager( PageManager.class ).getPage( entryid, 1 );
-        final Entry entry = SyndicationFactory.newSyndicationEntry();
+        final SyndEntry entry = new SyndEntryImpl();
         final String pageText = m_engine.getManager( PageManager.class ).getText(page.getName());
         final int firstLine = pageText.indexOf('\n');
 
@@ -196,10 +210,12 @@ public class AtomAPIServlet extends HttpServlet {
         }
 
         entry.setTitle( title );
-        entry.setCreated( firstVersion.getLastModified() );
-        entry.setModified( page.getLastModified() );
-        entry.setAuthor( SyndicationFactory.createPerson( page.getAuthor(), null, null ) );
-        entry.addContent( SyndicationFactory.createEscapedContent(pageText) );
+        entry.setPublishedDate(firstVersion.getLastModified() );
+        entry.setUpdatedDate(page.getLastModified() );
+        entry.setAuthor( page.getAuthor());
+        List<SyndContent> list  = new ArrayList<>();
+        list.add(new SyndContentImpl());
+        list.get(0).setValue(pageText);
 
         return entry;
     }
@@ -207,39 +223,41 @@ public class AtomAPIServlet extends HttpServlet {
     /**
      *  Creates and outputs a full list of all available blogs
      */
-    private Feed listBlogs() throws ProviderException {
+    private SyndFeed listBlogs( final HttpServletRequest request ) throws ProviderException{
         final Collection< Page > pages = m_engine.getManager( PageManager.class ).getAllPages();
-        final Feed feed = SyndicationFactory.newSyndicationFeed();
+        final SyndFeed feed = new SyndFeedImpl();
         feed.setTitle("List of blogs at this site");
-        feed.setModified( new Date() );
+        feed.setPublishedDate( new Date() );
 
         for( final Page p : pages ) {
             //  List only weblogs
             //  FIXME: Unfortunately, a weblog is not known until it has een executed once, because plugins are off during the initial startup phase.
             LOG.debug( p.getName() + " = " + p.getAttribute( WeblogPlugin.ATTR_ISWEBLOG ) );
-
-            if( !( "true".equals( p.getAttribute( WeblogPlugin.ATTR_ISWEBLOG ) ) ) ) {
+            
+            if( !( "true".equals( p.getAttribute( WeblogPlugin.ATTR_ISWEBLOG ) ) ) &&
+                    !( "true".equals( p.getAttribute( "@" + WeblogPlugin.ATTR_ISWEBLOG ) ) )) {
                 continue;
             }
 
             final String encodedName = TextUtil.urlEncodeUTF8( p.getName() );
             final Context context = Wiki.context().create( m_engine, p );
             final String title = TextUtil.replaceEntities( org.apache.wiki.rss.Feed.getSiteName( context ) );
-            final Link postlink = createLink( "service.post", m_engine.getBaseURL() + "atom/" + encodedName, title );
-            final Link editlink = createLink( "service.edit", m_engine.getBaseURL() + "atom/" + encodedName, title );
-            final Link feedlink = createLink( "service.feed", m_engine.getBaseURL() + "atom.jsp?page=" + encodedName, title );
+            //FIXME this needs to be an absolute URL not a relative one
+            final SyndLink postlink = createLink( "service.post", HttpUtil.getAbsoluteUrl(request, m_engine.getBaseURL()) + "/atom/" + encodedName, title );
+            final SyndLink editlink = createLink( "service.edit", HttpUtil.getAbsoluteUrl(request, m_engine.getBaseURL()) + "/atom/" + encodedName, title );
+            final SyndLink feedlink = createLink( "service.feed", HttpUtil.getAbsoluteUrl(request, m_engine.getBaseURL()) + "/rss.jsp?page=" + encodedName, title );
 
-            feed.addLink( postlink );
-            feed.addLink( feedlink );
-            feed.addLink( editlink );
+            feed.getLinks().add( postlink );
+            feed.getLinks().add( feedlink );
+            feed.getLinks().add( editlink );
         }
 
         return feed;
     }
 
-    private Link createLink( final String rel, final String href, final String title ) {
-        final LinkImpl link = new LinkImpl();
-        link.setRelationship( rel );
+    private SyndLink createLink( final String rel, final String href, final String title ) {
+        final SyndLink link = new SyndLinkImpl();
+        link.setRel( rel );
         link.setTitle( title );
         link.setType( "application/x.atom+xml" );
         link.setHref( href );

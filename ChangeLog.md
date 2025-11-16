@@ -16,6 +16,48 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+
+**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-07_
+
+* [JSPWIKI-1235](https://issues.apache.org/jira/browse/JSPWIKI-1235) password complexity checks for XML or JDBC based user data stores
+* [JSPWIKI-80](https://issues.apache.org/jira/browse/JSPWIKI-80) Related
+
+**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-06_
+
+* Dependency Updates 
+	* commons-validator (added) at 1.10.0
+	
+* [JSPWIKI-1239](https://issues.apache.org/jira/browse/JSPWIKI-1239) New user signup says the email is optional, but does not accept blank since it's already in use by the admin account
+* [JSPWIKI-1243](https://issues.apache.org/jira/browse/JSPWIKI-1243 Email validation rouine is incorrect (unicode symbols and more)
+* NOJIRA disables and removes the ClearSiteData Servlet Filter which broke CSRF token checks
+	
+
+
+**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-05_
+
+* Dependency Updates 
+	* Tomcat updated to 10.1.49
+	
+* [JSPWIKI-388](https://issues.apache.org/jira/browse/JSPWIKI-388) ParamTag loops forever when parent tag is not ParamHandler
+* [JSPWIKI-1238](https://issues.apache.org/jira/browse/JSPWIKI-1238) I18N fixes
+* [JSPWIKI-1237](https://issues.apache.org/jira/browse/JSPWIKI-1237) OWASP http response headers, can be disabled and configured via web.xml
+* [JSPWIKI-1230](https://issues.apache.org/jira/browse/JSPWIKI-1230) Preconfigured tomcat configurations improvements
+* NOJIRA - additional CI testing enabled
+* [JSPWIKI-1229](https://issues.apache.org/jira/browse/JSPWIKI-1229) cookie security flags. new jspwiki properties added.
+* [JSPWIKI-1220](https://issues.apache.org/jira/browse/JSPWIKI-1220) replaces the sandler library with the rome rss/atom library for RSS/ATOM support
+* [JSPWIKI-1223](https://issues.apache.org/jira/browse/JSPWIKI-1223)  restores the /atom servlet api's capabilities, restores the ability to create and store weblog entries with the requisite attribute for the atom feed to work
+* [JSPWIKI-1225](https://issues.apache.org/jira/browse/JSPWIKI-1225)  fixes loading the preloaded data for the portable build
+* [JSPWIKI-1224](https://issues.apache.org/jira/browse/JSPWIKI-1224)  rss.jsp now sets the filename for download 
+
+
+
+
 **2025-11-08 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-04_
@@ -26,6 +68,8 @@ under the License.
 
 * [JSPWIKI-1219](https://issues.apache.org/jira/browse/JSPWIKI-1219) SpamFilter removal of asirra.com due to service shutdown 10 years ago
 * [JSPWIKI-1218](https://issues.apache.org/jira/browse/JSPWIKI-1218) Removal of commons-http-client v2 
+* [JSPWIKI-1179](https://issues.apache.org/jira/browse/JSPWIKI-1179) Github Actions CI builders
+
 
 **2025-11-07 Alex O'Ree (alexoree AT apache DOT org)**
 
