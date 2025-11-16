@@ -67,6 +67,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload2.core.FileUploadByteCountLimitException;
 import java.util.ResourceBundle;
+import org.apache.wiki.tags.MaxUploadTag;
 
 
 /**
@@ -421,13 +422,16 @@ public class AttachmentServlet extends HttpServlet {
             if ("chunked".equalsIgnoreCase(req.getHeader("Transfer-Encoding"))) {
                 //not sure how chunked encoding would work here, this should block it
                 //this is to prevent resource exhaustion
-                
+                //TODO i18n this error message
                 throw new RedirectException("Chunked encoding is not allowed for this service", errorPage +"?Error=true");
             }
             if (req.getContentLengthLong() > m_maxSize) {
                 //we don't want total upload size to be larger than the max
                 //this is to prevent resource exhaustion
-                throw new RedirectException("Request too big" +req.getContentLengthLong() + " vs " + m_maxSize + " bytes", errorPage +"?Error=true");
+                //TODO i18n this error message
+                throw new RedirectException("Request too big " + 
+                        MaxUploadTag.humanReadableByteCountBin(req.getContentLengthLong()) + " vs " + 
+                        MaxUploadTag.humanReadableByteCountBin(m_maxSize), errorPage +"?Error=true");
             }
             final JakartaServletFileUpload upload = new JakartaServletFileUpload( factory );
             upload.setHeaderCharset(StandardCharsets.UTF_8);
@@ -476,7 +480,10 @@ public class AttachmentServlet extends HttpServlet {
                 for( final FileItem actualFile : fileItems ) {
                     if( !context.hasAdminPermissions() ) {
                         if (actualFile.getSize()> m_maxSize) {
-                            throw new RedirectException("Attachment too big " + actualFile.getName() + " " + actualFile.getSize() + " vs " + m_maxSize + " bytes", nextPage);
+                            //TODO i18n this error message
+                            throw new RedirectException("Attachment too big " + actualFile.getName() + " " + 
+                                     MaxUploadTag.humanReadableByteCountBin(actualFile.getSize()) + " vs " + 
+                                     MaxUploadTag.humanReadableByteCountBin(m_maxSize), nextPage);
                         }
                     }
                     
