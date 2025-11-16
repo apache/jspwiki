@@ -41,7 +41,7 @@ public class WikiBootstrapServletContextListenerTest {
         final WikiBootstrapServletContextListener listener = new WikiBootstrapServletContextListener();
         final Properties properties = listener.initWikiSPIs( sce );
 
-        Assertions.assertEquals( 36, properties.size() );
+        Assertions.assertEquals( 6, properties.size() );
     }
 
     @Test

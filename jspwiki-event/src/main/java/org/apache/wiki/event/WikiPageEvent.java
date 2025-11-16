@@ -170,7 +170,7 @@ public class WikiPageEvent extends WikiEvent {
     /**
       * Constructs an instance of this event.
      *
-      * @param src  the Object that is the source of the event.
+      * @param src  the Object that is the source of the event. Typically this is the WikiEngine
       * @param type the type of the event (see the enumerated int values defined in {@link org.apache.wiki.event.WikiEvent}).
       * @param pagename the WikiPage being acted upon.
       */

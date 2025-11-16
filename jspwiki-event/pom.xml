@@ -29,7 +29,7 @@
   <artifactId>jspwiki-event</artifactId>
   <name>Apache JSPWiki event subsystem</name>
 
-  <dependencies>
+<dependencies>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>

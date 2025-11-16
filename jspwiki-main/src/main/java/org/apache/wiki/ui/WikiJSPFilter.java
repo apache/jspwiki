@@ -309,7 +309,7 @@ public class WikiJSPFilter extends WikiServletFilter {
      */
     protected final void fireEvent( final int type, final String pagename ) {
         if( WikiEventManager.isListening( m_engine ) ) {
-            WikiEventManager.fireEvent( m_engine, new WikiPageEvent( m_engine, type, pagename ) );
+            WikiEventManager.fireEvent( m_engine, new WikiPageEvent( m_engine, type, pagename ));
         }
     }
 

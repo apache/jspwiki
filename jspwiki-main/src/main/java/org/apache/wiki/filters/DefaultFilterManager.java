@@ -44,6 +44,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import org.apache.wiki.event.WikiPageEvent;
+import org.apache.wiki.security.EventUtil;
 
 
 /**
@@ -336,7 +338,11 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
      */
     public void fireEvent( final int type, final Context context ) {
         if( WikiEventManager.isListening(this ) && WikiPageEvent.isValidType( type ) )  {
-            WikiEventManager.fireEvent(this, new WikiPageEvent( m_engine, type, context.getPage().getName() ) );
+            WikiEventManager.fireEvent(
+                    this, 
+                    EventUtil.applyFrom( 
+                            new WikiPageEvent( m_engine, type, context.getPage().getName()),
+                            context) );
         }
     }
 

@@ -16,7 +16,8 @@
     specific language governing permissions and limitations
     under the License.
 --%>
-
+<%@ page import="org.apache.wiki.event.*" %>
+<%@ page import="org.apache.wiki.security.*" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.security.Principal" %>
 <%@ page import="org.apache.logging.log4j.Logger" %>
@@ -40,7 +41,12 @@
 <html lang="en" name="top">
 <%
   Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_NONE.getRequestContext() );
-  if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) return;
+  if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response )) {
+        WikiSecurityEvent wse = new WikiSecurityEvent(this, WikiSecurityEvent.ACCESS_DENIED, request.getUserPrincipal(), this);
+        EventUtil.applyFrom(wse, pageContext);
+        org.apache.wiki.event.WikiEventManager.fireEvent(this, wse);
+        return;
+  }
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );
   verifier = new SecurityVerifier( wiki, wikiContext.getWikiSession() );
 
@@ -49,6 +55,9 @@
   //
   if( !TextUtil.isPositive(wiki.getWikiProperties().getProperty("jspwiki-x.securityconfig.enable")) )
   {
+        WikiSecurityEvent wse = new WikiSecurityEvent(this, WikiSecurityEvent.ACCESS_DENIED, request.getUserPrincipal(), this);
+        EventUtil.applyFrom(wse, pageContext);
+        org.apache.wiki.event.WikiEventManager.fireEvent(this, wse);
       %>
       <head>
         <title><wiki:Variable var="applicationname" default="Apache JSPWiki" />: JSPWiki Security Configuration Verifier</title>
@@ -73,6 +82,10 @@
       <%
       return;
   }
+
+    WikiSecurityEvent wse = new WikiSecurityEvent(this, WikiSecurityEvent.ACCESS_ALLOWED, request.getUserPrincipal(), this);
+    EventUtil.applyFrom(wse, pageContext);
+    org.apache.wiki.event.WikiEventManager.fireEvent(this, wse);
 
 %>
 

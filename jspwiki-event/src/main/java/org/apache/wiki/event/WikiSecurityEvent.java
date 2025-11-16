@@ -18,6 +18,8 @@
  */
 package org.apache.wiki.event;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -111,6 +113,9 @@ public final class WikiSecurityEvent extends WikiEvent {
     /** When a user profile name changes. */
     public static final int   PROFILE_NAME_CHANGED     = 54;
     
+    /** When a low disk space is encountered . */
+    public static final int   LOW_STORAGE              = 55;
+    
     /** The security logging service. */
     private static final Logger LOG = LogManager.getLogger( "SecurityLog" );
     
@@ -140,6 +145,7 @@ public final class WikiSecurityEvent extends WikiEvent {
         }
         this.m_principal = principal;
         this.m_target = target;
+        
         if( LOG.isEnabled( Level.ERROR ) && ArrayUtils.contains( ERROR_EVENTS, type ) ) {
             LOG.error( this );
         } else if( LOG.isEnabled( Level.WARN ) && ArrayUtils.contains( WARN_EVENTS, type ) ) {
@@ -211,23 +217,24 @@ public final class WikiSecurityEvent extends WikiEvent {
      * @return the string representation
      */
     public String eventName( final int type ) {
-        switch( type ) {
-            case LOGIN_AUTHENTICATED:       return "LOGIN_AUTHENTICATED";
-            case LOGIN_ACCOUNT_EXPIRED:     return "LOGIN_ACCOUNT_EXPIRED";
-            case LOGIN_CREDENTIAL_EXPIRED:  return "LOGIN_ACCOUNT_EXPIRED";
-            case LOGIN_FAILED:              return "LOGIN_FAILED";
-            case LOGOUT:                    return "LOGOUT";
-            case PRINCIPAL_ADD:             return "PRINCIPAL_ADD";
-            case SESSION_EXPIRED:           return "SESSION_EXPIRED";
-            case GROUP_ADD:                 return "GROUP_ADD";
-            case GROUP_REMOVE:              return "GROUP_REMOVE";
-            case GROUP_CLEAR_GROUPS:        return "GROUP_CLEAR_GROUPS";
-            case ACCESS_ALLOWED:            return "ACCESS_ALLOWED";
-            case ACCESS_DENIED:             return "ACCESS_DENIED";
-            case PROFILE_NAME_CHANGED:      return "PROFILE_NAME_CHANGED";
-            case PROFILE_SAVE:              return "PROFILE_SAVE";
-            default:                        return super.eventName();
+        Field[] fields = this.getClass().getFields();
+        for (Field f : fields) {
+            if (Modifier.isStatic(f.getModifiers()) &&
+                    Modifier.isPublic(f.getModifiers()) &&
+                    Modifier.isFinal(f.getModifiers())) {
+                try {
+                    if (f.getInt(null) == type) {
+                        return f.getName();
+                    }
+                } catch (IllegalArgumentException ex) {
+                    LOG.debug(ex.getMessage() + " for " + type);
+                } catch (IllegalAccessException ex) {
+                    LOG.debug(ex.getMessage() + " for " + type);
+                }
+            }
         }
+         return super.eventName();
+        
     }
 
     /**
@@ -252,7 +259,7 @@ public final class WikiSecurityEvent extends WikiEvent {
             case ACCESS_DENIED:             return "access denied";
             case PROFILE_NAME_CHANGED:      return "user profile name changed";
             case PROFILE_SAVE:              return "user profile saved";
-            default:                        return super.getTypeDescription();
+            default:                        return eventName(getType());
         }
     }
 

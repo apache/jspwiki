@@ -16,7 +16,8 @@
     specific language governing permissions and limitations
     under the License.
 --%>
-
+<%@ page import="org.apache.wiki.event.*" %>
+<%@ page import="org.apache.wiki.security.*" %>
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
@@ -38,13 +39,21 @@
     Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
     Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_ADMIN.getRequestContext() );
-    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
+    if(!wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) {
+        WikiSecurityEvent wse = new WikiSecurityEvent(this, WikiSecurityEvent.ACCESS_DENIED, request.getUserPrincipal(), this);
+        EventUtil.applyFrom(wse, pageContext);
+        org.apache.wiki.event.WikiEventManager.fireEvent(this, wse);
+        return;
+    }
 
     //
     //  This is an experimental feature, so we will turn it off unless the user really wants to.
     //
     if( !TextUtil.isPositive(wiki.getWikiProperties().getProperty("jspwiki-x.adminui.enable")) )
     {
+        WikiSecurityEvent wse = new WikiSecurityEvent(this, WikiSecurityEvent.ACCESS_DENIED, request.getUserPrincipal(), this);
+        EventUtil.applyFrom(wse, pageContext);
+        org.apache.wiki.event.WikiEventManager.fireEvent(this, wse);
         %>
         <!doctype html>
         <html lang="en">
@@ -69,6 +78,9 @@
         return;
     }
 
+    WikiSecurityEvent wse = new WikiSecurityEvent(this, WikiSecurityEvent.ACCESS_ALLOWED, request.getUserPrincipal(), this);
+    EventUtil.applyFrom(wse, pageContext);
+    org.apache.wiki.event.WikiEventManager.fireEvent(this, wse);
     // Set the content type and include the response content
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
     String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "admin/AdminTemplate.jsp" );
