@@ -72,7 +72,7 @@
     <jaxen.version>2.0.0</jaxen.version>
     <javax-mail.version>1.6.2</javax-mail.version>
     <javax-jsp-api.version>2.3.3</javax-jsp-api.version>
-    <jdom2.version>2.0.6</jdom2.version>
+    <jdom2.version>2.0.6.1</jdom2.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>6.0.0</junit.version>
     <log4j2.version>2.25.1</log4j2.version>
