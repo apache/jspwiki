@@ -71,6 +71,7 @@ import java.util.ResourceBundle;
 import java.util.WeakHashMap;
 
 
+
 /**
  * Default implementation for {@link UserManager}.
  *
@@ -79,7 +80,7 @@ import java.util.WeakHashMap;
 public class DefaultUserManager implements UserManager {
 
     private static final String USERDATABASE_PACKAGE = "org.apache.wiki.auth.user";
-    private static final String SESSION_MESSAGES = "profile";
+    public static final String SESSION_MESSAGES = "profile";
     private static final String PARAM_EMAIL = "email";
     private static final String PARAM_FULLNAME = "fullname";
     private static final String PARAM_PASSWORD = "password";
@@ -358,6 +359,15 @@ public class DefaultUserManager implements UserManager {
                 List<String> msg = PasswordComplexityVeriffier.validate(password2, context);
                 for (String s : msg) {
                     session.addMessage( SESSION_MESSAGES, s );
+                }
+                int reuseCount = Integer.parseInt(m_engine.getWikiProperties().getProperty("jspwiki.credentials.reuseCount", "-1"));
+                if (reuseCount > 0) {
+                    //if it's set to 0 or less, we don't store it so we can skip this check
+                    if (!m_database.validatePasswordReuse(profile.getLoginName(), password2)) {
+                        //password reuse detected
+                        session.addMessage(SESSION_MESSAGES,
+                                MessageFormat.format(rb.getString("security.error.passwordReuseError"), reuseCount));
+                    }
                 }
             }
         }

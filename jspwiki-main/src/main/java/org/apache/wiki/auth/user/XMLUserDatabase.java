@@ -78,6 +78,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     public static final String  PROP_USERDATABASE = "jspwiki.xmlUserDatabaseFile";
     private static final String DEFAULT_USERDATABASE = "userdatabase.xml";
     private static final String ATTRIBUTES_TAG    = "attributes";
+    private static final String OLD_HASHES_TAG    = "oldhashes";
     private static final String CREATED           = "created";
     private static final String EMAIL             = "email";
     private static final String FULL_NAME         = "fullName";
@@ -91,6 +92,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     private static final String DATE_FORMAT       = "yyyy.MM.dd 'at' HH:mm:ss:SSS z";
     private Document            c_dom;
     private File                c_file;
+    private int m_passwordReusedCount = -1;
 
     /** {@inheritDoc} */
     @Override
@@ -193,7 +195,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         }
 
         LOG.info( "XML user database at " + c_file.getAbsolutePath() );
-
+        m_passwordReusedCount = Integer.parseInt(props.getProperty("jspwiki.credentials.reuseCount", "-1"));
         buildDOM();
         sanitizeDOM();
     }
@@ -270,6 +272,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 io.write( "=\"" + user.getAttribute( LAST_MODIFIED ) + "\" " );
                 io.write( LOCK_EXPIRY );
                 io.write( "=\"" + user.getAttribute( LOCK_EXPIRY ) + "\" " );
+                io.write( OLD_HASHES_TAG );
+                io.write( "=\"" + user.getAttribute( OLD_HASHES_TAG ) + "\" " );
                 io.write( ">" );
                 final NodeList attributes = user.getElementsByTagName( ATTRIBUTES_TAG );
                 for( int j = 0; j < attributes.getLength(); j++ ) {
@@ -412,7 +416,15 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         if( newPassword != null && !newPassword.equals( "" ) ) {
             final String oldPassword = user.getAttribute( PASSWORD );
             if( !oldPassword.equals( newPassword ) ) {
-                setAttribute( user, PASSWORD, getHash( newPassword ) );
+                String newhash = getHash( newPassword );
+                setAttribute( user, PASSWORD, newhash );
+            
+                profile.getPreviousHashedCredentials().add(newhash);
+                while (!profile.getPreviousHashedCredentials().isEmpty() && 
+                        profile.getPreviousHashedCredentials().size() > m_passwordReusedCount) {
+                    profile.getPreviousHashedCredentials().remove(0);
+                }
+
             }
         }
 
@@ -427,6 +439,9 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             } catch( final IOException e ) {
                 throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
             }
+        }
+        if (!profile.getPreviousHashedCredentials().isEmpty()) {
+            setAttribute( user, OLD_HASHES_TAG, StringUtils.join(profile.getPreviousHashedCredentials(), "|"));
         }
 
         // Set the profile timestamps
@@ -493,6 +508,13 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                     profile.setLockExpiry( null );
                 } else {
                     profile.setLockExpiry( new Date( Long.parseLong( lockExpiry ) ) );
+                }
+                final String oldHahes = user.getAttribute(OLD_HASHES_TAG);
+                if (oldHahes != null && oldHahes.length() > 0) {
+                    String[] parts = oldHahes.split("\\|");
+                    for (String s : parts) {
+                        profile.getPreviousHashedCredentials().add(s);
+                    }
                 }
 
                 // Extract all the user's attributes (should only be one attributes tag, but you never know!)

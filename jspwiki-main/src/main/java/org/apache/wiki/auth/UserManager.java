@@ -73,9 +73,9 @@ public interface UserManager extends Initializable {
 
     /**
      * <p>
-     * Saves the {@link org.apache.wiki.auth.user.UserProfile} for the user in a wiki session. This method verifies that a user profile to
-     * be saved doesn't collide with existing profiles; that is, the login name or full name is already used by another profile. If the
-     * profile collides, a <code>DuplicateUserException</code> is thrown. After saving the profile, the user database changes are committed,
+     * Saves the {@link org.apache.wiki.auth.user.UserProfile} for the user in a wiki session.This method verifies that a user profile to
+ be saved doesn't collide with existing profiles; that is, the login name or full name is already used by another profile. If the
+ profile collides, a <code>DuplicateUserException</code> is thrown. After saving the profile, the user database changes are committed,
      * and the user's credential set is refreshed; if custom authentication is used, this means the user will be automatically be logged in.
      * </p>
      * <p>

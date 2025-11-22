@@ -20,6 +20,7 @@ package org.apache.wiki.auth.user;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -194,4 +195,6 @@ public interface UserProfile extends Serializable
      */
     @Override
     String toString();
+    
+    List<String> getPreviousHashedCredentials();
 }
