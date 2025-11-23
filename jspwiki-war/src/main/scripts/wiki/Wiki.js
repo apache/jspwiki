@@ -78,6 +78,7 @@ var Wiki = {
             console.warn("snips are not loaded yet, cannot fetch the plugin list");
         }
         
+        
         //add the standard jspwiki behaviors; needed to render the haddock JSP templates
         wiki.add( "body", wiki.caniuse )
 
@@ -177,10 +178,147 @@ var Wiki = {
             popstate: wiki.popstate,
             domready: wiki.domready.bind(wiki)
         });
+         wiki.chartify();
         }, 500);
+        
+       
 
     },
+    
+    
+    chartify: function() {
+        console.warn("looking for charts to build");
+        var css_selector = '[class^=chartist]';
+        const matches = document.querySelectorAll(css_selector);
+        console.warn("found " + matches.length + " charts to build");
+        for (var i=0; i < matches.length; i++) {
+            Wiki.chartist_behavior(matches[i]);
+        };
+    },
+    /*
+Function: grabOptions
+    Read the chartist options, and encapsulate it in a hidden container dom element
+*/
+    grabOptions: function (element, container) {
+        var el,
+            fragment = new DocumentFragment();
 
+        while ((el = element.firstChild) && el.nodeType == 3) {
+            fragment.appendChild(el);
+        }
+
+        fragment = fragment.textContent.trim();
+
+        if (fragment != '') {
+            container.slick({ text: fragment }).inject(element, 'top');
+        }
+        return fragment;
+    },
+
+    /*
+Function: evalOptions
+    Validate and parse the options string, into a regular javascript object
+*/
+    evalOptions: function (options, labels, series) {
+        if (options != '') {
+            try {
+                return Function(
+                    'labels',
+                    'series',
+                    'return ' + options
+                )(labels, series); // jshint ignore:line
+            } catch (err) {
+                console.log('Options eval err', err, options);
+                return null;
+            }
+        }
+    },
+
+    /*
+Function: getTableData
+    Parse regular html table, and collect the LABELS and SERIES data-sets.
+*/
+    getTableData: function (table) {
+        var rows = table.rows,
+            tlen = rows.length,
+            i,
+            j,
+            row,
+            rlen,
+            labels = undefined,
+            series = [];
+
+        for (i = 0; i < tlen; i++) {
+            row = Array.from(rows[i].cells);
+            rlen = row.length;
+
+            if (row[0].tagName.test(/TH/i)) {
+                //get LABELS
+                labels = [];
+                for (j = 0; j < rlen; j++) {
+                    labels[j] = row[j].innerHTML;
+                }
+            } else {
+                //get SERIES ; convert to numbers
+                for (j = 0; j < rlen; j++) {
+                    row[j] = +row[j].textContent;
+                }
+                series.push(row);
+            }
+        }
+        console.warn("chart data returned was " + series);
+        return series[0] ? { labels: labels, series: series } : null;
+    },
+
+    chartist_behavior: function (element) {
+        var type = element.className.split('-')[1] || 'line', // line or bar or pie
+            //var type = chartistClass.sliceArgs(element)[0] || "line",  // line or bar or pie
+            options = Wiki.grabOptions(
+                element,
+                'span.chartist-options'
+            ), //default display:none
+            data,
+            el;
+
+        type = type.capitalize();
+
+        if (type.match(/Line|Bar|Pie/)) {
+            console.warn("chartifying element ");
+            console.warn(element);
+            element.getElements('table').each(function (table) {
+                data = Wiki.getTableData(table);
+
+                if (data) {
+                    console.warn("got table data " + type);
+                    console.warn(data);
+                    el = ['div', ['div.ct-chart.ct-golden-section']]
+                        .slick()
+                        .inject(table, 'after');
+
+                    table.addClass('chartist-table'); //default display:none;
+
+                    if (type == 'Pie') {
+                        data.series = data.series[0];
+                    }
+
+                    new Chartist[type](
+                        el.getFirst(),
+                        data,
+                        Wiki.evalOptions(options, data.labels, data.series)
+                    );
+                } else {
+                    console.warn("no data returned for chart, skipping");
+                }
+            });
+        } else {
+            console.warn("skipping element as the type " + type + " doesn't match anything i currently process");
+        }
+    },
+    
+    
+    //end chartist addon
+    
+    
 
     caniuse: function( body ){
 

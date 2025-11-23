@@ -32,6 +32,16 @@
     <packaging>war</packaging>
 
     <dependencies>
+        <!-- when updating this, updates are required for the include paths
+        in the folloiwng jsp files
+
+        -->
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>chartist</artifactId>
+            <version>1.5.0</version>
+        </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jspwiki-bootstrap</artifactId>
