@@ -339,6 +339,9 @@ public class WikiEngine implements Engine {
 
         final Map< String, String > extraComponents = ClassUtil.getExtraClassMappings();
         initExtraComponents( extraComponents );
+        
+        
+        ProductUpdateChecker.initialize(props);
 
         fireEvent( WikiEngineEvent.INITIALIZED ); // initialization complete
 
@@ -640,6 +643,9 @@ public class WikiEngine implements Engine {
         fireEvent( WikiEngineEvent.SHUTDOWN );
         getManager( CachingManager.class ).shutdown();
         getManager( FilterManager.class ).destroy();
+        if (ProductUpdateChecker.getInstance() != null) {
+            ProductUpdateChecker.getInstance().shutdown();
+        }
         WikiEventManager.shutdown();
     }
 
