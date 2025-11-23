@@ -18,6 +18,9 @@
  */
 package org.apache.wiki.filters;
 
+import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.AbstractDelta;
+import com.github.difflib.patch.Patch;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
@@ -46,14 +49,6 @@ import org.apache.wiki.ui.EditorManager;
 import org.apache.wiki.util.FileUtil;
 import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.TextUtil;
-import org.suigeneris.jrcs.diff.Diff;
-import org.suigeneris.jrcs.diff.DifferentiationFailedException;
-import org.suigeneris.jrcs.diff.Revision;
-import org.suigeneris.jrcs.diff.delta.AddDelta;
-import org.suigeneris.jrcs.diff.delta.ChangeDelta;
-import org.suigeneris.jrcs.diff.delta.DeleteDelta;
-import org.suigeneris.jrcs.diff.delta.Delta;
-import org.suigeneris.jrcs.diff.myers.MyersDiff;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -808,31 +803,48 @@ public class SpamFilter extends BasePageFilter {
         
         try {
             final String oldText = engine.getManager( PageManager.class ).getPureText( page.getName(), WikiProvider.LATEST_VERSION );
-            final String[] first  = Diff.stringToArray( oldText );
-            final String[] second = Diff.stringToArray( newText );
-            final Revision rev = Diff.diff( first, second, new MyersDiff() );
-
-            if( rev == null || rev.size() == 0 ) {
+            Patch<String> patch = DiffUtils.diffInline(oldText, newText);
+            
+        
+            if( patch == null ) {
                 return ch;
             }
-            
-            for( int i = 0; i < rev.size(); i++ ) {
-                final Delta d = rev.getDelta( i );
+            int lineNumber = 1;
+            int currentOriginalLine = 0;
+            int currentModifiedLine = 0;
 
-                if( d instanceof AddDelta ) {
-                    d.getRevised().toString( change, "", "\r\n" );
-                    ch.m_adds++;
-                    
-                } else if( d instanceof ChangeDelta ) {
-                    d.getRevised().toString( change, "", "\r\n" );
-                    ch.m_adds++;
-                    
-                } else if( d instanceof DeleteDelta ) {
+            for (AbstractDelta<String> delta : patch.getDeltas()) {
+                int originalPosition = delta.getSource().getPosition();
+                int modifiedPosition = delta.getTarget().getPosition();
+
+                // Output unchanged lines before the delta
+                while (currentOriginalLine < originalPosition && currentModifiedLine < modifiedPosition) {
+                    lineNumber++;
+                    currentOriginalLine++;
+                    currentModifiedLine++;
+                }
+
+                List<String> originalLines = delta.getSource().getLines();
+                List<String> revisedLines = delta.getTarget().getLines();
+
+                for (String line : originalLines) {
+                    change.append("- " + lineNumber + ": " + line + "\r\n");
                     ch.m_removals++;
+                    lineNumber++;
+                    currentOriginalLine++;
+                }
+
+                for (String line : revisedLines) {
+                    change.append("+ " + lineNumber + ": " + line + "\r\n");
+                    lineNumber++;
+                    currentModifiedLine++;
+                    ch.m_adds++;
+
                 }
             }
-        } catch( final DifferentiationFailedException e ) {
-            LOG.error( "Diff failed", e );
+
+        } catch (final Exception e) {
+            LOG.error("Diff failed", e);
         }
 
         //  Don't forget to include the change note, too

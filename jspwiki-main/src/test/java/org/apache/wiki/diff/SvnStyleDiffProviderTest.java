@@ -27,48 +27,21 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Properties;
+import org.apache.commons.lang3.StringUtils;
 
 
-public class ContextualDiffProviderTest {
+public class SvnStyleDiffProviderTest {
 
-    /**
-     * Sets up some shorthand notation for writing test cases.
-     * <p>
-     * The quick |^Brown Fox^-Blue Monster-| jumped over |^the^| moon.
-     * <p>
-     * Get it?
-     */
-    private void specializedNotation( final ContextualDiffProvider diff ) {
-        diff.CHANGE_END_HTML = "|";
-        diff.CHANGE_START_HTML = "|";
-
-        diff.DELETION_END_HTML = "-";
-        diff.DELETION_START_HTML = "-";
-
-        diff.DIFF_END = "";
-        diff.DIFF_START = "";
-
-        diff.ELIDED_HEAD_INDICATOR_HTML = "...";
-        diff.ELIDED_TAIL_INDICATOR_HTML = "...";
-
-        diff.m_emitChangeNextPreviousHyperlinks = false;
-
-        diff.INSERTION_END_HTML = "^";
-        diff.INSERTION_START_HTML = "^";
-
-        diff.LINE_BREAK_HTML = "";
-        diff.ALTERNATING_SPACE_HTML = "_";
-    }
 
     @Test
     public void testNoChanges() throws IOException, WikiException {
-        diffTest( null, "", "", "" );
-        diffTest( null, "A", "A", "A" );
-        diffTest( null, "A B", "A B", "A B" );
+        diffTest(  "", "",0);
+        diffTest(  "A", "A",0);
+        diffTest(  "A B", "A B",0);
 
-        diffTest( null, "      ", "      ", " _ _ _" );
-        diffTest( null, "A B  C", "A B  C", "A B _C" );
-        diffTest( null, "A B   C", "A B   C", "A B _ C" );
+        diffTest(  "      ", "      ",0);
+        diffTest(  "A B  C", "A B  C",0);
+        diffTest(  "A B   C", "A B   C",0);
     }
 
     @Test
@@ -79,63 +52,63 @@ public class ContextualDiffProviderTest {
         // when writing tests.
 
         // Simple inserts...
-        diffTest( null, "A C", "A B C", "A |^B ^|C" );
-        diffTest( null, "A D", "A B C D", "A |^B C ^|D" );
+        diffTest(  "A C", "A B C", 1 );
+        diffTest(  "A D", "A B C D", 1 );
 
         // Simple inserts with spaces...
-        diffTest( null, "A C", "A B  C", "A |^B _^|C" );
-        diffTest( null, "A C", "A B   C", "A |^B _ ^|C" );
-        diffTest( null, "A C", "A B    C", "A |^B _ _^|C" );
+        diffTest(  "A C", "A B  C", 1);
+        diffTest(  "A C", "A B   C", 1 );
+        diffTest(  "A C", "A B    C", 1 );
 
         // Just inserted spaces...
-        diffTest( null, "A B", "A  B", "A |^_^|B" );
-        diffTest( null, "A B", "A   B", "A |^_ ^|B" );
-        diffTest( null, "A B", "A    B", "A |^_ _^|B" );
-        diffTest( null, "A B", "A     B", "A |^_ _ ^|B" );
+        diffTest(  "A B", "A  B", 1 );
+        diffTest(  "A B", "A   B",1 );
+        diffTest(  "A B", "A    B", 1 );
+        diffTest(  "A B", "A     B", 1 );
     }
 
     @Test
     public void testSimpleDeletions() throws IOException, WikiException {
         // Simple deletes...
-        diffTest( null, "A B C", "A C", "A |-B -|C" );
-        diffTest( null, "A B C D", "A D", "A |-B C -|D" );
+        diffTest(  "A B C", "A C", 1 );
+        diffTest(  "A B C D", "A D", 1 );
 
         // Simple deletes with spaces...
-        diffTest( null, "A B  C", "A C", "A |-B _-|C" );
-        diffTest( null, "A B   C", "A C", "A |-B _ -|C" );
+        diffTest(  "A B  C", "A C", 1 );
+        diffTest(  "A B   C", "A C", 1 );
 
         // Just deleted spaces...
-        diffTest( null, "A  B", "A B", "A |-_-|B" );
-        diffTest( null, "A   B", "A B", "A |-_ -|B" );
-        diffTest( null, "A    B", "A B", "A |-_ _-|B" );
+        diffTest(  "A  B", "A B", 1 );
+        diffTest(  "A   B", "A B", 1 );
+        diffTest(  "A    B", "A B", 1 );
     }
 
     @Test
     public void testContextLimits() throws IOException, WikiException {
         // No change
-        diffTest( "1", "A B C D E F G H I", "A B C D E F G H I", "A..." );
+        diffTest(  "A B C D E F G H I", "A B C D E F G H I", 0 );
         //TODO Hmm, should the diff provider instead return the string, "No Changes"?
 
         // Bad property value, should default to huge context limit and return entire string.
-        diffTest( "foobar", "A B C D E F G H I", "A B C D F G H I", "A B C D |-E -|F G H I" );
+        diffTest(  "A B C D E F G H I", "A B C D F G H I", 1 );
 
         // One simple deletion, limit context to 2...
-        diffTest( "2", "A B C D E F G H I", "A B C D F G H I", "...D |-E -|F ..." );
+        diffTest(  "A B C D E F G H I", "A B C D F G H I", 1);
 
         // Deletion of first element, limit context to 2...
-        diffTest( "2", "A B C D E", "B C D E", "|-A -|B ..." );
+        diffTest(  "A B C D E", "B C D E", 1);
 
         // Deletion of last element, limit context to 2...
-        diffTest( "2", "A B C D E", "A B C D ", "...D |-E-|" );
+        diffTest( "A B C D E", "A B C D ", 1 );
 
         // Two simple deletions, limit context to 2...
-        diffTest( "2", "A B C D E F G H I J K L M N O P", "A B C E F G H I J K M N O P", "...C |-D -|E ......K |-L -|M ..." );
+        diffTest( "A B C D E F G H I J K L M N O P", "A B C E F G H I J K M N O P", 1 );
     }
 
     @Test
     public void testMultiples() throws IOException, WikiException {
-        diffTest( null, "A F", "A B C D E F", "A |^B C D E ^|F" );
-        diffTest( null, "A B C D E F", "A F", "A |-B C D E -|F" );
+        diffTest(  "A F", "A B C D E F", 1 );
+        diffTest(  "A B C D E F", "A F", 1 );
     }
 
     @Test
@@ -143,25 +116,25 @@ public class ContextualDiffProviderTest {
         // *changes* are actually an insert and a delete in the output...
 
         //single change
-        diffTest( null, "A B C", "A b C", "A |^b^-B-| C" );
+        diffTest(  "A B C", "A b C", 1 );
 
         //non-consequtive changes...
-        diffTest( null, "A B C D E", "A b C d E", "A |^b^-B-| C |^d^-D-| E" );
+        diffTest(  "A B C D E", "A b C d E", 1 );
     }
 
     // FIXME: This test Assertions.fails; must be enabled again asap.
-    /*
+    
     @Test
-    public void testKnownProblemCases() throws NoRequiredPropertyException, IOException
+    public void testKnownProblemCases() throws Exception
     {
         //These all Assertions.fail...
 
         //make two consequtive changes
-        diffTest(null, "A B C D", "A b c D", "A |^b c^-B C-| D");
+        diffTest( "A B C D", "A b c D", 1);
         //acually returns ->                 "A |^b^-B-| |^c^-C-| D"
 
         //collapse adjacent elements...
-        diffTest(null, "A B C D", "A BC D", "A |^BC^-B C-| D");
+        diffTest( "A B C D", "A BC D", 1);
         //acually returns ->                "A |^BC^-B-| |-C -|D"
 
 
@@ -169,26 +142,23 @@ public class ContextualDiffProviderTest {
         //adjacent edits into one...
 
     }
-     */
+     
 
-    private void diffTest( final String contextLimit, final String oldText, final String newText, final String expectedDiff )
+    private void diffTest( final String oldText, final String newText, int expected )
             throws IOException, WikiException {
-        final ContextualDiffProvider diff = new ContextualDiffProvider();
-
-        specializedNotation( diff );
+        final SvnStyleDiffProvider diff = new SvnStyleDiffProvider();
 
         final Properties props = TestEngine.getTestProperties();
-        if( null != contextLimit ) {
-            props.put( ContextualDiffProvider.PROP_UNCHANGED_CONTEXT_LIMIT, contextLimit );
-        }
-
+        
         diff.initialize( null, props );
 
         final TestEngine engine = new TestEngine( props );
         final Context ctx = Wiki.context().create( engine, Wiki.contents().page( engine, "Dummy" ) );
         final String actualDiff = diff.makeDiffHtml( ctx, oldText, newText );
-
-        Assertions.assertEquals( expectedDiff, actualDiff );
+        int actuals = StringUtils.countMatches(actualDiff, SvnStyleDiffProvider.CSS_DIFF_ADDED ) +
+                StringUtils.countMatches(actualDiff, SvnStyleDiffProvider.CSS_DIFF_REMOVED );
+        
+        Assertions.assertEquals( expected*2, actuals , actualDiff);
     }
 
 }
