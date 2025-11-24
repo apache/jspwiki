@@ -41,6 +41,8 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.wiki.event.WikiPageRenameEvent;
+import org.apache.wiki.security.EventUtil;
 
 
 /**
@@ -136,7 +138,7 @@ public class DefaultPageRenamer implements PageRenamer {
             engine.getManager( SearchManager.class ).reindexPage( att );
         }
 
-        firePageRenameEvent( renameFrom, renameToClean );
+        firePageRenameEvent( renameFrom, renameToClean, context );
 
         //  Done, return the new name.
         return renameToClean;
@@ -150,9 +152,9 @@ public class DefaultPageRenamer implements PageRenamer {
      * @param newName the new page name
      */
     @Override
-    public void firePageRenameEvent( final String oldName, final String newName ) {
+    public void firePageRenameEvent( final String oldName, final String newName, final Context context) {
         if( WikiEventManager.isListening(this) ) {
-            WikiEventManager.fireEvent(this, new WikiPageRenameEvent(this, oldName, newName ) );
+            WikiEventManager.fireEvent(this, EventUtil.applyFrom(new WikiPageRenameEvent(this, oldName, newName ), context) );
         }
     }
 

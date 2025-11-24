@@ -53,7 +53,11 @@
 
     <%-- <p><fmt:message key="attach.add.info" /></p> --%>
     <div class="form-group">
-      <label class="control-label form-col-20" for="files"><fmt:message key="attach.add.selectfile"/></label>
+      <label class="control-label form-col-20" for="files">
+          <fmt:message key="attach.add.selectfile"/><br>
+          <fmt:message key="attach.add.maxUpload" />
+          <wiki:MaxUpload />
+      </label>
 
       <ul class="list-group form-col-50">
         <li class="list-group-item droppable">

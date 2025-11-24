@@ -56,9 +56,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import org.apache.wiki.api.plugin.Plugin;
-import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.plugin.PluginManager;
-import org.apache.wiki.preferences.Preferences;
 import static org.apache.wiki.search.SearchManager.PLUGIN_SEARCH;
 
 
@@ -136,18 +134,25 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                     PluginManager mgr = m_engine.getManager(PluginManager.class);
                     final List< Plugin > plugins = mgr.getDiscoveredPlugins();
                     List< SimpleSnipData > callResults = new ArrayList<>();
-                    final Context wikiContext = Wiki.context().create(m_engine, req, "pluginDisco");
-                    Locale locale =  Preferences.getLocale(wikiContext);
+                   
+                    Locale locale = req.getLocale();
+                    if (locale == null) {
+                        locale = Locale.getDefault();
+                    }
                     for (Plugin p : plugins) {
-                        if ( itemId != null && StringUtils.isNotBlank(itemId) ) {
+                        if (itemId != null && StringUtils.isNotBlank(itemId) ) {
                             if ( !p.getSnipExample().startsWith(itemId) ) {
                                 continue;
                             }
                         } else {
-                            SimpleSnipData data = new SimpleSnipData();
-                            data.snip = p.getSnipExample();
-                            data.displayName = p.getDisplayName(locale);
-                            callResults.add(data);
+                            try {
+                                SimpleSnipData data = new SimpleSnipData();
+                                data.snip = p.getSnipExample();
+                                data.displayName = p.getDisplayName(locale);
+                                callResults.add(data);
+                            } catch (Throwable t) {
+                                LOG.warn("failed to get plugin informatiom from " + p.getClass().getCanonicalName(), t);
+                            }
                         }
                         if ( callResults.size() > maxResults )
                             break;

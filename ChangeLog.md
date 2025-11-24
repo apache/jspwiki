@@ -16,6 +16,15 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-11-23 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-10_
+
+* [JSPWIKI-1205](https://issues.apache.org/jira/browse/JSPWIKI-1205) -  adjusts the handling for too large file attachments. 
+* [JSPWIKI-1198(https://issues.apache.org/jira/browse/JSPWIKI-1198) -  fixes the ajax service for plugin suggestions. adds tests
+* [JSPWIKI-1245](https://issues.apache.org/jira/browse/JSPWIKI-1245) -  run security validation checks at start up and log it.
+* [JSPWIKI-1228](https://issues.apache.org/jira/browse/JSPWIKI-1228) -  audit logging capability with optional email based alert
+
 **2025-11-16 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-09_
@@ -31,14 +40,14 @@ under the License.
 * [JSPWIKI-75](https://issues.apache.org/jira/browse/JSPWIKI-75) - Undisclosed security issue
 
 
-**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+**2025-11-15 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-07_
 
 * [JSPWIKI-1235](https://issues.apache.org/jira/browse/JSPWIKI-1235) password complexity checks for XML or JDBC based user data stores
 * [JSPWIKI-80](https://issues.apache.org/jira/browse/JSPWIKI-80) Related
 
-**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+**2025-11-15 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-06_
 

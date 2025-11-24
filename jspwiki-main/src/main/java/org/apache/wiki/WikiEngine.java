@@ -82,6 +82,9 @@ import java.util.Properties;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import org.apache.wiki.auth.SecurityVerificationUtility;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.security.AuditLogger;
 
 
 /**
@@ -238,6 +241,7 @@ public class WikiEngine implements Engine {
     @Override
     public void initialize( final Properties props ) throws WikiException {
         m_startTime  = new Date();
+        
         m_properties = props;
 
         LOG.info( "*******************************************" );
@@ -254,7 +258,7 @@ public class WikiEngine implements Engine {
                 throw new InternalWikiException( "JSPWiki requires a container which supports at least version 3.1 of Servlet specification" );
             }
         }
-
+        AuditLogger.initialize(this);
         fireEvent( WikiEngineEvent.INITIALIZING ); // begin initialization
 
         LOG.debug( "Configuring WikiEngine..." );
@@ -346,6 +350,8 @@ public class WikiEngine implements Engine {
         fireEvent( WikiEngineEvent.INITIALIZED ); // initialization complete
 
         LOG.info( "WikiEngine configured." );
+        
+        new SecurityVerificationUtility().verify(this);
         m_isConfigured = true;
     }
 
@@ -977,7 +983,7 @@ public class WikiEngine implements Engine {
      */
     protected final void firePageEvent( final int type, final String pageName ) {
         if( WikiEventManager.isListening(this ) ) {
-            WikiEventManager.fireEvent(this,new WikiPageEvent(this, type, pageName ) );
+            WikiEventManager.fireEvent(this,new WikiPageEvent(this, type, pageName ));
         }
     }
 
