@@ -97,7 +97,7 @@ String.I18N.PREFIX = "javascript.";
 <%-- JAVASCRIPT --%>
 
 <script src="<wiki:Link format='url' jsp='scripts/haddock.js'/>"></script>
-<script type="module" src="webjars/chartist/1.5.0/dist/index.js"></script>
+<script type="text/javascript" src="webjars/chartist/1.5.0/dist/index.umd.js"></script>
 <wiki:IncludeResources type="script"/>
 
 

@@ -188,10 +188,10 @@ var Wiki = {
     
     
     chartify: function() {
-        console.warn("looking for charts to build");
+        console.debug("looking for charts to build");
         var css_selector = '[class^=chartist]';
         const matches = document.querySelectorAll(css_selector);
-        console.warn("found " + matches.length + " charts to build");
+        console.debug("found " + matches.length + " charts to build");
         for (var i=0; i < matches.length; i++) {
             Wiki.chartist_behavior(matches[i]);
         };
@@ -267,7 +267,7 @@ Function: getTableData
                 series.push(row);
             }
         }
-        console.warn("chart data returned was " + series);
+        console.debug("chart data returned was " + series);
         return series[0] ? { labels: labels, series: series } : null;
     },
 
@@ -323,8 +323,10 @@ Function: getTableData
                 if (type == 'Pie') {
                     data.series = data.series[0];
                 }
-
-                new Chartist[type](
+                //Chartist(el.getFirst(), data, { type: type },
+                //Wiki.evalOptions(options, data.labels, data.series))
+                
+                new Chartist[type + "Chart"](
                     el.getFirst(),
                     data,
                     Wiki.evalOptions(options, data.labels, data.series)
