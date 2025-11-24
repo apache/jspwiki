@@ -82,6 +82,7 @@ import java.util.Properties;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import org.apache.wiki.auth.SecurityVerificationUtility;
 
 
 /**
@@ -343,6 +344,8 @@ public class WikiEngine implements Engine {
         fireEvent( WikiEngineEvent.INITIALIZED ); // initialization complete
 
         LOG.info( "WikiEngine configured." );
+        
+        new SecurityVerificationUtility().verify(this);
         m_isConfigured = true;
     }
 
