@@ -61,10 +61,13 @@ import org.apache.wiki.util.TextUtil;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.fileupload2.core.FileUploadByteCountLimitException;
 import java.util.ResourceBundle;
+import org.apache.wiki.tags.MaxUploadTag;
 
 
 /**
@@ -103,6 +106,8 @@ public class AttachmentServlet extends HttpServlet {
 
     /**
      *  Initializes the servlet from Engine properties.
+     * @param config
+     * @throws jakarta.servlet.ServletException
      */
     @Override
     public void init( final ServletConfig config ) throws ServletException {
@@ -352,7 +357,17 @@ public class AttachmentServlet extends HttpServlet {
         } catch( final RedirectException e ) {
             final Session session = Wiki.session().find( m_engine, req );
             session.addMessage( e.getMessage() );
-
+            //drain the request body
+            try (ServletInputStream inputStream = req.getInputStream();) {
+                int data;
+                while ((data = inputStream.read()) != -1) {
+                    //we are just reading the stream to the end
+                }
+            } catch (Exception err) {
+                //ignore it
+            }
+            
+            
             req.getSession().setAttribute("msg", e.getMessage());
             res.sendRedirect( e.getRedirect() );
         }
@@ -376,6 +391,8 @@ public class AttachmentServlet extends HttpServlet {
 
     /**
      *  Uploads a specific mime multipart input set, intercepts exceptions.
+     * 
+     *  If the total request size is too big, the user will be redirected to the Error.jsp page
      *
      *  @param req The servlet request
      *  @return The page to which we should go next.
@@ -391,7 +408,7 @@ public class AttachmentServlet extends HttpServlet {
 
         // Check that we have a file upload request
         if( !JakartaServletFileUpload.isMultipartContent(req) ) {
-            throw new RedirectException( "Not a file upload", errorPage );
+            throw new RedirectException( "Not a file upload", nextPage );
         }
 
         try {
@@ -402,15 +419,24 @@ public class AttachmentServlet extends HttpServlet {
             final UploadListener pl = new UploadListener();
 
             m_engine.getManager( ProgressManager.class ).startProgress( pl, progressId );
-
+            
+            if (req.getContentLengthLong() > m_maxSize) {
+                //we don't want total upload size to be larger than the max
+                //this is to prevent resource exhaustion
+                //TODO i18n this error message
+                throw new RedirectException("Request too big " + 
+                        MaxUploadTag.humanReadableByteCountBin(req.getContentLengthLong()) + " vs " + 
+                        MaxUploadTag.humanReadableByteCountBin(m_maxSize), errorPage +"?Error=true");
+            }
             final JakartaServletFileUpload upload = new JakartaServletFileUpload( factory );
             upload.setHeaderCharset(StandardCharsets.UTF_8);
-            if( !context.hasAdminPermissions() ) {
-                upload.setFileSizeMax( m_maxSize );
-            }
             upload.setProgressListener( pl );
-            final List<FileItem> items = upload.parseRequest( req );
-
+            final List<FileItem> items;
+            try {
+                items = upload.parseRequest(req);
+            } catch (FileUploadByteCountLimitException ex) {
+                throw new RedirectException( "Request too big " + ex.getMessage(), nextPage );
+            }
             String   wikipage   = null;
             String   changeNote = null;
             //FileItem actualFile = null;
@@ -443,10 +469,19 @@ public class AttachmentServlet extends HttpServlet {
             }
 
             if(fileItems.isEmpty()) {
-                throw new RedirectException( "Broken file upload", errorPage );
+                throw new RedirectException( "Broken file upload", nextPage );
 
             } else {
                 for( final FileItem actualFile : fileItems ) {
+                    if( !context.hasAdminPermissions() ) {
+                        if (actualFile.getSize()> m_maxSize) {
+                            //TODO i18n this error message
+                            throw new RedirectException("Attachment too big " + actualFile.getName() + " " + 
+                                     MaxUploadTag.humanReadableByteCountBin(actualFile.getSize()) + " vs " + 
+                                     MaxUploadTag.humanReadableByteCountBin(m_maxSize), nextPage);
+                        }
+                    }
+                    
                     final String filename = actualFile.getName();
                     final long   fileSize = actualFile.getSize();
                     try( final InputStream in  = actualFile.getInputStream() ) {

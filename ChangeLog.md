@@ -20,7 +20,8 @@ under the License.
 
 * _3.0.0-git-09_
 
-* [JSPWIKI-1228](https://issues.apache.org/jira/browse/JSPWIKI-1228) audit logging capability with optional email based alert
+* [JSPWIKI-1198](https://issues.apache.org/jira/browse/JSPWIKI-1198) - Plugin API change that enables all plugins to be internationalized and visible in the auto complete suggestion/snippet menu
+* [JSPWIKI-1242](https://issues.apache.org/jira/browse/JSPWIKI-1242) - Fix for the web blog snippet defaults causing existing blog entries to not render.
 
 
 **2025-11-16 Alex O'Ree (alexoree AT apache DOT org)**

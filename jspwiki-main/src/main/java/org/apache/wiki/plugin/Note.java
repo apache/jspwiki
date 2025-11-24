@@ -55,6 +55,10 @@ public class Note implements Plugin {
     /** The default name for the note.  Value is <tt>{@value}</tt>. */
     public static final String DEFAULT_NOTE_IMAGE = "note.png";
 
+    @Override
+    public String getSnipExample() {
+        return "Note " + PROP_NOTE_IMAGE + "=note.png This text shows as tooltip";
+    }
     /**
      *  {@inheritDoc}
      */
