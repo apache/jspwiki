@@ -30,6 +30,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 
 import java.security.Principal;
+import org.apache.wiki.security.EventUtil;
 
 
 /**
@@ -170,7 +171,8 @@ public interface UserManager extends Initializable {
      */
     default void fireEvent( final int type, final Session session, final Object profile ) {
         if( WikiEventManager.isListening( this ) ) {
-            WikiEventManager.fireEvent( this, new WikiSecurityEvent( session, type, profile ) );
+            WikiEventManager.fireEvent( this, 
+                    EventUtil.applyFrom(new WikiSecurityEvent( session, type, profile )) );
         }
     }
 

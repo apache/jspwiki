@@ -28,6 +28,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 
 import java.util.Properties;
+import org.apache.wiki.security.EventUtil;
 
 /**
   * Fires WikiPageEvents for page events.
@@ -136,6 +137,7 @@ public class PageEventFilter extends BasePageFilter {
     protected final void fireEvent( final int type, final Context context ) {
         if( WikiEventManager.isListening(this ) && WikiPageEvent.isValidType( type ) ) {
             final WikiPageEvent event = new WikiPageEvent( context.getEngine(), type, context.getPage().getName() );
+            EventUtil.applyFrom(event, context);
             WikiEventManager.fireEvent(this, event );
         }
     }
