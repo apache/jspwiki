@@ -31,14 +31,14 @@ under the License.
 * [JSPWIKI-75](https://issues.apache.org/jira/browse/JSPWIKI-75) - Undisclosed security issue
 
 
-**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+**2025-11-15 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-07_
 
 * [JSPWIKI-1235](https://issues.apache.org/jira/browse/JSPWIKI-1235) password complexity checks for XML or JDBC based user data stores
 * [JSPWIKI-80](https://issues.apache.org/jira/browse/JSPWIKI-80) Related
 
-**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+**2025-11-15 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-06_
 
