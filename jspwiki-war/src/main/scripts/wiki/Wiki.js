@@ -58,6 +58,7 @@ Depends on :
 Class: Wiki
     Javascript support functions for jspwiki.
 */
+
 var Wiki = {
 
     version: "haddock04",  //js version, used to validate compatible preference cookies
@@ -283,33 +284,55 @@ Function: getTableData
         type = type.capitalize();
 
         if (type.match(/Line|Bar|Pie/)) {
-            console.warn("chartifying element ");
-            console.warn(element);
-            element.getElements('table').each(function (table) {
-                data = Wiki.getTableData(table);
-
-                if (data) {
-                    console.warn("got table data " + type);
-                    console.warn(data);
-                    el = ['div', ['div.ct-chart.ct-golden-section']]
-                        .slick()
-                        .inject(table, 'after');
-
-                    table.addClass('chartist-table'); //default display:none;
-
-                    if (type == 'Pie') {
-                        data.series = data.series[0];
+            console.info("chartifying element ");
+            console.debug(element);
+            var pageContent = element.parentElement.parentElement;
+            //iterate until we find 'element', then get the next table element
+            var x=0;
+            var found=false;
+            for (x=0; x < pageContent.children.length; x++) {
+                var p = pageContent.children[x];
+                //this should be a "p" element.
+                for (var j=0; j < p.children.length; j++) {
+                    if (p.children[j] === element) {
+                        found = true;
+                        break;
                     }
-
-                    new Chartist[type](
-                        el.getFirst(),
-                        data,
-                        Wiki.evalOptions(options, data.labels, data.series)
-                    );
-                } else {
-                    console.warn("no data returned for chart, skipping");
                 }
-            });
+                if (found) break;
+            }
+            if (found) {
+                element = pageContent.children[x+1];
+                //this should be the next "p" containing the table.
+            } else {
+                console.warn("failed to locate the table for " + element);
+                return;
+            }
+
+            data = Wiki.getTableData(element);
+            var table = element;
+            if (data) {
+                console.debug("got table data " + type);
+                console.debug(data);
+                el = ['div', ['div.ct-chart.ct-golden-section']]
+                    .slick()
+                    .inject(table, 'after');
+
+                table.addClass('chartist-table'); //default display:none;
+
+                if (type == 'Pie') {
+                    data.series = data.series[0];
+                }
+
+                new Chartist[type](
+                    el.getFirst(),
+                    data,
+                    Wiki.evalOptions(options, data.labels, data.series)
+                );
+            } else {
+                console.warn("no data returned for chart, skipping");
+            }
+
         } else {
             console.warn("skipping element as the type " + type + " doesn't match anything i currently process");
         }

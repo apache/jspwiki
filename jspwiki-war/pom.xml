@@ -34,7 +34,10 @@
     <dependencies>
         <!-- when updating this, updates are required for the include paths
         in the folloiwng jsp files
-
+jspwiki-war\src\main\webapp\templates\default\commonheader.jsp
+   2 lines, a link/css tag and script tag
+jspwiki-war\src\main\scripts\wiki\Wiki.js
+   1 line, the import statement
         -->
         <dependency>
             <groupId>org.webjars.npm</groupId>
