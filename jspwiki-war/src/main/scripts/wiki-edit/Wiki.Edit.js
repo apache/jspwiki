@@ -95,14 +95,19 @@ wiki.add("textarea#editorarea", function( main ){
         if(LocalCache in localStorage){
 
             var cache = localStorage.getItem(LocalCache);
-            const modal = document.getElementById("localstoragemodal");
-            document.getElementById("previouscontent").value = cache;
-            modal.openModal( function(content){
-                    snipe.set("value", content);
-                }, function(){
-                    //abort
-                    localStorage.removeItem(LocalCache);
-                });
+            var testvalue = document.querySelector('textarea.editor').value;
+            //prevent the popup if the current content is identical to the cached.
+            if (cache!==testvalue) {
+                const modal = document.getElementById("localstoragemodal");
+                document.getElementById("previouscontent").value = cache;
+                modal.openModal( function(content){
+                        snipe.set("value", content);
+                    }, function(){
+                        //abort
+                        localStorage.removeItem(LocalCache);
+                    }
+                );
+            }
         }
 
     }
