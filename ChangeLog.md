@@ -16,6 +16,13 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+
+**2025-11-26 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-11_
+
+* [JSPWIKI-1248](https://issues.apache.org/jira/browse/JSPWIKI-1248) - Additional password change check to enforce X number of characters are different from the original
+
 **2025-11-23 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-10_
