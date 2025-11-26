@@ -342,12 +342,16 @@ public class DefaultUserManager implements UserManager {
 
         if( !m_engine.getManager( AuthenticationManager.class ).isContainerAuthenticated() ) {
             // passwords must match and can't be null
+            
+            //this is the new password
             final String password = profile.getPassword();
             if( password == null ) {
                 session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.blankpassword" ) );
             } else {
                 final HttpServletRequest request = context.getHttpRequest();
+                //the existing password
                 final String password0 = ( request == null ) ? null : request.getParameter( "password0" );
+                //the new password confirmation
                 final String password2 = ( request == null ) ? null : request.getParameter( "password2" );
                 if( !password.equals( password2 ) ) {
                     session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
@@ -355,7 +359,7 @@ public class DefaultUserManager implements UserManager {
                 if( !profile.isNew() && !getUserDatabase().validatePassword( profile.getLoginName(), password0 ) ) {
                     session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
                 }
-                List<String> msg = PasswordComplexityVeriffier.validate(password2, context);
+                List<String> msg = PasswordComplexityVeriffier.validate(password2, password0, context);
                 for (String s : msg) {
                     session.addMessage( SESSION_MESSAGES, s );
                 }
