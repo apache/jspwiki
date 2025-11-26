@@ -222,17 +222,8 @@ public class WikiSession implements Session {
 
         // Add all the GroupPrincipals possessed by the Subject directly
         roles.addAll(m_subject.getPrincipals(GroupPrincipal.class));
-        if (httpSesssion != null) {
-            String v = m_engine.getWikiProperties().getProperty("jspwiki.role.extraRoles", null);
-            if (v != null) {
-                String[] extraRoles = v.split("\\,");
-                for (String s : extraRoles) {
-                    if (httpSesssion.isUserInRole(s)) {
-                        roles.add(new GroupPrincipal(s));
-                    }
-                }
-            }
-        }
+        
+        
         // Return a defensive copy
         final Principal[] roleArray = roles.toArray( new Principal[0] );
         Arrays.sort( roleArray, WikiPrincipal.COMPARATOR );
@@ -505,6 +496,17 @@ public class WikiSession implements Session {
         // Attach reference to wiki engine
         wikiSession.m_engine = engine;
         wikiSession.m_cachedLocale = request.getLocale();
+        
+        String v = engine.getWikiProperties().getProperty("jspwiki.role.extraRoles", null);
+        if (v != null) {
+            String[] extraRoles = v.split("\\,");
+            for (String s : extraRoles) {
+                if (request.isUserInRole(s)) {
+                    wikiSession.m_subject.getPrincipals().add(new GroupPrincipal(s));
+                }
+            }
+        }
+        
         return wikiSession;
     }
 
@@ -580,17 +582,6 @@ public class WikiSession implements Session {
     public static Principal[] userPrincipals( final Engine engine ) {
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.userPrincipals();
-    }
-    private HttpServletRequest httpSesssion = null;
-    
-   
-    @Override
-    public void setHttpRequestContext(HttpServletRequest session) {
-        this.httpSesssion = session;
-    }
-    @Override
-    public HttpServletRequest getHttpRequestContext() {
-        return httpSesssion;
     }
 
 }
