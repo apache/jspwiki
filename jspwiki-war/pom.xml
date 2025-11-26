@@ -32,15 +32,17 @@
     <packaging>war</packaging>
 
     <dependencies>
-        <!-- when updating this, updates are required for the include paths
-        in the folloiwng jsp files
-jspwiki-war\src\main\webapp\templates\default\commonheader.jsp
-   2 lines, a link/css tag and script tag
-        -->
+
         <dependency>
             <groupId>org.webjars.npm</groupId>
             <artifactId>chartist</artifactId>
             <version>1.5.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>webjars-locator</artifactId>
+            <version>0.52</version>
         </dependency>
 
         <dependency>

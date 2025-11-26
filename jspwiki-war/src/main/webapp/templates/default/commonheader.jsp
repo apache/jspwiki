@@ -90,14 +90,14 @@ String.I18N.PREFIX = "javascript.";
 }
 
 </style>
-<link rel="stylesheet" href="webjars/chartist/1.5.0/dist/index.css">
+<link rel="stylesheet" href="webjars/chartist/dist/index.css">
 <wiki:IncludeResources type="stylesheet"/>
 <wiki:IncludeResources type="inlinecss" />
 
 <%-- JAVASCRIPT --%>
 
 <script src="<wiki:Link format='url' jsp='scripts/haddock.js'/>"></script>
-<script type="text/javascript" src="webjars/chartist/1.5.0/dist/index.umd.js"></script>
+<script type="text/javascript" src="webjars/chartist/dist/index.umd.js"></script>
 <wiki:IncludeResources type="script"/>
 
 
