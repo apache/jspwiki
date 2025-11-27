@@ -44,7 +44,7 @@ public final class PasswordComplexityVeriffier {
      * @param context
      * @return see above
      */
-    public static List<String> validate(String pwd, Context context) {
+    public static List<String> validate(String pwd, String previousPwd, Context context) {
         Properties wikiProps = context.getEngine().getWikiProperties();
         final ResourceBundle rb = ResourceBundle.getBundle(InternationalizationManager.CORE_BUNDLE, context.getWikiSession().getLocale());
 
@@ -55,6 +55,7 @@ public final class PasswordComplexityVeriffier {
         int minDigits = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.minDigits", "1"));
         int minSymbols = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.minSymbols", "1"));
         int maxRepeats = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.repeatingCharacters", "1"));
+        int minChanged = Integer.parseInt(wikiProps.getProperty("jspwiki.credentials.minChanged", "0"));
         //potential future enhancement, detect common patterns like keyboard walks, asdf, etc
         //boolean allowCommonPatterns = "true".equalsIgnoreCase(wikiProps.getProperty("jspwiki.credentials.allowCommonPatterns", "false"));
         //potential future enhancements, detect common numerical patterns, such as 1234 oe 4321
@@ -73,6 +74,7 @@ public final class PasswordComplexityVeriffier {
             problems.add(MessageFormat.format(rb.getString("pwdcheck.tooshort"), minLength));
         }
         char[] cred = pwd.toCharArray();
+        int qtyChanged = 0;
         int upper = 0;
         int lower = 0;
         int digits = 0;
@@ -110,6 +112,24 @@ public final class PasswordComplexityVeriffier {
                     }
                     localrepeats = 0;
                 }
+            }
+        }
+        
+        //quantity of changed character test
+        if (minChanged > 0 && previousPwd != null) {
+            for (int i = 0; i < cred.length; i++) {
+                if ((i + 1) < previousPwd.length()) {
+                    if (previousPwd.charAt(i) != cred[i]) {
+                        qtyChanged++;
+                    }
+                } else {
+                    //i.e. the new pass is longer than the old one
+                    break;
+                }
+
+            }
+            if (qtyChanged < minChanged) {
+                problems.add(MessageFormat.format(rb.getString("pwdcheck.minchanged"), minChanged));
             }
         }
 

@@ -39,6 +39,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import org.apache.wiki.security.EventUtil;
 
 /**
  *  <p>Manages Sessions for different Engines.</p>
@@ -259,7 +260,8 @@ public class SessionMonitor implements HttpSessionListener {
      */
     protected final void fireEvent( final int type, final Principal principal, final Session session ) {
         if( WikiEventManager.isListening( this ) ) {
-            WikiEventManager.fireEvent( this, new WikiSecurityEvent( this, type, principal, session ) );
+            WikiEventManager.fireEvent( this, 
+                    EventUtil.applyFrom(new WikiSecurityEvent( this, type, principal, session ) ) );
         }
     }
 
