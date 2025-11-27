@@ -78,26 +78,13 @@ String.I18N.PREFIX = "javascript.";
 <link rel="stylesheet" type="text/css" media="screen, projection, print" id="main-stylesheet"
      href="<wiki:Link format='url' templatefile='haddock-dark.css'/>"/>
 </c:if>
-<style type="text/css">
-.chartist-options,.chartist-table{
-    display:none;
-}
-.ct-chart .ct-label,.ct-chart .ct-label.ct-vertical,.ct-chart .ct-label.ct-horizontal{
-    font-size:1em;
-}
-.ct-chart-pie .ct-label{
-    fill:rgba(255,255,255,.8);
-}
 
-</style>
-<link rel="stylesheet" href="webjars/chartist/dist/index.css">
 <wiki:IncludeResources type="stylesheet"/>
 <wiki:IncludeResources type="inlinecss" />
 
 <%-- JAVASCRIPT --%>
 
 <script src="<wiki:Link format='url' jsp='scripts/haddock.js'/>"></script>
-<script type="text/javascript" src="webjars/chartist/dist/index.umd.js"></script>
 <wiki:IncludeResources type="script"/>
 
 

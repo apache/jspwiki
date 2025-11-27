@@ -373,7 +373,24 @@ Behavior: Viewer.Carousel (embed auto-rotating media viewer into a wiki page)
         });
 
 
-    });
+    })
+
+
+    .add( ".chartist-line", function( element ){
+        new ChartistChart( filterJSPWikiLinks( element ), {
+            container: element
+        });
+    })
+    .add( ".chartist-bar", function( element ){
+        new ChartistChart( filterJSPWikiLinks( element ), {
+            container: element
+        });
+    })
+    .add( ".chartist-pie", function( element ){
+        new ChartistChart( filterJSPWikiLinks( element ), {
+            container: element
+        });
+    })
 
 
 /*
