@@ -28,12 +28,16 @@ import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.io.File;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.UUID;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.auth.user.XMLUserDatabase;
 import org.junit.jupiter.api.Disabled;
 
 import static org.mockito.Mockito.mock;
@@ -83,7 +87,11 @@ class DefaultUserManagerTest {
     
     @Test
     public void verifyPasswordReusePolicies() throws Exception {
-     
+        Properties props = TestEngine.getTestProperties();
+        File target = new File("target/" + UUID.randomUUID() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/userdatabase.xml"), target);
+        props.setProperty(XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath());
+        
         final HttpSession httpSession = mock(HttpSession.class);
         
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -94,7 +102,6 @@ class DefaultUserManagerTest {
         when(request.getParameter("fullname")).thenReturn("unitTestBob" + " Smith");
         when(request.getParameter("email")).thenReturn("unitTestBob" + "@apache.org");
         when(request.getSession()).thenReturn(httpSession);
-        Properties props = TestEngine.getTestProperties();
         props.put("jspwiki.credentials.reuseCount", "2");
         props.put("jspwiki.userdatabase", "org.apache.wiki.auth.user.XMLUserDatabase");
 
@@ -110,8 +117,9 @@ class DefaultUserManagerTest {
         when(context.getWikiSession()).thenReturn(wikiSession);
 
         // Call parseProfile
-        final UserProfile profile = userManager.parseProfile(context);
-
+        UserProfile profile = userManager.parseProfile(context);
+        profile.setCreated(null);
+        profile.setLastModified(null);
         userManager.validateProfile(context, profile);
         Assertions.assertEquals(0, 
                 wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, 
@@ -130,13 +138,23 @@ class DefaultUserManagerTest {
         when(request.getParameter("loginname")).thenReturn("unitTestBob");
         when(request.getParameter("fullname")).thenReturn("unitTestBob" + " Smith");
         when(request.getParameter("email")).thenReturn("unitTestBob" + "@apache.org");
-        when(request.getParameter("password0")).thenReturn("myP@5sw0rd");
-        when(request.getParameter("password2")).thenReturn("passwordA2!");
+        when(request.getParameter("password")).thenReturn("myP@5sw0rd");
+        
+        
         when(request.getSession()).thenReturn(httpSession);
         context = mock(Context.class);
         when(context.getHttpRequest()).thenReturn(request);
         when(context.getEngine()).thenReturn(engine);
         when(context.getWikiSession()).thenReturn(wikiSession);
+        when(request.getParameter("password")).thenReturn("passwordA2!");
+        
+        //the proposed password
+        profile.setPassword("passwordA2!");
+        //old one
+        when(request.getParameter("password0")).thenReturn("myP@5sw0rd");
+        //new confirm
+        when(request.getParameter("password2")).thenReturn ("passwordA2!");
+        
         userManager.validateProfile(context, profile);
         Assertions.assertEquals(0, 
                 wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, 
@@ -151,13 +169,20 @@ class DefaultUserManagerTest {
         when(request.getParameter("loginname")).thenReturn("unitTestBob");
         when(request.getParameter("fullname")).thenReturn("unitTestBob" + " Smith");
         when(request.getParameter("email")).thenReturn("unitTestBob" + "@apache.org");
-        when(request.getParameter("password0")).thenReturn("passwordA2!");
-        when(request.getParameter("password2")).thenReturn("passwordA3!");
+        when(request.getParameter("password")).thenReturn("passwordA2!");
+        
         when(request.getSession()).thenReturn(httpSession);
         context = mock(Context.class);
         when(context.getHttpRequest()).thenReturn(request);
         when(context.getEngine()).thenReturn(engine);
         when(context.getWikiSession()).thenReturn(wikiSession);
+        profile = userManager.parseProfile(context);
+        //proposed
+        profile.setPassword("passwordA3!");
+        //existing
+        when(request.getParameter("password0")).thenReturn("passwordA2!");
+        //new pass
+        when(request.getParameter("password2")).thenReturn("passwordA3!");
         userManager.validateProfile(context, profile);
         Assertions.assertEquals(0, 
                 wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, 
@@ -173,23 +198,22 @@ class DefaultUserManagerTest {
         when(request.getParameter("fullname")).thenReturn("unitTestBob" + " Smith");
         when(request.getParameter("email")).thenReturn("unitTestBob" + "@apache.org");
         when(request.getParameter("password0")).thenReturn("passwordA3!");
+        when(request.getParameter("password")).thenReturn("passwordA3!");
         when(request.getParameter("password2")).thenReturn("passwordA2!");
         when(request.getSession()).thenReturn(httpSession);
         context = mock(Context.class);
         when(context.getHttpRequest()).thenReturn(request);
         when(context.getEngine()).thenReturn(engine);
         when(context.getWikiSession()).thenReturn(wikiSession);
+        profile = userManager.parseProfile(context);
+        profile.setPassword("passwordA2!");
+        
         userManager.validateProfile(context, profile);
         System.out.println(StringUtils.join(wikiSession.getMessages()));
-        Assertions.assertEquals(0, 
-                wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, 
-                StringUtils.join(wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES)));
-        userManager.setUserProfile(context, profile);
         Assertions.assertEquals(1, 
                 wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, 
                 StringUtils.join(wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES)));
-        
-
+      
 
     }
     @Disabled
@@ -197,7 +221,80 @@ class DefaultUserManagerTest {
     public void verifyPasswordReusePoliciesWithItOff() throws Exception {
          
         Properties props = TestEngine.getTestProperties();
+        File target = new File("target/" + UUID.randomUUID() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/userdatabase.xml"), target);
+        props.setProperty(XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath());
+        
+        final HttpSession httpSession = mock(HttpSession.class);
+        
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getParameter("loginname")).thenReturn("unitTestBob");
+        when(request.getParameter("password")).thenReturn("myP@5sw0rd");
+        when(request.getParameter("password0")).thenReturn("myP@5sw0rd");
+        when(request.getParameter("password2")).thenReturn("myP@5sw0rd");
+        when(request.getParameter("fullname")).thenReturn("unitTestBob" + " Smith");
+        when(request.getParameter("email")).thenReturn("unitTestBob" + "@apache.org");
+        when(request.getSession()).thenReturn(httpSession);
         props.put("jspwiki.credentials.reuseCount", "-1");
-        TestEngine engine = TestEngine.build(props);
+        props.put("jspwiki.userdatabase", "org.apache.wiki.auth.user.XMLUserDatabase");
+
+        
+        final TestEngine engine = TestEngine.build(props);
+        final DefaultUserManager userManager = (DefaultUserManager) engine.getManager(UserManager.class);
+
+        final Session wikiSession = WikiSessionTest.authenticatedSession( engine, "unitTestBob", "myP@5sw0rd" );
+        // Mock Context
+        Context context = mock(Context.class);
+        when(context.getHttpRequest()).thenReturn(request);
+        when(context.getEngine()).thenReturn(engine);
+        when(context.getWikiSession()).thenReturn(wikiSession);
+
+        // Call parseProfile
+        UserProfile profile = userManager.parseProfile(context);
+        profile.setCreated(null);
+        profile.setLastModified(null);
+        userManager.validateProfile(context, profile);
+        Assertions.assertEquals(0, 
+                wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, 
+                StringUtils.join(wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES)));
+        
+        //this should save the profile
+        userManager.setUserProfile(context, profile);
+        Assertions.assertEquals(0, 
+                wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, 
+                StringUtils.join(wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES)));
+
+        //change the password
+        //note that the first password is not stored as a hash because
+        //it's under a unit test context
+        request = mock(HttpServletRequest.class);
+        when(request.getParameter("loginname")).thenReturn("unitTestBob");
+        when(request.getParameter("fullname")).thenReturn("unitTestBob" + " Smith");
+        when(request.getParameter("email")).thenReturn("unitTestBob" + "@apache.org");
+        when(request.getParameter("password")).thenReturn("myP@5sw0rd");
+        
+        
+        when(request.getSession()).thenReturn(httpSession);
+        context = mock(Context.class);
+        when(context.getHttpRequest()).thenReturn(request);
+        when(context.getEngine()).thenReturn(engine);
+        when(context.getWikiSession()).thenReturn(wikiSession);
+        when(request.getParameter("password")).thenReturn("passwordA2!");
+        
+        //the proposed password
+        profile.setPassword("passwordA2!");
+        //old one
+        when(request.getParameter("password0")).thenReturn("myP@5sw0rd");
+        //new confirm
+        when(request.getParameter("password2")).thenReturn ("passwordA2!");
+        
+        userManager.validateProfile(context, profile);
+        Assertions.assertEquals(0, 
+                wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, 
+                StringUtils.join(wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES)));
+        //this should save the profile, changing the password
+        userManager.setUserProfile(context, profile);
+        Assertions.assertEquals(0, wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, StringUtils.join(wikiSession.getMessages()));
+
     }
 }
