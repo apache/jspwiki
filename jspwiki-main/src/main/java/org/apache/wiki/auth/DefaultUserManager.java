@@ -153,7 +153,7 @@ public class DefaultUserManager implements UserManager {
         if ( session.isAuthenticated() ) {
             user = session.getUserPrincipal();
             try {
-                profile = getUserDatabase().find( user.getName() );
+                profile = getUserDatabase().findByWikiName( user.getName());
                 newProfile = false;
             } catch( final NoSuchPrincipalException e ) { }
         }
@@ -162,6 +162,8 @@ public class DefaultUserManager implements UserManager {
             profile = getUserDatabase().newProfile();
             if ( user != null ) {
                 profile.setLoginName( user.getName() );
+            } else {
+                LOG.warn("new profile however the user principal is null. this shouldn't happen");
             }
             if ( !profile.isNew() ) {
                 throw new IllegalStateException( "New profile should be marked 'new'. Check your UserProfile implementation." );
@@ -372,8 +374,10 @@ public class DefaultUserManager implements UserManager {
         final String email = profile.getEmail();
 
         // It's illegal to use as a full name someone else's login name
+        //FIXME this check seems dubious at best. can't be two John Smith's in the same
+        //database?
         try {
-            otherProfile = getUserDatabase().find( fullName );
+            otherProfile = getUserDatabase().findByFullName( fullName );
             if( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) ) {
                 final Object[] args = { fullName };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalfullname" ), args ) );
@@ -382,7 +386,7 @@ public class DefaultUserManager implements UserManager {
 
         // It's illegal to use as a login name someone else's full name
         try {
-            otherProfile = getUserDatabase().find( loginName );
+            otherProfile = getUserDatabase().findByFullName(loginName );
             if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
                 final Object[] args = { loginName };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );
@@ -479,7 +483,7 @@ public class DefaultUserManager implements UserManager {
          */
         public UserProfile getUserInfo( final String uid ) throws NoSuchPrincipalException {
             if( m_manager != null ) {
-                return m_manager.getUserDatabase().find( uid );
+                return m_manager.getUserDatabase().findByUid( uid );
             }
 
             throw new IllegalStateException( "The manager is offline." );
