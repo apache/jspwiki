@@ -47,6 +47,6 @@
     String newEntry = p.getNewEntryPage( wiki, pagereq );
 
     // Redirect to a new page for user to edit
-    response.sendRedirect( wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), newEntry ) );
+    response.sendRedirect( wikiContext.getURL( ContextEnum.PAGE_EDIT.getRequestContext(), newEntry ) + "&" + WeblogPlugin.ATTR_ISWEBLOG + "=true" );
 %>
 

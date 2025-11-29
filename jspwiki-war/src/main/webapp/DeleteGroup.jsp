@@ -16,7 +16,8 @@
     specific language governing permissions and limitations
     under the License.
 --%>
-
+<%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
+<%@ page import="java.util.*" %>
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
@@ -78,7 +79,8 @@
     catch ( WikiSecurityException e )
     {
         // Send error message
-        wikiSession.addMessage( GroupManager.MESSAGES_KEY, e.getMessage() );
+        final ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE, wikiSession.getLocale() );
+        wikiSession.addMessage( GroupManager.MESSAGES_KEY, rb.getString("operation.failed") );
         response.sendRedirect( "Group.jsp" );
     }
 

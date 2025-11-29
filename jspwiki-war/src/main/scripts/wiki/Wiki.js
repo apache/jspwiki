@@ -70,7 +70,14 @@ var Wiki = {
         wiki.add = behavior.add.bind(behavior);
         wiki.once = behavior.once.bind(behavior);
         wiki.update = behavior.update.bind(behavior);
-
+       
+        setTimeout(function(){
+        if (wiki.Snips) {
+            wiki.Snips.loadPlugins();
+        } else {
+            console.warn("snips are not loaded yet, cannot fetch the plugin list");
+        }
+        
         //add the standard jspwiki behaviors; needed to render the haddock JSP templates
         wiki.add( "body", wiki.caniuse )
 
@@ -170,6 +177,7 @@ var Wiki = {
             popstate: wiki.popstate,
             domready: wiki.domready.bind(wiki)
         });
+        }, 500);
 
     },
 
@@ -197,8 +205,20 @@ var Wiki = {
     > wiki.prefs("")                        //erase user-preference cookie
     */
     prefs: function(key, value){
-
-        return $.cookie.json({name:"JSPWikiUserPrefs", path:this.BaseUrl, expiry:20}, key, value);
+        var flag = false;
+        var sameSite = "none";
+        if (window.location.href.startsWith("https://")) {
+            flag = true;
+            sameSite = "strict";
+        }
+        return $.cookie.json({
+            name:"JSPWikiUserPrefs", 
+            path:this.BaseUrl, 
+            sameSite: sameSite,
+            secure: flag,
+            httpOnly: flag,
+            expiry:400
+            }, key, value);
     },
 
     /*

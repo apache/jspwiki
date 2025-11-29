@@ -24,13 +24,14 @@ import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
-import org.apache.wiki.event.WikiSecurityEvent;
 
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.AccessController;
 import java.security.Permission;
 import java.security.Principal;
+import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.security.EventUtil;
 
 
 /**
@@ -264,7 +265,8 @@ public interface AuthorizationManager extends Initializable {
      */
     default void fireEvent( final int type, final Principal user, final Object permission ) {
         if( WikiEventManager.isListening( this ) ) {
-            WikiEventManager.fireEvent( this, new WikiSecurityEvent( this, type, user, permission ) );
+            WikiEventManager.fireEvent( this, 
+                    EventUtil.applyFrom(new WikiSecurityEvent( this, type, user, permission ) ) );
         }
     }
 

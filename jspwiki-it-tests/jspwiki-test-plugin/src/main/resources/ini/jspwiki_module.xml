@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modules>
+   <plugin class="org.apache.jspwiki.jspwiki.test.plugin.JspwikiTestPlugin">
+      <author>Apache</author>
+      <minVersion>3.0.0</minVersion>
+      <alias>JspwikiTestPlugin</alias>
+   </plugin>
+</modules>

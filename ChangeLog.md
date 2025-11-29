@@ -16,6 +16,121 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+
+
+**2025-11-29 arturobernalg **
+
+* _3.0.0-git-13_
+
+  * Security / API cleanup
+    * Remove the Security Manager–dependent Session#doPrivileged from jspwiki-api.
+    * Replace the only usage with Subject.doAsPrivileged in DefaultAuthorizationManager; behavior unchanged.
+    * Keep policy checks: global via AccessController, local via LocalPolicy. 
+    * Rationale: Security Manager is deprecated/disabled on modern JDKs; simplify 3.0 before release. 
+    * Migration: use Subject.doAs( session.getSubject(), action ) (or Subject.doAsPrivileged) in custom code.
+	
+**2025-11-29 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-12_
+* Dependency Updates 
+	* aws-java-sdk-kendra.version>1.12.793
+	* commons-io>2.21.0
+	* commons-lang>2.30
+	* commons-validator>1.10.1
+	* gson.version>2.13.2
+	* jakarta-activation-api.version>2.1.4
+	* jakarta-mail.version>2.0.2
+	* jakarta-servlet-api.version>6.1.0
+	* javax-mail.version>2.0.2
+	* unit.version>6.0.1
+	* log4j2.version>2.25.2
+	* selenide.version>7.12.1
+	* plugin.antrun.version>3.2.0
+	* plugin.dependency.version>3.9.0<
+	* plugin.enforcer.version>3.6.2
+	* plugin.jar.version>3.5.0
+	* plugin.release.version>3.2.0
+	* plugin.war.version>3.5.0
+	* plugin.cargo.version>1.10.25
+	* plugin.sonar.version>5.3.0.6276
+	
+* [JSPWIKI-1250](https://issues.apache.org/jira/browse/JSPWIKI-1250) product update checker
+* [JSPWIKI-1229](https://issues.apache.org/jira/browse/JSPWIKI-1229) fix for locating/loading user accounts on the admin page 
+* [JSPWIKI-1262](https://issues.apache.org/jira/browse/JSPWIKI-1262) see jira for details
+* [JSPWIKI-1260](https://issues.apache.org/jira/browse/JSPWIKI-1260) addresses a number of FIXME items. Assures that all catc…hes either throw or at least logs a message (code audit rule)
+* [JSPWIKI-1259](https://issues.apache.org/jira/browse/JSPWIKI-1259) updates many dependencies
+
+**2025-11-26 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-11_
+
+* [JSPWIKI-1248](https://issues.apache.org/jira/browse/JSPWIKI-1248) - Additional password change check to enforce X number of characters are different from the original
+
+**2025-11-23 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-10_
+
+* [JSPWIKI-1205](https://issues.apache.org/jira/browse/JSPWIKI-1205) -  adjusts the handling for too large file attachments. 
+* [JSPWIKI-1198(https://issues.apache.org/jira/browse/JSPWIKI-1198) -  fixes the ajax service for plugin suggestions. adds tests
+* [JSPWIKI-1245](https://issues.apache.org/jira/browse/JSPWIKI-1245) -  run security validation checks at start up and log it.
+* [JSPWIKI-1228](https://issues.apache.org/jira/browse/JSPWIKI-1228) -  audit logging capability with optional email based alert
+
+**2025-11-16 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-09_
+
+* [JSPWIKI-1198](https://issues.apache.org/jira/browse/JSPWIKI-1198) - Plugin API change that enables all plugins to be internationalized and visible in the auto complete suggestion/snippet menu
+* [JSPWIKI-1242](https://issues.apache.org/jira/browse/JSPWIKI-1242) - Fix for the web blog snippet defaults causing existing blog entries to not render.
+
+
+**2025-11-16 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-08_
+
+* [JSPWIKI-75](https://issues.apache.org/jira/browse/JSPWIKI-75) - Undisclosed security issue
+
+
+**2025-11-15 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-07_
+
+* [JSPWIKI-1235](https://issues.apache.org/jira/browse/JSPWIKI-1235) password complexity checks for XML or JDBC based user data stores
+* [JSPWIKI-80](https://issues.apache.org/jira/browse/JSPWIKI-80) Related
+
+**2025-11-15 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-06_
+
+* Dependency Updates 
+	* commons-validator (added) at 1.10.0
+	
+* [JSPWIKI-1239](https://issues.apache.org/jira/browse/JSPWIKI-1239) New user signup says the email is optional, but does not accept blank since it's already in use by the admin account
+* [JSPWIKI-1243](https://issues.apache.org/jira/browse/JSPWIKI-1243 Email validation rouine is incorrect (unicode symbols and more)
+* NOJIRA disables and removes the ClearSiteData Servlet Filter which broke CSRF token checks
+	
+
+
+**2025-11-13 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-05_
+
+* Dependency Updates 
+	* Tomcat updated to 10.1.49
+	
+* [JSPWIKI-388](https://issues.apache.org/jira/browse/JSPWIKI-388) ParamTag loops forever when parent tag is not ParamHandler
+* [JSPWIKI-1238](https://issues.apache.org/jira/browse/JSPWIKI-1238) I18N fixes
+* [JSPWIKI-1237](https://issues.apache.org/jira/browse/JSPWIKI-1237) OWASP http response headers, can be disabled and configured via web.xml
+* [JSPWIKI-1230](https://issues.apache.org/jira/browse/JSPWIKI-1230) Preconfigured tomcat configurations improvements
+* NOJIRA - additional CI testing enabled
+* [JSPWIKI-1229](https://issues.apache.org/jira/browse/JSPWIKI-1229) cookie security flags. new jspwiki properties added.
+* [JSPWIKI-1220](https://issues.apache.org/jira/browse/JSPWIKI-1220) replaces the sandler library with the rome rss/atom library for RSS/ATOM support
+* [JSPWIKI-1223](https://issues.apache.org/jira/browse/JSPWIKI-1223)  restores the /atom servlet api's capabilities, restores the ability to create and store weblog entries with the requisite attribute for the atom feed to work
+* [JSPWIKI-1225](https://issues.apache.org/jira/browse/JSPWIKI-1225)  fixes loading the preloaded data for the portable build
+* [JSPWIKI-1224](https://issues.apache.org/jira/browse/JSPWIKI-1224)  rss.jsp now sets the filename for download 
+
+
+
+
 **2025-11-08 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-04_
@@ -26,6 +141,8 @@ under the License.
 
 * [JSPWIKI-1219](https://issues.apache.org/jira/browse/JSPWIKI-1219) SpamFilter removal of asirra.com due to service shutdown 10 years ago
 * [JSPWIKI-1218](https://issues.apache.org/jira/browse/JSPWIKI-1218) Removal of commons-http-client v2 
+* [JSPWIKI-1179](https://issues.apache.org/jira/browse/JSPWIKI-1179) Github Actions CI builders
+
 
 **2025-11-07 Alex O'Ree (alexoree AT apache DOT org)**
 
@@ -45,19 +162,6 @@ under the License.
 * [JSPWIKI-1216](https://issues.apache.org/jira/browse/JSPWIKI-1216) removes references to the WikiWizard template/editor, i18n improvements 
 * [JSPWIKI-1183](https://issues.apache.org/jira/browse/JSPWIKI-1183) The IfPlugin now supports IP address checks using CIDR style netmasks
 * [JSPWIKI-1283](https://issues.apache.org/jira/browse/JSPWIKI-1283) Removes the asirra.com based captcha filtering
-
-
-
-**2025-10-11 Juan Pablo Santos (abernal AT apache DOT org)**
-
-* _3.0.0-git-03_
-
-  * Security / API cleanup
-    * Remove the Security Manager–dependent Session#doPrivileged from jspwiki-api.
-    * Replace the only usage with Subject.doAsPrivileged in DefaultAuthorizationManager; behavior unchanged.
-    * Keep policy checks: global via AccessController, local via LocalPolicy. 
-    * Rationale: Security Manager is deprecated/disabled on modern JDKs; simplify 3.0 before release. 
-    * Migration: use Subject.doAs( session.getSubject(), action ) (or Subject.doAsPrivileged) in custom code.
 
 
 **2025-09-30  Juan Pablo Santos (juanpablo AT apache DOT org)**

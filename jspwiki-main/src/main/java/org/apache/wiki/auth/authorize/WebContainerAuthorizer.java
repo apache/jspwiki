@@ -95,7 +95,6 @@ public class WebContainerAuthorizer implements WebAuthorizer  {
         m_engine = engine;
         m_containerAuthorized = false;
 
-        // FIXME: Error handling here is not very verbose
         try {
             m_webxml = getWebXml();
             if( m_webxml != null ) {

@@ -123,7 +123,7 @@
         w.exitState();
         return;
     }
-
+    response.addHeader("Content-Disposition", "attachment; filename=\"rss.xml\"");
     response.addDateHeader("Last-Modified",latest.getTime());
     response.addHeader("ETag", HttpUtil.createETag( wikipage.getName(), wikipage.getLastModified() ) );
     
