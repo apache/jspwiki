@@ -143,7 +143,7 @@ public class DefaultProgressManager implements ProgressManager {
         	String progressString = "";
         	try {
         		progressString = Integer.toString( getProgress( progressId ) );
-        	} catch( final IllegalArgumentException e ) { // ignore
+        	} catch( final IllegalArgumentException e ) {
         		LOG.debug( "progressId " + progressId + " is no longer valid" );
         	}
         	LOG.debug( "progressString=" + progressString );

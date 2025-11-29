@@ -620,7 +620,10 @@ public class WikiContext implements Context, Command {
             copy.m_page        = m_page;
             copy.m_realPage    = m_realPage;
             return copy;
-        } catch( final CloneNotSupportedException e ){} // Never happens
+        } catch( final CloneNotSupportedException e ){
+            // Never happens
+            LOG.debug(e.getMessage(), e);
+        } 
 
         return null;
     }
@@ -652,7 +655,10 @@ public class WikiContext implements Context, Command {
             copy.m_realPage    = m_realPage.clone();
             return copy;
         }
-        catch( final CloneNotSupportedException e ){} // Never happens
+        catch( final CloneNotSupportedException e ){
+            LOG.debug(e.getMessage(), e);
+            // Never happens
+        } 
 
         return null;
     }

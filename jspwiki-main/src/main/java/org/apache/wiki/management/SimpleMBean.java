@@ -56,6 +56,7 @@ public abstract class SimpleMBean implements DynamicMBean {
         }
         catch( final Exception e )
         {
+            LOG.debug(e.getMessage(), e);
             // There's nothing to do, really - we just return a null.
         }
 

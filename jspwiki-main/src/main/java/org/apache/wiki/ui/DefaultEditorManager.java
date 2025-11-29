@@ -112,7 +112,9 @@ public class DefaultEditorManager extends BaseModuleManager implements EditorMan
             // or use the default editor in jspwiki.properties
             try {
                 editor = m_engine.getManager( VariableManager.class ).getValue( context, PROP_EDITORTYPE );
-            } catch( final NoSuchVariableException e ) {} // This is fine
+            } catch( final NoSuchVariableException e ) {
+                LOG.debug(e.getMessage(), e);
+            } // This is fine
         }
 
         if( editor != null ) {

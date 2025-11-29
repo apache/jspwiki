@@ -16,6 +16,36 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-11-28 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-12_
+* Dependency Updates 
+	* aws-java-sdk-kendra.version>1.12.793
+	* commons-io>2.21.0
+	* commons-lang>2.30
+	* commons-validator>1.10.1
+	* gson.version>2.13.2
+	* jakarta-activation-api.version>2.1.4
+	* jakarta-mail.version>2.0.2
+	* jakarta-servlet-api.version>6.1.0
+	* javax-mail.version>2.0.2
+	* unit.version>6.0.1
+	* log4j2.version>2.25.2
+	* selenide.version>7.12.1
+	* plugin.antrun.version>3.2.0
+	* plugin.dependency.version>3.9.0<
+	* plugin.enforcer.version>3.6.2
+	* plugin.jar.version>3.5.0
+	* plugin.release.version>3.2.0
+	* plugin.war.version>3.5.0
+	* plugin.cargo.version>1.10.25
+	* plugin.sonar.version>5.3.0.6276
+	
+* [JSPWIKI-1250](https://issues.apache.org/jira/browse/JSPWIKI-1250) product update checker
+* [JSPWIKI-1229](https://issues.apache.org/jira/browse/JSPWIKI-1229) fix for locating/loading user accounts on the admin page 
+* [JSPWIKI-1262](https://issues.apache.org/jira/browse/JSPWIKI-1262) see jira for details
+* [JSPWIKI-1260](https://issues.apache.org/jira/browse/JSPWIKI-1260) addresses a number of FIXME items. Assures that all catc…hes either throw or at least logs a message (code audit rule)
+* [JSPWIKI-1259](https://issues.apache.org/jira/browse/JSPWIKI-1259) updates many dependencies
 
 **2025-11-26 Alex O'Ree (alexoree AT apache DOT org)**
 

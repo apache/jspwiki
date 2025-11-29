@@ -129,6 +129,29 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
             LOG.error( "Evil NPE occurred", e );
         }
     }
+    
+    private void unregisterAdminBean( final AdminBean ab ) {
+        try {
+            if( ab instanceof DynamicMBean && m_mbeanServer != null ) {
+                final ObjectName name = getObjectName( ab );
+                if( m_mbeanServer.isRegistered( name ) ) {
+                    m_mbeanServer.unregisterMBean( name );
+                }
+            }
+
+            m_allBeans.add( ab );
+
+            LOG.info( "Registered new admin bean " + ab.getTitle() );
+        } catch( final MBeanRegistrationException e ) {
+            LOG.error( "Admin bean cannot be registered to JMX", e );
+        } catch( final MalformedObjectNameException e ) {
+            LOG.error( "Your admin bean name is not very good", e );
+        } catch( final NullPointerException e ) {
+            LOG.error( "Evil NPE occurred", e );
+        } catch (InstanceNotFoundException ex) {
+            LOG.error( "Failed to unregister mbean " + ab.getClass().getSimpleName(), ex );
+        }
+    }
 
     private ObjectName getObjectName( final AdminBean ab ) throws MalformedObjectNameException {
         final String component = getJMXTitleString( ab.getType() );
@@ -157,8 +180,14 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
 
     }
 
-    // FIXME: Should unload the beans first.
+    
     private void reload() {
+        //unload the beans first.
+        if (m_allBeans != null) {
+            for (AdminBean b : m_allBeans) {
+                unregisterAdminBean(b);
+            }
+        }
         m_allBeans = new ArrayList<>();
 
         try {
