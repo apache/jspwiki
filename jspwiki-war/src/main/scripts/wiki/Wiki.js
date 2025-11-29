@@ -58,6 +58,7 @@ Depends on :
 Class: Wiki
     Javascript support functions for jspwiki.
 */
+
 var Wiki = {
 
     version: "haddock04",  //js version, used to validate compatible preference cookies
@@ -77,6 +78,7 @@ var Wiki = {
         } else {
             console.warn("snips are not loaded yet, cannot fetch the plugin list");
         }
+        
         
         //add the standard jspwiki behaviors; needed to render the haddock JSP templates
         wiki.add( "body", wiki.caniuse )
@@ -178,10 +180,8 @@ var Wiki = {
             domready: wiki.domready.bind(wiki)
         });
         }, 500);
-
     },
-
-
+    
     caniuse: function( body ){
 
         //support for flexbox is broken in IE, do it the hard-way - ugh.
