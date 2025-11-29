@@ -450,24 +450,24 @@ public class DefaultUserManager implements UserManager {
 
         @Override
         public String getServletMapping() {
-        	return JSON_USERS;
+            return JSON_USERS;
         }
 
         @Override
         public void service( final HttpServletRequest req, final HttpServletResponse resp, final String actionName, final List<String> params) throws ServletException, IOException {
-        	try {
+            try {
             	if( params.isEmpty() ) {
             		return;
             	}
-        		final String uid = params.get(0);
-	        	LOG.debug("uid="+uid);
-	        	if (StringUtils.isNotBlank(uid)) {
-		            final UserProfile prof = getUserInfo(uid);
-		            resp.getWriter().write(AjaxUtil.toJson(prof));
-	        	}
-        	} catch (final NoSuchPrincipalException e) {
-        		throw new ServletException(e);
-        	}
+                final String uid = params.get(0);
+                LOG.debug("uid="+uid);
+                if (StringUtils.isNotBlank(uid)) {
+                    final UserProfile prof = getUserInfo(uid);
+                    resp.getWriter().write(AjaxUtil.toJson(prof));
+                }
+            } catch (final NoSuchPrincipalException e) {
+                    throw new ServletException(e);
+            }
         }
 
         /**
