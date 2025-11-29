@@ -19,10 +19,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.auth.user.XMLUserDatabase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +53,7 @@ public class PasswordComplexityVeriffierTest {
 // i.e. 1 with "password" is ok but "passsword" is not
         props.setProperty("jspwiki.credentials.repeatingCharacters", "1");
         props.setProperty("jspwiki.credentials.minChanged", "1");
+       
         engine = TestEngine.build(props);
         context = new WikiContext(engine,
                 new WikiPage(engine, "test"));

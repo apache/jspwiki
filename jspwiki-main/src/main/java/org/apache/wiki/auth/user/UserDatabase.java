@@ -181,4 +181,11 @@ public interface UserDatabase {
      */
     boolean validatePassword( String loginName, String password );
 
+    /**
+     * validates that the proposed password has not been recently used.
+     * @param loginName
+     * @param password
+     * @return false if the password has been recently used, true otherwise
+     */
+    boolean validatePasswordReuse( final String loginName, final String password );
 }
