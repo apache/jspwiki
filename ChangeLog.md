@@ -16,7 +16,20 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-**2025-11-28 Alex O'Ree (alexoree AT apache DOT org)**
+
+
+**2025-11-29 arturobernalg **
+
+* _3.0.0-git-14_
+
+  * Security / API cleanup
+    * Remove the Security Manager–dependent Session#doPrivileged from jspwiki-api.
+    * Replace the only usage with Subject.doAsPrivileged in DefaultAuthorizationManager; behavior unchanged.
+    * Keep policy checks: global via AccessController, local via LocalPolicy. 
+    * Rationale: Security Manager is deprecated/disabled on modern JDKs; simplify 3.0 before release. 
+    * Migration: use Subject.doAs( session.getSubject(), action ) (or Subject.doAsPrivileged) in custom code.
+	
+**2025-11-29 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-12_
 * Dependency Updates 
