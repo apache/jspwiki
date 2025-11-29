@@ -142,7 +142,7 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
                     final String xsrfToken = req.getParameter( "X-XSRF-TOKEN" );
                     if (!wikiSession.antiCsrfToken().equals(xsrfToken)) {
                         res.sendError(400, "X-XSRF-TOKEN missing or invalid.");
-                         WikiEventManager.fireEvent(this,
+                        WikiEventManager.fireEvent(this,
                             EventUtil.applyFrom(new WikiSecurityEvent(wikiSession, WikiSecurityEvent.ACCESS_DENIED,
                                     req.getUserPrincipal(), "X-XSRF-TOKEN missing or invalid."), req));
                         return;
