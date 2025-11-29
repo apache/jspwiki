@@ -37,9 +37,6 @@ import java.util.Date;
  *
  * @since 2.0
  */
-
-// FIXME: Should also take the current user TimeZone into account.
-
 public class PageDateTag extends WikiTagBase {
 
     private static final long serialVersionUID = 0L;

@@ -194,7 +194,7 @@ public class DefaultFilterManager extends BaseModuleManager implements FilterMan
                     xmlStream.close();
                 }
             } catch( final IOException ioe ) {
-                // ignore
+                LOG.debug(ioe.getMessage(), ioe );
             }
         }
     }
