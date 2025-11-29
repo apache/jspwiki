@@ -64,4 +64,4 @@ jobs:
 #      run: mvn org.sonatype.ossindex.maven:ossindex-maven-plugin:LATEST:audit
 # token required
     - name: Dependency scan
-      run: mvn org.owasp:dependency-check-maven:LATEST:check -fn
+      run: mvn org.owasp:dependency-check-maven:LATEST:check -Ddependency-check.assemblyAnalyzerEnabled=false
