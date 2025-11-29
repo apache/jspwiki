@@ -479,7 +479,7 @@ public class DefaultUserManager implements UserManager {
          */
         public UserProfile getUserInfo( final String uid ) throws NoSuchPrincipalException {
             if( m_manager != null ) {
-                return m_manager.getUserDatabase().find( uid );
+                return m_manager.getUserDatabase().findByWikiName( uid );
             }
 
             throw new IllegalStateException( "The manager is offline." );
