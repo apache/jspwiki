@@ -131,6 +131,7 @@ public class CookieAuthenticationLoginModule extends AbstractLoginModule {
                         return cookieFile.setLastModified( System.currentTimeMillis() );
 
                     } catch( final IOException e ) {
+                        LOG.debug(e.getMessage(), e);
                         return false;
                     }
                 }

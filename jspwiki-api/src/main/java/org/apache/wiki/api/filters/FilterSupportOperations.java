@@ -52,6 +52,7 @@ class FilterSupportOperations {
                 }
                 return pf.getClass().getMethod( method, classes );
             } catch( final ClassNotFoundException | NoSuchMethodException e ) {
+                LOG.debug(e.getMessage(), e);
                 return null;
             }
         }

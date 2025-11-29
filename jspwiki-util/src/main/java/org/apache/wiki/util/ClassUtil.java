@@ -108,11 +108,13 @@ public final class ClassUtil {
         try {
             return ( Class< T > )loader.loadClass( className );
         } catch( final ClassNotFoundException e ) {
+            LOG.debug(e.getMessage(), e);
             for( final String packageName : packages ) {
                 try {
                     return ( Class< T > )loader.loadClass( packageName + "." + className );
                 } catch( final ClassNotFoundException ex ) {
                     // This is okay, we go to the next package.
+                    LOG.debug(e.getMessage(), e);
                 }
             }
 
@@ -344,6 +346,7 @@ public final class ClassUtil {
             Class.forName( className, false, ClassUtil.class.getClassLoader() );
             return true;
         } catch( final ClassNotFoundException e ) {
+            LOG.debug(e.getMessage(), e);
             return false;
         }
     }

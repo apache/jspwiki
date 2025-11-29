@@ -325,6 +325,7 @@ public class XMLGroupDatabase implements GroupDatabase {
             group.setCreated( new SimpleDateFormat( DATE_FORMAT ).parse( created ) );
             group.setLastModified( new SimpleDateFormat( DATE_FORMAT ).parse( modified ) );
         } catch ( final ParseException e ) {
+            LOG.debug(e.getMessage(), e);
             // If parsing failed, use the platform default
             try {
                 group.setCreated( m_defaultFormat.parse( created ) );

@@ -180,6 +180,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
                                 version = res;
                             }
                         } catch( final NumberFormatException e ) {
+                            LOG.debug(e.getMessage(), e);
                         } // It's okay to skip these.
                     }
                 }
@@ -304,7 +305,7 @@ public class VersioningFileProvider extends AbstractFileProvider {
         } else {
             // This is okay.
             // FIXME: is it?
-            LOG.info("New page");
+            LOG.debug("New page");
         }
 
         return result;
@@ -546,7 +547,6 @@ public class VersioningFileProvider extends AbstractFileProvider {
      *  @param page {@inheritDoc}
      *  @throws {@inheritDoc}
      */
-    // FIXME: Should log errors.
     @Override
     public void deletePage( final String page ) throws ProviderException {
         super.deletePage( page );
@@ -554,12 +554,16 @@ public class VersioningFileProvider extends AbstractFileProvider {
         if( dir.exists() && dir.isDirectory() ) {
             final File[] files = dir.listFiles( new WikiFileFilter() );
             for( final File file : files ) {
-                file.delete();
+                if (!file.delete()) {
+                    LOG.warn("Failed to delete " + file.getAbsolutePath());
+                }
             }
 
             final File propfile = new File( dir, PROPERTYFILE );
             if( propfile.exists() ) {
-                propfile.delete();
+                if (!propfile.delete()) {
+                    LOG.warn("Failed to delete " + propfile.getAbsolutePath());
+                }
             }
 
             dir.delete();

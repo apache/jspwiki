@@ -615,6 +615,7 @@ public final class SecurityVerifier {
             }
             catch( final MalformedURLException e )
             {
+                LOG.debug(e.getMessage(), e);
                 // Swallow exception because we can't find it anyway
             }
             m_session.addMessage( "Error." + property, "File '" + propertyValue
@@ -623,6 +624,7 @@ public final class SecurityVerifier {
         }
         catch( final SecurityException e )
         {
+            LOG.debug(e.getMessage(), e);
             m_session.addMessage( "Error." + property, "We could not read system property '" + property
                     + "'. This is probably because you are running with a security manager." );
             return null;
