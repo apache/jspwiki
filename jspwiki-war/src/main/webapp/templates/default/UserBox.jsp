@@ -21,6 +21,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ page import="jakarta.servlet.jsp.jstl.fmt.*" %>
+<%@ page import="org.apache.wiki.ProductUpdateChecker" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <fmt:setLocale value="${prefs.Language}" />
 <fmt:setBundle basename="templates.default"/>
@@ -57,7 +58,45 @@
           </wiki:UserCheck>
         </wiki:LinkTo>
       </wiki:UserCheck>
+        
     </li>
+    <wiki:UserCheck status="admin">
+        <li>   <% 
+                ProductUpdateChecker checker = ProductUpdateChecker.getInstance();
+                if (checker!=null) {
+                    ProductUpdateChecker.UpdateStatus status = checker.getUpdateStatus();
+                    if (status!=null) {
+                        switch (status.getIsUpToDate()) {
+                        case UP_TO_DATE:
+                        %>
+                            <a href="#" class="info">
+                            <fmt:message key="fav.productstatus.updateToDate"></fmt:message>
+                            </a>
+                        <%
+                            break;
+                        case UNKNOWN:
+                            %>
+                            <a href="#" class="warn">
+                            <fmt:message key="fav.productstatus.unknown"></fmt:message>
+                            </a>
+                            <%          
+                            break;
+                        case UPDATE_AVAILABLE:
+                        //
+                            %>
+                            <a href="https://jspwiki-wiki.apache.org/Wiki.jsp?page=Downloads"
+                               class="warning"
+                               target="_blank"> 
+                                <fmt:message key="fav.productstatus.updateAvailable"></fmt:message>
+                            </a>
+                            <%          
+                            break;
+                        } 
+                    }
+                }
+%>
+        </li>
+    </wiki:UserCheck>
 
     <li class="divider"></li>
 

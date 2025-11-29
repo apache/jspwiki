@@ -279,7 +279,7 @@ public class DefaultCommandResolver implements CommandResolver {
                         page = finalPage;
                     }
                 } catch( final ProviderException e ) {
-                    // FIXME: Should not ignore!
+                    LOG.debug(e.getMessage(), e);
                 }
                 return page;
             }

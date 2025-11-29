@@ -31,6 +31,12 @@
     <name>Apache JSPWiki Main Jar</name>
 
     <dependencies>
+        
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jspwiki-util</artifactId>
@@ -81,7 +87,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
         </dependency>
-
+        
         <dependency>
           <groupId>net.thauvin.erik</groupId>
           <artifactId>akismet-kotlin</artifactId>

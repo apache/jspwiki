@@ -631,7 +631,7 @@ Wiki.Snips = {
         }
         }]
     },
-    
+
 //load up any server defined plugins
 //note this file is ran through wro4j maven plugin which is limited ES6 support
 //thus the usage of super old xhr requests and var vs let. 

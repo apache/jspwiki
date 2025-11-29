@@ -144,6 +144,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                  return ( ( WebContainerAuthorizer )authorizer ).isContainerAuthorized();
             }
         } catch ( final WikiException e ) {
+            LOG.debug(e.getMessage(), e);
             // It's probably ok to fail silently...
         }
         return false;
@@ -174,9 +175,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
             // If the container logged the user in successfully, tell the Session (and add all the Principals)
             if (!principals.isEmpty()) {
-                fireEvent( WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );
+                fireEvent( WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session, request );
                 for( final Principal principal : principals ) {
-                    fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
+                    fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session, request );
                 }
 
                 // Add all appropriate Authorizer roles
@@ -189,7 +190,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             // Execute the cookie assertion login module
             final Set< Principal > principals = authenticationMgr.doJAASLogin( CookieAssertionLoginModule.class, handler, options );
             if (!principals.isEmpty()) {
-                fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, getLoginPrincipal( principals ), session);
+                fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, getLoginPrincipal( principals ), session, request);
             }
         }
 
@@ -197,7 +198,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         if( session.isAnonymous() ) {
             final Set< Principal > principals = authenticationMgr.doJAASLogin( AnonymousLoginModule.class, handler, options );
             if(!principals.isEmpty()) {
-                fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, getLoginPrincipal( principals ), session );
+                fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, getLoginPrincipal( principals ), session, request );
                 return true;
             }
         }
@@ -226,9 +227,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         // Execute the user's specified login module
         final Set< Principal > principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions );
         if(!principals.isEmpty()) {
-            fireEvent(WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session );
+            fireEvent(WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session, request );
             for ( final Principal principal : principals ) {
-                fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session );
+                fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session, request );
             }
 
             // Add all appropriate Authorizer roles
@@ -259,6 +260,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             m_lastLoginAttempts.add( username );
         } catch( final InterruptedException e ) {
             // FALLTHROUGH is fine
+            LOG.debug(e.getMessage(), e);
         }
     }
 
@@ -289,7 +291,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         }
 
         // Log the event
-        fireEvent( WikiSecurityEvent.LOGOUT, originalPrincipal, null );
+        fireEvent( WikiSecurityEvent.LOGOUT, originalPrincipal, null, request );
     }
 
     /**
@@ -336,6 +338,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 commitSucceeded = loginModule.commit();
             }
         } catch( final LoginException e ) {
+            LOG.debug(e.getMessage(), e);
             // Login or commit failed! No principal for you!
         }
 
@@ -408,13 +411,13 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         for( final Principal role : authorizer.getRoles() ) {
             // Test the Authorizer
             if( authorizer.isUserInRole( session, role ) ) {
-                fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
+                fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session, request );
                 LOG.debug( "Added authorizer role {}.", role.getName() );
             // If web authorizer, test the request.isInRole() method also
             } else if ( request != null && authorizer instanceof WebAuthorizer ) {
                 final WebAuthorizer wa = ( WebAuthorizer )authorizer;
                 if ( wa.isUserInRole( request, role ) ) {
-                    fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session );
+                    fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session, request );
                     LOG.debug( "Added container role {}.",role.getName() );
                 }
             }

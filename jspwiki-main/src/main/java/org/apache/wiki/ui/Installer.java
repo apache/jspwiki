@@ -104,6 +104,7 @@ public class Installer {
             userDb.findByLoginName( ADMIN_ID );
             return true;
         } catch ( final NoSuchPrincipalException e ) {
+            LOG.debug(e.getMessage(), e);
             return false;
         }
     }

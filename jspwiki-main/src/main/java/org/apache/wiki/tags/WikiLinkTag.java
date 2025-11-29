@@ -19,6 +19,8 @@
 package org.apache.wiki.tags;
 
 import java.io.IOException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *  Root class for different internal wiki links.  Cannot be used directly,
@@ -37,9 +39,9 @@ import java.io.IOException;
  *  @since 2.0
  */
 public abstract class WikiLinkTag extends WikiTagBase {
-
-	private static final long serialVersionUID = 4130732879352134867L;
-	public static final int   ANCHOR = 0;
+    private static final Logger LOG = LogManager.getLogger( WikiLinkTag.class );
+    private static final long serialVersionUID = 4130732879352134867L;
+    public static final int   ANCHOR = 0;
     public static final int   URL    = 1;
 
     protected String m_pageName;
@@ -100,7 +102,7 @@ public abstract class WikiLinkTag extends WikiTagBase {
         }
         catch( final IOException e )
         {
-            // FIXME: Should do something?
+            LOG.warn(e.getMessage(), e);
         }
 
         return EVAL_PAGE;

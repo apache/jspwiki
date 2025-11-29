@@ -49,6 +49,7 @@ public class PasswordComplexityVeriffierTest {
 // allow X repeating characters but no more. 1 is the default.
 // i.e. 1 with "password" is ok but "passsword" is not
         props.setProperty("jspwiki.credentials.repeatingCharacters", "1");
+        props.setProperty("jspwiki.credentials.minChanged", "1");
         engine = TestEngine.build(props);
         context = new WikiContext(engine,
                 new WikiPage(engine, "test"));
@@ -57,43 +58,54 @@ public class PasswordComplexityVeriffierTest {
     @Test
     public void testValidate() {
 
-        List<String> result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi?,", context);
+        List<String> result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi?,",null, context);
         Assertions.assertTrue(result.isEmpty(), StringUtils.join(result));
 
         //too long
-        result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi?,1234", context);
+        result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi?,1234",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
         //no upper, digits symbols
-        result = PasswordComplexityVeriffier.validate("abcedefghi", context);
+        result = PasswordComplexityVeriffier.validate("abcedefghi",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
         //too short
-        result = PasswordComplexityVeriffier.validate("abc", context);
+        result = PasswordComplexityVeriffier.validate("abc",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
         //no lower, digits, symbols
-        result = PasswordComplexityVeriffier.validate("ABCEDEFGHI", context);
+        result = PasswordComplexityVeriffier.validate("ABCEDEFGHI",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
         //too many repeating
-        result = PasswordComplexityVeriffier.validate("a@CEDEFGHI222", context);
+        result = PasswordComplexityVeriffier.validate("a@CEDEFGHI222",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
-        result = PasswordComplexityVeriffier.validate("a@CEDEFGHI222a", context);
+        result = PasswordComplexityVeriffier.validate("a@CEDEFGHI222a",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
-        result = PasswordComplexityVeriffier.validate("aaa@CEDEFGHI2a", context);
+        result = PasswordComplexityVeriffier.validate("aaa@CEDEFGHI2a",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
-        result = PasswordComplexityVeriffier.validate("aaa@CEbbbbGHI2a", context);
+        result = PasswordComplexityVeriffier.validate("aaa@CEbbbbGHI2a",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
-        result = PasswordComplexityVeriffier.validate("a@CEbbGH4444", context);
+        result = PasswordComplexityVeriffier.validate("a@CEbbGH4444",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
-        result = PasswordComplexityVeriffier.validate("aaaa@CEbbGH444", context);
+        result = PasswordComplexityVeriffier.validate("aaaa@CEbbGH444",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
+        
+        //shorter to longer version
+        result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi?,","e,#Em1KG1!tez8EYm,", context);
+        Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
+        
+        //longer to shorter
+        result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi","e,#Em1KG1!tez8EYmi?", context);
+        Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
+        
+        result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi?,","e,#Em1KG1!teAAEYmi?,", context);
+        Assertions.assertTrue(result.isEmpty(), StringUtils.join(result));
     }
 
 }

@@ -551,6 +551,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
         }
         catch( final NoSuchPrincipalException e )
         {
+            LOG.debug(e.getMessage(), e);
             return false;
         }
     }
@@ -648,6 +649,7 @@ public class JDBCGroupDatabase implements GroupDatabase {
         }
         catch( final SQLException e )
         {
+            LOG.debug(e.getMessage(), e);
             // I guess that means there aren't any principals...
         }
         finally
@@ -657,25 +659,28 @@ public class JDBCGroupDatabase implements GroupDatabase {
         return group;
     }
     
-    void closeQuietly( final Connection conn, final PreparedStatement ps, final ResultSet rs ) {
-    	if( conn != null ) {
-    		try {
-    		    conn.close();
-    		} catch( final Exception e ) {
-    		}
-    	}
-		if( ps != null )  {
-			try {
-			    ps.close();
-			} catch( final Exception e ) {
-			}
-		}
-		if( rs != null )  {
-			try {
-			    rs.close();
-			} catch( final Exception e ) {
-			}
-		}
-	}
+    void closeQuietly(final Connection conn, final PreparedStatement ps, final ResultSet rs) {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (final Exception e) {
+                LOG.debug(e.getMessage(), e);
+            }
+        }
+        if (ps != null) {
+            try {
+                ps.close();
+            } catch (final Exception e) {
+                LOG.debug(e.getMessage(), e);
+            }
+        }
+        if (rs != null) {
+            try {
+                rs.close();
+            } catch (final Exception e) {
+                LOG.debug(e.getMessage(), e);
+            }
+        }
+    }
 
 }

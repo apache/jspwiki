@@ -51,7 +51,7 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
 
     @Override
     public String getDisplayName(Locale locale) {
-        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_RESOURCE_LOCATION, locale);
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_I18N_RESOURCE, locale);
         return rb.getString(this.getClass().getSimpleName());
     }
     
