@@ -38,7 +38,6 @@ import java.nio.file.Files;
 
 /**
  *  Runs the RSS generation thread.
- *  FIXME: MUST be somewhere else, this is not a good place.
  */
 public class RSSThread extends WikiBackgroundThread {
 

@@ -38,6 +38,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.wiki.util.HttpUtil;
 
 /**
@@ -48,6 +50,8 @@ import org.apache.wiki.util.HttpUtil;
  */
 public class RSS20Feed extends Feed
 {
+    private static final Logger LOG = LogManager.getLogger( RSS20Feed.class );
+
     /**
      *  Creates an RSS 2.0 feed for the specified Context.
      *
@@ -93,7 +97,7 @@ public class RSS20Feed extends Feed
                         item.addContent( attEl );
                     }
                 } catch( final ProviderException ex ) {
-                    // FIXME: LOG.info("Can't get attachment data",ex);
+                    LOG.info("Can't get attachment data",ex);
                 }
             }
 
@@ -170,6 +174,7 @@ public class RSS20Feed extends Feed
 
             return res.toString();
         } catch( final IOException e ) {
+            LOG.debug(e.getMessage(), e);
             return null;
         }
     }

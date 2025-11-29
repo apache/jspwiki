@@ -209,6 +209,7 @@ public class BasicAttachmentProvider implements AttachmentProvider {
                     version = res;
                 }
             } catch( final NumberFormatException e ) {
+                LOG.debug(e.getMessage(), e);
             } // It's okay to skip these.
         }
 
