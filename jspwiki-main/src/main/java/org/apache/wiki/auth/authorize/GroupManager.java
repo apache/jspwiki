@@ -26,9 +26,10 @@ import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
-import org.apache.wiki.event.WikiSecurityEvent;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.security.EventUtil;
 
 
 /**
@@ -220,7 +221,8 @@ public interface GroupManager extends Initializable, Authorizer, WikiEventListen
      */
     default void fireEvent( final int type, final Object target ) {
         if( WikiEventManager.isListening( this ) ) {
-            WikiEventManager.fireEvent( this, new WikiSecurityEvent( this, type, target ) );
+            WikiEventManager.fireEvent( this, 
+                    EventUtil.applyFrom(new WikiSecurityEvent( this, type, target ) ) );
         }
     }
 

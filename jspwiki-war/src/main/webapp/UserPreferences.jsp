@@ -16,7 +16,7 @@
     specific language governing permissions and limitations
     under the License.  
 --%>
-
+<%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="org.apache.wiki.api.core.Context" %>
@@ -39,6 +39,7 @@
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.variables.VariableManager" %>
 <%@ page import="org.apache.wiki.workflow.DecisionRequiredException" %>
+<%@ page import="java.util.*" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 
@@ -79,7 +80,7 @@
         if( wikiSession.getMessages( "profile" ).length == 0 ) {
             try {
                 userMgr.setUserProfile( wikiContext, profile );
-                CookieAssertionLoginModule.setUserCookie( response, profile.getFullname() );
+                CookieAssertionLoginModule.setUserCookie( pageContext, response, profile.getFullname() );
             } catch( DuplicateUserException due ) {
                 // User collision! (full name or wiki name already taken)
                 wikiSession.addMessage( "profile", wiki.getManager( InternationalizationManager.class )
@@ -92,7 +93,8 @@
                 return;
             } catch( WikiSecurityException e ) {
                 // Something went horribly wrong! Maybe it's an I/O error...
-                wikiSession.addMessage( "profile", e.getMessage() );
+                final ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE, wikiSession.getLocale() );
+                wikiSession.addMessage( "profile", rb.getString("operation.failed") );
             }
         }
         if( wikiSession.getMessages( "profile" ).length == 0 ) {
@@ -112,7 +114,7 @@
         Preferences.reloadPreferences( pageContext );
         
         String assertedName = request.getParameter( "assertedName" );
-        CookieAssertionLoginModule.setUserCookie( response, assertedName );
+        CookieAssertionLoginModule.setUserCookie( pageContext, response, assertedName );
 
         String redirectPage = request.getParameter( "redirect" );
         if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) ) {

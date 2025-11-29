@@ -50,6 +50,7 @@ import org.apache.wiki.auth.AuthenticationManager;
 public class UserCheckTag extends WikiTagBase {
 
     private static final long serialVersionUID = 3256438110127863858L;
+    private static final String ADMIN = "admin";
     private static final String ASSERTED = "asserted";
     private static final String AUTHENTICATED = "authenticated";
     private static final String ANONYMOUS = "anonymous";
@@ -107,6 +108,11 @@ public class UserCheckTag extends WikiTagBase {
             switch( m_status ) {
             case ANONYMOUS:
                 if( status.equals( Session.ANONYMOUS ) ) {
+                    return EVAL_BODY_INCLUDE;
+                }
+                break;
+            case ADMIN: 
+                if( m_wikiContext.hasAdminPermissions() ) {
                     return EVAL_BODY_INCLUDE;
                 }
                 break;

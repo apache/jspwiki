@@ -178,6 +178,7 @@ public final class HttpUtil {
                     }
                 }
             } catch( final IllegalArgumentException e ) {
+                LOG.debug(e.getMessage(), e);
                 // Illegal date/time header format.  We fail quietly, and return false.
                 // FIXME: Should really move to ETags.
             }

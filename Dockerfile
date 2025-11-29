@@ -33,6 +33,10 @@ COPY --from=package /tmp/jspwiki-war/target/JSPWiki.war /tmp
 COPY --from=package /tmp/jspwiki-wikipages/en/target/jspwiki-wikipages-en-*-jspwiki.zip /tmp
 COPY docker-files/log4j2.properties /tmp
 COPY docker-files/tomcat-users.xml $CATALINA_HOME/conf/tomcat-users.xml
+COPY jspwiki-portable/src/overlay/tomcat/conf/test-use-only.p12 $CATALINA_HOME/conf/
+COPY docker-files/web.xml $CATALINA_HOME/conf/web.xml
+COPY docker-files/server.xml $CATALINA_HOME/conf/server.xml
+COPY docker-files/catalina.properties $CATALINA_HOME/conf/catalina.properties
 
 #
 # set default environment entries to configure jspwiki
@@ -81,7 +85,7 @@ RUN set -x \
  && mv /tmp/log4j2.properties $CATALINA_HOME/lib/log4j2.properties
 
 # make port visible in metadata
-EXPOSE 8080
+EXPOSE 8443
 
 #
 # by default we start the Tomcat container when the docker container is started.

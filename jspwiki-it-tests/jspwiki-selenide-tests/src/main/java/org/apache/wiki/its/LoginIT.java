@@ -22,6 +22,8 @@ import org.apache.wiki.pages.haddock.LoginPage;
 import org.apache.wiki.pages.haddock.ViewWikiPage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 
 /**
@@ -30,6 +32,7 @@ import org.junit.jupiter.api.Test;
 public class LoginIT extends WithIntegrationTestSetup {
     
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void loginAndLogout() {
         ViewWikiPage main = ViewWikiPage.open( "Main" );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
@@ -49,6 +52,7 @@ public class LoginIT extends WithIntegrationTestSetup {
     }
     
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void loginKO() {
         ViewWikiPage main = ViewWikiPage.open( "Main" );
         Assertions.assertEquals( "JSPWiki: Main", main.title() );

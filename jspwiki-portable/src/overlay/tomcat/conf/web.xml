@@ -121,6 +121,10 @@
             <param-name>listings</param-name>
             <param-value>false</param-value>
         </init-param>
+		<init-param>
+            <param-name>readonly</param-name>
+            <param-value>true</param-value>
+        </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
 
@@ -631,7 +635,7 @@
   <!-- created sessions by modifying the value below.                       -->
 
     <session-config>
-        <session-timeout>30</session-timeout>
+        <session-timeout>10</session-timeout>
     </session-config>
 
 

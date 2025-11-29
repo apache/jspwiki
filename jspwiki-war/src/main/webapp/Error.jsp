@@ -32,15 +32,20 @@
 <%
     Engine wiki = Wiki.engine().find( getServletConfig() );
     Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.WIKI_ERROR.getRequestContext() );
+    //the following line is critical to get the jspwiki jsp tags to work
+    pageContext.setAttribute( Context.ATTR_CONTEXT, wikiContext, PageContext.REQUEST_SCOPE);
     String pagereq = wikiContext.getName();
 
     response.setContentType("text/html; charset="+wiki.getContentEncoding() );
 
     String msg = "An unknown error was caught by Error.jsp";
-
+    if ("true".equalsIgnoreCase(request.getParameter("Error"))) {
+        //this is coming from the attaching upload servlet
+        msg = (String) request.getSession().getAttribute("msg");
+    }
     Throwable realcause = null;
-
-    msg = exception.getMessage();
+    if (exception!=null)
+        msg = exception.getMessage();
     if( msg == null || msg.isEmpty())
     {
         msg = "An unknown exception "+exception.getClass().getName()+" was caught by Error.jsp.";
@@ -52,7 +57,7 @@
     //  imported in JSP pages.
     //
 
-    if( exception instanceof jakarta.servlet.jsp.JspException )
+    if( exception!=null && exception instanceof jakarta.servlet.jsp.JspException )
     {
         log.debug("IS JSPEXCEPTION");
         realcause = ((jakarta.servlet.jsp.JspException)exception).getCause();
@@ -81,10 +86,12 @@
       <dd>
          <wiki:Messages div="error" />
       </dd>
+      <% if (wikiContext.hasAdminPermissions()) { %>
       <dt>Exception</dt>
-      <dd><%=realcause.getClass().getName()%></dd>
+      <dd><%=realcause!=null ? realcause.getClass().getName() : ""%></dd>
       <dt>Place where detected</dt>
-      <dd><%=FileUtil.getThrowingMethod(realcause)%></dd>
+      <dd><%=realcause!=null ? FileUtil.getThrowingMethod(realcause) : ""%></dd>
+      <% } %>
    </dl>
    <p>
    If you have changed the templates, please do check them.  This error message

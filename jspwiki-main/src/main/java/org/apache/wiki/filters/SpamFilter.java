@@ -18,7 +18,6 @@
  */
 package org.apache.wiki.filters;
 
-import net.sf.akismet.Akismet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
@@ -77,6 +76,8 @@ import java.util.Random;
 import java.util.StringTokenizer;
 import java.util.Vector;
 import java.util.concurrent.ThreadLocalRandom;
+import net.thauvin.erik.akismet.Akismet;
+import net.thauvin.erik.akismet.AkismetComment;
 
 
 /**
@@ -98,7 +99,7 @@ import java.util.concurrent.ThreadLocalRandom;
  *    <li>maxurls - How many URLs can be added to the page before it is considered spam (default is 5)</li>
  *    <li>akismet-apikey - The Akismet API key (see akismet.org)</li>
  *    <li>ignoreauthenticated - If set to "true", all authenticated users are ignored and never caught in SpamFilter</li>
- *    <li>captcha - Sets the captcha technology to use.  Current allowed values are "none" and "asirra".</li>
+ *    <li>captcha - Sets the captcha technology to use.  Current allowed values are "none". "asirra" was previously supported however that service has been discontinued.</li>
  *    <li>strategy - Sets the filtering strategy to use.  If set to "eager", will stop at the first probable
  *        match, and won't consider any other tests.  This is the default, as it's considerably lighter. If set to "score", will go through all of the tests
  *        and calculates a score for the spam, which is then compared to a filter level value.
@@ -219,8 +220,6 @@ public class SpamFilter extends BasePageFilter {
 
     private String          m_akismetAPIKey;
 
-    private boolean         m_useCaptcha;
-
     /** The limit at which we consider something to be spam. */
     private final int             m_scoreLimit = 1;
 
@@ -262,8 +261,6 @@ public class SpamFilter extends BasePageFilter {
 
         m_ignoreAuthenticated = TextUtil.getBooleanProperty( properties, PROP_IGNORE_AUTHENTICATED, m_ignoreAuthenticated );
         m_allowedGroups = StringUtils.split( StringUtils.defaultString( properties.getProperty( PROP_ALLOWED_GROUPS, m_blacklist ) ), ',' );
-
-        m_useCaptcha = properties.getProperty( PROP_CAPTCHA, "" ).equals("asirra");
 
         try {
             m_urlPattern = m_compiler.compile( URL_REGEXP );
@@ -530,9 +527,12 @@ public class SpamFilter extends BasePageFilter {
         if( m_akismetAPIKey != null ) {
             if( m_akismet == null ) {
                 LOG.info( "Initializing Akismet spam protection." );
-                m_akismet = new Akismet( m_akismetAPIKey, context.getEngine().getBaseURL() );
+                String fullPageUrl = context.getHttpRequest().getRequestURL().toString();
+                String fragment = context.getEngine().getBaseURL();
+                fullPageUrl = fullPageUrl.substring(0, fullPageUrl.indexOf(fragment) + fragment.length());
+                m_akismet = new Akismet( m_akismetAPIKey, fullPageUrl );
 
-                if( !m_akismet.verifyAPIKey() ) {
+                if( !m_akismet.verifyKey() ) {
                     LOG.error( "Akismet API key cannot be verified.  Please check your config." );
                     m_akismetAPIKey = null;
                     m_akismet = null;
@@ -560,17 +560,16 @@ public class SpamFilter extends BasePageFilter {
                 final String commentAuthor = context.getCurrentUser().getName();
                 final String commentAuthorEmail = null;
                 final String commentAuthorURL   = null;
-
-                final boolean isSpam = m_akismet.commentCheck( ipAddress,
-                                                               userAgent,
-                                                               referrer,
-                                                               permalink,
-                                                               commentType,
-                                                               commentAuthor,
-                                                               commentAuthorEmail,
-                                                               commentAuthorURL,
-                                                               change.toString(),
-                                                               null );
+                AkismetComment comment = new AkismetComment(ipAddress, userAgent);
+                comment.setAuthor(commentAuthor);
+                comment.setAuthorEmail(commentAuthorEmail);
+                comment.setAuthorUrl(commentAuthorURL);
+                comment.setContent(change.toString());
+                comment.setPermalink(permalink);
+                comment.setReferrer(referrer);
+                comment.setType(commentType);
+                
+                final boolean isSpam = m_akismet.checkComment(comment);
 
                 sw.stop();
                 LOG.debug( "Akismet request done in: " + sw );
@@ -897,9 +896,6 @@ public class SpamFilter extends BasePageFilter {
      *  @return An URL to redirect to
      */
     private String getRedirectPage( final Context ctx ) {
-        if( m_useCaptcha ) {
-            return ctx.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "Captcha.jsp", "page= " +ctx.getEngine().encodeName( ctx.getPage().getName() ) );
-        }
 
         return ctx.getURL( ContextEnum.PAGE_VIEW.getRequestContext(), m_errorPage );
     }

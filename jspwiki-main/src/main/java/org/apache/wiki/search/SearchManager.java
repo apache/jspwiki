@@ -44,6 +44,9 @@ public interface SearchManager extends PageFilter, InternalModule, WikiEventList
 
     /** The name of the JSON object that manages search. */
     String JSON_SEARCH = "search";
+    
+    /** the name of the Plugin discovery endpoint */
+    String PLUGIN_SEARCH = "plugins";
 
     /**
      *  Returns the SearchProvider used.

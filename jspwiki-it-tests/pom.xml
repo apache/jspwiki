@@ -26,7 +26,7 @@
   </parent>
 
   <groupId>org.apache.jspwiki.it</groupId>
-  <artifactId>jspwiki-it-builder</artifactId>
+  <artifactId>jspwiki-it-tests</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <description>selenium tests execution for jspwiki</description>
   <packaging>pom</packaging>
@@ -38,6 +38,7 @@
     <module>jspwiki-it-test-custom-jdbc</module>
     <module>jspwiki-it-test-cma</module>
     <module>jspwiki-it-test-cma-jdbc</module>
+	<module>jspwiki-test-plugin</module>
   </modules>
 
   <dependencies>

@@ -38,7 +38,10 @@ import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.variables.VariableManager;
 
 import java.security.Principal;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
+import org.apache.wiki.i18n.InternationalizationManager;
 
 /**
  *  The IfPlugin allows parts of a WikiPage to be executed conditionally, and is intended as a flexible way
@@ -140,6 +143,16 @@ public class IfPlugin implements Plugin {
     /** The parameter name for checking whether a page/var exists.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_EXISTS   = "exists";
 
+    @Override
+    public String getDisplayName(Locale locale) {
+        final ResourceBundle rb = ResourceBundle.getBundle(PluginManager.PLUGIN_I18N_RESOURCE, locale);
+        return rb.getString(this.getClass().getSimpleName());
+    }
+    
+    @Override
+    public String getSnipExample() {
+        return "If name='{value}' page='pagename' exists='true' contains='regexp'\n\nbody\n";
+    }
     /**
      *  {@inheritDoc}
      */

@@ -19,6 +19,10 @@
 package org.apache.wiki.search;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import static java.lang.System.out;
 import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
@@ -35,10 +39,10 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Callable;
+import static org.apache.wiki.search.DefaultSearchManager.PluginSearch.AJAX_ACTION_PLUGINS;
+import static org.mockito.Mockito.when;
 
 
 class SearchManagerTest {
@@ -205,6 +209,22 @@ class SearchManagerTest {
         Assertions.assertEquals( 1, res.size(), "no pages" );
         Assertions.assertEquals( "TestPage", res.iterator().next().getPage().getName(), "page" );
         m_engine.deleteTestPage("TestPage");
+    }
+    
+    
+    @Test
+    public void getPluginList() throws Exception {
+        DefaultSearchManager defaultSearchManager = new DefaultSearchManager(m_engine, m_engine.getWikiProperties());
+        DefaultSearchManager.PluginSearch instance = defaultSearchManager.new PluginSearch();
+        
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        HttpServletResponse response = HttpMockFactory.createHttpResponse();
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        when (response.getWriter()).thenReturn(pw);
+        instance.service(request, response, AJAX_ACTION_PLUGINS, new ArrayList<>());
+        Assertions.assertNotEquals("[]", sw.toString());
+        
     }
 
 }

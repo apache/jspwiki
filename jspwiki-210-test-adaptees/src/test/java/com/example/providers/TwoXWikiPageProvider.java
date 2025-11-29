@@ -43,13 +43,15 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 
 
 public class TwoXWikiPageProvider implements WikiPageProvider {
-
-    WikiEngine engine;
-    Map< String, List < WikiPage > > pages = new ConcurrentHashMap<>();
-    Map< String, List < String > > contents = new ConcurrentHashMap<>();
+    private static final Logger LOG = LogManager.getLogger(TwoXWikiPageProvider.class);
+    private WikiEngine engine;
+    private Map< String, List < WikiPage > > pages = new ConcurrentHashMap<>();
+    private Map< String, List < String > > contents = new ConcurrentHashMap<>();
 
     /** {@inheritDoc} */
     @Override
@@ -125,6 +127,7 @@ public class TwoXWikiPageProvider implements WikiPageProvider {
                     res.add( comparison );
                 }
             } catch( final IOException e ) {
+                LOG.debug(e.getMessage(), e);
                 // ok to ignore, shouldn't happen
             }
         }
@@ -149,6 +152,7 @@ public class TwoXWikiPageProvider implements WikiPageProvider {
         try {
             return getAllPages();
         } catch( final ProviderException e ) {
+            LOG.debug(e.getMessage(), e);
             return Collections.emptyList();
         }
     }

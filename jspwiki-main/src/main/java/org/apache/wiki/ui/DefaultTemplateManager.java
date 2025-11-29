@@ -255,9 +255,12 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
                     fmt.applyPattern( s );
                     resultMap.put( s, fmt.format( d ) );
                 } catch( final IllegalArgumentException e ) {
+                    LOG.debug(e.getMessage(), e);
                 } // skip parameter
             }
-        } catch( final IllegalArgumentException e ) {} // skip parameter
+        } catch( final IllegalArgumentException e ) {
+            LOG.debug(e.getMessage(), e);
+        } // skip parameter
 
         return resultMap;
     }
