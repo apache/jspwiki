@@ -55,7 +55,7 @@ public class DefaultDifferenceManager implements DifferenceManager {
     }
 
     private void loadProvider( final Properties props ) {
-        final String providerClassName = props.getProperty( PROP_DIFF_PROVIDER, TraditionalDiffProvider.class.getName() );
+        final String providerClassName = props.getProperty( PROP_DIFF_PROVIDER, SvnStyleDiffProvider.class.getName() );
         try {
             m_provider = ClassUtil.buildInstance( "org.apache.wiki.diff", providerClassName );
         } catch( final ReflectiveOperationException e ) {
