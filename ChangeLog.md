@@ -20,7 +20,7 @@ under the License.
 
 **2025-11-29 arturobernalg **
 
-* _3.0.0-git-13_
+* _3.0.0-git-14_
 
   * Security / API cleanup
     * Remove the Security Manager–dependent Session#doPrivileged from jspwiki-api.
