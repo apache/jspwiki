@@ -26,12 +26,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+import org.apache.log4j.Logger;
 
 /**
  *  This class is still experimental.
  *
  */
 public abstract class WikiFormAdminBean implements AdminBean {
+    
+    private static final Logger LOG = Logger.getLogger(WikiFormAdminBean.class);
 
     public abstract String getForm( Context context );
     
@@ -47,8 +50,7 @@ public abstract class WikiFormAdminBean implements AdminBean {
             doc = mgr.getParser( context, wikiMarkup ).parse();
             result = mgr.getHTML( context, doc );
         } catch( final IOException e ) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         
         return result;

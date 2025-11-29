@@ -317,7 +317,9 @@ public final class TextUtil {
     public static int parseIntParameter( final String value, final int defvalue ) {
         try {
             return Integer.parseInt( value.trim() );
-        } catch( final Exception e ) {}
+        } catch( final Exception e ) {
+            LOG.debug(e.getMessage(), e);
+        }
 
         return defvalue;
     }
@@ -483,6 +485,7 @@ public final class TextUtil {
         try {
             result = new File( new File( val.trim() ).getCanonicalPath() ).getAbsolutePath();
         } catch( final IOException e ) {
+            LOG.debug(e.getMessage(), e);
             result = val.trim();
         }
         return result;

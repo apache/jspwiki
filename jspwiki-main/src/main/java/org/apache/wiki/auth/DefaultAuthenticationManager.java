@@ -144,6 +144,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                  return ( ( WebContainerAuthorizer )authorizer ).isContainerAuthorized();
             }
         } catch ( final WikiException e ) {
+            LOG.debug(e.getMessage(), e);
             // It's probably ok to fail silently...
         }
         return false;
@@ -259,6 +260,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             m_lastLoginAttempts.add( username );
         } catch( final InterruptedException e ) {
             // FALLTHROUGH is fine
+            LOG.debug(e.getMessage(), e);
         }
     }
 
@@ -336,6 +338,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 commitSucceeded = loginModule.commit();
             }
         } catch( final LoginException e ) {
+            LOG.debug(e.getMessage(), e);
             // Login or commit failed! No principal for you!
         }
 

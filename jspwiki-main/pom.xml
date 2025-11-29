@@ -31,6 +31,12 @@
     <name>Apache JSPWiki Main Jar</name>
 
     <dependencies>
+        
+        <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jspwiki-util</artifactId>
