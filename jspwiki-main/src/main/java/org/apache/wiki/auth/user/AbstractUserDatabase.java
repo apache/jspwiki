@@ -249,6 +249,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
 
             return true;
         } catch( final NoSuchPrincipalException e ) {
+            LOG.debug(e.getMessage(), e);
         } catch( final NoSuchAlgorithmException e ) {
             LOG.error( "Unsupported algorithm: " + e.getMessage() );
         } catch( final WikiSecurityException e ) {

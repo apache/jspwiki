@@ -196,5 +196,10 @@ public interface UserProfile extends Serializable
     @Override
     String toString();
     
+    /**
+     * List of recently used passwords in hashed format. may be empty
+     * @since 3.0.0
+     * @return non null list
+     */
     List<String> getPreviousHashedCredentials();
 }
