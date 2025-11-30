@@ -200,6 +200,17 @@
         <url-pattern>/ajax/*</url-pattern>
         <url-pattern>/admin/ajax/*</url-pattern>
     </servlet-mapping>
+    
+    <!--Webjars Servlet-->
+    <servlet>
+        <servlet-name>WebjarsServlet</servlet-name>
+        <servlet-class>org.apache.wiki.servlets.WebjarsServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>WebjarsServlet</servlet-name>
+        <url-pattern>/webjars/*</url-pattern>
+    </servlet-mapping>
 
     <!--
         And finally, let us tell the servlet container which

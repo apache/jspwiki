@@ -69,6 +69,7 @@
     <js>/scripts/behaviors/Viewer.js</js>
     <js>/scripts/behaviors/Viewer.Slimbox.js</js>
     <js>/scripts/behaviors/Viewer.Carousel.js</js>
+    <js>/scripts/behaviors/ChartistChart.js</js>
   </group>
 
   <group name="haddock">
