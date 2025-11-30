@@ -389,7 +389,7 @@ public class DefaultUserManager implements UserManager {
 
         // It's illegal to use as a full name someone else's login name
         try {
-            otherProfile = getUserDatabase().find( fullName );
+            otherProfile = getUserDatabase().findByFullName(fullName );
             if( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) ) {
                 final Object[] args = { fullName };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalfullname" ), args ) );
@@ -398,7 +398,7 @@ public class DefaultUserManager implements UserManager {
 
         // It's illegal to use as a login name someone else's full name
         try {
-            otherProfile = getUserDatabase().find( loginName );
+            otherProfile = getUserDatabase().findByLoginName(loginName );
             if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
                 final Object[] args = { loginName };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );

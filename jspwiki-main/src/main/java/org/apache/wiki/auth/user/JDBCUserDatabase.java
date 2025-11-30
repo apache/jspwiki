@@ -609,7 +609,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
             password = getHash( password );
             //add the hashed password
             profile.getPreviousHashedCredentials().add(password);
-            while (profile.getPreviousHashedCredentials().isEmpty() && 
+            while (!profile.getPreviousHashedCredentials().isEmpty() && 
                     profile.getPreviousHashedCredentials().size() > m_passwordReusedCount) {
                 profile.getPreviousHashedCredentials().remove(0);
             }
