@@ -17,6 +17,15 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2025-12-01 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-15_
+
+* Dependency Updates 
+	* maven-source-plugin from 3.3.1 to 3.4.0
+	* maven-surefire-junit5-tree-reporter from 1.4.0 to 1.5.1
+* [JSPWIKI-1262](https://issues.apache.org/jira/browse/JSPWIKI-1262) follow up fix to the previous fix (resolves the snip plugin discovery issue)
+
 
 **2025-11-29 arturobernalg **
 
