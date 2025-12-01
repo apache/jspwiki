@@ -57,7 +57,7 @@ Snipe.Snips = new Class({
         for( cmd in snips ){
             try{
                 snip = $.toFunction( snips[cmd] )( workarea, cmd );
-
+                if (!snip) continue;
                 // short format of snip
                 if( typeOf(snip) == "string" ){ snip = { snippet:snip }; }
 
