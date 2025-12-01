@@ -471,6 +471,7 @@ public class DefaultUserManager implements UserManager {
             	if( params.isEmpty() ) {
             		return;
             	}
+                resp.setContentType("application/json");
                 final String uid = params.get(0);
                 LOG.debug("uid="+uid);
                 if (StringUtils.isNotBlank(uid)) {
