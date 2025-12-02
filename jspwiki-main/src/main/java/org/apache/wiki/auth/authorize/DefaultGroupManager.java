@@ -82,6 +82,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             final Group group = getGroup( name );
             return group.getPrincipal();
         } catch( final NoSuchPrincipalException e ) {
+            LOG.debug(e.getMessage(), e);
             return null;
         }
     }
@@ -320,6 +321,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         try {
             checkGroupName( context, group.getName() );
         } catch( final WikiSecurityException e ) {
+            LOG.debug(e.getMessage(), e);
         }
 
         // Member names must be "safe" strings

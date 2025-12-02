@@ -65,6 +65,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
         try {
             profile = findByFullName( index );
         } catch( final NoSuchPrincipalException e ) {
+            LOG.debug(e.getMessage(), e);
         }
         if( profile != null ) {
             return profile;
@@ -74,6 +75,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
         try {
             profile = findByWikiName( index );
         } catch( final NoSuchPrincipalException e ) {
+            LOG.debug(e.getMessage(), e);
         }
         if( profile != null ) {
             return profile;
@@ -83,6 +85,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
         try {
             profile = findByLoginName( index );
         } catch( final NoSuchPrincipalException e ) {
+            LOG.debug(e.getMessage(), e);
         }
         if( profile != null ) {
             return profile;
@@ -215,6 +218,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
 
             return verified;
         } catch( final NoSuchPrincipalException e ) {
+            LOG.debug(e.getMessage(), e);
         } catch( final NoSuchAlgorithmException e ) {
             LOG.error( "Unsupported algorithm: " + e.getMessage() );
         } catch( final WikiSecurityException e ) {
@@ -275,6 +279,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
             try {
                 db.findByUid( uid );
             } catch ( final NoSuchPrincipalException e ) {
+                LOG.debug(e.getMessage(), e);
                 collision = false;
             }
         } 

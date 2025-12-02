@@ -40,6 +40,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.wiki.api.core.Session;
+import org.apache.wiki.auth.SessionMonitor;
+import org.apache.wiki.event.WikiEventManager;
+import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.search.DefaultSearchManager;
+import org.apache.wiki.security.EventUtil;
 
 
 /**
@@ -129,10 +135,20 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
             final AjaxServletContainer container = findServletContainer( servletName );
             if( container != null ) {
                 final WikiAjaxServlet servlet = container.servlet;
+                Session wikiSession = SessionMonitor.getInstance(m_engine).find(req.getSession());
                 if ( validatePermission( req, container ) ) {
-                    req.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
                     res.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
                     final String actionName = AjaxUtil.getNextPathPart( req.getRequestURI(), servlet.getServletMapping() );
+                    if (!(servlet instanceof DefaultSearchManager.PluginSearch)) {
+                        final String xsrfToken = req.getParameter("X-XSRF-TOKEN");
+                        if (!wikiSession.antiCsrfToken().equals(xsrfToken)) {
+                            res.sendError(400, "X-XSRF-TOKEN missing or invalid.");
+                            WikiEventManager.fireEvent(this,
+                                    EventUtil.applyFrom(new WikiSecurityEvent(wikiSession, WikiSecurityEvent.ACCESS_DENIED,
+                                            req.getUserPrincipal(), "X-XSRF-TOKEN missing or invalid."), req));
+                            return;
+                        }
+                    }
                     LOG.debug( "actionName=" + actionName );
                     final String params = req.getParameter( "params" );
                     LOG.debug( "params=" + params );
@@ -144,11 +160,18 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
                     }
                     servlet.service( req, res, actionName, paramValues );
                 } else {
-                    LOG.warn( "Servlet container " + container + " not authorised. Permission required." );
+                    LOG.warn("Servlet container " + container + " not authorised. Permission required.");
+                    WikiEventManager.fireEvent(this,
+                            EventUtil.applyFrom(new WikiSecurityEvent(wikiSession, WikiSecurityEvent.ACCESS_DENIED,
+                                    req.getUserPrincipal(), container.permission), req));
+                    res.sendError(400, "Denied.");
+                    return;
                 }
             } else {
-                LOG.error( "No registered class for servletName=" + servletName + " in path=" + path );
-                throw new ServletException( "No registered class for servletName=" + servletName );
+                LOG.warn( "No registered class for servletName=" + servletName + " in path=" + path );
+                res.sendError(400, "Unknown Service.");
+                //should this be an auditable event?
+                //throw new ServletException( "No registered class for servletName=" + servletName );
             }
         }
     }

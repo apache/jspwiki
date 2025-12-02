@@ -346,6 +346,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 throw new DuplicateUserException( "security.error.cannot.rename", newName );
             }
         } catch( final NoSuchPrincipalException e ) {
+            LOG.debug(e.getMessage(), e);
             // Good! That means it's safe to save using the new name
         }
 

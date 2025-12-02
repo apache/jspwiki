@@ -307,7 +307,7 @@ public class AttachmentServlet extends HttpServlet {
         try {
             res.sendError( HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message );
         } catch( final IllegalStateException e ) {
-            // ignore
+            LOG.debug(e.getMessage(), e);
         }
     }
 
@@ -365,6 +365,7 @@ public class AttachmentServlet extends HttpServlet {
                 }
             } catch (Exception err) {
                 //ignore it
+                LOG.debug(e.getMessage(), e);
             }
             
             

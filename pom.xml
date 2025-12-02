@@ -46,77 +46,78 @@
 
     <akismet-java.version>1.0.0</akismet-java.version>
     <awaitility.version>4.3.0</awaitility.version>
-    <aws-java-sdk-kendra.version>1.12.565</aws-java-sdk-kendra.version>
+    <aws-java-sdk-kendra.version>1.12.793</aws-java-sdk-kendra.version>
     <commons-collections.version>4.5.0</commons-collections.version>
     <commons-fileupload.version>2.0.0-M4</commons-fileupload.version>
-    <commons-io.version>2.20.0</commons-io.version>
-    <commons-lang.version>3.19.0</commons-lang.version>
+    <commons-io.version>2.21.0</commons-io.version>
+    <commons-lang.version>3.20.0</commons-lang.version>
     <commons-net.version>3.12.0</commons-net.version>
     <commons-text.version>1.14.0</commons-text.version>
-    <commons-validator.version>1.10.0</commons-validator.version>
+    <commons-validator.version>1.10.1</commons-validator.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.64.8</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
-    <gson.version>2.13.1</gson.version>
+    <gson.version>2.13.2</gson.version>
     <hsqldb.version>2.7.4</hsqldb.version>
+    <jackson-version>3.0.2</jackson-version>
     <jakarta-activation.version>2.0.1</jakarta-activation.version>
-    <jakarta-activation-api.version>2.1.3</jakarta-activation-api.version>
+    <jakarta-activation-api.version>2.1.4</jakarta-activation-api.version>
     <jakarta-jsp-api.version>4.0.0</jakarta-jsp-api.version>
     <jakarta-jstl.version>3.0.1</jakarta-jstl.version>
     <jakarta-jstl-api.version>3.0.2</jakarta-jstl-api.version>
-    <jakarta-mail.version>2.0.1</jakarta-mail.version>
+    <jakarta-mail.version>2.0.2</jakarta-mail.version>
     <jakarta-mail-api.version>2.1.5</jakarta-mail-api.version>
-    <jakarta-servlet-api.version>6.0.0</jakarta-servlet-api.version>
+    <jakarta-servlet-api.version>6.1.0</jakarta-servlet-api.version>
     <jacoco-version>0.8.14</jacoco-version>
     <jamm.version>0.4.0</jamm.version>
     <jaxen.version>2.0.0</jaxen.version>
-    <javax-mail.version>1.6.2</javax-mail.version>
+    <javax-mail.version>2.0.2</javax-mail.version>
     <javax-jsp-api.version>2.3.3</javax-jsp-api.version>
     <jdom2.version>2.0.6</jdom2.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
-    <junit.version>6.0.0</junit.version>
-    <log4j2.version>2.25.1</log4j2.version>
+    <junit.version>6.0.1</junit.version>
+    <log4j2.version>2.25.2</log4j2.version>
     <lucene.version>9.12.2</lucene.version>
     <mockito.version>5.20.0</mockito.version>
     <nekohtml.version>2.1.3</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <rome.version>2.1.0</rome.version>
     <sandler.version>0.5</sandler.version>
-    <selenide.version>7.10.1</selenide.version>
+    <selenide.version>7.12.1</selenide.version>
     <slf4j.version>2.0.17</slf4j.version>
     <tika.version>3.2.3</tika.version>
     <tomcat.version>10.1.49</tomcat.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
     <xstream.version>1.4.21</xstream.version>
 
-    <plugin.antrun.version>3.1.0</plugin.antrun.version>
+    <plugin.antrun.version>3.2.0</plugin.antrun.version>
     <plugin.assembly.version>3.7.1</plugin.assembly.version>
     <plugin.clean.version>3.5.0</plugin.clean.version>
     <plugin.compiler.version>3.14.1</plugin.compiler.version>
-    <plugin.dependency.version>3.8.1</plugin.dependency.version>
-    <plugin.enforcer.version>3.6.1</plugin.enforcer.version>
+    <plugin.dependency.version>3.9.0</plugin.dependency.version>
+    <plugin.enforcer.version>3.6.2</plugin.enforcer.version>
     <plugin.install.version>3.1.4</plugin.install.version>
-    <plugin.jar.version>3.4.2</plugin.jar.version>
+    <plugin.jar.version>3.5.0</plugin.jar.version>
     <plugin.javadoc.version>3.12.0</plugin.javadoc.version>
     <plugin.jxr.version>3.6.0</plugin.jxr.version>
     <plugin.project-info-reports.version>3.9.0</plugin.project-info-reports.version>
-    <plugin.release.version>3.1.1</plugin.release.version>
+    <plugin.release.version>3.2.0</plugin.release.version>
     <plugin.remote-resources.version>3.3.0</plugin.remote-resources.version>
     <plugin.resources.version>3.3.1</plugin.resources.version>
-    <plugin.source.version>3.3.1</plugin.source.version>
+    <plugin.source.version>3.4.0</plugin.source.version>
     <plugin.surefire.version>3.5.4</plugin.surefire.version>
-    <plugin.surefire.junit5-tree-reporter.version>1.4.0</plugin.surefire.junit5-tree-reporter.version>
-    <plugin.war.version>3.4.0</plugin.war.version>
+    <plugin.surefire.junit5-tree-reporter.version>1.5.1</plugin.surefire.junit5-tree-reporter.version>
+    <plugin.war.version>3.5.0</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>5.0.0</plugin.jspc.version>
     <plugin.build-helper.version>3.6.1</plugin.build-helper.version>
     <plugin.checksum.version>1.11</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
-    <plugin.cargo.version>1.10.20</plugin.cargo.version>
+    <plugin.cargo.version>1.10.25</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
     <plugin.cobertura.version>2.7</plugin.cobertura.version>
     <plugin.cyclonedx.version>2.9.1</plugin.cyclonedx.version>
-    <plugin.sonar.version>5.1.0.4751</plugin.sonar.version>
+    <plugin.sonar.version>5.3.0.6276</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
     <plugin.wro4j.version>2.1.1</plugin.wro4j.version>
     <plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
@@ -168,6 +169,13 @@
         <artifactId>selenide</artifactId>
         <version>${selenide.version}</version>
       </dependency>
+      
+      <dependency>
+            <groupId>tools.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson-version}</version>
+      </dependency>
+      
       <dependency>
           <groupId>commons-net</groupId>
           <artifactId>commons-net</artifactId>

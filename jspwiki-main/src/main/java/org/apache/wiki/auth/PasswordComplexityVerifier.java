@@ -28,9 +28,9 @@ import org.apache.wiki.i18n.InternationalizationManager;
  *
  * @since 3.0.0
  */
-public final class PasswordComplexityVeriffier {
+public final class PasswordComplexityVerifier {
 
-    private PasswordComplexityVeriffier() {
+    private PasswordComplexityVerifier() {
     }
 
     /**

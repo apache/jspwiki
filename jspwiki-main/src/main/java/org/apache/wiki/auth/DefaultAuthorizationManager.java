@@ -47,6 +47,7 @@ import org.apache.wiki.util.ClassUtil;
 import org.freshcookies.security.policy.LocalPolicy;
 
 import jakarta.servlet.http.HttpServletResponse;
+import javax.security.auth.Subject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -310,13 +311,14 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
     /** {@inheritDoc} */
     @Override
     public boolean checkStaticPermission( final Session session, final Permission permission ) {
-        return ( Boolean )Session.doPrivileged( session, ( PrivilegedAction< Boolean > )() -> {
+        return ( Boolean )Subject.doAsPrivileged( session.getSubject(), ( PrivilegedAction< Boolean > )() -> {
             try {
                 // Check the JVM-wide security policy first
                 AccessController.checkPermission( permission );
                 return Boolean.TRUE;
             } catch( final AccessControlException e ) {
                 // Global policy denied the permission
+                LOG.debug(e.getMessage(), e);
             }
 
             // Try the local policy - check each Role/Group and User Principal
@@ -324,7 +326,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
                 return Boolean.TRUE;
             }
             return Boolean.FALSE;
-        } );
+        }, null );
     }
 
     /** {@inheritDoc} */
@@ -363,6 +365,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
             }
         } catch( final NoSuchPrincipalException e ) {
             // We couldn't find the user...
+            LOG.debug(e.getMessage(), e);
         }
         // Ok, no luck---mark this as unresolved and move on
         return new UnresolvedPrincipal( name );

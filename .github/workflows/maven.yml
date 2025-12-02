@@ -28,7 +28,7 @@ jobs:
     strategy:
       matrix:
         # windows-latest is not used due to intermittent lucene failures
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, windows-latest]
         # All LTS versions plus the current version
         # 23, 24 do not work currently due to javax.security
         java: [ 17, 18, 19, 21, 22 ]

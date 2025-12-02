@@ -156,7 +156,9 @@ public class DefaultUserManager implements UserManager {
             try {
                 profile = getUserDatabase().find( user.getName() );
                 newProfile = false;
-            } catch( final NoSuchPrincipalException e ) { }
+            } catch( final NoSuchPrincipalException e ) { 
+                LOG.debug(e.getMessage(), e);
+            }
         }
 
         if ( newProfile ) {
@@ -206,6 +208,7 @@ public class DefaultUserManager implements UserManager {
                 throw new DuplicateUserException( "security.error.fullname.taken", profile.getFullname() );
             }
         } catch( final NoSuchPrincipalException e ) {
+            LOG.debug(e.getMessage(), e);
         }
 
         // For new accounts, create approval workflow for user profile save.
@@ -366,7 +369,7 @@ public class DefaultUserManager implements UserManager {
                     //existing account and the provided password does not match what we currently have
                     session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
                 }
-                List<String> msg = PasswordComplexityVeriffier.validate(passwordConfirmation, existingPassword, context);
+                List<String> msg = PasswordComplexityVerifier.validate(passwordConfirmation, existingPassword, context);
                 for (String s : msg) {
                     session.addMessage( SESSION_MESSAGES, s );
                 }
@@ -394,7 +397,10 @@ public class DefaultUserManager implements UserManager {
                 final Object[] args = { fullName };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalfullname" ), args ) );
             }
-        } catch( final NoSuchPrincipalException e ) { /* It's clean */ }
+        } catch( final NoSuchPrincipalException e ) {
+            LOG.debug(e.getMessage(), e);
+            /* It's clean */ 
+        }
 
         // It's illegal to use as a login name someone else's full name
         try {
@@ -403,7 +409,10 @@ public class DefaultUserManager implements UserManager {
                 final Object[] args = { loginName };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );
             }
-        } catch( final NoSuchPrincipalException e ) { /* It's clean */ }
+        } catch( final NoSuchPrincipalException e ) { 
+            LOG.debug(e.getMessage(), e);
+            /* It's clean */ 
+        }
 
         // It's illegal to use multiple accounts with the same email
         if (email != null && email.trim().length() > 0) {
@@ -415,7 +424,10 @@ public class DefaultUserManager implements UserManager {
                     final Object[] args = { email };
                     session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.email.taken" ), args ) );
                 }
-            } catch( final NoSuchPrincipalException e ) { /* It's clean */ }
+            } catch( final NoSuchPrincipalException e ) { 
+                LOG.debug(e.getMessage(), e);
+                /* It's clean */ 
+            }
         }
     }
 
@@ -466,24 +478,25 @@ public class DefaultUserManager implements UserManager {
 
         @Override
         public String getServletMapping() {
-        	return JSON_USERS;
+            return JSON_USERS;
         }
 
         @Override
         public void service( final HttpServletRequest req, final HttpServletResponse resp, final String actionName, final List<String> params) throws ServletException, IOException {
-        	try {
+            try {
             	if( params.isEmpty() ) {
             		return;
             	}
-        		final String uid = params.get(0);
-	        	LOG.debug("uid="+uid);
-	        	if (StringUtils.isNotBlank(uid)) {
-		            final UserProfile prof = getUserInfo(uid);
-		            resp.getWriter().write(AjaxUtil.toJson(prof));
-	        	}
-        	} catch (final NoSuchPrincipalException e) {
-        		throw new ServletException(e);
-        	}
+                resp.setContentType("application/json");
+                final String uid = params.get(0);
+                LOG.debug("uid="+uid);
+                if (StringUtils.isNotBlank(uid)) {
+                    final UserProfile prof = getUserInfo(uid);
+                    resp.getWriter().write(AjaxUtil.toJson(prof));
+                }
+            } catch (final NoSuchPrincipalException e) {
+                    throw new ServletException(e);
+            }
         }
 
         /**
@@ -495,7 +508,7 @@ public class DefaultUserManager implements UserManager {
          */
         public UserProfile getUserInfo( final String uid ) throws NoSuchPrincipalException {
             if( m_manager != null ) {
-                return m_manager.getUserDatabase().find( uid );
+                return m_manager.getUserDatabase().findByWikiName( uid );
             }
 
             throw new IllegalStateException( "The manager is offline." );
