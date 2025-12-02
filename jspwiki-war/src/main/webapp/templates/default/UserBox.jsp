@@ -17,7 +17,14 @@
     under the License.
 --%>
 
+<%@page import="java.util.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="org.apache.wiki.preferences.Preferences"%>
+<%@page import="org.apache.wiki.preferences.Preferences.TimeFormat"%>
+<%@page import="org.apache.wiki.i18n.InternationalizationManager"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
+<%@page import="org.apache.wiki.auth.user.UserProfile"%>
+<%@page import="org.apache.wiki.auth.UserManager"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ page import="jakarta.servlet.jsp.jstl.fmt.*" %>
@@ -27,6 +34,21 @@
 <fmt:setBundle basename="templates.default"/>
 <%
   Context c = Context.findContext(pageContext);
+  UserManager mgr = c.getEngine().getManager(UserManager.class);
+  UserProfile profile = mgr.getUserProfile(c.getWikiSession());
+  String lastLoginAt=null;
+  String lastLoginFrom=null;
+  if (profile!=null) {
+      Long timestamp = (Long) profile.getAttributes().get(UserProfile.ATTR_PREVIOUS_LOGIN_TIMESTAMP);
+      lastLoginFrom = (String) profile.getAttributes().get(UserProfile.ATTR_PREVIOUS_LOGIN_IP);
+      if (timestamp!=null) {
+        SimpleDateFormat sdf = Preferences.getDateFormat(c, TimeFormat.DATETIME);
+        lastLoginAt = sdf.format(new Date(timestamp));
+      }
+  }
+  
+  
+  
 %>
 <c:set var="redirect"><%= c.getEngine().encodeName(c.getName()) %></c:set>
 <c:set var="username"><wiki:UserName /></c:set>
@@ -60,6 +82,7 @@
       </wiki:UserCheck>
         
     </li>
+   
     <wiki:UserCheck status="admin">
         <li>   <% 
                 ProductUpdateChecker checker = ProductUpdateChecker.getInstance();
@@ -151,6 +174,21 @@
           <h4><fmt:message key="actions.logout"/></h4>
           <p><fmt:message key='actions.confirmlogout'/></p>
         </div>
+		 <%
+        if (lastLoginAt!=null && lastLoginFrom!=null) {
+            %>
+            <div class="content">
+			<fmt:message key="fav.greet.lastLogin">
+				<fmt:param><%=lastLoginAt%></fmt:param>
+				<fmt:param><%=lastLoginFrom%></fmt:param>
+			</fmt:message>
+
+            </div>
+            <%
+        }
+    %>
+		
+		
       </wiki:UserCheck>
     </li>
   </ul>
