@@ -362,7 +362,7 @@ public class DefaultUserManager implements UserManager {
                 if( !profile.isNew() && !getUserDatabase().validatePassword( profile.getLoginName(), password0 ) ) {
                     session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
                 }
-                List<String> msg = PasswordComplexityVeriffier.validate(password2, password0, context);
+                List<String> msg = PasswordComplexityVerifier.validate(password2, password0, context);
                 for (String s : msg) {
                     session.addMessage( SESSION_MESSAGES, s );
                 }
