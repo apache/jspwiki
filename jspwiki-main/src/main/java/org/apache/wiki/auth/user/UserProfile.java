@@ -33,6 +33,22 @@ import java.util.Map;
  */
 public interface UserProfile extends Serializable
 {
+    /**
+     * IP
+     */
+    String ATTR_PREVIOUS_LOGIN_IP = "PREVIOUS_LOGIN_IP";
+    /** 
+     * LONG time in ms since epoch
+     */
+    String ATTR_PREVIOUS_LOGIN_TIMESTAMP = "PREVIOUS_LOGIN_TIMESTAMP";
+    /**
+     * IP
+     */
+    String ATTR_CURRENT_LOGIN_IP = "CURRENT_LOGIN_IP";
+    /** 
+     * LONG time in ms since epoch
+     */
+    String ATTR_CURRENT_LOGIN_TIMESTAMP = "CURRENT_LOGIN_TIMESTAMP";
 
     /**
      * Returns the attributes associated with this profile as a Map of key/value pairs.

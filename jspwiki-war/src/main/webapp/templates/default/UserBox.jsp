@@ -17,6 +17,11 @@
     under the License.
 --%>
 
+<%@page import="java.util.Date"%>
+<%@page import="java.text.SimpleDateFormat"%>
+<%@page import="org.apache.wiki.preferences.Preferences"%>
+<%@page import="org.apache.wiki.preferences.Preferences.TimeFormat"%>
+<%@page import="org.apache.wiki.i18n.InternationalizationManager"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@page import="org.apache.wiki.auth.user.UserProfile"%>
 <%@page import="org.apache.wiki.auth.UserManager"%>
@@ -34,9 +39,14 @@
   String lastLoginAt=null;
   String lastLoginFrom=null;
   if (profile!=null) {
-      lastLoginAt = (String) profile.getAttributes().get("PREVIOUS_LOGIN_TIMESTAMP");
-      lastLoginFrom = (String) profile.getAttributes().get("PREVIOUS_LOGIN_IP");
+      Long timestamp = (Long) profile.getAttributes().get(UserProfile.ATTR_PREVIOUS_LOGIN_TIMESTAMP);
+      lastLoginFrom = (String) profile.getAttributes().get(UserProfile.ATTR_PREVIOUS_LOGIN_IP);
+      if (timestamp!=null) {
+        SimpleDateFormat sdf = Preferences.getDateFormat(c, TimeFormat.DATETIME);
+        lastLoginAt = sdf.format(new Date(timestamp));
+      }
   }
+  
   
   
 %>

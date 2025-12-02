@@ -213,17 +213,17 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 UserManager mgr = m_engine.getManager(UserManager.class);
                 UserProfile profile = mgr.getUserDatabase().findByLoginName(session.getLoginPrincipal().getName());
                 if (request.getSession().getAttribute("LOGINTIMESTAMPSET") == null) {
-                    request.getSession().setAttribute("LOGINTIMESTAMPSET", "true");
-                    String lastLoginAt = (String) profile.getAttributes().get("CURRENT_LOGIN_TIMESTAMP");
-                    String oldIp = (String) profile.getAttributes().get("CURRENT_LOGIN_IP");
+                    request.getSession().setAttribute("LOGINTIMESTAMPSET", true);
+                    Long lastLoginAt = (Long) profile.getAttributes().get(UserProfile.ATTR_CURRENT_LOGIN_TIMESTAMP);
+                    String oldIp = (String) profile.getAttributes().get(UserProfile.ATTR_CURRENT_LOGIN_IP);
                     if (lastLoginAt != null) {
-                        profile.getAttributes().put("PREVIOUS_LOGIN_TIMESTAMP", lastLoginAt);
+                        profile.getAttributes().put(UserProfile.ATTR_PREVIOUS_LOGIN_TIMESTAMP, lastLoginAt);
                     }
                     if (oldIp != null) {
-                        profile.getAttributes().put("PREVIOUS_LOGIN_IP", oldIp);
+                        profile.getAttributes().put(UserProfile.ATTR_PREVIOUS_LOGIN_IP, oldIp);
                     }
-                    profile.getAttributes().put("CURRENT_LOGIN_IP", request.getRemoteAddr());
-                    profile.getAttributes().put("CURRENT_LOGIN_TIMESTAMP", new Date().toString());
+                    profile.getAttributes().put(UserProfile.ATTR_CURRENT_LOGIN_IP, request.getRemoteAddr());
+                    profile.getAttributes().put(UserProfile.ATTR_CURRENT_LOGIN_TIMESTAMP, System.currentTimeMillis());
                     try {
                         mgr.setUserProfile(new WikiContext(m_engine, request, ""), profile);
                     } catch (WikiException ex) {
