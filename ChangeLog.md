@@ -16,6 +16,14 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-12-02 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-16_
+
+* [JSPWIKI-1253](https://issues.apache.org/jira/browse/JSPWIKI-1253) Display the date/time and ip of the user's last login
+* [JSPWIKI-175](https://issues.apache.org/jira/browse/JSPWIKI-175) see JIRA for details.
+* NOJIRA - corrects a typo with PasswordComplexityVerifier (class was spelled wrong).
+
 
 **2025-12-01 Alex O'Ree (alexoree AT apache DOT org)**
 
