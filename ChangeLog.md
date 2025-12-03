@@ -16,6 +16,13 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-12-03 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-17_
+* [JSPWIKI-1072](https://issues.apache.org/jira/browse/JSPWIKI-1072) see JIRA for details.
+* [JSPWIKI-1240](https://issues.apache.org/jira/browse/JSPWIKI-1240) potential fix for Inconsistent test failures with RSS generator
+
+
 **2025-12-02 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-16_
