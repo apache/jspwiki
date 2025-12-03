@@ -233,7 +233,8 @@ public interface AuthorizationManager extends Initializable {
      * <li>Finally, if a user cannot be found, manufacture and return a generic {@link org.apache.wiki.auth.acl.UnresolvedPrincipal}</li>
      * </ol>
      *
-     * @param name the name of the Principal to resolve
+     * @param name the name of the Principal to resolve. Note: as of v3.0.0, the 
+     * underlying behavior has changed. Principals can be resolved via login names only.
      * @return the fully-resolved Principal
      */
     Principal resolvePrincipal( final String name );

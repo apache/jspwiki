@@ -48,6 +48,7 @@
     <awaitility.version>4.3.0</awaitility.version>
     <aws-java-sdk-kendra.version>1.12.793</aws-java-sdk-kendra.version>
     <commons-collections.version>4.5.0</commons-collections.version>
+    <commons-codec.version>1.20.0</commons-codec.version>
     <commons-fileupload.version>2.0.0-M4</commons-fileupload.version>
     <commons-io.version>2.21.0</commons-io.version>
     <commons-lang.version>3.20.0</commons-lang.version>
@@ -168,6 +169,12 @@
         <groupId>com.codeborne</groupId>
         <artifactId>selenide</artifactId>
         <version>${selenide.version}</version>
+      </dependency>
+      
+       <dependency>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+          <version>${commons-codec.version}</version>
       </dependency>
       
       <dependency>

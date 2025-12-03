@@ -1,5 +1,5 @@
 
-Apache JSPWiki 2.12.0 - Upgrading Notes
+Apache JSPWiki 3.0.0 - Upgrading Notes
 ==================================================
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -20,6 +20,27 @@ Apache JSPWiki 2.12.0 - Upgrading Notes
     under the License.  
 
 The license file can be found in LICENSE.
+
+
+Upgrading JSPWiki to 3.0.0
+---------------------------
+Please see https://jspwiki-wiki.apache.org/Wiki.jsp?page=NewIn3.0.0 for details
+
+1. New requirements
+  * Java 17 needed to run JSPWiki
+
+2. Backwards incompatible changes:
+  * Page level access controls (i.e. [ALLOW edit/view/etc User/Role] ) logic has been changed.
+    Prior to this release, wiki name, full name, login name, role name or group names were allowed.
+	With this release and moving forward, login name, role name and group names are utilitized only.
+	Wiki and Full names are no longer honored. see JSPWIKI-130 for additional details. This also includes
+	the IF plugin.
+	
+	Review all wiki pages looking for the ALLOW/DENY and IF plugins and adjust as necessary.
+	
+3. Many new security features have been added and enabled by default. Please review the default 
+	jspwiki.properties file 
+
 
 Upgrading JSPWiki to 2.12.0
 ---------------------------
