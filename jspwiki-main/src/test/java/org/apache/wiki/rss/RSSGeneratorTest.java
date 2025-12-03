@@ -22,6 +22,7 @@
  */
 package org.apache.wiki.rss;
 
+import java.io.File;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
@@ -34,17 +35,32 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import java.util.UUID;
+import org.apache.commons.io.FileUtils;
 
 import static org.apache.wiki.TestEngine.with;
+import org.apache.wiki.api.core.Engine;
+import static org.apache.wiki.auth.UserManager.PROP_DATABASE;
+import org.apache.wiki.auth.authorize.XMLGroupDatabase;
+import org.apache.wiki.auth.user.XMLUserDatabase;
 
 
 public class RSSGeneratorTest {
 
-    
-
+  
     @Test
     public void testBlogRSS() throws Exception {
-        TestEngine m_testEngine = TestEngine.build( with( RSSGenerator.PROP_GENERATE_RSS, "true" ) );
+        
+        Properties props = TestEngine.getTestProperties();
+        File target = new File("target/" + UUID.randomUUID() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/userdatabase.xml"), target);
+        props.setProperty(XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath());
+        props.put(PROP_DATABASE, XMLUserDatabase.class.getCanonicalName());
+        props.put("jspwiki.groupdatabase", XMLGroupDatabase.class.getCanonicalName());
+        props.put(RSSGenerator.PROP_GENERATE_RSS, "true");
+        TestEngine m_testEngine = TestEngine.build( props);
+
         final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
         m_testEngine.saveText( "testBlogRSS", "Foo1" );
         String newPage = plugin.getNewEntryPage( m_testEngine, "testBlogRSS" );
