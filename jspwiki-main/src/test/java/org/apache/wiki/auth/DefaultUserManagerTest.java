@@ -27,12 +27,22 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.Properties;
+import java.util.UUID;
+import org.apache.commons.io.FileUtils;
+import org.apache.wiki.TestEngine;
+import static org.apache.wiki.auth.UserManager.PROP_DATABASE;
+import org.apache.wiki.auth.authorize.XMLGroupDatabase;
+import org.apache.wiki.auth.user.XMLUserDatabase;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class DefaultUserManagerTest {
+/**
+ * this focuses on the XML user database
+ */
+public class DefaultUserManagerTest extends AbstractPasswordReuseTest {
 
     @Test
     void testParseProfileTrimsFields() {
@@ -73,4 +83,16 @@ class DefaultUserManagerTest {
         Assertions.assertEquals( "admin@example.com", profile.getEmail(), "Email should be trimmed" );
     }
 
+    
+
+    @Override
+    public Properties getTestProps() throws Exception {
+        Properties props = TestEngine.getTestProperties();
+        File target = new File("target/" + UUID.randomUUID() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/userdatabase.xml"), target);
+        props.setProperty(XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath());
+        props.put(PROP_DATABASE, XMLUserDatabase.class.getCanonicalName());
+        props.put("jspwiki.groupdatabase", XMLGroupDatabase.class.getCanonicalName());
+        return props;
+    }
 }
