@@ -78,5 +78,6 @@ public class RSSGeneratorTest {
         Assertions.assertTrue( blog.contains( "<description>Foo</description>" ), "has Foo" );
         Assertions.assertTrue( blog.contains( "&lt;b&gt;Bar&lt;/b&gt;" ), "has proper Bar" );
         
+        
     }
 }
