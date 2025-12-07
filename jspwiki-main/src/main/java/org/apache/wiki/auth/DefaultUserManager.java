@@ -69,6 +69,7 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
+import org.apache.wiki.auth.authorize.GroupManager;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
 
@@ -419,6 +420,7 @@ public class DefaultUserManager implements UserManager {
                 LOG.debug(e.getMessage(), e);
                 /* It's clean */ 
             }
+            m_engine.getManager(GroupManager.class).getGroupDatabase().groups();
             try {
                 otherProfile = getUserDatabase().findByWikiName(wikiName );
                 if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
