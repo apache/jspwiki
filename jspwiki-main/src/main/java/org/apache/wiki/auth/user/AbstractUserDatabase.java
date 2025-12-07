@@ -55,6 +55,8 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      * that supplied the name is unknown.
      *
      * @param index the login name, full name, or wiki name
+     * @return non null
+     * @throws org.apache.wiki.auth.NoSuchPrincipalException
      * @see org.apache.wiki.auth.user.UserDatabase#find(java.lang.String)
      */
     @Override

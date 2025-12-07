@@ -239,7 +239,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             }
         }
         
-        if ("true".equalsIgnoreCase(m_engine.getWikiProperties().getProperty(Engine.PROP_USE_2_X_ACL_LOGIC, "false"))) {
+        if ("false".equalsIgnoreCase(m_engine.getWikiProperties().getProperty(Engine.PROP_USE_2_X_ACL_LOGIC, "false"))) {
             //check to ensure that the group name does not conflict with any existing user account login, email or wiki name
             UserManager userManger = m_engine.getManager(UserManager.class);
             try { userManger.getUserDatabase().findByEmail(name);

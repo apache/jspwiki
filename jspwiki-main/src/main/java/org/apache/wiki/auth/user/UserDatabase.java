@@ -77,6 +77,8 @@ public interface UserDatabase {
      * that supplied the name is unknown.
      *
      * @param index the login name, full name, or wiki name
+     * @return non null
+     * @throws org.apache.wiki.auth.NoSuchPrincipalException
      * @deprecated depending on the use case, this API's usage can be dangerous.
      * Recommend using other APIs for more explicit lookup types. see JSPWIKI-130
      * for additional details.
