@@ -16,6 +16,11 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-12-07 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-18_
+* [JSPWIKI-130](https://issues.apache.org/jira/browse/JSPWIKI-130) see JIRA for details. Addresses 1 of 2 reported issues.
+
 **2025-12-03 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-17_
