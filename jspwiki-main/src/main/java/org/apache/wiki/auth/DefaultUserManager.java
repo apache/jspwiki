@@ -155,7 +155,7 @@ public class DefaultUserManager implements UserManager {
         if ( session.isAuthenticated() ) {
             user = session.getUserPrincipal();
             try {
-                profile = getUserDatabase().find( user.getName() );
+                profile = getUserDatabase().findByWikiName( user.getName());
                 newProfile = false;
             } catch( final NoSuchPrincipalException e ) { 
                 LOG.debug(e.getMessage(), e);
@@ -166,6 +166,8 @@ public class DefaultUserManager implements UserManager {
             profile = getUserDatabase().newProfile();
             if ( user != null ) {
                 profile.setLoginName( user.getName() );
+            } else {
+                LOG.warn("new profile however the user principal is null. this shouldn't happen");
             }
             if ( !profile.isNew() ) {
                 throw new IllegalStateException( "New profile should be marked 'new'. Check your UserProfile implementation." );
@@ -374,31 +376,61 @@ public class DefaultUserManager implements UserManager {
         UserProfile otherProfile;
         final String fullName = profile.getFullname();
         final String loginName = profile.getLoginName();
+        final String wikiName = profile.getWikiName();
         final String email = profile.getEmail();
 
-        // It's illegal to use as a full name someone else's login name
-        try {
-            otherProfile = getUserDatabase().find( fullName );
-            if( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) ) {
-                final Object[] args = { fullName };
-                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalfullname" ), args ) );
+        
+        if ("true".equalsIgnoreCase(m_engine.getWikiProperties().getProperty(Engine.PROP_USE_2_X_ACL_LOGIC, "false"))) {
+            // It's illegal to use as a full name someone else's login name
+            try {
+                otherProfile = getUserDatabase().find( fullName );
+                if( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) ) {
+                    final Object[] args = { fullName };
+                    session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalfullname" ), args ) );
+                }
+            } catch( final NoSuchPrincipalException e ) {
+                LOG.debug(e.getMessage(), e);
+                /* It's clean */ 
             }
-        } catch( final NoSuchPrincipalException e ) {
-            LOG.debug(e.getMessage(), e);
-            /* It's clean */ 
-        }
 
-        // It's illegal to use as a login name someone else's full name
-        try {
-            otherProfile = getUserDatabase().find( loginName );
-            if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
-                final Object[] args = { loginName };
-                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );
+            // It's illegal to use as a login name someone else's full name
+            try {
+                otherProfile = getUserDatabase().find( loginName );
+                if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
+                    final Object[] args = { loginName };
+                    session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );
+                }
+            } catch( final NoSuchPrincipalException e ) { 
+                LOG.debug(e.getMessage(), e);
+                /* It's clean */ 
             }
-        } catch( final NoSuchPrincipalException e ) { 
-            LOG.debug(e.getMessage(), e);
-            /* It's clean */ 
+        } else {
+            //JSPWIKI-130, v3+ behavior
+            // It is legal to use as a full name someone else's login name
+
+            // It's illegal to use as a login name someone else's full name
+            try {
+                otherProfile = getUserDatabase().findByLoginName(loginName );
+                if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
+                    final Object[] args = { loginName };
+                    session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );
+                }
+            } catch( final NoSuchPrincipalException e ) { 
+                LOG.debug(e.getMessage(), e);
+                /* It's clean */ 
+            }
+            try {
+                otherProfile = getUserDatabase().findByWikiName(wikiName );
+                if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
+                    final Object[] args = { loginName };
+                    session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );
+                }
+            } catch( final NoSuchPrincipalException e ) { 
+                LOG.debug(e.getMessage(), e);
+                /* It's clean */ 
+            }
         }
+        
 
         // It's illegal to use multiple accounts with the same email
         if (email != null && email.trim().length() > 0) {
@@ -499,7 +531,7 @@ public class DefaultUserManager implements UserManager {
          */
         public UserProfile getUserInfo( final String uid ) throws NoSuchPrincipalException {
             if( m_manager != null ) {
-                return m_manager.getUserDatabase().findByWikiName( uid );
+                return m_manager.getUserDatabase().findByUid( uid );
             }
 
             throw new IllegalStateException( "The manager is offline." );
