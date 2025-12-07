@@ -20,6 +20,7 @@ package org.apache.wiki.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.io.File;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
@@ -52,6 +53,9 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
+import org.apache.commons.io.FileUtils;
+import org.apache.wiki.WikiEngine;
 
 
 class UserManagerTest {
@@ -60,7 +64,7 @@ class UserManagerTest {
     UserManager m_mgr;
     UserDatabase m_db;
     String m_groupName;
-
+ File target;
     /**
      *
      */
@@ -71,8 +75,11 @@ class UserManagerTest {
         // Make sure user profile save workflow is OFF
         props.remove( "jspwiki.approver" + WorkflowManager.WF_UP_CREATE_SAVE_APPROVER );
 
+        target = new File("target/XMLUserDatabaseTest" + UUID.randomUUID().toString() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/userdatabase.xml" ), target);
+        props.put( XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath() );
         // Make sure we are using the XML user database
-        props.put( XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
+
         m_engine = new TestEngine( props );
         m_mgr = m_engine.getManager( UserManager.class );
         m_db = m_mgr.getUserDatabase();
@@ -277,6 +284,7 @@ class UserManagerTest {
         // Create a new user with random name
         final Context context = Wiki.context().create( m_engine, HttpMockFactory.createHttpRequest(), "" );
         final String loginName = "TestUser" + System.currentTimeMillis();
+        
         UserProfile profile = m_db.newProfile();
         profile.setEmail( "jspwiki.tests@mailinator.com" );
         profile.setLoginName( loginName );
