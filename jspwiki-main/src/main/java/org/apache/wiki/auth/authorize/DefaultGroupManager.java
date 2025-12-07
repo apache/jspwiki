@@ -194,6 +194,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             if( create ) {
                 name = "MyGroup";
             } else {
+                //TODO i18n
                 throw new WikiSecurityException( "Group name cannot be blank." );
             }
         } else if( ArrayUtils.contains( Group.RESTRICTED_GROUPNAMES, name ) ) {
@@ -224,6 +225,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         } catch( final NoSuchPrincipalException e ) {
             // It's a new group.... throw error if we don't create new ones
             if( !create ) {
+                //TODO i18n
                 throw new NoSuchPrincipalException( "Group '" + name + "' does not exist." );
             }
         }
@@ -234,6 +236,26 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             group.clear();
             for( final String member : members ) {
                 group.add( new WikiPrincipal( member ) );
+            }
+        }
+        
+        if ("true".equalsIgnoreCase(m_engine.getWikiProperties().getProperty(Engine.PROP_USE_2_X_ACL_LOGIC, "false"))) {
+            //check to ensure that the group name does not conflict with any existing user account login, email or wiki name
+            UserManager userManger = m_engine.getManager(UserManager.class);
+            try { userManger.getUserDatabase().findByEmail(name);
+                throw new WikiSecurityException( "Group name conflicts with a user account" );
+            }catch (NoSuchPrincipalException e) {
+                //no issues here
+            }
+            try { userManger.getUserDatabase().findByLoginName(name);
+                throw new WikiSecurityException( "Group name conflicts with a user account" );
+            }catch (NoSuchPrincipalException e) {
+                //no issues here
+            }
+            try { userManger.getUserDatabase().findByWikiName(name);
+                throw new WikiSecurityException( "Group name conflicts with a user account" );
+            }catch (NoSuchPrincipalException e) {
+                //no issues here
             }
         }
 

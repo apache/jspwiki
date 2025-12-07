@@ -69,6 +69,7 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
+import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
@@ -414,13 +415,39 @@ public class DefaultUserManager implements UserManager {
                 otherProfile = getUserDatabase().findByLoginName(loginName );
                 if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
                     final Object[] args = { loginName };
-                    session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );
+                    session.addMessage( SESSION_MESSAGES, MessageFormat.format( 
+                            rb.getString( "security.error.illegalloginname" ), args ) );
                 }
             } catch( final NoSuchPrincipalException e ) { 
                 LOG.debug(e.getMessage(), e);
                 /* It's clean */ 
             }
-            m_engine.getManager(GroupManager.class).getGroupDatabase().groups();
+            //it's illegal to use a username, email or wiki name as a group name
+            try {
+                Group[] groups = m_engine.getManager(GroupManager.class).getGroupDatabase().groups();
+                for (Group grp : groups) {
+                    if (grp.getName().equals(loginName)) {
+                        final Object[] args = {loginName};
+                        session.addMessage(SESSION_MESSAGES,
+                                MessageFormat.format(rb.getString("security.error.illegalloginname"), args));
+                    }
+                    if (grp.getName().equals(wikiName)) {
+                        final Object[] args = {wikiName};
+                        session.addMessage(SESSION_MESSAGES,
+                                MessageFormat.format(rb.getString("security.error.illegalloginname"), args));
+                    }
+                    if (grp.getName().equals(email)) {
+                        final Object[] args = {email};
+                        session.addMessage(SESSION_MESSAGES,
+                                MessageFormat.format(rb.getString("security.error.illegalloginname"), args));
+                    }
+                }
+            } catch (WikiSecurityException ex) {
+                //TODO i18n
+                session.addMessage(SESSION_MESSAGES,
+                        "failed to query for groups " + ex.getMessage());
+            }
+            //wiki names must be unique as well.
             try {
                 otherProfile = getUserDatabase().findByWikiName(wikiName );
                 if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
