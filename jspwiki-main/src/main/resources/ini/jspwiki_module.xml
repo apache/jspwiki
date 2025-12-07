@@ -150,5 +150,10 @@
         <author>Janne Jalkanen</author>
         <minVersion>2.6</minVersion>
     </filter>
-
+    <plugin class="org.apache.wiki.plugin.ChartistPlugin">
+        <author>ASF</author>
+        <minVersion>2.11</minVersion>
+        <script>webjars/chartist/dist/index.umd.js</script>
+        <stylesheet>webjars/chartist/dist/index.css</stylesheet>
+    </plugin>
 </modules>
