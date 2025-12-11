@@ -23,7 +23,7 @@ grant principal org.apache.wiki.auth.authorize.Role "Authenticated" {
     permission org.apache.wiki.auth.permissions.PagePermission "*:*", "view";
 };
 
-grant principal org.apache.wiki.auth.WikiPrincipal "Janne Jalkanen" {
+grant principal org.apache.wiki.auth.WikiPrincipal "JanneJalkanen" {
     permission org.apache.wiki.auth.permissions.PagePermission "*:*", "edit,delete";
 };
 

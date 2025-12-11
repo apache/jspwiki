@@ -205,7 +205,8 @@ public class DefaultUserManager implements UserManager {
             if( otherProfile != null && !otherProfile.equals( oldProfile ) ) {
                 throw new DuplicateUserException( "security.error.login.taken", profile.getLoginName() );
             }
-        } catch( final NoSuchPrincipalException e ) {
+        } catch (final NoSuchPrincipalException e) {
+            LOG.debug(e.getMessage(), e);
         }
         try {
             otherProfile = getUserDatabase().findByFullName( profile.getFullname() );
@@ -252,6 +253,7 @@ public class DefaultUserManager implements UserManager {
                 fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
             }
         }
+        m_profiles.put( session, profile );
     }
 
     /** {@inheritDoc} */

@@ -78,7 +78,7 @@ public class GroupManagerTest
         m_groupMgr.setGroup( m_session, group );
         group = m_groupMgr.parseGroup( "Test2", "Bob", true );
         m_groupMgr.setGroup( m_session, group );
-        group = m_groupMgr.parseGroup( "Test3", "Fred Flintstone", true );
+        group = m_groupMgr.parseGroup( "Test3", "Fred", true );
         m_groupMgr.setGroup( m_session, group );
 
         // We should see 3 events: 1 for each group add
