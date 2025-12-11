@@ -19,7 +19,6 @@
 package org.apache.wiki.auth.user;
 
 import java.io.File;
-import java.io.IOException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
@@ -39,7 +38,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import org.apache.commons.io.FileUtils;
-import org.apache.wiki.auth.authorize.XMLGroupDatabase;
 
 
 public class XMLUserDatabaseTest {

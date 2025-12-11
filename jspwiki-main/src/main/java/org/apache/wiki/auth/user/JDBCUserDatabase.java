@@ -415,6 +415,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
      */
     @Override
     public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException, WikiSecurityException {
+        m_engine = engine;
         final String jndiName = props.getProperty( PROP_DB_DATASOURCE, DEFAULT_DB_JNDI_NAME );
         try {
             final Context initCtx = new InitialContext();

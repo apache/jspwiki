@@ -55,7 +55,12 @@ import java.util.ServiceLoader;
  *  {@code Context#getEngine()} method or through {@code Wiki.engine().find(..)} DSL methods.
  */
 public interface Engine {
-
+    /**
+     * see JSPWIKI-130
+     * @since 3.0.0
+     */
+    String PROP_USE_2_X_ACL_LOGIC = "jspwiki.security.useOldPageAccessControlLogic";
+    
     /** The default inlining pattern.  Currently "*.png" */
     String DEFAULT_INLINEPATTERN = "*.png";
 

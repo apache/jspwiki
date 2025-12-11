@@ -355,6 +355,7 @@ public class WikiPage implements Page {
      *  
      *  {@inheritDoc}
      */
+    @Override
     public boolean equals( final Object o ) {
         if( o instanceof WikiPage ) {
             final WikiPage wp = ( WikiPage )o;

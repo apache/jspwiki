@@ -111,6 +111,7 @@ public class DummyUserDatabase extends AbstractUserDatabase {
      */
     @Override
     public void initialize( final Engine engine, final Properties props ) {
+        this.m_engine = engine;
     }
 
     /**
