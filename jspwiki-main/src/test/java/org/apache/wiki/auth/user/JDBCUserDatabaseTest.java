@@ -42,18 +42,22 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Properties;
+import org.apache.wiki.TestEngine;
+import org.apache.wiki.auth.AbstractPasswordReuseTest;
+import static org.apache.wiki.auth.UserManager.PROP_DATABASE;
+import org.apache.wiki.auth.authorize.JDBCGroupDatabase;
 
 /**
  *
  */
-public class JDBCUserDatabaseTest {
+public class JDBCUserDatabaseTest extends AbstractPasswordReuseTest {
     private final HsqlDbUtils m_hu = new HsqlDbUtils();
 
     private JDBCUserDatabase m_db;
 
     private static final String TEST_ATTRIBUTES = "rO0ABXNyABFqYXZhLnV0aWwuSGFzaE1hcAUH2sHDFmDRAwACRgAKbG9hZEZhY3RvckkACXRocmVzaG9sZHhwP0AAAAAAAAx3CAAAABAAAAACdAAKYXR0cmlidXRlMXQAEXNvbWUgcmFuZG9tIHZhbHVldAAKYXR0cmlidXRlMnQADWFub3RoZXIgdmFsdWV4";
 
-    private static final String INSERT_JANNE = "INSERT INTO users (" +
+    public static final String INSERT_JANNE = "INSERT INTO users (" +
             JDBCUserDatabase.DEFAULT_DB_UID + "," +
             JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
             JDBCUserDatabase.DEFAULT_DB_FULL_NAME + "," +
@@ -68,7 +72,7 @@ public class JDBCUserDatabaseTest {
             "'" + new Timestamp( new Timestamp( System.currentTimeMillis() ).getTime() ) + "'," +
             "'" + TEST_ATTRIBUTES + "'" + ");";
 
-    private static final String INSERT_USER = "INSERT INTO users (" +
+    public static final String INSERT_USER = "INSERT INTO users (" +
             JDBCUserDatabase.DEFAULT_DB_UID + "," +
             JDBCUserDatabase.DEFAULT_DB_EMAIL + "," +
             JDBCUserDatabase.DEFAULT_DB_LOGIN_NAME + "," +
@@ -412,6 +416,17 @@ public class JDBCUserDatabaseTest {
         Assertions.assertFalse( m_db.validatePassword( "janne", "test" ) );
         Assertions.assertTrue( m_db.validatePassword( "janne", "myP@5sw0rd" ) );
         Assertions.assertTrue( m_db.validatePassword( "user", "password" ) );
+    }
+
+     @Override
+    public Properties getTestProps() throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+
+        props.put(PROP_DATABASE, JDBCUserDatabase.class.getCanonicalName());
+        props.put("jspwiki.groupdatabase", JDBCGroupDatabase.class.getCanonicalName());
+        props.put("jspwiki.groupdatabase.datasource", JDBCUserDatabase.DEFAULT_DB_JNDI_NAME);
+        props.put("jspwiki.userdatabase.datasource", JDBCUserDatabase.DEFAULT_DB_JNDI_NAME);
+        return props;
     }
 
 }

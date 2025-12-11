@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.IOException;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -37,6 +39,8 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import java.util.UUID;
+import org.apache.commons.io.FileUtils;
 
 
 /**
@@ -63,11 +67,16 @@ public class XMLGroupDatabaseTest {
     }
 
     @Test
-    public void testDelete() throws WikiException {
+    public void testDelete() throws Exception {
         XMLGroupDatabase m_db;
 
         String m_wiki;
-
+        final Properties props = TestEngine.getTestProperties();
+        File target = new File("target/XMLUserDatabaseTest" + UUID.randomUUID().toString() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml" ), target);
+        props.put( XMLGroupDatabase.PROP_DATABASE, target.getAbsolutePath() );
+        
+        final WikiEngine engine = new TestEngine(props);
         m_db = new XMLGroupDatabase();
         m_db.initialize(engine, engine.getWikiProperties());
         m_wiki = engine.getApplicationName();
@@ -94,11 +103,14 @@ public class XMLGroupDatabaseTest {
     }
 
     @Test
-    public void testGroups() throws WikiSecurityException, WikiException {
+    public void testGroups() throws WikiSecurityException, WikiException, IOException {
         XMLGroupDatabase m_db;
-
+        final Properties props = TestEngine.getTestProperties();
+        File target = new File("target/XMLUserDatabaseTest" + UUID.randomUUID().toString() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml" ), target);
+        props.put( XMLGroupDatabase.PROP_DATABASE, target.getAbsolutePath() );
         String m_wiki;
-        
+        final WikiEngine engine = new TestEngine(props);
         m_db = new XMLGroupDatabase();
         m_db.initialize(engine, engine.getWikiProperties());
         m_wiki = engine.getApplicationName();
@@ -142,9 +154,12 @@ public class XMLGroupDatabaseTest {
     @Test
     public void testSave() throws Exception {
         XMLGroupDatabase m_db;
-
+        final Properties props = TestEngine.getTestProperties();
+        File target = new File("target/XMLUserDatabaseTest" + UUID.randomUUID().toString() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml" ), target);
+        props.put( XMLGroupDatabase.PROP_DATABASE, target.getAbsolutePath() );
         String m_wiki;
-       
+        final WikiEngine engine = new TestEngine(props);
         m_db = new XMLGroupDatabase();
         m_db.initialize(engine, engine.getWikiProperties());
         m_wiki = engine.getApplicationName();
@@ -183,9 +198,12 @@ public class XMLGroupDatabaseTest {
     @Test
     public void testResave() throws Exception {
         XMLGroupDatabase m_db;
-
+        final Properties props = TestEngine.getTestProperties();
+        File target = new File("target/XMLUserDatabaseTest" + UUID.randomUUID().toString() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml" ), target);
+        props.put( XMLGroupDatabase.PROP_DATABASE, target.getAbsolutePath() );
         String m_wiki;
-        
+        final WikiEngine engine = new TestEngine(props);
         m_db = new XMLGroupDatabase();
         m_db.initialize(engine, engine.getWikiProperties());
         m_wiki = engine.getApplicationName();

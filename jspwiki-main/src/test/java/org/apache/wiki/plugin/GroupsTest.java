@@ -40,10 +40,10 @@ public class GroupsTest {
     @BeforeAll
     public static void init() throws IOException {
         final Properties props = TestEngine.getTestProperties();
-        File target = new File("target/XMLUserDatabaseTest" + UUID.randomUUID().toString() + ".xml");
+        File target = new File("target/GroupsTest" + UUID.randomUUID().toString() + ".xml");
         FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml"), target);
         props.put(XMLGroupDatabase.PROP_DATABASE, target.getAbsolutePath());
-        testEngine = TestEngine.build();
+        testEngine = TestEngine.build(props);
     }
     
 

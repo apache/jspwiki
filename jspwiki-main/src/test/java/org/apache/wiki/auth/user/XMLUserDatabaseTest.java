@@ -19,7 +19,6 @@
 package org.apache.wiki.auth.user;
 
 import java.io.File;
-import java.io.IOException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
@@ -39,7 +38,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 import org.apache.commons.io.FileUtils;
-import org.apache.wiki.auth.authorize.XMLGroupDatabase;
 
 
 public class XMLUserDatabaseTest {
@@ -52,7 +50,6 @@ public class XMLUserDatabaseTest {
         File target = new File("target/XMLUserDatabaseTest" + UUID.randomUUID().toString() + ".xml");
         FileUtils.copyFile(new File("src/test/resources/userdatabase.xml" ), target);
         props.put( XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath() );
-        
         final WikiEngine engine = new TestEngine( props );
         m_db = new XMLUserDatabase();
         m_db.initialize( engine, props );
@@ -61,29 +58,34 @@ public class XMLUserDatabaseTest {
     @Test
     public void testDeleteByLoginName() throws WikiSecurityException {
         // First, count the number of users in the db now.
-        final int oldUserCount = m_db.getWikiNames().length;
-
-        // Create a new user with random name
         final String loginName = "TestUser" + System.currentTimeMillis();
-        UserProfile profile = m_db.newProfile();
-        profile.setEmail( "jspwiki.tests@mailinator.com" );
-        profile.setLoginName( loginName );
-        profile.setFullname( "FullName" + loginName );
-        profile.setPassword( "password" );
-        m_db.save( profile );
+        synchronized (m_db) {
+            final int oldUserCount = m_db.getWikiNames().length;
+            try {
 
-        // Make sure the profile saved successfully
-        profile = m_db.findByLoginName( loginName );
-        Assertions.assertEquals( loginName, profile.getLoginName() );
-        Assertions.assertEquals( oldUserCount + 1, m_db.getWikiNames().length );
+                // Create a new user with random name
+                UserProfile profile = m_db.newProfile();
+                profile.setEmail("jspwiki.tests@mailinator.com");
+                profile.setLoginName(loginName);
+                profile.setFullname("FullName" + loginName);
+                profile.setPassword("password");
+                m_db.save(profile);
 
-        // Now delete the profile; should be back to old count
-        m_db.deleteByLoginName( loginName );
-        Assertions.assertEquals( oldUserCount, m_db.getWikiNames().length );
+                // Make sure the profile saved successfully
+                profile = m_db.findByLoginName(loginName);
+                Assertions.assertEquals(loginName, profile.getLoginName());
+                Assertions.assertEquals(oldUserCount + 1, m_db.getWikiNames().length);
+            } finally {
+                // Now delete the profile; should be back to old count
+                m_db.deleteByLoginName(loginName);
+                Assertions.assertEquals(oldUserCount, m_db.getWikiNames().length);
+            }
+        }
     }
 
     @Test
     public void testAttributes() throws Exception {
+         final Principal[] p = m_db.getWikiNames();
         UserProfile profile = m_db.findByEmail( "janne@ecyrd.com" );
 
         Map< String, Serializable > attributes = profile.getAttributes();
@@ -351,12 +353,8 @@ public class XMLUserDatabaseTest {
         
         
         //start it back up again, expecting it to barf
-        try{
+        Assertions.assertThrows(RuntimeException.class, () -> {
             m_db.initialize(engine, props);
-            Assertions.fail("xml database check did not trigger");
-        }catch (RuntimeException ex) {
-            //this is expected
-        }
-
+        });
     }
 }
