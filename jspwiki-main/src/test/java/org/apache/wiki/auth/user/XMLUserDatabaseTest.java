@@ -19,8 +19,6 @@
 package org.apache.wiki.auth.user;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.File;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
@@ -38,9 +36,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
-import org.apache.commons.io.FileUtils;
-import org.apache.wiki.auth.authorize.XMLGroupDatabase;
 import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 
@@ -358,12 +353,8 @@ public class XMLUserDatabaseTest {
         
         
         //start it back up again, expecting it to barf
-        try{
+        Assertions.assertThrows(RuntimeException.class, () -> {
             m_db.initialize(engine, props);
-            Assertions.fail("xml database check did not trigger");
-        }catch (RuntimeException ex) {
-            //this is expected
-        }
-
+        });
     }
 }

@@ -19,6 +19,7 @@
 package org.apache.wiki.auth.user;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -217,5 +218,7 @@ public interface UserProfile extends Serializable
      * @since 3.0.0
      * @return non null list
      */
-    List<String> getPreviousHashedCredentials();
+    default List<String> getPreviousHashedCredentials() {
+        return new ArrayList<>();
+    }
 }

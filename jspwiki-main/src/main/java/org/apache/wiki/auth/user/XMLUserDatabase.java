@@ -199,27 +199,18 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         }
 
         LOG.info( "XML user database at " + c_file.getAbsolutePath() );
-        m_passwordReusedCount = Integer.parseInt(props.getProperty("jspwiki.credentials.reuseCount", "-1"));
+        m_passwordReusedCount = TextUtil.getIntegerProperty( props, "jspwiki.credentials.reuseCount", -1);
         File checkFile = new File(c_file.getParent(), c_file.getName() + ".check");
         if (checkFile.exists()) {
             
-            FileInputStream fis = null;
             byte[] computedHash = null;
             byte[] storedHash = null;
-            try {
-                fis = new FileInputStream(c_file);
+            try (FileInputStream fis = new FileInputStream(c_file)) {
                 computedHash = DigestUtils.sha256(fis);
                 storedHash = FileUtils.readFileToByteArray(checkFile);
             } catch (Exception ex) {
                 throw new RuntimeException("Failed to compute integrity check. ", ex);
-            } finally {
-                if (fis != null)
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOG.debug(ex.getMessage());
-                }
-            }
+            } 
             if (Arrays.equals(computedHash, storedHash)) {
                 LOG.info("XML user database hash check passed. no modifications detected.");
             } else {
@@ -341,22 +332,13 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             }
             LOG.error( "Could not save database: " + c_file + ". Check the file permissions" );
         }
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(c_file);
+        
+        try (FileInputStream fis = new FileInputStream(c_file)) {
             byte[] hash = DigestUtils.sha256(fis);
             File checkFile = new File(c_file.getParent(), c_file.getName() + ".check");
             FileUtils.writeByteArrayToFile(checkFile, hash);
         } catch (Exception ex) {
             LOG.warn("Failed to recompute and/or save the check file", ex);
-        } finally {
-            if (fis!=null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOG.debug(ex.getMessage());
-                }
-            }
         }
     }
 
