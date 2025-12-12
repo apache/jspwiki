@@ -33,8 +33,10 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpSessionEvent;
 import jakarta.servlet.http.HttpSessionListener;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
@@ -111,12 +113,14 @@ public class SessionMonitor implements HttpSessionListener {
     private Session findSession( final String sessionId ) {
         Session wikiSession = null;
         final String sid = ( sessionId == null ) ? "(null)" : sessionId;
-        final Session storedSession = m_sessions.get( sid );
+        synchronized( m_sessions ){
+            final Session storedSession = m_sessions.get( sid );
 
-        // If the weak reference returns a wiki session, return it
-        if( storedSession != null ) {
-            LOG.debug( "Looking up WikiSession for session ID={}... found it", sid );
-            wikiSession = storedSession;
+            // If the weak reference returns a wiki session, return it
+            if( storedSession != null ) {
+                LOG.debug( "Looking up WikiSession for session ID={}... found it", sid );
+                wikiSession = storedSession;
+            }
         }
 
         return wikiSession;
@@ -292,6 +296,26 @@ public class SessionMonitor implements HttpSessionListener {
                 fireEvent( WikiSecurityEvent.SESSION_EXPIRED, storedSession.getLoginPrincipal(), storedSession );
             }
         }
+    }
+
+    /**
+     * gets a list of other sessions for the same login id for auditing purposes.
+     * 
+     * @since 3.0.0
+     * @param name
+     * @return list
+     */
+    public List<Session> findOtherSessionsByUsername(String name) {
+        List<Session> otherSessions = new ArrayList<>();
+        synchronized (m_sessions) {
+
+            for (Session m : m_sessions.values()) {
+                if (m.getLoginPrincipal().getName().equals(name)) {
+                    otherSessions.add(m);
+                }
+            }
+        }
+        return otherSessions;
     }
 
 }
