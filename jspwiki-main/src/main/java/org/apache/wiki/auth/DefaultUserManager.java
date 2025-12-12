@@ -69,6 +69,8 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 
 
 /**
@@ -362,7 +364,7 @@ public class DefaultUserManager implements UserManager {
                 if( !profile.isNew() && !getUserDatabase().validatePassword( profile.getLoginName(), password0 ) ) {
                     session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
                 }
-                List<String> msg = PasswordComplexityVeriffier.validate(password2, password0, context);
+                List<String> msg = PasswordComplexityVerifier.validate(password2, password0, context);
                 for (String s : msg) {
                     session.addMessage( SESSION_MESSAGES, s );
                 }
@@ -471,11 +473,17 @@ public class DefaultUserManager implements UserManager {
             	if( params.isEmpty() ) {
             		return;
             	}
+                resp.setContentType("application/json");
                 final String uid = params.get(0);
                 LOG.debug("uid="+uid);
                 if (StringUtils.isNotBlank(uid)) {
                     final UserProfile prof = getUserInfo(uid);
-                    resp.getWriter().write(AjaxUtil.toJson(prof));
+                    //clone the object
+                    ObjectMapper om = new ObjectMapper();
+                    ObjectNode node = om.convertValue(prof, ObjectNode.class);
+                    node.remove("password");
+                    node.remove("previousHashedCredentials");
+                    resp.getWriter().write(node.toString());
                 }
             } catch (final NoSuchPrincipalException e) {
                     throw new ServletException(e);

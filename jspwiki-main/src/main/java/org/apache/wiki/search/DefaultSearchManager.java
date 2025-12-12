@@ -114,21 +114,8 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                              final String actionName,
                              final List< String > params ) throws IOException {
             String result = "[]";
-            String itemId = null;
+            resp.setContentType("application/json");
             if( actionName != null && StringUtils.isNotBlank( actionName ) ) {
-                if( !params.isEmpty() ) {
-                    itemId = params.get( 0 );
-                    LOG.debug( "itemId=" + itemId );
-                    if( params.size() > 1 ) {
-                        itemId = params.get( 0 );
-                        final String maxResultsParam = params.get( 1 );
-                        LOG.debug( "maxResultsParam=" + maxResultsParam );
-                        if( StringUtils.isNotBlank( maxResultsParam ) && StringUtils.isNumeric( maxResultsParam ) ) {
-                            maxResults = Integer.parseInt( maxResultsParam );
-                        }
-                    }
-                }
-
                 if( actionName.equals( AJAX_ACTION_PLUGINS ) ) {
                     LOG.debug( "Calling getPlugins() START" );
                     PluginManager mgr = m_engine.getManager(PluginManager.class);
@@ -140,24 +127,16 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                         locale = Locale.getDefault();
                     }
                     for (Plugin p : plugins) {
-                        if (itemId != null && StringUtils.isNotBlank(itemId) ) {
-                            if ( !p.getSnipExample().startsWith(itemId) ) {
-                                continue;
-                            }
-                        } else {
-                            try {
-                                SimpleSnipData data = new SimpleSnipData();
-                                data.snip = p.getSnipExample();
-                                data.displayName = p.getDisplayName(locale);
-                                callResults.add(data);
-                            } catch (Throwable t) {
-                                LOG.warn("failed to get plugin informatiom from " + p.getClass().getCanonicalName(), t);
-                            }
+                        try {
+                            SimpleSnipData data = new SimpleSnipData();
+                            data.snip = p.getSnipExample();
+                            data.displayName = p.getDisplayName(locale);
+                            callResults.add(data);
+                        } catch (Throwable t) {
+                            LOG.warn("failed to get plugin informatiom from " + p.getClass().getCanonicalName(), t);
                         }
-                        if ( callResults.size() > maxResults )
-                            break;
                     }
-                    LOG.debug( "Calling getSuggestions() DONE. " + callResults.size() );
+                    LOG.debug("Calling getSuggestions() DONE. " + callResults.size() );
                     result = AjaxUtil.toJson( callResults );
                 } 
             }
@@ -188,7 +167,8 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                              final HttpServletResponse resp,
                              final String actionName,
                              final List< String > params ) throws IOException {
-            String result = "";
+            String result = "[]";
+            resp.setContentType("application/json");
             if( StringUtils.isNotBlank( actionName ) ) {
                 if( params.isEmpty() ) {
                     return;

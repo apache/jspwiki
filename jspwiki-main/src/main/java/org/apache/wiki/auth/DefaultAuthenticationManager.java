@@ -48,11 +48,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.auth.user.DefaultUserProfile;
+import org.apache.wiki.auth.user.UserProfile;
 
 
 /**
@@ -201,8 +206,34 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, getLoginPrincipal( principals ), session, request );
                 return true;
             }
+        } else {
+            //attempt to get the user profile
+           
+            try {
+                UserManager mgr = m_engine.getManager(UserManager.class);
+                UserProfile profile = mgr.getUserDatabase().findByLoginName(session.getLoginPrincipal().getName());
+                if (request.getSession().getAttribute("LOGINTIMESTAMPSET") == null) {
+                    request.getSession().setAttribute("LOGINTIMESTAMPSET", true);
+                    Long lastLoginAt = (Long) profile.getAttributes().get(UserProfile.ATTR_CURRENT_LOGIN_TIMESTAMP);
+                    String oldIp = (String) profile.getAttributes().get(UserProfile.ATTR_CURRENT_LOGIN_IP);
+                    if (lastLoginAt != null) {
+                        profile.getAttributes().put(UserProfile.ATTR_PREVIOUS_LOGIN_TIMESTAMP, lastLoginAt);
+                    }
+                    if (oldIp != null) {
+                        profile.getAttributes().put(UserProfile.ATTR_PREVIOUS_LOGIN_IP, oldIp);
+                    }
+                    profile.getAttributes().put(UserProfile.ATTR_CURRENT_LOGIN_IP, request.getRemoteAddr());
+                    profile.getAttributes().put(UserProfile.ATTR_CURRENT_LOGIN_TIMESTAMP, System.currentTimeMillis());
+                    try {
+                        mgr.setUserProfile(new WikiContext(m_engine, request, ""), profile);
+                    } catch (WikiException ex) {
+                        LOG.warn("failed to persist last login from for " + profile.getLoginName(), ex);
+                    }
+                }
+            } catch (Exception ex) {
+                LOG.debug(ex.getMessage(), ex);
+            }
         }
-
         // If by some unusual turn of events the Anonymous login module doesn't work, login failed!
         return false;
     }
