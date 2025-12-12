@@ -279,11 +279,23 @@ Element.implement({
         if( modal ){ self.addEvent( "click" , onClick); }
 
     },
-    openModal: function( callback ){
+    openModal: function( callback, abort ){
 
         var modal = this,
-            init = "modal-initialized";
-
+        init = "modal-initialized";
+        var dialog = null;
+        if (abort) {
+            //this is specifically when restoring previous editor content
+            dialog = document.getElementById("localstoragemodal");
+            document.getElementById("previouscontentConfirm").addEvent("click", function(){
+                callback(document.getElementById("previouscontent").value);
+                dialog.close();
+            });
+        
+            document.getElementById("previouscontentAbandon").addEvent("click", function(){
+                abort();
+            });
+        }
         function clickModal(event){
 
             modal.ifClass(!event, "active");
@@ -294,23 +306,34 @@ Element.implement({
 
         if( !modal.getElement(".btn.btn-success") ){
             //add buttons at the bottom of the modal dialog
-            modal.appendChild([
-                "div.modal-footer", [
-                    "button.btn.btn-success", { text: "dialog.confirm".localize() },
-                    "button.btn.btn-danger", { text: "dialog.cancel".localize() }
-                    ]
-                ].slick());
+            if (dialog!==null){
+                dialog.appendChild([
+                    "div.modal-footer", [
+                        "button.btn.btn-success", { text: "dialog.confirm".localize() },
+                        "button.btn.btn-danger", { text: "dialog.cancel".localize() }
+                        ]
+                    ].slick());
+            } else {
+                modal.appendChild([
+                    "div.modal-footer", [
+                        "button.btn.btn-success", { text: "dialog.confirm".localize() },
+                        "button.btn.btn-danger", { text: "dialog.cancel".localize() }
+                        ]
+                    ].slick());
+            }
         }
+        if (!abort) {
+            if( !modal.hasClass(init) ){
 
-        if( !modal.hasClass(init) ){
-
-            //move it just before the backdrop element for easy css styling
-            modal.inject( document.getBackdrop(), "before" )
-                 .addClass( init )
-                 .addEvent("click:relay(.btn)",  clickModal);
+                //move it just before the backdrop element for easy css styling
+                modal.inject( document.getBackdrop(), "before" )
+                     .addClass( init )
+                     .addEvent("click:relay(.btn)",  clickModal);
+            }
+            clickModal(false); //and now show the modal
+        } else {
+            dialog.showModal();
         }
-
-        clickModal(false); //and now show the modal
     },
 
     /*
