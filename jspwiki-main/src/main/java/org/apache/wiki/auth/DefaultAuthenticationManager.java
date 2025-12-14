@@ -51,6 +51,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -196,6 +197,23 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             final Set< Principal > principals = authenticationMgr.doJAASLogin( CookieAssertionLoginModule.class, handler, options );
             if (!principals.isEmpty()) {
                 fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, getLoginPrincipal( principals ), session, request);
+            }
+        }
+        
+        if (!session.isAnonymous()) {
+            final SessionMonitor monitor = SessionMonitor.getInstance(m_engine);
+            List<Session> sessions = monitor.findOtherSessionsByUsername(session.getLoginPrincipal().getName());
+            StringBuilder sb = new StringBuilder();
+            for (Session s : sessions) {
+                if (s.getRemoteAddress() != null && !s.getRemoteAddress().equals(request.getRemoteAddr())) {
+                    sb.append(request.getRemoteAddr()).append(",");
+                }
+            }
+            if (sb.length() > 0) {
+                sb.append(request.getRemoteAddr());
+                LOG.warn("AUDIT - New login for login '" + session.getLoginPrincipal().getName() + "' from " + request.getRemoteAddr()
+                        + " however there are already concurrent logins from the following addresses " + sb.toString());
+                fireEvent(WikiSecurityEvent.LOGIN_ALERT, session.getLoginPrincipal(), session, request);
             }
         }
 
