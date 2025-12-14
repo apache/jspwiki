@@ -18,6 +18,14 @@ under the License.
 -->
 **2025-12-14 Alex O'Ree (alexoree AT apache DOT org)**
 
+* _3.0.0-git-20_
+
+* [JSPWIKI-1176](https://issues.apache.org/jira/browse/JSPWIKI-1176) container based authentication roles fix.
+* [JSPWIKI-1249](https://issues.apache.org/jira/browse/JSPWIKI-1249)  Container based authentication, can't get admin permissions
+* [JSPWIKI-841](https://issues.apache.org/jira/browse/JSPWIKI-841) Container Managed Security Not Working
+
+**2025-12-14 Alex O'Ree (alexoree AT apache DOT org)**
+
 * _3.0.0-git-19_
 * Dependency Updates 
 	* removes org.jvnet.hudon:org.suigeneris.jcrs.diff
