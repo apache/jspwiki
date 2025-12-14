@@ -107,7 +107,15 @@ public class HsqlDbUtils
     void startHsqlServer() throws Exception {
         // start Hypersonic server
         final Properties hProps = loadPropertiesFrom( "target/test-classes/jspwiki-custom.properties" );
-
+        
+        String path = hProps.getProperty("server.database.0");
+        path = path.replace("file:", "");
+        File db = new File(path) ;
+        if (db.exists()) {
+            if (!db.delete()) {
+                LOG.warn("failed to remove existing hsql database, start up scripts may fail");
+            }
+        }
         hsqlServer = new Server();
         hsqlServer.setSilent( true );     // be quiet during junit tests
         hsqlServer.setLogWriter( null );  // and even more quiet
@@ -186,7 +194,7 @@ public class HsqlDbUtils
      * @return {@link Properties} holding {@code fileLocation} properties.
      * @throws IOException if {@code fileLocation} cannot be readed.
      */
-    Properties loadPropertiesFrom( final String fileLocation ) throws IOException {
+    public Properties loadPropertiesFrom( final String fileLocation ) throws IOException {
         final Properties p = new Properties();
         final InputStream inStream = new BufferedInputStream( new FileInputStream( fileLocation ) );
         p.load( inStream );

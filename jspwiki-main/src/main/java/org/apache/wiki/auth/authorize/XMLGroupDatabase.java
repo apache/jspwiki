@@ -194,23 +194,14 @@ public class XMLGroupDatabase implements GroupDatabase {
         File checkFile = new File(m_file.getParent(), m_file.getName() + ".check");
         if (checkFile.exists()) {
             
-            FileInputStream fis = null;
             byte[] computedHash = null;
             byte[] storedHash = null;
-            try {
-                fis = new FileInputStream(m_file);
+            try (FileInputStream fis = new FileInputStream(m_file)) {
                 computedHash = DigestUtils.sha256(fis);
                 storedHash = FileUtils.readFileToByteArray(checkFile);
             } catch (Exception ex) {
                 throw new RuntimeException("Failed to compute integrity check. ", ex);
-            } finally {
-                if (fis != null)
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOG.debug(ex.getMessage());
-                }
-            }
+            } 
             if (Arrays.equals(computedHash, storedHash)) {
                 LOG.info("XML user database hash check passed. no modifications detected.");
             } else {
@@ -429,22 +420,13 @@ public class XMLGroupDatabase implements GroupDatabase {
             }
             LOG.error( "Could not save database: " + m_file + ". Check the file permissions" );
         }
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(m_file);
+        
+        try (FileInputStream fis = new FileInputStream(m_file)) {
             byte[] hash = DigestUtils.sha256(fis);
             File checkFile = new File(m_file.getParent(), m_file.getName() + ".check");
             FileUtils.writeByteArrayToFile(checkFile, hash);
         } catch (Exception ex) {
             LOG.warn("Failed to recompute and/or save the check file", ex);
-        } finally {
-            if (fis!=null) {
-                try {
-                    fis.close();
-                } catch (IOException ex) {
-                    LOG.debug(ex.getMessage());
-                }
-            }
         }
     }
 

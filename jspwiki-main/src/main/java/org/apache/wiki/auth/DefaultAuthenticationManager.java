@@ -224,11 +224,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                     }
                     profile.getAttributes().put(UserProfile.ATTR_CURRENT_LOGIN_IP, request.getRemoteAddr());
                     profile.getAttributes().put(UserProfile.ATTR_CURRENT_LOGIN_TIMESTAMP, System.currentTimeMillis());
-                    try {
-                        mgr.setUserProfile(new WikiContext(m_engine, request, ""), profile);
-                    } catch (WikiException ex) {
-                        LOG.warn("failed to persist last login from for " + profile.getLoginName(), ex);
-                    }
+                    mgr.setUserProfile(Wiki.context().create(m_engine, request, ""), profile);
                 }
             } catch (Exception ex) {
                 LOG.debug(ex.getMessage(), ex);

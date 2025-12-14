@@ -68,6 +68,7 @@ public interface UserDatabase {
      * contain any profiles, this method will return a zero-length array.
      *
      * @return the WikiNames
+     * @throws org.apache.wiki.auth.WikiSecurityException
      */
     Principal[] getWikiNames() throws WikiSecurityException;
 
@@ -77,6 +78,8 @@ public interface UserDatabase {
      * that supplied the name is unknown.
      *
      * @param index the login name, full name, or wiki name
+     * @return User profile
+     * @throws org.apache.wiki.auth.NoSuchPrincipalException
      */
     UserProfile find( String index ) throws NoSuchPrincipalException;
 
@@ -86,6 +89,7 @@ public interface UserDatabase {
      *
      * @param index the e-mail address of the desired user profile
      * @return the user profile
+     * @throws org.apache.wiki.auth.NoSuchPrincipalException
      */
     UserProfile findByEmail( String index ) throws NoSuchPrincipalException;
 
@@ -95,6 +99,7 @@ public interface UserDatabase {
      *
      * @param index the login name of the desired user profile
      * @return the user profile
+     * @throws org.apache.wiki.auth.NoSuchPrincipalException
      */
     UserProfile findByLoginName( String index ) throws NoSuchPrincipalException;
 
@@ -104,6 +109,7 @@ public interface UserDatabase {
      *
      * @param uid the unique identifier of the desired user profile
      * @return the user profile
+     * @throws org.apache.wiki.auth.NoSuchPrincipalException
      * @since 2.8
      */
     UserProfile findByUid( String uid ) throws NoSuchPrincipalException;
@@ -114,6 +120,7 @@ public interface UserDatabase {
      *
      * @param index the wiki name of the desired user profile
      * @return the user profile
+     * @throws org.apache.wiki.auth.NoSuchPrincipalException
      */
     UserProfile findByWikiName( String index ) throws NoSuchPrincipalException;
 
@@ -123,15 +130,21 @@ public interface UserDatabase {
      *
      * @param index the fill name of the desired user profile
      * @return the user profile
+     * @throws org.apache.wiki.auth.NoSuchPrincipalException
      */
     UserProfile findByFullName( String index ) throws NoSuchPrincipalException;
 
-    /** Initializes the user database based on values from a Properties object. */
+    /** Initializes the user database based on values from a Properties object.
+     * @param engine
+     * @param props
+     * @throws org.apache.wiki.api.exceptions.NoRequiredPropertyException
+     * @throws org.apache.wiki.auth.WikiSecurityException */
     void initialize( Engine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
 
     /**
      * Factory method that instantiates a new user profile. The {@link UserProfile#isNew()} method of profiles created using
      * this method should return <code>true</code>.
+     * @return user profile
      */
     UserProfile newProfile();
 
@@ -181,4 +194,12 @@ public interface UserDatabase {
      */
     boolean validatePassword( String loginName, String password );
 
+    /**
+     * validates that the proposed password has not been recently used.
+     * @param loginName
+     * @param password
+     * @return false if the password has been recently used, true otherwise
+     * @since 3.0.0
+     */
+    boolean validatePasswordReuse( final String loginName, final String password );
 }
