@@ -301,7 +301,7 @@ Element.implement({
                     ]
                 ].slick());
         }
-        if( modal.getElement(".abortCachedEdits") ){
+        if( modal.getElement(".abortCachedEdits") && abortCallback ){
              modal.getElement(".abortCachedEdits").addEvent("click", function(){
                 abortCallback();
             });
