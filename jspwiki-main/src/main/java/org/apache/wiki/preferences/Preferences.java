@@ -217,10 +217,14 @@ public class Preferences extends HashMap< String,String > {
         // see if default locale is set server side
         if( loc == null ) {
             final String locale = context.getEngine().getWikiProperties().getProperty( "jspwiki.preferences.default-locale" );
-            try {
-                loc = LocaleUtils.toLocale( locale );
-            } catch( final IllegalArgumentException iae ) {
-                LOG.error( iae.getMessage() );
+            if (locale != null) {
+                //this can be null under unit test/mock contexts but normally is
+                //not null under normal operating circumstances.
+                try {
+                    loc = LocaleUtils.toLocale( locale );
+                } catch( final IllegalArgumentException iae ) {
+                    LOG.error( iae.getMessage() );
+                }
             }
         }
 
@@ -228,6 +232,9 @@ public class Preferences extends HashMap< String,String > {
         if( loc == null ) {
             final HttpServletRequest request = context.getHttpRequest();
             loc = ( request != null ) ? request.getLocale() : Locale.getDefault();
+        }
+        if ( loc == null) {
+            loc = Locale.getDefault();
         }
 
         LOG.debug( "using locale " + loc.toString() );

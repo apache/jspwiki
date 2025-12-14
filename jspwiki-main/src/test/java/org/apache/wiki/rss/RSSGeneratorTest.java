@@ -39,8 +39,6 @@ import java.util.Properties;
 import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 
-import static org.apache.wiki.TestEngine.with;
-import org.apache.wiki.api.core.Engine;
 import static org.apache.wiki.auth.UserManager.PROP_DATABASE;
 import org.apache.wiki.auth.authorize.XMLGroupDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
@@ -56,9 +54,10 @@ public class RSSGeneratorTest {
         File target = new File("target/" + UUID.randomUUID() + ".xml");
         FileUtils.copyFile(new File("src/test/resources/userdatabase.xml"), target);
         props.setProperty(XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath());
-        props.put(PROP_DATABASE, XMLUserDatabase.class.getCanonicalName());
-        props.put("jspwiki.groupdatabase", XMLGroupDatabase.class.getCanonicalName());
         props.put(RSSGenerator.PROP_GENERATE_RSS, "true");
+        target = new File("target/" + UUID.randomUUID() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml"), target);
+        props.setProperty(XMLGroupDatabase.PROP_DATABASE, target.getAbsolutePath());
         TestEngine m_testEngine = TestEngine.build( props);
 
         final WeblogEntryPlugin plugin = new WeblogEntryPlugin();

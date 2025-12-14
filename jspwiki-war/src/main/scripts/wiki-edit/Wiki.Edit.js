@@ -96,11 +96,21 @@ wiki.add("textarea#editorarea", function( main ){
 
             var cache = localStorage.getItem(LocalCache),
                 modal = getFormElem(".localstorage");
-
-            modal.appendChild("pre".slick({text:cache}) )
-                .openModal( function(){
+            //get the current text editor value
+            var testvalue = document.querySelector('textarea.editor').value;
+            if (cache!==testvalue) {
+                //console.log("previous edit " + cache);
+                //console.log("Current value " + cache);
+                //if they are different, show the hey...you were previously editing...
+                document.getElementById("previouscontent").value = cache;
+                
+                modal.openModal( function(){
                     snipe.set("value", cache);
+                }, function(){
+                    //discard the changes
+                    localStorage.removeItem(LocalCache);
                 });
+            }
         }
 
     }

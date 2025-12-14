@@ -115,6 +115,8 @@ public final class WikiSecurityEvent extends WikiEvent {
     
     /** When a low disk space is encountered . */
     public static final int   LOW_STORAGE              = 55;
+    /** Login audit alert, multiple concurrent logins from the different ip addresses . */
+    public static final int   LOGIN_ALERT = 56;
     
     /** The security logging service. */
     private static final Logger LOG = LogManager.getLogger( "SecurityLog" );
@@ -123,7 +125,7 @@ public final class WikiSecurityEvent extends WikiEvent {
     
     private final Object      m_target;
 
-    private static final int[] ERROR_EVENTS = { LOGIN_FAILED };
+    private static final int[] ERROR_EVENTS = { LOGIN_FAILED, LOGIN_ALERT };
     
     private static final int[] WARN_EVENTS  = { LOGIN_ACCOUNT_EXPIRED, LOGIN_CREDENTIAL_EXPIRED };
     
@@ -249,6 +251,7 @@ public final class WikiSecurityEvent extends WikiEvent {
             case LOGIN_ACCOUNT_EXPIRED:     return "login failed: expired account";
             case LOGIN_CREDENTIAL_EXPIRED:  return "login failed: credential expired";
             case LOGIN_FAILED:              return "login failed";
+            case LOGIN_ALERT:               return "login alert";
             case LOGOUT:                    return "user logged out";
             case PRINCIPAL_ADD:             return "new principal added";
             case SESSION_EXPIRED:           return "session expired";

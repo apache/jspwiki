@@ -50,6 +50,7 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -195,6 +196,23 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, getLoginPrincipal( principals ), session, request);
             }
         }
+        
+        if (!session.isAnonymous()) {
+            final SessionMonitor monitor = SessionMonitor.getInstance(m_engine);
+            List<Session> sessions = monitor.findOtherSessionsByUsername(session.getLoginPrincipal().getName());
+            StringBuilder sb = new StringBuilder();
+            for (Session s : sessions) {
+                if (s.getRemoteAddress() != null && !s.getRemoteAddress().equals(request.getRemoteAddr())) {
+                    sb.append(request.getRemoteAddr()).append(",");
+                }
+            }
+            if (sb.length() > 0) {
+                sb.append(request.getRemoteAddr());
+                LOG.warn("AUDIT - New login for login '" + session.getLoginPrincipal().getName() + "' from " + request.getRemoteAddr()
+                        + " however there are already concurrent logins from the following addresses " + sb.toString());
+                fireEvent(WikiSecurityEvent.LOGIN_ALERT, session.getLoginPrincipal(), session, request);
+            }
+        }
 
         // If user still anonymous, use the remote address
         if( session.isAnonymous() ) {
@@ -221,11 +239,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                     }
                     profile.getAttributes().put(UserProfile.ATTR_CURRENT_LOGIN_IP, request.getRemoteAddr());
                     profile.getAttributes().put(UserProfile.ATTR_CURRENT_LOGIN_TIMESTAMP, System.currentTimeMillis());
-                    try {
-                        mgr.setUserProfile(new WikiContext(m_engine, request, ""), profile);
-                    } catch (WikiException ex) {
-                        LOG.warn("failed to persist last login from for " + profile.getLoginName(), ex);
-                    }
+                    mgr.setUserProfile(Wiki.context().create(m_engine, request, ""), profile);
                 }
             } catch (Exception ex) {
                 LOG.debug(ex.getMessage(), ex);
@@ -444,11 +458,34 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             // If web authorizer, test the request.isInRole() method also
             } else if ( request != null && authorizer instanceof WebAuthorizer ) {
                 final WebAuthorizer wa = ( WebAuthorizer )authorizer;
+                addRoles( request, "jspwiki.role.admin", "Admin",session);
+                addRoles( request, "jspwiki.role.authenticated", "Authenticated",session);
+                addRoles( request, "jspwiki.role.extraRoles", null,session);
                 if ( wa.isUserInRole( request, role ) ) {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session, request );
                     LOG.debug( "Added container role {}.",role.getName() );
                 }
             }
+        }
+    }
+    
+    private void addRoles(HttpServletRequest request, String configProp, String jspWikiRole, Session session) {
+        if (m_engine.getWikiProperties().containsKey(configProp)) {
+            String roles = m_engine.getWikiProperties().getProperty(configProp);
+            if (roles != null) {
+                String[] parts = roles.split("\\,");
+                for (String s : parts) {
+                    if (request.isUserInRole(s)) {
+                        WikiPrincipal wikiPrincipal = new WikiPrincipal(s);
+                        fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, wikiPrincipal, session );
+                        if (jspWikiRole != null) {
+                            WikiPrincipal wikiPrincipal1 = new WikiPrincipal(jspWikiRole);
+                            fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, wikiPrincipal1, session );
+                        }
+                    }
+                }
+            }
+
         }
     }
 

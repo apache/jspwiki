@@ -16,6 +16,26 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-12-14 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-20_
+
+* [JSPWIKI-1176](https://issues.apache.org/jira/browse/JSPWIKI-1176) container based authentication roles fix.
+* [JSPWIKI-1249](https://issues.apache.org/jira/browse/JSPWIKI-1249)  Container based authentication, can't get admin permissions
+* [JSPWIKI-841](https://issues.apache.org/jira/browse/JSPWIKI-841) Container Managed Security Not Working
+
+**2025-12-14 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-19_
+* Dependency Updates 
+	* removes org.jvnet.hudon:org.suigeneris.jcrs.diff
+	* adds io.github.java-diff-utils:java-diff-utils 
+	
+* [JSPWIKI-1234](https://issues.apache.org/jira/browse/JSPWIKI-1234) password reuse check
+* [JSPWIKI-794](https://issues.apache.org/jira/browse/JSPWIKI-794) updates the dependency for diffs.
+* [JSPWIKI-1252](https://issues.apache.org/jira/browse/JSPWIKI-1252) audit log alert when multiple logins are detected for the same login
+* [JSPWIKI-1189](https://issues.apache.org/jira/browse/JSPWIKI-1189) fixes the restore/delete modal prompt when using the plain editor
+
 **2025-12-07 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-18_

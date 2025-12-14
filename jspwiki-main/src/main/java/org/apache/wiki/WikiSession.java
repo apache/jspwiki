@@ -41,6 +41,7 @@ import org.apache.wiki.util.HttpUtil;
 import javax.security.auth.Subject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.net.http.HttpRequest;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -72,7 +73,7 @@ public class WikiSession implements Session {
 
     /** The Engine that created this session. */
     private Engine m_engine;
-
+    private String remoteAddress;
     private String antiCsrfToken;
     private String m_status            = ANONYMOUS;
 
@@ -220,8 +221,9 @@ public class WikiSession implements Session {
         roles.addAll( m_subject.getPrincipals( Role.class ) );
 
         // Add all the GroupPrincipals possessed by the Subject directly
-        roles.addAll( m_subject.getPrincipals( GroupPrincipal.class ) );
-
+        roles.addAll(m_subject.getPrincipals(GroupPrincipal.class));
+        
+        
         // Return a defensive copy
         final Principal[] roleArray = roles.toArray( new Principal[0] );
         Arrays.sort( roleArray, WikiPrincipal.COMPARATOR );
@@ -496,10 +498,21 @@ public class WikiSession implements Session {
         final HttpSession session = request.getSession();
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         final WikiSession wikiSession = ( WikiSession )monitor.find( session );
-
+        wikiSession.remoteAddress = request.getRemoteAddr();
         // Attach reference to wiki engine
         wikiSession.m_engine = engine;
         wikiSession.m_cachedLocale = request.getLocale();
+        
+        String v = engine.getWikiProperties().getProperty("jspwiki.role.extraRoles", null);
+        if (v != null) {
+            String[] extraRoles = v.split("\\,");
+            for (String s : extraRoles) {
+                if (request.isUserInRole(s)) {
+                    wikiSession.m_subject.getPrincipals().add(new GroupPrincipal(s));
+                }
+            }
+        }
+        
         return wikiSession;
     }
 
@@ -575,6 +588,11 @@ public class WikiSession implements Session {
     public static Principal[] userPrincipals( final Engine engine ) {
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.userPrincipals();
+    }
+
+    @Override
+    public String getRemoteAddress() {
+        return remoteAddress;
     }
 
 }

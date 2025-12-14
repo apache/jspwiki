@@ -25,7 +25,6 @@ import java.util.Properties;
 import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.apache.wiki.TestEngine;
-import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.XMLGroupDatabase;
@@ -33,7 +32,6 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
