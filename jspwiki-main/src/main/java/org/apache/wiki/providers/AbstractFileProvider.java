@@ -257,8 +257,31 @@ public abstract class AbstractFileProvider implements PageProvider {
             // This is okay.
             LOG.info( "New page '" + page + "'" );
         }
-
-        return result;
+        
+        return deobfuscate(result);
+    }
+    
+    /**
+     * An api hook to provide obfuscation of data before it's written to disk.
+     * Useful for wiring in your own custom encryption mechanism if so desired.
+     * @since 3.0.0
+     * 
+     * @param pageContent
+     * @return 
+     */
+    public String obfuscate(String pageContent) {
+        return pageContent;
+    }
+    
+    /**
+     * An api hook to provide deobfuscation of data before it's written to disk.
+     * Useful for wiring in your own custom decryption mechanism if so desired.
+     * @since 3.0.0
+     * @param pageContent
+     * @return 
+     */
+    public String deobfuscate(String pageContent) {
+        return pageContent;
     }
 
     /**
@@ -268,7 +291,7 @@ public abstract class AbstractFileProvider implements PageProvider {
     public void putPageText( final Page page, final String text ) throws ProviderException {
         final File file = findPage( page.getName() );
         try( final PrintWriter out = new PrintWriter( new OutputStreamWriter( Files.newOutputStream( file.toPath() ), m_encoding ) ) ) {
-            out.print( text );
+            out.print( obfuscate(text) );
         } catch( final IOException e ) {
             LOG.error( "Saving failed", e );
         }
