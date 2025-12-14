@@ -91,11 +91,18 @@
   <wiki:SpamFilterInputs/>
 
   <div class="snipe">
-
+      <%-- 
+      notes: this modal is displayed when entering the plain editor
+      and there were unsaved changed stored in browser local storage at the 
+      last time of editing... limited to about 5MB of storage.
+      See Element.Extend.js and Wiki.Edit.js
+      --%>
     <div class="localstorage modal">
+      <input type='hidden' id='previouscontent'/>
+      <fmt:message key="editor.plain.localstorage.restore.prompt"/>
       <div class="modal-footer">
         <button class="btn btn-success"><fmt:message key="editor.plain.localstorage.restore"/></button>
-        <button class="btn btn-danger"><fmt:message key="editor.plain.localstorage.delete"/></button>
+        <button class="btn btn-danger abortCachedEdits"><fmt:message key="editor.plain.localstorage.delete"/></button>
       </div>
     </div>
 
