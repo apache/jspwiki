@@ -85,6 +85,8 @@ public class TestJDBCDataSource implements DataSource
         m_jdbcURL = url;
         initializeJDBC( file );
     }
+    
+    
 
     /**
      * Returns a JDBC connection using the specified username and password.
@@ -175,14 +177,18 @@ public class TestJDBCDataSource implements DataSource
      * @param file the file containing the JDBC properties
      * @throws Exception error loading class or properties
      */
-    protected void initializeJDBC( final File file ) throws Exception
-    {
-        // Load the properties JDBC properties file
+    protected void initializeJDBC(final File file) throws Exception {
         final Properties properties;
         properties = new Properties();
-        final FileInputStream is = new FileInputStream( file );
-        properties.load( is );
+        final FileInputStream is = new FileInputStream(file);
+        properties.load(is);
         is.close();
+        initializeJDBC(properties);
+    }
+    
+    protected void initializeJDBC( final Properties properties) throws Exception {
+        // Load the properties JDBC properties file
+      
         if( m_jdbcURL == null ) {
             m_jdbcURL = properties.getProperty( PROPERTY_DRIVER_URL );
         }

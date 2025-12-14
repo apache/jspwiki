@@ -28,9 +28,9 @@ import org.apache.wiki.i18n.InternationalizationManager;
  *
  * @since 3.0.0
  */
-public final class PasswordComplexityVeriffier {
+public final class PasswordComplexityVerifier {
 
-    private PasswordComplexityVeriffier() {
+    private PasswordComplexityVerifier() {
     }
 
     /**
@@ -63,6 +63,10 @@ public final class PasswordComplexityVeriffier {
         //perhaps a regex pattern can be added in the future
 
         List<String> problems = new ArrayList<>();
+        if (pwd == null) {
+            problems.add(MessageFormat.format(rb.getString("pwdcheck.tooshort"), minLength));
+            return problems;
+        }
         if (pwd.length() > maxLength) {
             problems.add(MessageFormat.format(rb.getString("pwdcheck.toolong"), maxLength));
         }

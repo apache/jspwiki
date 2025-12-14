@@ -48,11 +48,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.auth.user.DefaultUserProfile;
+import org.apache.wiki.auth.user.UserProfile;
 
 
 /**
@@ -193,6 +199,23 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 fireEvent( WikiSecurityEvent.LOGIN_ASSERTED, getLoginPrincipal( principals ), session, request);
             }
         }
+        
+        if (!session.isAnonymous()) {
+            final SessionMonitor monitor = SessionMonitor.getInstance(m_engine);
+            List<Session> sessions = monitor.findOtherSessionsByUsername(session.getLoginPrincipal().getName());
+            StringBuilder sb = new StringBuilder();
+            for (Session s : sessions) {
+                if (s.getRemoteAddress() != null && !s.getRemoteAddress().equals(request.getRemoteAddr())) {
+                    sb.append(request.getRemoteAddr()).append(",");
+                }
+            }
+            if (sb.length() > 0) {
+                sb.append(request.getRemoteAddr());
+                LOG.warn("AUDIT - New login for login '" + session.getLoginPrincipal().getName() + "' from " + request.getRemoteAddr()
+                        + " however there are already concurrent logins from the following addresses " + sb.toString());
+                fireEvent(WikiSecurityEvent.LOGIN_ALERT, session.getLoginPrincipal(), session, request);
+            }
+        }
 
         // If user still anonymous, use the remote address
         if( session.isAnonymous() ) {
@@ -201,8 +224,30 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 fireEvent( WikiSecurityEvent.LOGIN_ANONYMOUS, getLoginPrincipal( principals ), session, request );
                 return true;
             }
+        } else {
+            //attempt to get the user profile
+           
+            try {
+                UserManager mgr = m_engine.getManager(UserManager.class);
+                UserProfile profile = mgr.getUserDatabase().findByLoginName(session.getLoginPrincipal().getName());
+                if (request.getSession().getAttribute("LOGINTIMESTAMPSET") == null) {
+                    request.getSession().setAttribute("LOGINTIMESTAMPSET", true);
+                    Long lastLoginAt = (Long) profile.getAttributes().get(UserProfile.ATTR_CURRENT_LOGIN_TIMESTAMP);
+                    String oldIp = (String) profile.getAttributes().get(UserProfile.ATTR_CURRENT_LOGIN_IP);
+                    if (lastLoginAt != null) {
+                        profile.getAttributes().put(UserProfile.ATTR_PREVIOUS_LOGIN_TIMESTAMP, lastLoginAt);
+                    }
+                    if (oldIp != null) {
+                        profile.getAttributes().put(UserProfile.ATTR_PREVIOUS_LOGIN_IP, oldIp);
+                    }
+                    profile.getAttributes().put(UserProfile.ATTR_CURRENT_LOGIN_IP, request.getRemoteAddr());
+                    profile.getAttributes().put(UserProfile.ATTR_CURRENT_LOGIN_TIMESTAMP, System.currentTimeMillis());
+                    mgr.setUserProfile(Wiki.context().create(m_engine, request, ""), profile);
+                }
+            } catch (Exception ex) {
+                LOG.debug(ex.getMessage(), ex);
+            }
         }
-
         // If by some unusual turn of events the Anonymous login module doesn't work, login failed!
         return false;
     }

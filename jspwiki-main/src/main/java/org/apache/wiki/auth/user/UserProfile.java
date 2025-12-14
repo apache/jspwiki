@@ -19,7 +19,9 @@
 package org.apache.wiki.auth.user;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -33,6 +35,22 @@ import java.util.Map;
  */
 public interface UserProfile extends Serializable
 {
+    /**
+     * IP
+     */
+    String ATTR_PREVIOUS_LOGIN_IP = "PREVIOUS_LOGIN_IP";
+    /** 
+     * LONG time in ms since epoch
+     */
+    String ATTR_PREVIOUS_LOGIN_TIMESTAMP = "PREVIOUS_LOGIN_TIMESTAMP";
+    /**
+     * IP
+     */
+    String ATTR_CURRENT_LOGIN_IP = "CURRENT_LOGIN_IP";
+    /** 
+     * LONG time in ms since epoch
+     */
+    String ATTR_CURRENT_LOGIN_TIMESTAMP = "CURRENT_LOGIN_TIMESTAMP";
 
     /**
      * Returns the attributes associated with this profile as a Map of key/value pairs.
@@ -194,4 +212,13 @@ public interface UserProfile extends Serializable
      */
     @Override
     String toString();
+    
+    /**
+     * List of recently used passwords in hashed format. may be empty
+     * @since 3.0.0
+     * @return non null list
+     */
+    default List<String> getPreviousHashedCredentials() {
+        return new ArrayList<>();
+    }
 }

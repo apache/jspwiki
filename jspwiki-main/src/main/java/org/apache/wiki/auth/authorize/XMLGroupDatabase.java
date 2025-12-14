@@ -37,6 +37,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -46,12 +47,15 @@ import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.XMLConstants;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 
 
 /**
@@ -187,7 +191,26 @@ public class XMLGroupDatabase implements GroupDatabase {
         }
 
         LOG.info( "XML group database at " + m_file.getAbsolutePath() );
+        File checkFile = new File(m_file.getParent(), m_file.getName() + ".check");
+        if (checkFile.exists()) {
+            
+            byte[] computedHash = null;
+            byte[] storedHash = null;
+            try (FileInputStream fis = new FileInputStream(m_file)) {
+                computedHash = DigestUtils.sha256(fis);
+                storedHash = FileUtils.readFileToByteArray(checkFile);
+            } catch (Exception ex) {
+                throw new RuntimeException("Failed to compute integrity check. ", ex);
+            } 
+            if (Arrays.equals(computedHash, storedHash)) {
+                LOG.info("XML user database hash check passed. no modifications detected.");
+            } else {
+                throw new RuntimeException("XML user database has been modified outside of JSP Wiki. Refusing start up. An administrator will need to restore the file from backup");
+            }
 
+        } else {
+            LOG.info("XML user database check file does not exist. This is normal if JSPWIki was just installed.");
+        }
         // Read DOM
         buildDOM();
     }
@@ -396,6 +419,14 @@ public class XMLGroupDatabase implements GroupDatabase {
                 LOG.error( "Restore failed. Check the file permissions." );
             }
             LOG.error( "Could not save database: " + m_file + ". Check the file permissions" );
+        }
+        
+        try (FileInputStream fis = new FileInputStream(m_file)) {
+            byte[] hash = DigestUtils.sha256(fis);
+            File checkFile = new File(m_file.getParent(), m_file.getName() + ".check");
+            FileUtils.writeByteArrayToFile(checkFile, hash);
+        } catch (Exception ex) {
+            LOG.warn("Failed to recompute and/or save the check file", ex);
         }
     }
 

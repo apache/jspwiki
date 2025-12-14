@@ -19,19 +19,22 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiPage;
+import org.apache.wiki.auth.user.XMLUserDatabase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class PasswordComplexityVeriffierTest {
+public class PasswordComplexityVerifierTest {
 
     TestEngine engine;
     WikiContext context;
 
-    public PasswordComplexityVeriffierTest() throws Exception {
+    public PasswordComplexityVerifierTest() throws Exception {
         Properties props = new Properties();
         props.load(new FileInputStream(new File("src/main/resources/ini/jspwiki.properties")));
         // 8 is the default. 15 or more is recommended for high security systems
@@ -50,6 +53,7 @@ public class PasswordComplexityVeriffierTest {
 // i.e. 1 with "password" is ok but "passsword" is not
         props.setProperty("jspwiki.credentials.repeatingCharacters", "1");
         props.setProperty("jspwiki.credentials.minChanged", "1");
+       
         engine = TestEngine.build(props);
         context = new WikiContext(engine,
                 new WikiPage(engine, "test"));
@@ -58,53 +62,53 @@ public class PasswordComplexityVeriffierTest {
     @Test
     public void testValidate() {
 
-        List<String> result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi?,",null, context);
+        List<String> result = PasswordComplexityVerifier.validate("e,#Em1KG1!tez8EYmi?,",null, context);
         Assertions.assertTrue(result.isEmpty(), StringUtils.join(result));
 
         //too long
-        result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi?,1234",null, context);
+        result = PasswordComplexityVerifier.validate("e,#Em1KG1!tez8EYmi?,1234",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
         //no upper, digits symbols
-        result = PasswordComplexityVeriffier.validate("abcedefghi",null, context);
+        result = PasswordComplexityVerifier.validate("abcedefghi",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
         //too short
-        result = PasswordComplexityVeriffier.validate("abc",null, context);
+        result = PasswordComplexityVerifier.validate("abc",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
         //no lower, digits, symbols
-        result = PasswordComplexityVeriffier.validate("ABCEDEFGHI",null, context);
+        result = PasswordComplexityVerifier.validate("ABCEDEFGHI",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
         //too many repeating
-        result = PasswordComplexityVeriffier.validate("a@CEDEFGHI222",null, context);
+        result = PasswordComplexityVerifier.validate("a@CEDEFGHI222",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
-        result = PasswordComplexityVeriffier.validate("a@CEDEFGHI222a",null, context);
+        result = PasswordComplexityVerifier.validate("a@CEDEFGHI222a",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
-        result = PasswordComplexityVeriffier.validate("aaa@CEDEFGHI2a",null, context);
+        result = PasswordComplexityVerifier.validate("aaa@CEDEFGHI2a",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
-        result = PasswordComplexityVeriffier.validate("aaa@CEbbbbGHI2a",null, context);
+        result = PasswordComplexityVerifier.validate("aaa@CEbbbbGHI2a",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
-        result = PasswordComplexityVeriffier.validate("a@CEbbGH4444",null, context);
+        result = PasswordComplexityVerifier.validate("a@CEbbGH4444",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
 
-        result = PasswordComplexityVeriffier.validate("aaaa@CEbbGH444",null, context);
+        result = PasswordComplexityVerifier.validate("aaaa@CEbbGH444",null, context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
         
         //shorter to longer version
-        result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi?,","e,#Em1KG1!tez8EYm,", context);
+        result = PasswordComplexityVerifier.validate("e,#Em1KG1!tez8EYmi?,","e,#Em1KG1!tez8EYm,", context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
         
         //longer to shorter
-        result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi","e,#Em1KG1!tez8EYmi?", context);
+        result = PasswordComplexityVerifier.validate("e,#Em1KG1!tez8EYmi","e,#Em1KG1!tez8EYmi?", context);
         Assertions.assertTrue(!result.isEmpty(), StringUtils.join(result));
         
-        result = PasswordComplexityVeriffier.validate("e,#Em1KG1!tez8EYmi?,","e,#Em1KG1!teAAEYmi?,", context);
+        result = PasswordComplexityVerifier.validate("e,#Em1KG1!tez8EYmi?,","e,#Em1KG1!teAAEYmi?,", context);
         Assertions.assertTrue(result.isEmpty(), StringUtils.join(result));
     }
 

@@ -16,6 +16,78 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-12-07 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-18_
+* [JSPWIKI-130](https://issues.apache.org/jira/browse/JSPWIKI-130) see JIRA for details. Addresses 1 of 2 reported issues.
+
+**2025-12-03 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-17_
+* [JSPWIKI-1072](https://issues.apache.org/jira/browse/JSPWIKI-1072) see JIRA for details.
+* [JSPWIKI-1240](https://issues.apache.org/jira/browse/JSPWIKI-1240) potential fix for Inconsistent test failures with RSS generator
+
+
+**2025-12-02 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-16_
+
+* [JSPWIKI-1253](https://issues.apache.org/jira/browse/JSPWIKI-1253) Display the date/time and ip of the user's last login
+* [JSPWIKI-175](https://issues.apache.org/jira/browse/JSPWIKI-175) see JIRA for details.
+* NOJIRA - corrects a typo with PasswordComplexityVerifier (class was spelled wrong).
+
+
+**2025-12-01 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-15_
+
+* Dependency Updates 
+	* maven-source-plugin from 3.3.1 to 3.4.0
+	* maven-surefire-junit5-tree-reporter from 1.4.0 to 1.5.1
+* [JSPWIKI-1262](https://issues.apache.org/jira/browse/JSPWIKI-1262) follow up fix to the previous fix (resolves the snip plugin discovery issue)
+
+
+**2025-11-29 arturobernalg **
+
+* _3.0.0-git-14_
+
+  * Security / API cleanup
+    * Remove the Security Manager–dependent Session#doPrivileged from jspwiki-api.
+    * Replace the only usage with Subject.doAsPrivileged in DefaultAuthorizationManager; behavior unchanged.
+    * Keep policy checks: global via AccessController, local via LocalPolicy. 
+    * Rationale: Security Manager is deprecated/disabled on modern JDKs; simplify 3.0 before release. 
+    * Migration: use Subject.doAs( session.getSubject(), action ) (or Subject.doAsPrivileged) in custom code.
+	
+**2025-11-29 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-12_
+* Dependency Updates 
+	* aws-java-sdk-kendra.version>1.12.793
+	* commons-io>2.21.0
+	* commons-lang>2.30
+	* commons-validator>1.10.1
+	* gson.version>2.13.2
+	* jakarta-activation-api.version>2.1.4
+	* jakarta-mail.version>2.0.2
+	* jakarta-servlet-api.version>6.1.0
+	* javax-mail.version>2.0.2
+	* unit.version>6.0.1
+	* log4j2.version>2.25.2
+	* selenide.version>7.12.1
+	* plugin.antrun.version>3.2.0
+	* plugin.dependency.version>3.9.0<
+	* plugin.enforcer.version>3.6.2
+	* plugin.jar.version>3.5.0
+	* plugin.release.version>3.2.0
+	* plugin.war.version>3.5.0
+	* plugin.cargo.version>1.10.25
+	* plugin.sonar.version>5.3.0.6276
+	
+* [JSPWIKI-1250](https://issues.apache.org/jira/browse/JSPWIKI-1250) product update checker
+* [JSPWIKI-1229](https://issues.apache.org/jira/browse/JSPWIKI-1229) fix for locating/loading user accounts on the admin page 
+* [JSPWIKI-1262](https://issues.apache.org/jira/browse/JSPWIKI-1262) see jira for details
+* [JSPWIKI-1260](https://issues.apache.org/jira/browse/JSPWIKI-1260) addresses a number of FIXME items. Assures that all catc…hes either throw or at least logs a message (code audit rule)
+* [JSPWIKI-1259](https://issues.apache.org/jira/browse/JSPWIKI-1259) updates many dependencies
 
 **2025-11-26 Alex O'Ree (alexoree AT apache DOT org)**
 

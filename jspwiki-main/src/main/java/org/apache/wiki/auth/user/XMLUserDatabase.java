@@ -37,6 +37,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -47,6 +48,7 @@ import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
@@ -55,6 +57,8 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.xml.XMLConstants;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
 
 /**
  * <p>Manages {@link DefaultUserProfile} objects using XML files for persistence. Passwords are hashed using SHA1. User entries are simple
@@ -78,6 +82,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     public static final String  PROP_USERDATABASE = "jspwiki.xmlUserDatabaseFile";
     private static final String DEFAULT_USERDATABASE = "userdatabase.xml";
     private static final String ATTRIBUTES_TAG    = "attributes";
+    private static final String OLD_HASHES_TAG    = "oldhashes";
     private static final String CREATED           = "created";
     private static final String EMAIL             = "email";
     private static final String FULL_NAME         = "fullName";
@@ -91,6 +96,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     private static final String DATE_FORMAT       = "yyyy.MM.dd 'at' HH:mm:ss:SSS z";
     private Document            c_dom;
     private File                c_file;
+    private int m_passwordReusedCount = -1;
 
     /** {@inheritDoc} */
     @Override
@@ -193,7 +199,28 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         }
 
         LOG.info( "XML user database at " + c_file.getAbsolutePath() );
+        m_passwordReusedCount = TextUtil.getIntegerProperty( props, "jspwiki.credentials.reuseCount", -1);
+        File checkFile = new File(c_file.getParent(), c_file.getName() + ".check");
+        if (checkFile.exists()) {
+            
+            byte[] computedHash = null;
+            byte[] storedHash = null;
+            try (FileInputStream fis = new FileInputStream(c_file)) {
+                computedHash = DigestUtils.sha256(fis);
+                storedHash = FileUtils.readFileToByteArray(checkFile);
+            } catch (Exception ex) {
+                throw new RuntimeException("Failed to compute integrity check. ", ex);
+            } 
+            if (Arrays.equals(computedHash, storedHash)) {
+                LOG.info("XML user database hash check passed. no modifications detected.");
+            } else {
+                throw new RuntimeException("XML user database has been modified outside of JSP Wiki. Refusing start up. An administrator will need to restore the file from backup");
+            }
 
+        } else {
+            LOG.info("XML user database check file does not exist. This is normal if JSPWIki was just installed.");
+        }
+        
         buildDOM();
         sanitizeDOM();
     }
@@ -270,6 +297,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 io.write( "=\"" + user.getAttribute( LAST_MODIFIED ) + "\" " );
                 io.write( LOCK_EXPIRY );
                 io.write( "=\"" + user.getAttribute( LOCK_EXPIRY ) + "\" " );
+                io.write( OLD_HASHES_TAG );
+                io.write( "=\"" + user.getAttribute( OLD_HASHES_TAG ) + "\" " );
                 io.write( ">" );
                 final NodeList attributes = user.getElementsByTagName( ATTRIBUTES_TAG );
                 for( int j = 0; j < attributes.getLength(); j++ ) {
@@ -302,6 +331,14 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 LOG.error( "Restore failed. Check the file permissions." );
             }
             LOG.error( "Could not save database: " + c_file + ". Check the file permissions" );
+        }
+        
+        try (FileInputStream fis = new FileInputStream(c_file)) {
+            byte[] hash = DigestUtils.sha256(fis);
+            File checkFile = new File(c_file.getParent(), c_file.getName() + ".check");
+            FileUtils.writeByteArrayToFile(checkFile, hash);
+        } catch (Exception ex) {
+            LOG.warn("Failed to recompute and/or save the check file", ex);
         }
     }
 
@@ -413,7 +450,15 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         if( newPassword != null && !newPassword.equals( "" ) ) {
             final String oldPassword = user.getAttribute( PASSWORD );
             if( !oldPassword.equals( newPassword ) ) {
-                setAttribute( user, PASSWORD, getHash( newPassword ) );
+                String newhash = getHash( newPassword );
+                setAttribute( user, PASSWORD, newhash );
+            
+                profile.getPreviousHashedCredentials().add(newhash);
+                while (!profile.getPreviousHashedCredentials().isEmpty() && 
+                        profile.getPreviousHashedCredentials().size() > m_passwordReusedCount) {
+                    profile.getPreviousHashedCredentials().remove(0);
+                }
+
             }
         }
 
@@ -428,6 +473,9 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             } catch( final IOException e ) {
                 throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
             }
+        }
+        if (!profile.getPreviousHashedCredentials().isEmpty()) {
+            setAttribute( user, OLD_HASHES_TAG, StringUtils.join(profile.getPreviousHashedCredentials(), "|"));
         }
 
         // Set the profile timestamps
@@ -494,6 +542,13 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                     profile.setLockExpiry( null );
                 } else {
                     profile.setLockExpiry( new Date( Long.parseLong( lockExpiry ) ) );
+                }
+                final String oldHahes = user.getAttribute(OLD_HASHES_TAG);
+                if (oldHahes != null && oldHahes.length() > 0) {
+                    String[] parts = oldHahes.split("\\|");
+                    for (String s : parts) {
+                        profile.getPreviousHashedCredentials().add(s);
+                    }
                 }
 
                 // Extract all the user's attributes (should only be one attributes tag, but you never know!)

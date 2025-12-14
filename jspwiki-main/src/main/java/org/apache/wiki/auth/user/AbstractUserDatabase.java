@@ -226,6 +226,41 @@ public abstract class AbstractUserDatabase implements UserDatabase {
         }
         return false;
     }
+    
+    @Override
+    public boolean validatePasswordReuse( final String loginName, final String password ) {
+        try {
+            final UserProfile profile = findByLoginName( loginName );
+
+            // If the password is stored as SHA-256 or SSHA, verify the hash
+            
+             for (String storedPassword : profile.getPreviousHashedCredentials()) {
+                if (storedPassword.startsWith(SHA256_PREFIX) || storedPassword.startsWith(SSHA_PREFIX)) {
+                    boolean match = CryptoUtil.verifySaltedPassword(password.getBytes(StandardCharsets.UTF_8), storedPassword);
+                    if (match) {
+                        return false;
+                    }
+                }
+                if (storedPassword.startsWith(SHA_PREFIX)) {
+                    String fragment  = storedPassword.substring(SHA_PREFIX.length());
+                    String hashedPassword = getShaHash(password);
+                    boolean match  = hashedPassword.equals(fragment);
+                     if (match) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        } catch( final NoSuchPrincipalException e ) {
+            LOG.debug(e.getMessage(), e);
+        } catch( final NoSuchAlgorithmException e ) {
+            LOG.error( "Unsupported algorithm: " + e.getMessage() );
+        } catch( final WikiSecurityException e ) {
+            LOG.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage(), e );
+        }
+        return true;
+    }
 
     /**
      * Generates a new random user identifier (uid) that is guaranteed to be unique.

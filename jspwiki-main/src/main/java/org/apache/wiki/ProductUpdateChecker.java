@@ -84,6 +84,10 @@ public final class ProductUpdateChecker implements Runnable {
 
     @Override
     public void run() {
+        if (Status.UPDATE_AVAILABLE == status.isUpToDate) {
+            //don't bother checking again. if it's updated, we'll have to restart anyhow
+            return;
+        }
         LOG.debug("checking for product updates");
         //option a) xml
         //https://repo1.maven.org/maven2/org/apache/jspwiki/jspwiki-war/maven-metadata.xml

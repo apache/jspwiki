@@ -250,5 +250,14 @@ public interface Session extends WikiEventListener {
     static Object doPrivileged( final Session session, final PrivilegedAction<?> action ) throws AccessControlException {
         return Subject.doAsPrivileged( session.getSubject(), action, null );
     }
+    
+    /**
+     * returns the remote address of the user login session, usually an ip address
+     * @since 3.0.0
+     * @return string
+     */
+    default String getRemoteAddress() {
+        return null;
+    }
 
 }

@@ -33,6 +33,11 @@
     <dependencies>
         
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+      
+        <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
@@ -169,8 +174,8 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jvnet.hudson</groupId>
-            <artifactId>org.suigeneris.jrcs.diff</artifactId>
+            <groupId>io.github.java-diff-utils</groupId>
+            <artifactId>java-diff-utils</artifactId>
         </dependency>
 
         <dependency>

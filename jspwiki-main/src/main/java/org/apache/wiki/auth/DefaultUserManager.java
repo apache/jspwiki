@@ -69,6 +69,9 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
+
 
 
 /**
@@ -79,7 +82,7 @@ import java.util.WeakHashMap;
 public class DefaultUserManager implements UserManager {
 
     private static final String USERDATABASE_PACKAGE = "org.apache.wiki.auth.user";
-    private static final String SESSION_MESSAGES = "profile";
+    public static final String SESSION_MESSAGES = "profile";
     private static final String PARAM_EMAIL = "email";
     private static final String PARAM_FULLNAME = "fullname";
     private static final String PARAM_PASSWORD = "password";
@@ -347,24 +350,39 @@ public class DefaultUserManager implements UserManager {
             // passwords must match and can't be null
             
             //this is the new password
-            final String password = profile.getPassword();
-            if( password == null ) {
+            final String newpassword = profile.getPassword();
+            if( newpassword == null ) {
                 session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.blankpassword" ) );
             } else {
                 final HttpServletRequest request = context.getHttpRequest();
                 //the existing password
-                final String password0 = ( request == null ) ? null : request.getParameter( "password0" );
+                final String existingPassword = ( request == null ) ? null : request.getParameter( "password0" );
                 //the new password confirmation
-                final String password2 = ( request == null ) ? null : request.getParameter( "password2" );
-                if( !password.equals( password2 ) ) {
+                final String passwordConfirmation = ( request == null ) ? null : request.getParameter( "password2" );
+                if (!newpassword.equals(passwordConfirmation)) {
+                    //password confirmation does not match
                     session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
                 }
-                if( !profile.isNew() && !getUserDatabase().validatePassword( profile.getLoginName(), password0 ) ) {
+                if( !profile.isNew() && (existingPassword==null || existingPassword.equals( newpassword ) ) ) {
+                    //existing account and the existing password matches the new password
+                    session.addMessage( SESSION_MESSAGES, "existing password matches the proposed new one" );
+                }
+                if( !profile.isNew() && !getUserDatabase().validatePassword( profile.getLoginName(), existingPassword ) ) {
+                    //existing account and the provided password does not match what we currently have
                     session.addMessage( SESSION_MESSAGES, rb.getString( "security.error.passwordnomatch" ) );
                 }
-                List<String> msg = PasswordComplexityVeriffier.validate(password2, password0, context);
+                List<String> msg = PasswordComplexityVerifier.validate(passwordConfirmation, existingPassword, context);
                 for (String s : msg) {
                     session.addMessage( SESSION_MESSAGES, s );
+                }
+                int reuseCount = Integer.parseInt(m_engine.getWikiProperties().getProperty("jspwiki.credentials.reuseCount", "-1"));
+                if (reuseCount > 0) {
+                    //if it's set to 0 or less, we don't store it so we can skip this check
+                    if (!m_database.validatePasswordReuse(profile.getLoginName(), passwordConfirmation)) {
+                        //password reuse detected
+                        session.addMessage(SESSION_MESSAGES,
+                                MessageFormat.format(rb.getString("security.error.passwordReuseError"), reuseCount));
+                    }
                 }
             }
         }
@@ -376,7 +394,7 @@ public class DefaultUserManager implements UserManager {
 
         // It's illegal to use as a full name someone else's login name
         try {
-            otherProfile = getUserDatabase().find( fullName );
+            otherProfile = getUserDatabase().findByFullName(fullName );
             if( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) ) {
                 final Object[] args = { fullName };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalfullname" ), args ) );
@@ -388,7 +406,7 @@ public class DefaultUserManager implements UserManager {
 
         // It's illegal to use as a login name someone else's full name
         try {
-            otherProfile = getUserDatabase().find( loginName );
+            otherProfile = getUserDatabase().findByLoginName(loginName );
             if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
                 final Object[] args = { loginName };
                 session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );
@@ -471,11 +489,17 @@ public class DefaultUserManager implements UserManager {
             	if( params.isEmpty() ) {
             		return;
             	}
+                resp.setContentType("application/json");
                 final String uid = params.get(0);
                 LOG.debug("uid="+uid);
                 if (StringUtils.isNotBlank(uid)) {
                     final UserProfile prof = getUserInfo(uid);
-                    resp.getWriter().write(AjaxUtil.toJson(prof));
+                    //clone the object
+                    ObjectMapper om = new ObjectMapper();
+                    ObjectNode node = om.convertValue(prof, ObjectNode.class);
+                    node.remove("password");
+                    node.remove("previousHashedCredentials");
+                    resp.getWriter().write(node.toString());
                 }
             } catch (final NoSuchPrincipalException e) {
                     throw new ServletException(e);

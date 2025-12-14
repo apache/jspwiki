@@ -73,7 +73,7 @@ public class WikiSession implements Session {
 
     /** The Engine that created this session. */
     private Engine m_engine;
-
+    private String remoteAddress;
     private String antiCsrfToken;
     private String m_status            = ANONYMOUS;
 
@@ -492,7 +492,7 @@ public class WikiSession implements Session {
         final HttpSession session = request.getSession();
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         final WikiSession wikiSession = ( WikiSession )monitor.find( session );
-
+        wikiSession.remoteAddress = request.getRemoteAddr();
         // Attach reference to wiki engine
         wikiSession.m_engine = engine;
         wikiSession.m_cachedLocale = request.getLocale();
@@ -582,6 +582,11 @@ public class WikiSession implements Session {
     public static Principal[] userPrincipals( final Engine engine ) {
         final SessionMonitor monitor = SessionMonitor.getInstance( engine );
         return monitor.userPrincipals();
+    }
+
+    @Override
+    public String getRemoteAddress() {
+        return remoteAddress;
     }
 
 }
