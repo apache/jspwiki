@@ -279,7 +279,7 @@ Element.implement({
         if( modal ){ self.addEvent( "click" , onClick); }
 
     },
-    openModal: function( callback ){
+    openModal: function( callback, abortCallback ){
 
         var modal = this,
             init = "modal-initialized";
@@ -300,6 +300,11 @@ Element.implement({
                     "button.btn.btn-danger", { text: "dialog.cancel".localize() }
                     ]
                 ].slick());
+        }
+        if( modal.getElement(".abortCachedEdits") && abortCallback ){
+             modal.getElement(".abortCachedEdits").addEvent("click", function(){
+                abortCallback();
+            });
         }
 
         if( !modal.hasClass(init) ){
