@@ -99,8 +99,8 @@ wiki.add("textarea#editorarea", function( main ){
             //get the current text editor value
             var testvalue = document.querySelector('textarea.editor').value;
             if (cache!==testvalue) {
-                console.log("previous edit " + cache);
-                console.log("Current value " + cache);
+                //console.log("previous edit " + cache);
+                //console.log("Current value " + cache);
                 //if they are different, show the hey...you were previously editing...
                 document.getElementById("previouscontent").value = cache;
                 
