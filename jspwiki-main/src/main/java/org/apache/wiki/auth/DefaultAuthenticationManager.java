@@ -461,11 +461,34 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             // If web authorizer, test the request.isInRole() method also
             } else if ( request != null && authorizer instanceof WebAuthorizer ) {
                 final WebAuthorizer wa = ( WebAuthorizer )authorizer;
+                addRoles( request, "jspwiki.role.admin", "Admin",session);
+                addRoles( request, "jspwiki.role.authenticated", "Authenticated",session);
+                addRoles( request, "jspwiki.role.extraRoles", null,session);
                 if ( wa.isUserInRole( request, role ) ) {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, role, session, request );
                     LOG.debug( "Added container role {}.",role.getName() );
                 }
             }
+        }
+    }
+    
+    private void addRoles(HttpServletRequest request, String configProp, String jspWikiRole, Session session) {
+        if (m_engine.getWikiProperties().containsKey(configProp)) {
+            String roles = m_engine.getWikiProperties().getProperty(configProp);
+            if (roles != null) {
+                String[] parts = roles.split("\\,");
+                for (String s : parts) {
+                    if (request.isUserInRole(s)) {
+                        WikiPrincipal wikiPrincipal = new WikiPrincipal(s);
+                        fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, wikiPrincipal, session );
+                        if (jspWikiRole != null) {
+                            WikiPrincipal wikiPrincipal1 = new WikiPrincipal(jspWikiRole);
+                            fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, wikiPrincipal1, session );
+                        }
+                    }
+                }
+            }
+
         }
     }
 
