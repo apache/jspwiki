@@ -256,6 +256,8 @@ public interface Session extends WikiEventListener {
      * @since 3.0.0
      * @return string
      */
-    String getRemoteAddress();
+    default String getRemoteAddress() {
+        return null;
+    }
 
 }
