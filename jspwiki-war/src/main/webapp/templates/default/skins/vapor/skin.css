@@ -1,80 +1,61 @@
 /*
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-    KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
- */
-/* Inspired by:  https://medium.com/@mwichary/dark-theme-in-a-day-3518dde2955a.
-   Adapted for JSPWIKI,  as delta on top of haddock.css.
+inspired by Bootswatch theme of the same name
+from https://github.com/thomaspark/bootswatch/
+MIT Licensed
 */
-
 html {
-  /*red / ...
-  --hue: 10;
-  --accent-hue: 185;
-  */
-  /*green / ...
-  --hue: 110;
-  --accent-hue: 285;
-  */
-  /* blue / orange */
-  --hue: 210;
-  --accent-hue: 25;
+  /* 1. Core Hue Shifts (Vapor is Purple/Violet based) */
+  --hue: 275; 
+  --accent-hue: 320; /* Hot Pink / Magenta */
 
-  --text-color-normal: hsl(var(--hue), 10%, 62%);
-  --text-color-light: hsl(var(--hue), 15%, 35%);
-  --text-color-richer: hsl(var(--hue), 50%, 72%);
-  --text-color-highlight: hsl(var(--accent-hue), 70%, 45%);
+  /* 2. Text Colors */
+  --text-color-normal: #cdb9df;      /* Soft Purple-White */
+  --text-color-light: #80679b;       /* Muted Purple */
+  --text-color-richer: #ffffff;      /* Bright White */
+  --text-color-highlight: #ff00ab;   /* Neon Pink */
 
-  --link-color: hsl(var(--accent-hue), 90%, 70%);
+  /* 3. Links and Accents */
+  --link-color: #32fbe2;             /* Neon Cyan */
+  --accent-color: #ff00ab;           /* Neon Pink */
+  --error-color: #ff5e9c;            /* Vapor Pink-Red */
 
-  --accent-color: hsl(var(--accent-hue), 100%, 70%);
-  --error-color: rgb(240, 50, 50);
+  /* 4. Buttons */
+  --button-background: #442671;      /* Deep Purple */
+  --button-text-color: #ffffff;
+  --button-active: #ff00ab;
+  --button-active-darker: #c20082;
 
-  --button-background: hsl(var(--hue), 63%, 43%);
-  --button-text-color: black;
+  /* 5. Backgrounds (The deep space purple) */
+  --background: #1a0933;             /* Dark Space Background */
+  --background-sidebar: #261447;      /* Lighter Purple */
+  --background-light: #261447;
+  --background-lighter: #442671;
+  --background-light-solid: #261447;
 
-  --background: hsla(var(--hue), 20%, 12%, 0.9);
-  --background-sidebar: hsla(var(--hue), 20%, 28%, 0.5);
-  --background-light: hsl(var(--hue), 20%, 28%);
-  --background-lighter: hsla(var(--hue), 20%, 32%, 0.9);
-  --background-light-solid: hsl(var(--hue), 20%, 32%);
+  --background-dropdown: #1a0933;
+  --background-dialog: #1a0933;
 
-  --background-dropdown: hsla(var(--hue), 20%, 20%, 0.95);
-  --background-dialog: hsla(var(--hue), 20%, 20%, 0.95);
+  /* 6. Borders (Neon outlines) */
+  --border-color: #442671;
 
-  --border-color: var(--background-lighter);
+  /* 7. Contextual Colors (Vapor Neon Palette) */
+  --context-primary: #6f42c1;        /* Deep Purple */
+  --context-success: #32fbe2;        /* Cyan */
+  --context-info: #00d5ff;           /* Bright Blue */
+  --context-info-darker: #00a8cc; 
+  --context-warning: #ff9100;        /* Neon Orange */
+  --context-error: #ff5e9c;          /* Hot Pink/Red */
+  
+  --color-black: #0d0221;
+  --color-white: #ffffff;
 
-  --context-primary: hsl(200, 100%, 40%); /*#0088cc*/
-  --context-success: hsl(120, 40%, 46%); /*#47a447*/
-  --context-info: hsl(194, 66%, 61%); /*#5bc0de*/
-  --context-info-darker: hsl(193, 53%, 43%); /*10% darker */
-  --context-warning: hsl(35, 85%, 54%); /*#ed9c28*/
-  --context-error: hsl(	2, 65%, 53%); /*#d53f3a*/
-  --color-black: hsl(0, 0%, 7%); /*#111*/
-  --color-white: hsl(0,0%, 100%); /*#fff*/
-
-
-  --button-active: hsl(214, 68%, 58%);
-  --button-active-darker: hsl(214, 68%, 51%);
-  --wikiTriangleColor: var(--button-active);
+  /* 8. UI Constants */
+  --wikiTriangleColor: #32fbe2;      /* Cyan Triangles */
   --wikiTriangleSize: 4.8px;
   --padding-base-horizontal: 12px;
   --padding-base-vertical: 6px;
-
 }
+
 
 ::selection {
   color:var(--accent-color);
@@ -82,7 +63,9 @@ html {
 }
 
 /* --- BOOTSTRAP --- */
-
+.titlebox {
+    background-color: var(--background-light);
+}
 .panel {
   background-color: var(--background-light);
   border-color: var(--border-color);
@@ -285,7 +268,7 @@ mark, .highlight {
   color:var(--text-color-highlight);
 }
 
-span.text-white, div.text-white, .bg.dark + .bg-overlay { color:var(--text-color-normal;); }
+span.text-white, div.text-white, .bg.dark + .bg-overlay { color:var(--text-color-normal); }
 /*span.text-black, div.text-black, .bg.light + .bg-overlay { color:(var(--text-???); } */
 
 .text-primary { color: var(--context-primary); }

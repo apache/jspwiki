@@ -105,7 +105,7 @@ public class Preferences extends HashMap< String,String > {
         prefs.put("Layout", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.layout", "fluid" ) );
         prefs.put("Language", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.language", getLocale( ctx ).toString() ) );
         prefs.put("SectionEditing", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.sectionediting", "true" ) );
-        prefs.put("Appearance", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.appearance", "true" ) );
+        //prefs.put("Appearance", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.appearance", "true" ) );
 
         //editor cookies
         prefs.put("autosuggest", TextUtil.getStringProperty( props, "jspwiki.defaultprefs.template.autosuggest", "true" ) );
