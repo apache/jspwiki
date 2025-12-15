@@ -269,6 +269,11 @@
       <artifactId>tomcat-jsp-api</artifactId>
       <version>${tomcat.version}</version>
     </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-plugins-chartist</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
   <profiles>
