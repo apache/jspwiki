@@ -153,6 +153,7 @@
     <module>jspwiki-war</module>
     <module>jspwiki-portable</module>
     <module>jspwiki-it-tests</module><!-- IT tests are launched only if -Pintegration-tests is given -->
+    <module>jspwiki-plugins</module>
     <module>jspwiki-bom</module>
   </modules>
 
