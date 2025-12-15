@@ -74,10 +74,6 @@ String.I18N.PREFIX = "javascript.";
 <link rel="stylesheet" type="text/css" media="screen, projection, print" id="main-stylesheet"
      href="<wiki:Link format='url' templatefile='haddock.css'/>" />
 
-<c:if test="${prefs.Appearance }">
-<link rel="stylesheet" type="text/css" media="screen, projection, print" id="main-stylesheet"
-     href="<wiki:Link format='url' templatefile='haddock-dark.css'/>"/>
-</c:if>
 
 <wiki:IncludeResources type="stylesheet"/>
 <wiki:IncludeResources type="inlinecss" />
