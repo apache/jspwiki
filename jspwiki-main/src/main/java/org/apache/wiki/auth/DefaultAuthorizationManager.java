@@ -61,10 +61,14 @@ import java.security.ProtectionDomain;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.WeakHashMap;
+import org.apache.wiki.auth.acl.adv.AdvancedAcl;
+import org.apache.wiki.auth.acl.adv.RuleNode;
 
 
 /**
@@ -85,7 +89,7 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
     /** Cache for storing ProtectionDomains used to evaluate the local policy. */
     private final Map< Principal, ProtectionDomain > m_cachedPds = new WeakHashMap<>();
 
-    private Engine m_engine;
+    protected Engine m_engine;
 
     private LocalPolicy m_localPolicy;
 
@@ -135,7 +139,35 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
             fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
             return true;
         }
+        if (acl instanceof AdvancedAcl) {
+            AdvancedAcl a2 = (AdvancedAcl) acl;
+            Set<String> roles = new HashSet<>();
+            roles.add(session.getLoginPrincipal().getName());
+            if (session.getRoles() != null) {
+                for (Principal p : session.getRoles()) {
+                    roles.add(p.getName());
+                }
+            }
+            RuleNode node = a2.getNode(permission);
+            if (node == null) {
+                fireEvent(WikiSecurityEvent.ACCESS_ALLOWED, user, permission);
+                return true;
+            }
+            Set<String> potentialRoles = node.getAllRoles();
+            for (String s : potentialRoles) {
+                if (hasRoleOrPrincipal(session, new WikiPrincipal(s))) {
+                    roles.add(s);
+                }
+            }
 
+            if (node.evaluate(roles)) {
+                //granted..
+                fireEvent(WikiSecurityEvent.ACCESS_ALLOWED, user, permission);
+                return true;
+            }
+            fireEvent( WikiSecurityEvent.ACCESS_DENIED, user, permission );
+            return false;
+        }
         // Next, iterate through the Principal objects assigned this permission. If the context's subject possesses
         // any of these, the action is allowed.
         final Principal[] aclPrincipals = acl.findPrincipals( permission );
