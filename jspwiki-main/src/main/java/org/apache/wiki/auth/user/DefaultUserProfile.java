@@ -70,7 +70,10 @@ public final class DefaultUserProfile implements UserProfile {
         if ( o instanceof UserProfile ) {
             final DefaultUserProfile u = ( DefaultUserProfile )o;
             return  same( fullname, u.fullname ) &&
-                    same( password, u.password ) &&
+                    //same( password, u.password ) &&
+                    //Note: this used to compare the password for some reason, but that was causing
+                    //issues when the user wanted to change their password. since this is called
+                    //from DefaultUserManager#setProfile
                     same( loginName, u.loginName ) &&
                     same( StringUtils.lowerCase( email ), StringUtils.lowerCase( u.email ) ) &&
                     same( wikiname, u.wikiname );

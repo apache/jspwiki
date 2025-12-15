@@ -48,7 +48,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -56,8 +55,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import org.apache.wiki.WikiContext;
-import org.apache.wiki.api.core.Context;
-import org.apache.wiki.auth.user.DefaultUserProfile;
 import org.apache.wiki.auth.user.UserProfile;
 
 

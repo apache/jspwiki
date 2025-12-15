@@ -181,6 +181,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     /** {@inheritDoc} */
     @Override
     public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException {
+        m_engine = engine;
         final File defaultFile;
         if( engine.getRootPath() == null ) {
             LOG.warn( "Cannot identify JSPWiki root path" );

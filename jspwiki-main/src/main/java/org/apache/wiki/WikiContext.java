@@ -556,7 +556,7 @@ public class WikiContext implements Context, Command {
             // This shouldn't happen, really...
             return WikiPrincipal.GUEST;
         }
-        return m_session.getUserPrincipal();
+        return m_session.getLoginPrincipal();
     }
 
     /**

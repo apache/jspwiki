@@ -335,37 +335,35 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         // Check built-in Roles first
         final Role role = new Role(name);
         if ( Role.isBuiltInRole( role ) ) {
-            return role;
+           return role;
         }
 
         // Check Authorizer Roles
         Principal principal = m_authorizer.findRole( name );
         if ( principal != null ) {
-            return principal;
+           return principal;
         }
 
         // Check Groups
         principal = m_engine.getManager( GroupManager.class ).findRole( name );
         if ( principal != null ) {
-            return principal;
+           return principal;
         }
 
         // Ok, no luck---this must be a user principal
         final Principal[] principals;
-        final UserProfile profile;
         final UserDatabase db = m_engine.getManager( UserManager.class ).getUserDatabase();
         try {
-            profile = db.find( name );
-            principals = db.getPrincipals( profile.getLoginName() );
-            for( final Principal value : principals ) {
-                principal = value;
-                if( principal.getName().equals( name ) ) {
-                    return principal;
-                }
-            }
+           principals = db.getPrincipals( name );
+           for( final Principal value : principals ) {
+               principal = value;
+               if( principal.getName().equals( name ) ) {
+                   return principal;
+               }
+           }
         } catch( final NoSuchPrincipalException e ) {
-            // We couldn't find the user...
-            LOG.debug(e.getMessage(), e);
+           // We couldn't find the user...
+           LOG.debug(e.getMessage(), e);
         }
         // Ok, no luck---mark this as unresolved and move on
         return new UnresolvedPrincipal( name );

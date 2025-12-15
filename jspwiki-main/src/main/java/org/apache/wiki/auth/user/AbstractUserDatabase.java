@@ -48,13 +48,15 @@ public abstract class AbstractUserDatabase implements UserDatabase {
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String SSHA_PREFIX = "{SSHA}";
     protected static final String SHA256_PREFIX = "{SHA-256}";
-
+    protected Engine m_engine;
     /**
      * Looks up and returns the first {@link UserProfile} in the user database that whose login name, full name, or wiki name matches the
      * supplied string. This method provides a "forgiving" search algorithm for resolving principal names when the exact profile attribute
      * that supplied the name is unknown.
      *
      * @param index the login name, full name, or wiki name
+     * @return non null
+     * @throws org.apache.wiki.auth.NoSuchPrincipalException
      * @see org.apache.wiki.auth.user.UserDatabase#find(java.lang.String)
      */
     @Override
@@ -144,9 +146,13 @@ public abstract class AbstractUserDatabase implements UserDatabase {
         if( profile.getLoginName() != null && !profile.getLoginName().isEmpty() ) {
             principals.add( new WikiPrincipal( profile.getLoginName(), WikiPrincipal.LOGIN_NAME ) );
         }
-        if( profile.getFullname() != null && !profile.getFullname().isEmpty() ) {
-            principals.add( new WikiPrincipal( profile.getFullname(), WikiPrincipal.FULL_NAME ) );
+        if ("true".equalsIgnoreCase(m_engine.getWikiProperties().getProperty(Engine.PROP_USE_2_X_ACL_LOGIC, "false"))) {
+            if( profile.getFullname() != null && !profile.getFullname().isEmpty() ) {
+                principals.add( new WikiPrincipal( profile.getFullname(), WikiPrincipal.FULL_NAME ) );
+            }
         }
+        
+        
         if( profile.getWikiName() != null && !profile.getWikiName().isEmpty() ) {
             principals.add( new WikiPrincipal( profile.getWikiName(), WikiPrincipal.WIKI_NAME ) );
         }
@@ -159,7 +165,9 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      * @see org.apache.wiki.auth.user.UserDatabase#initialize(org.apache.wiki.api.core.Engine, java.util.Properties)
      */
     @Override
-    public abstract void initialize( Engine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException;
+    public void initialize( Engine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException {
+        this.m_engine = engine;
+    }
 
     /**
      * Factory method that instantiates a new DefaultUserProfile with a new, distinct unique identifier.

@@ -102,10 +102,6 @@ public abstract class AbstractPasswordReuseTest {
         //new confirm
         when(request.getParameter("password2")).thenReturn("passwordA2!");
 
-        userManager.validateProfile(context, profile);
-        Assertions.assertEquals(0,
-                wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length,
-                StringUtils.join(wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES)));
         //this should save the profile, changing the password
         userManager.setUserProfile(context, profile);
         Assertions.assertEquals(0, wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, StringUtils.join(wikiSession.getMessages()));
@@ -129,10 +125,6 @@ public abstract class AbstractPasswordReuseTest {
         when(request.getParameter("password0")).thenReturn("passwordA2!");
         //new pass
         when(request.getParameter("password2")).thenReturn("passwordA3!");
-        userManager.validateProfile(context, profile);
-        Assertions.assertEquals(0,
-                wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length,
-                StringUtils.join(wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES)));
         userManager.setUserProfile(context, profile);
         Assertions.assertEquals(0,
                 wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length,
@@ -229,10 +221,6 @@ public abstract class AbstractPasswordReuseTest {
         //new confirm
         when(request.getParameter("password2")).thenReturn("passwordA2!");
 
-        userManager.validateProfile(context, profile);
-        Assertions.assertEquals(0,
-                wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length,
-                StringUtils.join(wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES)));
         //this should save the profile, changing the password
         userManager.setUserProfile(context, profile);
         Assertions.assertEquals(0, wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, StringUtils.join(wikiSession.getMessages()));

@@ -67,7 +67,7 @@ class IfPluginTest {
      */
     @Test
     void testIfPluginUserAllowed() throws WikiException {
-        final String src = "[{IfPlugin user='Janne Jalkanen'\n\nContent visible for Janne Jalkanen}]";
+        final String src = "[{IfPlugin user='janne'\n\nContent visible for Janne Jalkanen}]";
         final String expected = "<p>Content visible for Janne Jalkanen</p>\n";
 
         testEngine.saveText( "Test", src );
@@ -85,7 +85,7 @@ class IfPluginTest {
      */
     @Test
     void testIfPluginUserNotAllowed() throws WikiException {
-        final String src = "[{IfPlugin user='!Janne Jalkanen'\n\nContent NOT visible for Janne Jalkanen}]";
+        final String src = "[{IfPlugin user='!janne'\n\nContent NOT visible for Janne Jalkanen}]";
         final String expected = "\n";
 
         testEngine.saveText( "Test", src );
