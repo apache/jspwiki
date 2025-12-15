@@ -16,6 +16,16 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-12-15 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-21_
+
+* [JSPWIKI-1198](https://issues.apache.org/jira/browse/JSPWIKI-1198) sets the pom to notify maven of the relocated artifact for the IT tests
+* [JSPWIKI-1265](https://issues.apache.org/jira/browse/JSPWIKI-1265) additional skins for the haddock template
+* [JSPWIKI-205](https://issues.apache.org/jira/browse/JSPWIKI-205) adds an override for obfuscating or deobfuscating data
+* [JSPWIKI-130](https://issues.apache.org/jira/browse/JSPWIKI-130) addresses the secondary reported issue
+* [JSPWIKI-1102](https://issues.apache.org/jira/browse/JSPWIKI-1102) optional chartist plugin
+
 **2025-12-14 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-20_
