@@ -64,4 +64,5 @@ the umd.js and css files and placing in the src/main/resources/META-INF/chartist
 The webjar, at this point in time, has a directory with a "." as a path, which is strange.
 This caused the java compiled to to complain, otherwise the webjar is the way to go.
 
+Chartist is MIT licensed.
 
