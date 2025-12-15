@@ -30,7 +30,11 @@
   <modelVersion>4.0.0</modelVersion>
   <description>selenium tests execution for jspwiki</description>
   <packaging>pom</packaging>
-
+  <distributionManagement>
+      <relocation>
+          <artifactId>jspwiki-it-builder</artifactId>
+      </relocation>
+  </distributionManagement>
   <modules>
     <module>jspwiki-selenide-tests</module>
     <module>jspwiki-it-test-custom</module>
