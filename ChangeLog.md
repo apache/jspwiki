@@ -16,6 +16,12 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2025-12-16 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.0-git-22_
+
+* [JSPWIKI-1267](https://issues.apache.org/jira/browse/JSPWIKI-1267) FormElement plugins are not listed in the jspwiki module xml file
+	
 **2025-12-15 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-21_
