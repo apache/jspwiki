@@ -165,7 +165,7 @@
         <author>ASF</author>
         <minVersion>2.6</minVersion>
     </plugin>
-    <plugin class="org.apache.wiki.forms.FormTextArea">
+    <plugin class="org.apache.wiki.forms.FormTextarea">
         <author>ASF</author>
         <minVersion>2.6</minVersion>
     </plugin>

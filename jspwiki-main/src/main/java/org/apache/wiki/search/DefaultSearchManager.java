@@ -48,6 +48,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -126,6 +128,13 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                     if (locale == null) {
                         locale = Locale.getDefault();
                     }
+                    final Locale sorter = locale;
+                    Collections.sort(plugins, new Comparator<Plugin>() {
+                        @Override
+                        public int compare(Plugin o1, Plugin o2) {
+                            return o1.getDisplayName(sorter).compareTo(o2.getDisplayName(sorter));
+                        }
+                    });
                     for (Plugin p : plugins) {
                         try {
                             SimpleSnipData data = new SimpleSnipData();
