@@ -63,6 +63,9 @@ public interface Engine {
     
     /** The default inlining pattern.  Currently "*.png" */
     String DEFAULT_INLINEPATTERN = "*.png";
+    String DEFAULT_INLINEPATTERN_JPG = "*.jpg";
+    String DEFAULT_INLINEPATTERN_GIF = "*.gif";
+    String DEFAULT_INLINEPATTERN_SVG = "*.svg";
 
     /** The name used for the default template. The value is {@value}. */
     String DEFAULT_TEMPLATE_NAME = "default";

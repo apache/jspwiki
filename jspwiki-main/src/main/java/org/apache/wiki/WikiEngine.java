@@ -586,6 +586,9 @@ public class WikiEngine implements Engine {
 
         if( ptrnlist.isEmpty() ) {
             ptrnlist.add( DEFAULT_INLINEPATTERN );
+            ptrnlist.add( DEFAULT_INLINEPATTERN_GIF );
+            ptrnlist.add( DEFAULT_INLINEPATTERN_JPG );
+            ptrnlist.add( DEFAULT_INLINEPATTERN_SVG );
         }
 
         return ptrnlist;
