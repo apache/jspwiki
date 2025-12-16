@@ -145,7 +145,30 @@
         <author>ASF</author>
         <minVersion>2.4</minVersion>
     </plugin>
-
+    <plugin class="org.apache.wiki.forms.FormClose">
+        <author>ASF</author>
+        <minVersion>2.6</minVersion>
+    </plugin>
+     <plugin class="org.apache.wiki.forms.FormOpen">
+        <author>ASF</author>
+        <minVersion>2.6</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.forms.FormInput">
+        <author>ASF</author>
+        <minVersion>2.6</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.forms.FormOutput">
+        <author>ASF</author>
+        <minVersion>2.6</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.forms.FormSelect">
+        <author>ASF</author>
+        <minVersion>2.6</minVersion>
+    </plugin>
+    <plugin class="org.apache.wiki.forms.FormTextArea">
+        <author>ASF</author>
+        <minVersion>2.6</minVersion>
+    </plugin>
     <filter class="org.apache.wiki.filters.SpamFilter">
         <author>Janne Jalkanen</author>
         <minVersion>2.6</minVersion>
