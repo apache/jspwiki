@@ -158,8 +158,16 @@ public class DefaultVariableManager implements VariableManager {
             if( name.equals( value ) ) {
                 return ""; // FIXME: Should this be something different?
             }
-        }
+            if ("jspwiki.frontpage".equals(name)) continue;
+            if ("jspwiki.runfilters".equals(name) ) continue;
+            
+            if ( name.startsWith( "jspwiki" ) ) {
+                LOG.warn("variable manager is denying access to '" + name + "'");
+                return "";
+            }
 
+        }
+        
         try {
             //
             //  Using reflection to get system variables adding a new system variable

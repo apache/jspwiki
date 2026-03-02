@@ -341,6 +341,7 @@
            <url-pattern>/Edit.jsp</url-pattern>
            <url-pattern>/Comment.jsp</url-pattern>
            <url-pattern>/Login.jsp</url-pattern>
+           <url-pattern>/templates/default/AJAXPreview.jsp</url-pattern>
            <url-pattern>/NewGroup.jsp</url-pattern>
            <url-pattern>/Rename.jsp</url-pattern>
            <url-pattern>/Upload.jsp</url-pattern>
