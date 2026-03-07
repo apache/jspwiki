@@ -20,6 +20,8 @@ package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
@@ -66,7 +68,7 @@ class NodePostProcessorStateCommonOperations {
     }
 
     static void makeError( final NodeTracker state, final Node node, final String errMsg ) {
-        final WikiHtmlInline error = WikiHtmlInline.of( "<span class=\"error\">" + errMsg + "</span>" );
+        final WikiHtmlInline error = WikiHtmlInline.of( "<span class=\"error\">" + StringEscapeUtils.escapeHtml4(errMsg) + "</span>" );
         addContent( state, node, error );
     }
 
