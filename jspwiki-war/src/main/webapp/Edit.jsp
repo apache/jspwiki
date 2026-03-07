@@ -17,6 +17,7 @@
     under the License.
 --%>
 
+<%@ page import="org.apache.wiki.i18n.InternationalizationManager" %>
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="java.util.*" %>
@@ -194,8 +195,9 @@
             return;
         } catch( RedirectException ex ) {
             // FIXME: Cut-n-paste code.
-            wikiContext.getWikiSession().addMessage( ex.getMessage() ); // FIXME: should work, but doesn't
-            session.setAttribute( "message", ex.getMessage() );
+            
+            wikiContext.getWikiSession().addMessage( "Redirect Error" ); // FIXME: should work, but doesn't
+            session.setAttribute( "message", "Redirect Error" );
             session.setAttribute(EditorManager.REQ_EDITEDTEXT, EditorManager.getEditedText(pageContext));
             session.setAttribute("author",user);
             session.setAttribute("link",link != null ? link : "" );

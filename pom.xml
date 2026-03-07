@@ -29,7 +29,7 @@
   <artifactId>jspwiki-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <name>Apache JSPWiki</name>
-  <version>2.12.3</version>
+  <version>2.12.4-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Apache JSPWiki is a leading open source WikiWiki engine, feature-rich
     and built around standard JEE components (Java, servlets, JSP).</description>
@@ -39,7 +39,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <project.build.outputTimestamp>2025-07-25T13:21:03Z</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
+    <project.build.outputTimestamp>2025-11-18T00:12:00Z</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
     <jdk.version>11</jdk.version>
     <jdk.javadoc.doclet.version>2.2.2</jdk.javadoc.doclet.version>
     <maven.version>3.5</maven.version>

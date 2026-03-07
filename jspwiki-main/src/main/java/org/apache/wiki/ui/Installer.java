@@ -46,6 +46,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.apache.log4j.Logger;
 
 /**
  * Manages JSPWiki installation on behalf of <code>admin/Install.jsp</code>. The contents of this class were previously part of
@@ -54,6 +55,7 @@ import java.util.stream.Collectors;
  * @since 2.4.20
  */
 public class Installer {
+    private static final Logger LOG = Logger.getLogger(Installer.class);
 
     public static final String ADMIN_ID = "admin";
     public static final String ADMIN_NAME = "Administrator";
@@ -203,7 +205,8 @@ public class Installer {
             }
             m_session.addMessage( INSTALL_INFO, MessageFormat.format(rb.getString("install.installer.props.saved"), m_propertyFile) );
         } catch( final IOException e ) {
-            final Object[] args = { e.getMessage(), m_props.toString() };
+            LOG.warn("save properties failed", e);
+            final Object[] args = {  m_props.toString() };
             m_session.addMessage( INSTALL_ERROR, MessageFormat.format( rb.getString( "install.installer.props.notsaved" ), args ) );
         }
     }

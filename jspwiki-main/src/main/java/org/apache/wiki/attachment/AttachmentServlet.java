@@ -23,7 +23,6 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.wiki.api.core.Attachment;
@@ -63,6 +62,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 
 /**
@@ -257,12 +258,13 @@ public class AttachmentServlet extends HttpServlet {
                 res.sendError( HttpServletResponse.SC_NOT_FOUND, msg );
             }
         } catch( final ProviderException pe ) {
-            LOG.debug("Provider failed while reading", pe);
+            LOG.warn("Provider failed while reading", pe);
             //
             //  This might fail, if the response is already committed.  So in that
             //  case we just log it.
             //
-            sendError( res, "Provider error: "+ pe.getMessage() );
+            final ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE, req.getLocale() );
+            sendError( res, rb.getString("operation.failed") );
         } catch( final NumberFormatException nfe ) {
             LOG.warn( "Invalid version number: " + version );
             res.sendError( HttpServletResponse.SC_BAD_REQUEST, "Invalid version number" );
@@ -279,7 +281,8 @@ public class AttachmentServlet extends HttpServlet {
             //  try to send an error and catch it quietly if it doesn't quite work.
             //
             LOG.debug( "I/O exception during download", ioe );
-            sendError( res, "Error: " + ioe.getMessage() );
+            final ResourceBundle rb = ResourceBundle.getBundle( InternationalizationManager.CORE_BUNDLE, req.getLocale() );
+            sendError( res, rb.getString("operation.failed") );
         }
     }
 
@@ -456,18 +459,18 @@ public class AttachmentServlet extends HttpServlet {
             LOG.warn( msg + " (attachment: " + attName + ")", e );
 
             throw new IOException( msg );
-        } catch( final IOException e ) {
-            // Show the submit page again, but with a bit more intimidating output.
-            msg = "Upload failure: " + e.getMessage();
-            LOG.warn( msg + " (attachment: " + attName + ")", e );
-
-            throw e;
         } catch( final FileUploadException e ) {
             // Show the submit page again, but with a bit more intimidating output.
             msg = "Upload failure: " + e.getMessage();
             LOG.warn( msg + " (attachment: " + attName + ")", e );
 
             throw new IOException( msg, e );
+        } catch( final IOException e ) {
+            // Show the submit page again, but with a bit more intimidating output.
+            msg = "Upload failure: " + e.getMessage();
+            LOG.warn( msg + " (attachment: " + attName + ")", e );
+
+            throw e;
         } finally {
             m_engine.getManager( ProgressManager.class ).stopProgress( progressId );
             // FIXME: In case of exceptions should absolutely remove the uploaded file.

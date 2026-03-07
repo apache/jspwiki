@@ -296,6 +296,7 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
 
         // We got an exception! Roll back...
         catch( final WikiSecurityException e ) {
+            LOG.warn("setGroup failed, rolling back changes", e);
             if( oldGroup != null ) {
                 // Restore previous version, re-throw...
                 fireEvent( WikiSecurityEvent.GROUP_REMOVE, group );
