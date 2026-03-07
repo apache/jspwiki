@@ -126,7 +126,15 @@ public class MarkdownRendererTest {
     public void testMarkupExtensionWrongInterWikiLink() throws Exception {
         final String src = "This should be an [interwiki link](JSPWiko:About)";
 
-        Assertions.assertEquals( "<p>This should be an <span class=\"error\">No InterWiki reference defined in properties for Wiki called \"JSPWiko\"!</span></p>\n",
+        Assertions.assertEquals( "<p>This should be an <span class=\"error\">No InterWiki reference defined in properties for Wiki called &quot;JSPWiko&quot;!</span></p>\n",
+                                 translate( src ) );
+    }
+    
+    @Test
+    public void testMarkupDirtyLink() throws Exception {
+        final String src = "This should be an [interwiki link](javascript:alert('hello world'))";
+
+        Assertions.assertEquals( "<p>This should be an [interwiki link](javascript:alert('hello world'))</p>\n",
                                  translate( src ) );
     }
 
