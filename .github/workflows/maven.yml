@@ -63,5 +63,6 @@ jobs:
 #    - name: Dependency scan
 #      run: mvn org.sonatype.ossindex.maven:ossindex-maven-plugin:LATEST:audit
 # token required
-    - name: Dependency scan
-      run: mvn install -B -T 1C -DskipTests=true org.owasp:dependency-check-maven:LATEST:check -DassemblyAnalyzerEnabled=false
+# Disabled due to some bug in the plugin
+#    - name: Dependency scan
+#      run: mvn install -B -T 1C -DskipTests=true org.owasp:dependency-check-maven:LATEST:check -DassemblyAnalyzerEnabled=false
