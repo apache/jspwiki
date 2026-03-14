@@ -17,6 +17,14 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-03-07 Alex O'Ree (alexoree AT apache DOT org)**
+* _2.12.4-git-01_
+
+* Backport of [JSPWIKI-1271](https://issues.apache.org/jira/browse/JSPWIKI-1271)
+* Backport of [JSPWIKI-1270](https://issues.apache.org/jira/browse/JSPWIKI-1270)
+* Backport of [JSPWIKI-75](https://issues.apache.org/jira/browse/JSPWIKI-75)
+
+
 **2025-07-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.3-git-10_

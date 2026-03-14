@@ -21,6 +21,7 @@ package org.apache.wiki.markdown.nodes;
 import org.apache.commons.lang3.StringUtils;
 
 import com.vladsch.flexmark.ast.Link;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 
 /**
@@ -50,7 +51,12 @@ public class JSPWikiLink extends Link {
             hasRef = true;
         }
 
-        wikiLink = getUrl().toString();
+        String str = getUrl().toString();
+        if (str!=null && str.toLowerCase().startsWith("javascript:")) {
+            str = str.substring(11);
+            setUrl(CharSubSequence.of(str));
+        }
+        wikiLink = str;
     }
 
     /**
