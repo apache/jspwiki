@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jspwiki.it</groupId>
     <artifactId>jspwiki-it-tests</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1-SNAPSHOT</version>
   </parent>
   
   <artifactId>jspwiki-selenide-tests</artifactId>
@@ -56,8 +56,4 @@
       <artifactId>junit-jupiter-engine</artifactId>
     </dependency>
   </dependencies>
-
-  <scm>
-    <tag>jspwiki-builder-3.0.0-RC1</tag>
-  </scm>
 </project>

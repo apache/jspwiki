@@ -22,14 +22,10 @@
   <parent>
     <groupId>org.apache.jspwiki.wikipages</groupId>
     <artifactId>jspwiki-wikipages-builder</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1-SNAPSHOT</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
   <artifactId>jspwiki-wikipages-pt_BR</artifactId>
   <name>Apache JSPWiki initial wiki pages (pt_BR)</name>
-
-  <scm>
-    <tag>jspwiki-builder-3.0.0-RC1</tag>
-  </scm>
 </project>
