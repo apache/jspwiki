@@ -31,7 +31,7 @@
   <packaging>pom</packaging>
 
   <properties>
-    <jspwiki.version>2.12.3</jspwiki.version>
+    <jspwiki.version>2.12.4</jspwiki.version>
   </properties>
 
   <dependencyManagement>
