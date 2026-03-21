@@ -4,7 +4,7 @@
     <parent> <!-- tests reuse [1/3]: reads common configuration for ITs and brings jspwiki-war as dependency -->
         <groupId>org.apache.jspwiki.it</groupId>
         <artifactId>jspwiki-it-tests</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.0</version>
     </parent>
     <artifactId>jspwiki-test-plugin</artifactId>
     <packaging>jar</packaging>
@@ -15,4 +15,8 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+
+  <scm>
+    <tag>jspwiki-builder-3.0.0-RC1</tag>
+  </scm>
 </project>
