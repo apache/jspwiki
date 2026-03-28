@@ -16,17 +16,17 @@
 package org.apache.wiki.security;
 
 import com.google.gson.Gson;
-import jakarta.mail.MessagingException;
 import java.io.File;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.event.WikiEvent;
@@ -102,6 +102,7 @@ public final class AuditLogger implements WikiEventListener {
     @Override
     public void actionPerformed(WikiEvent event) {
         try {
+            Map<Object, Object> cleaned = clean(event.getAttributes());
             LOG.info(String.format(
                     "Class=%s, Description=%s, At=%d, AsString=%s, Name=%s, HttpsBits=%s",
                     event.getClass().getSimpleName(),
@@ -109,7 +110,7 @@ public final class AuditLogger implements WikiEventListener {
                     event.getWhen(),
                     event.toString(),
                     event.eventName(),
-                    gson.toJson(event.getAttributes())));
+                    gson.toJson(cleaned)));
             if (event instanceof WikiSecurityEvent wse) {
                 String filters = engine.getWikiProperties().getProperty("audit.alert.filter", "41,42,43,46,47,52");
                 String[] alertsWeCareAbout = filters.split("\\,");
@@ -152,7 +153,7 @@ public final class AuditLogger implements WikiEventListener {
                         event.getTypeDescription(),
                         new Date(event.getWhen()).toString(),
                         event.toString(),
-                        gson.toJson(event.getAttributes()));
+                        gson.toJson(cleaned));
                 for (String to : addrs) {
                     threadPool.submit(() -> {
                         try {
@@ -172,6 +173,24 @@ public final class AuditLogger implements WikiEventListener {
         } catch (Exception ex) {
             LOG.error("Failed to log audit event " + ex.getMessage(), ex);
         }
+    }
+
+    private Map<Object, Object> clean(Map<Object, Object> attributes) {
+        Map<Object, Object> result = new HashMap<>();
+        for (Map.Entry<Object, Object> item : attributes.entrySet()) {
+            String key = (String) item.getKey();
+            String comparer = key.toLowerCase();
+            if (comparer.contains("cookie")
+                    || comparer.contains("api-key")
+                    || comparer.contains("authorization")
+                    || comparer.contains("token")) {
+                result.put(key, "****");
+            } else {
+                result.put(key, item.getValue());
+            }
+        }
+        return result;
+
     }
 
     private static class DiskSpaceCheck extends TimerTask {
