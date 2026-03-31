@@ -153,7 +153,9 @@ public class DefaultVariableManager implements VariableManager {
         }
         // Faster than doing equalsIgnoreCase()
         final String name = varName.toLowerCase();
-        if ( name.startsWith( "jspwiki" ) ) {
+        if (!"jspwiki.frontpage".equals(name) && 
+            !"jspwiki.runfilters".equals(name) && 
+            name.startsWith( "jspwiki" ) ) {
             LOG.warn("variable manager is denying access to '" + name + "'");
             return "";
         }
@@ -161,8 +163,6 @@ public class DefaultVariableManager implements VariableManager {
             if( name.equals( value ) ) {
                 return ""; // FIXME: Should this be something different?
             }
-            if ("jspwiki.frontpage".equals(name)) continue;
-            if ("jspwiki.runfilters".equals(name) ) continue;
         }
         
         try {

@@ -45,11 +45,11 @@ public class FilterFrom210Test {
         final TwoXFilter txf = ( TwoXFilter )fm.getFilterList().stream().filter( f -> f instanceof TwoXFilter ).findAny().get();
         // post save triggers page references' update which in turn renders the page, which in turn triggers the preTranslate
         // filter method, so we end up with 5 invocations to any given filter on a page save + 1 more from initialize
-        Assertions.assertEquals( 3, txf.invocations() );
+        Assertions.assertEquals( 6, txf.invocations() );
 
         final WikiContext context = new WikiContext( engine, new WikiPage( engine, "Testpage" ) );
         final String res = rm.textToHTML( context,"Incredible and super important content here" ); // test only pre / post translate
-        Assertions.assertEquals( "Incredible and super important content here", res );
+        Assertions.assertEquals( "see how I care about yor content - hmmm...", res );
     }
 
 }
