@@ -586,6 +586,7 @@
             <encoding>${project.build.sourceEncoding}</encoding>
             <source>${jdk.version}</source>
             <target>${jdk.version}</target>
+            <release>${jdk.version}</release>
             <compilerArgs>
               <arg>-Xlint:deprecation</arg>
               <arg>-parameters</arg>
