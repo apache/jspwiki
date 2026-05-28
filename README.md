@@ -1,4 +1,4 @@
-# Apache JSPWiki 2.12 - Documentation
+# Apache JSPWiki 3.0 - Documentation
 
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
