@@ -20,6 +20,7 @@ package org.apache.wiki.util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdom2.Element;
@@ -224,7 +225,7 @@ public final class ClassUtil {
             while( files.hasNext() ) {
                 final File subfile = files.next();
                 // store an entry similar to the jarSearch(..) below ones
-                final String entry = StringUtils.replace( subfile.getAbsolutePath(), file.getAbsolutePath() + File.separatorChar, StringUtils.EMPTY );
+                final String entry = Strings.CS.replace( subfile.getAbsolutePath(), file.getAbsolutePath() + File.separatorChar, StringUtils.EMPTY );
                 results.add( rootPackage + "/" + entry );
             }
         } else {

@@ -18,6 +18,12 @@
  */
 package org.apache.wiki.auth.permissions;
 
+import org.apache.wiki.auth.GroupPrincipal;
+import org.apache.wiki.auth.WikiPrincipal;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import javax.security.auth.Subject;
 import java.security.AccessControlException;
 import java.security.Permission;
 import java.security.PrivilegedAction;

@@ -19,7 +19,7 @@
 
 package org.apache.wiki.util.comparators;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.Comparator;
 
@@ -82,7 +82,7 @@ public class HumanComparator implements Comparator< String > {
     public int compare(final String str1, final String str2 )
     {
         // Some quick and easy checks
-        if( StringUtils.equals( str1, str2 ) ) {
+        if( Strings.CS.equals( str1, str2 ) ) {
             // they're identical, possibly both null
             return 0;
         } else if ( str1 == null ) {
