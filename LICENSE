@@ -212,14 +212,15 @@ akismet-java-1.02.jar                       ./jspwiki-war/src/main/config/doc/LI
 annotations-15.0.jar                        LICENSE
 aws-java-sdk-core-1.12.565.jar              LICENSE
 aws-java-sdk-kendra-1.12.565.jar            LICENSE
-commons-codec-1.3.jar                       LICENSE
+commons-codec-1.22.0.jar                    LICENSE
 commons-collections-4.5.0.jar               LICENSE
-commons-fileupload-2.0.0-M4.jar             LICENSE
+commons-fileupload-2.0.0-M5.jar             LICENSE
 commons-httpclient-3.1.jar                  LICENSE
-commons-io-2.20.0.jar                       LICENSE
-commons-lang-3.18.0.jar                     LICENSE
+commons-io-2.22.0.jar                       LICENSE
+commons-lang-3.20.0.jar                     LICENSE
 commons-logging-1.0.4.jar                   LICENSE
-commons-text-1.14.0.jar                     LICENSE
+commons-net-3.13.0.jar                      LICENSE
+commons-text-1.15.0.jar                     LICENSE
 ehcache-2.10.9.2.jar                        LICENSE
 flexmark-0.64.8.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
 flexmark-ext-attributes-0.64.8.jar          ./jspwiki-war/src/main/config/doc/LICENSE.flexmark
@@ -254,10 +255,10 @@ jmespath-java-1.12.565                      LICENSE
 joda-time-2.8.1                             LICENSE
 jstl-1.2.jar                                LICENSE
 logging-mailhandler-1.6.2.jar               ./jspwiki-war/src/main/config/doc/LICENSE.cddl
-log4j-1.2-api-2.25.1.jar                    LICENSE
-log4j-api-2.25.1.jar                        LICENSE
-log4j-core-2.25.1.jar                       LICENSE
-log4j-slf4j-impl-2.25.1                     LICENSE
+log4j-1.2-api-2.25.4.jar                    LICENSE
+log4j-api-2.25.4.jar                        LICENSE
+log4j-core-2.25.4.jar                       LICENSE
+log4j-slf4j-impl-2.25.4                     LICENSE
 lucene-analyzers-common-9.12.2.jar          LICENSE
 lucene-backward-codecs-9.12.2.jar           LICENSE
 lucene-core-9.12.2.jar                      LICENSE
@@ -271,10 +272,10 @@ nekohtml-2.0.2.jar (codelibs fork)          LICENSE
 org.suigeneris.jrcs.diff-0.4.2              LICENSE
 oro-2.0.8.jar                               LICENSE
 sandler-0.5.jar                             ./jspwiki-war/src/main/config/doc/LICENSE.sandler
-slf4-api-2.0.17.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
+slf4-api-2.0.18.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
 xercesImpl-2.10.0.jar                       LICENSE
-tika-core-3.2.3.jar                         LICENSE
-tika-parsers-3.2.3.jar                      LICENSE
+tika-core-3.3.1.jar                         LICENSE
+tika-parsers-3.3.1.jar                      LICENSE
 xml-apis-1.4.01                             LICENSE
 xmlrpc-2.0.1.jar                            LICENSE
 xpp3-1.1.3.4-RC3                            ./jspwiki-war/src/main/config/doc/LICENSE.cc-cod
@@ -287,9 +288,9 @@ custom_rhino-0.4.3.jar                      ./jspwiki-war/src/main/config/doc/LI
 hsqldb-2.7.4.jar                            ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 sqltool-2.7.4.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 jamm-0.4.0.jar                              LICENSE
-junit-6.0.0                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
+junit-6.1.0                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
 mockito-core-5.20.0.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.mit
-selenide-7.10.1.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
+selenide-7.16.2.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui
 
 JS LIBRARY                                  LICENSE FILE
@@ -304,7 +305,7 @@ SlimBox                                     ./jspwiki-war/src/main/config/doc/LI
 
 RESOURCES                                   LICENSE FILE
 =============================================================================================================
-Apache Tomcat 10.1.46                       LICENSE
+Apache Tomcat 10.1.55                       LICENSE
 Font Awesome (CSS & LESS files)             ./jspwiki-war/src/main/config/doc/LICENSE.mit
 Font Awesome (Fonts)                        ./jspwiki-war/src/main/config/doc/LICENSE.ofl
 SilkIconSet                                 ./jspwiki-war/src/main/config/doc/LICENSE.SilkIconSet
