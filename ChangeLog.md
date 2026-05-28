@@ -16,6 +16,29 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-05-29 Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _3.0.0-git-23_
+
+* Sanitize `link` parameter in `Image` plugin
+
+* Set up default rulesets for default and release branches (closes [PR #495](https://github.com/apache/jspwiki/pull/495), thanks to Apache Infra Team)
+
+* Dependency Updates
+    * parent to 38
+    * Commons Codec to 1.22.0
+    * Commons File Upload to 2.0.0-M5
+    * Commons IO to 2.22.0
+    * Commons Net to 3.13.0
+    * Commons Text to 1.15.0
+    * JUnit to 6.1.0
+    * Log4J to 2.25.4
+    * Selenide to 7.16.2
+    * SLF4J to 2.0.18
+    * Tika to 3.3.1
+    * Tomcat to 10.1.55
+    * maven plugins: assembly to 3.8.0, compiler to 3.15.0, dependency to 3.11.0, enforcer to 3.6.3, release to 3.3.1, resources to 3.5.0, surefire to 3.5.6, war to 3.5.1 and umldoclet to 2.3.0
+
 **2025-12-16 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-22_
@@ -136,7 +159,7 @@ under the License.
 * _3.0.0-git-10_
 
 * [JSPWIKI-1205](https://issues.apache.org/jira/browse/JSPWIKI-1205) -  adjusts the handling for too large file attachments. 
-* [JSPWIKI-1198(https://issues.apache.org/jira/browse/JSPWIKI-1198) -  fixes the ajax service for plugin suggestions. adds tests
+* [JSPWIKI-1198](https://issues.apache.org/jira/browse/JSPWIKI-1198) -  fixes the ajax service for plugin suggestions. adds tests
 * [JSPWIKI-1245](https://issues.apache.org/jira/browse/JSPWIKI-1245) -  run security validation checks at start up and log it.
 * [JSPWIKI-1228](https://issues.apache.org/jira/browse/JSPWIKI-1228) -  audit logging capability with optional email based alert
 
@@ -170,7 +193,7 @@ under the License.
 	* commons-validator (added) at 1.10.0
 	
 * [JSPWIKI-1239](https://issues.apache.org/jira/browse/JSPWIKI-1239) New user signup says the email is optional, but does not accept blank since it's already in use by the admin account
-* [JSPWIKI-1243](https://issues.apache.org/jira/browse/JSPWIKI-1243 Email validation rouine is incorrect (unicode symbols and more)
+* [JSPWIKI-1243](https://issues.apache.org/jira/browse/JSPWIKI-1243) Email validation rouine is incorrect (unicode symbols and more)
 * NOJIRA disables and removes the ClearSiteData Servlet Filter which broke CSRF token checks
 	
 
@@ -194,8 +217,6 @@ under the License.
 * [JSPWIKI-1224](https://issues.apache.org/jira/browse/JSPWIKI-1224)  rss.jsp now sets the filename for download 
 
 
-
-
 **2025-11-08 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-04_
@@ -206,7 +227,7 @@ under the License.
 
 * [JSPWIKI-1219](https://issues.apache.org/jira/browse/JSPWIKI-1219) SpamFilter removal of asirra.com due to service shutdown 10 years ago
 * [JSPWIKI-1218](https://issues.apache.org/jira/browse/JSPWIKI-1218) Removal of commons-http-client v2 
-* [JSPWIKI-1179](https://issues.apache.org/jira/browse/JSPWIKI-1179) Github Actions CI builders
+* [JSPWIKI-1179](https://issues.apache.org/jira/browse/JSPWIKI-1179) GitHub Actions CI builders
 
 
 **2025-11-07 Alex O'Ree (alexoree AT apache DOT org)**
