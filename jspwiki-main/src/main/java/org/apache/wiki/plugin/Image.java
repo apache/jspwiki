@@ -102,7 +102,7 @@ public class Image implements Plugin {
         final String wt      = getCleanParameter( params, PARAM_WIDTH );
         final String alt     = getCleanParameter( params, PARAM_ALT );
         final String caption = getCleanParameter( params, PARAM_CAPTION );
-        final String link    = getCleanParameter( params, PARAM_LINK );
+        String link          = getCleanParameter( params, PARAM_LINK );
         String target        = getCleanParameter( params, PARAM_TARGET );
         final String style   = getCleanParameter( params, PARAM_STYLE );
         final String cssclass= getCleanParameter( params, PARAM_CLASS );
@@ -173,6 +173,11 @@ public class Image implements Plugin {
         result.append( ">" );
 
         if( link != null ) {
+            if( !context.getBooleanWikiProperty( MarkupParser.PROP_ALLOWHTML, false ) ) {
+                if( link.startsWith( "data:" ) || link.startsWith( "javascript:" ) ) {
+                    link = "http://invalid_url" + link;
+                }
+            }
             result.append( "<a href=\"" ).append( link ).append( "\"" );
             if( target != null ) {
                 result.append( " target=\"" ).append( target ).append( "\"" );
