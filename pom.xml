@@ -67,10 +67,10 @@
     <jdom2.version>2.0.6</jdom2.version>
     <jetty.version>9.4.54.v20240208</jetty.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
-    <junit.version>5.13.4</junit.version>
+    <junit.version>5.14.4</junit.version>
     <log4j2.version>2.25.1</log4j2.version>
     <lucene.version>9.12.2</lucene.version>
-    <mockito.version>5.18.0</mockito.version>
+    <mockito.version>5.23.0</mockito.version>
     <nekohtml.version>2.1.2</nekohtml.version>
     <oro.version>2.0.8</oro.version>
     <sandler.version>0.5</sandler.version>
@@ -78,7 +78,7 @@
     <slf4j.version>1.7.36</slf4j.version>
     <stripes.version>1.7.0-async-beta</stripes.version>
     <tika.version>3.2.1</tika.version>
-    <tomcat.version>9.0.107</tomcat.version>
+    <tomcat.version>9.0.118</tomcat.version>
     <wro4j.version>1.8.0</wro4j.version>
     <xmlrpc.version>2.0.1</xmlrpc.version>
     <xstream.version>1.4.21</xstream.version>
