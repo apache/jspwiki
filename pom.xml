@@ -638,6 +638,7 @@
               <groupId>nl.talsmasoftware</groupId>
               <artifactId>umldoclet</artifactId>
               <version>${jdk.javadoc.doclet.version}</version>
+              <classifier>full</classifier>
             </docletArtifact>
             <linksource>true</linksource>
             <release>${jdk.version}</release>
