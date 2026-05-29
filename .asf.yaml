@@ -43,7 +43,7 @@ github:
       restrict_force_push: true
       
   copilot_code_review:
-    enbaled: true
+    enabled: true
     review_drafts: false
     review_on_push: true
 
