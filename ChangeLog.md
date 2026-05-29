@@ -17,13 +17,26 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-05-28  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.5-git-01_
+
+* Backport Sanitize `link` parameter in `Image` plugin
+
+* Dependency updates
+    * JUnit to 5.14.4
+	* Mockito to 5.23.0
+	* Tomcat to 9.0.118
+
 **2026-03-07 Alex O'Ree (alexoree AT apache DOT org)**
+
 * _2.12.4-git-01_
 
 * Backport of [JSPWIKI-1271](https://issues.apache.org/jira/browse/JSPWIKI-1271)
-* Backport of [JSPWIKI-1270](https://issues.apache.org/jira/browse/JSPWIKI-1270)
-* Backport of [JSPWIKI-75](https://issues.apache.org/jira/browse/JSPWIKI-75)
 
+* Backport of [JSPWIKI-1270](https://issues.apache.org/jira/browse/JSPWIKI-1270)
+
+* Backport of [JSPWIKI-75](https://issues.apache.org/jira/browse/JSPWIKI-75)
 
 **2025-07-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
