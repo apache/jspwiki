@@ -640,6 +640,7 @@
               <version>${jdk.javadoc.doclet.version}</version>
             </docletArtifact>
             <linksource>true</linksource>
+            <release>${jdk.version}</release>
             <sourcetab>4</sourcetab>
             <quiet>true</quiet>
             <useStandardDocletOptions>true</useStandardDocletOptions>
