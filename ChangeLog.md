@@ -43,6 +43,8 @@ under the License.
     * https://github.com/mojohaus/cobertura-maven-plugin/issues/67
 	* https://stackoverflow.com/a/64700109
 
+* In the same vein, lifecycle-mapping is moved to a m2e environment dedicated profile, to allow Docker builds to proceed.
+
 **2025-12-16 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-22_
