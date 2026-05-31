@@ -39,6 +39,10 @@ under the License.
     * Tomcat to 10.1.55
     * maven plugins: assembly to 3.8.0, compiler to 3.15.0, dependency to 3.11.0, enforcer to 3.6.3, release to 3.3.1, resources to 3.5.0, surefire to 3.5.6, war to 3.5.1 and umldoclet to 2.3.0
 
+* Exclude com.sun:tools from cobertura-maven-plugin as this causes `mvn dependency:go-offline` errors on Docker builds. See
+    * https://github.com/mojohaus/cobertura-maven-plugin/issues/67
+	* https://stackoverflow.com/a/64700109
+
 **2025-12-16 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.0-git-22_
