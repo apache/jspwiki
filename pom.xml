@@ -118,7 +118,6 @@
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
     <plugin.cargo.version>1.10.25</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
-    <plugin.cobertura.version>2.7</plugin.cobertura.version>
     <plugin.cyclonedx.version>2.9.1</plugin.cyclonedx.version>
     <plugin.sonar.version>5.3.0.6276</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
@@ -914,18 +913,6 @@
         </plugin>
 
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>cobertura-maven-plugin</artifactId>
-          <version>${plugin.cobertura.version}</version>
-          <configuration>
-            <formats>
-              <format>html</format>
-              <format>xml</format>
-            </formats>
-          </configuration>
-        </plugin>
-
-        <plugin>
           <groupId>org.cyclonedx</groupId>
           <artifactId>cyclonedx-maven-plugin</artifactId>
           <version>${plugin.cyclonedx.version}</version>
@@ -943,72 +930,6 @@
           <version>${plugin.sonar-report.version}</version>
         </plugin>
 
-        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>${plugin.eclipse-lifecycle-mapping.version}</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>io.leonard.maven.plugins</groupId>
-                    <artifactId>jspc-maven-plugin</artifactId>
-                    <versionRange>[2.4.6,)</versionRange>
-                    <goals><goal>compile</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>net.alchim31.maven</groupId>
-                    <artifactId>yuicompressor-maven-plugin</artifactId>
-                    <versionRange>[1.3.2,)</versionRange>
-                    <goals><goal>compress</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <versionRange>[1.7,)</versionRange>
-                    <goals><goal>run</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>jslint-maven-plugin</artifactId>
-                    <versionRange>[1.0.1,)</versionRange>
-                    <goals><goal>jslint</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>ro.isdc.wro4j</groupId>
-                    <artifactId>wro4j-maven-plugin</artifactId>
-                    <versionRange>[1.7.2,)</versionRange>
-                    <goals><goal>run</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <versionRange>[2.1,)</versionRange>
-                    <goals><goal>unpack</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
         <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
@@ -1149,6 +1070,89 @@
         </plugins>
       </build>
     </profile>
+	
+	<profile>
+	  <id>m2e</id>
+      <!-- This profile is only active when the property "m2e.version"
+        is set, which is the case when building in Eclipse with m2e. -->
+      <activation>
+        <property>
+          <name>m2e.version</name>
+        </property>
+      </activation>
+	  
+	  <build>
+	    <pluginManagement>
+		  <plugins>
+		    <plugin>
+              <groupId>org.eclipse.m2e</groupId>
+              <artifactId>lifecycle-mapping</artifactId>
+              <version>${plugin.eclipse-lifecycle-mapping.version}</version>
+              <configuration>
+                <lifecycleMappingMetadata>
+                  <pluginExecutions>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>io.leonard.maven.plugins</groupId>
+                        <artifactId>jspc-maven-plugin</artifactId>
+                        <versionRange>[2.4.6,)</versionRange>
+                        <goals><goal>compile</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>net.alchim31.maven</groupId>
+                        <artifactId>yuicompressor-maven-plugin</artifactId>
+                        <versionRange>[1.3.2,)</versionRange>
+                        <goals><goal>compress</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <versionRange>[1.7,)</versionRange>
+                        <goals><goal>run</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>jslint-maven-plugin</artifactId>
+                        <versionRange>[1.0.1,)</versionRange>
+                        <goals><goal>jslint</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>ro.isdc.wro4j</groupId>
+                        <artifactId>wro4j-maven-plugin</artifactId>
+                        <versionRange>[1.7.2,)</versionRange>
+                        <goals><goal>run</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <versionRange>[2.1,)</versionRange>
+                        <goals><goal>unpack</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                  </pluginExecutions>
+                </lifecycleMappingMetadata>
+              </configuration>
+            </plugin>
+		  </plugins>
+		</pluginManagement>
+	  </build>
+	</profile>
   </profiles>
 
   <organization>
