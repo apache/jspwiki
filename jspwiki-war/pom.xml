@@ -136,7 +136,7 @@
                 <executions>
                     <execution>
                         <id>buildDefaultJsAndCss</id>
-                        <phase>prepare-package</phase>
+                        <phase>${plugin.wro4j.default-phase}</phase>
                         <goals>
                             <goal>run</goal>
                             <!--<goal>jshint</goal>-->
