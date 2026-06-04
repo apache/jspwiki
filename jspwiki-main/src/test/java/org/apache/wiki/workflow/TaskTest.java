@@ -32,9 +32,8 @@ import java.util.List;
 
 public class TaskTest {
 
-    TestEngine engine = TestEngine.build();
-    // listen to workflow events
-    WorkflowManager workflowsEventListener = new DefaultWorkflowManager();
+    TestEngine engine;
+    WorkflowManager workflowsEventListener;
     Workflow m_workflow;
     Task m_task;
 
@@ -74,6 +73,8 @@ public class TaskTest {
 
     @BeforeEach
     public void setUp() throws Exception {
+        engine = TestEngine.build();
+        workflowsEventListener = new DefaultWorkflowManager();
         workflowsEventListener.initialize( engine, TestEngine.getTestProperties() );
         m_workflow = new Workflow( "workflow.key", new WikiPrincipal( "Owner1" ) );
         m_task = new NormalTask( m_workflow );
