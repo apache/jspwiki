@@ -110,6 +110,7 @@
     <plugin.source.version>3.4.0</plugin.source.version>
     <plugin.surefire.version>3.5.6</plugin.surefire.version>
     <plugin.surefire.junit5-tree-reporter.version>1.5.1</plugin.surefire.junit5-tree-reporter.version>
+    <plugin.surefire.junit5-tree-reporter.enable-console>false</plugin.surefire.junit5-tree-reporter.enable-console>
     <plugin.war.version>3.5.1</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>5.0.0</plugin.jspc.version>
@@ -702,7 +703,7 @@
           <configuration>
             <argLine>@{argLine}</argLine>
             <consoleOutputReporter>
-              <disable>true</disable>
+              <disable>${plugin.surefire.junit5-tree-reporter.enable-console}</disable>
             </consoleOutputReporter>
             <reportFormat>plain</reportFormat>
             <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
