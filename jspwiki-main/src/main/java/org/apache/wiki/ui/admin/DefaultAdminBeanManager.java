@@ -66,7 +66,6 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
     public DefaultAdminBeanManager( final Engine engine ) {
         LOG.info("Using JDK 1.5 Platform MBeanServer");
         m_mbeanServer = MBeanServerFactory15.getServer();
-
         m_engine = engine;
         applicationName = m_engine.getWikiProperties().getProperty("jspwiki.applicationName").trim();
 
@@ -156,7 +155,7 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
     private ObjectName getObjectName( final AdminBean ab ) throws MalformedObjectNameException {
         final String component = getJMXTitleString( ab.getType() );
         final String title     = ab.getTitle();
-        return new ObjectName(String.format("%s:component=%s,name=%s (%s)", Release.APPNAME, component, title, applicationName));
+        return new ObjectName( String.format( "%s:component=%s,name=%s (%s)", Release.APPNAME, component, title, applicationName ) );
     }
 
     /**
@@ -234,7 +233,12 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
         {}
 
         public static MBeanServer getServer() {
-            return ManagementFactory.getPlatformMBeanServer();
+            try {
+                return ManagementFactory.getPlatformMBeanServer();
+            } catch( final Exception e ) {
+                LOG.error( "Unable to obtain platform MBeanServer, JMX admin beans will not be available", e );
+                return null;
+            }
         }
     }
 
@@ -260,21 +264,23 @@ public class DefaultAdminBeanManager implements WikiEventListener, AdminBeanMana
 	 */
     @Override
 	public void actionPerformed( final WikiEvent event ) {
-        if( event instanceof WikiEngineEvent ) {
-            if( event.getType() == WikiEngineEvent.SHUTDOWN ) {
-                for( final AdminBean m_allBean : m_allBeans ) {
-                    try {
-                        final ObjectName on = getObjectName( m_allBean );
-                        if( m_mbeanServer.isRegistered( on ) ) {
-                            m_mbeanServer.unregisterMBean( on );
-                            LOG.info( "Unregistered AdminBean " + m_allBean.getTitle() );
+        if( m_mbeanServer != null ) {
+            if( event instanceof WikiEngineEvent ) {
+                if( event.getType() == WikiEngineEvent.SHUTDOWN ) {
+                    for( final AdminBean m_allBean : m_allBeans ) {
+                        try {
+                            final ObjectName on = getObjectName( m_allBean );
+                            if( m_mbeanServer.isRegistered( on ) ) {
+                                m_mbeanServer.unregisterMBean( on );
+                                LOG.info( "Unregistered AdminBean " + m_allBean.getTitle() );
+                            }
+                        } catch( final MalformedObjectNameException e ) {
+                            LOG.error( "Malformed object name when unregistering", e );
+                        } catch( final InstanceNotFoundException e ) {
+                            LOG.error( "Object was registered; yet claims that it's not there", e );
+                        } catch( final MBeanRegistrationException e ) {
+                            LOG.error( "Registration exception while unregistering", e );
                         }
-                    } catch( final MalformedObjectNameException e ) {
-                        LOG.error( "Malformed object name when unregistering", e );
-                    } catch( final InstanceNotFoundException e ) {
-                        LOG.error( "Object was registered; yet claims that it's not there", e );
-                    } catch( final MBeanRegistrationException e ) {
-                        LOG.error( "Registration exception while unregistering", e );
                     }
                 }
             }
