@@ -59,7 +59,7 @@ jobs:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
     - name: Build with Maven
-      run: mvn clean package -T 1C -V -B -Pintegration-tests "-Dplugin.surefire.junit5-tree-reporter.enable-console=true" "-Dplugin.wro4j.default-phase=none"
+      run: mvn clean package -T 1C -V -B -Pintegration-tests "-Dplugin.surefire.junit5-tree-reporter.enable-console=true"
 #    - name: Dependency scan
 #      run: mvn org.sonatype.ossindex.maven:ossindex-maven-plugin:LATEST:audit
 # token required

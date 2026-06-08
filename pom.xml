@@ -123,7 +123,6 @@
     <plugin.sonar.version>5.3.0.6276</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
     <plugin.wro4j.version>2.1.1</plugin.wro4j.version>
-    <plugin.wro4j.default-phase>prepare-package</plugin.wro4j.default-phase>
     <plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
     <maven.compiler.source>${jdk.version}</maven.compiler.source> <!-- override values from parent pom -->
     <maven.compiler.target>${jdk.version}</maven.compiler.target>

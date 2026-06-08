@@ -136,7 +136,7 @@
                 <executions>
                     <execution>
                         <id>buildDefaultJsAndCss</id>
-                        <phase>${plugin.wro4j.default-phase}</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>run</goal>
                             <!--<goal>jshint</goal>-->
@@ -158,7 +158,7 @@
                     <!-- HADDOCK template -->
                     <execution>
                         <id>buildHaddockJsAndCss</id>
-                        <phase>${plugin.wro4j.default-phase}</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>

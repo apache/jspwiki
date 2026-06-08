@@ -152,7 +152,7 @@
         <executions>
           <execution>
             <id>buildPlainEditorSyntaxJS</id>
-            <phase>${plugin.wro4j.default-phase}</phase>
+            <phase>prepare-package</phase>
             <goals>
               <goal>run</goal>
             </goals>
