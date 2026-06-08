@@ -142,15 +142,7 @@
                             <!--<goal>jshint</goal>-->
                         </goals>
                         <configuration>
-                            <!--
-                            <targetGroups>all</targetGroups>
-                            <minimize>true</minimize>
-                            <cssDestinationFolder>d:/static/css/</cssDestinationFolder>
-                            <jsDestinationFolder>d:/static/js/</jsDestinationFolder>
-                            <ignoreMissingResources>false</ignoreMissingResources>
-                            -->
-                            <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/210/
-                            </cssDestinationFolder>
+                            <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/210/</cssDestinationFolder>
                             <wroFile>src/main/config/wro/wro.xml</wroFile>
                         </configuration>
                     </execution>
@@ -163,8 +155,7 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/
-                            </cssDestinationFolder>
+                            <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
                             <wroFile>src/main/config/wro/wro-haddock.xml</wroFile>
                         </configuration>
                     </execution>
