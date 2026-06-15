@@ -189,7 +189,10 @@ public class Image implements Plugin {
 
         if( link != null ) {
             if( !context.getBooleanWikiProperty( MarkupParser.PROP_ALLOWHTML, false ) ) {
-                if( link.startsWith( "data:" ) || link.startsWith( "javascript:" ) ) {
+                String testVal = link.toLowerCase().replaceAll("\\s+","").trim();
+                if (testVal.startsWith("data")
+                        || testVal.startsWith("javascript")
+                        || testVal.startsWith("vbscript")) {
                     link = "http://invalid_url" + link;
                 }
             }
@@ -200,8 +203,11 @@ public class Image implements Plugin {
             result.append(">");
         }
 
-        if( !context.getBooleanWikiProperty( MarkupParser.PROP_ALLOWHTML, false ) ) {
-            if( src.startsWith( "data:" ) || src.startsWith( "javascript:" ) ) {
+        if(!context.getBooleanWikiProperty(MarkupParser.PROP_ALLOWHTML, false)) {
+            String testVal = src.toLowerCase().replaceAll("\\s+", "").trim();
+            if (testVal.startsWith("data")
+                    || testVal.startsWith("javascript")
+                    || testVal.startsWith("vbscript")) {
                 src = "http://invalid_url" + src;
             }
         }
