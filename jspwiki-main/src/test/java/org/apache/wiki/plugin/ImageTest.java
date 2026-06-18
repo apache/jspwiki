@@ -21,7 +21,6 @@ import org.junit.jupiter.api.Assertions;
 
 /**
  *
- * @author Dad
  */
 public class ImageTest {
 
