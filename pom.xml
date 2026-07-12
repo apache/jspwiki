@@ -149,12 +149,14 @@
     <module>jspwiki-markdown</module>
     <module>jspwiki-tika-searchprovider</module>
     <module>jspwiki-kendra-searchprovider</module>
+    <module>jspwiki-plugins</module>
+    <module>jspwiki-https-enabler</module>
     <module>jspwiki-210-test-adaptees</module>
     <module>jspwiki-210-adapters</module>
     <module>jspwiki-war</module>
+    <module>jspwiki-war-https</module>
     <module>jspwiki-portable</module>
     <module>jspwiki-it-tests</module><!-- IT tests are launched only if -Pintegration-tests is given -->
-    <module>jspwiki-plugins</module>
     <module>jspwiki-bom</module>
   </modules>
 
