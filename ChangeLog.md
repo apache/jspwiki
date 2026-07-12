@@ -16,6 +16,25 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-07-12 Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _3.0.0-git-24_
+
+* Rework OWASP filters so that they can be configured also through wiki properties under `jspwiki.http.filters` namespace. See source code for specific property names
+
+* Move OWASP filter configurations to web-fragment.xml at jspwiki-http
+
+* jspwiki-war defaults to http again, which allows Dockerfile builds to be used. Full https war is provided through `jspwiki-https-enabler` and `jspwiki-war-https` modules
+
+* Dependency Updates
+    * parent to 39
+    * aws-java-sdk-kendra to 1.12.797
+    * JUnit to 6.1.2
+    * Log4J to 2.26.1
+    * Selenide to 7.17.0
+    * Tomcat to 10.1.57
+    * Maven plugins: umldoclet to 2.3.1
+
 **2026-05-28 Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _3.0.0-git-23_
