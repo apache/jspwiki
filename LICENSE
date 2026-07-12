@@ -210,8 +210,8 @@ LIBRARY                                     LICENSE FILE
 activation-1.1.jar                          ./jspwiki-war/src/main/config/doc/LICENSE.cddl
 akismet-java-1.02.jar                       ./jspwiki-war/src/main/config/doc/LICENSE.akismet
 annotations-15.0.jar                        LICENSE
-aws-java-sdk-core-1.12.565.jar              LICENSE
-aws-java-sdk-kendra-1.12.565.jar            LICENSE
+aws-java-sdk-core-1.12.797.jar              LICENSE
+aws-java-sdk-kendra-1.12.797.jar            LICENSE
 commons-codec-1.22.0.jar                    LICENSE
 commons-collections-4.5.0.jar               LICENSE
 commons-fileupload-2.0.0-M5.jar             LICENSE
@@ -251,14 +251,14 @@ jackson-databind-2.12.7.1                   LICENSE
 jackson-dataformat-cbor-2.12.7.1            LICENSE
 jaxen-2.0.0.jar                             ./jspwiki-war/src/main/config/doc/LICENSE.jaxen
 jdom2-2.0.6.jar                             ./jspwiki-war/src/main/config/doc/LICENSE.jdom
-jmespath-java-1.12.565                      LICENSE
+jmespath-java-1.12.797                      LICENSE
 joda-time-2.8.1                             LICENSE
 jstl-1.2.jar                                LICENSE
 logging-mailhandler-1.6.2.jar               ./jspwiki-war/src/main/config/doc/LICENSE.cddl
-log4j-1.2-api-2.25.4.jar                    LICENSE
-log4j-api-2.25.4.jar                        LICENSE
-log4j-core-2.25.4.jar                       LICENSE
-log4j-slf4j-impl-2.25.4                     LICENSE
+log4j-1.2-api-2.26.1.jar                    LICENSE
+log4j-api-2.26.1.jar                        LICENSE
+log4j-core-2.26.1.jar                       LICENSE
+log4j-slf4j-impl-2.26.1                     LICENSE
 lucene-analyzers-common-9.12.2.jar          LICENSE
 lucene-backward-codecs-9.12.2.jar           LICENSE
 lucene-core-9.12.2.jar                      LICENSE
@@ -288,9 +288,9 @@ custom_rhino-0.4.3.jar                      ./jspwiki-war/src/main/config/doc/LI
 hsqldb-2.7.4.jar                            ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 sqltool-2.7.4.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.hsqldb
 jamm-0.4.0.jar                              LICENSE
-junit-6.1.0                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
+junit-6.1.2                                 ./jspwiki-war/src/main/config/doc/LICENSE.cpl
 mockito-core-5.20.0.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.mit
-selenide-7.16.2.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
+selenide-7.17.0.jar                         ./jspwiki-war/src/main/config/doc/LICENSE.mit
 yuicompressor-2.4.7.jar                     ./jspwiki-war/src/main/config/doc/LICENSE.yui
 
 JS LIBRARY                                  LICENSE FILE
@@ -305,7 +305,7 @@ SlimBox                                     ./jspwiki-war/src/main/config/doc/LI
 
 RESOURCES                                   LICENSE FILE
 =============================================================================================================
-Apache Tomcat 10.1.55                       LICENSE
+Apache Tomcat 10.1.57                       LICENSE
 Font Awesome (CSS & LESS files)             ./jspwiki-war/src/main/config/doc/LICENSE.mit
 Font Awesome (Fonts)                        ./jspwiki-war/src/main/config/doc/LICENSE.ofl
 SilkIconSet                                 ./jspwiki-war/src/main/config/doc/LICENSE.SilkIconSet
