@@ -18,20 +18,21 @@
  */
 package org.apache.wiki.util;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.util.SubnetUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.apache.commons.net.util.SubnetUtils;
 
 
 /**
@@ -347,6 +348,18 @@ public final class HttpUtil {
      */
     public static String getAbsoluteUrl(final HttpServletRequest request) {
         return getAbsoluteUrl(request, null);
+    }
+
+    /**
+     * Add's a header to the response
+     *
+     * @param response servlet response in which the header is added
+     * @param headerName header's name
+     * @param headerValue header's value
+     */
+    public static void addHeader( final ServletResponse response, final String headerName, final String headerValue ) {
+        final HttpServletResponse res = ( HttpServletResponse )response;
+        res.addHeader( headerName, headerValue );
     }
 
 }

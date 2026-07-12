@@ -21,8 +21,10 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletResponse;
+import org.apache.wiki.util.HttpUtil;
+
 import java.io.IOException;
+
 
 /**
  * Content-Security-Policy (CSP): Mitigates XSS and other injection attacks by
@@ -32,18 +34,20 @@ public class CSPFilter implements Filter {
 
     private String mode = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self'; img-src 'self';";
 
-    public void init(FilterConfig filterConfig) {
-        String configMode = filterConfig.getInitParameter("CSPValue");
-        if (configMode != null) {
+    /** {@inheritDoc} */
+    @Override
+    public void init( final FilterConfig filterConfig ) {
+        final String configMode = FilterOperations.initValue( filterConfig, "CSPValue", "csp.value" );
+        if( configMode != null ) {
             mode = configMode;
         }
     }
 
+    /** {@inheritDoc} */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletResponse res = (HttpServletResponse) response;
-        res.addHeader("Content-Security-Policy", mode);
-        chain.doFilter(request, response);
+    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
+        HttpUtil.addHeader( response,"Content-Security-Policy", mode );
+        chain.doFilter( request, response );
     }
 
 }

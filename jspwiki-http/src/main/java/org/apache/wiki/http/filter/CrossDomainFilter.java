@@ -21,29 +21,32 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletResponse;
+import org.apache.wiki.util.HttpUtil;
+
 import java.io.IOException;
 
+
 /**
- * X-Permitted-Cross-Domain-Policies: Restricts cross-domain data loading by
- * specific plugins, such as Flash.
+ * X-Permitted-Cross-Domain-Policies: Restricts cross-domain data loading by specific plugins, such as Flash.
  */
 public class CrossDomainFilter implements Filter {
 
     private String mode = "none";
 
-    public void init(FilterConfig filterConfig) {
-        String configMode = filterConfig.getInitParameter("XDomainValue");
-        if (configMode != null) {
+    /** {@inheritDoc} */
+    @Override
+    public void init( final FilterConfig filterConfig ) {
+        final String configMode = FilterOperations.initValue( filterConfig, "XDomainValue", "cross-domain.value" );
+        if( configMode != null ) {
             mode = configMode;
         }
     }
 
+    /** {@inheritDoc} */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletResponse res = (HttpServletResponse) response;
-        res.addHeader("X-Permitted-Cross-Domain-Policies", mode);
-        chain.doFilter(request, response);
+    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
+        HttpUtil.addHeader( response,"X-Permitted-Cross-Domain-Policies", mode );
+        chain.doFilter( request, response );
     }
 
 }
