@@ -26,6 +26,8 @@ under the License.
 
 * jspwiki-war defaults to http again, which allows Dockerfile builds to be used. Full https war is provided through `jspwiki-https-enabler` and `jspwiki-war-https` modules
 
+* Remove compilations on GH Actions for JDK-18 and JDK-19 due to a [JDK bug](https://jspwiki-wiki.apache.org/Wiki.jsp?page=Common%20problems%20when%20building%20JSPWiki#section-Common+problems+when+building+JSPWiki-UnableToBuildUsingJDK18UnderSomeConditions)
+
 * Dependency Updates
     * parent to 39
     * aws-java-sdk-kendra to 1.12.797
