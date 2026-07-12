@@ -27,15 +27,11 @@
 
   <artifactId>jspwiki-plugins</artifactId>
   <modelVersion>4.0.0</modelVersion>
-  <description>Optional plugins for JSP wiki</description>
+  <description>Optional plugins for JSPWiki</description>
   <packaging>pom</packaging>
 
   <modules>
     <module>jspwiki-plugins-chartist</module>
   </modules>
-
-  <dependencies>
-   
-  </dependencies>
 
 </project>
