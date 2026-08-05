@@ -89,7 +89,15 @@ public class Image implements Plugin {
     private static String getCleanParameter( final Map< String, String > params, final String paramId ) {
         return TextUtil.replaceEntities( params.get( paramId ) );
     }
-
+    private boolean needsSanitization(String link) {
+        String testVal = link.toLowerCase().replaceAll("\\s+", "").trim();
+        if (testVal.startsWith("data")
+                || testVal.startsWith("javascript")
+                || testVal.startsWith("vbscript")) {
+            return true;
+        }
+        return false;
+    }
     /**
      *  {@inheritDoc}
      */
@@ -174,7 +182,7 @@ public class Image implements Plugin {
 
         if( link != null ) {
             if( !context.getBooleanWikiProperty( MarkupParser.PROP_ALLOWHTML, false ) ) {
-                if( link.startsWith( "data:" ) || link.startsWith( "javascript:" ) ) {
+                if (needsSanitization(link)) {
                     link = "http://invalid_url" + link;
                 }
             }
@@ -185,8 +193,8 @@ public class Image implements Plugin {
             result.append(">");
         }
 
-        if( !context.getBooleanWikiProperty( MarkupParser.PROP_ALLOWHTML, false ) ) {
-            if( src.startsWith( "data:" ) || src.startsWith( "javascript:" ) ) {
+        if(!context.getBooleanWikiProperty(MarkupParser.PROP_ALLOWHTML, false)) {
+            if (needsSanitization(src)) {
                 src = "http://invalid_url" + src;
             }
         }
