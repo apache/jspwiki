@@ -82,8 +82,8 @@
     <wiki:Permission permission="createGroups">
       <fmt:message key="group.createsuggestion">
         <fmt:param><wiki:Link jsp="NewGroup.jsp">
-                      <wiki:Param name="group" value="<%=name%>" />
-                      <wiki:Param name="group" value="<%=name%>" />
+                      <wiki:Param name="group" value="<%=TextUtil.replaceEntities(name)%>" />
+                      <wiki:Param name="group" value="<%=TextUtil.replaceEntities(name)%>" />
                       <fmt:message key="group.createit"/>
                    </wiki:Link>
         </fmt:param>
@@ -156,7 +156,7 @@
         method="POST" accept-charset="UTF-8">
       <wiki:CsrfProtection/>
       <input type="submit" name="ok" value="<fmt:message key="actions.deletegroup"/>" />
-      <input type="hidden" name="group" value="${param.group}" />
+      <input type="hidden" name="group" value="${TextUtil.replaceEntities(param.group)}" />
   </form>
   </wiki:Permission>
 

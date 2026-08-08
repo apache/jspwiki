@@ -30,6 +30,7 @@
 <%@ page import="org.apache.wiki.auth.authorize.GroupManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.util.comparators.PrincipalComparator" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
@@ -102,7 +103,7 @@
       class="hidden"
         name="deleteGroupForm" id="deleteGroupForm"
       method="POST" accept-charset="UTF-8">
-  <input type="hidden" name="group" value="${group.name}" />
+  <input type="hidden" name="group" value="${ TextUtil.replaceEntities(group.name)}" />
   <wiki:CsrfProtection/>
   <input type="submit" name="ok"
    data-modal="+ .modal"
