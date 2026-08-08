@@ -75,7 +75,7 @@
     String append  = request.getParameter("append");
     String edit    = request.getParameter("edit");
     String author  = TextUtil.replaceEntities( findParam( pageContext, "author" ) );
-    String changenote = findParam( pageContext, "changenote" );
+    String changenote = TextUtil.replaceEntities( findParam( pageContext, "changenote" ) );
     String text    = EditorManager.getEditedText( pageContext );
     String link    = TextUtil.replaceEntities( findParam( pageContext, "link") );
     String spamhash = findParam( pageContext, SpamFilter.getHashFieldName(request) );
