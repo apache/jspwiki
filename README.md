@@ -62,7 +62,7 @@ Since JSPWiki 2.1.153, JSPWiki comes with a really simple installation
 engine.  Just do the following:
 
 1) Install Tomcat from https://tomcat.apache.org/ (or any other servlet
-   container)
+   container) and unzip it somewhere.
 
 2) Rename the JSPWiki.war file from the download and rename it based on
    your desired URL (if you want it different from /JSPWiki).  For example,
@@ -70,13 +70,7 @@ engine.  Just do the following:
    This name will be referred to as <appname> below.
    Place this WAR in your `$TOMCAT_HOME/webapps` folder and then start Tomcat.
 
-3) Point your browser at http://&lt;myhost>/&lt;appname>/Install.jsp
-
-4) Answer a couple of simple questions
-
-5) Restart your container
-
-6) Point your browser to http://&lt;myhost>/&lt;appname>/
+3) Point your browser to http://&lt;myhost>/&lt;appname>/
 
 That's it!
 
