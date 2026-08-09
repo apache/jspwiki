@@ -35,6 +35,9 @@ import org.junit.jupiter.api.Test;
 
 import java.security.Principal;
 import java.util.regex.Matcher;
+import org.apache.wiki.auth.acl.adv.AdvancedAcl;
+import org.apache.wiki.auth.acl.adv.RuleNode;
+import org.mockito.internal.util.collections.Sets;
 
 public class DefaultAclManagerTest
 {
@@ -44,6 +47,12 @@ public class DefaultAclManagerTest
     public void setUp() throws Exception {
         m_engine.saveText( "TestDefaultPage", "Foo" );
         m_engine.saveText( "TestAclPage", "Bar. [{ALLOW edit Charlie, Herman}] " );
+        
+        m_engine.saveText("TestAdvAclPage", "Bar. [{ALLOW edit Charlie OR Herman}] [{ALLOW view Charlie OR Herman}] ");
+        
+        m_engine.saveText("TestAdvAclPage2", "Bar. [{ALLOW edit Charlie OR Admin OR NOT Accounting}] ");
+        m_engine.saveText("TestAdvAclPage3", "Bar. [{ALLOW edit Group1 AND (Group2 OR Group3)}] ");
+ 
     }
 
     @AfterEach
@@ -51,6 +60,11 @@ public class DefaultAclManagerTest
         try {
             m_engine.getManager( PageManager.class ).deletePage( "TestDefaultPage" );
             m_engine.getManager( PageManager.class ).deletePage( "TestAclPage" );
+            m_engine.getManager( PageManager.class ).deletePage( "TestAdvAclPage" );
+            m_engine.getManager( PageManager.class ).deletePage( "TestAdvAclPage2" );
+            m_engine.getManager( PageManager.class ).deletePage( "TestAdvAclPage3" );
+            
+            
         } catch ( final ProviderException e ) {
         }
     }
@@ -98,7 +112,77 @@ public class DefaultAclManagerTest
         p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "delete") );
         Assertions.assertEquals( 0, p.length );
     }
+    
+    @Test
+    public void testGetPermissionsAdvancedAcl() {
+        Page page = m_engine.getManager(PageManager.class).getPage("TestDefaultPage");
+        AclManager mgr = m_engine.getManager(AclManager.class);
 
+        page = m_engine.getManager(PageManager.class).getPage("TestAdvAclPage");
+        AdvancedAcl aacl = (AdvancedAcl) mgr.getPermissions(page);
+        Assertions.assertNotNull(page.getAcl());
+        Assertions.assertFalse(page.getAcl().isEmpty());
+
+        // Charlie is an editor; reading is therefore implied
+        RuleNode node = aacl.getNode(PermissionFactory.getPagePermission(page, "view"));
+        Assertions.assertTrue(node.evaluate(Sets.newSet("Charlie")));
+        Assertions.assertTrue(node.evaluate(Sets.newSet("Herman")));
+
+        // Charlie should not be able to delete this page
+        Assertions.assertTrue(node.evaluate(Sets.newSet("Herman")));
+
+        // Herman should be in the ACL as an editor
+        node = aacl.getNode(PermissionFactory.getPagePermission(page, "edit"));
+        Assertions.assertTrue(node.evaluate(Sets.newSet("Herman")));
+       
+    }
+
+     @Test
+    public void testGetPermissionsAdvancedAcl2() {
+        Page page = m_engine.getManager(PageManager.class).getPage("TestAdvAclPage2");
+        Assertions.assertNotNull(page.getAcl());
+        Assertions.assertFalse(page.getAcl().isEmpty());
+        AclManager mgr = m_engine.getManager(AclManager.class);
+
+        AdvancedAcl acl = (AdvancedAcl) mgr.getPermissions(page);
+        Assertions.assertNotNull(page.getAcl());
+        Assertions.assertFalse(page.getAcl().isEmpty());
+
+        // Charlie is an editor; reading is therefore implied
+        RuleNode node = acl.getNode(PermissionFactory.getPagePermission(page, "edit"));
+        Assertions.assertTrue(node.evaluate(Sets.newSet("Charlie")));
+        Assertions.assertTrue(node.evaluate(Sets.newSet("Admin")));
+        Assertions.assertFalse(node.evaluate(Sets.newSet("Accounting")));
+
+
+    }
+    
+      @Test
+    public void testGetPermissionsAdvancedAcl3() {
+        Page page = m_engine.getManager(PageManager.class).getPage("TestAdvAclPage3");
+        Assertions.assertNotNull(page.getAcl());
+        Assertions.assertFalse(page.getAcl().isEmpty());
+        AclManager mgr = m_engine.getManager(AclManager.class);
+
+        AdvancedAcl acl = (AdvancedAcl) mgr.getPermissions(page);
+        Assertions.assertNotNull(page.getAcl());
+        Assertions.assertFalse(page.getAcl().isEmpty());
+
+        // Charlie is an editor; reading is therefore implied
+        RuleNode node = acl.getNode(PermissionFactory.getPagePermission(page, "edit"));
+        Assertions.assertFalse(node.evaluate(Sets.newSet("Group1")));
+        Assertions.assertFalse(node.evaluate(Sets.newSet("Group2")));
+        Assertions.assertFalse(node.evaluate(Sets.newSet("Group3")));
+        Assertions.assertTrue(node.evaluate(Sets.newSet("Group1", "Group2")));
+        Assertions.assertTrue(node.evaluate(Sets.newSet("Group1", "Group3")));
+        Assertions.assertTrue(node.evaluate(Sets.newSet("Group1", "Group2", "Group3")));
+        Assertions.assertFalse(node.evaluate(Sets.newSet("Admin")));
+        Assertions.assertFalse(node.evaluate(Sets.newSet("Accounting")));
+
+
+    }
+
+    
     @Test
     public void testAclRegex()
     {

@@ -276,6 +276,7 @@ public class WikiEngine implements Engine {
         //
         try {
             final String aclClassName = m_properties.getProperty( PROP_ACL_MANAGER_IMPL, ClassUtil.getMappedClass( AclManager.class.getName() ).getName() );
+            final String authClassName = m_properties.getProperty( PROP_AUTHZ_MANAGER_IMPL, ClassUtil.getMappedClass( AuthorizationManager.class.getName() ).getName() );
             final String urlConstructorClassName = TextUtil.getStringProperty( props, PROP_URLCONSTRUCTOR, "DefaultURLConstructor" );
             final Class< URLConstructor > urlclass = ClassUtil.findClass( "org.apache.wiki.url", urlConstructorClassName );
 
@@ -289,7 +290,7 @@ public class WikiEngine implements Engine {
             initComponent( VariableManager.class, props );
             initComponent( SearchManager.class, this, props );
             initComponent( AuthenticationManager.class );
-            initComponent( AuthorizationManager.class );
+            initComponent( authClassName, AuthorizationManager.class );
             initComponent( UserManager.class );
             initComponent( GroupManager.class );
             initComponent( EditorManager.class, this );
