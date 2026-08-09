@@ -70,7 +70,13 @@ engine.  Just do the following:
    This name will be referred to as <appname> below.
    Place this WAR in your `$TOMCAT_HOME/webapps` folder and then start Tomcat.
 
-3) Point your browser to http://&lt;myhost>/&lt;appname>/
+3) Point your browser at http://&lt;myhost>/&lt;appname>/Install.jsp
+
+4) Answer a couple of simple questions
+
+5) Restart your container
+
+6) Point your browser to http://&lt;myhost>/&lt;appname>/
 
 That's it!
 
