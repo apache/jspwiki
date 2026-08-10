@@ -16,6 +16,16 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+
+
+**2026-08-10  Alex O'ree (alexoree AT apache DOT org)**
+
+* Prepare for release of 3.0.0 RC2
+
+* Fix for  [JSPWIKI-1275](https://issues.apache.org/jira/browse/JSPWIKI-1275)
+* Fix for [JSPWIKI-1274](https://issues.apache.org/jira/browse/JSPWIKI-1274)
+* Fix for [JSPWIKI-1273](https://issues.apache.org/jira/browse/JSPWIKI-1273)
+
 **2026-07-12 Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _3.0.0-git-24_
