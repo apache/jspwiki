@@ -136,7 +136,7 @@
         Arrays.sort( members, new PrincipalComparator() );
         pageContext.setAttribute("members", members);
     %>
-    <c:set var="group" value="<%= TextUtil.replaceEntities(group) %>" />
+    <c:set var="group" value="<%=group%>" />
     <tr class="${param.group == group.name ? 'highlight' : ''}">
       <%--<td><wiki:Link jsp='Group.jsp'><wiki:Param name='group' value='${group.name}'/>${group.name}</wiki:Link></td>--%>
       <td><c:if test="${group.name =='Admin'}"><span class="icon-unlock-alt"></span> </c:if>${TextUtil.replaceEntities(group.name)}</td>
