@@ -892,7 +892,17 @@
               <type>standalone</type>
               <home>${project.build.directory}/tomcat10x</home>
               <properties>
+                <cargo.protocol>http</cargo.protocol>
                 <cargo.servlet.port>8080</cargo.servlet.port>
+                <!--example for cargo plugin with https-->
+                <!--
+                <cargo.protocol>https</cargo.protocol>
+                <cargo.servlet.port>8443</cargo.servlet.port>
+                <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+                <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+                <cargo.tomcat.connector.keystoreFile>${project.basedir}/../jspwiki-portable/src/overlay/tomcat/conf/test-use-only.p12</cargo.tomcat.connector.keystoreFile>
+                <cargo.tomcat.connector.keystorePass></cargo.tomcat.connector.keystorePass>
+                -->
                 <cargo.jvmargs>-Xms256m -Xmx3072m -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -XX:+DisableExplicitGC -Xverify:none -Djava.awt.headless=true</cargo.jvmargs>
               </properties>
             </configuration>
