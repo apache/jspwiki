@@ -56,7 +56,7 @@
 
 %>
 <c:set var="name" value="<%=TextUtil.replaceEntities(name)%>" />
-<c:set var="members" value="<%= TextUtil.replaceEntities(membersAsString)%>" />
+<c:set var="members" value="<%= TextUtil.replaceEntities(membersAsString.toString())%>" />
 
 <div class="page-content">
 

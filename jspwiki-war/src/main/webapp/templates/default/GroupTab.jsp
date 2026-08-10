@@ -57,7 +57,7 @@
   StringBuffer membersAsString = null;
 
 %>
-<c:set var="groups" value="<%=TextUtil.replaceEntities(groups) %>" />
+<c:set var="groups" value="<%=groups %>" />
 
 <wiki:CheckRequestContext context="!createGroup"><c:set var="createFormClose" value="-close"/></wiki:CheckRequestContext>
 <wiki:Permission permission="createGroups">
