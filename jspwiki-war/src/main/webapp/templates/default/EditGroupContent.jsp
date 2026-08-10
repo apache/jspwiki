@@ -23,6 +23,7 @@
 <%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.authorize.Group" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.wiki.util.comparators.PrincipalComparator" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -63,7 +64,7 @@
             id="editGroup"
         method="POST" accept-charset="UTF-8">
 
-    <input type="hidden" name="group" value="${name}" />
+    <input type="hidden" name="group" value="${ TextUtil.replaceEntities(name) }" />
     <wiki:CsrfProtection/>
 
     <div class="form-group">
