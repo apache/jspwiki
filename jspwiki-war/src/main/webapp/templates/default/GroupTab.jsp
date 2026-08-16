@@ -57,7 +57,7 @@
   StringBuffer membersAsString = null;
 
 %>
-<c:set var="groups" value="<%= groups %>" />
+<c:set var="groups" value="<%=groups %>" />
 
 <wiki:CheckRequestContext context="!createGroup"><c:set var="createFormClose" value="-close"/></wiki:CheckRequestContext>
 <wiki:Permission permission="createGroups">
@@ -139,11 +139,11 @@
     <c:set var="group" value="<%= group %>" />
     <tr class="${param.group == group.name ? 'highlight' : ''}">
       <%--<td><wiki:Link jsp='Group.jsp'><wiki:Param name='group' value='${group.name}'/>${group.name}</wiki:Link></td>--%>
-      <td><c:if test="${group.name =='Admin'}"><span class="icon-unlock-alt"></span> </c:if>${group.name}</td>
+      <td><c:if test="${group.name =='Admin'}"><span class="icon-unlock-alt"></span> </c:if>${TextUtil.replaceEntities(group.name)}</td>
       <td>
         <c:forEach items="${members}" var="member" varStatus="iterator">
           <c:if test="${iterator.index > 0}">, </c:if>
-          ${member.name}
+          ${TextUtil.replaceEntities(member.name)}
         </c:forEach>
       </td>
       <td><fmt:formatDate value="${group.created}" pattern="${prefs.DateFormat}" timeZone="${prefs.TimeZone}" /></td>
@@ -158,7 +158,7 @@
       <c:if test='<%= authMgr.checkPermission( c.getWikiSession(), new GroupPermission( name, "edit" ) ) %>'>
       <%-- <wiki:Permission permission="editGroup"> --%>
         <a class="btn btn-xs btn-primary"
-            href="<wiki:Link format='url' jsp='EditGroup.jsp'><wiki:Param name='group' value='${group.name}' /></wiki:Link>" >
+            href="<wiki:Link format='url' jsp='EditGroup.jsp'><wiki:Param name='group' value='${TextUtil.replaceEntities(group.name)}' /></wiki:Link>" >
           <fmt:message key="actions.editgroup" />
         </a>
       <%--</wiki:Permission>--%>
@@ -166,7 +166,7 @@
 
       <c:if test='<%= authMgr.checkPermission( c.getWikiSession(), new GroupPermission( name, "delete" ) ) %>'>
       <%-- <wiki:Permission permission="deleteGroup"> --%>
-        <button class="btn btn-xs btn-danger" type="button" onclick="document.deleteGroupForm.group.value ='${group.name}';document.deleteGroupForm.ok.click();">
+        <button class="btn btn-xs btn-danger" type="button" onclick="document.deleteGroupForm.group.value ='${TextUtil.replaceEntities(group.name)}';document.deleteGroupForm.ok.click();">
           <fmt:message key="actions.deletegroup"/>
         </button>
       <%--</wiki:Permission>--%>
