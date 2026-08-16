@@ -379,7 +379,7 @@
                        class="attachment" ><wiki:PageVersion /></wiki:Link></td>
       --%>
       <td><a href="<wiki:Link version='<%=Integer.toString(att.getVersion())%>' format='url' />"
-                       title="<%= name %>"
+                       title="<%= TextUtil.replaceEntities(name) %>"
                        class="attachment" ><wiki:PageVersion /></a></td>
       <td style="white-space:nowrap;text-align:right;">
         <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0) %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
