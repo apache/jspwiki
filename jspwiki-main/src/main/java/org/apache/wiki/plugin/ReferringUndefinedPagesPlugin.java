@@ -54,7 +54,7 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
         final ReferenceManager referenceManager = context.getEngine().getManager( ReferenceManager.class );
 
         final int items = TextUtil.parseIntParameter(params.get(PARAM_MAX), ALL_ITEMS);
-        String extras = params.get(PARAM_EXTRAS);
+        String extras = TextUtil.replaceEntities( params.get( PARAM_EXTRAS ) );
         if (extras == null) {
             extras = rb.getString("referringundefinedpagesplugin.more");
         }

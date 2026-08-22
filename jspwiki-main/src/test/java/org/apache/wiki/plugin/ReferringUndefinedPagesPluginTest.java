@@ -113,4 +113,16 @@ public class ReferringUndefinedPagesPluginTest {
         Assertions.assertTrue( res.startsWith( "<div style=\"columns:2;-moz-columns:2;-webkit-columns:2;\"><a " ) );
     }
 
+    /**
+     * The 'extras' parameter is author-controlled; it must be entity-encoded before being
+     * appended to the HTML result.
+     */
+    @Test
+    void testParamExtrasEscaped() throws Exception {
+        final String res = manager.execute( context, "{INSERT ReferringUndefinedPagesPlugin} max='1' extras='<script>alert(document.cookie)</script>'}" );
+
+        Assertions.assertFalse( res.contains( "<script>" ), res );
+        Assertions.assertTrue( res.contains( "&lt;script&gt;alert(document.cookie)&lt;/script&gt;" ), res );
+    }
+
 }
