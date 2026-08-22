@@ -144,6 +144,24 @@ public class SvnStyleDiffProviderTest {
     }
      
 
+    @Test
+    public void testHtmlIsEscaped() throws IOException, WikiException {
+        final SvnStyleDiffProvider diff = new SvnStyleDiffProvider();
+        final Properties props = TestEngine.getTestProperties();
+        diff.initialize( null, props );
+
+        final TestEngine engine = new TestEngine( props );
+        final Context ctx = Wiki.context().create( engine, Wiki.contents().page( engine, "Dummy" ) );
+        final String actualDiff = diff.makeDiffHtml( ctx,
+                "unchanged <b>line</b>\n<script>alert(\"old\")</script>",
+                "unchanged <b>line</b>\n<script>alert(\"new\")</script>" );
+
+        Assertions.assertFalse( actualDiff.contains( "<script>" ), actualDiff );
+        Assertions.assertTrue( actualDiff.contains( "unchanged &lt;b&gt;line&lt;/b&gt;" ), actualDiff );
+        Assertions.assertTrue( actualDiff.contains( "&lt;script&gt;alert(&quot;old&quot;)&lt;/script&gt;" ), actualDiff );
+        Assertions.assertTrue( actualDiff.contains( "&lt;script&gt;alert(&quot;new&quot;)&lt;/script&gt;" ), actualDiff );
+    }
+
     private void diffTest( final String oldText, final String newText, int expected )
             throws IOException, WikiException {
         final SvnStyleDiffProvider diff = new SvnStyleDiffProvider();
