@@ -326,12 +326,17 @@ public abstract class MarkupParser {
 
     /**
      *  Writes HTML for error message.  Does not add it to the document, you have to do it yourself.
+     *  <p>
+     *  The error string is HTML-escaped here, because the wiki rendering pipeline serializes the
+     *  document with output escaping disabled, so any markup in the message would otherwise be
+     *  emitted verbatim into the page (e.g. attacker-controlled plugin parameters echoed back in
+     *  exception messages).
      *
      *  @param error The error string.
      *  @return An Element containing the error.
      */
     public static Element makeError( final String error ) {
-        return new Element( "span" ).setAttribute( "class", "error" ).addContent( error );
+        return new Element( "span" ).setAttribute( "class", "error" ).addContent( TextUtil.replaceEntities( error ) );
     }
 
     /**
