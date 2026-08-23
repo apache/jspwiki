@@ -32,7 +32,9 @@ import java.io.IOException;
  */
 public class ReferrerPolicyFilter implements Filter {
 
-    private String mode = "no-referrer-when-downgrade";
+    // Default to same-origin: wiki URLs can carry sensitive query parameters, so the URL must never reach a
+    // third-party destination via the Referer header. Deployments may still override via ReferrerPolicyPValue.
+    private String mode = "same-origin";
 
     /** {@inheritDoc} */
     @Override
