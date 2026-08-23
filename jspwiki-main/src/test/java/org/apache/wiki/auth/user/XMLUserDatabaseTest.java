@@ -44,15 +44,42 @@ public class XMLUserDatabaseTest {
 
     private XMLUserDatabase m_db;
 
+    private WikiEngine m_engine;
+
+    private Properties m_props;
+
     @BeforeEach
     public void setUp() throws Exception {
-        final Properties props = TestEngine.getTestProperties();
+        m_props = TestEngine.getTestProperties();
         File target = new File("target/XMLUserDatabaseTest" + UUID.randomUUID().toString() + ".xml");
         FileUtils.copyFile(new File("src/test/resources/userdatabase.xml" ), target);
-        props.put( XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath() );
-        final WikiEngine engine = new TestEngine( props );
+        m_props.put( XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath() );
+        m_engine = new TestEngine( m_props );
         m_db = new XMLUserDatabase();
-        m_db.initialize( engine, props );
+        m_db.initialize( m_engine, m_props );
+    }
+
+    @Test
+    public void testSaveQuotedEmailKeepsDatabaseWellFormed() throws Exception {
+        // An RFC-2822 quoted local part passes EmailValidator; it used to be written into
+        // userdatabase.xml without XML escaping, corrupting the whole authentication store.
+        final String email = "\"x\"@example.com";
+        UserProfile profile = m_db.newProfile();
+        profile.setEmail( email );
+        profile.setLoginName( "xmlescape" );
+        profile.setFullname( "Xml Escape" );
+        profile.setPassword( "password" );
+        m_db.save( profile );
+
+        // Reload the database from disk: a corrupted file comes back empty (or unparseable),
+        // locking every user out of authentication.
+        final XMLUserDatabase db2 = new XMLUserDatabase();
+        db2.initialize( m_engine, m_props );
+        final UserProfile saved = db2.findByLoginName( "xmlescape" );
+        Assertions.assertEquals( email, saved.getEmail() );
+
+        // The pre-existing users must have survived the round-trip as well.
+        Assertions.assertNotNull( db2.findByLoginName( "janne" ) );
     }
 
     @Test
