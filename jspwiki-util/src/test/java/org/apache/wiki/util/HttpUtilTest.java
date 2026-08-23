@@ -127,26 +127,32 @@ public class HttpUtilTest {
     }
 
     @Test
-    public void testGetAbsoluteUrlWithForwardedHostAndProto() {
+    public void testGetAbsoluteUrlIgnoresForwardedHostAndProto() {
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getHeader("X-Forwarded-Host")).thenReturn("proxyhost");
+        when(request.getHeader("X-Forwarded-Host")).thenReturn("evil.example.com");
         when(request.getHeader("X-Forwarded-Proto")).thenReturn("https");
+        when(request.getScheme()).thenReturn("http");
+        when(request.getServerName()).thenReturn("localhost");
+        when(request.getServerPort()).thenReturn(8080);
 
         String relativeUrl = "/login";
-        String expected = "https://proxyhost/login";
+        String expected = "http://localhost:8080/login";
 
         String actual = HttpUtil.getAbsoluteUrl(request, relativeUrl);
         assertEquals(expected, actual);
     }
 
     @Test
-    public void testGetAbsoluteUrlWithForwardedServerAndProto() {
+    public void testGetAbsoluteUrlIgnoresForwardedServerAndProto() {
         HttpServletRequest request = mock(HttpServletRequest.class);
-        when(request.getHeader("X-Forwarded-Server")).thenReturn("proxyserver");
+        when(request.getHeader("X-Forwarded-Server")).thenReturn("evil.example.com");
         when(request.getHeader("X-Forwarded-Proto")).thenReturn("https");
+        when(request.getScheme()).thenReturn("http");
+        when(request.getServerName()).thenReturn("localhost");
+        when(request.getServerPort()).thenReturn(8080);
 
         String relativeUrl = "/login";
-        String expected = "https://proxyserver/login";
+        String expected = "http://localhost:8080/login";
 
         String actual = HttpUtil.getAbsoluteUrl(request, relativeUrl);
         assertEquals(expected, actual);
@@ -176,7 +182,7 @@ public class HttpUtilTest {
         when(request.getServerName()).thenReturn("localhost");
         when(request.getServerPort()).thenReturn(443);
 
-        String expected = "forwardedProto://forwardedHost";
+        String expected = "https://localhost";
 
         String actual = HttpUtil.getAbsoluteUrl(request);
         assertEquals(expected, actual);
