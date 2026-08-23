@@ -38,6 +38,7 @@ import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.http.filter.CsrfProtectionFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.ui.progress.ProgressItem;
@@ -412,6 +413,7 @@ public class AttachmentServlet extends HttpServlet {
         final String errorPage = m_engine.getURL( ContextEnum.WIKI_ERROR.getRequestContext(), "", null ); // If something bad happened, Upload should be able to take care of most stuff
         String nextPage = errorPage;
         final String progressId = req.getParameter( "progressid" );
+        String csrfToken = req.getParameter( CsrfProtectionFilter.ANTICSRF_PARAM );
 
         // Check that we have a file upload request
         if( !ServletFileUpload.isMultipartContent(req) ) {
@@ -460,10 +462,23 @@ public class AttachmentServlet extends HttpServlet {
                     case "nextpage":
                         nextPage = validateNextPage( item.getString( StandardCharsets.UTF_8.name() ), errorPage );
                         break;
+                    case CsrfProtectionFilter.ANTICSRF_PARAM:
+                        csrfToken = item.getString( StandardCharsets.UTF_8.name() );
+                        break;
                     }
                 } else {
                     fileItems.add( item );
                 }
+            }
+
+            // The CsrfProtectionFilter delegates multipart requests to this servlet, since it cannot read the
+            // token from a multipart body without consuming it. Enforce the token here - taken from the multipart
+            // form field written by <wiki:CsrfProtection/> (or, for older clients, the query string) - before
+            // acting on anything else in the request, including the "Broken file upload" redirect below.
+            final Session session = Wiki.session().find( m_engine, req );
+            if( csrfToken == null || !csrfToken.equals( session.antiCsrfToken() ) ) {
+                LOG.error( "Incorrect {} received for {}", CsrfProtectionFilter.ANTICSRF_PARAM, req.getPathInfo() );
+                throw new RedirectException( "Missing or invalid CSRF token", errorPage );
             }
 
             if(fileItems.isEmpty()) {
