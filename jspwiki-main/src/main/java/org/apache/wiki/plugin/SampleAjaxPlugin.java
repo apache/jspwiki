@@ -22,6 +22,7 @@ import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
+import org.apache.wiki.util.TextUtil;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -46,7 +47,7 @@ public class SampleAjaxPlugin implements Plugin, WikiAjaxServlet {
 
 		var url = "/" + SERVLET_MAPPING + "/ajaxAction";
 
-		var ajaxParams = params.get("params");
+		var ajaxParams = jsStringEscape( params.get("params") );
 
 		var js = String.format("$('result%s').value='Loading…';"+
 			"var token = Wiki.CsrfProtection;"+
@@ -58,6 +59,31 @@ public class SampleAjaxPlugin implements Plugin, WikiAjaxServlet {
 			"}).post('params=%s&X-XSRF-TOKEN='+token)", id, url, id, ajaxParams);
 
 		return String.format("<div onclick='%s' style='color: blue; cursor: pointer'>Press Me</div><div id='result%s'></div>", js, id);
+	}
+
+	/**
+	 * Escapes a value for safe embedding inside a single-quoted javascript string that itself
+	 * lives inside a single-quoted HTML event-handler attribute: every character other than an
+	 * ASCII letter or digit is emitted as a javascript unicode escape, so the result can
+	 * terminate neither the enclosing javascript string nor the enclosing attribute.
+	 *
+	 * @param s the raw parameter value, may be {@code null}.
+	 * @return the escaped value, or an empty string if {@code s} was {@code null}.
+	 */
+	static String jsStringEscape( final String s ) {
+		if( s == null ) {
+			return "";
+		}
+		final StringBuilder sb = new StringBuilder( s.length() );
+		for( int i = 0; i < s.length(); i++ ) {
+			final char c = s.charAt( i );
+			if( ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' ) || ( c >= '0' && c <= '9' ) ) {
+				sb.append( c );
+			} else {
+				sb.append( String.format( "\\u%04x", ( int )c ) );
+			}
+		}
+		return sb.toString();
 	}
 
 	@Override
@@ -72,7 +98,8 @@ public class SampleAjaxPlugin implements Plugin, WikiAjaxServlet {
 			Thread.sleep( 5000 ); // Wait 5 seconds
 		} catch( final Exception e ) {
 		}
-		response.getWriter().print( "You called! actionName=" + actionName + " params=" + params );
+		response.getWriter().print( "You called! actionName=" + TextUtil.replaceEntities( actionName )
+				+ " params=" + TextUtil.replaceEntities( String.valueOf( params ) ) );
 	}
 
 }
