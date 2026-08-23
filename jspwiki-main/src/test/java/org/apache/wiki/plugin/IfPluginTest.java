@@ -43,6 +43,7 @@ public class IfPluginTest {
     @AfterEach
     public void tearDown() throws Exception {
         testEngine.getManager( PageManager.class ).deletePage( "Test" );
+        testEngine.getManager( PageManager.class ).deletePage( "SecretPage" );
     }
 
     /**
@@ -123,6 +124,27 @@ public class IfPluginTest {
     @Test
     public void testIfPluginIPNotAllowed() throws WikiException {
         final String src = "[{IfPlugin ip='!127.0.0.1'\n\nContent NOT visible for 127.0.0.1}]";
+        final String expected = "\n";
+
+        testEngine.saveText( "Test", src );
+        final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
+        final Context context = getJanneBasedWikiContextFor( page );
+
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
+        Assertions.assertEquals( expected, res );
+    }
+
+    /**
+     * Checks that an ACL-protected page cannot be probed through the contains parameter:
+     * a denied page must behave exactly as if its content did not match.
+     *
+     * @throws WikiException test Assertions.failing.
+     */
+    @Test
+    void testIfPluginContainsAclProtectedPageNotLeaked() throws WikiException {
+        testEngine.saveText( "SecretPage", "[{ALLOW view Alice}]\nxyzzy" );
+
+        final String src = "[{IfPlugin page='SecretPage' contains='xyzzy'\n\nSecret page contains xyzzy}]";
         final String expected = "\n";
 
         testEngine.saveText( "Test", src );
