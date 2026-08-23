@@ -24,6 +24,7 @@
 <%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.attachment.Attachment" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag" %>
@@ -59,6 +60,11 @@
 
     String delete = request.getParameter( "delete" );
     String deleteall = request.getParameter( "delete-all" );
+
+    if( ( delete != null || deleteall != null ) && !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+        response.sendRedirect( "/error/Forbidden.html" );
+        return;
+    }
 
     if( latestversion == null )
     {
