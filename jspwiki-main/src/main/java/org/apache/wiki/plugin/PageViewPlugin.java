@@ -521,7 +521,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
                     try( final InputStream fis = Files.newInputStream( new File( m_workDir, COUNTER_PAGE ).toPath() ) ) {
                         m_storage.load( fis );
                     } catch( final IOException ioe ) {
-                        LOG.error( "Can't load page counter store: " + ioe.getMessage() + " , will create a new one!" );
+                        LOG.debug( "Can't load page counter store: " + ioe.getMessage() + " , will create a new one!" );
                     }
 
                     // Copy the collection into a sorted map
