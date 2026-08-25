@@ -27,10 +27,12 @@ import org.apache.oro.text.regex.PatternMatcher;
 import org.apache.oro.text.regex.Perl5Compiler;
 import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.HttpUtil;
@@ -190,7 +192,15 @@ public class IfPlugin implements Plugin {
         include |= checkIP(context, ip);
 
         if( page != null ) {
-            final String content = context.getEngine().getManager( PageManager.class ).getPureText(page, WikiProvider.LATEST_VERSION).trim();
+            // Only read the target page's content if the requesting session is allowed to view it;
+            // otherwise behave exactly as if the content did not match, so ACL-protected content
+            // cannot be probed through the contains/is parameters.
+            String content = null;
+            final Page testedPage = context.getEngine().getManager( PageManager.class ).getPage( page );
+            if( testedPage != null && context.getEngine().getManager( AuthorizationManager.class )
+                    .checkPermission( context.getWikiSession(), PermissionFactory.getPagePermission( testedPage, "view" ) ) ) {
+                content = context.getEngine().getManager( PageManager.class ).getPureText(page, WikiProvider.LATEST_VERSION).trim();
+            }
             include |= checkContains(content,contains);
             include |= checkIs(content,is);
             include |= checkExists(context,page,exists);
