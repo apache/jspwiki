@@ -379,15 +379,39 @@ public class AttachmentServlet extends HttpServlet {
      *  Fixes [JSPWIKI-46].
      */
     private String validateNextPage( String nextPage, final String errorPage ) {
-        if( nextPage.contains( "://" ) ) {
-            // It's an absolute link, so unless it starts with our address, we'll log an error.
-            if( !nextPage.startsWith( m_engine.getBaseURL() ) ) {
-                LOG.warn("Detected phishing attempt by redirecting to an unsecure location: "+nextPage);
-                nextPage = errorPage;
-            }
-        }
+        if( !isSameOrigin( nextPage, m_engine.getBaseURL() ) ) {
+            LOG.warn("Detected phishing attempt by redirecting to an unsecure location: "+nextPage);
+            nextPage = errorPage;
+         }
+ 
 
         return nextPage;
+    }
+    
+    
+    /**
+     *  Checks that a redirect target stays on this wiki. Rejects scheme-relative ({@code //host}) and
+     *  backslash forms, which browsers resolve to a foreign origin even though they contain no {@code ://},
+     *  and requires any URL with an explicit scheme to stay within the wiki's base URL on a path-segment
+     *  boundary (so {@code http://host/wiki.evil.example} cannot spoof a base URL of {@code http://host/wiki}).
+     *
+     *  @param nextPage redirect target to validate
+     *  @param baseURL the wiki's configured base URL
+     *  @return true if the target is safe to redirect to
+     */
+    static boolean isSameOrigin( final String nextPage, final String baseURL ) {
+        // Browsers ignore ASCII control characters and whitespace when parsing URLs, so strip them before validating.
+        final String url = nextPage.replaceAll( "[\\x00-\\x20]", "" );
+        if( url.startsWith( "//" ) || url.startsWith( "/\\" ) || url.startsWith( "\\" ) ) {
+            return false;
+        }
+        final int colon = url.indexOf( ':' );
+        if( colon != -1 && url.substring( 0, colon ).matches( "[a-zA-Z][a-zA-Z0-9+.-]*" ) ) {
+            // absolute URL with an explicit scheme: only allow it inside our own base URL
+            final String base = baseURL.endsWith( "/" ) ? baseURL : baseURL + "/";
+            return url.startsWith( base ) || url.equals( base.substring( 0, base.length() - 1 ) );
+        }
+        return true; // relative URL, resolves on this server
     }
 
     /**
