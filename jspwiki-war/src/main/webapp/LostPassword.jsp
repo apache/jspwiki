@@ -41,54 +41,102 @@
 
     String message = null;
 
-    public boolean resetPassword( Engine wiki, HttpServletRequest request, ResourceBundle rb ) {
-        // Reset pw for account name
+    /*
+     * Builds the login URL for the reset e-mails from configuration ("jspwiki.baseURL", the
+     * externally reachable base URL of the wiki including the context path), never from request
+     * headers (Host / X-Forwarded-*), which are attacker-controlled. If the property is not set,
+     * a server-relative URL is used.
+     */
+    private String buildLoginUrl( Engine wiki ) {
+        String loginUrl = wiki.getManager( URLConstructor.class ).makeURL( ContextEnum.PAGE_NONE.getRequestContext(), "Login.jsp", "" );
+        String base = TextUtil.getStringProperty( wiki.getWikiProperties(), "jspwiki.baseURL", "" ).trim();
+        if( base.isEmpty() ) {
+            return loginUrl;
+        }
+        while( base.endsWith( "/" ) ) {
+            base = base.substring( 0, base.length() - 1 );
+        }
+        String contextPath = wiki.getBaseURL();
+        if( !contextPath.isEmpty() && loginUrl.startsWith( contextPath ) ) {
+            loginUrl = loginUrl.substring( contextPath.length() );
+        }
+        return base + loginUrl;
+    }
+
+    /*
+     * Step 1 of the password reset: mail a single-use, expiring reset token to the account owner.
+     * Nothing is disclosed to the requester: the caller reports the same message whether or not
+     * the account exists, so this cannot be used as an account enumeration oracle, and the stored
+     * credential is not touched here.
+     */
+    public void requestResetToken( Engine wiki, HttpServletRequest request, ResourceBundle rb ) {
         String name = request.getParameter( "name" );
+        UserDatabase userDatabase = wiki.getManager( UserManager.class ).getUserDatabase();
+
+        try {
+            UserProfile profile = userDatabase.findByEmail( name );
+            String token = PasswordResetTokenStore.getInstance().issue( profile.getLoginName() );
+            if( token == null ) {
+                // A token is already outstanding for this account (or the store is full): throttled.
+                log.info( "Password reset token request throttled." );
+                return;
+            }
+
+            Object[] args = { profile.getLoginName(), token, buildLoginUrl( wiki ), wiki.getApplicationName() };
+            Object[] args2 = { wiki.getApplicationName() };
+            MailUtil.sendMessage( wiki.getWikiProperties(),
+                                  profile.getEmail(),
+                                  MessageFormat.format( rb.getString( "lostpwd.token.subject" ), args2 ),
+                                  MessageFormat.format( rb.getString( "lostpwd.token.email" ), args ) );
+
+            log.info( "User " + profile.getLoginName() + " requested and received a password reset token." );
+        } catch( NoSuchPrincipalException e ) {
+            // Deliberately indistinguishable from success for the requester.
+            log.info( "Password reset requested for a non-existent account." );
+        } catch( Exception e ) {
+            log.error( "Tried to send a password reset token and got an exception: " + e );
+        }
+    }
+
+    /*
+     * Step 2 of the password reset: redeem the emailed token. Only here, with proof of control
+     * over the account mailbox, is the stored credential changed.
+     */
+    public boolean redeemResetToken( Engine wiki, HttpServletRequest request, ResourceBundle rb ) {
+        String token = request.getParameter( "resettoken" );
+        String loginName = PasswordResetTokenStore.getInstance().redeem( token == null ? null : token.trim() );
+        if( loginName == null ) {
+            message = rb.getString( "lostpwd.reset.unable" );
+            log.info( "Password reset attempted with an invalid, used or expired token." );
+            return false;
+        }
+
         UserDatabase userDatabase = wiki.getManager( UserManager.class ).getUserDatabase();
         boolean success = false;
 
         try {
-            UserProfile profile = null;
-            /*
-             // This is disabled because it would otherwise be possible to DOS JSPWiki instances
-             // by requesting new passwords for all users.  See https://issues.apache.org/jira/browse/JSPWIKI-78
-             try {
-                 profile = userDatabase.find(name);
-             } catch (NoSuchPrincipalException e) {
-             // Try email as well
-             }
-            */
-            if( profile == null ) {
-                profile = userDatabase.findByEmail( name );
-            }
-
-            String email = profile.getEmail();
+            UserProfile profile = userDatabase.findByLoginName( loginName );
             String randomPassword = TextUtil.generateRandomPassword();
 
             // Try sending email first, as that is more likely to fail.
 
-            Object[] args = { profile.getLoginName(), randomPassword, request.getScheme() + "://"+ request.getServerName() + ":" + request.getServerPort() +
-                             wiki.getManager( URLConstructor.class ).makeURL( ContextEnum.PAGE_NONE.getRequestContext(), "Login.jsp", "" ), wiki.getApplicationName() };
+            Object[] args = { profile.getLoginName(), randomPassword, buildLoginUrl( wiki ), wiki.getApplicationName() };
 
             String mailMessage = MessageFormat.format( rb.getString( "lostpwd.newpassword.email" ), args );
 
             Object[] args2 = { wiki.getApplicationName() };
-            MailUtil.sendMessage( wiki.getWikiProperties(), 
-            		              email, 
+            MailUtil.sendMessage( wiki.getWikiProperties(),
+            		              profile.getEmail(),
             		              MessageFormat.format( rb.getString( "lostpwd.newpassword.subject" ), args2 ),
                                   mailMessage );
 
-            log.info( "User " + email + " requested and received a new password." );
+            log.info( "User " + profile.getLoginName() + " redeemed a reset token and received a new password." );
 
             // Mail succeeded.  Now reset the password.
             // If this fails, we're kind of screwed, because we already emailed.
             profile.setPassword( randomPassword );
             userDatabase.save( profile );
             success = true;
-        } catch( NoSuchPrincipalException e ) {
-            Object[] args = { name };
-            message = MessageFormat.format( rb.getString( "lostpwd.nouser" ), args );
-            log.info( "Tried to reset password for non-existent user '" + name + "'" );
         } catch( SendFailedException e ) {
             message = rb.getString( "lostpwd.nomail" );
             log.error( "Tried to reset password and got SendFailedException: " + e );
@@ -122,14 +170,24 @@
 
     boolean done = false;
 
-    if( action != null && action.equals( "resetPassword" ) ) {
-        if( resetPassword( wiki, request, rb ) ) {
-            done = true;
-            wikiSession.addMessage( "resetpwok", rb.getString( "lostpwd.emailed" ) );
-            pageContext.setAttribute( "passwordreset", "done" );
+    // State changes only happen on POST: GET never mutates anything, and the
+    // CsrfProtectionFilter validates the anti-CSRF token on every POST.
+    if( "resetPassword".equals( action ) && "POST".equalsIgnoreCase( request.getMethod() ) ) {
+        String resetToken = request.getParameter( "resettoken" );
+        if( resetToken != null && !resetToken.trim().isEmpty() ) {
+            // Step 2: redeem the emailed token; only now is the stored credential changed.
+            if( redeemResetToken( wiki, request, rb ) ) {
+                done = true;
+                wikiSession.addMessage( "resetpwok", rb.getString( "lostpwd.emailed" ) );
+                pageContext.setAttribute( "passwordreset", "done" );
+            } else {
+                // Error
+                wikiSession.addMessage( "resetpw", message );
+            }
         } else {
-            // Error
-            wikiSession.addMessage( "resetpw", message );
+            // Step 1: always report the same outcome, whether or not the account exists.
+            requestResetToken( wiki, request, rb );
+            wikiSession.addMessage( "resetpwok", rb.getString( "lostpwd.tokenmailed" ) );
         }
     }
 

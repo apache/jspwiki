@@ -27,8 +27,8 @@ import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.tasks.TasksManager;
-import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.util.MailUtil;
+import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.Task;
 import org.apache.wiki.workflow.WorkflowManager;
@@ -78,9 +78,19 @@ public class SaveUserProfileTask extends Task {
                 final String subject = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc,
                                                  "notification.createUserProfile.accept.subject", app );
 
-                final String loginUrl = context.getEngine().getURL( ContextEnum.WIKI_LOGIN.getRequestContext(), null, null );
+                String loginUrl = context.getEngine().getURL( ContextEnum.WIKI_LOGIN.getRequestContext(), null, null );
 
-                final String absoluteLoginUrl = HttpUtil.getAbsoluteUrl(context.getHttpRequest(), loginUrl);
+                // Build the emailed link from configuration (jspwiki.baseURL), never from request
+                // headers (Host / X-Forwarded-*), which are attacker-controlled.
+                String base = TextUtil.getStringProperty( context.getEngine().getWikiProperties(), "jspwiki.baseURL", "" ).trim();
+                while( base.endsWith( "/" ) ) {
+                    base = base.substring( 0, base.length() - 1 );
+                }
+                final String contextPath = context.getEngine().getBaseURL();
+                if( !base.isEmpty() && !contextPath.isEmpty() && loginUrl.startsWith( contextPath ) ) {
+                    loginUrl = loginUrl.substring( contextPath.length() );
+                }
+                final String absoluteLoginUrl = base + loginUrl;
 
                 final String content = i18n.get( InternationalizationManager.DEF_TEMPLATE, m_loc,
                                                  "notification.createUserProfile.accept.content", app,
