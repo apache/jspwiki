@@ -20,12 +20,6 @@ package org.apache.wiki.plugin;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.PatternCompiler;
-import org.apache.oro.text.regex.PatternMatcher;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
@@ -40,6 +34,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import org.apache.wiki.util.TimeLimitedRegex;
 
 
 /**
@@ -63,7 +60,6 @@ public class ReferredPagesPlugin implements Plugin {
     private int m_depth;
     private final HashSet< String > m_exists  = new HashSet<>();
     private final StringBuffer m_result  = new StringBuffer( 1024 );
-    private final PatternMatcher m_matcher = new Perl5Matcher();
     private Pattern m_includePattern;
     private Pattern m_excludePattern;
     private int items;
@@ -181,12 +177,13 @@ public class ReferredPagesPlugin implements Plugin {
         // glob compiler :  * is 0..n instance of any char  -- more convenient as input
         // perl5 compiler : .* is 0..n instances of any char -- more powerful
         //PatternCompiler g_compiler = new GlobCompiler();
-        final PatternCompiler compiler = new Perl5Compiler();
 
         try {
-            m_includePattern = compiler.compile( includePattern );
-            m_excludePattern = compiler.compile( excludePattern );
-        } catch( final MalformedPatternException e ) {
+             m_includePattern = Pattern.compile( includePattern );
+            m_excludePattern = Pattern.compile( excludePattern );
+           // m_includePattern = compiler.compile( includePattern );
+           // m_excludePattern = compiler.compile( excludePattern );
+        } catch( final PatternSyntaxException e ) {
             if( m_includePattern == null ) {
                 throw new PluginException( "Illegal include pattern detected." );
             } else if( m_excludePattern == null ) {
@@ -245,10 +242,12 @@ public class ReferredPagesPlugin implements Plugin {
             if( !m_engine.getManager( PageManager.class ).wikiPageExists( link ) ) {
                 continue; // hide links to non-existing pages
             }
-            if(  m_matcher.matches( link , m_excludePattern ) ) {
+            // author-controlled patterns: time-box each match so a pathological
+            // regexp can't pin the rendering thread (see TimeLimitedRegex)
+            if (TimeLimitedRegex.matches(link, m_excludePattern)) {
                 continue;
             }
-            if( !m_matcher.matches( link , m_includePattern ) ) {
+            if (!TimeLimitedRegex.matches(link, m_includePattern)) {
                 continue;
             }
 
