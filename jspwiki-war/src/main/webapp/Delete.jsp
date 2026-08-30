@@ -29,6 +29,7 @@
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag" %>
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag.FixedQueue" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page errorPage="/Error.jsp" %>
@@ -39,6 +40,10 @@
 %>
 
 <%
+    if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+        response.sendRedirect( "/error/Forbidden.html" );
+        return;
+    }
     Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
     Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_DELETE.getRequestContext() );
