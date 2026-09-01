@@ -34,6 +34,7 @@
 <%@ page import="org.apache.wiki.workflow.NoSuchOutcomeException" %>
 <%@ page import="org.apache.wiki.workflow.Outcome" %>
 <%@ page import="org.apache.wiki.workflow.Workflow" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.workflow.WorkflowManager" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -55,6 +56,10 @@
 
     if( "decide".equals(request.getParameter("action")) )
     {
+        if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+            response.sendRedirect( "/error/Forbidden.html" );
+            return;
+        }
         try
         {
           // Extract parameters for decision ID & decision outcome
@@ -78,6 +83,10 @@
     }
     if( "abort".equals(request.getParameter("action")) )
     {
+        if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+            response.sendRedirect( "/error/Forbidden.html" );
+            return;
+        }
         try
         {
           // Extract parameters for decision ID & decision outcome

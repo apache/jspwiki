@@ -469,7 +469,7 @@ public final class PropertyReader {
                 LOG.info("ServletContext's temporary directory not found. Setting jspwiki.workDir to system's temporary directory: {}", defaultTmpDir);
             }
         } else {
-            LOG.info("jspwiki.workDir is already set to: {}", workDir);
+            LOG.debug("jspwiki.workDir is already set to: {}", workDir);
         }
     }
 
