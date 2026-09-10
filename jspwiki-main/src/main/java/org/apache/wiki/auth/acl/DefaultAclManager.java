@@ -49,6 +49,12 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.wiki.auth.acl.adv.AdvancedAcl;
+import org.apache.wiki.auth.acl.adv.NotNode;
+import org.apache.wiki.auth.acl.adv.OperatorNode;
+import org.apache.wiki.auth.acl.adv.RoleNode;
+import org.apache.wiki.auth.acl.adv.RuleNode;
+import org.apache.wiki.auth.acl.adv.RuleParser;
 
 /**
  * Default implementation that parses Acls from wiki page markup.
@@ -91,10 +97,40 @@ public class DefaultAclManager implements AclManager {
     public Acl parseAcl( final Page page, final String ruleLine ) throws WikiSecurityException {
         Acl acl = page.getAcl();
         if (acl == null) {
-            acl = Wiki.acls().acl();
+            acl = Wiki.acls().acl();    
         }
 
         try {
+            if (ruleLine.contains(" AND ")
+                    || ruleLine.contains(" NOT ")
+                    || ruleLine.contains(" OR ")) {
+                try {
+                    if (acl == null || !(acl instanceof AdvancedAcl)) {
+                        acl = new AdvancedAcl();
+                    }
+                    final StringTokenizer fieldToks = new StringTokenizer(ruleLine);
+                    //burn off the allow tag
+                    fieldToks.nextToken();
+                    //get the permission flag. i.e. edit, view, etc
+                    final String actions = fieldToks.nextToken();
+                    StringBuilder sb = new StringBuilder();
+                    while (fieldToks.hasMoreTokens()) {
+                        sb.append(fieldToks.nextToken() + " ");
+                    }
+                    RuleParser parser = new RuleParser(sb.toString());
+                    RuleNode node = parser.parse();
+                    ((AdvancedAcl) acl).addRuleNode(node, actions);
+                    recursiveResolve(node);
+                    page.setAcl(acl);
+                    LOG.debug(acl.toString());
+                    return acl;
+                } catch (final NoSuchElementException nsee) {
+                    LOG.warn("Invalid access rule: " + ruleLine + " - defaults will be used.");
+                    throw new WikiSecurityException("Invalid access rule: " + ruleLine, nsee);
+                } catch (final IllegalArgumentException iae) {
+                    throw new WikiSecurityException("Invalid permission type: " + ruleLine, iae);
+                }
+            }
             final StringTokenizer fieldToks = new StringTokenizer(ruleLine);
             fieldToks.nextToken();
             final String actions = fieldToks.nextToken();
@@ -128,7 +164,19 @@ public class DefaultAclManager implements AclManager {
 
         return acl;
     }
-
+  private void recursiveResolve(RuleNode node) {
+        if (node == null) {
+            return;
+        }
+        if (node instanceof OperatorNode) {
+            recursiveResolve(((OperatorNode) node).getLeft());
+            recursiveResolve(((OperatorNode) node).getRight());
+        } else if (node instanceof NotNode) {
+            recursiveResolve(((NotNode) node).getChild());
+        } else if (node instanceof RoleNode) {
+            ((RoleNode) node).setPrincipal(m_auth.resolvePrincipal(((RoleNode) node).getRole()));
+        }
+    }
 
     /** {@inheritDoc} */
     @Override
