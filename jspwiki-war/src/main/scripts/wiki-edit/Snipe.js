@@ -763,12 +763,22 @@ var Snipe = new Class({
             Selection will become "test",  and snippet will become "wiki-page"
         [te$st] => lback = "te", match = "test",  snippet ="team-page"
             Selection will become "st",  and snippet will become "am-page"
+        [link|url|$ more] => lback = "", match = "", snippet = "target='_blank'"
+            Inserts at the caret; " more" is kept
+        [link|url|cla$ more] => lback = "cla", match = "cla", snippet = "class='viewer'"
+            Replaces only "cla"; " more" is kept
     */
     suggestAction: function( txta, snippet, lback, match){
 
         var start = txta.getSelectionRange().start,
             len = match.length;
 
+        // If the forward match stopped early (e.g. at whitespace) but the user
+        // already typed more in the look-back, replace the whole look-back.
+        if( len < lback.length ){
+            len = lback.length;
+        }
+        
         //console.log("Snipe:suggestAction ",snippet,lback,match );
         if( snippet.startsWith( lback ) ){
 
