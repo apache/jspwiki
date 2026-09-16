@@ -27,6 +27,7 @@
 <%@ page import="org.apache.wiki.api.core.Session" %>
 <%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.workflow.Decision" %>
@@ -53,6 +54,12 @@
     
     // Get the current decisions
     DecisionQueue dq = wiki.getManager( WorkflowManager.class ).getDecisionQueue();
+
+    String action = request.getParameter( "action" );
+    if( ( "decide".equals( action ) || "abort".equals( action ) ) && !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+        response.sendRedirect( "/error/Forbidden.html" );
+        return;
+    }
 
     if( "decide".equals(request.getParameter("action")) )
     {
