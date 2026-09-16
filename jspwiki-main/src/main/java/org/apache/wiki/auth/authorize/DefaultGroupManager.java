@@ -239,23 +239,26 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             }
         }
         
-        if ("false".equalsIgnoreCase(m_engine.getWikiProperties().getProperty(Engine.PROP_USE_2_X_ACL_LOGIC, "false"))) {
-            //check to ensure that the group name does not conflict with any existing user account login, email or wiki name
-            UserManager userManger = m_engine.getManager(UserManager.class);
-            try { userManger.getUserDatabase().findByEmail(name);
+        if( "false".equalsIgnoreCase( m_engine.getWikiProperties().getProperty( Engine.PROP_USE_2_X_ACL_LOGIC, "false" ) ) ) {
+            // check to ensure that the group name does not conflict with any existing user account login, email or wiki name
+            final UserManager userManager = m_engine.getManager( UserManager.class );
+            try {
+                userManager.getUserDatabase().findByEmail( name );
                 throw new WikiSecurityException( "Group name conflicts with a user account" );
-            }catch (NoSuchPrincipalException e) {
-                //no issues here
+            } catch( final NoSuchPrincipalException e ) {
+                // no issues here
             }
-            try { userManger.getUserDatabase().findByLoginName(name);
+            try {
+                userManager.getUserDatabase().findByLoginName( name );
                 throw new WikiSecurityException( "Group name conflicts with a user account" );
-            }catch (NoSuchPrincipalException e) {
-                //no issues here
+            } catch( final NoSuchPrincipalException e ) {
+                // no issues here
             }
-            try { userManger.getUserDatabase().findByWikiName(name);
+            try {
+                userManager.getUserDatabase().findByWikiName( name );
                 throw new WikiSecurityException( "Group name conflicts with a user account" );
-            }catch (NoSuchPrincipalException e) {
-                //no issues here
+            }catch( final NoSuchPrincipalException e ) {
+                // no issues here
             }
         }
 
