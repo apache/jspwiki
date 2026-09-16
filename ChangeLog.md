@@ -17,13 +17,53 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-09-16 Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _3.0.1-git-02_
+
+* Fix for [JSPWIKI-1240](https://issues.apache.org/jira/browse/JSPWIKI-1240): Inconsistent test failures with RSSGenerator not finding the XML user database on CI builds - synchronize `DefaultUserManager#getUserDatabase()` so that other threads accesing it (such as `RssThread`) when it is fully initialized
+    * On the same topic, `HttpMockFactory#createHttpSession` no longer creates mock sessions with a fixed id; this was making some tests, under some circunstances, to reuse incorrect sessions, failing the build dependending on the tests execution order  
+
+* Fix regex pattern in `linkPart3` when editing a link tag (closes [PR#531](https://github.com/apache/jspwiki/pull/531/files)), by Ulf Dittmer, thanks!
+
+* Dependency Updates
+    * commons-codec to 1.22.1
+    * commons-collections to 4.6.0
+    * commons-validator to 1.11.0
+    * JUnit to 6.1.3
+    * Log4J to 2.26.1
+    * Selenide to 7.18.1
+    * Tika to 3.3.2
+    * Tomcat to 10.1.60
+    * Maven plugins: umldoclet to 2.3.2, compiler to 3.16.0, install to 3.2.0, jar to 3.5.1, surefire/failsafe to 3.6.0, cargo to 1.10.28
+
+**2026-09-01  Alex O'ree (alexoree AT apache DOT org)**
+
+* _3.0.1-git-01_
+
+* Fix for [JSPWIKI-1240](https://issues.apache.org/jira/browse/JSPWIKI-1240): Inconsistent test failures with RSSGenerator not finding the XML user database on CI builds: reduces the logging a bit for routine messages that pollute the stdout
+
+* Fix for [JSPWIKI-1277](https://issues.apache.org/jira/browse/JSPWIKI-1277)
+
+* Fix for [JSPWIKI-1278](https://issues.apache.org/jira/browse/JSPWIKI-1278)
+
+* Fix for [JSPWIKI-1279](https://issues.apache.org/jira/browse/JSPWIKI-1279)
+
+* Fix for [JSPWIKI-1285](https://issues.apache.org/jira/browse/JSPWIKI-1285)
+
+* Fix for [JSPWIKI-1291](https://issues.apache.org/jira/browse/JSPWIKI-1291)
+
+* Fix for [JSPWIKI-1303](https://issues.apache.org/jira/browse/JSPWIKI-1303)
+
 
 **2026-08-10  Alex O'ree (alexoree AT apache DOT org)**
 
 * Prepare for release of 3.0.0 RC2
 
-* Fix for  [JSPWIKI-1275](https://issues.apache.org/jira/browse/JSPWIKI-1275)
+* Fix for [JSPWIKI-1275](https://issues.apache.org/jira/browse/JSPWIKI-1275)
+
 * Fix for [JSPWIKI-1274](https://issues.apache.org/jira/browse/JSPWIKI-1274)
+
 * Fix for [JSPWIKI-1273](https://issues.apache.org/jira/browse/JSPWIKI-1273)
 
 **2026-07-12 Juan Pablo Santos (juanpablo AT apache DOT org)**
