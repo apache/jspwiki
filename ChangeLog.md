@@ -30,12 +30,13 @@ under the License.
     * commons-codec to 1.22.1
     * commons-collections to 4.6.0
     * commons-validator to 1.11.0
+    * Jackson to 3.2.2
     * JUnit to 6.1.3
     * Log4J to 2.26.1
     * Selenide to 7.18.1
     * Tika to 3.3.2
     * Tomcat to 10.1.60
-    * Maven plugins: umldoclet to 2.3.2, compiler to 3.16.0, install to 3.2.0, jar to 3.5.1, surefire/failsafe to 3.6.0, cargo to 1.10.28
+    * Maven plugins: umldoclet to 2.3.2, compiler to 3.16.0, install to 3.2.0, jar to 3.5.1, surefire/failsafe to 3.6.0, cargo to 1.10.28, cyclonedx 2.9.3
 
 **2026-09-01  Alex O'ree (alexoree AT apache DOT org)**
 

@@ -245,11 +245,12 @@ freshcookies-security-0.60.jar              LICENSE
 gson-2.13.1                                 LICENSE
 httpclient-4.5.13                           LICENSE
 httpcore-4.4.13                             LICENSE
-ion-java-1.0.2                              LICENSE
-jackson-annotations-2.12.7.1                LICENSE
-jackson-core-2.12.7.1                       LICENSE
-jackson-databind-2.12.7.1                   LICENSE
-jackson-dataformat-cbor-2.12.7.1            LICENSE
+jackson-annotations-2.22                    LICENSE
+jackson-core-2.17.2                         LICENSE
+jackson-core-3.2.2                          LICENSE
+jackson-databind-2.17.2                     LICENSE
+jackson-databind-3.2.2                      LICENSE
+jackson-dataformat-cbor-2.17.2              LICENSE
 jaxen-2.0.0.jar                             ./jspwiki-war/src/main/config/doc/LICENSE.jaxen
 jdom2-2.0.6.jar                             ./jspwiki-war/src/main/config/doc/LICENSE.jdom
 jmespath-java-1.12.797                      LICENSE

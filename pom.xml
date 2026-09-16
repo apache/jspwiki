@@ -61,7 +61,7 @@
     <freshcookies-security.version>0.60</freshcookies-security.version>
     <gson.version>2.13.2</gson.version>
     <hsqldb.version>2.7.4</hsqldb.version>
-    <jackson-version>3.0.2</jackson-version>
+    <jackson-version>3.2.2</jackson-version>
     <jakarta-activation.version>2.0.1</jakarta-activation.version>
     <jakarta-activation-api.version>2.1.4</jakarta-activation-api.version>
     <jakarta-jsp-api.version>4.0.0</jakarta-jsp-api.version>
@@ -120,7 +120,7 @@
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
     <plugin.cargo.version>1.10.28</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
-    <plugin.cyclonedx.version>2.9.1</plugin.cyclonedx.version>
+    <plugin.cyclonedx.version>2.9.3</plugin.cyclonedx.version>
     <plugin.sonar.version>5.3.0.6276</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
     <plugin.wro4j.version>2.1.1</plugin.wro4j.version>
