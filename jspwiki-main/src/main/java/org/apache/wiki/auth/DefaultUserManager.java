@@ -21,7 +21,6 @@ package org.apache.wiki.auth;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.wiki.ajax.AjaxUtil;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.core.Context;
@@ -75,7 +74,6 @@ import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
 
 
-
 /**
  * Default implementation for {@link UserManager}.
  *
@@ -116,7 +114,7 @@ public class DefaultUserManager implements UserManager {
 
     /** {@inheritDoc} */
     @Override
-    public UserDatabase getUserDatabase() {
+    public synchronized UserDatabase getUserDatabase() {
         if( m_database != null ) {
             return m_database;
         }
