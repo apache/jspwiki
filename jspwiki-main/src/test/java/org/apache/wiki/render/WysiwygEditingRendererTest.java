@@ -49,8 +49,15 @@ public class WysiwygEditingRendererTest {
     }
 
     private String render( final String s ) throws IOException {
+        return render( s, false );
+    }
+
+    private String render( final String s, final boolean wysiwygEditorMode ) throws IOException {
         final Page dummyPage = Wiki.contents().page(testEngine,"TestPage");
         final Context ctx = Wiki.context().create(testEngine,dummyPage);
+        if( wysiwygEditorMode ) {
+            ctx.setVariable( Context.VAR_WYSIWYG_EDITOR_MODE, Boolean.TRUE );
+        }
 
         final StringReader in = new StringReader(s);
 
@@ -90,6 +97,25 @@ public class WysiwygEditingRendererTest {
 
         src = "[Non-existent Pagename with Spaces]";
         Assertions.assertEquals( "<a class=\"createpage\" href=\"Non-existent Pagename with Spaces\">Non-existent Pagename with Spaces</a>", render(src) );
+    }
+
+    /**
+     * The wysiwyg render path echoes raw plugin command lines, access rules and metadata back into the
+     * generated HTML with output escaping disabled.  Unescaped markup there breaks out of the wysiwyg
+     * editors' &lt;textarea&gt; (stored XSS).  See the textarea sinks in templates/editors/*.jsp.
+     */
+    @Test
+    public void testWysiwygEchoedMarkupIsEscaped() throws Exception {
+        final String payload = "</textarea><script>alert(1)</script>";
+
+        String html = render( "[{SomePlugin " + payload + "}]", true );
+        Assertions.assertFalse( html.contains( payload ), html );
+
+        html = render( "[{SET foo='" + payload + "'}]", true );
+        Assertions.assertFalse( html.contains( payload ), html );
+
+        html = render( "[{ALLOW edit " + payload + "}]", true );
+        Assertions.assertFalse( html.contains( payload ), html );
     }
 
 }
