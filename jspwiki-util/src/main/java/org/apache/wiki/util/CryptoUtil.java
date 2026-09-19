@@ -18,10 +18,13 @@
  */
 package org.apache.wiki.util;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.Random;
 
@@ -41,6 +44,16 @@ public final class CryptoUtil {
     private static final Random RANDOM = new SecureRandom();
 
     private static final int DEFAULT_SALT_SIZE = 8;
+
+    /** Prefix of PBKDF2-HMAC-SHA256 password entries, the current password-storage format. */
+    public static final String PBKDF2_PREFIX = "{PBKDF2-SHA256}";
+
+    /** Iteration count for new PBKDF2-HMAC-SHA256 hashes, per current OWASP password-storage guidance. */
+    private static final int PBKDF2_ITERATIONS = 600_000;
+
+    private static final int PBKDF2_KEY_LENGTH_BYTES = 32;
+
+    private static final int PBKDF2_SALT_SIZE = 16;
 
     private static final Object HELP = "--help";
 
@@ -175,6 +188,64 @@ public final class CryptoUtil {
     }
 
     /**
+     * <p>Creates an iterated, salted PBKDF2-HMAC-SHA256 hash of the given password, suitable for storage. Unlike the
+     * single-iteration digests above, the work factor makes offline cracking of a disclosed user database
+     * expensive. The format is <code>{PBKDF2-SHA256}<var>iterations</var>$base64(salt)$base64(hash)</code>, so the
+     * iteration count of stored entries can be raised in the future without breaking old entries.</p>
+     *
+     * @param password the password to be hashed
+     * @return the password entry, prepended by <code>{PBKDF2-SHA256}</code>
+     * @throws NoSuchAlgorithmException If your JVM does not supply the necessary algorithm. Should not happen.
+     */
+    public static String getPbkdf2SaltedPassword( final byte[] password ) throws NoSuchAlgorithmException {
+        final byte[] salt = new byte[ PBKDF2_SALT_SIZE ];
+        RANDOM.nextBytes( salt );
+        return getPbkdf2SaltedPassword( password, salt, PBKDF2_ITERATIONS );
+    }
+
+    static String getPbkdf2SaltedPassword( final byte[] password, final byte[] salt, final int iterations ) throws NoSuchAlgorithmException {
+        final byte[] hash = pbkdf2( password, salt, iterations );
+        final Base64.Encoder encoder = Base64.getEncoder();
+        return PBKDF2_PREFIX + iterations + "$" + encoder.encodeToString( salt ) + "$" + encoder.encodeToString( hash );
+    }
+
+    /**
+     * Verifies a password against a <code>{PBKDF2-SHA256}</code> entry created by
+     * {@link #getPbkdf2SaltedPassword(byte[])}. The comparison is constant-time.
+     *
+     * @param password the password to verify
+     * @param entry the stored password entry
+     * @return true if the password matches the entry
+     * @throws NoSuchAlgorithmException If your JVM does not supply the necessary algorithm. Should not happen.
+     */
+    public static boolean verifyPbkdf2SaltedPassword( final byte[] password, final String entry ) throws NoSuchAlgorithmException {
+        if( !entry.startsWith( PBKDF2_PREFIX ) ) {
+            throw new IllegalArgumentException( "Hash not prefixed by expected algorithm; is it really a PBKDF2 hash?" );
+        }
+        final String[] fields = entry.substring( PBKDF2_PREFIX.length() ).split( "\\$" );
+        if( fields.length != 3 ) {
+            throw new IllegalArgumentException( "Malformed PBKDF2 password entry" );
+        }
+        final int iterations = Integer.parseInt( fields[ 0 ] );
+        final byte[] salt = Base64.getDecoder().decode( fields[ 1 ] );
+        final byte[] expected = Base64.getDecoder().decode( fields[ 2 ] );
+        final byte[] hash = pbkdf2( password, salt, iterations );
+        return MessageDigest.isEqual( expected, hash );
+    }
+
+    private static byte[] pbkdf2( final byte[] password, final byte[] salt, final int iterations ) throws NoSuchAlgorithmException {
+        final char[] chars = new String( password, StandardCharsets.UTF_8 ).toCharArray();
+        final PBEKeySpec spec = new PBEKeySpec( chars, salt, iterations, PBKDF2_KEY_LENGTH_BYTES * 8 );
+        try {
+            return SecretKeyFactory.getInstance( "PBKDF2WithHmacSHA256" ).generateSecret( spec ).getEncoded();
+        } catch( final InvalidKeySpecException e ) {
+            throw new NoSuchAlgorithmException( "Unable to compute PBKDF2 hash", e );
+        } finally {
+            spec.clearPassword();
+        }
+    }
+
+    /**
      *  Compares a password to a given entry and returns true, if it matches.
      *
      *  @param password The password in bytes.
@@ -183,11 +254,23 @@ public final class CryptoUtil {
      *  @throws NoSuchAlgorithmException If there is no SHA available.
      */
     public static boolean verifySaltedPassword( final byte[] password, final String entry ) throws NoSuchAlgorithmException {
-        if( !entry.startsWith( SSHA ) && !entry.startsWith( SHA256 ) ) {
+        if( !entry.startsWith( SSHA ) && !entry.startsWith( SHA256 ) && !entry.startsWith( CryptoUtil.PBKDF2_PREFIX )  ) {
             throw new IllegalArgumentException( "Hash not prefixed by expected algorithm; is it really a salted hash?" );
         }
-        final String algorithm = entry.startsWith( SSHA ) ? SSHA : SHA256;
-        final byte[] challenge = Base64.getDecoder().decode( entry.substring( algorithm.length() ).getBytes( StandardCharsets.UTF_8 ) );
+        final String algorithm;
+        if (entry.startsWith(PBKDF2_PREFIX)) {
+            return verifyPbkdf2SaltedPassword(password, entry);
+        } else if (entry.startsWith(SSHA)) {
+            algorithm = SSHA;
+        } else if (entry.startsWith(SHA256)) {
+            algorithm = SHA256;
+        } else {
+            throw new NoSuchAlgorithmException("unknown hash algorithm prefix");
+        }
+
+        String hash2 = entry.substring( algorithm.length() );
+        byte[] bits = hash2.getBytes( StandardCharsets.UTF_8 );
+        final byte[] challenge = Base64.getDecoder().decode(bits);
 
         // Extract the password hash and salt
         final byte[] passwordHash = extractPasswordHash( challenge, algorithm.equals( SSHA ) ? 20 : 32 );
