@@ -304,7 +304,7 @@ public class WeblogPlugin implements Plugin, ParserStagePlugin {
         buffer.append("<div class=\"weblogentryheading\">\n");
 
         final Date entryDate = entry.getLastModified();
-        buffer.append( entryFormat != null ? entryFormat.format(entryDate) : entryDate );
+        buffer.append( entryFormat != null ? TextUtil.replaceEntities( entryFormat.format(entryDate) ) : entryDate );
         buffer.append("</div>\n");
 
         //
