@@ -255,7 +255,7 @@
   <div class="row edit-area livepreview previewcolumn"><%-- .livepreview  .previewcolumn--%>
       <div>
         <textarea name="htmlPageText"
-             autofocus="autofocus"><%=pageAsHtml.replace("&", "&amp;")%></textarea>
+             autofocus="autofocus"><%=pageAsHtml.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")%></textarea>
       </div>
       <div class="ajaxpreview" >Preview comes here</div>
   </div>
