@@ -21,6 +21,7 @@ package org.apache.wiki.search.tika;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.tika.exception.TikaException;
+import org.apache.tika.exception.WriteLimitReachedException;
 import org.apache.tika.metadata.ClimateForcast;
 import org.apache.tika.metadata.CreativeCommons;
 import org.apache.tika.metadata.Database;
@@ -56,6 +57,13 @@ public class TikaSearchProvider extends LuceneSearchProvider {
     private static final Logger LOG = LogManager.getLogger( TikaSearchProvider.class );
     final AutoDetectParser parser;
     final Set< String > textualMetadataFields;
+
+    /**
+     * Maximum number of characters extracted from a single attachment for indexing. Bounds the memory used at index
+     * time regardless of attachment content: a small compressed attachment (e.g. a zip bomb, which expands to
+     * gigabytes of text) must not be able to grow into an unbounded in-memory string and exhaust the heap.
+     */
+    static final int MAX_EXTRACTED_CHARS = 1_000_000;
 
     public TikaSearchProvider() {
         parser = new AutoDetectParser();
@@ -99,10 +107,17 @@ public class TikaSearchProvider extends LuceneSearchProvider {
             final Metadata metadata = new Metadata();
             metadata.set( TikaCoreProperties.RESOURCE_NAME_KEY, att.getFileName() );
 
-            final ContentHandler handler = new BodyContentHandler(-1 );
-            // -1 disables the character size limit; otherwise only the first 100.000 characters are indexed
-
-            parser.parse( attStream, handler, metadata );
+            final ContentHandler handler = new BodyContentHandler( MAX_EXTRACTED_CHARS );
+            try {
+                parser.parse( attStream, handler, metadata );
+            } catch( final SAXException e ) {
+                if( !WriteLimitReachedException.isWriteLimitReached( e ) ) {
+                    throw e;
+                }
+                // keep what was extracted so far, so oversized attachments still get (truncated) indexing
+                LOG.warn( "Attachment {} reached the maximum of {} extracted characters, indexing truncated content",
+                          att.getFileName(), MAX_EXTRACTED_CHARS );
+            }
             out.append( handler );
 
             final String[] names = metadata.names();
