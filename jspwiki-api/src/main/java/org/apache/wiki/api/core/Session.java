@@ -132,6 +132,7 @@ public interface Session extends WikiEventListener {
      /**
      * Regenerates the anti-CSRF token. Called when the session's privilege level changes (i.e. at login), so that
      * a token observed before authentication cannot be replayed against the authenticated session.
+     * @since 3.0.1
      */
     void regenerateAntiCsrfToken();
     
