@@ -308,9 +308,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
                 monitor.register( httpSession, session );
             }
         }
-        if( session instanceof WikiSession ) {
-            ( ( WikiSession )session ).regenerateAntiCsrfToken();
-        }
+        session.regenerateAntiCsrfToken();
+        
     }
 
     /**
