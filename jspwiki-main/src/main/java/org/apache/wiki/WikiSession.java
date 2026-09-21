@@ -150,6 +150,15 @@ public class WikiSession implements Session {
         return antiCsrfToken;
     }
 
+    /**
+     * Regenerates the anti-CSRF token. Called when the session's privilege level changes (i.e. at login), so that
+     * a token observed before authentication cannot be replayed against the authenticated session.
+     */
+    @Override
+    public void regenerateAntiCsrfToken() {
+        antiCsrfToken = UUID.randomUUID().toString();
+    }
+
     /** {@inheritDoc} */
     @Override
     public Locale getLocale() {
