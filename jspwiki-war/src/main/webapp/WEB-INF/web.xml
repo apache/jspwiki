@@ -87,6 +87,18 @@
      <url-pattern>*.jsp</url-pattern>
    </filter-mapping>
 
+   <!-- declared here rather than in a META-INF/web-fragment.xml inside jspwiki-http.jar,
+        so that the filter is always applied, regardless of web fragment discovery/ordering -->
+   <filter>
+     <filter-name>CsrfProtectionFilter</filter-name>
+     <filter-class>org.apache.wiki.http.filter.CsrfProtectionFilter</filter-class>
+   </filter>
+
+   <filter-mapping>
+     <filter-name>CsrfProtectionFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+
    <!--
        HttpSessionListener used for managing WikiSession's.
      -->
