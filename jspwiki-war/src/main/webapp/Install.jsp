@@ -29,6 +29,7 @@
 <%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="java.text.MessageFormat" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <fmt:setBundle basename="CoreResources"/>
 
@@ -54,6 +55,10 @@ ResourceBundle rb = Preferences.getBundle( wikiContext, "CoreResources" );
 // If user hit "submit" button, validate and install them
 if( request.getParameter("submit") != null )
 {
+    if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+        response.sendRedirect( "/error/Forbidden.html" );
+        return;
+    }
     validated = installer.validateProperties();
     if ( validated )
     {
