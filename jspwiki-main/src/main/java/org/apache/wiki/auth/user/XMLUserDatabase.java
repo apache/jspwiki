@@ -19,6 +19,7 @@
 package org.apache.wiki.auth.user;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
@@ -250,23 +251,23 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 final Element user = ( Element )nodes.item( i );
                 io.write( "    <" + USER_TAG + " " );
                 io.write( UID );
-                io.write( "=\"" + user.getAttribute( UID ) + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( UID ) ) + "\" " );
                 io.write( LOGIN_NAME );
-                io.write( "=\"" + user.getAttribute( LOGIN_NAME ) + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( LOGIN_NAME ) ) + "\" " );
                 io.write( WIKI_NAME );
-                io.write( "=\"" + user.getAttribute( WIKI_NAME ) + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( WIKI_NAME ) ) + "\" " );
                 io.write( FULL_NAME );
-                io.write( "=\"" + user.getAttribute( FULL_NAME ) + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( FULL_NAME ) ) + "\" " );
                 io.write( EMAIL );
-                io.write( "=\"" + user.getAttribute( EMAIL ) + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( EMAIL ) ) + "\" " );
                 io.write( PASSWORD );
-                io.write( "=\"" + user.getAttribute( PASSWORD ) + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( PASSWORD ) ) + "\" " );
                 io.write( CREATED );
-                io.write( "=\"" + user.getAttribute( CREATED ) + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( CREATED ) ) + "\" " );
                 io.write( LAST_MODIFIED );
-                io.write( "=\"" + user.getAttribute( LAST_MODIFIED ) + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( LAST_MODIFIED ) ) + "\" " );
                 io.write( LOCK_EXPIRY );
-                io.write( "=\"" + user.getAttribute( LOCK_EXPIRY ) + "\" " );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( LOCK_EXPIRY ) ) + "\" " );
                 io.write( ">" );
                 final NodeList attributes = user.getElementsByTagName( ATTRIBUTES_TAG );
                 for( int j = 0; j < attributes.getLength(); j++ ) {

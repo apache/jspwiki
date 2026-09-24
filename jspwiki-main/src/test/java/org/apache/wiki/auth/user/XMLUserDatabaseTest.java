@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.auth.user;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
@@ -30,10 +31,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 
 public class XMLUserDatabaseTest {
@@ -47,6 +50,37 @@ public class XMLUserDatabaseTest {
         final WikiEngine engine = new TestEngine( props );
         m_db = new XMLUserDatabase();
         m_db.initialize( engine, props );
+    }
+
+    @Test
+    public void testSaveQuotedEmailKeepsDatabaseWellFormed() throws Exception {
+        // An RFC-2822 quoted local part passes EmailValidator; it used to be written into
+        // userdatabase.xml without XML escaping, corrupting the whole authentication store.
+        // Use a private copy of the database so the shared test file is left alone.
+        final Properties props = TestEngine.getTestProperties();
+        final File target = new File( "target/XMLUserDatabaseTest" + UUID.randomUUID() + ".xml" );
+        FileUtils.copyFile( new File( "src/test/resources/userdatabase.xml" ), target );
+        props.put( XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath() );
+        final WikiEngine engine = new TestEngine( props );
+        final XMLUserDatabase db = new XMLUserDatabase();
+        db.initialize( engine, props );
+
+        final String email = "\"x\"@example.com";
+        final UserProfile profile = db.newProfile();
+        profile.setEmail( email );
+        profile.setLoginName( "xmlescape" );
+        profile.setFullname( "Xml Escape" );
+        profile.setPassword( "password" );
+        db.save( profile );
+
+        // Reload the database from disk: a corrupted file comes back empty (or unparseable),
+        // locking every user out of authentication.
+        final XMLUserDatabase db2 = new XMLUserDatabase();
+        db2.initialize( engine, props );
+        Assertions.assertEquals( email, db2.findByLoginName( "xmlescape" ).getEmail() );
+
+        // The pre-existing users must have survived the round-trip as well.
+        Assertions.assertNotNull( db2.findByLoginName( "janne" ) );
     }
 
     @Test
