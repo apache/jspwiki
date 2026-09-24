@@ -111,7 +111,7 @@ public class DefaultUserManager implements UserManager {
 
     /** {@inheritDoc} */
     @Override
-    public UserDatabase getUserDatabase() {
+    public synchronized UserDatabase getUserDatabase() {
         if( m_database != null ) {
             return m_database;
         }
