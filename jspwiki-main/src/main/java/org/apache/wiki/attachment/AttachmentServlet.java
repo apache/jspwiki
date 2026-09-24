@@ -63,6 +63,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 
@@ -86,6 +87,12 @@ public class AttachmentServlet extends HttpServlet {
     private Engine m_engine;
     private static final Logger LOG = LogManager.getLogger( AttachmentServlet.class );
     private static final String HDR_VERSION = "version";
+
+    /** Allowlist of passive content types which may be served inline; everything else forces a download. */
+    private static final Set< String > INLINE_SAFE_TYPES = Set.of(
+            "image/png", "image/jpeg", "image/gif", "image/webp", "image/bmp",
+            "image/avif", "image/tiff", "image/x-icon", "image/vnd.microsoft.icon",
+            "text/plain" );
 
     /** The maximum size that an attachment can be. */
     private int m_maxSize = Integer.MAX_VALUE;
@@ -219,7 +226,7 @@ public class AttachmentServlet extends HttpServlet {
                 final String mimetype = getMimeType( context, att.getFileName() );
                 res.setContentType( mimetype );
 
-                final String contentDisposition = getContentDisposition( att );
+                final String contentDisposition = getContentDisposition( att, mimetype );
                 res.addHeader( "Content-Disposition", contentDisposition );
                 res.addDateHeader("Last-Modified",att.getLastModified().getTime());
 
@@ -286,15 +293,33 @@ public class AttachmentServlet extends HttpServlet {
         }
     }
 
-    String getContentDisposition( final Attachment att ) {
-        // We use 'inline' instead of 'attachment' so that user agents can try to automatically open the file,
-        // except those cases in which we want to enforce the file download.
-        String contentDisposition = "inline; filename=\"";
-        if( m_engine.getManager( AttachmentManager.class ).forceDownload( att.getFileName() ) ) {
-            contentDisposition = "attachment; filename=\"";
+    String getContentDisposition( final Attachment att, final String mimetype ) {
+        // Default-deny: only passive content types which cannot execute script on the wiki's origin
+        // are served inline, so that user agents can try to automatically open them.  Everything
+        // else - including anything the container resolves to an actively rendering type such as
+        // text/html, application/xhtml+xml or image/svg+xml - is forced to download.
+        String contentDisposition = "attachment; filename=\"";
+        if( isInlineRenderSafe( mimetype ) && !m_engine.getManager( AttachmentManager.class ).forceDownload( att.getFileName() ) ) {
+            contentDisposition = "inline; filename=\"";
         }
         contentDisposition += att.getFileName() + "\";";
         return contentDisposition;
+    }
+
+    /**
+     * Checks whether the given content type is safe to render inline on the wiki origin, i.e. it is a
+     * passive media type which cannot carry script.  Actively rendering types (text/html,
+     * application/xhtml+xml, image/svg+xml, XML, PDF, ...) are deliberately not on the allowlist.
+     *
+     * @param mimetype The resolved content type of the attachment.
+     * @return {@code true} if the attachment may be served with {@code Content-Disposition: inline}.
+     */
+    static boolean isInlineRenderSafe( final String mimetype ) {
+        if( mimetype == null ) {
+            return false;
+        }
+        final String type = mimetype.toLowerCase();
+        return INLINE_SAFE_TYPES.contains( type ) || type.startsWith( "audio/" ) || type.startsWith( "video/" );
     }
 
     void sendError( final HttpServletResponse res, final String message ) throws IOException {
