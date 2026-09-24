@@ -202,6 +202,23 @@ public class SessionMonitor implements HttpSessionListener {
     }
 
     /**
+     * (Re-)associates a wiki session with the user's current HTTP session id. Needed after the HTTP session id has
+     * been rotated at authentication time (session-fixation defense), so that the upgraded privileges attach to the
+     * new session id instead of the pre-login one.
+     *
+     * @param session the user's HTTP session, carrying its current id
+     * @param wikiSession the wiki session to register under that id
+     */
+    public final void register( final HttpSession session, final Session wikiSession ) {
+        if( session == null || wikiSession == null ) {
+            throw new IllegalArgumentException( "Session cannot be null." );
+        }
+        synchronized( m_sessions ) {
+            m_sessions.put( session.getId(), wikiSession );
+        }
+    }
+
+    /**
      * Returns the current number of active wiki sessions.
      * @return the number of sessions
      */
