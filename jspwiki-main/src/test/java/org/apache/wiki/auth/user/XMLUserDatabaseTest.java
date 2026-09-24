@@ -46,7 +46,12 @@ public class XMLUserDatabaseTest {
     @BeforeEach
     public void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
-        props.put( XMLUserDatabase.PROP_USERDATABASE, "target/test-classes/userdatabase.xml" );
+        // Give every test its own copy of the database: validatePassword() rewrites the stored
+        // hash whenever it is not in the current format, so tests would otherwise see each
+        // other's upgrades through the shared file.
+        final File target = new File( "target/XMLUserDatabaseTest" + UUID.randomUUID() + ".xml" );
+        FileUtils.copyFile( new File( "src/test/resources/userdatabase.xml" ), target );
+        props.put( XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath() );
         final WikiEngine engine = new TestEngine( props );
         m_db = new XMLUserDatabase();
         m_db.initialize( engine, props );

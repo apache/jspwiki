@@ -223,6 +223,13 @@
     </dependency>
 
     <dependency>
+      <groupId>com.github.kirviq</groupId>
+      <artifactId>dumbster</artifactId>
+      <version>1.7.1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>

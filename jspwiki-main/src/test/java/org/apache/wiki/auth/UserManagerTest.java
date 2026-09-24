@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.auth;
 
+import com.dumbster.smtp.SimpleSmtpServer;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSessionTest;
@@ -39,8 +40,10 @@ import org.apache.wiki.workflow.DecisionRequiredException;
 import org.apache.wiki.workflow.Fact;
 import org.apache.wiki.workflow.Outcome;
 import org.apache.wiki.workflow.WorkflowManager;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -53,6 +56,20 @@ import java.util.Properties;
  */
 public class UserManagerTest {
 
+    private static SimpleSmtpServer dumbster = null;
+
+    @BeforeAll
+    public static void startTestEmailServer() throws Exception {
+        dumbster = SimpleSmtpServer.start( SimpleSmtpServer.AUTO_SMTP_PORT );
+    }
+
+    @AfterAll
+    public static void stopTestEmailServer() {
+        if( dumbster != null ) {
+            dumbster.close();
+        }
+    }
+
     private TestEngine m_engine;
     private UserManager m_mgr;
     private UserDatabase m_db;
@@ -64,6 +81,7 @@ public class UserManagerTest {
     @BeforeEach
     public void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
+        props.setProperty( "mail.smtp.port", dumbster.getPort() + "" );
 
         // Make sure user profile save workflow is OFF
         props.remove( "jspwiki.approver" + WorkflowManager.WF_UP_CREATE_SAVE_APPROVER );
@@ -87,6 +105,7 @@ public class UserManagerTest {
     /** Call this setup program to use the save-profile workflow. */
     protected void setUpWithWorkflow() throws Exception {
         final Properties props = TestEngine.getTestProperties();
+        props.setProperty( "mail.smtp.port", dumbster.getPort() + "" );
 
         // Turn on user profile saves by the Admin group
         props.put( "jspwiki.approver." + WorkflowManager.WF_UP_CREATE_SAVE_APPROVER, "Admin" );
