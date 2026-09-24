@@ -25,6 +25,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.mockito.Mockito;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -180,6 +183,46 @@ public class HttpUtilTest {
 
         String actual = HttpUtil.getAbsoluteUrl(request);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testGetRemoteAddressTrustsForwardedForOnlyBehindTrustedProxy() {
+        try {
+            // default: no trusted proxies configured, so X-Forwarded-For is ignored
+            HttpUtil.resetTrustedProxies();
+            HttpServletRequest direct = mock( HttpServletRequest.class );
+            when( direct.getRemoteAddr() ).thenReturn( "203.0.113.10" );
+            when( direct.getHeaders( "X-Forwarded-For" ) ).thenReturn( Collections.enumeration( List.of( "6.6.6.6" ) ) );
+            assertEquals( "203.0.113.10", HttpUtil.getRemoteAddress( direct ) );
+
+            System.setProperty( HttpUtil.PROP_TRUSTED_PROXIES, "10.0.0.1" );
+            HttpUtil.resetTrustedProxies();
+
+            // peer is not in the trusted list: header is still ignored
+            assertEquals( "203.0.113.10", HttpUtil.getRemoteAddress( direct ) );
+
+            // trusted peer, single entry: the forwarded client address is returned, trimmed
+            HttpServletRequest single = mock( HttpServletRequest.class );
+            when( single.getRemoteAddr() ).thenReturn( "10.0.0.1" );
+            when( single.getHeaders( "X-Forwarded-For" ) ).thenReturn( Collections.enumeration( List.of( " 198.51.100.7 " ) ) );
+            assertEquals( "198.51.100.7", HttpUtil.getRemoteAddress( single ) );
+
+            // comma-parse regression: the client address is returned, not ", <addr>" nor the raw list; an entry
+            // pre-populated by the client before the trusted proxy appended the real address is skipped over
+            HttpServletRequest proxied = mock( HttpServletRequest.class );
+            when( proxied.getRemoteAddr() ).thenReturn( "10.0.0.1" );
+            when( proxied.getHeaders( "X-Forwarded-For" ) ).thenReturn( Collections.enumeration( List.of( "6.6.6.6, 198.51.100.7" ) ) );
+            assertEquals( "198.51.100.7", HttpUtil.getRemoteAddress( proxied ) );
+
+            // a forwarded value that does not look like an IP address falls back to the peer address
+            HttpServletRequest garbage = mock( HttpServletRequest.class );
+            when( garbage.getRemoteAddr() ).thenReturn( "10.0.0.1" );
+            when( garbage.getHeaders( "X-Forwarded-For" ) ).thenReturn( Collections.enumeration( List.of( "evil injected\r\nvalue" ) ) );
+            assertEquals( "10.0.0.1", HttpUtil.getRemoteAddress( garbage ) );
+        } finally {
+            System.clearProperty( HttpUtil.PROP_TRUSTED_PROXIES );
+            HttpUtil.resetTrustedProxies();
+        }
     }
 
 
