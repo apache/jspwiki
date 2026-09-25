@@ -297,7 +297,7 @@
         <configuration>
           <systemPropertyVariables>
             <java.io.tmpdir>${project.build.directory}</java.io.tmpdir>
-          </systemPropertyVariables>          
+          </systemPropertyVariables>
           <excludes>
             <!-- time-consuming tests excluded by default -->
             <exclude>**/StressTestVersioningProvider.java</exclude>
