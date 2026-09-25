@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -319,6 +320,19 @@ public final class HttpUtil {
      */
     public static String getAbsoluteUrl(final HttpServletRequest request) {
         return getAbsoluteUrl(request, null);
+    }
+
+    /**
+     * Add's a header to the response
+     *
+     * @param response servlet response in which the header is added
+     * @param headerName header's name
+     * @param headerValue header's value
+     * @since 2.12.6
+     */
+    public static void addHeader( final ServletResponse response, final String headerName, final String headerValue ) {
+        final HttpServletResponse res = ( HttpServletResponse )response;
+        res.addHeader( headerName, headerValue );
     }
 
 }
