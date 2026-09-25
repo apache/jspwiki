@@ -17,6 +17,19 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-09-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
+
+* _2.12.6-git-01_
+
+* Backported all relevant commits between 3.0.0 and 2026-09-25
+    * Note that backporting `94de86414` adds `PBKDF2-HMAC-SHA256` as the current format for encrypted passwords at UserDatabase, falling back to legacy `SSHA/SHA-256` first, unsalted `SHA-1` last. This is backward compatible, but not _downgrade_ compatible: make a copy of your `userdatabase.xml` (or equivalent) database, just in case you decide to downgrade.
+    * `Cross-Origin-Embedder-Policy` Filter (`COEPFilter`) defaults that header to `require-corp`, meaning third party images will stop rendering. See the [allowed values for this header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Cross-Origin-Embedder-Policy) if you want it to be set to something else through `jspwiki.http.filters.coep.value` wiki property.
+    * Taking the previous point a step further, look at all the new filters at `jspwiki-http` module, they hold a bunch of `jspwiki.http.filters.*.value` properties that may be interesting to have a look at
+    * Lots of security hardenings
+    * Link snippets for more and class + fixes on links attributes dialog, by Ulf Dittmer
+    * Plugins update, but dependencies stay the same as in 2.12.5
+    * Backport assisted by Claude Code
+
 **2026-08-10  Alex O'ree (alexoree AT apache DOT org)**
 
 * Prepare for release of 2.12.5
@@ -94,7 +107,7 @@ under the License.
 * Extract suitable `jspwiki.woas.version` property for portable build from `project.version` instead of hard coding it into `build.xml`
 
 * Dependency updates
-    * Apache Parent POM to 34 
+    * Apache Parent POM to 34
     * Commons Collections to 4.5.0
     * Gson to 2.13.1 (closes [PR #383](https://github.com/apache/jspwiki/pull/383), thanks to Dependabot)
     * Log4J2 to 2.24.3 (closes [PR #379](https://github.com/apache/jspwiki/pull/379), thanks to Dependabot)
@@ -188,7 +201,7 @@ under the License.
 * _2.12.3-git-01_
 
 * Fix problematic `CalendarTag` <-> `WeblogPlugin` interaction
-    * Provided in [PR #350](https://github.com/apache/jspwiki/pull/350) by Ulf Dittmer, thanks! 
+    * Provided in [PR #350](https://github.com/apache/jspwiki/pull/350) by Ulf Dittmer, thanks!
 
 * Fix issue with CI build not findind a test-jar
 
@@ -236,7 +249,7 @@ under the License.
 * _2.12.2-git-13_
 
 * [JSPWIKI-1188](https://issues.apache.org/jira/browse/JSPWIKI-1188) - Support system property / env replacement for JSPWiki configuration properties
-    * [PR #330](https://github.com/apache/jspwiki/pull/330) provided by Alex O'Ree, thanks! 
+    * [PR #330](https://github.com/apache/jspwiki/pull/330) provided by Alex O'Ree, thanks!
 
 * `MailUtil` now uses every `mail.smtp` / `mail.smtps` property provided through your `jspwiki[-custom].properties` file
     * This allows to set f.ex., `mail.smtp.ssl.protocols=TLSv1.2` or `mail.smtp.ssl.trust=your.domain.org`
@@ -245,7 +258,7 @@ under the License.
 * Dependency updates
     * Apache parent to 32
     * Commons Text to 1.12.0
-    * JavaMail to 1.6.2 
+    * JavaMail to 1.6.2
     * Jetty to 9.4.54.v20240208 (closes [PR #334](https://github.com/apache/jspwiki/pull/334), thanks to Dependabot)
     * Tomcat to 9.0.88
     * Maven plugins: jar to 3.4.1, cargo to 1.10.12 (closes [PR #331](https://github.com/apache/jspwiki/pull/331), thanks to Dependabot), sonar to 3.11.0.3922 (closes [PR #333](https://github.com/apache/jspwiki/pull/333), thanks to Dependabot)
@@ -312,7 +325,7 @@ under the License.
 * Added `.svg` to default `jspwiki.attachment.forceDownload` patterns
 
 * [JSPWIKI-1184](https://issues.apache.org/jira/browse/JSPWIKI-1184) - Image missing and German text typo
-  Fixed as suggested by Ulf Dittmer - thanks! 
+  Fixed as suggested by Ulf Dittmer - thanks!
 
 * Dependency updates
     * Apache Parent to 31
@@ -367,13 +380,13 @@ Replaced 'size() == 0' with 'isEmpty()'
 
 * [JSPWIKI-1167](https://issues.apache.org/jira/browse/JSPWIKI-1167) - prettify: line numbering is wrong with longer lines
     Prettified code lines should not wrap around, to avoid mismatch with line numbering.
-    
+
 **2023-09-09  Dirk Frederickx (brushed AT apache DOT org)**
 
 * _2.12.2-git-01_
 
 * [JSPWIKI-1165](https://issues.apache.org/jira/browse/JSPWIKI-1165) - long text in monospace font inside {{}} is shown without scroll bar
-    Inline preformatted text will wrap as necessary, and stay within the width of the line boxes. 
+    Inline preformatted text will wrap as necessary, and stay within the width of the line boxes.
 
 **2023-09-06  Arturo Bernal (abernal AT apache DOT org)**
 
@@ -427,10 +440,10 @@ Replaced 'size() == 0' with 'isEmpty()'
 
 * Rollback wro4j plugin version and configuration to 1.8.0, as current configuration was affected by [MDEP-863](https://issues.apache.org/jira/browse/MDEP-863), preventing Docker builds
 
-* jspwiki-util and jspwiki-main don't pull commons-httpclient, as they weren't using it anymore (it is still pulled transitively, though) 
+* jspwiki-util and jspwiki-main don't pull commons-httpclient, as they weren't using it anymore (it is still pulled transitively, though)
 
 * Dependency updates
-    * AWS kendra java sdk to 1.12.468 
+    * AWS kendra java sdk to 1.12.468
     * Lucene to 9.6.0 (closes [#276](https://github.com/apache/jspwiki/pull/276)), thanks to dependabot
     * Selenide to 6.14.0 (closes [#274](https://github.com/apache/jspwiki/pull/274)), thanks to dependabot
     * Tomcat to 9.0.75 (closes [#275](https://github.com/apache/jspwiki/pull/275)), thanks to dependabot
@@ -471,7 +484,7 @@ Replaced 'size() == 0' with 'isEmpty()'
 * ReferenceManager implementation can be set via `jspwiki.refManager` property on your `jspwiki[-custom].properties` file
     * The provided implementation is expected to have a constructor receiving only an `Engine`
 
-* `.html`, `.htm` and `.js` attachments are now forcibly downloaded by default, if you want to open them rather than 
+* `.html`, `.htm` and `.js` attachments are now forcibly downloaded by default, if you want to open them rather than
 downloading them, set the `jspwiki.attachment.forceDownload` property to empty on your `jspwiki[-custom].properties` file
 
 * Fixed CSS file used by Install.jsp - now that's a pretty jsp to look at!
@@ -490,7 +503,7 @@ downloading them, set the `jspwiki.attachment.forceDownload` property to empty o
     * Tika to 2.7.0
     * Tomcat to 9.0.73
     * XStream on antrun plugin on portable module to 1.4.20 (closes [#256](https://github.com/apache/jspwiki/pull/256)), thanks to dependabot
-    * Maven plugins: assembly to 3.5.0, compiler to 3.11.0, dependency to 3.5.0, enforcer to 3.2.1, install to 3.1.1, javadoc to 3.5.0, 
+    * Maven plugins: assembly to 3.5.0, compiler to 3.11.0, dependency to 3.5.0, enforcer to 3.2.1, install to 3.1.1, javadoc to 3.5.0,
       project info reports to 3.4.2, release to 3.0.0, resources to 3.3.1, surefire to 3.0.0, cargo to 1.10.6, jspc to 3.2.2 (closes [#257](https://github.com/apache/jspwiki/pull/257), thanks to dependabot)
 
 **2023-01-04  Juan Pablo Santos (juanpablo AT apache DOT org)**
@@ -545,7 +558,7 @@ downloading them, set the `jspwiki.attachment.forceDownload` property to empty o
 * Dependency updates
     * JUnit to 5.9.0 (closes [#218](https://github.com/apache/jspwiki/pull/218)), thanks to dependabot
     * HSQLDB to 2.7.0 (closes [#217](https://github.com/apache/jspwiki/pull/217)), thanks to dependabot
-    * Tomcat to 9.0.65 (closes [#210](https://github.com/apache/jspwiki/pull/210)), thanks to dependabot 
+    * Tomcat to 9.0.65 (closes [#210](https://github.com/apache/jspwiki/pull/210)), thanks to dependabot
     * Maven plugins: install to 3.0.1 (closes [#214](https://github.com/apache/jspwiki/pull/214)), assembly to 3.4.2 (closes [#215](https://github.com/apache/jspwiki/pull/215)), surefire junit5 tree reporter to 1.1.0 (closes [#216](https://github.com/apache/jspwiki/pull/216)), thanks to dependabot
 
 **2022-07-20  Juan Pablo Santos (juanpablo AT apache DOT org)**
@@ -580,14 +593,14 @@ downloading them, set the `jspwiki.attachment.forceDownload` property to empty o
 * _2.11.3-git-09_
 
 * New `CsrfProtectionFilter` to protect POST requests from CSRF attacks
-    * `org.apache.wiki.api.core.Session` gains new `String antiCsrfToken()` method 
+    * `org.apache.wiki.api.core.Session` gains new `String antiCsrfToken()` method
 
 * [`org.apache.wiki.markdown.migration.WikiSyntaxConverter`](https://github.com/apache/jspwiki/blob/master/jspwiki-markdown/src/test/java/org/apache/wiki/markdown/migration/WikiSyntaxConverter.java) to convert from JSPWiki syntax to markdown
     * does not keep pages' history nor attachments (yet), but it's enough to generate the basic set of wikipages from jspwiki-wikipages artifacts
 
 * Fixed logout modal dialog not showing up
 
-* `TestEngine` is able to not clean up directories / ensure they have unique names if `jspwiki.test.disable-clean-props` wiki property is set to `true` 
+* `TestEngine` is able to not clean up directories / ensure they have unique names if `jspwiki.test.disable-clean-props` wiki property is set to `true`
 
 * Fixed integration tests
     * Upgrade to cargo-maven3 broke the launch configuration
@@ -640,7 +653,7 @@ downloading them, set the `jspwiki.attachment.forceDownload` property to empty o
 
 * Dependency updates
     * Tomcat to 9.0.62
-    * Maven clean plugin to 3.2.0 
+    * Maven clean plugin to 3.2.0
     * Maven surefire plugin to 3.0.0-M6, now with JUnit 5 tree reporter - closes [#180](https://github.com/apache/jspwiki/pull/180), thanks to dependabot
 
 **2022-03-28  Dirk Frederickx (brushed AT apache DOT org)**
