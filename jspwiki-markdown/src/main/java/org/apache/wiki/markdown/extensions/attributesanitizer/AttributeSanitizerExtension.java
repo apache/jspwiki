@@ -49,6 +49,7 @@ import java.util.Set;
  */
 public class AttributeSanitizerExtension implements HtmlRenderer.HtmlRendererExtension {
 
+    private static Boolean escapeHtml = true;
     /**
      * Attributes whose value is a URL, and must therefore not carry a
      * script-capable scheme.
@@ -68,6 +69,10 @@ public class AttributeSanitizerExtension implements HtmlRenderer.HtmlRendererExt
      */
     @Override
     public void rendererOptions(final MutableDataHolder options) {
+        escapeHtml = HtmlRenderer.ESCAPE_HTML.get(options);
+        if (escapeHtml==null) {
+            escapeHtml = true;
+        }
     }
 
     /**
@@ -95,6 +100,9 @@ public class AttributeSanitizerExtension implements HtmlRenderer.HtmlRendererExt
      * @param attributes the final attribute set of the node, mutated in place
      */
     static void sanitize(final Node node, final AttributablePart part, final MutableAttributes attributes) {
+        if (!escapeHtml) {
+            return;
+        }
         for (final String name : new ArrayList<>(attributes.keySet())) {
             final String attribute = name.trim().toLowerCase(Locale.ENGLISH);
             if (attribute.startsWith("on") || "style".equals(attribute) || "srcdoc".equals(attribute)) {
