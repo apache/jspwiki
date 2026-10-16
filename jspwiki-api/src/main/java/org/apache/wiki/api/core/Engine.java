@@ -110,6 +110,14 @@ public interface Engine {
 
     /** The name of the property containing the ACLManager implementing class. The value is {@value}. */
     String PROP_ACL_MANAGER_IMPL = "jspwiki.aclManager";
+    
+    /**
+     * The name of the property containing the AuthorizationManager implementing
+     * class. The value is {@value}.
+     *
+     * @since 3.0.0
+     */
+    String PROP_AUTHZ_MANAGER_IMPL = "jspwiki.authZManager";
 
     /** The name of the property containing the ReferenceManager implementing class. The value is {@value}. */
     String PROP_REF_MANAGER_IMPL = "jspwiki.refManager";
