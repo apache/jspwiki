@@ -135,7 +135,13 @@ public class RSS20Feed extends Feed
         //  Mandatory parts
         //
         channel.addContent( new Element("title").setText( getChannelTitle() ) );
-        channel.addContent( new Element("link").setText(HttpUtil.getAbsoluteUrl(m_wikiContext.getHttpRequest(), engine.getBaseURL())));
+        try{
+            channel.addContent( new Element("link").setText(HttpUtil.getAbsoluteUrl(m_wikiContext.getHttpRequest(), engine.getBaseURL())));
+        }catch (Exception ex) {
+            //usually just in unit tests
+            LOG.error("failed to get base url from http request " + ex.getMessage());
+            channel.addContent( new Element("link").setText("https://0.0.0.0/"));
+        }
         channel.addContent( new Element("description").setText( getChannelDescription() ));
 
         //

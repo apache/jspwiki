@@ -230,6 +230,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
         feed.setChannelDescription( m_channelDescription );
 
         final Set< Page > changed = m_engine.getManager( PageManager.class ).getRecentChanges();
+        final AuthorizationManager mgr = wikiContext.getEngine().getManager(AuthorizationManager.class);
 
         final Session session = Wiki.session().guest( m_engine );
         int items = 0;
@@ -237,7 +238,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
             final Page page = i.next();
 
             //  Check if the anonymous user has view access to this page.
-            if( !m_engine.getManager( AuthorizationManager.class ).checkPermission(session, new PagePermission(page,PagePermission.VIEW_ACTION) ) ) {
+            if( !mgr.checkPermission(session, new PagePermission(page,PagePermission.VIEW_ACTION) ) ) {
                 // No permission, skip to the next one.
                 continue;
             }
@@ -281,10 +282,14 @@ public class DefaultRSSGenerator implements RSSGenerator {
         }
 
         changed.sort( new PageTimeComparator() );
+        final AuthorizationManager mgr = wikiContext.getEngine().getManager(AuthorizationManager.class);
 
         int items = 0;
         for( final Iterator< Page > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
             final Page page = i.next();
+            if( !mgr.checkPermission( wikiContext.getWikiSession(), new PagePermission(page, PagePermission.VIEW_ACTION) ) ) {
+                continue;
+            }
             final Entry e = new Entry();
             e.setPage( page );
             String url;
@@ -332,10 +337,14 @@ public class DefaultRSSGenerator implements RSSGenerator {
         }
 
         changed.sort( new PageTimeComparator() );
-
+        final AuthorizationManager mgr = wikiContext.getEngine().getManager(AuthorizationManager.class);
         int items = 0;
         for( final Iterator< Page > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
             final Page page = i.next();
+            if( !mgr.checkPermission( wikiContext.getWikiSession(), new PagePermission(page, PagePermission.VIEW_ACTION) ) ) {
+                continue;
+            }
+
             final Entry e = new Entry();
             e.setPage( page );
             final String url;
