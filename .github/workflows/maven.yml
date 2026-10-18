@@ -66,14 +66,41 @@ jobs:
 #      run: mvn install -B -T 1C -DskipTests=true org.owasp:dependency-check-maven:LATEST:check -DassemblyAnalyzerEnabled=false
     - name: generate jacoco aggregated
       run: mvn -Pgithubjacoco verify -N
-    - name: Add Coverage Comment to PR
-      uses: madrapps/jacoco-report@v1.8.0
-      with:
+
+      # --- Native Bash Script to Parse XML and create GitHub Summary ---
+    - name: Generate Code Coverage Summary
+      if: always()
+      run: |
+        REPORT_PATH="${{ github.workspace }}/target/site/jacoco-aggregate/jacoco.xml"
         
-        paths: ${{ github.workspace }}/target/site/jacoco-aggregate/jacoco.xml
+        if [ ! -f "$REPORT_PATH" ]; then
+          echo "::error::JaCoCo XML report not found at $REPORT_PATH"
+          exit 1
+        fi
+        # Extract total missed and covered metrics using standard grep/sed
+        # In JaCoCo XML, the final elements contain <counter type="LINE" missed="X" covered="Y"/>
+        LINE_COUNTER=$(tail -n 20 "$REPORT_PATH" | grep 'type="LINE"')
+        MISSED=$(echo "$LINE_COUNTER" | sed -n 's/.*missed="\([0-9]*\)".*/\1/p')
+        COVERED=$(echo "$LINE_COUNTER" | sed -n 's/.*covered="\([0-9]*\)".*/\1/p')
           
-        token: ${{ secrets.GITHUB_TOKEN }}
-        min-coverage-overall: 50          # Fails the gate if overall coverage is under 80%
-        min-coverage-changed-lines: 50    # Fails the gate if newly added lines are under 80%
-        title: "Code Coverage Report"
-        update-comment: true              # Updates the same comment instead of creating spam duplicates
+        TOTAL=$((MISSED + COVERED))
+          
+        if [ "$TOTAL" -gt 0 ]; then
+          PERCENTAGE=$(awk "BEGIN {printf \"%.2f\", ($COVERED / $TOTAL) * 100}")
+        else
+          PERCENTAGE=0
+        fi
+
+        # Write natively to the GitHub Step Summary markdown file
+        echo "### 📊 Code Coverage Summary" >> $GITHUB_STEP_SUMMARY
+        echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+        echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Total Covered Lines** | $COVERED |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Total Missed Lines** | $MISSED |" >> $GITHUB_STEP_SUMMARY
+        echo "| **Overall Line Coverage** | **$PERCENTAGE%** |" >> $GITHUB_STEP_SUMMARY
+
+        # Optional: Enforce quality gate natively
+        if (( $(echo "$PERCENTAGE < 80.0" | bc -l) )); then
+          echo "::error::Overall coverage ($PERCENTAGE%) is below required threshold of 80%!"
+          exit 1
+        fi
