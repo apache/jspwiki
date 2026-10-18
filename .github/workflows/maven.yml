@@ -29,8 +29,8 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        # All LTS versions plus the current version, , windows-latest
+        os: [ubuntu-latest, windows-latest]
+        # All LTS versions plus the current version, , 
         java: [ 17, 21, 25 ]
         experimental: [false]
 #        include:
@@ -71,7 +71,7 @@ jobs:
 
       # --- Native Bash Script to Parse XML and create GitHub Summary ---
     - name: Generate Code Coverage Summary
-      if: always()
+      if: always() && runner.os == 'Linux'
       run: |
         REPORT_PATH="${{ github.workspace }}/target/site/jacoco-aggregate/jacoco.xml"
         
