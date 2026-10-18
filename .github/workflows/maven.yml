@@ -100,7 +100,7 @@ jobs:
         echo "| **Total Covered Lines** | $COVERED |" >> $GITHUB_STEP_SUMMARY
         echo "| **Total Missed Lines** | $MISSED |" >> $GITHUB_STEP_SUMMARY
         echo "| **Overall Line Coverage** | **$PERCENTAGE%** |" >> $GITHUB_STEP_SUMMARY
-        echo EOF >> >> $GITHUB_STEP_SUMMARY
+        echo EOF >> $GITHUB_STEP_SUMMARY
         
         
         # Optional: Enforce quality gate natively
