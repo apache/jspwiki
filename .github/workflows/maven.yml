@@ -79,11 +79,18 @@ jobs:
           echo "::error::JaCoCo XML report not found at $REPORT_PATH"
           exit 1
         fi
-        # Extract total missed and covered metrics using standard grep/sed
-        # In JaCoCo XML, the final elements contain <counter type="LINE" missed="X" covered="Y"/>
-        LINE_COUNTER=$(tail -n 20 "$REPORT_PATH" | grep 'type="LINE"')
-        MISSED=$(echo "$LINE_COUNTER" | sed -n 's/.*missed="\([0-9]*\)".*/\1/p')
-        COVERED=$(echo "$LINE_COUNTER" | sed -n 's/.*covered="\([0-9]*\)".*/\1/p')
+        # 1. Grab ALL global report counters located strictly inside the final </report> scope
+        # The global project totals are always the very last <counter> entries before the closing </report> tag.
+        GLOBAL_COUNTERS=$(grep '<counter type="LINE"' "$REPORT_PATH" | tail -n 1)
+
+        if [ -z "$GLOBAL_COUNTERS" ]; then
+           echo "::error::Could not find global Line Counter in JaCoCo XML"
+           exit 1
+        fi
+
+        # 2. Extract values cleanly from the global project counter element
+        MISSED=$(echo "$GLOBAL_COUNTERS" | sed -n 's/.*missed="\([0-9]*\)".*/\1/p')
+        COVERED=$(echo "$GLOBAL_COUNTERS" | sed -n 's/.*covered="\([0-9]*\)".*/\1/p')
           
         TOTAL=$((MISSED + COVERED))
           
