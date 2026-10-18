@@ -64,3 +64,16 @@ jobs:
 # Disabled due to some bug in the plugin
 #    - name: Dependency scan
 #      run: mvn install -B -T 1C -DskipTests=true org.owasp:dependency-check-maven:LATEST:check -DassemblyAnalyzerEnabled=false
+    - name: generate jacoco aggregated
+      run: mvn -Pgithubjacoco verify -N
+    - name: Add Coverage Comment to PR
+      uses: madrapps/jacoco-report@v1.8.0
+      with:
+        
+        paths: ${{ github.workspace }}/target/site/jacoco-aggregate/jacoco.xml
+          
+        token: ${{ secrets.GITHUB_TOKEN }}
+        min-coverage-overall: 50          # Fails the gate if overall coverage is under 80%
+        min-coverage-changed-lines: 50    # Fails the gate if newly added lines are under 80%
+        title: "Code Coverage Report"
+        update-comment: true              # Updates the same comment instead of creating spam duplicates
