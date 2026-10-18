@@ -17,7 +17,9 @@ name: Java CI
 
 on: [push, pull_request]
 
+#pull reqquest write is for adding comments to a PR
 permissions:
+  pull-requests: write
   contents: read
 
 jobs:
@@ -98,9 +100,21 @@ jobs:
         echo "| **Total Covered Lines** | $COVERED |" >> $GITHUB_STEP_SUMMARY
         echo "| **Total Missed Lines** | $MISSED |" >> $GITHUB_STEP_SUMMARY
         echo "| **Overall Line Coverage** | **$PERCENTAGE%** |" >> $GITHUB_STEP_SUMMARY
-
+        # Write it to the special GitHub output file
+        
+        echo "### 📊 Code Coverage Summary" >> $GITHUB_OUTPUT
+        echo "| Metric | Value |" >> $GITHUB_OUTPUT
+        echo "| --- | --- |" >> $GITHUB_OUTPUT
+        echo "| **Total Covered Lines** | $COVERED |" >> $GITHUB_OUTPUT
+        echo "| **Total Missed Lines** | $MISSED |" >> $GITHUB_OUTPUT
+        echo "| **Overall Line Coverage** | **$PERCENTAGE%** |" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
         # Optional: Enforce quality gate natively
         #if (( $(echo "$PERCENTAGE < 80.0" | bc -l) )); then
         #  echo "::error::Overall coverage ($PERCENTAGE%) is below required threshold of 80%!"
         #  exit 1
         #fi
+        
+
+        
