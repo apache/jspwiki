@@ -34,6 +34,7 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.ui.CommandResolver;
 import org.apache.wiki.ui.Installer;
 import org.apache.wiki.ui.PageCommand;
@@ -339,6 +340,7 @@ public class WikiContext implements Context, Command {
         final String pagename = m_page.getName();
         String redirURL = m_engine.getManager( CommandResolver.class ).getSpecialPageReference( pagename );
         if( redirURL == null ) {
+            parseForMetadata();
             final String alias = m_page.getAttribute( WikiPage.ALIAS );
             if( alias != null ) {
                 redirURL = getViewURL( alias );
@@ -348,6 +350,19 @@ public class WikiContext implements Context, Command {
         }
 
         return redirURL;
+    }
+
+    /** Aliases and redirects are set while parsing, and a page that comes straight from the provider, as without the page cache, was not parsed yet. */
+    private void parseForMetadata() {
+        if( m_page.hasMetadata() ) {
+            return;
+        }
+        try {
+            final String text = m_engine.getManager( PageManager.class ).getPureText( m_page.getName(), m_page.getVersion() );
+            m_engine.getManager( RenderingManager.class ).getParser( this, text ).parse();
+        } catch( final Exception e ) {
+            LOG.debug( "Unable to parse {} for its metadata", m_page, e );
+        }
     }
 
     /**
