@@ -110,6 +110,28 @@ public class VersioningFileProviderTest {
     }
 
     /*
+     * A page that predates VersioningFileProvider has no history in OLD/, yet its first version must exist
+     * for pageExists() just as it does for getPageInfo().
+     */
+    @Test
+    public void testMigrationPageExistsFirstVersion() throws Exception {
+        // without the page cache the provider answers directly
+        PROPS.setProperty( CachingManager.PROP_CACHE_ENABLE, "false" );
+        engine = new TestEngine( PROPS );
+        files = engine.getWikiProperties().getProperty( AbstractFileProvider.PROP_PAGEDIR );
+        injectFile( NAME1 + AbstractFileProvider.FILE_EXT, "foobar" );
+
+        final PageManager pm = engine.getManager( PageManager.class );
+        Assertions.assertTrue( pm.pageExists( NAME1, PageProvider.LATEST_VERSION ), "latest version should exist" );
+        Assertions.assertTrue( pm.pageExists( NAME1, 1 ), "first version should exist" );
+        Assertions.assertFalse( pm.pageExists( NAME1, 2 ), "second version should not exist" );
+
+        // what NoSuchPageTag asks for a page that was just fetched
+        final Page page = pm.getPage( NAME1 );
+        Assertions.assertTrue( pm.wikiPageExists( NAME1, page.getVersion() ), "page should exist at its own version" );
+    }
+
+    /*
      * Checks if migration from FileSystemProvider to VersioningFileProvider
      * works when a simple text file and its associated properties exist, but
      * when there is not yet any corresponding history content in OLD/
