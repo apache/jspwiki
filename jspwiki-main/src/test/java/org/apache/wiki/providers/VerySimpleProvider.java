@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 
 /**
  *  This is a simple provider that is used by some of the tests.  It has some specific behaviours, like it always contains a single page.
@@ -137,7 +136,7 @@ public class VerySimpleProvider implements PageProvider {
     @Override
     public List< Page > getVersionHistory( final String page )
     {
-        return new Vector<>();
+        return new ArrayList<>();
     }
 
     /**
