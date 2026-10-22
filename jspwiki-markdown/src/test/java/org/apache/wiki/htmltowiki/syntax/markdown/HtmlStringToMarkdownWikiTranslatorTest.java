@@ -273,7 +273,7 @@ public class HtmlStringToMarkdownWikiTranslatorTest {
         Assertions.assertEquals( "Dies ist **bold**, _italic_ und **_both_** 3.",
                 html2wiki.translate( "Dies ist <strong>bold</strong>, <em>italic</em> und <strong><em>both</em></strong> 3." ) );
 
-        Assertions.assertEquals( "Wilma: _Ich m\u00f6chte hiermal in allerDeutlichkeit sagen! _",
+        Assertions.assertEquals( "Wilma: _Ich m\u00f6chte hier mal in aller Deutlichkeit sagen! _",
                 html2wiki.translate( "Wilma: <i>Ich             m\u00f6chte hier\nmal in aller\nDeutlichkeit sagen! </i>" ) );
 
     }

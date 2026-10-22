@@ -70,6 +70,12 @@ public class HtmlStringToWikiTranslatorTest {
     }
 
     @Test
+    public void testLineBreakInTextIsWhitespace() throws Exception {
+        Assertions.assertEquals( "\nhello world\n", html2wiki.translate( "<p>hello\nworld</p>" ) );
+        Assertions.assertEquals( "\nhello world\n", html2wiki.translate( "<p>hello\r\nworld</p>" ) );
+    }
+
+    @Test
     public void testTable() throws Exception {
         Assertions.assertEquals( "a\n| erste\n", html2wiki.translate( "a <table border=\"1\"> <tbody><tr> <td> erste</td> </tr> </tbody> </table>" ) );
 
@@ -271,7 +277,7 @@ public class HtmlStringToWikiTranslatorTest {
         Assertions.assertEquals( "Dies ist __bold__, ''italic'' und __''both''__ 3.",
                 html2wiki.translate( "Dies ist <strong>bold</strong>, <em>italic</em> und <strong><em>both</em></strong> 3." ) );
 
-        Assertions.assertEquals( "Wilma: ''Ich m\u00f6chte hiermal in allerDeutlichkeit sagen! ''",
+        Assertions.assertEquals( "Wilma: ''Ich m\u00f6chte hier mal in aller Deutlichkeit sagen! ''",
                 html2wiki.translate( "Wilma: <i>Ich             m\u00f6chte hier\nmal in aller\nDeutlichkeit sagen! </i>" ) );
 
     }
