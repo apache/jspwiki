@@ -95,6 +95,14 @@ public class GroupManagerTest
    }
 
     @Test
+    public void testRemoveGroupGrantedAllPermissionIsRejected() throws Exception {
+        Assertions.assertNotNull( m_groupMgr.getGroup( "Admin" ) );
+
+        Assertions.assertThrows( WikiSecurityException.class, () -> m_groupMgr.removeGroup( "Admin" ) );
+        Assertions.assertNotNull( m_groupMgr.getGroup( "Admin" ) );
+    }
+
+    @Test
     public void testParseGroup() throws WikiSecurityException
     {
         String members = "Biff";
