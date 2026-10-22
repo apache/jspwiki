@@ -89,7 +89,7 @@ public final class Serializer
         
         // Transform to Base64-encoded String
         final byte[] result = Base64.getEncoder().encode( bytesOut.toByteArray() );
-        return new String( result ) ;
+        return new String( result, StandardCharsets.US_ASCII );
     }
 
 }
