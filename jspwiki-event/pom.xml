@@ -62,5 +62,11 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>jspwiki-util</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>
