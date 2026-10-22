@@ -529,7 +529,11 @@ Element.implement({
 
                         s = fn( n.nodeValue );
 
-                        if( hasHTML.test(s) ){
+                        if( s === n.nodeValue ){
+
+                            //nothing was replaced; leave the node alone, as text containing a < would be parsed as html
+
+                        } else if( hasHTML.test(s) ){
 
                             //seems like we are trying to replace text with some complex html
                             dummy.innerHTML = s;
