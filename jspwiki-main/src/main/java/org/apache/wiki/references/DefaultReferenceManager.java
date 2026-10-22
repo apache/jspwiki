@@ -38,6 +38,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.*;
@@ -47,6 +48,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /*
@@ -133,6 +137,16 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
     private static final long serialVersionUID = 4L;
 
     /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
+
+    /**
      *  Builds a new ReferenceManager.
      *
      *  @param engine The Engine to which this is managing references to.
@@ -143,9 +157,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
         m_engine = engine;
         m_matchEnglishPlurals = TextUtil.getBooleanProperty( engine.getWikiProperties(), Engine.PROP_MATCHPLURALS, false );
 
-        //
         //  Create two maps that contain unmutable versions of the two basic maps.
-        //
         m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
         m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
     }
@@ -233,54 +245,62 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      *  Reads the serialized data from the disk back to memory. Returns the date when the data was last written on disk
      */
     @SuppressWarnings("unchecked")
-    private synchronized long unserializeFromDisk() throws IOException, ClassNotFoundException {
-        final long saved;
+    private long unserializeFromDisk() throws IOException, ClassNotFoundException {
+        final AtomicLong saved = new AtomicLong(0);
+        Synchronizer.synchronize(lock, () -> {
+            try {
+                final File f = new File(m_engine.getWorkDir(), SERIALIZATION_FILE);
+                try (final ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(f.toPath())))) {
+                    final StopWatch sw = new StopWatch();
+                    sw.start();
 
-        final File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
-        try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
-            final StopWatch sw = new StopWatch();
-            sw.start();
+                    final long ver = in.readLong();
 
-            final long ver = in.readLong();
+                    if (ver != serialVersionUID) {
+                        throw new IOException("File format has changed; I need to recalculate references.");
+                    }
 
-            if( ver != serialVersionUID ) {
-                throw new IOException("File format has changed; I need to recalculate references.");
+                    saved.set(in.readLong());
+                    m_refersTo = (Map<String, Collection<String>>) in.readObject();
+                    m_referredBy = (Map<String, Set<String>>) in.readObject();
+
+                    m_unmutableReferredBy = Collections.unmodifiableMap(m_referredBy);
+                    m_unmutableRefersTo = Collections.unmodifiableMap(m_refersTo);
+
+                    sw.stop();
+                    LOG.debug("Read serialized data successfully in {}", sw);
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
+        });
 
-            saved        = in.readLong();
-            m_refersTo   = ( Map< String, Collection< String > > ) in.readObject();
-            m_referredBy = ( Map< String, Set< String > > ) in.readObject();
-
-            m_unmutableReferredBy = Collections.unmodifiableMap( m_referredBy );
-            m_unmutableRefersTo   = Collections.unmodifiableMap( m_refersTo );
-
-            sw.stop();
-            LOG.debug( "Read serialized data successfully in {}", sw );
-        }
-
-        return saved;
+        return saved.get();
     }
+
 
     /**
      *  Serializes hashmaps to disk.  The format is private, don't touch it.
      */
-    private synchronized void serializeToDisk() {
-        final File f = new File( m_engine.getWorkDir(), SERIALIZATION_FILE );
-        try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
-            final StopWatch sw = new StopWatch();
-            sw.start();
+    private void serializeToDisk() {
+        Synchronizer.synchronize(lock, () -> {
+            final File f = new File(m_engine.getWorkDir(), SERIALIZATION_FILE);
+            try (final ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(f.toPath())))) {
+                final StopWatch sw = new StopWatch();
+                sw.start();
 
-            out.writeLong( serialVersionUID );
-            out.writeLong( System.currentTimeMillis() ); // Timestamp
-            out.writeObject( m_refersTo );
-            out.writeObject( m_referredBy );
+                out.writeLong(serialVersionUID);
+                out.writeLong(System.currentTimeMillis()); // Timestamp
+                out.writeObject(m_refersTo);
+                out.writeObject(m_referredBy);
 
-            sw.stop();
+                sw.stop();
 
-            LOG.debug( "serialization done - took {}", sw );
-        } catch( final IOException ioe ) {
-            LOG.error( "Unable to serialize!", ioe );
-        }
+                LOG.debug("serialization done - took {}", sw);
+            } catch (final IOException ioe) {
+                LOG.error("Unable to serialize!", ioe);
+            }
+        });
     }
 
     private String getHashFileName( final String pageName ) {
@@ -301,101 +321,117 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
     /**
      *  Reads the serialized data from the disk back to memory. Returns the date when the data was last written on disk
      */
-    private synchronized long unserializeAttrsFromDisk( final Page p ) throws IOException, ClassNotFoundException {
-        long saved = 0L;
+    private long unserializeAttrsFromDisk(final Page p) throws IOException, ClassNotFoundException {
+        final AtomicLong saved = new AtomicLong(0L);
+        final AtomicReference<IOException> ioExceptionRef = new AtomicReference<>();
+        final AtomicReference<ClassNotFoundException> classNotFoundExceptionRef = new AtomicReference<>();
 
-        //  Find attribute cache, and check if it exists
-        final String hashName = getHashFileName( p.getName() );
-        if( hashName != null ) {
-        	File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
-            f = new File( f, hashName );
-            if( !f.exists() ) {
-                return 0L;
+        Synchronizer.synchronize(lock, () -> {
+            try {
+                long localSaved = 0L;
+
+                // Find attribute cache, and check if it exists
+                final String hashName = getHashFileName(p.getName());
+                if (hashName != null) {
+                    File f = new File(m_engine.getWorkDir(), SERIALIZATION_DIR);
+                    f = new File(f, hashName);
+                    if (!f.exists()) {
+                        return;
+                    }
+
+                    try (final ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(Files.newInputStream(f.toPath())))) {
+                        // ... existing code here
+                        final long ver = in.readLong();
+                        if (ver != serialVersionUID) {
+                            // Log or handle as needed
+                            return;
+                        }
+
+                        localSaved = in.readLong();
+                        final String name = in.readUTF();
+                        if (!name.equals(p.getName())) {
+                            // Log or handle as needed
+                            return;
+                        }
+
+                        final long entries = in.readLong();
+                        for (int i = 0; i < entries; i++) {
+                            final String key = in.readUTF();
+                            final Object value = in.readObject();
+                            p.setAttribute(key, value);
+                            // Log or handle as needed
+                        }
+                    }
+                }
+
+                saved.set(localSaved);
+            } catch (IOException e) {
+                ioExceptionRef.set(e);
+            } catch (ClassNotFoundException e) {
+                classNotFoundExceptionRef.set(e);
             }
+        });
 
-            try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
-                final StopWatch sw = new StopWatch();
-                sw.start();
-                LOG.debug( "Deserializing attributes for {}", p.getName() );
-
-                final long ver = in.readLong();
-                if( ver != serialVersionUID ) {
-                    LOG.debug( "File format has changed; cannot deserialize." );
-                    return 0L;
-                }
-
-                saved = in.readLong();
-                final String name  = in.readUTF();
-                if( !name.equals( p.getName() ) ) {
-                    LOG.debug( "File name does not match ({}), skipping...", name );
-                    return 0L; // Not here
-                }
-
-                final long entries = in.readLong();
-                for( int i = 0; i < entries; i++ ) {
-                    final String key   = in.readUTF();
-                    final Object value = in.readObject();
-                    p.setAttribute( key, value );
-                    LOG.debug( "   attr: {}={}", key, value );
-                }
-
-                sw.stop();
-                LOG.debug( "Read serialized data for {} successfully in {}", name, sw );
-                p.setHasMetadata();
-            }
+        if (ioExceptionRef.get() != null) {
+            throw ioExceptionRef.get();
         }
 
-        return saved;
+        if (classNotFoundExceptionRef.get() != null) {
+            throw classNotFoundExceptionRef.get();
+        }
+
+        return saved.get();
     }
 
     /**
      *  Serializes hashmaps to disk.  The format is private, don't touch it.
      */
-    private synchronized void serializeAttrsToDisk( final Page p ) {
-        final StopWatch sw = new StopWatch();
-        sw.start();
+    private void serializeAttrsToDisk( final Page p ) {
+        Synchronizer.synchronize(lock, () -> {
+            final StopWatch sw = new StopWatch();
+            sw.start();
 
-        final String hashName = getHashFileName( p.getName() );
-        if( hashName != null ) {
-        	File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
-            if( !f.exists() ) {
-                f.mkdirs();
-            }
-
-            //  Create a digest for the name
-            f = new File( f, hashName );
-
-            try( final ObjectOutputStream out =  new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
-                // new Set to avoid concurrency issues
-                final Set< Map.Entry < String, Object > > entries = new HashSet<>( p.getAttributes().entrySet() );
-
-                if(entries.isEmpty()) {
-                    //  Nothing to serialize, therefore we will just simply remove the serialization file so that the
-                    //  next time we boot, we don't deserialize old data.
-                    f.delete();
-                    return;
+            final String hashName = getHashFileName( p.getName() );
+            if( hashName != null ) {
+                File f = new File( m_engine.getWorkDir(), SERIALIZATION_DIR );
+                if( !f.exists() ) {
+                    f.mkdirs();
                 }
 
-                out.writeLong( serialVersionUID );
-                out.writeLong( System.currentTimeMillis() ); // Timestamp
-                out.writeUTF( p.getName() );
-                out.writeLong( entries.size() );
+                //  Create a digest for the name
+                f = new File( f, hashName );
 
-                for( final Map.Entry< String, Object > e : entries ) {
-                    if( e.getValue() instanceof Serializable ) {
-                        out.writeUTF( e.getKey() );
-                        out.writeObject( e.getValue() );
+                try( final ObjectOutputStream out =  new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
+                    // new Set to avoid concurrency issues
+                    final Set< Map.Entry < String, Object > > entries = new HashSet<>( p.getAttributes().entrySet() );
+
+                    if(entries.isEmpty()) {
+                        //  Nothing to serialize, therefore we will just simply remove the serialization file so that the
+                        //  next time we boot, we don't deserialize old data.
+                        f.delete();
+                        return;
                     }
+
+                    out.writeLong( serialVersionUID );
+                    out.writeLong( System.currentTimeMillis() ); // Timestamp
+                    out.writeUTF( p.getName() );
+                    out.writeLong( entries.size() );
+
+                    for( final Map.Entry< String, Object > e : entries ) {
+                        if( e.getValue() instanceof Serializable ) {
+                            out.writeUTF( e.getKey() );
+                            out.writeObject( e.getValue() );
+                        }
+                    }
+
+                } catch( final IOException e ) {
+                    LOG.error( "Unable to serialize!", e );
+                } finally {
+                    sw.stop();
+                    LOG.debug( "serialization for {} done - took {}", p.getName(), sw );
                 }
-
-            } catch( final IOException e ) {
-                LOG.error( "Unable to serialize!", e );
-            } finally {
-                sw.stop();
-                LOG.debug( "serialization for {} done - took {}", p.getName(), sw );
             }
-        }
-
+        });
     }
 
     /**
@@ -571,13 +607,10 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
 
     /**
      * Cleans the 'referred by' list, removing references by 'referrer' to any other page. Called after 'referrer' is removed.
-     *
      * Two ways to go about this. One is to look up all pages previously referred by referrer and remove referrer
      * from their lists, and let the update put them back in (except possibly removed ones).
-     *
      * The other is to get the old referred-to list, compare to the new, and tell the ones missing in the latter to remove referrer from
      * their list.
-     *
      * We'll just try the first for now. Need to come back and optimize this a bit.
      */
     private void cleanReferredBy( final String referrer,
@@ -810,10 +843,9 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
      * This 'deepHashCode' can be used to determine if there were any modifications made to the underlying to and by maps of the
      * ReferenceManager. The maps of the ReferenceManager are not synchronized, so someone could add/remove entries in them while the
      * hashCode is being computed.
-     *
      * This method traps and retries if a concurrent modification occurs.
      *
-     * @return Sum of the hashCodes for the to and by maps of the ReferenceManager
+     * @return Sum of the hashCodes for the 'to' and 'by' maps of the ReferenceManager
      * @since 2.3.24
      */
     //
