@@ -18,15 +18,19 @@
  */
 package org.apache.wiki.markdown.extensions.jspwikilinks.postprocessor;
 
+import com.vladsch.flexmark.ast.Image;
 import com.vladsch.flexmark.ast.Link;
 import com.vladsch.flexmark.parser.PostProcessor;
 import com.vladsch.flexmark.parser.block.NodePostProcessor;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.ast.NodeTracker;
+import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.commons.lang3.Strings;
 import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
@@ -36,7 +40,7 @@ import java.util.List;
 
 
 /**
- * {@link NodePostProcessor} to convert {@link Link}s into {@link JSPWikiLink}s.
+ * {@link NodePostProcessor} to convert {@link Link}s into {@link JSPWikiLink}s, and to point {@link Image}s of attachments to their URL.
  * <p>
  * Acts as a factory of {@link NodePostProcessorState}, which are the classes generating the extra markup for each concrete type of link.
  */
@@ -92,6 +96,12 @@ public class JSPWikiLinkNodePostProcessor extends NodePostProcessor {
                 linkPostProcessor = new LocalLinkNodePostProcessorState( m_context, isImageInlining, inlineImagePatterns );
             }
             linkPostProcessor.process( state, link );
+        } else if( node instanceof Image image ) {
+            final String attachment = m_context.getEngine().getManager( AttachmentManager.class )
+                                               .getAttachmentInfoName( m_context, image.getUrl().toString() );
+            if( attachment != null ) {
+                image.setUrl( CharSubSequence.of( m_context.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), attachment ) ) );
+            }
         }
     }
 
