@@ -33,6 +33,7 @@ import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.cache.CacheInfo;
 import org.apache.wiki.cache.CachingManager;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.IOException;
@@ -46,6 +47,7 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -62,6 +64,16 @@ public class CachingAttachmentProvider implements AttachmentProvider {
     private CachingManager cachingManager;
     private final AtomicBoolean allRequested = new AtomicBoolean();
     private final AtomicLong attachments = new AtomicLong( 0L );
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * {@inheritDoc}
@@ -143,7 +155,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
             all = provider.listAllChanged( timestamp );
 
             // Make sure that all attachments are in the cache.
-            synchronized( this ) {
+            Synchronizer.synchronize(lock, () -> {
                 for( final Attachment att : all ) {
                     cachingManager.put( CachingManager.CACHE_ATTACHMENTS, att.getName(), att );
                 }
@@ -151,7 +163,7 @@ public class CachingAttachmentProvider implements AttachmentProvider {
                     allRequested.set( true );
                     attachments.set( all.size() );
                 }
-            }
+            });
         } else {
             final List< String > keys = cachingManager.keys( CachingManager.CACHE_ATTACHMENTS );
             all = new ArrayList<>();
@@ -242,14 +254,17 @@ public class CachingAttachmentProvider implements AttachmentProvider {
      * @return A plain string with all the above-mentioned values.
      */
     @Override
-    public synchronized String getProviderInfo() {
-        final CacheInfo attCacheInfo = cachingManager.info( CachingManager.CACHE_ATTACHMENTS );
-        final CacheInfo attColCacheInfo = cachingManager.info( CachingManager.CACHE_ATTACHMENTS_COLLECTION );
-        return "Real provider: " + provider.getClass().getName() +
-                ". Attachment cache hits: " + attCacheInfo.getHits() +
-                ". Attachment cache misses: " + attCacheInfo.getMisses() +
-                ". Attachment collection cache hits: " + attColCacheInfo.getHits() +
-                ". Attachment collection cache misses: " + attColCacheInfo.getMisses();
+    public String getProviderInfo() {
+        return Synchronizer.synchronize(lock, () -> {
+            final CacheInfo attCacheInfo = cachingManager.info( CachingManager.CACHE_ATTACHMENTS );
+            final CacheInfo attColCacheInfo = cachingManager.info( CachingManager.CACHE_ATTACHMENTS_COLLECTION );
+            return "Real provider: " + provider.getClass().getName() +
+                    ". Attachment cache hits: " + attCacheInfo.getHits() +
+                    ". Attachment cache misses: " + attCacheInfo.getMisses() +
+                    ". Attachment collection cache hits: " + attColCacheInfo.getHits() +
+                    ". Attachment collection cache misses: " + attColCacheInfo.getMisses();
+        });
+
     }
 
     /**
