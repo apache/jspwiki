@@ -397,9 +397,12 @@ Wiki.Snips = {
 
 
     linkPart3:{
+        // Dialog must open after the second "|" even when "]" is not typed yet.
+        // Prefer matching up to "]" when present (attributes may contain spaces);
+        // otherwise only match non-whitespace so prose after the caret is not swallowed.
         suggest: {
-        lback: "\\[(?:[^\\|\\]]+\\|[^\\|\\]]+\\|)([^\\|\\[\\]\\n\\r]*)$",
-        match: "^[^\\|\\]\\n\\r]*"
+            lback: "\\[(?:[^\\|\\]]+\\|[^\\|\\]]+\\|)([^\\|\\[\\]\\n\\r]*)$",
+            match: "^(?:[^\\|\\[\\]\\n\\r]*(?=\\])|[^\\|\\[\\]\\n\\r\\s]*)"
         },
         linkPart3: [ Dialog.Selection, {
 

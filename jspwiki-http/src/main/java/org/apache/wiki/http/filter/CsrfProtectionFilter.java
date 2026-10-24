@@ -33,6 +33,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Locale;
 
 
 /**
@@ -54,7 +55,7 @@ public class CsrfProtectionFilter implements Filter {
     /** {@inheritDoc} */
     @Override
     public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
-        if( isPost( ( HttpServletRequest ) request ) ) {
+        if( isPost( ( HttpServletRequest ) request ) && !isMultipartAttachmentUpload( ( HttpServletRequest ) request ) ) {
             final Engine engine = Wiki.engine().find( request.getServletContext(), null );
             final Session session = Wiki.session().find( engine, ( HttpServletRequest ) request );
             if( !requestContainsValidCsrfToken( request, session ) ) {
@@ -82,6 +83,24 @@ public class CsrfProtectionFilter implements Filter {
 
     static boolean isPost( final HttpServletRequest request ) {
         return "POST".equalsIgnoreCase( request.getMethod() );
+    }
+
+    /**
+     * Multipart uploads carry their anti-CSRF token in the request body, which {@code getParameter()} cannot read
+     * without consuming the stream. Requiring the token as a request parameter would force it into the URL query
+     * string, where it leaks into access logs, proxies and browser history. For the attachment servlet - the only
+     * multipart consumer, which parses the body itself and performs the same token check before acting on the
+     * request - the check is therefore delegated instead of applied here. Multipart POSTs to any other path keep
+     * being validated by this filter, so the body trick cannot be used to smuggle query-string parameters past it.
+     *
+     * @param request the inbound request
+     * @return true if this is a multipart POST for the attachment servlet
+     */
+    private static boolean isMultipartAttachmentUpload( final HttpServletRequest request ) {
+        final String contentType = request.getContentType();
+        return "/attach".equals( request.getServletPath() )
+                && contentType != null
+                && contentType.toLowerCase( Locale.ENGLISH ).startsWith( "multipart/" );
     }
 
     /** {@inheritDoc} */

@@ -55,6 +55,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.user.UserProfile;
 
 
@@ -178,6 +179,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
             // If the container logged the user in successfully, tell the Session (and add all the Principals)
             if (!principals.isEmpty()) {
+                rotateSessionAfterAuthentication( request, session );
                 fireEvent( WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session, request );
                 for( final Principal principal : principals ) {
                     fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session, request );
@@ -269,6 +271,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         // Execute the user's specified login module
         final Set< Principal > principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions );
         if(!principals.isEmpty()) {
+            rotateSessionAfterAuthentication( request, session );
             fireEvent(WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session, request );
             for ( final Principal principal : principals ) {
                 fireEvent( WikiSecurityEvent.PRINCIPAL_ADD, principal, session, request );
@@ -280,6 +283,33 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Session-fixation defense: the pre-authentication HTTP session id and anti-CSRF token must not survive the
+     * upgrade to an authenticated session. Rotates the servlet session id, re-keys the {@link SessionMonitor} entry
+     * so the wiki session attaches to the new id, and regenerates the wiki session's anti-CSRF token so a token
+     * observed before login cannot be replayed against the authenticated session.
+     *
+     * @param request the servlet request, may be <code>null</code> (e.g. embedded use); nothing to rotate then
+     * @param session the wiki session being upgraded
+     */
+    private void rotateSessionAfterAuthentication( final HttpServletRequest request, final Session session ) {
+        if( request != null ) {
+            final HttpSession httpSession = request.getSession( false );
+            if( httpSession != null ) {
+                final SessionMonitor monitor = SessionMonitor.getInstance( m_engine );
+                monitor.remove( httpSession );
+                try {
+                    request.changeSessionId();
+                } catch( final IllegalStateException e ) {
+                    LOG.debug( "Unable to rotate the http session id: {}", e.getMessage() );
+                }
+                monitor.register( httpSession, session );
+            }
+        }
+        session.regenerateAntiCsrfToken();
+        
     }
 
     /**

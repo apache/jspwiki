@@ -38,8 +38,10 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 import org.apache.commons.io.FileUtils;
+import org.apache.wiki.auth.UserManager;
 
 import static org.apache.wiki.auth.UserManager.PROP_DATABASE;
+import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.XMLGroupDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
 
@@ -51,13 +53,16 @@ public class RSSGeneratorTest {
     public void testBlogRSS() throws Exception {
         
         Properties props = TestEngine.getTestProperties();
-        File target = new File("target/" + UUID.randomUUID() + ".xml");
-        FileUtils.copyFile(new File("src/test/resources/userdatabase.xml"), target);
-        props.setProperty(XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath());
+        File userTarget = new File("target/" + UUID.randomUUID() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/userdatabase.xml"), userTarget);
+        props.setProperty(XMLUserDatabase.PROP_USERDATABASE, userTarget.getAbsolutePath());
         props.put(RSSGenerator.PROP_GENERATE_RSS, "true");
-        target = new File("target/" + UUID.randomUUID() + ".xml");
-        FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml"), target);
-        props.setProperty(XMLGroupDatabase.PROP_DATABASE, target.getAbsolutePath());
+        File groupTarget = new File("target/" + UUID.randomUUID() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml"), groupTarget);
+        props.setProperty(XMLGroupDatabase.PROP_DATABASE, groupTarget.getAbsolutePath());
+        props.setProperty(GroupManager.PROP_GROUPDATABASE, XMLGroupDatabase.class.getCanonicalName());
+        props.setProperty(UserManager.PROP_DATABASE, XMLUserDatabase.class.getCanonicalName());
+        
         TestEngine m_testEngine = TestEngine.build( props);
 
         final WeblogEntryPlugin plugin = new WeblogEntryPlugin();

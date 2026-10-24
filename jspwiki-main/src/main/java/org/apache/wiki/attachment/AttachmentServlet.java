@@ -29,6 +29,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.commons.fileupload2.core.DiskFileItemFactory;
 import org.apache.commons.fileupload2.core.FileItem;
@@ -51,6 +52,7 @@ import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.http.filter.CsrfProtectionFilter;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.ui.progress.ProgressItem;
@@ -90,6 +92,12 @@ public class AttachmentServlet extends HttpServlet {
     private Engine m_engine;
     private static final Logger LOG = LogManager.getLogger( AttachmentServlet.class );
     private static final String HDR_VERSION = "version";
+
+    /** Allowlist of passive content types which may be served inline; everything else forces a download. */
+    private static final Set< String > INLINE_SAFE_TYPES = Set.of(
+            "image/png", "image/jpeg", "image/gif", "image/webp", "image/bmp",
+            "image/avif", "image/tiff", "image/x-icon", "image/vnd.microsoft.icon",
+            "text/plain" );
 
     /** The maximum size that an attachment can be. */
     private int m_maxSize = Integer.MAX_VALUE;
@@ -225,7 +233,7 @@ public class AttachmentServlet extends HttpServlet {
                 final String mimetype = getMimeType( context, att.getFileName() );
                 res.setContentType( mimetype );
 
-                final String contentDisposition = getContentDisposition( att );
+                final String contentDisposition = getContentDisposition( att, mimetype );
                 res.addHeader( "Content-Disposition", contentDisposition );
                 res.addDateHeader("Last-Modified",att.getLastModified().getTime());
 
@@ -292,15 +300,33 @@ public class AttachmentServlet extends HttpServlet {
         }
     }
 
-    String getContentDisposition( final Attachment att ) {
-        // We use 'inline' instead of 'attachment' so that user agents can try to automatically open the file,
-        // except those cases in which we want to enforce the file download.
-        String contentDisposition = "inline; filename=\"";
-        if( m_engine.getManager( AttachmentManager.class ).forceDownload( att.getFileName() ) ) {
-            contentDisposition = "attachment; filename=\"";
+    String getContentDisposition( final Attachment att, final String mimetype ) {
+        // Default-deny: only passive content types which cannot execute script on the wiki's origin
+        // are served inline, so that user agents can try to automatically open them.  Everything
+        // else - including anything the container resolves to an actively rendering type such as
+        // text/html, application/xhtml+xml or image/svg+xml - is forced to download.
+        String contentDisposition = "attachment; filename=\"";
+        if( isInlineRenderSafe( mimetype ) && !m_engine.getManager( AttachmentManager.class ).forceDownload( att.getFileName() ) ) {
+            contentDisposition = "inline; filename=\"";
         }
         contentDisposition += att.getFileName() + "\";";
         return contentDisposition;
+    }
+
+    /**
+     * Checks whether the given content type is safe to render inline on the wiki origin, i.e. it is a
+     * passive media type which cannot carry script.  Actively rendering types (text/html,
+     * application/xhtml+xml, image/svg+xml, XML, PDF, ...) are deliberately not on the allowlist.
+     *
+     * @param mimetype The resolved content type of the attachment.
+     * @return {@code true} if the attachment may be served with {@code Content-Disposition: inline}.
+     */
+    static boolean isInlineRenderSafe( final String mimetype ) {
+        if( mimetype == null ) {
+            return false;
+        }
+        final String type = mimetype.toLowerCase();
+        return INLINE_SAFE_TYPES.contains( type ) || type.startsWith( "audio/" ) || type.startsWith( "video/" );
     }
 
     void sendError( final HttpServletResponse res, final String message ) throws IOException {
@@ -406,6 +432,7 @@ public class AttachmentServlet extends HttpServlet {
         final String errorPage = m_engine.getURL( ContextEnum.WIKI_ERROR.getRequestContext(), "", null ); // If something bad happened, Upload should be able to take care of most stuff
         String nextPage = errorPage;
         final String progressId = req.getParameter( "progressid" );
+        String csrfToken = req.getParameter( CsrfProtectionFilter.ANTICSRF_PARAM );
 
         // Check that we have a file upload request
         if( !JakartaServletFileUpload.isMultipartContent(req) ) {
@@ -463,10 +490,23 @@ public class AttachmentServlet extends HttpServlet {
                     case "nextpage":
                         nextPage = validateNextPage( item.getString( StandardCharsets.UTF_8 ), errorPage );
                         break;
+                    case CsrfProtectionFilter.ANTICSRF_PARAM:
+                        csrfToken = item.getString( StandardCharsets.UTF_8 );
+                        break;
                     }
                 } else {
                     fileItems.add( item );
                 }
+            }
+
+            // The CsrfProtectionFilter delegates multipart requests to this servlet, since it cannot read the
+            // token from a multipart body without consuming it. Enforce the token here - taken from the multipart
+            // form field written by <wiki:CsrfProtection/> (or, for older clients, the query string) - before
+            // acting on anything else in the request, including the "Broken file upload" redirect below.
+            final Session session = Wiki.session().find( m_engine, req );
+            if( csrfToken == null || !csrfToken.equals( session.antiCsrfToken() ) ) {
+                LOG.error( "Incorrect {} received for {}", CsrfProtectionFilter.ANTICSRF_PARAM, req.getPathInfo() );
+                throw new RedirectException( "Missing or invalid CSRF token", errorPage );
             }
 
             if(fileItems.isEmpty()) {

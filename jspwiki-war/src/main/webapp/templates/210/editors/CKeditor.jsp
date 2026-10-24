@@ -167,7 +167,7 @@
       </fieldset>
     </wiki:CheckRequestContext>
 
-    <textarea name="htmlPageText"><%=pageAsHtml%></textarea>
+    <textarea name="htmlPageText"><%=pageAsHtml.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")%></textarea>
 </form>
 <script type="text/javascript">
 //<![CDATA[

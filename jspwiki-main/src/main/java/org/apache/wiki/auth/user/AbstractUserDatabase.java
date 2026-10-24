@@ -200,26 +200,26 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      */
     @Override
     public boolean validatePassword( final String loginName, final String password ) {
-        final String hashedPassword;
         try {
             final UserProfile profile = findByLoginName( loginName );
-            String storedPassword = profile.getPassword();
+            final String storedPassword = profile.getPassword();
             boolean verified = false;
 
-            // If the password is stored as SHA-256 or SSHA, verify the hash
-            if( storedPassword.startsWith( SHA256_PREFIX ) || storedPassword.startsWith( SSHA_PREFIX ) ) {
+            if( storedPassword.startsWith( CryptoUtil.PBKDF2_PREFIX ) ) {
+                // current format: iterated, salted PBKDF2-HMAC-SHA256
+                verified = CryptoUtil.verifyPbkdf2SaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
+            } else if( storedPassword.startsWith( SHA256_PREFIX ) || storedPassword.startsWith( SSHA_PREFIX ) ) {
+                // legacy salted, single-iteration digests
                 verified = CryptoUtil.verifySaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
+            } else if( storedPassword.startsWith( SHA_PREFIX ) ) {
+                // legacy unsalted SHA-1; compare in constant time while this format survives
+                final String hashedPassword = getShaHash( password );
+                verified = MessageDigest.isEqual( hashedPassword.getBytes( StandardCharsets.UTF_8 ),
+                                                  storedPassword.substring( SHA_PREFIX.length() ).getBytes( StandardCharsets.UTF_8 ) );
             }
 
-            // Use older verification algorithm if password is stored as SHA
-            if( storedPassword.startsWith( SHA_PREFIX ) ) {
-                storedPassword = storedPassword.substring( SHA_PREFIX.length() );
-                hashedPassword = getShaHash( password );
-                verified = hashedPassword.equals( storedPassword );
-            }
-
-            // If in the old format and password verified, upgrade the hash to SSHA
-            if( verified && !storedPassword.startsWith( SHA256_PREFIX ) ) {
+            // If verified against anything but the current KDF, upgrade the stored hash on this successful login
+            if( verified && !storedPassword.startsWith( CryptoUtil.PBKDF2_PREFIX ) ) {
                 profile.setPassword( password );
                 save( profile );
             }
@@ -243,6 +243,12 @@ public abstract class AbstractUserDatabase implements UserDatabase {
             // If the password is stored as SHA-256 or SSHA, verify the hash
             
              for (String storedPassword : profile.getPreviousHashedCredentials()) {
+                if (storedPassword.startsWith(CryptoUtil.PBKDF2_PREFIX)) {
+                    boolean match = CryptoUtil.verifyPbkdf2SaltedPassword(password.getBytes(StandardCharsets.UTF_8), storedPassword);
+                    if (match) {
+                        return false;
+                    }
+                }
                 if (storedPassword.startsWith(SHA256_PREFIX) || storedPassword.startsWith(SSHA_PREFIX)) {
                     boolean match = CryptoUtil.verifySaltedPassword(password.getBytes(StandardCharsets.UTF_8), storedPassword);
                     if (match) {
@@ -304,7 +310,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
      */
     protected String getHash( final String text ) {
         try {
-            return CryptoUtil.getSaltedPassword( text.getBytes(StandardCharsets.UTF_8), SHA256_PREFIX );
+            return CryptoUtil.getPbkdf2SaltedPassword( text.getBytes( StandardCharsets.UTF_8 ) );
         } catch( final NoSuchAlgorithmException e ) {
             LOG.error( "Error creating salted password hash: {}", e.getMessage() );
             return text;

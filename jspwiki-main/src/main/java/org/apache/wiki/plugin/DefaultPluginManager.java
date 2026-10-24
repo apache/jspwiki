@@ -238,7 +238,24 @@ public class DefaultPluginManager extends BaseModuleManager implements PluginMan
      *  @throws ClassNotFoundException if no such class exists.
      */
     private Class< ? > findPluginClass( final String classname ) throws ClassNotFoundException {
-        return ClassUtil.findClass( m_searchPath, m_externalJars, classname );
+        final Class< ? > clazz = ClassUtil.findClass( m_searchPath, m_externalJars, classname );
+        if( !Plugin.class.isAssignableFrom( clazz ) || !isInSearchPath( clazz ) ) {
+            // Reject with the same error as an unknown class, so that page markup cannot be used to
+            // load or instantiate arbitrary classpath classes, nor to probe for their presence.
+            throw new ClassNotFoundException( "Class '" + classname + "' not found in search path!" );
+        }
+        return clazz;
+    }
+
+    /**
+     *  Checks whether the package of the given class is one of the packages on the plugin search path.
+     *
+     *  @param clazz The class to check.
+     *  @return true, if the class' package is on the plugin search path.
+     */
+    private boolean isInSearchPath( final Class< ? > clazz ) {
+        final Package pkg = clazz.getPackage();
+        return pkg != null && m_searchPath.contains( pkg.getName() );
     }
 
     /** Outputs an HTML-formatted version of a stack trace. */

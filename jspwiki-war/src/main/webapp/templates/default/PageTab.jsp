@@ -47,7 +47,7 @@
   <form action="<wiki:Link format='url' jsp='Wiki.jsp'/>"
         method="get"  accept-charset='UTF-8'>
 
-    <input type="hidden" name="page" value="${param.page}" />
+    <input type="hidden" name="page" value="${fn:escapeXml(param.page)}" />
     <wiki:CsrfProtection/>
     <div class="error center">
       <label>
