@@ -781,7 +781,8 @@ public class JSPWikiMarkupParser extends MarkupParser {
             callMutatorChain( m_localLinkMutatorChain, possiblePage );
             return makeLink( IMAGEWIKILINK, reallink, link, null, null );
         } else {
-            return makeLink( IMAGE, reallink, link, null, null );
+            // A data URL makes no sense as alternative text
+            return makeLink( IMAGE, reallink, LinkParsingOperations.isDataImage( link ) ? "" : link, null, null );
         }
     }
 
@@ -907,6 +908,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
             if( m_linkParsingOperations.isVariableLink( linktext ) ) {
                 final Content el = new VariableContent( linktext );
                 addElement( el );
+            } else if( isImageInlining() && LinkParsingOperations.isDataImage( linkref ) ) {
+                // The image is in the link itself, so there is nothing to track as an external link
+                handleImageLink( linkref, linktext, link.hasReference() );
             } else if( m_linkParsingOperations.isExternalLink( linkref ) ) {
                 // It's an external link, out of this Wiki
                 callMutatorChain( m_externalLinkMutatorChain, linkref );

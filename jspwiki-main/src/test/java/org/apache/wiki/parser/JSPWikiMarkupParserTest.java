@@ -596,6 +596,33 @@ class JSPWikiMarkupParserTest {
         Assertions.assertEquals( "Link <img class=\"inline\" src=\"http://foobar.jpg\" alt=\"test\" />", translate( src ) );
     }
 
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1191 */
+    @Test
+    void testInlineDataImage() throws Exception {
+        final String src = "Link [data:image/png;base64,iVBORw0KGgo=]";
+        Assertions.assertEquals( "Link <img class=\"inline\" src=\"data:image/png;base64,iVBORw0KGgo=\" alt=\"\" />", translate( src ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1191 */
+    @Test
+    void testInlineDataImageWithAltText() throws Exception {
+        final String src = "Link [test|data:image/gif;base64,R0lGODlhAQABAAAAACw=]";
+        Assertions.assertEquals( "Link <img class=\"inline\" src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" alt=\"test\" />", translate( src ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1191 */
+    @Test
+    void testDataUrlsThatAreNotRasterImagesAreNotInlined() throws Exception {
+        for( final String url : new String[] { "data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==",
+                                               "data:image/svg+xml;base64,PHN2ZyBvbmxvYWQ9ImFsZXJ0KDEpIi8+",
+                                               "data:image/png,alert(1)",
+                                               "data:image/png;base64,AAAA\"onerror=\"alert(1)" } ) {
+            final String html = translate( "Link [" + url + "]" );
+            Assertions.assertFalse( html.contains( "src=\"data:" ), html );
+            Assertions.assertFalse( html.contains( "href=\"data:" ), html );
+        }
+    }
+
     // No link text should be just embedded link.
     @Test
     void testInlineImagesLink2() throws Exception {
