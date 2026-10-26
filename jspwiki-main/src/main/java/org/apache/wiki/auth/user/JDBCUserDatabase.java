@@ -631,7 +631,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
 
             final Timestamp ts = new Timestamp( System.currentTimeMillis() );
             final Date modDate = new Date( ts.getTime() );
-            final java.sql.Date lockExpiry = profile.getLockExpiry() == null ? null : new java.sql.Date( profile.getLockExpiry().getTime() );
+            final Timestamp lockExpiry = profile.getLockExpiry() == null ? null : new Timestamp( profile.getLockExpiry().getTime() );
             if( existingProfile == null ) {
                 // User is new: insert new user record
                 ps1.setString( 1, profile.getUid() );
@@ -682,7 +682,7 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                 } catch ( final IOException e ) {
                     throw new WikiSecurityException( "Could not save user profile attribute. Reason: " + e.getMessage(), e );
                 }
-                ps4.setDate( 9, lockExpiry );
+                ps4.setTimestamp( 9, lockExpiry );
                 ps4.setString(10, StringUtils.join(profile.getPreviousHashedCredentials(), "|"));
                 ps4.setString( 11, profile.getLoginName() );
                 
@@ -746,8 +746,8 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                     profile.setEmail( rs.getString( m_email ) );
                     profile.setFullname( rs.getString( m_fullName ) );
                     profile.setLastModified( rs.getTimestamp( m_modified ) );
-                    final Date lockExpiry = rs.getDate( m_lockExpiry );
-                    profile.setLockExpiry( rs.wasNull() ? null : lockExpiry );
+                    final Timestamp lockExpiry = rs.getTimestamp( m_lockExpiry );
+                    profile.setLockExpiry( rs.wasNull() ? null : new Date( lockExpiry.getTime() ) );
                     profile.setLoginName( rs.getString( m_loginName ) );
                     profile.setPassword( rs.getString( m_password ) );
                     
