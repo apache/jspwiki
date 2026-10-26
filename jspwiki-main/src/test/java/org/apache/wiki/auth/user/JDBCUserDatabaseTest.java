@@ -464,6 +464,117 @@ public class JDBCUserDatabaseTest extends AbstractPasswordReuseTest {
         Assertions.assertFalse( m_db.findByLoginName( "janne" ).isLocked() );
     }
 
+    private void withPasswordChangedColumn() throws Exception {
+        final Properties props = new Properties();
+        props.put( "jspwiki.userdatabase.passwordChanged", "password_changed" );
+        m_db.initialize( null, props );
+    }
+
+    private void saveUser( final String loginName, final String password ) throws Exception {
+        final UserProfile profile = m_db.newProfile();
+        profile.setLoginName( loginName );
+        profile.setFullname( "Full " + loginName );
+        profile.setEmail( loginName + "@example.com" );
+        profile.setPassword( password );
+        m_db.save( profile );
+    }
+
+    private Date daysAgo( final int days ) {
+        return new Date( ( System.currentTimeMillis() - 86_400_000L * days ) / 1000 * 1000 );
+    }
+
+    @Test
+    public void testPasswordChangeDateIsNotKeptWithoutTheColumn() throws Exception {
+        saveUser( "nocolumn", "Secret#1pass" );
+
+        Assertions.assertNull( m_db.findByLoginName( "nocolumn" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testNewProfileGetsThePasswordChangeDate() throws Exception {
+        withPasswordChangedColumn();
+        final long before = System.currentTimeMillis() - 2000;
+
+        saveUser( "datenew", "Secret#1pass" );
+
+        final Date changed = m_db.findByLoginName( "datenew" ).getPasswordChanged();
+        Assertions.assertNotNull( changed );
+        Assertions.assertTrue( changed.getTime() >= before && changed.getTime() <= System.currentTimeMillis() + 2000 );
+    }
+
+    @Test
+    public void testChangingThePasswordUpdatesTheDate() throws Exception {
+        withPasswordChangedColumn();
+        saveUser( "datechange", "Secret#1pass" );
+        final UserProfile profile = m_db.findByLoginName( "datechange" );
+        final Date old = daysAgo( 40 );
+        profile.setPasswordChanged( old );
+        m_db.save( profile );
+        Assertions.assertEquals( old, m_db.findByLoginName( "datechange" ).getPasswordChanged() );
+
+        final UserProfile again = m_db.findByLoginName( "datechange" );
+        again.setPassword( "Secret#2pass" );
+        m_db.save( again );
+
+        final Date changed = m_db.findByLoginName( "datechange" ).getPasswordChanged();
+        Assertions.assertTrue( changed.after( old ) );
+        Assertions.assertTrue( changed.getTime() > System.currentTimeMillis() - 60_000L );
+    }
+
+    @Test
+    public void testSavingTheProfileWithoutChangingThePasswordKeepsTheDate() throws Exception {
+        withPasswordChangedColumn();
+        saveUser( "datekeep", "Secret#1pass" );
+        final UserProfile profile = m_db.findByLoginName( "datekeep" );
+        final Date old = daysAgo( 40 );
+        profile.setPasswordChanged( old );
+        m_db.save( profile );
+
+        final UserProfile again = m_db.findByLoginName( "datekeep" );
+        again.setFullname( "Another Name" );
+        m_db.save( again );
+
+        Assertions.assertEquals( old, m_db.findByLoginName( "datekeep" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testSettingTheSamePasswordAgainDoesNotUpdateTheDate() throws Exception {
+        withPasswordChangedColumn();
+        saveUser( "datesame", "Secret#1pass" );
+        final UserProfile profile = m_db.findByLoginName( "datesame" );
+        final Date old = daysAgo( 40 );
+        profile.setPasswordChanged( old );
+        m_db.save( profile );
+
+        final UserProfile again = m_db.findByLoginName( "datesame" );
+        again.setPassword( "Secret#1pass" );
+        m_db.save( again );
+
+        Assertions.assertEquals( old, m_db.findByLoginName( "datesame" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testHashingTheLegacyPasswordAgainAtLoginDoesNotStartTheClockAgain() throws Exception {
+        withPasswordChangedColumn();
+        final UserProfile janne = m_db.findByLoginName( "janne" );
+        final Date old = daysAgo( 40 );
+        janne.setPasswordChanged( old );
+        m_db.save( janne );
+        Assertions.assertFalse( m_db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+
+        Assertions.assertTrue( m_db.validatePassword( "janne", "myP@5sw0rd" ) );
+
+        Assertions.assertTrue( m_db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+        Assertions.assertEquals( old, m_db.findByLoginName( "janne" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testProfilesWithoutADateHaveNone() throws Exception {
+        withPasswordChangedColumn();
+
+        Assertions.assertNull( m_db.findByLoginName( "janne" ).getPasswordChanged() );
+    }
+
     @Test
     public void testValidatePassword() {
         Assertions.assertFalse( m_db.validatePassword( "janne", "test" ) );

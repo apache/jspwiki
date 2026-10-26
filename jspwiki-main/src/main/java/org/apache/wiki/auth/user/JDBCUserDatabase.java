@@ -23,6 +23,7 @@ import org.apache.commons.lang3.Strings;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.auth.NoSuchPrincipalException;
+import org.apache.wiki.auth.PasswordExpiry;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.util.Serializer;
@@ -226,6 +227,14 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
     
     public static final String PROP_DB_OLD_HASHES = "jspwiki.userdatabase.oldhashes";
 
+    /**
+     * Property with the name of the column that holds the date the password was last changed, which has no default. Without it the
+     * date is not kept, and the password cannot expire.
+     *
+     * @since 3.0.1
+     */
+    public static final String PROP_DB_PASSWORD_CHANGED = "jspwiki.userdatabase.passwordChanged";
+
     public static final String PROP_DB_CREATED = "jspwiki.userdatabase.created";
 
     public static final String PROP_DB_EMAIL = "jspwiki.userdatabase.email";
@@ -293,6 +302,9 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
     private String m_loginName;
 
     private String m_password;
+
+    /** Name of the column with the date of the last password change, or {@code null} if there is none. */
+    private String m_passwordChanged;
 
     private String m_uid;
     
@@ -445,6 +457,10 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
             m_modified = props.getProperty( PROP_DB_MODIFIED, DEFAULT_DB_MODIFIED );
             m_attributes = props.getProperty( PROP_DB_ATTRIBUTES, DEFAULT_DB_ATTRIBUTES );
             m_oldPasswords = props.getProperty( PROP_DB_OLD_HASHES, DEFAULT_DB_OLD_HASHES );
+            m_passwordChanged = StringUtils.trimToNull( props.getProperty( PROP_DB_PASSWORD_CHANGED ) );
+            if( m_passwordChanged == null && new PasswordExpiry( props ).isEnabled() ) {
+                LOG.warn( "{} is set but {} is not, so passwords cannot expire", PasswordExpiry.PROP_EXPIRY_DAYS, PROP_DB_PASSWORD_CHANGED );
+            }
             m_passwordReusedCount = Integer.parseInt(props.getProperty("jspwiki.credentials.reuseCount", "-1"));
 
             m_findAll = "SELECT * FROM " + userTable;
@@ -466,7 +482,8 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                               + m_attributes + ","
                               + m_created + "," 
                               + m_oldPasswords
-                              + ") VALUES (?,?,?,?,?,?,?,?,?,?)";
+                              + ( m_passwordChanged == null ? "" : "," + m_passwordChanged )
+                              + ") VALUES (?,?,?,?,?,?,?,?,?,?" + ( m_passwordChanged == null ? "" : ",?" ) + ")";
             
             // The user update SQL prepared statement
             m_updateProfile = "UPDATE " + userTable + " SET "
@@ -479,8 +496,9 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                               + m_loginName + "=?,"
                               + m_attributes + "=?,"
                               + m_lockExpiry + "=?,"
-                              + m_oldPasswords + "=? "
-                              + "WHERE " + m_loginName + "=?";
+                              + m_oldPasswords + "=?"
+                              + ( m_passwordChanged == null ? "" : "," + m_passwordChanged + "=?" )
+                              + " WHERE " + m_loginName + "=?";
 
             // Prepare the role insert SQL
             final String roleTable = props.getProperty( PROP_DB_ROLE_TABLE, DEFAULT_DB_ROLE_TABLE );
@@ -610,6 +628,10 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
 
         // If password changed, hash it before we save
         if( !Strings.CS.equals( password, existingPassword ) ) {
+            // Hashing the same password again, e.g. with other settings, is not a change of password
+            if( existingPassword == null || !passwordMatches( password, existingPassword ) ) {
+                profile.setPasswordChanged( new Date() );
+            }
             password = getHash( password );
             //add the hashed password
             profile.getPreviousHashedCredentials().add(password);
@@ -632,6 +654,10 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
             final Timestamp ts = new Timestamp( System.currentTimeMillis() );
             final Date modDate = new Date( ts.getTime() );
             final Timestamp lockExpiry = profile.getLockExpiry() == null ? null : new Timestamp( profile.getLockExpiry().getTime() );
+            // The date is kept as it is unless the profile has a newer one
+            final Date passwordChanged = profile.getPasswordChanged() != null || existingProfile == null ? profile.getPasswordChanged()
+                                                                                                          : existingProfile.getPasswordChanged();
+            final Timestamp passwordChangedTs = passwordChanged == null ? null : new Timestamp( passwordChanged.getTime() );
             if( existingProfile == null ) {
                 // User is new: insert new user record
                 ps1.setString( 1, profile.getUid() );
@@ -649,6 +675,9 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                 
                 ps1.setTimestamp( 9, ts );
                 ps1.setString(10, StringUtils.join(profile.getPreviousHashedCredentials(), "|"));
+                if( m_passwordChanged != null ) {
+                    ps1.setTimestamp( 11, passwordChangedTs );
+                }
                 ps1.execute();
 
                 // Insert new role record
@@ -684,7 +713,11 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                 }
                 ps4.setTimestamp( 9, lockExpiry );
                 ps4.setString(10, StringUtils.join(profile.getPreviousHashedCredentials(), "|"));
-                ps4.setString( 11, profile.getLoginName() );
+                int next = 11;
+                if( m_passwordChanged != null ) {
+                    ps4.setTimestamp( next++, passwordChangedTs );
+                }
+                ps4.setString( next, profile.getLoginName() );
                 
                 ps4.execute();
             }
@@ -748,6 +781,10 @@ public class JDBCUserDatabase extends AbstractUserDatabase {
                     profile.setLastModified( rs.getTimestamp( m_modified ) );
                     final Timestamp lockExpiry = rs.getTimestamp( m_lockExpiry );
                     profile.setLockExpiry( rs.wasNull() ? null : new Date( lockExpiry.getTime() ) );
+                    if( m_passwordChanged != null ) {
+                        final Timestamp passwordChanged = rs.getTimestamp( m_passwordChanged );
+                        profile.setPasswordChanged( rs.wasNull() ? null : new Date( passwordChanged.getTime() ) );
+                    }
                     profile.setLoginName( rs.getString( m_loginName ) );
                     profile.setPassword( rs.getString( m_password ) );
                     

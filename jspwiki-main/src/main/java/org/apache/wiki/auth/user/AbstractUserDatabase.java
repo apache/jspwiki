@@ -251,20 +251,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
         try {
             final UserProfile profile = findByLoginName( loginName );
             final String storedPassword = profile.getPassword();
-            boolean verified = false;
-
-            if( CryptoUtil.isPbkdf2Entry( storedPassword ) ) {
-                // current format: iterated, salted PBKDF2-HMAC
-                verified = CryptoUtil.verifyPbkdf2SaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
-            } else if( storedPassword.startsWith( SHA256_PREFIX ) || storedPassword.startsWith( SSHA_PREFIX ) ) {
-                // legacy salted, single-iteration digests
-                verified = CryptoUtil.verifySaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
-            } else if( storedPassword.startsWith( SHA_PREFIX ) ) {
-                // legacy unsalted SHA-1; compare in constant time while this format survives
-                final String hashedPassword = getShaHash( password );
-                verified = MessageDigest.isEqual( hashedPassword.getBytes( StandardCharsets.UTF_8 ),
-                                                  storedPassword.substring( SHA_PREFIX.length() ).getBytes( StandardCharsets.UTF_8 ) );
-            }
+            final boolean verified = passwordMatches( password, storedPassword );
 
             // If verified against anything but the configured algorithm and iterations, hash the password again on this successful login
             if( verified && !CryptoUtil.hasPbkdf2Parameters( storedPassword, m_hashAlgorithm, m_hashIterations ) ) {
@@ -275,10 +262,42 @@ public abstract class AbstractUserDatabase implements UserDatabase {
             return verified;
         } catch( final NoSuchPrincipalException e ) {
             LOG.debug(e.getMessage(), e);
-        } catch( final NoSuchAlgorithmException e ) {
-            LOG.error( "Unsupported algorithm: " + e.getMessage() );
         } catch( final WikiSecurityException e ) {
             LOG.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage(), e );
+        }
+        return false;
+    }
+
+    /**
+     * Tells if a password is the one that a stored password entry was made from, whatever the format of the entry: the current PBKDF2
+     * one or any of the older SHA ones. An entry in none of those formats never matches.
+     *
+     * @param password the password in clear
+     * @param storedPassword the stored password entry
+     * @return {@code true} if the entry was made from the password
+     * @since 3.0.1
+     */
+    protected boolean passwordMatches( final String password, final String storedPassword ) {
+        if( password == null || storedPassword == null ) {
+            return false;
+        }
+        try {
+            if( CryptoUtil.isPbkdf2Entry( storedPassword ) ) {
+                // current format: iterated, salted PBKDF2-HMAC
+                return CryptoUtil.verifyPbkdf2SaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
+            } else if( storedPassword.startsWith( SHA256_PREFIX ) || storedPassword.startsWith( SSHA_PREFIX ) ) {
+                // legacy salted, single-iteration digests
+                return CryptoUtil.verifySaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
+            } else if( storedPassword.startsWith( SHA_PREFIX ) ) {
+                // legacy unsalted SHA-1; compare in constant time while this format survives
+                final String hashedPassword = getShaHash( password );
+                return MessageDigest.isEqual( hashedPassword.getBytes( StandardCharsets.UTF_8 ),
+                                              storedPassword.substring( SHA_PREFIX.length() ).getBytes( StandardCharsets.UTF_8 ) );
+            }
+        } catch( final NoSuchAlgorithmException e ) {
+            LOG.error( "Unsupported algorithm: " + e.getMessage() );
+        } catch( final IllegalArgumentException e ) {
+            LOG.warn( "Malformed password entry: {}", e.getMessage() );
         }
         return false;
     }

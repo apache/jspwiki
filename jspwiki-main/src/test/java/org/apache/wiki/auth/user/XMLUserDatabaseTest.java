@@ -499,6 +499,8 @@ public class XMLUserDatabaseTest {
         Assertions.assertFalse( sha512.validatePasswordReuse( "reuseuser", "Secret#1pass" ) );
         Assertions.assertFalse( sha512.validatePasswordReuse( "reuseuser", "Secret#2pass" ) );
         Assertions.assertTrue( sha512.validatePasswordReuse( "reuseuser", "Secret#3pass" ) );
+    }
+
     private XMLUserDatabase newDatabase( final File file ) throws Exception {
         final Properties props = TestEngine.getTestProperties();
         props.put( XMLUserDatabase.PROP_USERDATABASE, file.getAbsolutePath() );
@@ -567,6 +569,107 @@ public class XMLUserDatabaseTest {
         final UserProfile reloaded = newDatabase( file ).findByLoginName( "janne" );
 
         Assertions.assertTrue( reloaded.isLocked() );
+    }
+
+    @Test
+    public void testNewProfileGetsThePasswordChangeDate() throws Exception {
+        final File file = newDatabaseFile();
+        final long before = System.currentTimeMillis() - 1000;
+        final XMLUserDatabase db = newDatabase( file );
+
+        saveUser( db, "datenew", "Secret#1pass" );
+
+        final Date changed = newDatabase( file ).findByLoginName( "datenew" ).getPasswordChanged();
+        Assertions.assertNotNull( changed );
+        Assertions.assertTrue( changed.getTime() >= before && changed.getTime() <= System.currentTimeMillis() + 1000 );
+    }
+
+    @Test
+    public void testChangingThePasswordUpdatesTheDate() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase db = newDatabase( file );
+        saveUser( db, "datechange", "Secret#1pass" );
+        final UserProfile profile = db.findByLoginName( "datechange" );
+        final Date old = new Date( System.currentTimeMillis() - 86_400_000L * 40 );
+        profile.setPasswordChanged( old );
+        db.save( profile );
+        Assertions.assertEquals( old, newDatabase( file ).findByLoginName( "datechange" ).getPasswordChanged() );
+
+        final UserProfile again = db.findByLoginName( "datechange" );
+        again.setPassword( "Secret#2pass" );
+        db.save( again );
+
+        final Date changed = newDatabase( file ).findByLoginName( "datechange" ).getPasswordChanged();
+        Assertions.assertTrue( changed.after( old ) );
+        Assertions.assertTrue( changed.getTime() > System.currentTimeMillis() - 60_000L );
+    }
+
+    @Test
+    public void testSavingTheProfileWithoutChangingThePasswordKeepsTheDate() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase db = newDatabase( file );
+        saveUser( db, "datekeep", "Secret#1pass" );
+        final UserProfile profile = db.findByLoginName( "datekeep" );
+        final Date old = new Date( System.currentTimeMillis() - 86_400_000L * 40 );
+        profile.setPasswordChanged( old );
+        db.save( profile );
+
+        final UserProfile again = db.findByLoginName( "datekeep" );
+        again.setFullname( "Another Name" );
+        db.save( again );
+
+        Assertions.assertEquals( old, newDatabase( file ).findByLoginName( "datekeep" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testSettingTheSamePasswordAgainDoesNotUpdateTheDate() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase db = newDatabase( file );
+        saveUser( db, "datesame", "Secret#1pass" );
+        final UserProfile profile = db.findByLoginName( "datesame" );
+        final Date old = new Date( System.currentTimeMillis() - 86_400_000L * 40 );
+        profile.setPasswordChanged( old );
+        db.save( profile );
+
+        final UserProfile again = db.findByLoginName( "datesame" );
+        again.setPassword( "Secret#1pass" );
+        db.save( again );
+
+        Assertions.assertEquals( old, newDatabase( file ).findByLoginName( "datesame" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testHashingTheLegacyPasswordAgainAtLoginDoesNotStartTheClockAgain() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase db = newDatabase( file );
+        final UserProfile janne = db.findByLoginName( "janne" );
+        final Date old = new Date( System.currentTimeMillis() - 86_400_000L * 40 );
+        janne.setPasswordChanged( old );
+        db.save( janne );
+        Assertions.assertFalse( db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+
+        Assertions.assertTrue( db.validatePassword( "janne", "myP@5sw0rd" ) );
+
+        Assertions.assertTrue( db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+        Assertions.assertEquals( old, newDatabase( file ).findByLoginName( "janne" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testProfilesWithoutADateHaveNone() throws Exception {
+        Assertions.assertNull( newDatabase( newDatabaseFile() ).findByLoginName( "janne" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testExplicitDateIsSaved() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase db = newDatabase( file );
+        final UserProfile janne = db.findByLoginName( "janne" );
+        final Date date = new Date( System.currentTimeMillis() - 86_400_000L * 10 );
+
+        janne.setPasswordChanged( date );
+        db.save( janne );
+
+        Assertions.assertEquals( date, newDatabase( file ).findByLoginName( "janne" ).getPasswordChanged() );
     }
 
     @Test
