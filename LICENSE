@@ -270,7 +270,7 @@ lucene-queries-9.12.2.jar                   LICENSE
 lucene-queryparser-9.12.2.jar               LICENSE
 lucene-sandbox-9.12.2.jar                   LICENSE
 javax.mail-1.6.2.jar                        ./jspwiki-war/src/main/config/doc/LICENSE.cddl
-nekohtml-2.0.2.jar (codelibs fork)          LICENSE
+neko-htmlunit-5.6.0.jar                     LICENSE
 org.suigeneris.jrcs.diff-0.4.2              LICENSE
 oro-2.0.8.jar                               LICENSE
 sandler-0.5.jar                             ./jspwiki-war/src/main/config/doc/LICENSE.sandler

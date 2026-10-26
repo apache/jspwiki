@@ -158,11 +158,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codelibs</groupId>
-            <artifactId>nekohtml</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.freshcookies</groupId>
             <artifactId>freshcookies-security</artifactId>
         </dependency>
