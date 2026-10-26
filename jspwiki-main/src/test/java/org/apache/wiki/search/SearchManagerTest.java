@@ -38,7 +38,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import static org.apache.wiki.search.DefaultSearchManager.PluginSearch.AJAX_ACTION_PLUGINS;
@@ -212,6 +215,59 @@ class SearchManagerTest {
     }
     
     
+    Collection< String > pageNamesFor( final String text ) throws Exception {
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
+        final Collection< SearchResult > search = m_mgr.findPages( text, ctx );
+        final List< String > names = new ArrayList<>();
+        for( final SearchResult result : search ) {
+            names.add( result.getPage().getName() );
+        }
+        Collections.sort( names );
+        return names;
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-501 */
+    @Test
+    void testWildcardAfterUnderscoreInPageName() throws Exception {
+        m_engine.saveText( "Page_WithUnderscore", "some content" );
+        m_engine.saveText( "Pageant_Show", "other content" );
+        m_engine.saveText( "Unrelated", "nothing to see" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "Unrelated" ) );
+        Awaitility.await( "index2" ).until( findsResultsFor( new ArrayList<>(), "Pageant_Show" ) );
+
+        Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "Page_With*" ) );
+        Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "Page_*" ) );
+        Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "page_with?nderscore" ) );
+        Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "Page_WithUnderscore" ) );
+        Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore", "Pageant_Show" ), pageNamesFor( "Page*" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-501 */
+    @Test
+    void testWildcardAfterUnderscoreInContents() throws Exception {
+        m_engine.saveText( "SnakeCase", "uses snake_case_name for things" );
+        m_engine.saveText( "Other", "uses snake and case separately, plus snake_cased" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "separately" ) );
+        Awaitility.await( "index2" ).until( findsResultsFor( new ArrayList<>(), "SnakeCase" ) );
+
+        Assertions.assertEquals( Arrays.asList( "SnakeCase" ), pageNamesFor( "snake_case_na*" ) );
+        Assertions.assertEquals( Arrays.asList( "SnakeCase" ), pageNamesFor( "snake_ca?e_name" ) );
+        Assertions.assertEquals( Arrays.asList( "Other", "SnakeCase" ), pageNamesFor( "snake_case*" ) );
+        Assertions.assertEquals( Arrays.asList( "SnakeCase" ), pageNamesFor( "snake_case_*" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-501 */
+    @Test
+    void testWildcardWithoutUnderscoreIsUnchanged() throws Exception {
+        m_engine.saveText( "TestPage", "the dawn of the third age of mankind" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "mankind" ) );
+
+        Assertions.assertEquals( Arrays.asList( "TestPage" ), pageNamesFor( "man*" ) );
+        Assertions.assertEquals( Arrays.asList( "TestPage" ), pageNamesFor( "m?nkind" ) );
+        Assertions.assertEquals( Arrays.asList(), pageNamesFor( "woman*" ) );
+    }
+
     @Test
     public void getPluginList() throws Exception {
         DefaultSearchManager defaultSearchManager = new DefaultSearchManager(m_engine, m_engine.getWikiProperties());
