@@ -74,8 +74,14 @@ public class TabbedSectionTag extends BodyTagSupport
         m_defaultTabId = anDefaultTabId;
     }
 
-    // FIXME: I don't really understand what this does - so Dirk, please
-    //        add some documentation.
+    /**
+     *  Called by every tab each time the section goes through its tabs. While the default tab is being looked for, it records the first
+     *  tab and whether the requested default tab exists; if it does not, the first tab becomes the default one. In the other phases it
+     *  tells whether the tab is the default one, which is the tab that is shown and highlighted in the menu.
+     *
+     *  @param aTabId ID attribute of the tab.
+     *  @return True, if the tab is the default tab.
+     */
     public boolean validateDefaultTab(final String aTabId )
     {
         if( m_firstTabId == null ) m_firstTabId = aTabId;
