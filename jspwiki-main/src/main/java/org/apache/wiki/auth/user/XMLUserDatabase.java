@@ -90,6 +90,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     private static final String LOGIN_NAME        = "loginName";
     private static final String LAST_MODIFIED     = "lastModified";
     private static final String LOCK_EXPIRY       = "lockExpiry";
+    private static final String PASSWORD_CHANGED  = "passwordChanged";
     private static final String PASSWORD          = "password";
     private static final String UID               = "uid";
     private static final String USER_TAG          = "user";
@@ -300,6 +301,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( LAST_MODIFIED ) ) + "\" " );
                 io.write( LOCK_EXPIRY );
                 io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( LOCK_EXPIRY ) ) + "\" " );
+                io.write( PASSWORD_CHANGED );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( PASSWORD_CHANGED ) ) + "\" " );
                 io.write( OLD_HASHES_TAG );
                 io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( OLD_HASHES_TAG ) ) + "\" " );
                 io.write( ">" );
@@ -453,6 +456,10 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         if( newPassword != null && !newPassword.equals( "" ) ) {
             final String oldPassword = user.getAttribute( PASSWORD );
             if( !oldPassword.equals( newPassword ) ) {
+                // Hashing the same password again, e.g. with other settings, is not a change of password
+                if( !passwordMatches( newPassword, oldPassword ) ) {
+                    profile.setPasswordChanged( modDate );
+                }
                 String newhash = getHash( newPassword );
                 setAttribute( user, PASSWORD, newhash );
             
@@ -463,6 +470,11 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 }
 
             }
+        }
+
+        // The date is kept as it is unless the profile has a newer one
+        if( profile.getPasswordChanged() != null ) {
+            setAttribute( user, PASSWORD_CHANGED, c_format.format( profile.getPasswordChanged() ) );
         }
 
         // Save the attributes as Base64 string
@@ -541,6 +553,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
 
                 // Is the profile locked?
                 profile.setLockExpiry( parseLockExpiry( profile, user.getAttribute( LOCK_EXPIRY ) ) );
+                final String passwordChanged = user.getAttribute( PASSWORD_CHANGED );
+                profile.setPasswordChanged( StringUtils.isBlank( passwordChanged ) ? null : parseDate( profile, passwordChanged ) );
                 final String oldHahes = user.getAttribute(OLD_HASHES_TAG);
                 if (oldHahes != null && oldHahes.length() > 0) {
                     String[] parts = oldHahes.split("\\|");

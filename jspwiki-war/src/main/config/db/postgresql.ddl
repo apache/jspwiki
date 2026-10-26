@@ -28,6 +28,7 @@ create table users (
   created timestamp,
   modified timestamp,
   lock_expiry timestamp,
+  password_changed timestamp,
   attributes longvarchar,
 );
 
