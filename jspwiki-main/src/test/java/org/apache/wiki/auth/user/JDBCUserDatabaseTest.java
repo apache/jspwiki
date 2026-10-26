@@ -41,6 +41,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.Date;
 import java.util.Properties;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.auth.AbstractPasswordReuseTest;
@@ -445,6 +446,22 @@ public class JDBCUserDatabaseTest extends AbstractPasswordReuseTest {
 
         Assertions.assertTrue( m_db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2-SHA512}2000$" ) );
         Assertions.assertTrue( m_db.validatePassword( "janne", "myP@5sw0rd" ) );
+    }
+
+    @Test
+    public void testLockExpiryIsSavedAndRead() throws Exception {
+        final Date expiry = new Date( ( System.currentTimeMillis() + 3_600_000L ) / 1000 * 1000 );
+        final UserProfile profile = m_db.findByLoginName( "janne" );
+        profile.setLockExpiry( expiry );
+        m_db.save( profile );
+
+        final UserProfile reloaded = m_db.findByLoginName( "janne" );
+        Assertions.assertTrue( reloaded.isLocked() );
+        Assertions.assertEquals( expiry, reloaded.getLockExpiry() );
+
+        reloaded.setLockExpiry( null );
+        m_db.save( reloaded );
+        Assertions.assertFalse( m_db.findByLoginName( "janne" ).isLocked() );
     }
 
     @Test

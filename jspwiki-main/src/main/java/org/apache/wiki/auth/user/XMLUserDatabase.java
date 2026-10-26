@@ -540,12 +540,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 profile.setLastModified( parseDate( profile, modified ) );
 
                 // Is the profile locked?
-                final String lockExpiry = user.getAttribute( LOCK_EXPIRY );
-                if( StringUtils.isEmpty( lockExpiry ) || lockExpiry.isEmpty() ) {
-                    profile.setLockExpiry( null );
-                } else {
-                    profile.setLockExpiry( new Date( Long.parseLong( lockExpiry ) ) );
-                }
+                profile.setLockExpiry( parseLockExpiry( profile, user.getAttribute( LOCK_EXPIRY ) ) );
                 final String oldHahes = user.getAttribute(OLD_HASHES_TAG);
                 if (oldHahes != null && oldHahes.length() > 0) {
                     String[] parts = oldHahes.split("\\|");
@@ -589,6 +584,30 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     }
 
     /**
+     *  Parses the lock expiry of a profile, which is written in the default date format. Milliseconds since the epoch, which is what
+     *  was expected when reading it, are accepted too. A value that cannot be parsed keeps the profile locked, as it may have been
+     *  tampered with and opening the account would be the unsafe way to fail.
+     *
+     *  @param profile profile associated to the date.
+     *  @param lockExpiry the stored lock expiry, which may be empty.
+     *  @return the date the lock expires, or null if the profile is not locked.
+     */
+    private Date parseLockExpiry( final UserProfile profile, final String lockExpiry ) {
+        if( StringUtils.isBlank( lockExpiry ) ) {
+            return null;
+        }
+        if( StringUtils.isNumeric( lockExpiry ) ) {
+            return new Date( Long.parseLong( lockExpiry ) );
+        }
+        final Date expiry = parseDate( profile, lockExpiry );
+        if( expiry == null ) {
+            LOG.error( "Could not parse the 'lockExpiry' attribute for profile '{}'; keeping the profile locked.", profile.getLoginName() );
+            return new Date( Long.MAX_VALUE );
+        }
+        return expiry;
+    }
+
+    /**
      *  Tries to parse a date using the default format - then, for backwards compatibility reasons, tries the platform default.
      *
      *  @param profile profile associated to the date.
@@ -603,7 +622,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             try {
                 return DateFormat.getDateTimeInstance().parse( date );
             } catch( final ParseException e2 ) {
-                LOG.warn( "Could not parse 'created' or 'lastModified' attribute for profile '" + profile.getLoginName() + "'." +
+                LOG.warn( "Could not parse a date attribute for profile '" + profile.getLoginName() + "'." +
                           " It may have been tampered with.", e2 );
             }
         }

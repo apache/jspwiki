@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -498,6 +499,74 @@ public class XMLUserDatabaseTest {
         Assertions.assertFalse( sha512.validatePasswordReuse( "reuseuser", "Secret#1pass" ) );
         Assertions.assertFalse( sha512.validatePasswordReuse( "reuseuser", "Secret#2pass" ) );
         Assertions.assertTrue( sha512.validatePasswordReuse( "reuseuser", "Secret#3pass" ) );
+    private XMLUserDatabase newDatabase( final File file ) throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+        props.put( XMLUserDatabase.PROP_USERDATABASE, file.getAbsolutePath() );
+        final XMLUserDatabase db = new XMLUserDatabase();
+        db.initialize( m_engine, props );
+        return db;
+    }
+
+    /** Rewrites the lock expiry in the file as an administrator could, which makes the integrity check file obsolete. */
+    private void rewriteLockExpiry( final File file, final String lockExpiry ) throws Exception {
+        final String xml = FileUtils.readFileToString( file, StandardCharsets.UTF_8 );
+        FileUtils.writeStringToFile( file, xml.replaceAll( "lockExpiry=\"[^\"]*\"", "lockExpiry=\"" + lockExpiry + "\"" ), StandardCharsets.UTF_8 );
+        FileUtils.deleteQuietly( new File( file.getParent(), file.getName() + ".check" ) );
+    }
+
+    private UserProfile lockJanne( final File file, final Date expiry ) throws Exception {
+        final XMLUserDatabase db = newDatabase( file );
+        final UserProfile profile = db.findByLoginName( "janne" );
+        profile.setLockExpiry( expiry );
+        db.save( profile );
+        return profile;
+    }
+
+    @Test
+    public void testLockExpiryIsSavedAndRead() throws Exception {
+        final File file = newDatabaseFile();
+        final Date expiry = new Date( System.currentTimeMillis() + 3_600_000L );
+        lockJanne( file, expiry );
+
+        final UserProfile reloaded = newDatabase( file ).findByLoginName( "janne" );
+
+        Assertions.assertTrue( reloaded.isLocked() );
+        Assertions.assertEquals( expiry, reloaded.getLockExpiry() );
+    }
+
+    @Test
+    public void testClearedLockIsSavedAndRead() throws Exception {
+        final File file = newDatabaseFile();
+        lockJanne( file, new Date( System.currentTimeMillis() + 3_600_000L ) );
+        lockJanne( file, null );
+
+        final UserProfile reloaded = newDatabase( file ).findByLoginName( "janne" );
+
+        Assertions.assertFalse( reloaded.isLocked() );
+        Assertions.assertNull( reloaded.getLockExpiry() );
+    }
+
+    @Test
+    public void testLockExpiryInMillisecondsIsStillRead() throws Exception {
+        final File file = newDatabaseFile();
+        final long expiry = System.currentTimeMillis() + 3_600_000L;
+        lockJanne( file, new Date( expiry ) );
+        rewriteLockExpiry( file, String.valueOf( expiry ) );
+
+        final UserProfile reloaded = newDatabase( file ).findByLoginName( "janne" );
+
+        Assertions.assertEquals( new Date( expiry ), reloaded.getLockExpiry() );
+    }
+
+    @Test
+    public void testUnreadableLockExpiryKeepsTheProfileLocked() throws Exception {
+        final File file = newDatabaseFile();
+        lockJanne( file, new Date( System.currentTimeMillis() + 3_600_000L ) );
+        rewriteLockExpiry( file, "not a date" );
+
+        final UserProfile reloaded = newDatabase( file ).findByLoginName( "janne" );
+
+        Assertions.assertTrue( reloaded.isLocked() );
     }
 
     @Test
