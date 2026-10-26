@@ -65,11 +65,6 @@ public class WikiServletFilter implements Filter {
     public void init( final FilterConfig config ) throws ServletException {
         final ServletContext context = config.getServletContext();
 
-        // TODO REMOVEME when resolving JSPWIKI-129
-        if( System.getSecurityManager() != null ) {
-            context.log( "== JSPWIKI WARNING ==  : This container is running with a security manager. JSPWiki does not yet really support that right now. See issue JSPWIKI-129 for details and information on how to proceed." );
-        }
-
         m_engine = Wiki.engine().find( context, null );
     }
 

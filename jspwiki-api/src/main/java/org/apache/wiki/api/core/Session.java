@@ -253,7 +253,10 @@ public interface Session extends WikiEventListener {
      * @param action the privileged action
      * @return the result of the privileged action; may be <code>null</code>
      * @throws java.security.AccessControlException if the action is not permitted by the security policy
+     * @deprecated JSPWiki does not use the access control context of the JVM to check permissions anymore, so there is no reason to run
+     *             anything in the context of a session; use {@link Subject#doAs(Subject, PrivilegedAction)} if the Subject is needed
      */
+    @Deprecated( since = "3.0.1" )
     static Object doPrivileged( final Session session, final PrivilegedAction<?> action ) throws AccessControlException {
         return Subject.doAsPrivileged( session.getSubject(), action, null );
     }

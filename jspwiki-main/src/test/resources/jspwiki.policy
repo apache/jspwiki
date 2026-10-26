@@ -22,21 +22,12 @@
 // environment, and should be suitable for most purposes.
 // JSPWiki will load this policy when the wiki webapp starts.
 //
-// As noted, this is the 'local' policy for this instance of JSPWiki.
-// You can also use the standard Java 2 security policy mechanisms
-// to create a consolidated 'global policy' (JVM-wide) that will be checked first,
-// before this local policy. This is ideal for situations in which you are
-// running multiple instances of JSPWiki in your web container.
-// To set a global security policy for all running instances of JSPWiki,
-// you will need to specify the location of the global policy by setting the
-// JVM system property 'java.security.policy' in the command line script
-// you use to start your web container. See the documentation
-// pages at http://doc.jspwiki.org/2.4/wiki/InstallingJSPWiki. If you
-// don't know what this means, don't worry about it.
-//
-// Also, if you are running JSPWiki with a security policy, you will probably
-// want to copy the contents of the file jspwiki-container.policy into your
-// container's policy. See that file for more details.
+// This is the policy for this instance of JSPWiki, and the only one that
+// decides what the users of the wiki may do. Another file can be used for
+// each wiki instance by setting 'jspwiki.policy.file'. The security policy
+// of the JVM, set with the system property 'java.security.policy', is not
+// consulted: the Java security manager is deprecated, and what it checks has
+// nothing to do with the permissions of the users of the wiki.
 //
 // ------ EVERYTHING THAT FOLLOWS IS THE 'LOCAL' POLICY FOR YOUR WIKI ------
 
