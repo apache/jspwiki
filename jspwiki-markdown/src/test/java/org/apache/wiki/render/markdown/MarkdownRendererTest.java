@@ -284,6 +284,29 @@ public class MarkdownRendererTest {
                                  translate( src ) );
     }
 
+    private void storeImageAttachment() throws Exception {
+        newPage( "Test" );
+        final Attachment att = Wiki.contents().attachment( testEngine, "Test", "pic.png" );
+        att.setAuthor( "FirstPost" );
+        testEngine.getManager( AttachmentManager.class ).storeAttachment( att, testEngine.makeAttachmentFile() );
+    }
+
+    @Test
+    public void testInlineAttachedImage() throws Exception {
+        storeImageAttachment();
+
+        Assertions.assertEquals( "<p>see <img class=\"inline\" src=\"/test/attach/Test/pic.png\" alt=\"pic\" /> here</p>\n",
+                                 translate( "see [pic](Test/pic.png) here" ) );
+    }
+
+    @Test
+    public void testAttachedImageSyntax() throws Exception {
+        storeImageAttachment();
+
+        Assertions.assertEquals( "<p>see <img src=\"/test/attach/Test/pic.png\" alt=\"pic\" /> here</p>\n",
+                                 translate( "see ![pic](Test/pic.png) here" ) );
+    }
+
     @Test
     public void testInlineImages() throws Exception {
         final String src = "Link [test](http://www.ecyrd.com/test.png)";
