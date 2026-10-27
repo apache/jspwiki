@@ -605,6 +605,12 @@ class JSPWikiMarkupParserTest {
 
     /** https://issues.apache.org/jira/browse/JSPWIKI-1191 */
     @Test
+    void testInlineDataImageWithAllBase64Characters() throws Exception {
+        final String src = "Link [data:image/png;base64,iVBOR+/w0KGgo+AAA=]";
+        Assertions.assertEquals( "Link <img class=\"inline\" src=\"data:image/png;base64,iVBOR+/w0KGgo+AAA=\" alt=\"\" />", translate( src ) );
+    }
+
+    @Test
     void testInlineDataImageWithAltText() throws Exception {
         final String src = "Link [test|data:image/gif;base64,R0lGODlhAQABAAAAACw=]";
         Assertions.assertEquals( "Link <img class=\"inline\" src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" alt=\"test\" />", translate( src ) );
