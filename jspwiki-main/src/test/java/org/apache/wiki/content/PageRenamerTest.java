@@ -136,6 +136,33 @@ public class PageRenamerTest {
         Assertions.assertEquals( "TestPage2", refs.iterator().next(), "wrong ref" );
     }
 
+    private String renameTwiceWithBlanks( final String referrer ) throws Exception {
+        m_engine.saveText( "Test Page", "foofoo" );
+        m_engine.saveText( "TestPage2", referrer );
+
+        final Page p = m_engine.getManager( PageManager.class ).getPage( "Test Page" );
+        final Context context = Wiki.context().create( m_engine, p );
+        m_engine.getManager( PageRenamer.class ).renamePage( context, "Test Page", "Foo Test", true );
+        m_engine.getManager( PageRenamer.class ).renamePage( context, "Foo Test", "Bar Test", true );
+
+        return m_engine.getManager( PageManager.class ).getPureText( "TestPage2", WikiProvider.LATEST_VERSION ).trim();
+    }
+
+    @Test
+    public void testReferrerChangeMultiRenameWithBlanks() throws Exception {
+        Assertions.assertEquals( "[Test Page|Bar Test]", renameTwiceWithBlanks( "[Test Page]" ) );
+    }
+
+    @Test
+    public void testReferrerChangeMultiRenameWithBlanksAndAnchor() throws Exception {
+        Assertions.assertEquals( "[Test Page#Anchor|Bar Test]", renameTwiceWithBlanks( "[Test Page#Anchor]" ) );
+    }
+
+    @Test
+    public void testReferrerChangeLinkTextAndTargetWithBlanks() throws Exception {
+        Assertions.assertEquals( "[Alpha|Bar Test]", renameTwiceWithBlanks( "[Alpha|Test Page]" ) );
+    }
+
     @Test
     public void testReferrerChangeCC() throws Exception {
         m_engine.saveText("TestPage", "foofoo" );
