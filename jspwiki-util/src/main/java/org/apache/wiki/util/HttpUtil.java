@@ -33,10 +33,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 
 /**
@@ -51,17 +47,6 @@ public final class HttpUtil {
     private static final int    NINE                  = 57;
     private static final int    DOT                   = 46;
 
-    /**
-     * Name of the system property holding the comma-separated list of reverse proxies (exact IPs or IPv4 CIDR
-     * ranges) whose {@code X-Forwarded-For} header may be trusted. Empty or unset means the header is never trusted.
-     */
-    public static final String PROP_TRUSTED_PROXIES = "jspwiki.trustedProxies";
-
-    /** Characters allowed in an IPv4 / IPv6 address. */
-    private static final Pattern IP_ADDRESS_CHARS = Pattern.compile( "[0-9A-Fa-f.:]{1,45}" );
-
-    /** Cached parse of {@value #PROP_TRUSTED_PROXIES}; {@code null} until first used. */
-    private static volatile Set<String> trustedProxies;
     
     /** Private constructor to prevent direct instantiation. */
     private HttpUtil() {
@@ -80,78 +65,11 @@ public final class HttpUtil {
      */
     public static String getRemoteAddress( final HttpServletRequest req ) {
         final String remoteAddr = req.getRemoteAddr();
-        if( !isTrustedProxy( remoteAddr ) ) {
-            return remoteAddr;
-        }
-
-        // there may be several X-Forwarded-For headers, each holding a comma-separated list of addresses
-        final StringBuilder forwarded = new StringBuilder();
-        final Enumeration<String> headers = req.getHeaders( "X-Forwarded-For" );
-        while( headers != null && headers.hasMoreElements() ) {
-            if( forwarded.length() > 0 ) {
-                forwarded.append( ',' );
-            }
-            forwarded.append( headers.nextElement() );
-        }
-        if( forwarded.length() == 0 ) {
-            return remoteAddr;
-        }
-
-        final String[] hops = forwarded.toString().split( "," );
-        for( int i = hops.length - 1; i >= 0; i-- ) {
-            final String hop = hops[ i ].trim();
-            if( !isTrustedProxy( hop ) ) {
-                return IP_ADDRESS_CHARS.matcher( hop ).matches() ? hop : remoteAddr;
-            }
-        }
+        
         return remoteAddr;
     }
 
-    /**
-     * Returns whether the given address matches an entry of the {@value #PROP_TRUSTED_PROXIES} system property.
-     *
-     * @param addr address to check.
-     * @return {@code true} if the address is a trusted proxy, {@code false} otherwise.
-     */
-    static boolean isTrustedProxy( final String addr ) {
-        if( StringUtils.isEmpty( addr ) ) {
-            return false;
-        }
-        for( final String entry : trustedProxies() ) {
-            if( entry.indexOf( '/' ) >= 0 ) {
-                try {
-                    if( new SubnetUtils( entry ).getInfo().isInRange( addr ) ) {
-                        return true;
-                    }
-                } catch( final IllegalArgumentException e ) {
-                    LOG.warn( "ignoring invalid {} entry: {}", PROP_TRUSTED_PROXIES, entry );
-                }
-            } else if( entry.equals( addr ) ) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static Set<String> trustedProxies() {
-        Set<String> proxies = trustedProxies;
-        if( proxies == null ) {
-            proxies = new HashSet<>();
-            for( final String entry : System.getProperty( PROP_TRUSTED_PROXIES, "" ).split( "," ) ) {
-                final String trimmed = entry.trim();
-                if( !trimmed.isEmpty() ) {
-                    proxies.add( trimmed );
-                }
-            }
-            trustedProxies = proxies;
-        }
-        return proxies;
-    }
-
-    /** Clears the cached trusted proxy list so {@value #PROP_TRUSTED_PROXIES} is re-read. Intended for tests. */
-    static void resetTrustedProxies() {
-        trustedProxies = null;
-    }
+   
 
     /**
      * Returns whether or not the IP address of the request equals a given IP,
