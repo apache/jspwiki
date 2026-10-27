@@ -108,7 +108,7 @@ public final class WorkflowBuilder {
                                            final Step completionTask,
                                            final String rejectedMessageKey ) throws WikiException {
         final WorkflowManager mgr = m_engine.getManager( WorkflowManager.class );
-        final Workflow workflow = new Workflow( workflowApproverKey, submitter );
+        final Workflow workflow = new Workflow( m_engine, workflowApproverKey, submitter );
 
         // Is a Decision required to run the approve task?
         final boolean decisionRequired = mgr.requiresApproval( workflowApproverKey );
