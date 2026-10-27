@@ -41,8 +41,12 @@ import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.Properties;
@@ -84,6 +88,27 @@ public class AuthorizationManagerTest {
         m_auth = m_engine.getManager( AuthorizationManager.class );
         m_groupMgr = m_engine.getManager( GroupManager.class );
         m_session = WikiSessionTest.adminSession( m_engine );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-877 */
+    @Test
+    public void testPolicyFileWithAbsolutePath( @TempDir final Path dir ) throws Exception {
+        final Path policy = dir.resolve( "custom.policy" );
+        Files.write( policy, ( "grant principal org.apache.wiki.auth.authorize.Role \"All\" {\n"
+                             + "    permission org.apache.wiki.auth.permissions.PagePermission \"*:Visible*\", \"view\";\n"
+                             + "};\n" ).getBytes( StandardCharsets.UTF_8 ) );
+        final Properties props = TestEngine.getTestProperties();
+        props.put( AuthorizationManager.POLICY, policy.toAbsolutePath().toString() );
+
+        final TestEngine engine = new TestEngine( props );
+        try {
+            final AuthorizationManager auth = engine.getManager( AuthorizationManager.class );
+            final Session session = WikiSessionTest.anonymousSession( engine );
+            Assertions.assertTrue( auth.checkPermission( session, PermissionFactory.getPagePermission( "*:VisiblePage", "view" ) ) );
+            Assertions.assertFalse( auth.checkPermission( session, PermissionFactory.getPagePermission( "*:HiddenPage", "view" ) ) );
+        } finally {
+            engine.stop();
+        }
     }
 
     /**
