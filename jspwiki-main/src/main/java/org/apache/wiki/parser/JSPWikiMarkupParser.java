@@ -397,23 +397,22 @@ public class JSPWikiMarkupParser extends MarkupParser {
     }
 
     /**
-     *  This method peeks ahead in the stream until EOL and returns the result. It will keep the buffers untouched.
+     *  This method peeks ahead in the stream until EOL and returns the result. It will keep the buffers untouched. Of a line longer than
+     *  the pushback buffer only the first {@link #PUSHBACK_BUFFER_SIZE} characters are looked at, as more could not be given back.
      *
-     *  @return The string from the current position to the end of line.
+     *  @return The string from the current position to the end of line, or its first {@link #PUSHBACK_BUFFER_SIZE} characters.
      */
-    // FIXME: Always returns an empty line, even if the stream is full.
     private String peekAheadLine() throws IOException {
-        final String s = readUntilEOL().toString();
-        if( s.length() > PUSHBACK_BUFFER_SIZE ) {
-            LOG.warn( "Line is longer than maximum allowed size (" + PUSHBACK_BUFFER_SIZE + " characters.  Attempting to recover..." );
-            pushBack( s.substring( 0, PUSHBACK_BUFFER_SIZE - 1 ) );
-        } else {
-            try {
-                pushBack( s );
-            } catch( final IOException e ) {
-                LOG.warn( "Pushback failed: the line is probably too long.  Attempting to recover." );
+        final StringBuilder buf = new StringBuilder( 256 );
+        int ch;
+        while( buf.length() < PUSHBACK_BUFFER_SIZE && ( ch = nextToken() ) != -1 ) {
+            buf.append( ( char ) ch );
+            if( ch == '\n' ) {
+                break;
             }
         }
+        final String s = buf.toString();
+        pushBack( s );
         return s;
     }
 
@@ -1177,25 +1176,6 @@ public class JSPWikiMarkupParser extends MarkupParser {
             pushElement( el );
         }
         return el;
-    }
-
-    /**
-     * Reads the stream until the next EOL or EOF.  Note that it will also read the EOL from the stream.
-     */
-    private StringBuilder readUntilEOL() throws IOException {
-        int ch;
-        final StringBuilder buf = new StringBuilder( 256 );
-        while( true ) {
-            ch = nextToken();
-            if( ch == -1 ) {
-                break;
-            }
-            buf.append( (char) ch );
-            if( ch == '\n' ) {
-                break;
-            }
-        }
-        return buf;
     }
 
     /** Controls whether italic is restarted after a paragraph shift */

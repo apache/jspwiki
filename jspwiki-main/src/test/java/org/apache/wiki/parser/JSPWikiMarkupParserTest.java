@@ -610,6 +610,23 @@ class JSPWikiMarkupParserTest {
         Assertions.assertEquals( "Link <img class=\"inline\" src=\"data:image/png;base64,iVBOR+/w0KGgo+AAA=\" alt=\"\" />", translate( src ) );
     }
 
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1191 */
+    @Test
+    void testLongDataImagesAfterLineBreakAreKept() throws Exception {
+        final String first = "data:image/png;base64,iVBORw0KGgo" + "A".repeat( 20000 ) + "=";
+        final String second = "data:image/png;base64,iVBORw0KGgo" + "B".repeat( 20000 ) + "=";
+        final String html = translate( "\n[" + first + "][" + second + "]\n" );
+        Assertions.assertTrue( html.contains( "<img class=\"inline\" src=\"" + first + "\"" ), "first image was cut" );
+        Assertions.assertTrue( html.contains( "<img class=\"inline\" src=\"" + second + "\"" ), "second image was cut" );
+    }
+
+    /** A line longer than the pushback buffer must not lose its end when the parser looks ahead at it. */
+    @Test
+    void testLongLineAfterParagraphBreakIsKept() throws Exception {
+        final String line = "x".repeat( 30000 ) + " end";
+        Assertions.assertTrue( translate( "first\n\n" + line ).contains( line ) );
+    }
+
     @Test
     void testInlineDataImageWithAltText() throws Exception {
         final String src = "Link [test|data:image/gif;base64,R0lGODlhAQABAAAAACw=]";
