@@ -17,6 +17,38 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-03_
+
+* Fixes by Alex O'Ree, thanks! The issues are restricted in JIRA, so each one is listed with the code it changes; the details are in the commits of the pull requests
+    * [JSPWIKI-1280](https://issues.apache.org/jira/browse/JSPWIKI-1280): `AttachmentServlet`
+    * [JSPWIKI-1281](https://issues.apache.org/jira/browse/JSPWIKI-1281): `WeblogPlugin`
+    * [JSPWIKI-1282](https://issues.apache.org/jira/browse/JSPWIKI-1282): `SampleAjaxPlugin`
+    * [JSPWIKI-1283](https://issues.apache.org/jira/browse/JSPWIKI-1283): `MarkupParser`
+    * [JSPWIKI-1284](https://issues.apache.org/jira/browse/JSPWIKI-1284): `PageTab.jsp` and `Sidebar.jsp`
+    * [JSPWIKI-1286](https://issues.apache.org/jira/browse/JSPWIKI-1286): `PermissionFactory`
+    * [JSPWIKI-1287](https://issues.apache.org/jira/browse/JSPWIKI-1287): `Edit.jsp`, `Rename.jsp` and `Workflow.jsp`
+    * [JSPWIKI-1290](https://issues.apache.org/jira/browse/JSPWIKI-1290): `DefaultPluginManager`
+    * [JSPWIKI-1292](https://issues.apache.org/jira/browse/JSPWIKI-1292): the `CKeditor.jsp`, `TinyMCE.jsp` and `wysiwyg.jsp` editor templates
+    * [JSPWIKI-1293](https://issues.apache.org/jira/browse/JSPWIKI-1293): `IfPlugin` and `ReferredPagesPlugin`, with the new `TimeLimitedRegex`
+    * [JSPWIKI-1295](https://issues.apache.org/jira/browse/JSPWIKI-1295): `TikaSearchProvider`
+    * [JSPWIKI-1298](https://issues.apache.org/jira/browse/JSPWIKI-1298): `CsrfProtectionFilter`, `ReferrerPolicyFilter`, `WikiAjaxDispatcherServlet`, `AttachmentServlet` and the `AttachmentTab.jsp` templates
+    * [JSPWIKI-1299](https://issues.apache.org/jira/browse/JSPWIKI-1299): `CryptoUtil`, `AbstractUserDatabase` and their tests
+    * [JSPWIKI-1301](https://issues.apache.org/jira/browse/JSPWIKI-1301): session handling: `Session`, `WikiSession`, `SessionMonitor` and `DefaultAuthenticationManager`
+
+* Fix for [JSPWIKI-1138](https://issues.apache.org/jira/browse/JSPWIKI-1138): Install.jsp echoed submitted values without escaping them; they are escaped now ([PR#323](https://github.com/apache/jspwiki/pull/323))
+* Fix for [JSPWIKI-1164](https://issues.apache.org/jira/browse/JSPWIKI-1164): a page reached from a search result showed `<` as `&lt;` when the query was highlighted ([PR#538](https://github.com/apache/jspwiki/pull/538))
+* Fix for [JSPWIKI-919](https://issues.apache.org/jira/browse/JSPWIKI-919): `VersioningFileProvider#pageExists()` ignored the first version of a page that has no history, so a page dropped into the page directory was reported as missing when the page cache is off ([PR#539](https://github.com/apache/jspwiki/pull/539))
+* Fix for [JSPWIKI-647](https://issues.apache.org/jira/browse/JSPWIKI-647): page aliases and redirects work when the page cache is disabled ([PR#536](https://github.com/apache/jspwiki/pull/536))
+* Fix for [JSPWIKI-1192](https://issues.apache.org/jira/browse/JSPWIKI-1192): image attachments are rendered with the attachment URL in Markdown pages ([PR#537](https://github.com/apache/jspwiki/pull/537))
+* Fix for [JSPWIKI-638](https://issues.apache.org/jira/browse/JSPWIKI-638): the HTML to wiki translator turns line breaks within text into a space instead of removing them ([PR#540](https://github.com/apache/jspwiki/pull/540))
+* Fix for [JSPWIKI-1305](https://issues.apache.org/jira/browse/JSPWIKI-1305): the workflows of each engine are kept apart, so that with several engines in one JVM each wiki receives the events of its own workflows ([PR#541](https://github.com/apache/jspwiki/pull/541))
+* Fix for [JSPWIKI-877](https://issues.apache.org/jira/browse/JSPWIKI-877): `jspwiki.policy.file` accepts the absolute path of the security policy file ([PR#545](https://github.com/apache/jspwiki/pull/545))
+* [JSPWIKI-1261](https://issues.apache.org/jira/browse/JSPWIKI-1261): document `TabbedSectionTag#validateDefaultTab` ([PR#546](https://github.com/apache/jspwiki/pull/546))
+* [JSPWIKI-1201](https://issues.apache.org/jira/browse/JSPWIKI-1201): clarify in the Javadoc of `PageProvider` what a provider does with the methods it does not use ([PR#547](https://github.com/apache/jspwiki/pull/547))
+* Close the stream that loads the Denounce patterns ([PR#207](https://github.com/apache/jspwiki/pull/207))
+
 **2026-09-16 Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _3.0.1-git-02_
