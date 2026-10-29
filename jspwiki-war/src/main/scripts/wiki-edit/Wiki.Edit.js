@@ -223,6 +223,7 @@ function livepreview(content, preview, previewToggle){
                 'X-XSRF-TOKEN': wiki.CsrfProtection
             },
             update: preview,
+            evalScripts: false,
             onRequest: renderPreview,
             onSuccess: renderPreview.pass(true),
             onError: previewDone
