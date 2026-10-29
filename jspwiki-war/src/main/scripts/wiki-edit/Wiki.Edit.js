@@ -223,6 +223,7 @@ function livepreview(content, preview, previewToggle){
                 'X-XSRF-TOKEN': wiki.CsrfProtection
             },
             update: preview,
+            evalScripts: false,  //a script of the page must not run in the editor, it can replace the whole page
             onRequest: renderPreview,
             onSuccess: renderPreview.pass(true),
             onError: previewDone
