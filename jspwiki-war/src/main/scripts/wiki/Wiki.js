@@ -237,6 +237,15 @@ var Wiki = {
 
         wiki.meta();
 
+        //the editor marks its draft as sent on submit; the page was saved only when its view is the next page shown
+        for( var i = sessionStorage.length - 1; i >= 0; i-- ){
+            var key = sessionStorage.key( i );
+            if( sessionStorage.getItem( key ) == "sent" ){
+                sessionStorage.removeItem( key );
+                if( wiki.Context == "view" && key == "wiki" + wiki.PageName ){ localStorage.removeItem( key ); }
+            }
+        }
+
         if( wiki.version != wiki.prefs("version") ){
             wiki.prefs("");
             wiki.prefs("version", wiki.version);

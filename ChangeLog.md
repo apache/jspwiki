@@ -46,6 +46,7 @@ under the License.
 * Fix for [JSPWIKI-1305](https://issues.apache.org/jira/browse/JSPWIKI-1305): the workflows of each engine are kept apart, so that with several engines in one JVM each wiki receives the events of its own workflows ([PR#541](https://github.com/apache/jspwiki/pull/541))
 * Fix for [JSPWIKI-877](https://issues.apache.org/jira/browse/JSPWIKI-877): `jspwiki.policy.file` accepts the absolute path of the security policy file ([PR#545](https://github.com/apache/jspwiki/pull/545))
 * [JSPWIKI-1261](https://issues.apache.org/jira/browse/JSPWIKI-1261): document `TabbedSectionTag#validateDefaultTab` ([PR#546](https://github.com/apache/jspwiki/pull/546))
+* Fix for [JSPWIKI-851](https://issues.apache.org/jira/browse/JSPWIKI-851): when a save is refused because the session has expired, the text typed in the editor is no longer lost, as its draft is kept until the saved page is shown, and an initial page SessionExpired explains what happened ([PR#561](https://github.com/apache/jspwiki/pull/561))
 * [JSPWIKI-1201](https://issues.apache.org/jira/browse/JSPWIKI-1201): clarify in the Javadoc of `PageProvider` what a provider does with the methods it does not use ([PR#547](https://github.com/apache/jspwiki/pull/547))
 * Close the stream that loads the Denounce patterns ([PR#207](https://github.com/apache/jspwiki/pull/207))
 
