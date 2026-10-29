@@ -1729,6 +1729,27 @@ class JSPWikiMarkupParserTest {
         Assertions.assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate( src ) );
     }
 
+    /** https://issues.apache.org/jira/browse/JSPWIKI-529 */
+    @Test
+    void testSpanStyleClosedByLettersDirectlyAfterMarker() throws Exception {
+        final String src = "Johan %%(foo:bar;)test/%cake\n";
+        Assertions.assertEquals( "Johan <span style=\"foo:bar;\">test</span>cake\n", translate( src ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-529 */
+    @Test
+    void testSpanClassClosedByLettersDirectlyAfterMarker() throws Exception {
+        final String src = "%%foo test/%cake\n";
+        Assertions.assertEquals( "<span class=\"foo\">test</span>cake\n", translate( src ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-529 */
+    @Test
+    void testSpanStyleClosedByParenthesisDirectlyAfterMarker() throws Exception {
+        final String src = "%%(foo:bar;)test/%(x)\n";
+        Assertions.assertEquals( "<span style=\"foo:bar;\">test</span>(x)\n", translate( src ) );
+    }
+
     @Test
     void testSpanEscape() throws Exception {
         final String src = "~%%foo test~%%\n";
