@@ -48,6 +48,7 @@ under the License.
 * [JSPWIKI-1261](https://issues.apache.org/jira/browse/JSPWIKI-1261): document `TabbedSectionTag#validateDefaultTab` ([PR#546](https://github.com/apache/jspwiki/pull/546))
 * [JSPWIKI-1201](https://issues.apache.org/jira/browse/JSPWIKI-1201): clarify in the Javadoc of `PageProvider` what a provider does with the methods it does not use ([PR#547](https://github.com/apache/jspwiki/pull/547))
 * Close the stream that loads the Denounce patterns ([PR#207](https://github.com/apache/jspwiki/pull/207))
+* Fix for [JSPWIKI-684](https://issues.apache.org/jira/browse/JSPWIKI-684): the HTML to wiki translator converts the line breaks of a plugin that has plugins nested in it, so saving a page with the WYSIWYG editor no longer adds backslashes to it ([PR#559](https://github.com/apache/jspwiki/pull/559))
 
 **2026-09-16 Juan Pablo Santos (juanpablo AT apache DOT org)**
 
