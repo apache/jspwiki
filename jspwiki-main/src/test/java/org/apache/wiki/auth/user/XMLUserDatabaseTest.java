@@ -499,6 +499,8 @@ public class XMLUserDatabaseTest {
         Assertions.assertFalse( sha512.validatePasswordReuse( "reuseuser", "Secret#1pass" ) );
         Assertions.assertFalse( sha512.validatePasswordReuse( "reuseuser", "Secret#2pass" ) );
         Assertions.assertTrue( sha512.validatePasswordReuse( "reuseuser", "Secret#3pass" ) );
+    }
+
     private XMLUserDatabase newDatabase( final File file ) throws Exception {
         final Properties props = TestEngine.getTestProperties();
         props.put( XMLUserDatabase.PROP_USERDATABASE, file.getAbsolutePath() );
