@@ -186,6 +186,10 @@ public class XHtmlToWikiConfig {
         if( ref == null ) {
             return null;
         }
+        // A data URL is not percent-encoded, and decoding it would turn each '+' of the base64 text into a space
+        if( ref.trim().regionMatches( true, 0, "data:", 0, 5 ) ) {
+            return ref.trim();
+        }
         ref = URLDecoder.decode( ref, StandardCharsets.UTF_8);
         ref = ref.trim();
         if( ref.startsWith( getAttachPage() ) ) {
