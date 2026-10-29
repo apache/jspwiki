@@ -39,6 +39,7 @@ under the License.
 
 * Fix for [JSPWIKI-1138](https://issues.apache.org/jira/browse/JSPWIKI-1138): Install.jsp echoed submitted values without escaping them; they are escaped now ([PR#323](https://github.com/apache/jspwiki/pull/323))
 * Fix for [JSPWIKI-1164](https://issues.apache.org/jira/browse/JSPWIKI-1164): a page reached from a search result showed `<` as `&lt;` when the query was highlighted ([PR#538](https://github.com/apache/jspwiki/pull/538))
+* Fix for [JSPWIKI-1191](https://issues.apache.org/jira/browse/JSPWIKI-1191): pasted images that are data URLs are shown, their base64 text is kept when saving from the WYSIWYG editor, and the parser no longer loses the end of a long line when it looks ahead at it ([PR#544](https://github.com/apache/jspwiki/pull/544))
 * Fix for [JSPWIKI-919](https://issues.apache.org/jira/browse/JSPWIKI-919): `VersioningFileProvider#pageExists()` ignored the first version of a page that has no history, so a page dropped into the page directory was reported as missing when the page cache is off ([PR#539](https://github.com/apache/jspwiki/pull/539))
 * Fix for [JSPWIKI-647](https://issues.apache.org/jira/browse/JSPWIKI-647): page aliases and redirects work when the page cache is disabled ([PR#536](https://github.com/apache/jspwiki/pull/536))
 * Fix for [JSPWIKI-1192](https://issues.apache.org/jira/browse/JSPWIKI-1192): image attachments are rendered with the attachment URL in Markdown pages ([PR#537](https://github.com/apache/jspwiki/pull/537))
