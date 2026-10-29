@@ -1,0 +1,3 @@
+Your session has expired, or the editor was open for too long, so your changes were not saved.
+
+Open the page again and repeat your changes. If the editor is still open in another window, copy your text from it first.
