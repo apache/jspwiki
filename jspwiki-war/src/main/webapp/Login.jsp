@@ -88,6 +88,9 @@
         }
         if ( wikiSession.getMessages( "profile" ).length == 0 ) {
             String redirectPage = request.getParameter( "redirect" );
+            if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) ) {
+                redirectPage = wiki.getFrontPage();
+            }
             response.sendRedirect( wikiContext.getViewURL(redirectPage) );
             return;
         }
