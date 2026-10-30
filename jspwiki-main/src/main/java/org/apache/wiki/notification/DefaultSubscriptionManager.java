@@ -42,8 +42,10 @@ import org.apache.wiki.util.MailUtil;
 import org.apache.wiki.util.TextUtil;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.Set;
@@ -148,17 +150,22 @@ public class DefaultSubscriptionManager implements SubscriptionManager, Initiali
 
     void notifySubscribers( final String pageName ) {
         try {
-            final Page page = m_engine.getManager( PageManager.class ).getPage( pageName );
-            if( page == null || isViewRestricted( page ) ) {
-                return;
-            }
             final UserDatabase db = m_engine.getManager( UserManager.class ).getUserDatabase();
+            final List< UserProfile > recipients = new ArrayList<>();
             for( final Principal wikiName : db.getWikiNames() ) {
                 final UserProfile profile = db.findByWikiName( wikiName.getName() );
                 final String email = profile.getEmail();
                 if( email != null && !email.isEmpty() && readSubscriptions( profile ).contains( pageName ) ) {
-                    sendMail( profile, page );
+                    recipients.add( profile );
                 }
+            }
+            // looking up the ACL renders the page, so it is only done when someone is going to be notified
+            final Page page = m_engine.getManager( PageManager.class ).getPage( pageName );
+            if( recipients.isEmpty() || page == null || isViewRestricted( page ) ) {
+                return;
+            }
+            for( final UserProfile profile : recipients ) {
+                sendMail( profile, page );
             }
         } catch( final Exception e ) {
             LOG.error( "Could not notify the subscribers of " + pageName, e );
