@@ -279,7 +279,6 @@ xercesImpl-2.10.0.jar                       LICENSE
 tika-core-3.3.2.jar                         LICENSE
 tika-parsers-3.3.2.jar                      LICENSE
 xml-apis-1.4.01                             LICENSE
-xmlrpc-2.0.1.jar                            LICENSE
 xpp3-1.1.3.4-RC3                            ./jspwiki-war/src/main/config/doc/LICENSE.cc-cod
 
 TEST LIBRARY                                LICENSE FILE

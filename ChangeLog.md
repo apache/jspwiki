@@ -17,6 +17,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-10-30 Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-04_
+
+* Fix for [JSPWIKI-204](https://issues.apache.org/jira/browse/JSPWIKI-204): `PingWeblogsComFilter` sends its `weblogUpdates.ping` call with the HTTP client of the JDK, so the old `xmlrpc-2.0.1` library is no longer a dependency of JSPWiki
+
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
 
 * _3.0.1-git-03_
