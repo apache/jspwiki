@@ -39,6 +39,7 @@ import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.ui.InputValidator;
+import org.apache.wiki.ui.Installer;
 import org.apache.wiki.util.ClassUtil;
 
 import java.security.Principal;
@@ -275,6 +276,11 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         final Group group = m_groups.get( new GroupPrincipal( index ) );
         if( group == null ) {
             throw new NoSuchPrincipalException( "Group " + index + " not found" );
+        }
+
+        // the default security policy grants AllPermission to this group, so removing it could leave the wiki without administrators
+        if( Installer.ADMIN_GROUP.equals( index ) ) {
+            throw new WikiSecurityException( "The " + Installer.ADMIN_GROUP + " group cannot be removed" );
         }
 
         // Delete the group

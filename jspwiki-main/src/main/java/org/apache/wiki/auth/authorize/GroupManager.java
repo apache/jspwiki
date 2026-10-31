@@ -139,7 +139,7 @@ public interface GroupManager extends Initializable, Authorizer, WikiEventListen
      * If <code>index</code> is <code>null</code>, this method throws an {@link IllegalArgumentException}.
      *
      * @param index the group to remove
-     * @throws WikiSecurityException if the Group cannot be removed by the back-end
+     * @throws WikiSecurityException if the Group cannot be removed by the back-end, or if it is the <code>Admin</code> group
      * @see org.apache.wiki.auth.authorize.GroupDatabase#delete(Group)
      */
     void removeGroup( final String index ) throws WikiSecurityException;

@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-10-31 Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-04_
+
+* [JSPWIKI-1263](https://issues.apache.org/jira/browse/JSPWIKI-1263): the `Admin` group can no longer be removed, so the wiki cannot be left without administrators
+
+
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
 
 * _3.0.1-git-03_
