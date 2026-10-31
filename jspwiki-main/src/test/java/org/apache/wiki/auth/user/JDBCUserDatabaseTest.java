@@ -41,6 +41,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.Date;
 import java.util.Properties;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.auth.AbstractPasswordReuseTest;
@@ -409,6 +410,58 @@ public class JDBCUserDatabaseTest extends AbstractPasswordReuseTest {
         } catch( final WikiSecurityException e ) {
             Assertions.fail();
         }
+    }
+
+    private Properties sha512Properties() {
+        final Properties props = new Properties();
+        props.put( "jspwiki.credentials.hash.algorithm", "PBKDF2-SHA512" );
+        props.put( "jspwiki.credentials.hash.iterations", "2000" );
+        return props;
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testPasswordHashedWithSha512IsStored() throws Exception {
+        m_db.initialize( null, sha512Properties() );
+
+        final UserProfile profile = m_db.newProfile();
+        profile.setLoginName( "sha512user" );
+        profile.setFullname( "Sha512 User" );
+        profile.setEmail( "sha512user@example.com" );
+        profile.setPassword( "Secret#1pass" );
+        m_db.save( profile );
+
+        Assertions.assertTrue( m_db.findByLoginName( "sha512user" ).getPassword().startsWith( "{PBKDF2-SHA512}2000$" ) );
+        Assertions.assertTrue( m_db.validatePassword( "sha512user", "Secret#1pass" ) );
+        Assertions.assertFalse( m_db.validatePassword( "sha512user", "Secret#2pass" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testLoginHashesAgainWithTheConfiguredSettings() throws Exception {
+        m_db.initialize( null, sha512Properties() );
+        Assertions.assertFalse( m_db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+
+        Assertions.assertTrue( m_db.validatePassword( "janne", "myP@5sw0rd" ) );
+
+        Assertions.assertTrue( m_db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2-SHA512}2000$" ) );
+        Assertions.assertTrue( m_db.validatePassword( "janne", "myP@5sw0rd" ) );
+    }
+
+    @Test
+    public void testLockExpiryIsSavedAndRead() throws Exception {
+        final Date expiry = new Date( ( System.currentTimeMillis() + 3_600_000L ) / 1000 * 1000 );
+        final UserProfile profile = m_db.findByLoginName( "janne" );
+        profile.setLockExpiry( expiry );
+        m_db.save( profile );
+
+        final UserProfile reloaded = m_db.findByLoginName( "janne" );
+        Assertions.assertTrue( reloaded.isLocked() );
+        Assertions.assertEquals( expiry, reloaded.getLockExpiry() );
+
+        reloaded.setLockExpiry( null );
+        m_db.save( reloaded );
+        Assertions.assertFalse( m_db.findByLoginName( "janne" ).isLocked() );
     }
 
     @Test
