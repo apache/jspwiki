@@ -17,6 +17,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-10-30 Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-04_
+
+* Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): a user can be subscribed to a page and gets an e-mail when the page changes. The subscriptions are kept in the user profile; the new `SubscriptionManager` sends the mails from a background thread and `jspwiki.subscription.baseURL` sets the host of the links. The subscribe button follows in a separate change.
+
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
 
 * _3.0.1-git-03_
