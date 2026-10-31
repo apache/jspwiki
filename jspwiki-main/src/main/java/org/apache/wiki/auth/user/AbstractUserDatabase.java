@@ -28,6 +28,7 @@ import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.util.ByteUtils;
 import org.apache.wiki.util.CryptoUtil;
+import org.apache.wiki.util.TextUtil;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -45,6 +46,15 @@ import java.util.UUID;
 public abstract class AbstractUserDatabase implements UserDatabase {
 
     protected static final Logger LOG = LogManager.getLogger( AbstractUserDatabase.class );
+    /** Property that sets the algorithm used to hash new passwords: {@code PBKDF2-SHA256} (the default) or {@code PBKDF2-SHA512}. */
+    public static final String PROP_HASH_ALGORITHM = "jspwiki.credentials.hash.algorithm";
+
+    /** Property that sets the iteration count used to hash new passwords. The default depends on the algorithm. */
+    public static final String PROP_HASH_ITERATIONS = "jspwiki.credentials.hash.iterations";
+
+    private String m_hashAlgorithm = CryptoUtil.DEFAULT_PBKDF2_ALGORITHM;
+    private int m_hashIterations = CryptoUtil.defaultPbkdf2Iterations( CryptoUtil.DEFAULT_PBKDF2_ALGORITHM );
+
     protected static final String SHA_PREFIX = "{SHA}";
     protected static final String SSHA_PREFIX = "{SSHA}";
     protected static final String SHA256_PREFIX = "{SHA-256}";
@@ -167,6 +177,44 @@ public abstract class AbstractUserDatabase implements UserDatabase {
     @Override
     public void initialize( Engine engine, Properties props ) throws NoRequiredPropertyException, WikiSecurityException {
         this.m_engine = engine;
+        initializePasswordHashing( props );
+    }
+
+    /**
+     * Reads {@link #PROP_HASH_ALGORITHM} and {@link #PROP_HASH_ITERATIONS}, which say how new passwords are hashed. An algorithm that is
+     * not supported, or an iteration count that is not a positive number, is logged and replaced by the default, which is never weaker
+     * than what an administrator could have meant. If the algorithm is replaced, so is the iteration count, as the count is meant for the
+     * other algorithm. Subclasses that do not call {@link #initialize(Engine, Properties)} have to call this method.
+     *
+     * @param props the wiki properties
+     * @since 3.0.1
+     */
+    protected void initializePasswordHashing( final Properties props ) {
+        String algorithm = TextUtil.getStringProperty( props, PROP_HASH_ALGORITHM, CryptoUtil.DEFAULT_PBKDF2_ALGORITHM ).trim();
+        String iterations = TextUtil.getStringProperty( props, PROP_HASH_ITERATIONS, "" ).trim();
+        if( !CryptoUtil.isSupportedPbkdf2Algorithm( algorithm ) ) {
+            LOG.error( "{}={} is not supported; using {} with its default iteration count", PROP_HASH_ALGORITHM, algorithm, CryptoUtil.DEFAULT_PBKDF2_ALGORITHM );
+            algorithm = CryptoUtil.DEFAULT_PBKDF2_ALGORITHM;
+            iterations = "";
+        }
+
+        final int defaultIterations = CryptoUtil.defaultPbkdf2Iterations( algorithm );
+        int count = defaultIterations;
+        if( !iterations.isEmpty() ) {
+            try {
+                count = Integer.parseInt( iterations );
+            } catch( final NumberFormatException e ) {
+                count = 0;
+            }
+            if( count < 1 ) {
+                LOG.error( "{}={} is not a positive number; using {}", PROP_HASH_ITERATIONS, iterations, defaultIterations );
+                count = defaultIterations;
+            } else if( count < defaultIterations ) {
+                LOG.warn( "{}={} is below the {} recommended for {}", PROP_HASH_ITERATIONS, count, defaultIterations, algorithm );
+            }
+        }
+        m_hashAlgorithm = algorithm;
+        m_hashIterations = count;
     }
 
     /**
@@ -203,23 +251,10 @@ public abstract class AbstractUserDatabase implements UserDatabase {
         try {
             final UserProfile profile = findByLoginName( loginName );
             final String storedPassword = profile.getPassword();
-            boolean verified = false;
+            final boolean verified = passwordMatches( password, storedPassword );
 
-            if( storedPassword.startsWith( CryptoUtil.PBKDF2_PREFIX ) ) {
-                // current format: iterated, salted PBKDF2-HMAC-SHA256
-                verified = CryptoUtil.verifyPbkdf2SaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
-            } else if( storedPassword.startsWith( SHA256_PREFIX ) || storedPassword.startsWith( SSHA_PREFIX ) ) {
-                // legacy salted, single-iteration digests
-                verified = CryptoUtil.verifySaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
-            } else if( storedPassword.startsWith( SHA_PREFIX ) ) {
-                // legacy unsalted SHA-1; compare in constant time while this format survives
-                final String hashedPassword = getShaHash( password );
-                verified = MessageDigest.isEqual( hashedPassword.getBytes( StandardCharsets.UTF_8 ),
-                                                  storedPassword.substring( SHA_PREFIX.length() ).getBytes( StandardCharsets.UTF_8 ) );
-            }
-
-            // If verified against anything but the current KDF, upgrade the stored hash on this successful login
-            if( verified && !storedPassword.startsWith( CryptoUtil.PBKDF2_PREFIX ) ) {
+            // If verified against anything but the configured algorithm and iterations, hash the password again on this successful login
+            if( verified && !CryptoUtil.hasPbkdf2Parameters( storedPassword, m_hashAlgorithm, m_hashIterations ) ) {
                 profile.setPassword( password );
                 save( profile );
             }
@@ -227,10 +262,42 @@ public abstract class AbstractUserDatabase implements UserDatabase {
             return verified;
         } catch( final NoSuchPrincipalException e ) {
             LOG.debug(e.getMessage(), e);
-        } catch( final NoSuchAlgorithmException e ) {
-            LOG.error( "Unsupported algorithm: " + e.getMessage() );
         } catch( final WikiSecurityException e ) {
             LOG.error( "Could not upgrade SHA password to SSHA because profile could not be saved. Reason: " + e.getMessage(), e );
+        }
+        return false;
+    }
+
+    /**
+     * Tells if a password is the one that a stored password entry was made from, whatever the format of the entry: the current PBKDF2
+     * one or any of the older SHA ones. An entry in none of those formats never matches.
+     *
+     * @param password the password in clear
+     * @param storedPassword the stored password entry
+     * @return {@code true} if the entry was made from the password
+     * @since 3.0.1
+     */
+    protected boolean passwordMatches( final String password, final String storedPassword ) {
+        if( password == null || storedPassword == null ) {
+            return false;
+        }
+        try {
+            if( CryptoUtil.isPbkdf2Entry( storedPassword ) ) {
+                // current format: iterated, salted PBKDF2-HMAC
+                return CryptoUtil.verifyPbkdf2SaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
+            } else if( storedPassword.startsWith( SHA256_PREFIX ) || storedPassword.startsWith( SSHA_PREFIX ) ) {
+                // legacy salted, single-iteration digests
+                return CryptoUtil.verifySaltedPassword( password.getBytes( StandardCharsets.UTF_8 ), storedPassword );
+            } else if( storedPassword.startsWith( SHA_PREFIX ) ) {
+                // legacy unsalted SHA-1; compare in constant time while this format survives
+                final String hashedPassword = getShaHash( password );
+                return MessageDigest.isEqual( hashedPassword.getBytes( StandardCharsets.UTF_8 ),
+                                              storedPassword.substring( SHA_PREFIX.length() ).getBytes( StandardCharsets.UTF_8 ) );
+            }
+        } catch( final NoSuchAlgorithmException e ) {
+            LOG.error( "Unsupported algorithm: " + e.getMessage() );
+        } catch( final IllegalArgumentException e ) {
+            LOG.warn( "Malformed password entry: {}", e.getMessage() );
         }
         return false;
     }
@@ -243,7 +310,7 @@ public abstract class AbstractUserDatabase implements UserDatabase {
             // If the password is stored as SHA-256 or SSHA, verify the hash
             
              for (String storedPassword : profile.getPreviousHashedCredentials()) {
-                if (storedPassword.startsWith(CryptoUtil.PBKDF2_PREFIX)) {
+                if (CryptoUtil.isPbkdf2Entry(storedPassword)) {
                     boolean match = CryptoUtil.verifyPbkdf2SaltedPassword(password.getBytes(StandardCharsets.UTF_8), storedPassword);
                     if (match) {
                         return false;
@@ -302,15 +369,15 @@ public abstract class AbstractUserDatabase implements UserDatabase {
     }
     
     /**
-     * Private method that calculates the salted SHA-1 or SHA-256 hash of a given <code>String</code>. Note that as of JSPWiki 2.8, this method
-     * calculates a <em>salted</em> hash rather than a plain hash.
+     * Calculates the salted, iterated PBKDF2 hash of a given <code>String</code>, with the algorithm and iteration count that are
+     * configured through {@link #PROP_HASH_ALGORITHM} and {@link #PROP_HASH_ITERATIONS}.
      *
      * @param text the text to hash
      * @return the result hash
      */
     protected String getHash( final String text ) {
         try {
-            return CryptoUtil.getPbkdf2SaltedPassword( text.getBytes( StandardCharsets.UTF_8 ) );
+            return CryptoUtil.getPbkdf2SaltedPassword( text.getBytes( StandardCharsets.UTF_8 ), m_hashAlgorithm, m_hashIterations );
         } catch( final NoSuchAlgorithmException e ) {
             LOG.error( "Error creating salted password hash: {}", e.getMessage() );
             return text;

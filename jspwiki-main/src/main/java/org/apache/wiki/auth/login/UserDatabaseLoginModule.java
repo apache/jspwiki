@@ -29,6 +29,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
@@ -84,6 +85,11 @@ public class UserDatabaseLoginModule extends AbstractLoginModule {
             final UserProfile profile = db.findByLoginName( username );
             final String storedPassword = profile.getPassword();
             if ( storedPassword != null && db.validatePassword( username, password ) ) {
+                // Only someone who knows the password is told that the profile is locked
+                if( profile.isLocked() ) {
+                    LOG.info( "Login denied for locked user database user {}", username );
+                    throw new AccountLockedException( "The profile is locked." );
+                }
                 LOG.debug( "Logged in user database user {}", username );
 
                 // If login succeeds, commit these principals/roles
