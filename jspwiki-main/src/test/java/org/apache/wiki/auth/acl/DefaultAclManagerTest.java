@@ -22,18 +22,24 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.AclEntry;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.api.spi.Wiki;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.security.Principal;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 
 public class DefaultAclManagerTest
@@ -53,6 +59,26 @@ public class DefaultAclManagerTest
             m_engine.getManager( PageManager.class ).deletePage( "TestAclPage" );
         } catch ( final ProviderException e ) {
         }
+    }
+
+    /** A page filter that asks for the permissions of the page it is filtering must not make the rendering of that page loop. */
+    @Test
+    public void testFilterCheckingPermissionsOfItsOwnPageDoesNotLoop() throws Exception {
+        final AtomicInteger calls = new AtomicInteger();
+        m_engine.getManager( FilterManager.class ).addPageFilter( new BasePageFilter() {
+            @Override
+            public String preTranslate( final Context context, final String content ) {
+                calls.incrementAndGet();
+                context.getEngine().getManager( AuthorizationManager.class )
+                       .checkPermission( context.getWikiSession(), PermissionFactory.getPagePermission( context.getPage(), "view" ) );
+                return content;
+            }
+        }, 100 );
+
+        final String html = m_engine.getManager( RenderingManager.class ).getHTML( "TestDefaultPage" );
+
+        Assertions.assertTrue( html.contains( "Foo" ) );
+        Assertions.assertTrue( calls.get() < 10, "the filter ran " + calls.get() + " times" );
     }
 
     @Test
