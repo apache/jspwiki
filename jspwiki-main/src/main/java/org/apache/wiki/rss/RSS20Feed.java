@@ -62,6 +62,15 @@ public class RSS20Feed extends Feed
         super( context );
     }
 
+    /** RSS 2.0 requires the links of the items to be absolute, so the ones relative to the web application are completed with the request. */
+    private String absoluteUrl( final String url )
+    {
+        if( url == null || url.contains( "://" ) || m_wikiContext.getHttpRequest() == null ) {
+            return url;
+        }
+        return HttpUtil.getAbsoluteUrl( m_wikiContext.getHttpRequest(), url );
+    }
+
     private List<Element> getItems()
     {
         final ArrayList<Element> list = new ArrayList<>();
@@ -75,10 +84,8 @@ public class RSS20Feed extends Feed
 
         for( final Entry e : m_entries ) {
             final Page p = e.getPage();
-            final String url = e.getURL();
             final Element item = new Element( "item" );
-            //FIXME this needs to be an absolute url, not a relative one
-            item.addContent( new Element( "link" ).setText( url ) );
+            item.addContent( new Element( "link" ).setText( absoluteUrl( e.getURL() ) ) );
             item.addContent( new Element( "title" ).setText( e.getTitle() ) );
             item.addContent( new Element( "description" ).setText( e.getContent() ) );
 

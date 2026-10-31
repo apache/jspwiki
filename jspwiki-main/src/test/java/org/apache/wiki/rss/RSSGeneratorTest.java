@@ -23,6 +23,7 @@
 package org.apache.wiki.rss;
 
 import java.io.File;
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
@@ -33,7 +34,12 @@ import org.apache.wiki.plugin.WeblogPlugin;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import jakarta.servlet.http.HttpServletRequest;
+import org.mockito.Mockito;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -83,5 +89,37 @@ public class RSSGeneratorTest {
         Assertions.assertTrue( blog.contains( "&lt;b&gt;Bar&lt;/b&gt;" ), "has proper Bar" );
         
         
+    }
+
+    @Test
+    public void testRSS20LinksAreAbsolute() throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+        props.put( RSSGenerator.PROP_GENERATE_RSS, "true" );
+        final TestEngine engine = TestEngine.build( props );
+        try {
+            engine.saveText( "testRSS20Links", "Foo1" );
+            engine.saveText( "testRSS20Links", "Foo2" );
+
+            final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+            Mockito.doReturn( "http" ).when( request ).getScheme();
+            Mockito.doReturn( "wiki.example.org" ).when( request ).getServerName();
+            Mockito.doReturn( 8080 ).when( request ).getServerPort();
+            final Page page = engine.getManager( PageManager.class ).getPage( "testRSS20Links" );
+            final Context context = Wiki.context().create( engine, request, page );
+            final List< Page > versions = new ArrayList<>( engine.getManager( PageManager.class ).getVersionHistory( "testRSS20Links" ) );
+
+            final RSSGenerator gen = engine.getManager( RSSGenerator.class );
+            final String rss = gen.generateWikiPageRSS( context, versions, new RSS20Feed( context ) );
+
+            final Matcher m = Pattern.compile( "<link>([^<]*)</link>" ).matcher( rss );
+            int links = 0;
+            while( m.find() ) {
+                links++;
+                Assertions.assertTrue( m.group( 1 ).startsWith( "http://wiki.example.org:8080" ), "link is not absolute: " + m.group( 1 ) );
+            }
+            Assertions.assertTrue( links >= 2, "expected the channel link and at least one item link: " + rss );
+        } finally {
+            engine.shutdown();
+        }
     }
 }

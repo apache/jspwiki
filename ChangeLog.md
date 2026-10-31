@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-10-31 Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-04_
+
+* [JSPWIKI-1226](https://issues.apache.org/jira/browse/JSPWIKI-1226): the links of the items of the RSS 2.0 feeds are absolute URLs
+
+
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
 
 * _3.0.1-git-03_
