@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -155,8 +156,8 @@ public final class PropertyReader {
             setWorkDir( context, props );
 
             // add system properties beginning with jspwiki...
-            final Map< String, String > sysprops = collectPropertiesFrom( System.getProperties().entrySet().stream()
-                                                                                .collect( Collectors.toMap( Object::toString, Object::toString ) ) );
+            final Map< String, String > sysprops = collectPropertiesFrom( System.getProperties().stringPropertyNames().stream()
+                                                                                .collect( Collectors.toMap( Function.identity(), System::getProperty ) ) );
             props.putAll( sysprops );
 
             // finally, expand the variables (new in 2.5)
