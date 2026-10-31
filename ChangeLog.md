@@ -21,7 +21,7 @@ under the License.
 
 * _3.0.1-git-04_
 
-* Fix for [JSPWIKI-204](https://issues.apache.org/jira/browse/JSPWIKI-204): `PingWeblogsComFilter` sends its `weblogUpdates.ping` call with the HTTP client of the JDK, so the old `xmlrpc-2.0.1` library is no longer a dependency of JSPWiki
+* Fix for [JSPWIKI-204](https://issues.apache.org/jira/browse/JSPWIKI-204): removed `PingWeblogsComFilter`, a sample filter that pinged weblogs.com, which is no longer reachable, and with it the old `xmlrpc-2.0.1` library
 
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
 
