@@ -42,6 +42,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.notification.SubscriptionManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.references.ReferenceManager;
@@ -302,6 +303,7 @@ public class WikiEngine implements Engine {
             initComponent( FilterManager.class, this, props );
             initComponent( AdminBeanManager.class, this );
             initComponent( PageRenamer.class, this, props );
+            initComponent( SubscriptionManager.class );
 
             // RenderingManager depends on FilterManager events.
             initComponent( RenderingManager.class );

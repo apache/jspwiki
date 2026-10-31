@@ -17,6 +17,20 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-10-30 Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-06_
+
+* Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): the editors of the default template have a "Notify me of changes" box, so a user can subscribe to a page while writing it, also when it is a new page. `Edit.jsp` subscribes the user after the save, when the profile has an e-mail address.
+
+* _3.0.1-git-05_
+
+* Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): the "More..." menu of the default template has an entry to be notified of the changes of the page, or to stop being notified. It posts, with the anti-CSRF token, to the new `Subscribe.jsp`, which needs a logged-in user with an e-mail address in the profile.
+
+* _3.0.1-git-04_
+
+* Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): a user can be subscribed to a page and gets an e-mail when the page changes. The subscriptions are kept in the user profile; the new `SubscriptionManager` sends the mails from a background thread and `jspwiki.subscription.baseURL` sets the host of the links. The subscribe button follows in a separate change.
+
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
 
 * _3.0.1-git-03_

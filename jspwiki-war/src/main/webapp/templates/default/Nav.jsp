@@ -21,6 +21,7 @@
 <%@ page import="jakarta.servlet.jsp.jstl.fmt.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.attachment.*" %>
+<%@ page import="org.apache.wiki.notification.SubscriptionManager" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
@@ -326,6 +327,27 @@
 	      </li>
         </wiki:PageType>
       </wiki:Permission>
+      </wiki:PageExists>
+      </wiki:CheckRequestContext>
+
+      <%-- SUBSCRIBE TO THE CHANGES OF THE PAGE --%>
+      <wiki:CheckRequestContext context='view|info|diff|upload'>
+      <wiki:PageExists>
+      <wiki:UserCheck status="authenticated">
+        <wiki:PageType type="page">
+          <c:set var="subscribed" value="<%= c.getEngine().getManager( SubscriptionManager.class ).isSubscribed( c.getWikiSession().getLoginPrincipal().getName(), c.getPage().getName() ) %>" />
+          <li>
+            <form action="<wiki:Link jsp='Subscribe.jsp' format='url' />" method="post" accept-charset="UTF-8">
+              <input type="hidden" name="page" value="<wiki:PageName />" />
+              <input type="hidden" name="action" value="${subscribed ? 'unsubscribe' : 'subscribe'}" />
+              <wiki:CsrfProtection/>
+              <button type="submit" class="btn btn-link">
+                <span class="icon-bullhorn"></span> <fmt:message key="${subscribed ? 'actions.unsubscribe' : 'actions.subscribe'}" />
+              </button>
+            </form>
+          </li>
+        </wiki:PageType>
+      </wiki:UserCheck>
       </wiki:PageExists>
       </wiki:CheckRequestContext>
 
