@@ -28,7 +28,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FileUtilTest
 {
@@ -47,6 +50,24 @@ public class FileUtilTest
         final String res = new String( src.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.ISO_8859_1 );
 
         Assertions.assertEquals( src, res );
+    }
+
+    @Test
+    @DisabledOnOs( OS.WINDOWS )
+    public void testRunSimpleCommandDecodesOutputWithCharset() throws Exception {
+        final String src = "abc\u00e4\u00e5\u20ac";
+        for( final Charset charset : new Charset[] { StandardCharsets.UTF_8, StandardCharsets.UTF_16LE } ) {
+            final Path file = Files.createTempFile( "jspwiki-cmd", ".txt" );
+            try {
+                Files.write( file, src.getBytes( charset ) );
+
+                final String res = FileUtil.runSimpleCommand( "cat " + file, file.getParent().toString(), charset );
+
+                Assertions.assertEquals( src + "\n", res, "charset " + charset );
+            } finally {
+                Files.deleteIfExists( file );
+            }
+        }
     }
 
     @Test
