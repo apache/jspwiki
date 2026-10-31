@@ -17,6 +17,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-10-30 Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-04_
+
+* Fix for [JSPWIKI-204](https://issues.apache.org/jira/browse/JSPWIKI-204): removed `PingWeblogsComFilter`, a sample filter that pinged weblogs.com, which is no longer reachable, and with it the old `xmlrpc-2.0.1` library
+
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
 
 * _3.0.1-git-03_
