@@ -159,9 +159,12 @@ public class DefaultSubscriptionManager implements SubscriptionManager, Initiali
                     recipients.add( profile );
                 }
             }
-            // looking up the ACL renders the page, so it is only done when someone is going to be notified
+            if( recipients.isEmpty() ) {
+                return;
+            }
+            // reading the page and looking up its ACL (which renders it) is only done when someone is going to be notified
             final Page page = m_engine.getManager( PageManager.class ).getPage( pageName );
-            if( recipients.isEmpty() || page == null || isViewRestricted( page ) ) {
+            if( page == null || isViewRestricted( page ) ) {
                 return;
             }
             for( final UserProfile profile : recipients ) {
