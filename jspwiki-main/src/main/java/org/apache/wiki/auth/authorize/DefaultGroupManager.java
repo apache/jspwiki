@@ -27,12 +27,14 @@ import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.AuthenticationManager;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.Authorizer;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventListener;
@@ -275,6 +277,12 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         final Group group = m_groups.get( new GroupPrincipal( index ) );
         if( group == null ) {
             throw new NoSuchPrincipalException( "Group " + index + " not found" );
+        }
+
+        // Removing a group the policy grants AllPermission could lock every administrator out
+        final AllPermission allPermission = new AllPermission( m_engine.getApplicationName() );
+        if( m_engine.getManager( AuthorizationManager.class ).allowedByLocalPolicy( new Principal[] { group.getPrincipal() }, allPermission ) ) {
+            throw new WikiSecurityException( "Group " + index + " is granted AllPermission and cannot be removed" );
         }
 
         // Delete the group
