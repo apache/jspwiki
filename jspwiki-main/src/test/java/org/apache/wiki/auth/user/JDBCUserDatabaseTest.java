@@ -411,6 +411,42 @@ public class JDBCUserDatabaseTest extends AbstractPasswordReuseTest {
         }
     }
 
+    private Properties sha512Properties() {
+        final Properties props = new Properties();
+        props.put( "jspwiki.credentials.hash.algorithm", "PBKDF2-SHA512" );
+        props.put( "jspwiki.credentials.hash.iterations", "2000" );
+        return props;
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testPasswordHashedWithSha512IsStored() throws Exception {
+        m_db.initialize( null, sha512Properties() );
+
+        final UserProfile profile = m_db.newProfile();
+        profile.setLoginName( "sha512user" );
+        profile.setFullname( "Sha512 User" );
+        profile.setEmail( "sha512user@example.com" );
+        profile.setPassword( "Secret#1pass" );
+        m_db.save( profile );
+
+        Assertions.assertTrue( m_db.findByLoginName( "sha512user" ).getPassword().startsWith( "{PBKDF2-SHA512}2000$" ) );
+        Assertions.assertTrue( m_db.validatePassword( "sha512user", "Secret#1pass" ) );
+        Assertions.assertFalse( m_db.validatePassword( "sha512user", "Secret#2pass" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testLoginHashesAgainWithTheConfiguredSettings() throws Exception {
+        m_db.initialize( null, sha512Properties() );
+        Assertions.assertFalse( m_db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+
+        Assertions.assertTrue( m_db.validatePassword( "janne", "myP@5sw0rd" ) );
+
+        Assertions.assertTrue( m_db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2-SHA512}2000$" ) );
+        Assertions.assertTrue( m_db.validatePassword( "janne", "myP@5sw0rd" ) );
+    }
+
     @Test
     public void testValidatePassword() {
         Assertions.assertFalse( m_db.validatePassword( "janne", "test" ) );

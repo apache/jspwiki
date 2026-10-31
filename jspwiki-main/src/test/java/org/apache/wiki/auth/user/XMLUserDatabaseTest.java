@@ -343,6 +343,163 @@ public class XMLUserDatabaseTest {
         }
     }
 
+    private XMLUserDatabase newDatabase( final File file, final String algorithm, final String iterations ) throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+        props.put( XMLUserDatabase.PROP_USERDATABASE, file.getAbsolutePath() );
+        props.put( "jspwiki.credentials.reuseCount", "3" );
+        if( algorithm != null ) {
+            props.put( "jspwiki.credentials.hash.algorithm", algorithm );
+        }
+        if( iterations != null ) {
+            props.put( "jspwiki.credentials.hash.iterations", iterations );
+        }
+        final XMLUserDatabase db = new XMLUserDatabase();
+        db.initialize( m_engine, props );
+        return db;
+    }
+
+    private File newDatabaseFile() throws Exception {
+        final File file = new File( "target/XMLUserDatabaseTest" + UUID.randomUUID() + ".xml" );
+        FileUtils.copyFile( new File( "src/test/resources/userdatabase.xml" ), file );
+        return file;
+    }
+
+    private void saveUser( final XMLUserDatabase db, final String loginName, final String password ) throws Exception {
+        final UserProfile profile = db.newProfile();
+        profile.setEmail( loginName + "@example.com" );
+        profile.setLoginName( loginName );
+        profile.setFullname( "Full " + loginName );
+        profile.setPassword( password );
+        db.save( profile );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testNewPasswordsUseTheConfiguredAlgorithmAndIterations() throws Exception {
+        final XMLUserDatabase db = newDatabase( newDatabaseFile(), "PBKDF2-SHA512", "2000" );
+
+        saveUser( db, "sha512user", "Secret#1pass" );
+
+        final String stored = db.findByLoginName( "sha512user" ).getPassword();
+        Assertions.assertTrue( stored.startsWith( "{PBKDF2-SHA512}2000$" ), stored );
+        Assertions.assertTrue( db.validatePassword( "sha512user", "Secret#1pass" ) );
+        Assertions.assertFalse( db.validatePassword( "sha512user", "Secret#2pass" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testDefaultSettingsKeepTheCurrentFormat() throws Exception {
+        final XMLUserDatabase db = newDatabase( newDatabaseFile(), null, null );
+
+        saveUser( db, "defaultuser", "Secret#1pass" );
+
+        final String stored = db.findByLoginName( "defaultuser" ).getPassword();
+        Assertions.assertTrue( stored.startsWith( "{PBKDF2-SHA256}600000$" ), stored );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testLoginHashesAgainWhenTheSettingsChanged() throws Exception {
+        final File file = newDatabaseFile();
+        saveUser( newDatabase( file, "PBKDF2-SHA256", "2000" ), "changeuser", "Secret#1pass" );
+
+        final XMLUserDatabase db = newDatabase( file, "PBKDF2-SHA512", "3000" );
+        Assertions.assertTrue( db.findByLoginName( "changeuser" ).getPassword().startsWith( "{PBKDF2-SHA256}2000$" ) );
+
+        Assertions.assertTrue( db.validatePassword( "changeuser", "Secret#1pass" ) );
+
+        Assertions.assertTrue( db.findByLoginName( "changeuser" ).getPassword().startsWith( "{PBKDF2-SHA512}3000$" ) );
+        Assertions.assertTrue( db.validatePassword( "changeuser", "Secret#1pass" ) );
+        Assertions.assertFalse( db.validatePassword( "changeuser", "Secret#2pass" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testLoginHashesAgainWhenOnlyTheIterationsChanged() throws Exception {
+        final File file = newDatabaseFile();
+        saveUser( newDatabase( file, "PBKDF2-SHA512", "2000" ), "iteruser", "Secret#1pass" );
+
+        final XMLUserDatabase db = newDatabase( file, "PBKDF2-SHA512", "4000" );
+        Assertions.assertTrue( db.validatePassword( "iteruser", "Secret#1pass" ) );
+
+        Assertions.assertTrue( db.findByLoginName( "iteruser" ).getPassword().startsWith( "{PBKDF2-SHA512}4000$" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testLoginKeepsTheHashWhenTheSettingsAreTheSame() throws Exception {
+        final XMLUserDatabase db = newDatabase( newDatabaseFile(), "PBKDF2-SHA512", "2000" );
+        saveUser( db, "sameuser", "Secret#1pass" );
+        final String before = db.findByLoginName( "sameuser" ).getPassword();
+
+        Assertions.assertTrue( db.validatePassword( "sameuser", "Secret#1pass" ) );
+
+        Assertions.assertEquals( before, db.findByLoginName( "sameuser" ).getPassword() );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testFailedLoginDoesNotHashAgain() throws Exception {
+        final File file = newDatabaseFile();
+        saveUser( newDatabase( file, "PBKDF2-SHA256", "2000" ), "failuser", "Secret#1pass" );
+        final XMLUserDatabase db = newDatabase( file, "PBKDF2-SHA512", "3000" );
+
+        Assertions.assertFalse( db.validatePassword( "failuser", "Secret#2pass" ) );
+
+        Assertions.assertTrue( db.findByLoginName( "failuser" ).getPassword().startsWith( "{PBKDF2-SHA256}2000$" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testLegacyHashesAreHashedAgainWithTheConfiguredSettings() throws Exception {
+        final XMLUserDatabase db = newDatabase( newDatabaseFile(), "PBKDF2-SHA512", "2000" );
+        Assertions.assertFalse( db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+
+        Assertions.assertTrue( db.validatePassword( "janne", "myP@5sw0rd" ) );
+
+        Assertions.assertTrue( db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2-SHA512}2000$" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testUnsupportedAlgorithmFallsBackToTheDefault() throws Exception {
+        final XMLUserDatabase db = newDatabase( newDatabaseFile(), "PBKDF2-MD5", "2000" );
+
+        saveUser( db, "fallbackuser", "Secret#1pass" );
+
+        final String stored = db.findByLoginName( "fallbackuser" ).getPassword();
+        Assertions.assertTrue( stored.startsWith( "{PBKDF2-SHA256}600000$" ), stored );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testInvalidIterationsFallBackToTheDefault() throws Exception {
+        for( final String iterations : new String[] { "abc", "0", "-5", "" } ) {
+            final XMLUserDatabase db = newDatabase( newDatabaseFile(), "PBKDF2-SHA512", iterations );
+
+            saveUser( db, "iterationsuser", "Secret#1pass" );
+
+            final String stored = db.findByLoginName( "iterationsuser" ).getPassword();
+            Assertions.assertTrue( stored.startsWith( "{PBKDF2-SHA512}210000$" ), iterations + " -> " + stored );
+        }
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testPasswordReuseIsDetectedWithEveryAlgorithm() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase sha256 = newDatabase( file, "PBKDF2-SHA256", "2000" );
+        saveUser( sha256, "reuseuser", "Secret#1pass" );
+        final XMLUserDatabase sha512 = newDatabase( file, "PBKDF2-SHA512", "2000" );
+        final UserProfile profile = sha512.findByLoginName( "reuseuser" );
+        profile.setPassword( "Secret#2pass" );
+        sha512.save( profile );
+
+        Assertions.assertFalse( sha512.validatePasswordReuse( "reuseuser", "Secret#1pass" ) );
+        Assertions.assertFalse( sha512.validatePasswordReuse( "reuseuser", "Secret#2pass" ) );
+        Assertions.assertTrue( sha512.validatePasswordReuse( "reuseuser", "Secret#3pass" ) );
+    }
+
     @Test
     public void testValidatePassword() {
         Assertions.assertFalse( m_db.validatePassword( "janne", "test" ) );
