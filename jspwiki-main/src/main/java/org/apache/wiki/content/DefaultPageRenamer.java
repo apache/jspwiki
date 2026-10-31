@@ -55,6 +55,10 @@ public class DefaultPageRenamer implements PageRenamer {
 
     private static final Logger LOG = LogManager.getLogger( DefaultPageRenamer.class );
     
+    /** Plugin invocations and variable assignments whose parameter names a page: {@code [{InsertPage page='X'}]}, {@code [{SET alias='X'}]}. */
+    private static final Pattern PAGE_PARAMETER_INVOCATION = Pattern.compile( "(?<!\\[)(?<!~)(\\[\\{\\s*)(InsertPage|SET)(\\s[^}]*)\\}\\]" );
+    private static final Pattern PAGE_PARAMETER = Pattern.compile( "(\\b(?:page|alias)\\s*=\\s*)(?:'([^']*)'|\"([^\"]*)\"|([^\\s'\"]+))" );
+
     private boolean m_camelCase;
     
     /**
@@ -94,7 +98,7 @@ public class DefaultPageRenamer implements PageRenamer {
             throw new WikiException( "Page already exists " + renameToClean );
         }
         
-        final Set< String > referrers = getReferencesToChange( fromPage, engine );
+        final Set< String > referrers = getReferencesToChange( fromPage, renameToClean, engine );
 
         //  Do the actual rename by changing from the frompage to the topage, including all the attachments
         //  Remove references to attachments under old name
@@ -182,6 +186,7 @@ public class DefaultPageRenamer implements PageRenamer {
 
             final String sourceText = engine.getManager( PageManager.class ).getPureText( p );
             String newText = replaceReferrerString(sourceText, fromPage.getName(), toPage.getName() );
+            newText = replacePageParameters( newText, fromPage.getName(), toPage.getName() );
 
             m_camelCase = TextUtil.getBooleanProperty( engine.getWikiProperties(), MarkupParser.PROP_CAMELCASELINKS, m_camelCase );
             if( m_camelCase ) {
@@ -203,7 +208,7 @@ public class DefaultPageRenamer implements PageRenamer {
         }
     }
 
-    private Set<String> getReferencesToChange( final Page fromPage, final Engine engine ) {
+    private Set<String> getReferencesToChange( final Page fromPage, final String renameTo, final Engine engine ) {
         final Set< String > referrers = new TreeSet<>();
         final Collection< String > r = engine.getManager( ReferenceManager.class ).findReferrers( fromPage.getName() );
         if( r != null ) {
@@ -222,7 +227,66 @@ public class DefaultPageRenamer implements PageRenamer {
             // We will continue despite this error
             LOG.error( "Provider error while fetching attachments for rename", e );
         }
+        referrers.addAll( findPageParameterReferrers( fromPage, renameTo, engine ) );
         return referrers;
+    }
+
+    /**
+     * Finds the pages that name {@code fromPage} in a plugin or variable parameter. The {@link ReferenceManager} doesn't know about them,
+     * as they aren't links, so every page has to be looked at.
+     */
+    private Set< String > findPageParameterReferrers( final Page fromPage, final String renameTo, final Engine engine ) {
+        final Set< String > referrers = new TreeSet<>();
+        try {
+            for( final Page page : engine.getManager( PageManager.class ).getAllPages() ) {
+                final String text = engine.getManager( PageManager.class ).getPureText( page );
+                if( !replacePageParameters( text, fromPage.getName(), renameTo ).equals( text ) ) {
+                    referrers.add( page.getName() );
+                }
+            }
+        } catch( final ProviderException e ) {
+            // We will continue despite this error
+            LOG.error( "Provider error while looking for page parameters for rename", e );
+        }
+        return referrers;
+    }
+
+    /**
+     *  Replaces the page named by the {@code page} parameter of InsertPage and by the {@code alias} parameter of SET.
+     */
+    private String replacePageParameters( final String sourceText, final String from, final String to ) {
+        final Matcher invocation = PAGE_PARAMETER_INVOCATION.matcher( sourceText );
+        final StringBuilder sb = new StringBuilder( sourceText.length() + 32 );
+        int start = 0;
+        while( invocation.find() ) {
+            final String parameterName = "InsertPage".equals( invocation.group( 2 ) ) ? "page" : "alias";
+            final Matcher parameter = PAGE_PARAMETER.matcher( invocation.group( 3 ) );
+            final StringBuilder parameters = new StringBuilder();
+            int parametersStart = 0;
+            while( parameter.find() ) {
+                parameters.append( invocation.group( 3 ), parametersStart, parameter.start() );
+                parametersStart = parameter.end();
+                final String quote = parameter.group( 2 ) != null ? "'" : parameter.group( 3 ) != null ? "\"" : "";
+                final String value = parameter.group( 2 ) != null ? parameter.group( 2 ) : parameter.group( 3 ) != null ? parameter.group( 3 ) : parameter.group( 4 );
+                final boolean namesPage = parameter.group( 1 ).startsWith( parameterName ) && isSamePage( value, from );
+                parameters.append( parameter.group( 1 ) );
+                if( namesPage ) {
+                    final String newQuote = quote.isEmpty() && to.indexOf( ' ' ) != -1 ? "'" : quote;
+                    parameters.append( newQuote ).append( to ).append( newQuote );
+                } else {
+                    parameters.append( quote ).append( value ).append( quote );
+                }
+            }
+            parameters.append( invocation.group( 3 ).substring( parametersStart ) );
+            sb.append( sourceText, start, invocation.start() )
+              .append( invocation.group( 1 ) ).append( invocation.group( 2 ) ).append( parameters ).append( "}]" );
+            start = invocation.end();
+        }
+        return sb.append( sourceText.substring( start ) ).toString();
+    }
+
+    private boolean isSamePage( final String value, final String from ) {
+        return value.equals( from ) || MarkupParser.cleanLink( value ).equals( from );
     }
 
     /**
