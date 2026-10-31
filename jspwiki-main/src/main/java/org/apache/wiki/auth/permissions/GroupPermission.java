@@ -19,17 +19,9 @@
 package org.apache.wiki.auth.permissions;
 
 import java.io.Serializable;
-import java.security.AccessControlContext;
-import java.security.AccessController;
-import java.security.DomainCombiner;
 import java.security.Permission;
 import java.util.Arrays;
-import java.util.Set;
 
-import javax.security.auth.Subject;
-import javax.security.auth.SubjectDomainCombiner;
-
-import org.apache.wiki.auth.GroupPrincipal;
 
 /**
  * <p>
@@ -75,6 +67,10 @@ import org.apache.wiki.auth.GroupPrincipal;
  * means, &#8220;allow Authenticated users to edit any groups they are members of.&#8221;
  * The wildcard target (*) does <em>not</em> imply <code>&lt;groupmember&gt;</code>; it
  * must be granted explicitly.
+ * </p>
+ * <p>
+ * A permission does not know who is asking, so it is up to the one who checks it to find out if the user is a member of the group:
+ * {@link #toMemberPermission()} gives the permission to look for in the policy then.
  * @since 2.4.17
  */
 public final class GroupPermission extends Permission implements Serializable
@@ -303,11 +299,7 @@ public final class GroupPermission extends Permission implements Serializable
             impliedGroup = PagePermission.isSubset( m_group, p.m_group );
         }
 
-        // See if this permission is <groupmember> and Subject possesses
-        // GroupPrincipal matching the implied GroupPermission's group
-        final boolean impliedMember = impliesMember( p );
-
-        return  impliedWiki && ( impliedGroup || impliedMember );
+        return impliedWiki && impliedGroup;
     }
 
     /**
@@ -378,117 +370,15 @@ public final class GroupPermission extends Permission implements Serializable
     }
 
     /**
-     * <p>
-     * Returns <code>true</code> if this GroupPermission was created with the
-     * token <code>&lt;groupmember&gt;</code>
-     * <em>and</em> the current
-     * thread&#8217;s Subject is a member of the Group indicated by the implied
-     * GroupPermission. Thus, a GroupPermission with the group
-     * <code>&lt;groupmember&gt;</code> implies GroupPermission for group
-     * "TestGroup" only if the Subject is a member of TestGroup.
-     * </p>
-     * <p>
-     * We make this determination by obtaining the current {@link Thread}&#8217;s
-     * {@link java.security.AccessControlContext} and requesting the
-     * {@link javax.security.auth.SubjectDomainCombiner}. If the combiner is
-     * not <code>null</code>, then we know that the access check was
-     * requested using a {@link javax.security.auth.Subject}; that is, that an
-     * upstream caller caused a Subject to be associated with the Thread&#8217;s
-     * ProtectionDomain by executing a
-     * {@link javax.security.auth.Subject#doAs(Subject, java.security.PrivilegedAction)}
-     * operation.
-     * </p>
-     * <p>
-     * If a SubjectDomainCombiner exists, determining group membership is
-     * simple: just iterate through the Subject&#8217;s Principal set and look for all
-     * Principals of type {@link org.apache.wiki.auth.GroupPrincipal}. If the
-     * name of any Principal matches the value of the implied Permission&#8217;s
-     * {@link GroupPermission#getGroup()} value, then the Subject is a member of
-     * this group -- and therefore this <code>impliesMember</code> call
-     * returns <code>true</code>.
-     * </p>
-     * <p>
-     * This may sound complicated, but it really isn&#8217;t. Consider the following
-     * examples:
-     * </p>
-     * <table border="1"> <thead>
-     * <tr>
-     * <th width="25%">This object</th>
-     * <th width="25%"><code>impliesMember</code> parameter</th>
-     * <th width="25%">Calling Subject&#8217;s Principals
-     * <th width="25%">Result</th>
-     * </tr>
-     * <tr>
-     * <td><code>GroupPermission ("&lt;groupmember&gt;")</code></td>
-     * <td><code>GroupPermission ("*:TestGroup")</code></td>
-     * <td><code>WikiPrincipal ("Biff"),<br/>GroupPrincipal ("TestGroup")</code></td>
-     * <td><code>true</code></td>
-     * </tr>
-     * <tr>
-     * <td><code>GroupPermission ("*:TestGroup")</code></td>
-     * <td><code>GroupPermission ("*:TestGroup")</code></td>
-     * <td><code>WikiPrincipal ("Biff"),<br/>GroupPrincipal ("TestGroup")</code></td>
-     * <td><code>false</code> - this object does not contain
-     * <code>&lt;groupmember&gt;</code></td>
-     * </tr>
-     * <tr>
-     * <td><code>GroupPermission ("&lt;groupmember&gt;")</code></td>
-     * <td><code>GroupPermission ("*:TestGroup")</code></td>
-     * <td><code>WikiPrincipal ("Biff"),<br/>GroupPrincipal ("FooGroup")</code></td>
-     * <td><code>false</code> - Subject does not contain GroupPrincipal
-     * matching implied Permission&#8217;s group (TestGroup)</td>
-     * </tr>
-     * <tr>
-     * <td><code>GroupPermission ("&lt;groupmember&gt;")</code></td>
-     * <td><code>WikiPermission ("*:createGroups")</code></td>
-     * <td><code>WikiPrincipal ("Biff"),<br/>GroupPrincipal ("TestGroup")</code></td>
-     * <td><code>false</code> - implied permission not of type
-     * GroupPermission</td>
-     * </tr>
-     * <tr>
-     * <td><code>GroupPermission ("&lt;groupmember&gt;")</code></td>
-     * <td><code>GroupPermission ("*:TestGroup")</code></td>
-     * <td>-</td>
-     * <td><code>false</code> - <code>Subject.doAs()</code> not called
-     * upstream</td>
-     * </tr>
-     * </table>
-     * <p>
-     * Note that JSPWiki&#8217;s access control checks are made inside of
-     * {@link org.apache.wiki.auth.AuthorizationManager#checkPermission(org.apache.wiki.api.core.Session, Permission)},
-     * which performs a <code>Subject.doAs()</code> call. Thus, this
-     * Permission functions exactly the way it should during normal
-     * operations.
-     * </p>
-     * @param permission the implied permission
-     * @return <code>true</code> if the calling Thread&#8217;s Subject contains a
-     *         GroupPrincipal matching the implied GroupPermission&#8217;s group;
-     *         <code>false</code> otherwise
+     * Returns the permission for the same wiki and actions whose group is the {@code <groupmember>} token, which is the one a policy
+     * grants to the members of a group. To find out if a Subject may do something to a group because it is a member of it, check
+     * that this permission, not the one of the group, is granted.
+     *
+     * @return the permission of the {@code <groupmember>} token
+     * @since 3.0.1
      */
-    boolean impliesMember(final Permission permission )
-    {
-        if ( !( permission instanceof GroupPermission ) )
-        {
-            return false;
-        }
-        final GroupPermission gp = (GroupPermission) permission;
-        if ( !MEMBER_TOKEN.equals( m_group ) )
-        {
-            return false;
-        }
-
-        // For the current thread, retrieve the SubjectDomainCombiner
-        // (if one was used to create current AccessControlContext )
-        final AccessControlContext acc = AccessController.getContext();
-        final DomainCombiner dc = acc.getDomainCombiner();
-        if ( dc != null && dc instanceof SubjectDomainCombiner )
-        {
-            // <member> implies permission if subject possesses
-            // GroupPrincipal with same name as target
-            final Subject subject = ( (SubjectDomainCombiner) dc ).getSubject();
-            final Set<GroupPrincipal> principals = subject.getPrincipals( GroupPrincipal.class );
-            return principals.stream().anyMatch(principal -> principal.getName().equals(gp.m_group));
-        }
-        return false;
+    public GroupPermission toMemberPermission() {
+        return new GroupPermission( ( m_wiki == null ? "" : m_wiki ) + WIKI_SEPARATOR + MEMBER_TOKEN, m_actionString );
     }
+
 }
