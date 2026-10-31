@@ -41,6 +41,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.Date;
 import java.util.Properties;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.auth.AbstractPasswordReuseTest;
@@ -409,6 +410,169 @@ public class JDBCUserDatabaseTest extends AbstractPasswordReuseTest {
         } catch( final WikiSecurityException e ) {
             Assertions.fail();
         }
+    }
+
+    private Properties sha512Properties() {
+        final Properties props = new Properties();
+        props.put( "jspwiki.credentials.hash.algorithm", "PBKDF2-SHA512" );
+        props.put( "jspwiki.credentials.hash.iterations", "2000" );
+        return props;
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testPasswordHashedWithSha512IsStored() throws Exception {
+        m_db.initialize( null, sha512Properties() );
+
+        final UserProfile profile = m_db.newProfile();
+        profile.setLoginName( "sha512user" );
+        profile.setFullname( "Sha512 User" );
+        profile.setEmail( "sha512user@example.com" );
+        profile.setPassword( "Secret#1pass" );
+        m_db.save( profile );
+
+        Assertions.assertTrue( m_db.findByLoginName( "sha512user" ).getPassword().startsWith( "{PBKDF2-SHA512}2000$" ) );
+        Assertions.assertTrue( m_db.validatePassword( "sha512user", "Secret#1pass" ) );
+        Assertions.assertFalse( m_db.validatePassword( "sha512user", "Secret#2pass" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testLoginHashesAgainWithTheConfiguredSettings() throws Exception {
+        m_db.initialize( null, sha512Properties() );
+        Assertions.assertFalse( m_db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+
+        Assertions.assertTrue( m_db.validatePassword( "janne", "myP@5sw0rd" ) );
+
+        Assertions.assertTrue( m_db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2-SHA512}2000$" ) );
+        Assertions.assertTrue( m_db.validatePassword( "janne", "myP@5sw0rd" ) );
+    }
+
+    @Test
+    public void testLockExpiryIsSavedAndRead() throws Exception {
+        final Date expiry = new Date( ( System.currentTimeMillis() + 3_600_000L ) / 1000 * 1000 );
+        final UserProfile profile = m_db.findByLoginName( "janne" );
+        profile.setLockExpiry( expiry );
+        m_db.save( profile );
+
+        final UserProfile reloaded = m_db.findByLoginName( "janne" );
+        Assertions.assertTrue( reloaded.isLocked() );
+        Assertions.assertEquals( expiry, reloaded.getLockExpiry() );
+
+        reloaded.setLockExpiry( null );
+        m_db.save( reloaded );
+        Assertions.assertFalse( m_db.findByLoginName( "janne" ).isLocked() );
+    }
+
+    private void withPasswordChangedColumn() throws Exception {
+        final Properties props = new Properties();
+        props.put( "jspwiki.userdatabase.passwordChanged", "password_changed" );
+        m_db.initialize( null, props );
+    }
+
+    private void saveUser( final String loginName, final String password ) throws Exception {
+        final UserProfile profile = m_db.newProfile();
+        profile.setLoginName( loginName );
+        profile.setFullname( "Full " + loginName );
+        profile.setEmail( loginName + "@example.com" );
+        profile.setPassword( password );
+        m_db.save( profile );
+    }
+
+    private Date daysAgo( final int days ) {
+        return new Date( ( System.currentTimeMillis() - 86_400_000L * days ) / 1000 * 1000 );
+    }
+
+    @Test
+    public void testPasswordChangeDateIsNotKeptWithoutTheColumn() throws Exception {
+        saveUser( "nocolumn", "Secret#1pass" );
+
+        Assertions.assertNull( m_db.findByLoginName( "nocolumn" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testNewProfileGetsThePasswordChangeDate() throws Exception {
+        withPasswordChangedColumn();
+        final long before = System.currentTimeMillis() - 2000;
+
+        saveUser( "datenew", "Secret#1pass" );
+
+        final Date changed = m_db.findByLoginName( "datenew" ).getPasswordChanged();
+        Assertions.assertNotNull( changed );
+        Assertions.assertTrue( changed.getTime() >= before && changed.getTime() <= System.currentTimeMillis() + 2000 );
+    }
+
+    @Test
+    public void testChangingThePasswordUpdatesTheDate() throws Exception {
+        withPasswordChangedColumn();
+        saveUser( "datechange", "Secret#1pass" );
+        final UserProfile profile = m_db.findByLoginName( "datechange" );
+        final Date old = daysAgo( 40 );
+        profile.setPasswordChanged( old );
+        m_db.save( profile );
+        Assertions.assertEquals( old, m_db.findByLoginName( "datechange" ).getPasswordChanged() );
+
+        final UserProfile again = m_db.findByLoginName( "datechange" );
+        again.setPassword( "Secret#2pass" );
+        m_db.save( again );
+
+        final Date changed = m_db.findByLoginName( "datechange" ).getPasswordChanged();
+        Assertions.assertTrue( changed.after( old ) );
+        Assertions.assertTrue( changed.getTime() > System.currentTimeMillis() - 60_000L );
+    }
+
+    @Test
+    public void testSavingTheProfileWithoutChangingThePasswordKeepsTheDate() throws Exception {
+        withPasswordChangedColumn();
+        saveUser( "datekeep", "Secret#1pass" );
+        final UserProfile profile = m_db.findByLoginName( "datekeep" );
+        final Date old = daysAgo( 40 );
+        profile.setPasswordChanged( old );
+        m_db.save( profile );
+
+        final UserProfile again = m_db.findByLoginName( "datekeep" );
+        again.setFullname( "Another Name" );
+        m_db.save( again );
+
+        Assertions.assertEquals( old, m_db.findByLoginName( "datekeep" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testSettingTheSamePasswordAgainDoesNotUpdateTheDate() throws Exception {
+        withPasswordChangedColumn();
+        saveUser( "datesame", "Secret#1pass" );
+        final UserProfile profile = m_db.findByLoginName( "datesame" );
+        final Date old = daysAgo( 40 );
+        profile.setPasswordChanged( old );
+        m_db.save( profile );
+
+        final UserProfile again = m_db.findByLoginName( "datesame" );
+        again.setPassword( "Secret#1pass" );
+        m_db.save( again );
+
+        Assertions.assertEquals( old, m_db.findByLoginName( "datesame" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testHashingTheLegacyPasswordAgainAtLoginDoesNotStartTheClockAgain() throws Exception {
+        withPasswordChangedColumn();
+        final UserProfile janne = m_db.findByLoginName( "janne" );
+        final Date old = daysAgo( 40 );
+        janne.setPasswordChanged( old );
+        m_db.save( janne );
+        Assertions.assertFalse( m_db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+
+        Assertions.assertTrue( m_db.validatePassword( "janne", "myP@5sw0rd" ) );
+
+        Assertions.assertTrue( m_db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+        Assertions.assertEquals( old, m_db.findByLoginName( "janne" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testProfilesWithoutADateHaveNone() throws Exception {
+        withPasswordChangedColumn();
+
+        Assertions.assertNull( m_db.findByLoginName( "janne" ).getPasswordChanged() );
     }
 
     @Test

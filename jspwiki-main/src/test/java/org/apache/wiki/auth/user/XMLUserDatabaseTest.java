@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.Date;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
@@ -341,6 +342,334 @@ public class XMLUserDatabaseTest {
         } catch( final WikiSecurityException e ) {
             Assertions.fail( e.getMessage() );
         }
+    }
+
+    private XMLUserDatabase newDatabase( final File file, final String algorithm, final String iterations ) throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+        props.put( XMLUserDatabase.PROP_USERDATABASE, file.getAbsolutePath() );
+        props.put( "jspwiki.credentials.reuseCount", "3" );
+        if( algorithm != null ) {
+            props.put( "jspwiki.credentials.hash.algorithm", algorithm );
+        }
+        if( iterations != null ) {
+            props.put( "jspwiki.credentials.hash.iterations", iterations );
+        }
+        final XMLUserDatabase db = new XMLUserDatabase();
+        db.initialize( m_engine, props );
+        return db;
+    }
+
+    private File newDatabaseFile() throws Exception {
+        final File file = new File( "target/XMLUserDatabaseTest" + UUID.randomUUID() + ".xml" );
+        FileUtils.copyFile( new File( "src/test/resources/userdatabase.xml" ), file );
+        return file;
+    }
+
+    private void saveUser( final XMLUserDatabase db, final String loginName, final String password ) throws Exception {
+        final UserProfile profile = db.newProfile();
+        profile.setEmail( loginName + "@example.com" );
+        profile.setLoginName( loginName );
+        profile.setFullname( "Full " + loginName );
+        profile.setPassword( password );
+        db.save( profile );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testNewPasswordsUseTheConfiguredAlgorithmAndIterations() throws Exception {
+        final XMLUserDatabase db = newDatabase( newDatabaseFile(), "PBKDF2-SHA512", "2000" );
+
+        saveUser( db, "sha512user", "Secret#1pass" );
+
+        final String stored = db.findByLoginName( "sha512user" ).getPassword();
+        Assertions.assertTrue( stored.startsWith( "{PBKDF2-SHA512}2000$" ), stored );
+        Assertions.assertTrue( db.validatePassword( "sha512user", "Secret#1pass" ) );
+        Assertions.assertFalse( db.validatePassword( "sha512user", "Secret#2pass" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testDefaultSettingsKeepTheCurrentFormat() throws Exception {
+        final XMLUserDatabase db = newDatabase( newDatabaseFile(), null, null );
+
+        saveUser( db, "defaultuser", "Secret#1pass" );
+
+        final String stored = db.findByLoginName( "defaultuser" ).getPassword();
+        Assertions.assertTrue( stored.startsWith( "{PBKDF2-SHA256}600000$" ), stored );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testLoginHashesAgainWhenTheSettingsChanged() throws Exception {
+        final File file = newDatabaseFile();
+        saveUser( newDatabase( file, "PBKDF2-SHA256", "2000" ), "changeuser", "Secret#1pass" );
+
+        final XMLUserDatabase db = newDatabase( file, "PBKDF2-SHA512", "3000" );
+        Assertions.assertTrue( db.findByLoginName( "changeuser" ).getPassword().startsWith( "{PBKDF2-SHA256}2000$" ) );
+
+        Assertions.assertTrue( db.validatePassword( "changeuser", "Secret#1pass" ) );
+
+        Assertions.assertTrue( db.findByLoginName( "changeuser" ).getPassword().startsWith( "{PBKDF2-SHA512}3000$" ) );
+        Assertions.assertTrue( db.validatePassword( "changeuser", "Secret#1pass" ) );
+        Assertions.assertFalse( db.validatePassword( "changeuser", "Secret#2pass" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testLoginHashesAgainWhenOnlyTheIterationsChanged() throws Exception {
+        final File file = newDatabaseFile();
+        saveUser( newDatabase( file, "PBKDF2-SHA512", "2000" ), "iteruser", "Secret#1pass" );
+
+        final XMLUserDatabase db = newDatabase( file, "PBKDF2-SHA512", "4000" );
+        Assertions.assertTrue( db.validatePassword( "iteruser", "Secret#1pass" ) );
+
+        Assertions.assertTrue( db.findByLoginName( "iteruser" ).getPassword().startsWith( "{PBKDF2-SHA512}4000$" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testLoginKeepsTheHashWhenTheSettingsAreTheSame() throws Exception {
+        final XMLUserDatabase db = newDatabase( newDatabaseFile(), "PBKDF2-SHA512", "2000" );
+        saveUser( db, "sameuser", "Secret#1pass" );
+        final String before = db.findByLoginName( "sameuser" ).getPassword();
+
+        Assertions.assertTrue( db.validatePassword( "sameuser", "Secret#1pass" ) );
+
+        Assertions.assertEquals( before, db.findByLoginName( "sameuser" ).getPassword() );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testFailedLoginDoesNotHashAgain() throws Exception {
+        final File file = newDatabaseFile();
+        saveUser( newDatabase( file, "PBKDF2-SHA256", "2000" ), "failuser", "Secret#1pass" );
+        final XMLUserDatabase db = newDatabase( file, "PBKDF2-SHA512", "3000" );
+
+        Assertions.assertFalse( db.validatePassword( "failuser", "Secret#2pass" ) );
+
+        Assertions.assertTrue( db.findByLoginName( "failuser" ).getPassword().startsWith( "{PBKDF2-SHA256}2000$" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testLegacyHashesAreHashedAgainWithTheConfiguredSettings() throws Exception {
+        final XMLUserDatabase db = newDatabase( newDatabaseFile(), "PBKDF2-SHA512", "2000" );
+        Assertions.assertFalse( db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+
+        Assertions.assertTrue( db.validatePassword( "janne", "myP@5sw0rd" ) );
+
+        Assertions.assertTrue( db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2-SHA512}2000$" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testUnsupportedAlgorithmFallsBackToTheDefault() throws Exception {
+        final XMLUserDatabase db = newDatabase( newDatabaseFile(), "PBKDF2-MD5", "2000" );
+
+        saveUser( db, "fallbackuser", "Secret#1pass" );
+
+        final String stored = db.findByLoginName( "fallbackuser" ).getPassword();
+        Assertions.assertTrue( stored.startsWith( "{PBKDF2-SHA256}600000$" ), stored );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testInvalidIterationsFallBackToTheDefault() throws Exception {
+        for( final String iterations : new String[] { "abc", "0", "-5", "" } ) {
+            final XMLUserDatabase db = newDatabase( newDatabaseFile(), "PBKDF2-SHA512", iterations );
+
+            saveUser( db, "iterationsuser", "Secret#1pass" );
+
+            final String stored = db.findByLoginName( "iterationsuser" ).getPassword();
+            Assertions.assertTrue( stored.startsWith( "{PBKDF2-SHA512}210000$" ), iterations + " -> " + stored );
+        }
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1231 */
+    @Test
+    public void testPasswordReuseIsDetectedWithEveryAlgorithm() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase sha256 = newDatabase( file, "PBKDF2-SHA256", "2000" );
+        saveUser( sha256, "reuseuser", "Secret#1pass" );
+        final XMLUserDatabase sha512 = newDatabase( file, "PBKDF2-SHA512", "2000" );
+        final UserProfile profile = sha512.findByLoginName( "reuseuser" );
+        profile.setPassword( "Secret#2pass" );
+        sha512.save( profile );
+
+        Assertions.assertFalse( sha512.validatePasswordReuse( "reuseuser", "Secret#1pass" ) );
+        Assertions.assertFalse( sha512.validatePasswordReuse( "reuseuser", "Secret#2pass" ) );
+        Assertions.assertTrue( sha512.validatePasswordReuse( "reuseuser", "Secret#3pass" ) );
+    }
+
+    private XMLUserDatabase newDatabase( final File file ) throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+        props.put( XMLUserDatabase.PROP_USERDATABASE, file.getAbsolutePath() );
+        final XMLUserDatabase db = new XMLUserDatabase();
+        db.initialize( m_engine, props );
+        return db;
+    }
+
+    /** Rewrites the lock expiry in the file as an administrator could, which makes the integrity check file obsolete. */
+    private void rewriteLockExpiry( final File file, final String lockExpiry ) throws Exception {
+        final String xml = FileUtils.readFileToString( file, StandardCharsets.UTF_8 );
+        FileUtils.writeStringToFile( file, xml.replaceAll( "lockExpiry=\"[^\"]*\"", "lockExpiry=\"" + lockExpiry + "\"" ), StandardCharsets.UTF_8 );
+        FileUtils.deleteQuietly( new File( file.getParent(), file.getName() + ".check" ) );
+    }
+
+    private UserProfile lockJanne( final File file, final Date expiry ) throws Exception {
+        final XMLUserDatabase db = newDatabase( file );
+        final UserProfile profile = db.findByLoginName( "janne" );
+        profile.setLockExpiry( expiry );
+        db.save( profile );
+        return profile;
+    }
+
+    @Test
+    public void testLockExpiryIsSavedAndRead() throws Exception {
+        final File file = newDatabaseFile();
+        final Date expiry = new Date( System.currentTimeMillis() + 3_600_000L );
+        lockJanne( file, expiry );
+
+        final UserProfile reloaded = newDatabase( file ).findByLoginName( "janne" );
+
+        Assertions.assertTrue( reloaded.isLocked() );
+        Assertions.assertEquals( expiry, reloaded.getLockExpiry() );
+    }
+
+    @Test
+    public void testClearedLockIsSavedAndRead() throws Exception {
+        final File file = newDatabaseFile();
+        lockJanne( file, new Date( System.currentTimeMillis() + 3_600_000L ) );
+        lockJanne( file, null );
+
+        final UserProfile reloaded = newDatabase( file ).findByLoginName( "janne" );
+
+        Assertions.assertFalse( reloaded.isLocked() );
+        Assertions.assertNull( reloaded.getLockExpiry() );
+    }
+
+    @Test
+    public void testLockExpiryInMillisecondsIsStillRead() throws Exception {
+        final File file = newDatabaseFile();
+        final long expiry = System.currentTimeMillis() + 3_600_000L;
+        lockJanne( file, new Date( expiry ) );
+        rewriteLockExpiry( file, String.valueOf( expiry ) );
+
+        final UserProfile reloaded = newDatabase( file ).findByLoginName( "janne" );
+
+        Assertions.assertEquals( new Date( expiry ), reloaded.getLockExpiry() );
+    }
+
+    @Test
+    public void testUnreadableLockExpiryKeepsTheProfileLocked() throws Exception {
+        final File file = newDatabaseFile();
+        lockJanne( file, new Date( System.currentTimeMillis() + 3_600_000L ) );
+        rewriteLockExpiry( file, "not a date" );
+
+        final UserProfile reloaded = newDatabase( file ).findByLoginName( "janne" );
+
+        Assertions.assertTrue( reloaded.isLocked() );
+    }
+
+    @Test
+    public void testNewProfileGetsThePasswordChangeDate() throws Exception {
+        final File file = newDatabaseFile();
+        final long before = System.currentTimeMillis() - 1000;
+        final XMLUserDatabase db = newDatabase( file );
+
+        saveUser( db, "datenew", "Secret#1pass" );
+
+        final Date changed = newDatabase( file ).findByLoginName( "datenew" ).getPasswordChanged();
+        Assertions.assertNotNull( changed );
+        Assertions.assertTrue( changed.getTime() >= before && changed.getTime() <= System.currentTimeMillis() + 1000 );
+    }
+
+    @Test
+    public void testChangingThePasswordUpdatesTheDate() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase db = newDatabase( file );
+        saveUser( db, "datechange", "Secret#1pass" );
+        final UserProfile profile = db.findByLoginName( "datechange" );
+        final Date old = new Date( System.currentTimeMillis() - 86_400_000L * 40 );
+        profile.setPasswordChanged( old );
+        db.save( profile );
+        Assertions.assertEquals( old, newDatabase( file ).findByLoginName( "datechange" ).getPasswordChanged() );
+
+        final UserProfile again = db.findByLoginName( "datechange" );
+        again.setPassword( "Secret#2pass" );
+        db.save( again );
+
+        final Date changed = newDatabase( file ).findByLoginName( "datechange" ).getPasswordChanged();
+        Assertions.assertTrue( changed.after( old ) );
+        Assertions.assertTrue( changed.getTime() > System.currentTimeMillis() - 60_000L );
+    }
+
+    @Test
+    public void testSavingTheProfileWithoutChangingThePasswordKeepsTheDate() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase db = newDatabase( file );
+        saveUser( db, "datekeep", "Secret#1pass" );
+        final UserProfile profile = db.findByLoginName( "datekeep" );
+        final Date old = new Date( System.currentTimeMillis() - 86_400_000L * 40 );
+        profile.setPasswordChanged( old );
+        db.save( profile );
+
+        final UserProfile again = db.findByLoginName( "datekeep" );
+        again.setFullname( "Another Name" );
+        db.save( again );
+
+        Assertions.assertEquals( old, newDatabase( file ).findByLoginName( "datekeep" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testSettingTheSamePasswordAgainDoesNotUpdateTheDate() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase db = newDatabase( file );
+        saveUser( db, "datesame", "Secret#1pass" );
+        final UserProfile profile = db.findByLoginName( "datesame" );
+        final Date old = new Date( System.currentTimeMillis() - 86_400_000L * 40 );
+        profile.setPasswordChanged( old );
+        db.save( profile );
+
+        final UserProfile again = db.findByLoginName( "datesame" );
+        again.setPassword( "Secret#1pass" );
+        db.save( again );
+
+        Assertions.assertEquals( old, newDatabase( file ).findByLoginName( "datesame" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testHashingTheLegacyPasswordAgainAtLoginDoesNotStartTheClockAgain() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase db = newDatabase( file );
+        final UserProfile janne = db.findByLoginName( "janne" );
+        final Date old = new Date( System.currentTimeMillis() - 86_400_000L * 40 );
+        janne.setPasswordChanged( old );
+        db.save( janne );
+        Assertions.assertFalse( db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+
+        Assertions.assertTrue( db.validatePassword( "janne", "myP@5sw0rd" ) );
+
+        Assertions.assertTrue( db.findByLoginName( "janne" ).getPassword().startsWith( "{PBKDF2" ) );
+        Assertions.assertEquals( old, newDatabase( file ).findByLoginName( "janne" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testProfilesWithoutADateHaveNone() throws Exception {
+        Assertions.assertNull( newDatabase( newDatabaseFile() ).findByLoginName( "janne" ).getPasswordChanged() );
+    }
+
+    @Test
+    public void testExplicitDateIsSaved() throws Exception {
+        final File file = newDatabaseFile();
+        final XMLUserDatabase db = newDatabase( file );
+        final UserProfile janne = db.findByLoginName( "janne" );
+        final Date date = new Date( System.currentTimeMillis() - 86_400_000L * 10 );
+
+        janne.setPasswordChanged( date );
+        db.save( janne );
+
+        Assertions.assertEquals( date, newDatabase( file ).findByLoginName( "janne" ).getPasswordChanged() );
     }
 
     @Test

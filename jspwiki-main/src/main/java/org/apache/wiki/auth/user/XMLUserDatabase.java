@@ -90,6 +90,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     private static final String LOGIN_NAME        = "loginName";
     private static final String LAST_MODIFIED     = "lastModified";
     private static final String LOCK_EXPIRY       = "lockExpiry";
+    private static final String PASSWORD_CHANGED  = "passwordChanged";
     private static final String PASSWORD          = "password";
     private static final String UID               = "uid";
     private static final String USER_TAG          = "user";
@@ -183,6 +184,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     @Override
     public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException {
         m_engine = engine;
+        initializePasswordHashing( props );
         final File defaultFile;
         if( engine.getRootPath() == null ) {
             LOG.warn( "Cannot identify JSPWiki root path" );
@@ -299,6 +301,8 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( LAST_MODIFIED ) ) + "\" " );
                 io.write( LOCK_EXPIRY );
                 io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( LOCK_EXPIRY ) ) + "\" " );
+                io.write( PASSWORD_CHANGED );
+                io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( PASSWORD_CHANGED ) ) + "\" " );
                 io.write( OLD_HASHES_TAG );
                 io.write( "=\"" + StringEscapeUtils.escapeXml11( user.getAttribute( OLD_HASHES_TAG ) ) + "\" " );
                 io.write( ">" );
@@ -452,6 +456,10 @@ public class XMLUserDatabase extends AbstractUserDatabase {
         if( newPassword != null && !newPassword.equals( "" ) ) {
             final String oldPassword = user.getAttribute( PASSWORD );
             if( !oldPassword.equals( newPassword ) ) {
+                // Hashing the same password again, e.g. with other settings, is not a change of password
+                if( !passwordMatches( newPassword, oldPassword ) ) {
+                    profile.setPasswordChanged( modDate );
+                }
                 String newhash = getHash( newPassword );
                 setAttribute( user, PASSWORD, newhash );
             
@@ -462,6 +470,11 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 }
 
             }
+        }
+
+        // The date is kept as it is unless the profile has a newer one
+        if( profile.getPasswordChanged() != null ) {
+            setAttribute( user, PASSWORD_CHANGED, c_format.format( profile.getPasswordChanged() ) );
         }
 
         // Save the attributes as Base64 string
@@ -539,12 +552,9 @@ public class XMLUserDatabase extends AbstractUserDatabase {
                 profile.setLastModified( parseDate( profile, modified ) );
 
                 // Is the profile locked?
-                final String lockExpiry = user.getAttribute( LOCK_EXPIRY );
-                if( StringUtils.isEmpty( lockExpiry ) || lockExpiry.isEmpty() ) {
-                    profile.setLockExpiry( null );
-                } else {
-                    profile.setLockExpiry( new Date( Long.parseLong( lockExpiry ) ) );
-                }
+                profile.setLockExpiry( parseLockExpiry( profile, user.getAttribute( LOCK_EXPIRY ) ) );
+                final String passwordChanged = user.getAttribute( PASSWORD_CHANGED );
+                profile.setPasswordChanged( StringUtils.isBlank( passwordChanged ) ? null : parseDate( profile, passwordChanged ) );
                 final String oldHahes = user.getAttribute(OLD_HASHES_TAG);
                 if (oldHahes != null && oldHahes.length() > 0) {
                     String[] parts = oldHahes.split("\\|");
@@ -588,6 +598,30 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     }
 
     /**
+     *  Parses the lock expiry of a profile, which is written in the default date format. Milliseconds since the epoch, which is what
+     *  was expected when reading it, are accepted too. A value that cannot be parsed keeps the profile locked, as it may have been
+     *  tampered with and opening the account would be the unsafe way to fail.
+     *
+     *  @param profile profile associated to the date.
+     *  @param lockExpiry the stored lock expiry, which may be empty.
+     *  @return the date the lock expires, or null if the profile is not locked.
+     */
+    private Date parseLockExpiry( final UserProfile profile, final String lockExpiry ) {
+        if( StringUtils.isBlank( lockExpiry ) ) {
+            return null;
+        }
+        if( StringUtils.isNumeric( lockExpiry ) ) {
+            return new Date( Long.parseLong( lockExpiry ) );
+        }
+        final Date expiry = parseDate( profile, lockExpiry );
+        if( expiry == null ) {
+            LOG.error( "Could not parse the 'lockExpiry' attribute for profile '{}'; keeping the profile locked.", profile.getLoginName() );
+            return new Date( Long.MAX_VALUE );
+        }
+        return expiry;
+    }
+
+    /**
      *  Tries to parse a date using the default format - then, for backwards compatibility reasons, tries the platform default.
      *
      *  @param profile profile associated to the date.
@@ -602,7 +636,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
             try {
                 return DateFormat.getDateTimeInstance().parse( date );
             } catch( final ParseException e2 ) {
-                LOG.warn( "Could not parse 'created' or 'lastModified' attribute for profile '" + profile.getLoginName() + "'." +
+                LOG.warn( "Could not parse a date attribute for profile '" + profile.getLoginName() + "'." +
                           " It may have been tampered with.", e2 );
             }
         }
