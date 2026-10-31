@@ -37,6 +37,7 @@ under the License.
     * [JSPWIKI-1299](https://issues.apache.org/jira/browse/JSPWIKI-1299): `CryptoUtil`, `AbstractUserDatabase` and their tests
     * [JSPWIKI-1301](https://issues.apache.org/jira/browse/JSPWIKI-1301): session handling: `Session`, `WikiSession`, `SessionMonitor` and `DefaultAuthenticationManager`
 
+* [JSPWIKI-1254](https://issues.apache.org/jira/browse/JSPWIKI-1254): optional warning by e-mail, lock and deletion of the accounts whose password gets old, with `jspwiki.credentials.expiry.warnDays`, `jspwiki.credentials.lock.days` and `jspwiki.credentials.delete.days` ([PR#553](https://github.com/apache/jspwiki/pull/553))
 * Fix for [JSPWIKI-1138](https://issues.apache.org/jira/browse/JSPWIKI-1138): Install.jsp echoed submitted values without escaping them; they are escaped now ([PR#323](https://github.com/apache/jspwiki/pull/323))
 * Fix for [JSPWIKI-1164](https://issues.apache.org/jira/browse/JSPWIKI-1164): a page reached from a search result showed `<` as `&lt;` when the query was highlighted ([PR#538](https://github.com/apache/jspwiki/pull/538))
 * Fix for [JSPWIKI-919](https://issues.apache.org/jira/browse/JSPWIKI-919): `VersioningFileProvider#pageExists()` ignored the first version of a page that has no history, so a page dropped into the page directory was reported as missing when the page cache is off ([PR#539](https://github.com/apache/jspwiki/pull/539))
