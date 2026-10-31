@@ -37,6 +37,7 @@ under the License.
     * [JSPWIKI-1299](https://issues.apache.org/jira/browse/JSPWIKI-1299): `CryptoUtil`, `AbstractUserDatabase` and their tests
     * [JSPWIKI-1301](https://issues.apache.org/jira/browse/JSPWIKI-1301): session handling: `Session`, `WikiSession`, `SessionMonitor` and `DefaultAuthenticationManager`
 
+* [JSPWIKI-1206](https://issues.apache.org/jira/browse/JSPWIKI-1206) and [JSPWIKI-1221](https://issues.apache.org/jira/browse/JSPWIKI-1221): NekoHTML is replaced by htmlunit-neko 5.6.0 in the HTML to wiki translator ([PR#548](https://github.com/apache/jspwiki/pull/548))
 * Fix for [JSPWIKI-1138](https://issues.apache.org/jira/browse/JSPWIKI-1138): Install.jsp echoed submitted values without escaping them; they are escaped now ([PR#323](https://github.com/apache/jspwiki/pull/323))
 * Fix for [JSPWIKI-1164](https://issues.apache.org/jira/browse/JSPWIKI-1164): a page reached from a search result showed `<` as `&lt;` when the query was highlighted ([PR#538](https://github.com/apache/jspwiki/pull/538))
 * Fix for [JSPWIKI-919](https://issues.apache.org/jira/browse/JSPWIKI-919): `VersioningFileProvider#pageExists()` ignored the first version of a page that has no history, so a page dropped into the page directory was reported as missing when the page cache is off ([PR#539](https://github.com/apache/jspwiki/pull/539))

@@ -20,13 +20,18 @@ package org.apache.wiki.htmltowiki;
 
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
-import org.codelibs.nekohtml.parsers.SAXParser;
+import org.htmlunit.cyberneko.parsers.SAXParser;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-import org.jdom2.input.sax.XMLReaderSAX2Factory;
+import org.jdom2.input.sax.XMLReaderJDOMFactory;
 import org.jdom2.output.XMLOutputter;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.AttributesImpl;
+import org.xml.sax.helpers.XMLFilterImpl;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -38,7 +43,19 @@ import java.io.StringReader;
  */
 public class HtmlStringToWikiTranslator {
 
-    private static final String CYBERNEKO_PARSER = SAXParser.class.getName();
+    /** Hands JDOM the HTML parser directly, as it would set SAX features on it that the parser does not know about. */
+    private static final XMLReaderJDOMFactory HTML_READER_FACTORY = new XMLReaderJDOMFactory() {
+        @Override
+        public XMLReader createXMLReader() {
+            return new AttributeUriFilter( new SAXParser() );
+        }
+
+        @Override
+        public boolean isValidating() {
+            return false;
+        }
+    };
+
     private final Engine e;
 
     /**
@@ -97,12 +114,12 @@ public class HtmlStringToWikiTranslator {
      * Use NekoHtml to parse HTML like well-formed XHTML
      *
      * @param html HTML to parse.
-     * @return xhtml jdom root element (node "HTML")
+     * @return xhtml jdom root element (node "html")
      * @throws JDOMException when errors occur in parsing
      * @throws IOException when an I/O error prevents a document from being fully parsed
      */
     private Element htmlStringToElement( final String html ) throws JDOMException, IOException {
-        final SAXBuilder builder = new SAXBuilder( new XMLReaderSAX2Factory( true, CYBERNEKO_PARSER ), null, null );
+        final SAXBuilder builder = new SAXBuilder( HTML_READER_FACTORY, null, null );
         //builder.setProperty( XMLConstants.ACCESS_EXTERNAL_DTD, "" );
         //builder.setProperty( XMLConstants.ACCESS_EXTERNAL_SCHEMA, "" );
         final Document doc = builder.build( new StringReader( html ) );
@@ -119,6 +136,29 @@ public class HtmlStringToWikiTranslator {
         final Document document = new Document( element );
         final XMLOutputter outputter = new XMLOutputter();
         return outputter.outputString( document );
+    }
+
+    /**
+     *  The HTML parser reports {@code null} as the namespace URI of the attributes, where the SAX contract says it is the empty string,
+     *  and JDOM cannot handle that.
+     */
+    private static final class AttributeUriFilter extends XMLFilterImpl {
+
+        AttributeUriFilter( final XMLReader parent ) {
+            super( parent );
+        }
+
+        @Override
+        public void startElement( final String uri, final String localName, final String qName, final Attributes atts ) throws SAXException {
+            final AttributesImpl attributes = new AttributesImpl( atts );
+            for( int i = 0; i < attributes.getLength(); i++ ) {
+                if( attributes.getURI( i ) == null ) {
+                    attributes.setURI( i, "" );
+                }
+            }
+            super.startElement( uri, localName, qName, attributes );
+        }
+
     }
 
 }
