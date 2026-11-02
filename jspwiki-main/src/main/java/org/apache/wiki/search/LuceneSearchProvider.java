@@ -43,6 +43,8 @@ import org.apache.lucene.queries.spans.SpanTermQuery;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MultiTermQuery;
 import org.apache.lucene.search.PrefixQuery;
@@ -609,14 +611,39 @@ public class LuceneSearchProvider implements SearchProvider {
 
         @Override
         protected Query getPrefixQuery( final String field, final String termStr ) throws ParseException {
-            final Query query = field != null ? separated( field, termStr, true ) : null;
-            return query != null ? query : super.getPrefixQuery( field, termStr );
+            final Query separated = field != null ? separated( field, termStr, true ) : null;
+            if( separated == null ) {
+                return super.getPrefixQuery( field, termStr );
+            }
+            try {
+                return either( super.getPrefixQuery( field, termStr ), separated );
+            } catch( final ParseException e ) {
+                return separated; // the default handling does not accept the term, the separated one does
+            }
         }
 
         @Override
         protected Query getWildcardQuery( final String field, final String termStr ) throws ParseException {
-            final Query query = field != null ? separated( field, termStr, false ) : null;
-            return query != null ? query : super.getWildcardQuery( field, termStr );
+            final Query separated = field != null ? separated( field, termStr, false ) : null;
+            if( separated == null ) {
+                return super.getWildcardQuery( field, termStr );
+            }
+            try {
+                return either( super.getWildcardQuery( field, termStr ), separated );
+            } catch( final ParseException e ) {
+                return separated; // the default handling does not accept the term, the separated one does
+            }
+        }
+
+        /**
+         * Matches what either query matches. The default query is kept because the analyzer does not always split on a separator, so
+         * a token like {@code blogentry_021126_1} can hold it and only the default query finds it.
+         */
+        private static Query either( final Query defaultQuery, final Query separated ) {
+            return new BooleanQuery.Builder()
+                    .add( defaultQuery, BooleanClause.Occur.SHOULD )
+                    .add( separated, BooleanClause.Occur.SHOULD )
+                    .build();
         }
 
         /**

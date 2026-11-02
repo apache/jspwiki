@@ -259,6 +259,22 @@ class SearchManagerTest {
 
     /** https://issues.apache.org/jira/browse/JSPWIKI-501 */
     @Test
+    void testWildcardKeepsMatchesOfTokensHoldingUnderscores() throws Exception {
+        m_engine.saveText( "Blog_blogentry_021126_1", "first entry" );
+        m_engine.saveText( "Blog_blogentry_021126_2", "second entry" );
+        m_engine.saveText( "Blog_blogentry_031226_1", "third entry" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "name:blog" ) );
+
+        Assertions.assertEquals( Arrays.asList( "Blog_blogentry_021126_1", "Blog_blogentry_031226_1" ), pageNamesFor( "name:blog*26_1" ) );
+        Assertions.assertEquals( Arrays.asList( "Blog_blogentry_021126_1", "Blog_blogentry_021126_2", "Blog_blogentry_031226_1" ),
+                                 pageNamesFor( "name:blog*26_*" ) );
+        Assertions.assertEquals( Arrays.asList( "Blog_blogentry_021126_1", "Blog_blogentry_021126_2", "Blog_blogentry_031226_1" ),
+                                 pageNamesFor( "name:Blog_blogentry*" ) );
+        Assertions.assertEquals( Arrays.asList( "Blog_blogentry_021126_1", "Blog_blogentry_021126_2" ), pageNamesFor( "name:blogentry_021126*" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-501 */
+    @Test
     void testWildcardWithoutUnderscoreIsUnchanged() throws Exception {
         m_engine.saveText( "TestPage", "the dawn of the third age of mankind" );
         Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "mankind" ) );
