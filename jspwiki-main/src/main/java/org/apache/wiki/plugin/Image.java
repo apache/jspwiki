@@ -32,6 +32,7 @@ import org.apache.wiki.util.TextUtil;
 
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 
 /**
@@ -84,6 +85,16 @@ public class Image implements Plugin {
     /** The parameter name for setting the title.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_TITLE    = "title";
 
+    /** Purely presentational CSS properties the <tt>style</tt> parameter may set. Repositioning and stacking
+        properties (position, z-index, transform, inset, ...) are deliberately absent, so an author cannot lift
+        the rendered box out of the page flow and overlay other content with it (in-wiki phishing overlays). */
+    private static final Set< String > SAFE_STYLE_PROPERTIES = Set.of(
+            "background", "background-color", "border", "border-color", "border-radius", "border-style",
+            "border-width", "color", "display", "float", "font-family", "font-size", "font-style", "font-weight",
+            "height", "margin", "margin-bottom", "margin-left", "margin-right", "margin-top", "max-height",
+            "max-width", "min-height", "min-width", "opacity", "padding", "padding-bottom", "padding-left",
+            "padding-right", "padding-top", "text-align", "vertical-align", "white-space", "width" );
+
     /**
      *  This method is used to clean away things like quotation marks which
      *  a malicious user could use to stop processing and insert javascript.
@@ -103,6 +114,47 @@ public class Image implements Plugin {
         return  "Image src='{image.jpg}'";
     }
     
+    /**
+     *  Accepts an author-supplied style only if every declaration sets an allow-listed presentational property.
+     *  CSS escapes and functions (backslash, parentheses) and negative lengths are rejected outright: they could
+     *  disguise a forbidden property (<tt>\\70 osition</tt>), smuggle a URL (<tt>url(...)</tt>), or drag the
+     *  rendered box over other page content (<tt>margin-top:-9999px</tt>).
+     *
+     *  @param style the author-supplied style parameter, already entity-encoded
+     *  @return true if every declaration is allow-listed
+     */
+    static boolean isSafeStyle( final String style ) {
+        if( style.indexOf( '\\' ) >= 0 || style.indexOf( '(' ) >= 0 ) {
+            return false;
+        }
+        for( final String declaration : style.split( ";" ) ) {
+            if( declaration.trim().isEmpty() ) {
+                continue;
+            }
+            final int colon = declaration.indexOf( ':' );
+            if( colon < 0 ) {
+                return false;
+            }
+            final String property = declaration.substring( 0, colon ).trim().toLowerCase( Locale.ENGLISH );
+            final String value = declaration.substring( colon + 1 );
+            if( !SAFE_STYLE_PROPERTIES.contains( property ) || value.matches( ".*-\\s*\\.?\\d.*" ) ) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     *  Restricts the <tt>class</tt> parameter to a whitespace-separated list of CSS identifiers, so it cannot
+     *  carry CSS or markup fragments.
+     *
+     *  @param cssclass the author-supplied class parameter
+     *  @return true if it is a plain list of identifiers
+     */
+    static boolean isSafeCssClass( final String cssclass ) {
+        return cssclass.matches( "[\\w][\\w-]*(\\s+[\\w][\\w-]*)*" );
+    }
+
     private boolean needsSanitization(String link) {
         String testVal = link.toLowerCase().replaceAll("\\s+", "").trim();
         if (testVal.startsWith("data")
@@ -120,15 +172,15 @@ public class Image implements Plugin {
     public String execute( final Context context, final Map<String, String> params ) throws PluginException {
         final Engine engine  = context.getEngine();
         String src           = getCleanParameter( params, PARAM_SRC );
-        final String align   = getCleanParameter( params, PARAM_ALIGN );
+        String align         = getCleanParameter( params, PARAM_ALIGN );
         final String ht      = getCleanParameter( params, PARAM_HEIGHT );
         final String wt      = getCleanParameter( params, PARAM_WIDTH );
         final String alt     = getCleanParameter( params, PARAM_ALT );
         final String caption = getCleanParameter( params, PARAM_CAPTION );
         String link          = getCleanParameter( params, PARAM_LINK );
         String target        = getCleanParameter( params, PARAM_TARGET );
-        final String style   = getCleanParameter( params, PARAM_STYLE );
-        final String cssclass= getCleanParameter( params, PARAM_CLASS );
+        String style         = getCleanParameter( params, PARAM_STYLE );
+        String cssclass     = getCleanParameter( params, PARAM_CLASS );
         final String border  = getCleanParameter( params, PARAM_BORDER );
         final String title   = getCleanParameter( params, PARAM_TITLE );
 
@@ -140,6 +192,18 @@ public class Image implements Plugin {
 
         if( target != null && !validTargetValue(target) ) {
             target = null; // not a valid value so ignore
+        }
+
+        if( align != null && !align.equals( "left" ) && !align.equals( "right" ) && !align.equals( "center" ) ) {
+            align = null; // not a valid value so ignore; it is emitted into a CSS float declaration
+        }
+
+        if( style != null && !isSafeStyle( style ) ) {
+            style = null; // only allow-listed presentational CSS may pass, see isSafeStyle()
+        }
+
+        if( cssclass != null && !isSafeCssClass( cssclass ) ) {
+            cssclass = null; // not a plain list of CSS identifiers so ignore
         }
 
         try {
