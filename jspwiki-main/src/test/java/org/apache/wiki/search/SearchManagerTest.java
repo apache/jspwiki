@@ -284,6 +284,54 @@ class SearchManagerTest {
         Assertions.assertEquals( Arrays.asList(), pageNamesFor( "woman*" ) );
     }
 
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1321 */
+    @Test
+    void testWildcardInsideTheWordsOfPageName() throws Exception {
+        m_engine.saveText( "Weblog_blogentry_021126_1", "first entry" );
+        m_engine.saveText( "Weblog_blogentry_031226_1", "second entry" );
+        m_engine.saveText( "Weblog_blogentry_021127_2", "third entry" );
+        m_engine.saveText( "Man_Page", "a" );
+        m_engine.saveText( "Human_Page", "b" );
+        m_engine.saveText( "Woman_Page", "c" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "name:weblog" ) );
+        Awaitility.await( "index2" ).until( findsResultsFor( new ArrayList<>(), "name:woman" ) );
+
+        final List< String > withTwentySix = Arrays.asList( "Weblog_blogentry_021126_1", "Weblog_blogentry_031226_1" );
+        Assertions.assertEquals( withTwentySix, pageNamesFor( "name:blog*26" ) );
+        Assertions.assertEquals( withTwentySix, pageNamesFor( "name:entry*26*" ) );
+        Assertions.assertEquals( withTwentySix, pageNamesFor( "name:blog*26*" ) );
+        Assertions.assertEquals( Arrays.asList( "Weblog_blogentry_021127_2" ), pageNamesFor( "name:entry*27*" ) );
+        Assertions.assertEquals( Arrays.asList(), pageNamesFor( "name:entry*99*" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1321 */
+    @Test
+    void testWildcardAtTheEndOfTermStillStartsAtTheWord() throws Exception {
+        m_engine.saveText( "Man_Page", "a" );
+        m_engine.saveText( "Human_Page", "b" );
+        m_engine.saveText( "Woman_Page", "c" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "name:woman" ) );
+
+        Assertions.assertEquals( Arrays.asList( "Man_Page" ), pageNamesFor( "name:man*" ) );
+        Assertions.assertEquals( Arrays.asList( "Human_Page", "Man_Page", "Woman_Page" ), pageNamesFor( "name:man*pa*" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1321 */
+    @Test
+    void testRelevanceIsBetweenZeroAndOneHundred() throws Exception {
+        m_engine.saveText( "Few", "mankind" );
+        m_engine.saveText( "Many", "mankind mankind mankind mankind mankind mankind mankind mankind" );
+        m_engine.saveText( "Padded", "mankind and a good many other words to lower the score of this page in the index" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "Padded" ) );
+
+        final Collection< SearchResult > res = new ArrayList<>();
+        Awaitility.await( "scores" ).until( findsResultsFor( res, "mankind" ) );
+        final int max = res.stream().mapToInt( SearchResult::getScore ).max().getAsInt();
+        Assertions.assertEquals( 3, res.size() );
+        Assertions.assertEquals( 100, max );
+        Assertions.assertTrue( res.stream().allMatch( r -> r.getScore() >= 0 && r.getScore() <= 100 ) );
+    }
+
     @Test
     public void getPluginList() throws Exception {
         DefaultSearchManager defaultSearchManager = new DefaultSearchManager(m_engine, m_engine.getWikiProperties());
