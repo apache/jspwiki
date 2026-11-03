@@ -1,0 +1,14 @@
+Tämä wiki on toteutettu [JSP|http://java.sun.com/products/jsp] -tekniikalla, minkä ansiosta sitä on toivottavasti helppo pitää ajan tasalla ja sen ulkoasu on parempi kuin useimmilla [alkuperäiseen wikiin|http://c2.com/cgi/wiki] perustuvilla wikeillä.  Oma bean-komponentti muuntaa tekstin HTML:ksi.
+
+Useimmat [muokkausmerkit|TextFormattingRules] on muotoiltu [Sensein kirjaston|http://senseis.xmp.net] mukaan, joka on Internetin parhaita go-sivustoja.  Heidän merkintätapansa on mielestäni helppo mutta selkeä.
+
+Tämä wiki on saatavilla [Apache License, Version 2.0|http://www.apache.org/licenses/LICENSE-2.0] -lisenssillä. Lisätietoja osoitteessa [http://jspwiki.apache.org].
+
+Jos JSPWikin kehitys kiinnostaa, JSPWikin kotisivu on osoitteessa [http://jspwiki.apache.org].  Muutama pikalinkki:
+
+* [Virheilmoitukset|JSPWiki:SubmitBugReport] - tai [katso avointen virheiden luettelo|JSPWiki:OpenBugs].
+* [Ehdota uusia ideoita|JSPWiki:SubmitNewIdea].
+* Tutustu ajantasaisimpaan [JSPWikin UKK:hon|JSPWiki:JSPWikiFAQ]
+* Etsi lisää [liitännäisiä|JSPWiki:ContributedPlugins], [pohjia|JSPWiki:ContributedTemplates], [suodattimia|JSPWiki:ContributedFilters], [tallennusratkaisuja|JSPWiki:ContributedProviders] tai [muuta hauskaa|JSPWiki:ContributedCode].
+
+Hyvää hakkerointia, ja kiitos kun valitsit JSPWikin!

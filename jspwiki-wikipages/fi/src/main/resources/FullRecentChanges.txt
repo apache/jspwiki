@@ -1,0 +1,3 @@
+Nämä ovat kaikki näille sivuille tehdyt muutokset.  Paljon lyhyempi luettelo löytyy sivulta [Viimeisimmät muutokset|RecentChanges].
+
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin}]
