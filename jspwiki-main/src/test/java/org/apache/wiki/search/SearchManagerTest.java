@@ -201,6 +201,21 @@ class SearchManagerTest {
     }
 
     @Test
+    void testTitleSearchWithSuperscriptDigit() throws Exception {
+        final String name = "Metre\u00b2";
+        m_engine.saveText( name, "Nonsensical content that should not match" );
+
+        for( final String query : new String[] { "Metre", "name:Metre*", name } ) {
+            final Collection< SearchResult > res = new ArrayList<>();
+            Awaitility.await( "title search for " + query ).until( findsResultsFor( res, query ) );
+
+            Assertions.assertEquals( 1, res.size(), "no pages for " + query );
+            Assertions.assertEquals( name, res.iterator().next().getPage().getName(), "page for " + query );
+        }
+        m_engine.deleteTestPage( name );
+    }
+
+    @Test
     void testKeywordsSearch() throws Exception {
         final String txt = "[{SET keywords=perry,mason,attorney,law}] Nonsensical content that should not match";
 
