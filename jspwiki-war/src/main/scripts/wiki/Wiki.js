@@ -303,8 +303,7 @@ var Wiki = {
 
     DOM Structure:
     (start code)
-        div[style='padding-top:nn']    => nn==height of header;  push content down
-        div.header.yoyo[.scrolling-down]  => css: position=fixed
+        div.header.yoyo[.scrolling-down]  => css: position=sticky, so it keeps its place in the flow
     (end)
 
     */
@@ -313,17 +312,11 @@ var Wiki = {
         var height = "offsetHeight",
             scrollY,
             lastScrollY = 0,
-
-            //add spacer just infront of fixed element,
-            //and adjust height == header (fixed elements do not take space in the dom)
-            spacer = "div".slick().inject(header, "before"),
             busy;
 
         function update(){
 
             scrollY = window.getScroll().y;
-
-            spacer.style.paddingTop = header[height]+"px"; //update after window resize
 
             // Limit scroll top to counteract iOS / OSX bounce.
             scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
@@ -345,7 +338,7 @@ var Wiki = {
         }
 
         window.addEvents({ scroll: handleEvent, resize: handleEvent });
-        update(); //first run: set height of the spacer
+        update(); //first run
 
     },
 
