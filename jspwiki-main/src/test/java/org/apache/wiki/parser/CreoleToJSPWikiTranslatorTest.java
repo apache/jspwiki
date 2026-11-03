@@ -180,7 +180,7 @@ public class CreoleToJSPWikiTranslatorTest
     }
 
     /** ******* Stuff not in JSPWikiMarkupParserTest ************************* */
-    /* these are test where errors occured in the Creole Wiki */
+    /* these are test where errors occurred in the Creole Wiki */
 
     @Test
     public void testHeadingsCreole1() throws Exception

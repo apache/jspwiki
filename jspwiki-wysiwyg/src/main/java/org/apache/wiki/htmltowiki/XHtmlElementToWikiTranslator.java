@@ -322,7 +322,7 @@ public class XHtmlElementToWikiTranslator {
         String cssSpecial = null;
         final String cssClass = base.getAttributeValue( "class" );
 
-        // accomodate a FCKeditor bug with Firefox: when a link is removed, it becomes <span class="wikipage">text</span>.
+        // accommodate a FCKeditor bug with Firefox: when a link is removed, it becomes <span class="wikipage">text</span>.
         final boolean ignoredCssClass = cssClass != null && cssClass.matches( "wikipage|createpage|external|interwiki|attachment|inline-code" );
 
         Map< Object, Object > styleProps = null;

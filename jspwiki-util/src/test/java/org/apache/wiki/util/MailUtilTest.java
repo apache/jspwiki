@@ -33,7 +33,7 @@ import java.util.Properties;
  * This test is not integrated into any TestSuite yet, because I don't know how
  * to really assert if a mail was sent etc. (setup would be to complicated yet). Therefore
  * replace the static TEST variables with your configuration and test by hand: execute
- * testSendMail and see if you get the mail at the adress you indicate in "TEST_RECEIVER".
+ * testSendMail and see if you get the mail at the address you indicate in "TEST_RECEIVER".
  *
  *
  */
