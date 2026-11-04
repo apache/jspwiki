@@ -161,10 +161,10 @@ public class HtmlStringToWikiTranslatorTest {
     public void testPre() throws Exception {
         Assertions.assertEquals( "\n{{{hallo}}}\n", html2wiki.translate( "<pre>hallo</pre>" ) );
         Assertions.assertEquals( "\n{{{Hallo\nWelt!\n\n}}}\n", html2wiki.translate( "<pre>Hallo<br>Welt!<br><br></pre>" ) );
-        Assertions.assertEquals( "\n{{{\n\n\n\nHallo\n\n\n\nWelt!\n\n\n\n}}}\n",
+        Assertions.assertEquals( "\n{{{\n\n\nHallo\n\n\n\nWelt!\n\n\n\n}}}\n",
                 html2wiki.translate( "\n\n\n\n<pre>\n\n\n\nHallo\n\n\n\nWelt!\n\n\n\n</pre>\n\n\n\n" ) );
 
-        Assertions.assertEquals( "\n{{{\n\n* Baltramon \n  lasdjfh\n\n}}}\n", html2wiki.translate( "<pre>\n\n* Baltramon \n  lasdjfh\n\n</pre>" ) );
+        Assertions.assertEquals( "\n{{{\n* Baltramon \n  lasdjfh\n\n}}}\n", html2wiki.translate( "<pre>\n\n* Baltramon \n  lasdjfh\n\n</pre>" ) );
 
         /*
          * // The style "font-family: courier new" is no longer translated as monospace text, so this test case is no longer needed. Assertions.assertEquals(
