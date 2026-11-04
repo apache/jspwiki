@@ -215,38 +215,41 @@ Section: Sticky Footer
 This add-on will ensure to stick the footer to the bottom of the window
 even when there’s not enough content to fill the page.
 
-.can-flex :  present when the browser supports flexbox
+It is plain CSS, so the footer is in place from the first paint. The rules sit
+in @supports because IE9 to IE11 do not implement it, and their flexbox is broken.
 
 Credits: https://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/
 */
 
-body.can-flex {
-    //hack for IE-bug :  see https://github.com/philipwalton/flexbugs#3-min-height-on-a-flex-container-wont-apply-to-its-flex-items
-    display: flex;
-    min-height: 100vh;
-    flex-flow: column;
-
-    & > .container-fluid,
-    & > .container {
-        display: -webkit-box;
-        display: -moz-box;
-        display: -ms-flexbox;
-        display: -webkit-flex;
+@supports (display: flex) {
+    body {
+        //hack for IE-bug :  see https://github.com/philipwalton/flexbugs#3-min-height-on-a-flex-container-wont-apply-to-its-flex-items
         display: flex;
-
         min-height: 100vh;
-
-        -webkit-flex-flow: column;
-        -moz-flex-flow: column;
-        -ms-flex-flow: column;
         flex-flow: column;
-    }
-    & .content {
-        -webkit-box-flex: 1;
-        -moz-box-flex: 1;
-        -webkit-flex: 1;
-        -ms-flex: 1;
-        flex: 1;
+
+        & > .container-fluid,
+        & > .container {
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+
+            min-height: 100vh;
+
+            -webkit-flex-flow: column;
+            -moz-flex-flow: column;
+            -ms-flex-flow: column;
+            flex-flow: column;
+        }
+        & .content {
+            -webkit-box-flex: 1;
+            -moz-box-flex: 1;
+            -webkit-flex: 1;
+            -ms-flex: 1;
+            flex: 1;
+        }
     }
 }
 
