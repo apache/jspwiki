@@ -89,7 +89,7 @@
     <selenide.version>7.18.1</selenide.version>
     <slf4j.version>2.0.18</slf4j.version>
     <tika.version>3.3.2</tika.version>
-    <tomcat.version>10.1.60</tomcat.version>
+    <tomcat.version>11.0.27</tomcat.version>
     <xstream.version>1.4.21</xstream.version>
 
     <plugin.antrun.version>3.2.0</plugin.antrun.version>
