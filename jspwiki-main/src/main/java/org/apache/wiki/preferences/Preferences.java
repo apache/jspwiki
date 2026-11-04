@@ -36,11 +36,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.TimeZone;
 
 
@@ -50,6 +52,9 @@ import java.util.TimeZone;
 public class Preferences extends HashMap< String,String > {
 
     private static final long serialVersionUID = 1L;
+
+    /** The names of the preferences whose value comes from the user's cookie, and not from the defaults. */
+    private final Set< String > setByUser = new HashSet<>();
 
     /**
      * The name under which a Preferences object is stored in the HttpSession. Its value is {@value}.
@@ -128,7 +133,7 @@ public class Preferences extends HashMap< String,String > {
      * @param request
      * @param prefs The default hashmap of preferences
      */
-	private static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs ) {
+	static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs ) {
         final String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, COOKIE_USER_PREFS_NAME ) );
         if( prefVal != null ) {
             // Convert prefVal JSON to a generic hashmap
@@ -139,9 +144,21 @@ public class Preferences extends HashMap< String,String > {
                 final Object value = map.get( key );
                 if( value != null ) {
                     prefs.put( key, value.toString() );
+                    prefs.setByUser.add( key );
                 }
             }
         }
+    }
+
+    /**
+     *  Tells whether the user chose the value of a preference, as opposed to getting the default one.
+     *
+     *  @param name the name of the preference.
+     *  @return {@code true} if the value comes from the user's cookie.
+     *  @since 3.0.1
+     */
+    public boolean isSetByUser( final String name ) {
+        return setByUser.contains( name );
     }
 
     /**
