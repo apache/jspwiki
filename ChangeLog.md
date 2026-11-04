@@ -25,6 +25,7 @@ under the License.
 * [JSPWIKI-1317](https://issues.apache.org/jira/browse/JSPWIKI-1317): the default template follows the dark colour scheme of the system when no skin was chosen ([PR#555](https://github.com/apache/jspwiki/pull/555))
 * Fix for [JSPWIKI-1191](https://issues.apache.org/jira/browse/JSPWIKI-1191): pasted images that are data URLs are shown, their base64 text is kept when saving from the WYSIWYG editor, and the parser no longer loses the end of a long line when it looks ahead at it ([PR#544](https://github.com/apache/jspwiki/pull/544))
 * [JSPWIKI-129](https://issues.apache.org/jira/browse/JSPWIKI-129): permissions are checked against the policy of the wiki only, and not through the security policy of the JVM ([PR#552](https://github.com/apache/jspwiki/pull/552))
+* Bump parent pom from versio 39 to 40
 
 * _3.0.1-git-03_
 
