@@ -22,11 +22,6 @@ under the License.
 * _3.0.1-git-04_
 
 * Fix for [JSPWIKI-204](https://issues.apache.org/jira/browse/JSPWIKI-204): removed `PingWeblogsComFilter`, a sample filter that pinged weblogs.com, which is no longer reachable, and with it the old `xmlrpc-2.0.1` library
-
-**2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
-
-* _3.0.1-git-04_
-
 * [JSPWIKI-1231](https://issues.apache.org/jira/browse/JSPWIKI-1231): the algorithm and the iterations of the hash of new passwords are configurable with `jspwiki.credentials.hash.algorithm` and `jspwiki.credentials.hash.iterations` ([PR#549](https://github.com/apache/jspwiki/pull/549))
 * [JSPWIKI-1317](https://issues.apache.org/jira/browse/JSPWIKI-1317): the default template follows the dark colour scheme of the system when no skin was chosen ([PR#555](https://github.com/apache/jspwiki/pull/555))
 * Fix for [JSPWIKI-1191](https://issues.apache.org/jira/browse/JSPWIKI-1191): pasted images that are data URLs are shown, their base64 text is kept when saving from the WYSIWYG editor, and the parser no longer loses the end of a long line when it looks ahead at it ([PR#544](https://github.com/apache/jspwiki/pull/544))
