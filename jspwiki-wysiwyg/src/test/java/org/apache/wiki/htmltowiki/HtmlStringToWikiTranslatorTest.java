@@ -337,4 +337,11 @@ public class HtmlStringToWikiTranslatorTest {
                 html2wiki.translate( "\n<dl><dt><b>New Page Name</b></dt><dd><input name=\"nbf_newPageName\" type=\"text\"></dd></dl>\n" ) );
     }
 
+    @Test
+    public void testDataUrlImageKeepsBase64() throws Exception {
+        // base64 uses '+', which must not be read as an encoded space
+        Assertions.assertEquals( "[data:image/png;base64,iVBOR+/w0KGgo+AAA=]",
+                html2wiki.translate( "<img src=\"data:image/png;base64,iVBOR+/w0KGgo+AAA=\" alt=\"\">" ) );
+    }
+
 }
