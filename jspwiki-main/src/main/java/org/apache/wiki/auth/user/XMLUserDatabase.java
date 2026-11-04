@@ -183,6 +183,7 @@ public class XMLUserDatabase extends AbstractUserDatabase {
     @Override
     public void initialize( final Engine engine, final Properties props ) throws NoRequiredPropertyException {
         m_engine = engine;
+        initializePasswordHashing( props );
         final File defaultFile;
         if( engine.getRootPath() == null ) {
             LOG.warn( "Cannot identify JSPWiki root path" );
