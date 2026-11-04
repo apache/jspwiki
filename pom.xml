@@ -90,7 +90,6 @@
     <slf4j.version>2.0.18</slf4j.version>
     <tika.version>3.3.2</tika.version>
     <tomcat.version>10.1.60</tomcat.version>
-    <xmlrpc.version>2.0.1</xmlrpc.version>
     <xstream.version>1.4.21</xstream.version>
 
     <plugin.antrun.version>3.2.0</plugin.antrun.version>
@@ -463,12 +462,6 @@
         <groupId>oro</groupId>
         <artifactId>oro</artifactId>
         <version>${oro.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>xmlrpc</groupId>
-        <artifactId>xmlrpc</artifactId>
-        <version>${xmlrpc.version}</version>
       </dependency>
 
       <!-- test dependencies -->
