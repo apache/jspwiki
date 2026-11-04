@@ -31,6 +31,7 @@ under the License.
 * [JSPWIKI-1254](https://issues.apache.org/jira/browse/JSPWIKI-1254): passwords expire after the number of days of `jspwiki.credentials.expiry.days`, which is off by default ([PR#551](https://github.com/apache/jspwiki/pull/551))
 * Fix for [JSPWIKI-1162](https://issues.apache.org/jira/browse/JSPWIKI-1162): the target of a link is replaced when a page with blanks in its name is renamed again ([PR#554](https://github.com/apache/jspwiki/pull/554))
 * [JSPWIKI-1206](https://issues.apache.org/jira/browse/JSPWIKI-1206) and [JSPWIKI-1221](https://issues.apache.org/jira/browse/JSPWIKI-1221): NekoHTML is replaced by htmlunit-neko 5.7.0 in the HTML to wiki translator ([PR#548](https://github.com/apache/jspwiki/pull/548))
+* [JSPWIKI-1307](https://issues.apache.org/jira/browse/JSPWIKI-1307): See JIRA for details
 
 * _3.0.1-git-03_
 
