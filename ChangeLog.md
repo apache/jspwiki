@@ -33,7 +33,7 @@ under the License.
 * [JSPWIKI-1206](https://issues.apache.org/jira/browse/JSPWIKI-1206) and [JSPWIKI-1221](https://issues.apache.org/jira/browse/JSPWIKI-1221): NekoHTML is replaced by htmlunit-neko 5.7.0 in the HTML to wiki translator ([PR#548](https://github.com/apache/jspwiki/pull/548))
 * [JSPWIKI-1307](https://issues.apache.org/jira/browse/JSPWIKI-1307): See JIRA for details
 * [JSPWIKI-1263](https://issues.apache.org/jira/browse/JSPWIKI-1263): the `Admin` group can no longer be removed, so the wiki cannot be left without administrators
-
+* [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): markup handling defect when passing css properties containing a percent symbol
 * _3.0.1-git-03_
 
 * Fixes by Alex O'Ree, thanks! The issues are restricted in JIRA, so each one is listed with the code it changes; the details are in the commits of the pull requests
