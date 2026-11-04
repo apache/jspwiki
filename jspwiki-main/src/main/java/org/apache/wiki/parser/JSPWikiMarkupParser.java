@@ -1419,10 +1419,11 @@ public class JSPWikiMarkupParser extends MarkupParser {
 
     /**
      * Handles constructs of type %%(style) and %%class
+     * @param closing true when called for the closing marker /%, which never opens a style, whatever follows it
      * @return An Element containing the div or span, depending on the situation.
      * @throws IOException
      */
-    private Element handleDiv( ) throws IOException {
+    private Element handleDiv( final boolean closing ) throws IOException {
         int ch = nextToken();
         Element el = null;
 
@@ -1433,9 +1434,9 @@ public class JSPWikiMarkupParser extends MarkupParser {
             ch = nextToken();
 
             //  Style or class?
-            if( ch == '(' ) {
+            if( !closing && ch == '(' ) {
                 style = readBraceContent('(',')');
-            } else if( Character.isLetter( (char) ch ) ) {
+            } else if( !closing && Character.isLetter( (char) ch ) ) {
                 pushBack( ch );
                 clazz = readUntil( "( \t\n\r" );
                 //Note: ref.https://www.w3.org/TR/CSS21/syndata.html#characters
@@ -1517,7 +1518,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
         final int ch = nextToken();
         pushBack( ch );
         if( ch == '%' && !m_styleStack.isEmpty() ) {
-            return handleDiv();
+            return handleDiv( true );
         }
 
         return null;
@@ -1835,7 +1836,7 @@ public class JSPWikiMarkupParser extends MarkupParser {
             break;
 
           case '%':
-            el = handleDiv();
+            el = handleDiv( false );
             break;
 
           case '/':
