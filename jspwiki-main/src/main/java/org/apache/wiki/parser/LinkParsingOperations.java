@@ -64,6 +64,22 @@ public class LinkParsingOperations {
         Arrays.sort( EXTERNAL_LINKS );
     }
 
+    /** A base64 encoded raster image. Other types, SVG among them, can carry script and are not accepted. */
+    private static final java.util.regex.Pattern DATA_IMAGE = java.util.regex.Pattern.compile(
+            "data:image/(?:png|gif|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}", java.util.regex.Pattern.CASE_INSENSITIVE );
+
+    /**
+     * Tells if the link is a {@code data:} URL holding a PNG, GIF, JPEG or WebP image, such as the ones the WYSIWYG editor creates
+     * when an image is pasted. Those can be shown inline, as the browser only decodes them as an image.
+     *
+     * @param link the link to check
+     * @return {@code true} if the link is a base64 {@code data:} URL of a raster image
+     * @since 3.0.1
+     */
+    public static boolean isDataImage( final String link ) {
+        return link != null && DATA_IMAGE.matcher( link ).matches();
+    }
+
     public LinkParsingOperations( final Context wikiContext ) {
     	this.wikiContext = wikiContext;
     }
