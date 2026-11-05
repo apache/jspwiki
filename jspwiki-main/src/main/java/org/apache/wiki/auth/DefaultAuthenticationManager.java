@@ -36,6 +36,7 @@ import org.apache.wiki.auth.login.WikiCallbackHandler;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
+import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.util.ClassUtil;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.TimedCounterList;
@@ -48,14 +49,17 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiSession;
+import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
 
 
@@ -96,6 +100,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     private boolean m_throttleLogins = true;
 
+    private PasswordExpiry m_passwordExpiry = new PasswordExpiry( new Properties() );
+
     /** Static Boolean for lazily-initializing the "allows cookie authentication" flag */
     private boolean m_allowsCookieAuthentication;
 
@@ -123,6 +129,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
         // Should we throttle logins? (default: yes)
         m_throttleLogins = TextUtil.getBooleanProperty( props, PROP_LOGIN_THROTTLING, true );
+
+        // Should passwords expire? (default: no)
+        m_passwordExpiry = new PasswordExpiry( props );
 
         // Look up the LoginModule class
         final String loginModuleClassName = TextUtil.getStringProperty( props, PROP_LOGIN_MODULE, DEFAULT_LOGIN_MODULE );
@@ -271,6 +280,9 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         // Execute the user's specified login module
         final Set< Principal > principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions );
         if(!principals.isEmpty()) {
+            if( passwordExpired( session, principals ) ) {
+                return false;
+            }
             rotateSessionAfterAuthentication( request, session );
             fireEvent(WikiSecurityEvent.LOGIN_AUTHENTICATED, getLoginPrincipal( principals ), session, request );
             for ( final Principal principal : principals ) {
@@ -281,6 +293,43 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             injectAuthorizerRoles( session, m_engine.getManager( AuthorizationManager.class ).getAuthorizer(), null );
 
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * Tells if the password of a user who has just authenticated with the wiki's user database has expired, and tells the user so. The
+     * password of a profile that does not have the date it was changed yet is given it now, so that it expires once it is as old as
+     * the limit. Nothing is checked if passwords do not expire, or if the users are not authenticated with the user database.
+     *
+     * @param session the wiki session of the user
+     * @param principals the principals the user authenticated as
+     * @return {@code true} if the password has expired
+     */
+    private boolean passwordExpired( final Session session, final Set< Principal > principals ) {
+        if( !m_passwordExpiry.isEnabled() || !UserDatabaseLoginModule.class.isAssignableFrom( m_loginModuleClass ) ) {
+            return false;
+        }
+
+        final String loginName = getLoginPrincipal( principals ).getName();
+        final UserDatabase db = m_engine.getManager( UserManager.class ).getUserDatabase();
+        try {
+            final UserProfile profile = db.findByLoginName( loginName );
+            final Date now = new Date();
+            if( profile.getPasswordChanged() == null ) {
+                profile.setPasswordChanged( now );
+                db.save( profile );
+            } else if( m_passwordExpiry.isExpired( profile, now ) ) {
+                LOG.info( "Login denied for {}: the password has expired", loginName );
+                final ResourceBundle rb = m_engine.getManager( InternationalizationManager.class )
+                                                  .getBundle( InternationalizationManager.CORE_BUNDLE, session.getLocale() );
+                session.addMessage( "login", rb.getString( "login.error.passwordExpired" ) );
+                return true;
+            }
+        } catch( final NoSuchPrincipalException e ) {
+            LOG.debug( "No profile for {} in the user database, so its password cannot expire", loginName, e );
+        } catch( final WikiSecurityException e ) {
+            LOG.error( "Could not record the date of the password of {}: {}", loginName, e.getMessage(), e );
         }
         return false;
     }
