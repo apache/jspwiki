@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>39</version>
+    <version>40</version>
   </parent>
 
   <groupId>org.apache.jspwiki</groupId>
@@ -82,7 +82,7 @@
     <log4j2.version>2.26.1</log4j2.version>
     <lucene.version>9.12.2</lucene.version>
     <mockito.version>5.20.0</mockito.version>
-    <nekohtml.version>2.1.3</nekohtml.version>
+    <neko-htmlunit.version>5.7.0</neko-htmlunit.version>
     <oro.version>2.0.8</oro.version>
     <rome.version>2.1.0</rome.version>
     <sandler.version>0.5</sandler.version>
@@ -90,7 +90,6 @@
     <slf4j.version>2.0.18</slf4j.version>
     <tika.version>3.3.2</tika.version>
     <tomcat.version>10.1.60</tomcat.version>
-    <xmlrpc.version>2.0.1</xmlrpc.version>
     <xstream.version>1.4.21</xstream.version>
 
     <plugin.antrun.version>3.2.0</plugin.antrun.version>
@@ -424,9 +423,9 @@
       </dependency>
 
       <dependency>
-        <groupId>org.codelibs</groupId>
-        <artifactId>nekohtml</artifactId>
-        <version>${nekohtml.version}</version>
+        <groupId>org.htmlunit</groupId>
+        <artifactId>neko-htmlunit</artifactId>
+        <version>${neko-htmlunit.version}</version>
       </dependency>
 
       <dependency>
@@ -463,12 +462,6 @@
         <groupId>oro</groupId>
         <artifactId>oro</artifactId>
         <version>${oro.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>xmlrpc</groupId>
-        <artifactId>xmlrpc</artifactId>
-        <version>${xmlrpc.version}</version>
       </dependency>
 
       <!-- test dependencies -->
