@@ -292,8 +292,12 @@ public final class HttpUtil {
 
     /**
      * Generates an absolute URL based on the given HttpServletRequest and a relative URL.
-     * This method takes into account various headers like X-Forwarded-Host, X-Forwarded-Proto,
-     * and X-Forwarded-Server to construct the absolute URL.
+     * Only the container-resolved scheme, server name and port are used; forwarded headers
+     * such as {@code X-Forwarded-Host}, {@code X-Forwarded-Proto} and {@code X-Forwarded-Server}
+     * are deliberately ignored, because they are client-supplied and must only be honored by
+     * the container itself (e.g. Tomcat's RemoteIpValve) after validating that they were set
+     * by a trusted proxy. Trusting them here allowed any client to poison generated URLs
+     * (e.g. the shared RSS feed cache and e-mailed login links).
      *
      * @param request The HttpServletRequest object, used to obtain scheme, server name, and port.
      * @param relativeUrl The relative URL to be appended to the base URL. Can be null.
@@ -301,31 +305,21 @@ public final class HttpUtil {
      * @since 2.12.2
      */
     public static String getAbsoluteUrl(final HttpServletRequest request, final String relativeUrl) {
-        StringBuilder baseUrl = new StringBuilder();
+        final StringBuilder baseUrl = new StringBuilder();
 
-        // Check for proxy headers
-        final String forwardedHost = request.getHeader("X-Forwarded-Host");
-        final String forwardedProto = request.getHeader("X-Forwarded-Proto");
-        final String forwardedServer = request.getHeader("X-Forwarded-Server");
+        // Use only container-resolved values. X-Forwarded-* headers are attacker-controlled
+        // unless validated against a trusted proxy list, which is the container's job.
+        final String scheme = request.getScheme();
+        final String serverName = request.getServerName();
+        final int port = request.getServerPort();
 
-        if (forwardedHost != null && forwardedProto != null) {
-            baseUrl.append(forwardedProto).append("://").append(forwardedHost);
-        } else if (forwardedServer != null && forwardedProto != null) {
-            baseUrl.append(forwardedProto).append("://").append(forwardedServer);
-        } else {
-            // Fallback to HttpServletRequest
-            final String scheme = request.getScheme();
-            final String serverName = request.getServerName();
-            final int port = request.getServerPort();
+        baseUrl.append(scheme).append("://").append(serverName);
 
-            baseUrl.append(scheme).append("://").append(serverName);
-
-            // Include port only if it's not the default port for the scheme
-            if ((URIScheme.HTTP.same(scheme) && port != 80)
-                    || (URIScheme.HTTPS.same(scheme) && port != 443)) {
-                baseUrl.append(':');
-                baseUrl.append(port);
-            }
+        // Include port only if it's not the default port for the scheme
+        if ((URIScheme.HTTP.same(scheme) && port != 80)
+                || (URIScheme.HTTPS.same(scheme) && port != 443)) {
+            baseUrl.append(':');
+            baseUrl.append(port);
         }
 
         if (relativeUrl != null) {

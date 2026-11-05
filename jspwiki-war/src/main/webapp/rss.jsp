@@ -134,7 +134,11 @@
     //
     //  TODO: Figure out if it would be a good idea to use a disk-based cache here.
     //
-    String hashKey = wikipage.getName()+";"+mode+";"+type+";"+latest.getTime();
+    //  The request origin is part of the key because the generated feed embeds
+    //  absolute URLs derived from it; a cached copy must never be served for a
+    //  different origin than the one it was generated for.
+    String origin = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
+    String hashKey = wikipage.getName()+";"+mode+";"+type+";"+latest.getTime()+";"+origin;
     
     String rss = "";
 
