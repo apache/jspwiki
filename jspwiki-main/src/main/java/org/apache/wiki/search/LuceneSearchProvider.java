@@ -604,7 +604,6 @@ public class LuceneSearchProvider implements SearchProvider {
 
         private static final String NON_SEPARATORS = "[\\p{L}\\p{N}*?]*";
         private static final String SEPARATORS = "[^\\p{L}\\p{N}*?]+";
-        private static final int MAX_WORDS_BETWEEN_PARTS = 1000;
 
         SeparatorAwareQueryParser( final String[] fields, final Analyzer analyzer ) {
             super( fields, analyzer );
@@ -623,47 +622,22 @@ public class LuceneSearchProvider implements SearchProvider {
             }
         }
 
+        /**
+         * A page name term with a {@code *} between other characters does not need a {@code *} at its end: {@code blog*26} is read as
+         * {@code blog*26*}, as a token of a name, such as {@code blogentry_021126_1}, goes on after the digits that are asked for.
+         */
         @Override
         protected Query getWildcardQuery( final String field, final String termStr ) throws ParseException {
-            final Query query = separatedWildcardQuery( field, termStr );
-            final Query inside = LUCENE_PAGE_NAME.equals( field ) ? insideWords( field, termStr ) : null;
-            return inside == null ? query : either( query, inside );
-        }
-
-        private Query separatedWildcardQuery( final String field, final String termStr ) throws ParseException {
-            final Query separated = field != null ? separated( field, termStr, false ) : null;
+            final String term = LUCENE_PAGE_NAME.equals( field ) && termStr.matches( "[^*].*\\*.*[^*]" ) ? termStr + "*" : termStr;
+            final Query separated = field != null ? separated( field, term, false ) : null;
             if( separated == null ) {
-                return super.getWildcardQuery( field, termStr );
+                return super.getWildcardQuery( field, term );
             }
             try {
-                return either( super.getWildcardQuery( field, termStr ), separated );
+                return either( super.getWildcardQuery( field, term ), separated );
             } catch( final ParseException e ) {
                 return separated; // the default handling does not accept the term, the separated one does
             }
-        }
-
-        /**
-         * Builds the query for a page name term with a {@code *} between other characters, such as {@code blog*26}. Such a term is also
-         * looked for inside the words of the name, and its parts are looked for in order in different words, so {@code entry*26*} finds
-         * {@code blogentry_021126_1}. Returns {@code null} for any other term, which keeps the words it has to start with.
-         */
-        private Query insideWords( final String field, final String termStr ) {
-            if( !termStr.matches( ".+\\*.+" ) ) {
-                return null;
-            }
-
-            final String inside = "*" + StringUtils.strip( termStr, "*" ) + "*";
-            final BooleanQuery.Builder query = new BooleanQuery.Builder()
-                    .add( new WildcardQuery( new Term( field, getAnalyzer().normalize( field, inside ) ) ), BooleanClause.Occur.SHOULD );
-
-            final String[] parts = Arrays.stream( termStr.split( "\\*+" ) ).filter( part -> !part.isEmpty() ).toArray( String[]::new );
-            if( parts.length > 1 && Arrays.stream( parts ).noneMatch( part -> part.matches( ".*" + SEPARATORS + ".*" ) ) ) {
-                final SpanQuery[] clauses = Arrays.stream( parts )
-                        .map( part -> new SpanMultiTermQueryWrapper<>( new WildcardQuery( new Term( field, getAnalyzer().normalize( field, "*" + part + "*" ) ) ) ) )
-                        .toArray( SpanQuery[]::new );
-                query.add( new SpanNearQuery( clauses, MAX_WORDS_BETWEEN_PARTS, true ), BooleanClause.Occur.SHOULD );
-            }
-            return query.build();
         }
 
         /**
