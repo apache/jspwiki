@@ -35,6 +35,7 @@ under the License.
 * [JSPWIKI-1263](https://issues.apache.org/jira/browse/JSPWIKI-1263): the `Admin` group can no longer be removed, so the wiki cannot be left without administrators
 * [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): markup handling defect when passing css properties containing a percent symbol
 * Fix for [JSPWIKI-1130](https://issues.apache.org/jira/browse/JSPWIKI-1130): the preview of the editor no longer runs the scripts of the page, which could replace the whole editor page ([PR#560](https://github.com/apache/jspwiki/pull/560))
+* [JSPWIKI-1352](https://issues.apache.org/jira/browse/JSPWIKI-1352): JDOM to 2.0.6.1; the filter around the HTML parser of the HTML to wiki translator accepts the external entity features that JDOM sets on its reader ([PR#584](https://github.com/apache/jspwiki/pull/584))
 
 * _3.0.1-git-03_
 
