@@ -24,6 +24,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class PreferencesTest {
 
@@ -81,6 +83,48 @@ public class PreferencesTest {
         Assertions.assertFalse( prefs.containsKey( "Sidebar" ) );
         Assertions.assertEquals( "[1.0]", prefs.get( "Layout" ) );
         Assertions.assertEquals( "true", prefs.get( "Flag" ) );
+    }
+
+    private HttpServletRequest requestWithCookie( final String json ) {
+        final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+        final Cookie cookie = new Cookie( Preferences.COOKIE_USER_PREFS_NAME, URLEncoder.encode( json, StandardCharsets.UTF_8 ) );
+        Mockito.doReturn( new Cookie[] { cookie } ).when( request ).getCookies();
+        return request;
+    }
+
+    @Test
+    void testNothingIsSetByUserWithoutCookie() {
+        final Preferences prefs = new Preferences();
+        prefs.put( "SkinName", "default" );
+
+        Preferences.parseJSONPreferences( Mockito.mock( HttpServletRequest.class ), prefs );
+
+        Assertions.assertFalse( prefs.isSetByUser( "SkinName" ) );
+        Assertions.assertEquals( "default", prefs.get( "SkinName" ) );
+    }
+
+    @Test
+    void testSkinChosenAsTheDefaultOneIsSetByUser() {
+        final Preferences prefs = new Preferences();
+        prefs.put( "SkinName", "default" );
+
+        Preferences.parseJSONPreferences( requestWithCookie( "{\"SkinName\":\"default\",\"Layout\":\"fluid\"}" ), prefs );
+
+        Assertions.assertTrue( prefs.isSetByUser( "SkinName" ) );
+        Assertions.assertTrue( prefs.isSetByUser( "Layout" ) );
+    }
+
+    @Test
+    void testPreferenceMissingFromCookieIsNotSetByUser() {
+        final Preferences prefs = new Preferences();
+        prefs.put( "SkinName", "default" );
+        prefs.put( "Layout", "fluid" );
+
+        Preferences.parseJSONPreferences( requestWithCookie( "{\"Layout\":\"fixed\"}" ), prefs );
+
+        Assertions.assertEquals( "fixed", prefs.get( "Layout" ) );
+        Assertions.assertTrue( prefs.isSetByUser( "Layout" ) );
+        Assertions.assertFalse( prefs.isSetByUser( "SkinName" ) );
     }
 
 }
