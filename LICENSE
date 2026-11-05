@@ -252,7 +252,7 @@ jackson-databind-2.17.2                     LICENSE
 jackson-databind-3.2.2                      LICENSE
 jackson-dataformat-cbor-2.17.2              LICENSE
 jaxen-2.0.0.jar                             ./jspwiki-war/src/main/config/doc/LICENSE.jaxen
-jdom2-2.0.6.jar                             ./jspwiki-war/src/main/config/doc/LICENSE.jdom
+jdom2-2.0.6.1.jar                           ./jspwiki-war/src/main/config/doc/LICENSE.jdom
 jmespath-java-1.12.797                      LICENSE
 joda-time-2.8.1                             LICENSE
 jstl-1.2.jar                                LICENSE
