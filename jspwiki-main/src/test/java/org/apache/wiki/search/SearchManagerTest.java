@@ -263,7 +263,7 @@ class SearchManagerTest {
         m_engine.saveText( "Blog_blogentry_021126_1", "first entry" );
         m_engine.saveText( "Blog_blogentry_021126_2", "second entry" );
         m_engine.saveText( "Blog_blogentry_031226_1", "third entry" );
-        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "name:blog" ) );
+        Awaitility.await( "index" ).until( () -> pageNamesFor( "name:blog" ).size() == 3 );
 
         Assertions.assertEquals( Arrays.asList( "Blog_blogentry_021126_1", "Blog_blogentry_031226_1" ), pageNamesFor( "name:blog*26_1" ) );
         Assertions.assertEquals( Arrays.asList( "Blog_blogentry_021126_1", "Blog_blogentry_021126_2", "Blog_blogentry_031226_1" ),
