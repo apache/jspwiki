@@ -201,4 +201,35 @@ public class ImageTest {
 
     }
 
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1191 */
+    @Test
+    public void SRCdataImage() throws Exception {
+        testEngine.saveText( "ThisPage", "[{Image src='data:image/png;base64,iVBORw0KGgo='}]" );
+
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( "ThisPage" );
+        Assertions.assertTrue( res.contains( "<img src=\"data:image/png;base64,iVBORw0KGgo=\"" ), res );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1191 */
+    @Test
+    public void SRCdataNotImage() throws Exception {
+        for( final String url : new String[] { "data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==",
+                                               "data:image/svg+xml;base64,PHN2ZyBvbmxvYWQ9ImFsZXJ0KDEpIi8+",
+                                               "data:image/png,alert(1)" } ) {
+            testEngine.saveText( "ThisPage", "[{Image src='" + url + "'}]" );
+
+            final String res = testEngine.getManager( RenderingManager.class ).getHTML( "ThisPage" );
+            Assertions.assertFalse( res.contains( "src=\"data:" ), res );
+        }
+    }
+
+    /** A data URL is fine as an image source, but never as the target of the link around it. */
+    @Test
+    public void linkDataImage() throws Exception {
+        testEngine.saveText( "ThisPage", "[{Image src='img.png' link='data:image/png;base64,iVBORw0KGgo='}]" );
+
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( "ThisPage" );
+        Assertions.assertFalse( res.contains( "href=\"data:" ), res );
+    }
+
 }
