@@ -35,7 +35,7 @@ under the License.
 * [JSPWIKI-1263](https://issues.apache.org/jira/browse/JSPWIKI-1263): the `Admin` group can no longer be removed, so the wiki cannot be left without administrators
 * [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): markup handling defect when passing css properties containing a percent symbol
 * Fix for [JSPWIKI-1130](https://issues.apache.org/jira/browse/JSPWIKI-1130): the preview of the editor no longer runs the scripts of the page, which could replace the whole editor page ([PR#560](https://github.com/apache/jspwiki/pull/560))
-* Improvement [JSPWIKI-1321](https://issues.apache.org/jira/browse/JSPWIKI-1321): wildcard terms with a * in the middle find the words inside a page name, and the relevance of a search result is at most 100 ([PR#575](https://github.com/apache/jspwiki/pull/575))
+* Improvement [JSPWIKI-1321](https://issues.apache.org/jira/browse/JSPWIKI-1321): in a page name search, a wildcard term with a * in the middle does not need a * at its end, and the relevance of a search result is at most 100 ([PR#575](https://github.com/apache/jspwiki/pull/575))
 
 * _3.0.1-git-03_
 
