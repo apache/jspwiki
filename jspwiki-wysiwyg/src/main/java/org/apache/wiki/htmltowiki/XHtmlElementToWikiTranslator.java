@@ -130,14 +130,14 @@ public class XHtmlElementToWikiTranslator {
     }
 
     public void translateImage( final Element base ) {
-        Element child = XmlUtil.getXPathElement( base, "TBODY/TR/TD/*" );
+        Element child = XmlUtil.getXPathElement( base, "tbody/tr/td/*" );
         if( child == null ) {
             child = base;
         }
         final Element img;
         final String href;
-        if( child.getName().equals( "A" ) ) {
-            img = child.getChild( "IMG" );
+        if( child.getName().equals( "a" ) ) {
+            img = child.getChild( "img" );
             href = child.getAttributeValue( "href" );
         } else {
             img = child;
@@ -156,7 +156,7 @@ public class XHtmlElementToWikiTranslator {
         putIfNotEmpty( imageAttrs, "height", img.getAttributeValue( "height" ) );
         putIfNotEmpty( imageAttrs, "width", img.getAttributeValue( "width" ) );
         putIfNotEmpty( imageAttrs, "alt", img.getAttributeValue( "alt" ) );
-        putIfNotEmpty( imageAttrs, "caption", emptyToNull( ( Element )XPathFactory.instance().compile(  "CAPTION" ).evaluateFirst( base ) ) );
+        putIfNotEmpty( imageAttrs, "caption", emptyToNull( ( Element )XPathFactory.instance().compile(  "caption" ).evaluateFirst( base ) ) );
         putIfNotEmpty( imageAttrs, "link", href );
         putIfNotEmpty( imageAttrs, "border", img.getAttributeValue( "border" ) );
         putIfNotEmpty( imageAttrs, "style", base.getAttributeValue( "style" ) );
@@ -288,7 +288,7 @@ public class XHtmlElementToWikiTranslator {
 
     void translateA( final Element e ) throws JDOMException {
         if( config.isNotIgnorableWikiMarkupLink( e ) ) {
-            if( e.getChild( "IMG" ) != null ) {
+            if( e.getChild( "img" ) != null ) {
                 translateImage( e );
             } else {
                 final String ref = config.trimLink( e.getAttributeValue( "href" ) );

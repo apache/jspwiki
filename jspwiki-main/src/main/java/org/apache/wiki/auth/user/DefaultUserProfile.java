@@ -45,6 +45,7 @@ public final class DefaultUserProfile implements UserProfile {
     private String email;
     private String fullname;
     private Date lockExpiry;
+    private Date passwordChanged;
     private String loginName;
     private Date modified;
     private String password;
@@ -307,6 +308,22 @@ public final class DefaultUserProfile implements UserProfile {
         return isLocked() ? lockExpiry : null;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date getPasswordChanged() {
+        return passwordChanged;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPasswordChanged( final Date date ) {
+        this.passwordChanged = date;
+    }
+
     /**
      * {@inheritDoc}
      */
