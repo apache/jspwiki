@@ -291,8 +291,8 @@ class SearchManagerTest {
         m_engine.saveText( "Weblog_blogentry_031226_1", "second entry" );
         m_engine.saveText( "Weblog_blogentry_021127_2", "third entry" );
         m_engine.saveText( "Man_Page", "a" );
-        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "name:weblog" ) );
-        Awaitility.await( "index2" ).until( findsResultsFor( new ArrayList<>(), "name:man" ) );
+        Awaitility.await( "index" ).until( () -> pageNamesFor( "name:weblog" ).size() == 3 );
+        Awaitility.await( "index2" ).until( () -> pageNamesFor( "name:man" ).size() == 1 );
 
         final List< String > withTwentySix = Arrays.asList( "Weblog_blogentry_021126_1", "Weblog_blogentry_031226_1" );
         Assertions.assertEquals( withTwentySix, pageNamesFor( "name:blog*26" ) );
@@ -308,8 +308,10 @@ class SearchManagerTest {
         m_engine.saveText( "Man_Page", "a" );
         m_engine.saveText( "Human_Page", "b" );
         m_engine.saveText( "Woman_Page", "c" );
-        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "name:weblog" ) );
-        Awaitility.await( "index2" ).until( findsResultsFor( new ArrayList<>(), "name:woman" ) );
+        Awaitility.await( "index" ).until( () -> pageNamesFor( "name:weblog" ).size() == 1 );
+        Awaitility.await( "index2" ).until( () -> pageNamesFor( "name:woman" ).size() == 1 );
+        Awaitility.await( "index3" ).until( () -> pageNamesFor( "name:human" ).size() == 1 );
+        Awaitility.await( "index4" ).until( () -> pageNamesFor( "name:man" ).size() == 1 );
 
         Assertions.assertEquals( Arrays.asList( "Man_Page" ), pageNamesFor( "name:man*" ) );
         Assertions.assertEquals( Arrays.asList(), pageNamesFor( "name:entry" ) );
