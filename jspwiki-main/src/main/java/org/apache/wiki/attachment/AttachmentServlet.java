@@ -309,8 +309,53 @@ public class AttachmentServlet extends HttpServlet {
         if( isInlineRenderSafe( mimetype ) && !m_engine.getManager( AttachmentManager.class ).forceDownload( att.getFileName() ) ) {
             contentDisposition = "inline; filename=\"";
         }
-        contentDisposition += att.getFileName() + "\";";
+        contentDisposition += encodeFileName( att.getFileName() );
         return contentDisposition;
+    }
+
+    /**
+     * Builds the part of a {@code Content-Disposition} header that follows the quote of the {@code filename}
+     * parameter, as in RFC 6266.  A name made of printable ASCII characters other than the quote and the backslash
+     * is written as it is.  Any other name gets an ASCII fallback in {@code filename} and the real name, as UTF-8
+     * percent encoded bytes, in {@code filename*} (RFC 8187), since a header value has no defined encoding for
+     * the other characters.
+     *
+     * @param fileName The name of the attachment.
+     * @return The rest of the header value: the file name, the closing quote and the terminating semicolon.
+     * @since 3.0.1
+     */
+    static String encodeFileName( final String fileName ) {
+        boolean plain = true;
+        final StringBuilder fallback = new StringBuilder( fileName.length() );
+        for( int i = 0; i < fileName.length(); i++ ) {
+            final char c = fileName.charAt( i );
+            if( c < 0x20 || c > 0x7e || c == '"' || c == '\\' ) {
+                plain = false;
+                fallback.append( '_' );
+            } else {
+                fallback.append( c );
+            }
+        }
+        if( plain ) {
+            return fileName + "\";";
+        }
+
+        final StringBuilder encoded = new StringBuilder( fileName.length() * 3 );
+        for( final byte b : fileName.getBytes( StandardCharsets.UTF_8 ) ) {
+            final int v = b & 0xff;
+            if( isAttrChar( v ) ) {
+                encoded.append( ( char )v );
+            } else {
+                encoded.append( '%' ).append( Character.toUpperCase( Character.forDigit( v >> 4, 16 ) ) )
+                       .append( Character.toUpperCase( Character.forDigit( v & 0xf, 16 ) ) );
+            }
+        }
+        return fallback + "\"; filename*=UTF-8''" + encoded + ";";
+    }
+
+    /** Tells whether a byte is an {@code attr-char} of RFC 8187, which may appear in {@code filename*} unencoded. */
+    private static boolean isAttrChar( final int v ) {
+        return v >= 'a' && v <= 'z' || v >= 'A' && v <= 'Z' || v >= '0' && v <= '9' || "!#$&+-.^_`|~".indexOf( v ) >= 0;
     }
 
     /**
