@@ -66,6 +66,7 @@ under the License.
 
 
 
+* Fix for [JSPWIKI-656](https://issues.apache.org/jira/browse/JSPWIKI-656) and [JSPWIKI-521](https://issues.apache.org/jira/browse/JSPWIKI-521): renaming a page with the update of referrers also rewrites the page parameter of `InsertPage` and the alias parameter of `SET` ([PR#542](https://github.com/apache/jspwiki/pull/542))
 * Fix for [JSPWIKI-1138](https://issues.apache.org/jira/browse/JSPWIKI-1138): Install.jsp echoed submitted values without escaping them; they are escaped now ([PR#323](https://github.com/apache/jspwiki/pull/323))
 * Fix for [JSPWIKI-1164](https://issues.apache.org/jira/browse/JSPWIKI-1164): a page reached from a search result showed `<` as `&lt;` when the query was highlighted ([PR#538](https://github.com/apache/jspwiki/pull/538))
 
