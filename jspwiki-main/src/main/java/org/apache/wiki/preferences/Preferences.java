@@ -19,6 +19,7 @@
 package org.apache.wiki.preferences;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -128,16 +129,33 @@ public class Preferences extends HashMap< String,String > {
 
 
     /**
-     * Parses new-style preferences stored as JSON objects and stores them in the session.  Everything in the cookie is stored.
+     * Parses new-style preferences stored as JSON objects and stores them in the session.  Everything in the cookie is stored. The cookie
+     * comes from the client, so one that cannot be decoded or is not a JSON object is ignored and the default preferences stay.
      *
      * @param request
      * @param prefs The default hashmap of preferences
      */
-	static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs ) {
-        final String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, COOKIE_USER_PREFS_NAME ) );
+    static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs ) {
+        final String prefVal;
+        try {
+            prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, COOKIE_USER_PREFS_NAME ) );
+        } catch( final IllegalArgumentException e ) {
+            LOG.warn( "Ignoring the {} cookie, it cannot be decoded: {}", COOKIE_USER_PREFS_NAME, e.getMessage() );
+            return;
+        }
         if( prefVal != null ) {
             // Convert prefVal JSON to a generic hashmap
-            @SuppressWarnings( "unchecked" ) final Map< String, String > map = new Gson().fromJson( prefVal, Map.class );
+            final Map< String, String > map;
+            try {
+                @SuppressWarnings( "unchecked" ) final Map< String, String > parsed = new Gson().fromJson( prefVal, Map.class );
+                map = parsed;
+            } catch( final JsonParseException e ) {
+                LOG.warn( "Ignoring the {} cookie, its value is not a JSON object: {}", COOKIE_USER_PREFS_NAME, e.getMessage() );
+                return;
+            }
+            if( map == null ) { // an empty value or the JSON literal null
+                return;
+            }
             for( String key : map.keySet() ) {
                 key = TextUtil.replaceEntities( key );
                 // Sometimes this is not a String as it comes from the Cookie set by Javascript
