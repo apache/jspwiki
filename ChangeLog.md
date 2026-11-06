@@ -66,6 +66,7 @@ under the License.
 
 
 
+* Fix for [JSPWIKI-1226](https://issues.apache.org/jira/browse/JSPWIKI-1226): the links of the entries and of the feed are absolute in the RSS 1.0, RSS 2.0 and Atom feeds ([PR#535](https://github.com/apache/jspwiki/pull/535))
 * Fix for [JSPWIKI-1138](https://issues.apache.org/jira/browse/JSPWIKI-1138): Install.jsp echoed submitted values without escaping them; they are escaped now ([PR#323](https://github.com/apache/jspwiki/pull/323))
 * Fix for [JSPWIKI-1164](https://issues.apache.org/jira/browse/JSPWIKI-1164): a page reached from a search result showed `<` as `&lt;` when the query was highlighted ([PR#538](https://github.com/apache/jspwiki/pull/538))
 
