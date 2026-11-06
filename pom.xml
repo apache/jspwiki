@@ -71,7 +71,7 @@
     <jakarta-mail-api.version>2.1.5</jakarta-mail-api.version>
     <jakarta-servlet-api.version>6.1.0</jakarta-servlet-api.version>
     <java-diff-utils-version>4.16</java-diff-utils-version>
-    <jacoco-version>0.8.14</jacoco-version>
+    <jacoco-version>0.8.16</jacoco-version>
     <jamm.version>0.4.0</jamm.version>
     <jaxen.version>2.0.0</jaxen.version>
     <javax-mail.version>2.0.2</javax-mail.version>
