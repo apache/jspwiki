@@ -35,6 +35,7 @@ under the License.
 * [JSPWIKI-1263](https://issues.apache.org/jira/browse/JSPWIKI-1263): the `Admin` group can no longer be removed, so the wiki cannot be left without administrators
 * [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): markup handling defect when passing css properties containing a percent symbol
 * Fix for [JSPWIKI-1130](https://issues.apache.org/jira/browse/JSPWIKI-1130): the preview of the editor no longer runs the scripts of the page, which could replace the whole editor page ([PR#560](https://github.com/apache/jspwiki/pull/560))
+* Fix for [JSPWIKI-1324](https://issues.apache.org/jira/browse/JSPWIKI-1324): the time zone and time format lists of the user preferences are never wider than their form, so they stay within a narrow screen ([PR#578](https://github.com/apache/jspwiki/pull/578))
 * Fix for [JSPWIKI-1354](https://issues.apache.org/jira/browse/JSPWIKI-1354): a test of the search no longer fails when the index has not got to all the pages ([PR#585](https://github.com/apache/jspwiki/pull/585))
 
 * _3.0.1-git-03_
