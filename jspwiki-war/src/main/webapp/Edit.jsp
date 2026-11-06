@@ -23,12 +23,15 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
+<%@ page import="org.apache.wiki.api.exceptions.WikiException" %>
 <%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
+<%@ page import="org.apache.wiki.auth.UserManager" %>
 <%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
+<%@ page import="org.apache.wiki.notification.SubscriptionManager" %>
 <%@ page import="org.apache.wiki.pages.PageLock" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
@@ -222,6 +225,19 @@
             session.setAttribute(SpamFilter.getHashFieldName(request), spamhash);
             response.sendRedirect( ex.getRedirect() );
             return;
+        }
+
+        // the "notify me of changes" box of the editor; the subscription needs an address to send the mails to
+        if( request.getParameter( "subscribe" ) != null && wikiContext.getWikiSession().isAuthenticated() ) {
+            final String loginName = wikiContext.getWikiSession().getLoginPrincipal().getName();
+            try {
+                final String email = wiki.getManager( UserManager.class ).getUserDatabase().findByLoginName( loginName ).getEmail();
+                if( email != null && !email.trim().isEmpty() ) {
+                    wiki.getManager( SubscriptionManager.class ).subscribe( loginName, pagereq );
+                }
+            } catch( final WikiException e ) {
+                log.warn( "Could not subscribe " + loginName + " to " + pagereq + ": " + e.getMessage() );
+            }
         }
 
         response.sendRedirect(wikiContext.getViewURL(pagereq));
