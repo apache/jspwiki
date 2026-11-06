@@ -36,6 +36,9 @@ under the License.
 * [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): markup handling defect when passing css properties containing a percent symbol
 * Fix for [JSPWIKI-1130](https://issues.apache.org/jira/browse/JSPWIKI-1130): the preview of the editor no longer runs the scripts of the page, which could replace the whole editor page ([PR#560](https://github.com/apache/jspwiki/pull/560))
 * Fix for [JSPWIKI-1320](https://issues.apache.org/jira/browse/JSPWIKI-1320): the RSS feed of a page diffed a version against `version - 1`, which showed the whole page as added when that version had been deleted; it is diffed against the latest earlier version that exists now ([PR#572](https://github.com/apache/jspwiki/pull/572))
+* Fix for [JSPWIKI-1323](https://issues.apache.org/jira/browse/JSPWIKI-1323): a `JSPWikiUserPrefs` cookie that is not a JSON object is ignored, so the page keeps its stylesheets and scripts ([PR#577](https://github.com/apache/jspwiki/pull/577))
+* Fix for [JSPWIKI-1324](https://issues.apache.org/jira/browse/JSPWIKI-1324): the time zone and time format lists of the user preferences are never wider than their form, so they stay within a narrow screen ([PR#578](https://github.com/apache/jspwiki/pull/578))
+* Fix for [JSPWIKI-1354](https://issues.apache.org/jira/browse/JSPWIKI-1354): a test of the search no longer fails when the index has not got to all the pages ([PR#585](https://github.com/apache/jspwiki/pull/585))
 
 * _3.0.1-git-03_
 
