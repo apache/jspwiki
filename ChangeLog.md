@@ -27,6 +27,8 @@ under the License.
 * Fix for [JSPWIKI-1191](https://issues.apache.org/jira/browse/JSPWIKI-1191): pasted images that are data URLs are shown, their base64 text is kept when saving from the WYSIWYG editor, and the parser no longer loses the end of a long line when it looks ahead at it ([PR#544](https://github.com/apache/jspwiki/pull/544))
 * [JSPWIKI-129](https://issues.apache.org/jira/browse/JSPWIKI-129): permissions are checked against the policy of the wiki only, and not through the security policy of the JVM ([PR#552](https://github.com/apache/jspwiki/pull/552))
 * Bump parent pom from versio 39 to 40
+* Bump `jackson-databind` from 3.2.2 to 3.2.4 ([PR#587](https://github.com/apache/jspwiki/pull/587))
+* Bump `jacoco-maven-plugin` from 0.8.14 to 0.8.16 ([PR#586](https://github.com/apache/jspwiki/pull/586))
 * [JSPWIKI-1254](https://issues.apache.org/jira/browse/JSPWIKI-1254): the lock of a user profile works: a locked profile cannot log in, and the XML and the JDBC user databases keep the lock expiry ([PR#550](https://github.com/apache/jspwiki/pull/550))
 * [JSPWIKI-1254](https://issues.apache.org/jira/browse/JSPWIKI-1254): passwords expire after the number of days of `jspwiki.credentials.expiry.days`, which is off by default ([PR#551](https://github.com/apache/jspwiki/pull/551))
 * Fix for [JSPWIKI-1162](https://issues.apache.org/jira/browse/JSPWIKI-1162): the target of a link is replaced when a page with blanks in its name is renamed again ([PR#554](https://github.com/apache/jspwiki/pull/554))
