@@ -158,11 +158,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codelibs</groupId>
-            <artifactId>nekohtml</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.freshcookies</groupId>
             <artifactId>freshcookies-security</artifactId>
         </dependency>
@@ -180,11 +175,6 @@
         <dependency>
             <groupId>oro</groupId>
             <artifactId>oro</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>xmlrpc</groupId>
-            <artifactId>xmlrpc</artifactId>
         </dependency>
 
         <dependency>

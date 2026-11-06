@@ -282,9 +282,9 @@ public class DefaultPageRenamer implements PageRenamer {
             final String attr = matcher.group(6);
              
             if( link.isEmpty() ) {
-                text = replaceSingleLink(text, from, to );
+                text = replaceSingleLink(text, from, to, true );
             } else {
-                link = replaceSingleLink(link, from, to );
+                link = replaceSingleLink(link, from, to, false );
                 
                 //  A very simple substitution, but should work for quite a few cases.
                 text = TextUtil.replaceString( text, from, to );
@@ -312,9 +312,10 @@ public class DefaultPageRenamer implements PageRenamer {
     }
 
     /**
-     *  This method does a correct replacement of a single link, taking into account anchors and attachments.
+     *  This method does a correct replacement of a single link, taking into account anchors and attachments. When {@code introduceLink}
+     *  is {@code true}, the original is also the visible text, so a name with blanks is kept as the text of a new link.
      */
-    private String replaceSingleLink(final String original, final String from, final String newlink ) {
+    private String replaceSingleLink(final String original, final String from, final String newlink, final boolean introduceLink ) {
         final int hash = original.indexOf( '#' );
         final int slash = original.indexOf( '/' );
         String realLink = original;
@@ -343,7 +344,7 @@ public class DefaultPageRenamer implements PageRenamer {
             //  if the original contains blanks, then we should introduce a link, for example:  [My Page]  =>  [My Page|My Renamed Page]
             final int blank = realLink.indexOf( " ");
             
-            if( blank != -1 ) {
+            if( introduceLink && blank != -1 ) {
                 return original + "|" + newlink;
             }
             
