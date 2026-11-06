@@ -57,6 +57,20 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
 
     private static final Logger LOG = LogManager.getLogger( DefaultTemplateManager.class );
 
+    private static String santitize(String template) {
+        if (template==null) return null;
+        String filename = template.replace("..", "_");
+        filename = filename.replace("/", "_");
+        filename = filename.replace("\\", "_");
+        
+        //remove any non-filename-safe characters
+        filename = filename.replaceAll("[/:*?\"<>|\\p{Cntrl}]", "_");
+        if (!template.equals(filename)) {
+            LOG.warn("request for template '" + template + "' was sanitized to '" + filename + "' however they don't match. Potential malicious intent blocked");
+        }
+        return filename;
+    }
+
     /**
      *  Creates a new TemplateManager.  There is typically one manager per engine.
      *
@@ -158,7 +172,7 @@ public class DefaultTemplateManager extends BaseModuleManager implements Templat
      * @return The full name for a template.
      */
     private static String makeFullJSPName( final String template, final String name ) {
-        return "/" + DIRECTORY + "/" + template + "/" + name;
+        return "/" + DIRECTORY + "/" + santitize(template) + "/" + name;
     }
 
     /** {@inheritDoc} */
