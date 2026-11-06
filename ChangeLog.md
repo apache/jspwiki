@@ -17,6 +17,27 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-11-04 Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-04_
+
+* Fix for [JSPWIKI-204](https://issues.apache.org/jira/browse/JSPWIKI-204): removed `PingWeblogsComFilter`, a sample filter that pinged weblogs.com, which is no longer reachable, and with it the old `xmlrpc-2.0.1` library
+* [JSPWIKI-1231](https://issues.apache.org/jira/browse/JSPWIKI-1231): the algorithm and the iterations of the hash of new passwords are configurable with `jspwiki.credentials.hash.algorithm` and `jspwiki.credentials.hash.iterations` ([PR#549](https://github.com/apache/jspwiki/pull/549))
+* [JSPWIKI-1317](https://issues.apache.org/jira/browse/JSPWIKI-1317): the default template follows the dark colour scheme of the system when no skin was chosen ([PR#555](https://github.com/apache/jspwiki/pull/555))
+* Fix for [JSPWIKI-1191](https://issues.apache.org/jira/browse/JSPWIKI-1191): pasted images that are data URLs are shown, their base64 text is kept when saving from the WYSIWYG editor, and the parser no longer loses the end of a long line when it looks ahead at it ([PR#544](https://github.com/apache/jspwiki/pull/544))
+* [JSPWIKI-129](https://issues.apache.org/jira/browse/JSPWIKI-129): permissions are checked against the policy of the wiki only, and not through the security policy of the JVM ([PR#552](https://github.com/apache/jspwiki/pull/552))
+* Bump parent pom from versio 39 to 40
+* [JSPWIKI-1254](https://issues.apache.org/jira/browse/JSPWIKI-1254): the lock of a user profile works: a locked profile cannot log in, and the XML and the JDBC user databases keep the lock expiry ([PR#550](https://github.com/apache/jspwiki/pull/550))
+* [JSPWIKI-1254](https://issues.apache.org/jira/browse/JSPWIKI-1254): passwords expire after the number of days of `jspwiki.credentials.expiry.days`, which is off by default ([PR#551](https://github.com/apache/jspwiki/pull/551))
+* Fix for [JSPWIKI-1162](https://issues.apache.org/jira/browse/JSPWIKI-1162): the target of a link is replaced when a page with blanks in its name is renamed again ([PR#554](https://github.com/apache/jspwiki/pull/554))
+* [JSPWIKI-1206](https://issues.apache.org/jira/browse/JSPWIKI-1206) and [JSPWIKI-1221](https://issues.apache.org/jira/browse/JSPWIKI-1221): NekoHTML is replaced by htmlunit-neko 5.7.0 in the HTML to wiki translator ([PR#548](https://github.com/apache/jspwiki/pull/548))
+* [JSPWIKI-1307](https://issues.apache.org/jira/browse/JSPWIKI-1307): See JIRA for details
+* [JSPWIKI-1263](https://issues.apache.org/jira/browse/JSPWIKI-1263): the `Admin` group can no longer be removed, so the wiki cannot be left without administrators
+* [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): markup handling defect when passing css properties containing a percent symbol
+* Fix for [JSPWIKI-1130](https://issues.apache.org/jira/browse/JSPWIKI-1130): the preview of the editor no longer runs the scripts of the page, which could replace the whole editor page ([PR#560](https://github.com/apache/jspwiki/pull/560))
+* Fix for [JSPWIKI-1323](https://issues.apache.org/jira/browse/JSPWIKI-1323): a `JSPWikiUserPrefs` cookie that is not a JSON object is ignored, so the page keeps its stylesheets and scripts ([PR#577](https://github.com/apache/jspwiki/pull/577))
+* Fix for [JSPWIKI-1324](https://issues.apache.org/jira/browse/JSPWIKI-1324): the time zone and time format lists of the user preferences are never wider than their form, so they stay within a narrow screen ([PR#578](https://github.com/apache/jspwiki/pull/578))
+* Fix for [JSPWIKI-1354](https://issues.apache.org/jira/browse/JSPWIKI-1354): a test of the search no longer fails when the index has not got to all the pages ([PR#585](https://github.com/apache/jspwiki/pull/585))
 **2026-10-31 Arturo Bernal (abernal AT apache DOT org)**
 
 * _3.0.1-git-04_
@@ -44,10 +65,21 @@ under the License.
     * [JSPWIKI-1299](https://issues.apache.org/jira/browse/JSPWIKI-1299): `CryptoUtil`, `AbstractUserDatabase` and their tests
     * [JSPWIKI-1301](https://issues.apache.org/jira/browse/JSPWIKI-1301): session handling: `Session`, `WikiSession`, `SessionMonitor` and `DefaultAuthenticationManager`
 
+
+
+
+
+* Fix for [JSPWIKI-922](https://issues.apache.org/jira/browse/JSPWIKI-922): the `Content-Disposition` header of an attachment download carried a name with non-ASCII characters as a raw byte, which is not valid UTF-8; such names get an ASCII fallback and a `filename*` parameter with the UTF-8 name now ([PR#571](https://github.com/apache/jspwiki/pull/571))
+* Fix for [JSPWIKI-501](https://issues.apache.org/jira/browse/JSPWIKI-501): wildcard and prefix searches that contain an underscore find the pages ([PR#543](https://github.com/apache/jspwiki/pull/543))
+
+
+
 * Fix for [JSPWIKI-1138](https://issues.apache.org/jira/browse/JSPWIKI-1138): Install.jsp echoed submitted values without escaping them; they are escaped now ([PR#323](https://github.com/apache/jspwiki/pull/323))
 * Fix for [JSPWIKI-1164](https://issues.apache.org/jira/browse/JSPWIKI-1164): a page reached from a search result showed `<` as `&lt;` when the query was highlighted ([PR#538](https://github.com/apache/jspwiki/pull/538))
+
 * Fix for [JSPWIKI-919](https://issues.apache.org/jira/browse/JSPWIKI-919): `VersioningFileProvider#pageExists()` ignored the first version of a page that has no history, so a page dropped into the page directory was reported as missing when the page cache is off ([PR#539](https://github.com/apache/jspwiki/pull/539))
 * Fix for [JSPWIKI-647](https://issues.apache.org/jira/browse/JSPWIKI-647): page aliases and redirects work when the page cache is disabled ([PR#536](https://github.com/apache/jspwiki/pull/536))
+* Fix for [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): a style is closed at its closing marker even when a letter follows it ([PR#557](https://github.com/apache/jspwiki/pull/557))
 * Fix for [JSPWIKI-1192](https://issues.apache.org/jira/browse/JSPWIKI-1192): image attachments are rendered with the attachment URL in Markdown pages ([PR#537](https://github.com/apache/jspwiki/pull/537))
 * Fix for [JSPWIKI-638](https://issues.apache.org/jira/browse/JSPWIKI-638): the HTML to wiki translator turns line breaks within text into a space instead of removing them ([PR#540](https://github.com/apache/jspwiki/pull/540))
 * Fix for [JSPWIKI-1305](https://issues.apache.org/jira/browse/JSPWIKI-1305): the workflows of each engine are kept apart, so that with several engines in one JVM each wiki receives the events of its own workflows ([PR#541](https://github.com/apache/jspwiki/pull/541))
