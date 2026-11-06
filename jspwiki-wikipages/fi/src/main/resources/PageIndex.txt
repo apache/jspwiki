@@ -1,0 +1,5 @@
+Tämä on aakkosellinen luettelo kaikista tämän wikin sivuista.
+
+----
+
+[{INSERT IndexPlugin exclude='SandBox-*'}]

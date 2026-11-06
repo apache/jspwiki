@@ -41,6 +41,7 @@ under the License.
 * Fix for [JSPWIKI-1323](https://issues.apache.org/jira/browse/JSPWIKI-1323): a `JSPWikiUserPrefs` cookie that is not a JSON object is ignored, so the page keeps its stylesheets and scripts ([PR#577](https://github.com/apache/jspwiki/pull/577))
 * Fix for [JSPWIKI-1324](https://issues.apache.org/jira/browse/JSPWIKI-1324): the time zone and time format lists of the user preferences are never wider than their form, so they stay within a narrow screen ([PR#578](https://github.com/apache/jspwiki/pull/578))
 * Fix for [JSPWIKI-1354](https://issues.apache.org/jira/browse/JSPWIKI-1354): a test of the search no longer fails when the index has not got to all the pages ([PR#585](https://github.com/apache/jspwiki/pull/585))
+* [JSPWIKI-1326](https://issues.apache.org/jira/browse/JSPWIKI-1326): the 24 core wiki pages that were missing in the Finnish set are translated, so it has the 38 pages of the English one ([PR#579](https://github.com/apache/jspwiki/pull/579))
 * Fix for [JSPWIKI-1355](https://issues.apache.org/jira/browse/JSPWIKI-1355): the search, the user preferences and the workflow pages are no longer forbidden to every user ([PR#588](https://github.com/apache/jspwiki/pull/588))
 
 * _3.0.1-git-03_

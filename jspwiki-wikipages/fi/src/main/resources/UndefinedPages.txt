@@ -1,0 +1,6 @@
+Tässä ovat sivut, joita ei ole vielä luotu.  Miksi et loisi
+muutamaa?
+
+[{INSERT org.apache.wiki.plugin.UndefinedPagesPlugin}]
+
+(Takaisin sivulle [Main]).
