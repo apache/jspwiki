@@ -41,6 +41,8 @@ import java.util.Date;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PagePermission;
 
 /**
  *  Provides an Atom 1.0 standard feed, with enclosures.
@@ -87,9 +89,15 @@ public class AtomFeed extends Feed {
         if( m_wikiContext.getHttpRequest() != null ) {
             servletContext = m_wikiContext.getHttpRequest().getSession().getServletContext();
         }
+        final AuthorizationManager mgr = m_wikiContext.getEngine().getManager(AuthorizationManager.class);
 
         for( final Entry e : m_entries ) {
             final Page p = e.getPage();
+            if( !m_wikiContext.getEngine().getManager( AuthorizationManager.class ).checkPermission(m_wikiContext.getWikiSession(), 
+                    new PagePermission(p,PagePermission.VIEW_ACTION) ) ) {
+                // No permission, skip to the next one.
+                continue;
+            }
             final Element entryEl = getElement( "entry" );
 
             //  Mandatory elements

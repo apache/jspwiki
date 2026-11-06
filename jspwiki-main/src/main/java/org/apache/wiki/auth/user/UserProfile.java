@@ -103,6 +103,29 @@ public interface UserProfile extends Serializable
     String getLoginName();
 
     /**
+     * Returns the date the password was last changed, or <code>null</code> if it is not known, which is the case for the profiles that
+     * were saved before the date was recorded, or if the {@link UserDatabase} does not record it. The date is set by the
+     * {@link UserDatabase} when a profile is saved with a password that is different from the stored one.
+     *
+     * @return the date of the last password change
+     * @since 3.0.1
+     */
+    default Date getPasswordChanged() {
+        return null;
+    }
+
+    /**
+     * Sets the date the password was last changed. Saving the profile with a different password sets it to the current time, which
+     * replaces the value given here.
+     *
+     * @param date the date of the last password change, or <code>null</code> if it is not known
+     * @since 3.0.1
+     */
+    default void setPasswordChanged( final Date date ) {
+        // implementations that keep the date override this
+    }
+
+    /**
      * Returns the user password for use with custom authentication. Note that
      * the password field is not meaningful for container authentication; the
      * user's private credentials are generally stored elsewhere. While it
