@@ -25,6 +25,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.mockito.Mockito;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -181,6 +182,7 @@ public class HttpUtilTest {
         String actual = HttpUtil.getAbsoluteUrl(request);
         assertEquals(expected, actual);
     }
+
 
 
 }
