@@ -79,9 +79,7 @@ var Wiki = {
         }
         
         //add the standard jspwiki behaviors; needed to render the haddock JSP templates
-        wiki.add( "body", wiki.caniuse )
-
-            .add( "[accesskey]", Accesskey )
+        wiki.add( "[accesskey]", Accesskey )
 
             .add( "[data-toggle]", function(element){
                 //toggle the .active class on this element when clicking the "data-toggle" element
@@ -181,19 +179,6 @@ var Wiki = {
 
     },
 
-
-    caniuse: function( body ){
-
-        //support for flexbox is broken in IE, do it the hard-way - ugh.
-
-        var isIE11 = !(window.ActiveXObject) && "ActiveXObject" in window;
-        var isIE9or10 = "ActiveXObject" in window;
-
-        body.ifClass( !( isIE11 || isIE9or10 ) , "can-flex");
-
-        //body.ifClass( "ontouchstart" in document.documentElement, "can-touch" );
-
-    },
 
     /*
     Function: prefs
@@ -303,8 +288,7 @@ var Wiki = {
 
     DOM Structure:
     (start code)
-        div[style='padding-top:nn']    => nn==height of header;  push content down
-        div.header.yoyo[.scrolling-down]  => css: position=fixed
+        div.header.yoyo[.scrolling-down]  => css: position=sticky, so it keeps its place in the flow
     (end)
 
     */
@@ -313,17 +297,11 @@ var Wiki = {
         var height = "offsetHeight",
             scrollY,
             lastScrollY = 0,
-
-            //add spacer just infront of fixed element,
-            //and adjust height == header (fixed elements do not take space in the dom)
-            spacer = "div".slick().inject(header, "before"),
             busy;
 
         function update(){
 
             scrollY = window.getScroll().y;
-
-            spacer.style.paddingTop = header[height]+"px"; //update after window resize
 
             // Limit scroll top to counteract iOS / OSX bounce.
             scrollY = scrollY.limit(0, window.getScrollSize().y - window.getSize().y);
@@ -345,7 +323,7 @@ var Wiki = {
         }
 
         window.addEvents({ scroll: handleEvent, resize: handleEvent });
-        update(); //first run: set height of the spacer
+        update(); //first run
 
     },
 
