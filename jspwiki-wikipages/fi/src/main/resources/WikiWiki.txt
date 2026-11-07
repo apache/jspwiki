@@ -1,0 +1,5 @@
+WikiWiki on havaijia ja tarkoittaa &quot;nopeaa&quot;.
+~ViteVite on ranskaa ja tarkoittaa &quot;nopeasti nopeasti&quot;.
+Wikillä on myös takaperoinen lyhenne - What I Know Is
+
+Hyvin kattava luettelo muista wikimoottoreista löytyy Ward Cunninghamin [alkuperäisestä wikistä|http://c2.com/cgi/wiki?WikiEngines].
