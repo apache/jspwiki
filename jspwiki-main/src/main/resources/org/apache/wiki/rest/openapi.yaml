@@ -20,7 +20,7 @@ openapi: 3.0.3
 info:
   title: JSPWiki API
   version: 1.0.0
-  description: Search of the pages the caller may view.
+  description: Search of the pages the caller may view, page name suggestions and the installed plugins.
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
@@ -60,6 +60,50 @@ paths:
           $ref: '#/components/responses/InternalError'
         '503':
           $ref: '#/components/responses/Unavailable'
+  /search/suggestions:
+    get:
+      operationId: suggestPages
+      summary: Suggest the names of the pages that start with the given text and that the caller may view.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - $ref: '#/components/parameters/max'
+      responses:
+        '200':
+          description: Page names. Empty when there is no suggestion.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /plugins:
+    get:
+      operationId: listPlugins
+      summary: List the plugins discovered by the wiki, sorted by display name for the locale of the request.
+      responses:
+        '200':
+          description: The plugins with an example of how to insert each one.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plugin'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
 components:
   securitySchemes:
     sessionCookie:
@@ -87,6 +131,15 @@ components:
         score:
           type: integer
           description: Relevance of the page for the query. Higher is better.
+    Plugin:
+      type: object
+      required: [displayName, snip]
+      properties:
+        displayName:
+          type: string
+        snip:
+          type: string
+          description: Example of the markup that inserts the plugin.
     Error:
       type: object
       required: [status, message]

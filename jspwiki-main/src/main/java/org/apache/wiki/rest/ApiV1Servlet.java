@@ -33,17 +33,21 @@ import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
+import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.search.SearchManager;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Version 1 of the REST API of the wiki, described by {@code openapi.yaml} in this package. It answers with JSON, also when it fails.
@@ -72,27 +76,23 @@ public class ApiV1Servlet extends HttpServlet {
     /** {@inheritDoc} */
     @Override
     protected void doGet( final HttpServletRequest req, final HttpServletResponse resp ) throws IOException {
-        if( "/search".equals( req.getPathInfo() ) ) {
+        final String path = req.getPathInfo();
+        if( "/search".equals( path ) ) {
             search( req, resp );
+        } else if( "/search/suggestions".equals( path ) ) {
+            suggestions( req, resp );
+        } else if( "/plugins".equals( path ) ) {
+            plugins( req, resp );
         } else {
             error( resp, HttpServletResponse.SC_NOT_FOUND, "No such resource." );
         }
     }
 
     private void search( final HttpServletRequest req, final HttpServletResponse resp ) throws IOException {
-        final Session session = Wiki.session().find( engine, req );
-        if( !engine.getManager( AuthorizationManager.class ).checkPermission( session, PagePermission.VIEW ) ) {
-            denied( resp, session );
-            return;
-        }
-        final String query = req.getParameter( "query" );
-        if( StringUtils.isBlank( query ) ) {
-            error( resp, HttpServletResponse.SC_BAD_REQUEST, "The parameter query is required." );
-            return;
-        }
-        final int max = max( req.getParameter( "max" ) );
+        final Session session = authorized( req, resp );
+        final String query = session == null ? null : query( req, resp );
+        final int max = query == null ? 0 : max( req, resp );
         if( max < 1 ) {
-            error( resp, HttpServletResponse.SC_BAD_REQUEST, "The parameter max must be an integer greater than zero." );
             return;
         }
 
@@ -125,16 +125,65 @@ public class ApiV1Servlet extends HttpServlet {
         }
     }
 
-    /** Returns the value of the max parameter, the default when it is absent, and 0 when it is not a positive integer. */
-    private static int max( final String value ) {
+    private void suggestions( final HttpServletRequest req, final HttpServletResponse resp ) throws IOException {
+        final Session session = authorized( req, resp );
+        final String query = session == null ? null : query( req, resp );
+        final int max = query == null ? 0 : max( req, resp );
+        if( max > 0 ) {
+            json( resp, HttpServletResponse.SC_OK, engine.getManager( SearchManager.class ).suggestPages( query, max, session ) );
+        }
+    }
+
+    private void plugins( final HttpServletRequest req, final HttpServletResponse resp ) throws IOException {
+        if( authorized( req, resp ) == null ) {
+            return;
+        }
+        final Locale locale = req.getLocale() != null ? req.getLocale() : Locale.getDefault();
+        final List< Plugin > discovered = new ArrayList<>( engine.getManager( PluginManager.class ).getDiscoveredPlugins() );
+        discovered.sort( Comparator.comparing( plugin -> plugin.getDisplayName( locale ) ) );
+        final List< PluginEntry > entries = new ArrayList<>();
+        for( final Plugin plugin : discovered ) {
+            entries.add( new PluginEntry( plugin.getDisplayName( locale ), plugin.getSnipExample() ) );
+        }
+        json( resp, HttpServletResponse.SC_OK, entries );
+    }
+
+    /** Returns the session of the caller, or null after answering 401 or 403 when the caller may not read. */
+    private Session authorized( final HttpServletRequest req, final HttpServletResponse resp ) throws IOException {
+        final Session session = Wiki.session().find( engine, req );
+        if( engine.getManager( AuthorizationManager.class ).checkPermission( session, PagePermission.VIEW ) ) {
+            return session;
+        }
+        denied( resp, session );
+        return null;
+    }
+
+    /** Returns the query parameter, or null after answering 400 when it is missing. */
+    private static String query( final HttpServletRequest req, final HttpServletResponse resp ) throws IOException {
+        final String query = req.getParameter( "query" );
+        if( StringUtils.isBlank( query ) ) {
+            error( resp, HttpServletResponse.SC_BAD_REQUEST, "The parameter query is required." );
+            return null;
+        }
+        return query;
+    }
+
+    /** Returns the max parameter, the default when it is absent, and 0 after answering 400 when it is not a positive integer. */
+    private static int max( final HttpServletRequest req, final HttpServletResponse resp ) throws IOException {
+        final String value = req.getParameter( "max" );
         if( value == null ) {
             return DEFAULT_MAX;
         }
         try {
-            return Math.max( 0, Integer.parseInt( value.trim() ) );
+            final int max = Integer.parseInt( value.trim() );
+            if( max > 0 ) {
+                return max;
+            }
         } catch( final NumberFormatException e ) {
-            return 0;
+            // answered below
         }
+        error( resp, HttpServletResponse.SC_BAD_REQUEST, "The parameter max must be an integer greater than zero." );
+        return 0;
     }
 
     private static void denied( final HttpServletResponse resp, final Session session ) throws IOException {
@@ -164,6 +213,17 @@ public class ApiV1Servlet extends HttpServlet {
         Hit( final String page, final int score ) {
             this.page = page;
             this.score = score;
+        }
+    }
+
+    /** An entry of the list of plugins. */
+    private static final class PluginEntry {
+        private final String displayName;
+        private final String snip;
+
+        PluginEntry( final String displayName, final String snip ) {
+            this.displayName = displayName;
+            this.snip = snip;
         }
     }
 

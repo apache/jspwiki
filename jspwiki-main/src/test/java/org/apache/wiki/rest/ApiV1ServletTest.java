@@ -47,9 +47,12 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 class ApiV1ServletTest {
 
@@ -174,6 +177,93 @@ class ApiV1ServletTest {
     }
 
     @Test
+    void suggestionsAnswerWithTheContract() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiSugOne", "one" );
+        engine.saveText( "ApiSugTwo", "two" );
+        engine.saveText( "ApiOther", "other" );
+
+        final Reply reply = call( requestTo( "/search/suggestions", "query", "ApiSug" ) );
+
+        assertMatchesContract( "/search/suggestions", reply );
+        Assertions.assertEquals( 200, reply.status );
+        Assertions.assertEquals( Set.of( "ApiSugOne", "ApiSugTwo" ), names( reply ) );
+    }
+
+    @Test
+    void suggestionsReturnAtMostMaxEntries() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiSugOne", "one" );
+        engine.saveText( "ApiSugTwo", "two" );
+
+        final Reply reply = call( requestTo( "/search/suggestions", "query", "ApiSug", "max", "1" ) );
+
+        assertMatchesContract( "/search/suggestions", reply );
+        Assertions.assertEquals( 1, reply.json().getAsJsonArray().size() );
+    }
+
+    @Test
+    void suggestionsLeaveOutThePagesTheCallerMayNotView() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiSugOpen", "open" );
+        engine.saveText( "ApiSugSecret", "[{ALLOW view Admin}] secret" );
+
+        final Reply reply = call( requestTo( "/search/suggestions", "query", "ApiSug" ) );
+
+        assertMatchesContract( "/search/suggestions", reply );
+        Assertions.assertEquals( Set.of( "ApiSugOpen" ), names( reply ) );
+    }
+
+    @Test
+    void suggestionsWithoutQueryAreABadRequest() throws Exception {
+        startEngine( null );
+
+        final Reply reply = call( requestTo( "/search/suggestions" ) );
+
+        assertMatchesContract( "/search/suggestions", reply );
+        Assertions.assertEquals( 400, reply.status );
+    }
+
+    @Test
+    void suggestionsByAnAnonymousCallerWithoutPermissionAre401( @TempDir final Path dir ) throws Exception {
+        startEngine( policy( dir, "Authenticated" ) );
+
+        final Reply reply = call( requestTo( "/search/suggestions", "query", "Api" ) );
+
+        assertMatchesContract( "/search/suggestions", reply );
+        Assertions.assertEquals( 401, reply.status );
+    }
+
+    @Test
+    void pluginsAnswerWithTheContractSortedByDisplayName() throws Exception {
+        startEngine( null );
+
+        final Reply reply = call( requestTo( "/plugins" ) );
+
+        assertMatchesContract( "/plugins", reply );
+        Assertions.assertEquals( 200, reply.status );
+        final List< String > displayNames = new ArrayList<>();
+        reply.json().getAsJsonArray().forEach( entry -> displayNames.add( entry.getAsJsonObject().get( "displayName" ).getAsString() ) );
+        Assertions.assertFalse( displayNames.isEmpty(), "the wiki has plugins" );
+        final List< String > sorted = new ArrayList<>( displayNames );
+        sorted.sort( null );
+        Assertions.assertEquals( sorted, displayNames );
+    }
+
+    @Test
+    void pluginsByALoggedInCallerWithoutPermissionAre403( @TempDir final Path dir ) throws Exception {
+        startEngine( policy( dir, "Admin" ) );
+        final HttpServletRequest request = requestTo( "/plugins" );
+        final Session session = Wiki.session().find( engine, request );
+        engine.getManager( AuthenticationManager.class ).login( session, request, Users.JANNE, Users.JANNE_PASS );
+
+        final Reply reply = call( request );
+
+        assertMatchesContract( "/plugins", reply );
+        Assertions.assertEquals( 403, reply.status );
+    }
+
+    @Test
     void anUnknownResourceIs404() throws Exception {
         startEngine( null );
         final HttpServletRequest request = request();
@@ -227,9 +317,13 @@ class ApiV1ServletTest {
     }
 
     private HttpServletRequest request( final String... parameters ) {
-        final HttpServletRequest request = HttpMockFactory.createHttpRequest( "/JSPWiki", "/api/v1/search" );
+        return requestTo( "/search", parameters );
+    }
+
+    private HttpServletRequest requestTo( final String pathInfo, final String... parameters ) {
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest( "/JSPWiki", "/api/v1" + pathInfo );
         Mockito.doReturn( "GET" ).when( request ).getMethod();
-        Mockito.doReturn( "/search" ).when( request ).getPathInfo();
+        Mockito.doReturn( pathInfo ).when( request ).getPathInfo();
         for( int i = 0; i < parameters.length; i += 2 ) {
             Mockito.doReturn( parameters[ i + 1 ] ).when( request ).getParameter( parameters[ i ] );
         }
@@ -328,6 +422,12 @@ class ApiV1ServletTest {
     @SuppressWarnings( "unchecked" )
     private static List< Object > list( final Map< String, Object > node, final String key ) {
         return ( List< Object > )node.get( key );
+    }
+
+    private static Set< String > names( final Reply reply ) {
+        final Set< String > names = new HashSet<>();
+        reply.json().getAsJsonArray().forEach( name -> names.add( name.getAsString() ) );
+        return names;
     }
 
     /** What the servlet wrote to a mock response. */
