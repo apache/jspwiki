@@ -20,6 +20,7 @@ package org.apache.wiki.auth;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Context;
@@ -101,6 +102,12 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         }
 
         final Principal user = session.getLoginPrincipal();
+
+        // A context that needs no permission asks for the dummy one, which no policy grants
+        if( WikiContext.DUMMY_PERMISSION.equals( permission ) ) {
+            fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
+            return true;
+        }
 
         // Always allow the action if user has AllPermission
         final Permission allPermission = new AllPermission( m_engine.getApplicationName() );

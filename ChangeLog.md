@@ -27,6 +27,9 @@ under the License.
 * Fix for [JSPWIKI-1191](https://issues.apache.org/jira/browse/JSPWIKI-1191): pasted images that are data URLs are shown, their base64 text is kept when saving from the WYSIWYG editor, and the parser no longer loses the end of a long line when it looks ahead at it ([PR#544](https://github.com/apache/jspwiki/pull/544))
 * [JSPWIKI-129](https://issues.apache.org/jira/browse/JSPWIKI-129): permissions are checked against the policy of the wiki only, and not through the security policy of the JVM ([PR#552](https://github.com/apache/jspwiki/pull/552))
 * Bump parent pom from versio 39 to 40
+* Bump `jackson-databind` from 3.2.2 to 3.2.4 ([PR#587](https://github.com/apache/jspwiki/pull/587))
+* Bump `jacoco-maven-plugin` from 0.8.14 to 0.8.16 ([PR#586](https://github.com/apache/jspwiki/pull/586))
+* Bump `cargo-maven3-plugin` from 1.10.28 to 1.10.30 ([PR#581](https://github.com/apache/jspwiki/pull/581))
 * [JSPWIKI-1254](https://issues.apache.org/jira/browse/JSPWIKI-1254): the lock of a user profile works: a locked profile cannot log in, and the XML and the JDBC user databases keep the lock expiry ([PR#550](https://github.com/apache/jspwiki/pull/550))
 * [JSPWIKI-1254](https://issues.apache.org/jira/browse/JSPWIKI-1254): passwords expire after the number of days of `jspwiki.credentials.expiry.days`, which is off by default ([PR#551](https://github.com/apache/jspwiki/pull/551))
 * Fix for [JSPWIKI-1162](https://issues.apache.org/jira/browse/JSPWIKI-1162): the target of a link is replaced when a page with blanks in its name is renamed again ([PR#554](https://github.com/apache/jspwiki/pull/554))
@@ -35,10 +38,17 @@ under the License.
 * [JSPWIKI-1263](https://issues.apache.org/jira/browse/JSPWIKI-1263): the `Admin` group can no longer be removed, so the wiki cannot be left without administrators
 * [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): markup handling defect when passing css properties containing a percent symbol
 * Fix for [JSPWIKI-1130](https://issues.apache.org/jira/browse/JSPWIKI-1130): the preview of the editor no longer runs the scripts of the page, which could replace the whole editor page ([PR#560](https://github.com/apache/jspwiki/pull/560))
+* Fix for [JSPWIKI-1320](https://issues.apache.org/jira/browse/JSPWIKI-1320): the RSS feed of a page diffed a version against `version - 1`, which showed the whole page as added when that version had been deleted; it is diffed against the latest earlier version that exists now ([PR#572](https://github.com/apache/jspwiki/pull/572))
 * Fix for [JSPWIKI-1323](https://issues.apache.org/jira/browse/JSPWIKI-1323): a `JSPWikiUserPrefs` cookie that is not a JSON object is ignored, so the page keeps its stylesheets and scripts ([PR#577](https://github.com/apache/jspwiki/pull/577))
 * Fix for [JSPWIKI-1324](https://issues.apache.org/jira/browse/JSPWIKI-1324): the time zone and time format lists of the user preferences are never wider than their form, so they stay within a narrow screen ([PR#578](https://github.com/apache/jspwiki/pull/578))
 * Fix for [JSPWIKI-1354](https://issues.apache.org/jira/browse/JSPWIKI-1354): a test of the search no longer fails when the index has not got to all the pages ([PR#585](https://github.com/apache/jspwiki/pull/585))
+* [JSPWIKI-1319](https://issues.apache.org/jira/browse/JSPWIKI-1319): `PropertyReader` ignored the `jspwiki.*` Java system properties passed with `-D`
 * Fix for [JSPWIKI-1322](https://issues.apache.org/jira/browse/JSPWIKI-1322): the page no longer flashes on reload, because the header keeps its space in the page instead of a script pushing the content down after the page has loaded, and the panes of the tabs, as in the login page, stay hidden until the script has built the tabs ([PR#576](https://github.com/apache/jspwiki/pull/576))
+
+
+**2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
+* [JSPWIKI-1326](https://issues.apache.org/jira/browse/JSPWIKI-1326): the 24 core wiki pages that were missing in the Finnish set are translated, so it has the 38 pages of the English one ([PR#579](https://github.com/apache/jspwiki/pull/579))
+* Fix for [JSPWIKI-1355](https://issues.apache.org/jira/browse/JSPWIKI-1355): the search, the user preferences and the workflow pages are no longer forbidden to every user ([PR#588](https://github.com/apache/jspwiki/pull/588))
 
 * _3.0.1-git-03_
 
