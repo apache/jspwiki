@@ -26,6 +26,9 @@ import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.HttpMockFactory;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
@@ -603,6 +606,15 @@ public class AuthorizationManagerTest {
             m_engine.getManager( PageManager.class ).deletePage( "Test" );
         } catch( final ProviderException e ) {
             Assertions.fail( e.getMessage() );
+        }
+    }
+
+    /** The contexts that need no permission ask for the dummy one, which every session has. */
+    @Test
+    public void testContextsThatNeedNoPermission() {
+        for( final ContextEnum ctx : new ContextEnum[] { ContextEnum.WIKI_PREFS, ContextEnum.WIKI_FIND, ContextEnum.WIKI_WORKFLOW } ) {
+            final Context context = Wiki.context().create( m_engine, HttpMockFactory.createHttpRequest( "/" + ctx.getUrlPattern().replace( "%u", "" ) ), ctx.getRequestContext() );
+            Assertions.assertTrue( m_auth.checkPermission( context.getWikiSession(), context.requiredPermission() ), ctx.getRequestContext() );
         }
     }
 
