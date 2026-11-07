@@ -27,6 +27,8 @@ under the License.
 * Fix for [JSPWIKI-1191](https://issues.apache.org/jira/browse/JSPWIKI-1191): pasted images that are data URLs are shown, their base64 text is kept when saving from the WYSIWYG editor, and the parser no longer loses the end of a long line when it looks ahead at it ([PR#544](https://github.com/apache/jspwiki/pull/544))
 * [JSPWIKI-129](https://issues.apache.org/jira/browse/JSPWIKI-129): permissions are checked against the policy of the wiki only, and not through the security policy of the JVM ([PR#552](https://github.com/apache/jspwiki/pull/552))
 * Bump parent pom from versio 39 to 40
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search` is the first endpoint of a versioned REST API, described by the OpenAPI file `openapi.yaml` ([PR#589](https://github.com/apache/jspwiki/pull/589))
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search/suggestions` and `GET /api/v1/plugins` are added to the REST API; the suggestions leave out the pages the caller may not view ([PR#590](https://github.com/apache/jspwiki/pull/590))
 * Bump `jackson-databind` from 3.2.2 to 3.2.4 ([PR#587](https://github.com/apache/jspwiki/pull/587))
 * Bump `jacoco-maven-plugin` from 0.8.14 to 0.8.16 ([PR#586](https://github.com/apache/jspwiki/pull/586))
 * Bump `cargo-maven3-plugin` from 1.10.28 to 1.10.30 ([PR#581](https://github.com/apache/jspwiki/pull/581))

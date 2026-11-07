@@ -1,0 +1,181 @@
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+# Description of the REST API of the wiki, JSPWIKI-1310. A test compares it with the answers of ApiV1Servlet.
+openapi: 3.0.3
+info:
+  title: JSPWiki API
+  version: 1.0.0
+  description: Search of the pages the caller may view, page name suggestions and the installed plugins.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: /api/v1
+security:
+  - sessionCookie: []
+paths:
+  /search:
+    get:
+      operationId: searchPages
+      summary: Search the pages the caller may view.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - $ref: '#/components/parameters/max'
+      responses:
+        '200':
+          description: Matching pages, best match first. Empty when nothing matches.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+  /search/suggestions:
+    get:
+      operationId: suggestPages
+      summary: Suggest the names of the pages that start with the given text and that the caller may view.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - $ref: '#/components/parameters/max'
+      responses:
+        '200':
+          description: Page names. Empty when there is no suggestion.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /plugins:
+    get:
+      operationId: listPlugins
+      summary: List the plugins discovered by the wiki, sorted by display name for the locale of the request.
+      responses:
+        '200':
+          description: The plugins with an example of how to insert each one.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plugin'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: JSESSIONID
+  parameters:
+    max:
+      name: max
+      in: query
+      required: false
+      description: Maximum number of entries to return.
+      schema:
+        type: integer
+        minimum: 1
+        default: 20
+  schemas:
+    SearchResult:
+      type: object
+      required: [page, score]
+      properties:
+        page:
+          type: string
+          description: Name of the page.
+        score:
+          type: integer
+          description: Relevance of the page for the query. Higher is better.
+    Plugin:
+      type: object
+      required: [displayName, snip]
+      properties:
+        displayName:
+          type: string
+        snip:
+          type: string
+          description: Example of the markup that inserts the plugin.
+    Error:
+      type: object
+      required: [status, message]
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+  responses:
+    BadRequest:
+      description: A required parameter is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: The caller is not authenticated and anonymous access is not allowed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: The caller is authenticated but lacks the permission.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: The request could not be served because of an error of the wiki.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unavailable:
+      description: The search index is not available, for instance right after the wiki has started.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
