@@ -156,6 +156,18 @@ class PropertyReaderTest {
     }
 
     @Test
+    void testJspwikiSystemPropertiesAreLoaded() {
+        final String key = "jspwiki.test.systemProperty";
+        try {
+            System.setProperty( key, "fromSystem" );
+            final Properties props = PropertyReader.loadWebAppProps( mock( ServletContext.class ) );
+            Assertions.assertEquals( "fromSystem", props.getProperty( key ) );
+        } finally {
+            System.clearProperty( key );
+        }
+    }
+
+    @Test
     void testSystemPropertyExpansion() {
         try {
             System.setProperty( "FOO", "BAR" );
