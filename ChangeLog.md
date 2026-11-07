@@ -43,6 +43,7 @@ under the License.
 * Fix for [JSPWIKI-1354](https://issues.apache.org/jira/browse/JSPWIKI-1354): a test of the search no longer fails when the index has not got to all the pages ([PR#585](https://github.com/apache/jspwiki/pull/585))
 * [JSPWIKI-1326](https://issues.apache.org/jira/browse/JSPWIKI-1326): the 24 core wiki pages that were missing in the Finnish set are translated, so it has the 38 pages of the English one ([PR#579](https://github.com/apache/jspwiki/pull/579))
 * Fix for [JSPWIKI-1355](https://issues.apache.org/jira/browse/JSPWIKI-1355): the search, the user preferences and the workflow pages are no longer forbidden to every user ([PR#588](https://github.com/apache/jspwiki/pull/588))
+* [JSPWIKI-1352](https://issues.apache.org/jira/browse/JSPWIKI-1352): JDOM to 2.0.6.1; the filter around the HTML parser of the HTML to wiki translator accepts the external entity features that JDOM sets on its reader ([PR#584](https://github.com/apache/jspwiki/pull/584))
 
 * _3.0.1-git-03_
 
