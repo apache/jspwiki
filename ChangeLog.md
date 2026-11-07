@@ -38,7 +38,7 @@ under the License.
 * Fix for [JSPWIKI-1323](https://issues.apache.org/jira/browse/JSPWIKI-1323): a `JSPWikiUserPrefs` cookie that is not a JSON object is ignored, so the page keeps its stylesheets and scripts ([PR#577](https://github.com/apache/jspwiki/pull/577))
 * Fix for [JSPWIKI-1324](https://issues.apache.org/jira/browse/JSPWIKI-1324): the time zone and time format lists of the user preferences are never wider than their form, so they stay within a narrow screen ([PR#578](https://github.com/apache/jspwiki/pull/578))
 * Fix for [JSPWIKI-1354](https://issues.apache.org/jira/browse/JSPWIKI-1354): a test of the search no longer fails when the index has not got to all the pages ([PR#585](https://github.com/apache/jspwiki/pull/585))
-* Fix for [JSPWIKI-1322](https://issues.apache.org/jira/browse/JSPWIKI-1322): the page no longer flashes on reload, because the header keeps its space in the page instead of a script pushing the content down after the page has loaded ([PR#576](https://github.com/apache/jspwiki/pull/576))
+* Fix for [JSPWIKI-1322](https://issues.apache.org/jira/browse/JSPWIKI-1322): the page no longer flashes on reload, because the header keeps its space in the page instead of a script pushing the content down after the page has loaded, and the panes of the tabs, as in the login page, stay hidden until the script has built the tabs ([PR#576](https://github.com/apache/jspwiki/pull/576))
 
 * _3.0.1-git-03_
 
