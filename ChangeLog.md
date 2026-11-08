@@ -21,12 +21,12 @@ under the License.
 
 * _3.0.1-git-04_
 
-* Fix for [JSPWIKI-204](https://issues.apache.org/jira/browse/JSPWIKI-204): removed `PingWeblogsComFilter`, a sample filter that pinged weblogs.com, which is no longer reachable, and with it the old `xmlrpc-2.0.1` library
+* Fix for [JSPWIKI-204](https://issues.apache.org/jira/browse/JSPWIKI-204): removed `PingWeblogsComFilter`, a sample filter that pinged weblogs.com, which is no longer reachable, and with it the old `xmlrpc-2.0.1` library ([PR#567](https://github.com/apache/jspwiki/pull/567))
 * [JSPWIKI-1231](https://issues.apache.org/jira/browse/JSPWIKI-1231): the algorithm and the iterations of the hash of new passwords are configurable with `jspwiki.credentials.hash.algorithm` and `jspwiki.credentials.hash.iterations` ([PR#549](https://github.com/apache/jspwiki/pull/549))
 * [JSPWIKI-1317](https://issues.apache.org/jira/browse/JSPWIKI-1317): the default template follows the dark colour scheme of the system when no skin was chosen ([PR#555](https://github.com/apache/jspwiki/pull/555))
 * Fix for [JSPWIKI-1191](https://issues.apache.org/jira/browse/JSPWIKI-1191): pasted images that are data URLs are shown, their base64 text is kept when saving from the WYSIWYG editor, and the parser no longer loses the end of a long line when it looks ahead at it ([PR#544](https://github.com/apache/jspwiki/pull/544))
 * [JSPWIKI-129](https://issues.apache.org/jira/browse/JSPWIKI-129): permissions are checked against the policy of the wiki only, and not through the security policy of the JVM ([PR#552](https://github.com/apache/jspwiki/pull/552))
-* Bump parent pom from versio 39 to 40
+* Bump parent pom from version 39 to 40
 * Bump `jackson-databind` from 3.2.2 to 3.2.4 ([PR#587](https://github.com/apache/jspwiki/pull/587))
 * Bump `jacoco-maven-plugin` from 0.8.14 to 0.8.16 ([PR#586](https://github.com/apache/jspwiki/pull/586))
 * Bump `cargo-maven3-plugin` from 1.10.28 to 1.10.30 ([PR#581](https://github.com/apache/jspwiki/pull/581))
@@ -36,8 +36,8 @@ under the License.
 * Fix for [JSPWIKI-1162](https://issues.apache.org/jira/browse/JSPWIKI-1162): the target of a link is replaced when a page with blanks in its name is renamed again ([PR#554](https://github.com/apache/jspwiki/pull/554))
 * [JSPWIKI-1206](https://issues.apache.org/jira/browse/JSPWIKI-1206) and [JSPWIKI-1221](https://issues.apache.org/jira/browse/JSPWIKI-1221): NekoHTML is replaced by htmlunit-neko 5.7.0 in the HTML to wiki translator ([PR#548](https://github.com/apache/jspwiki/pull/548))
 * [JSPWIKI-1307](https://issues.apache.org/jira/browse/JSPWIKI-1307): See JIRA for details
-* [JSPWIKI-1263](https://issues.apache.org/jira/browse/JSPWIKI-1263): the `Admin` group can no longer be removed, so the wiki cannot be left without administrators
-* [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): markup handling defect when passing css properties containing a percent symbol
+* [JSPWIKI-1263](https://issues.apache.org/jira/browse/JSPWIKI-1263): the `Admin` group can no longer be removed, so the wiki cannot be left without administrators ([PR#569](https://github.com/apache/jspwiki/pull/569))
+* [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): markup handling defect when passing css properties containing a percent symbol ([PR#557](https://github.com/apache/jspwiki/pull/557))
 * Fix for [JSPWIKI-1130](https://issues.apache.org/jira/browse/JSPWIKI-1130): the preview of the editor no longer runs the scripts of the page, which could replace the whole editor page ([PR#560](https://github.com/apache/jspwiki/pull/560))
 * Fix for [JSPWIKI-1320](https://issues.apache.org/jira/browse/JSPWIKI-1320): the RSS feed of a page diffed a version against `version - 1`, which showed the whole page as added when that version had been deleted; it is diffed against the latest earlier version that exists now ([PR#572](https://github.com/apache/jspwiki/pull/572))
 * Fix for [JSPWIKI-1323](https://issues.apache.org/jira/browse/JSPWIKI-1323): a `JSPWikiUserPrefs` cookie that is not a JSON object is ignored, so the page keeps its stylesheets and scripts ([PR#577](https://github.com/apache/jspwiki/pull/577))
