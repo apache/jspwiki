@@ -81,6 +81,7 @@ under the License.
 * Fix for [JSPWIKI-1164](https://issues.apache.org/jira/browse/JSPWIKI-1164): a page reached from a search result showed `<` as `&lt;` when the query was highlighted ([PR#538](https://github.com/apache/jspwiki/pull/538))
 
 * Fix for [JSPWIKI-919](https://issues.apache.org/jira/browse/JSPWIKI-919): `VersioningFileProvider#pageExists()` ignored the first version of a page that has no history, so a page dropped into the page directory was reported as missing when the page cache is off ([PR#539](https://github.com/apache/jspwiki/pull/539))
+* Fix for [JSPWIKI-816](https://issues.apache.org/jira/browse/JSPWIKI-816): after a new user profile is saved from the login page with an empty redirect, the user is taken to the front page instead of getting a Forbidden error ([PR#562](https://github.com/apache/jspwiki/pull/562))
 * Fix for [JSPWIKI-647](https://issues.apache.org/jira/browse/JSPWIKI-647): page aliases and redirects work when the page cache is disabled ([PR#536](https://github.com/apache/jspwiki/pull/536))
 * Fix for [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): a style is closed at its closing marker even when a letter follows it ([PR#557](https://github.com/apache/jspwiki/pull/557))
 * Fix for [JSPWIKI-1192](https://issues.apache.org/jira/browse/JSPWIKI-1192): image attachments are rendered with the attachment URL in Markdown pages ([PR#537](https://github.com/apache/jspwiki/pull/537))
