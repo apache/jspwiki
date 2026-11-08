@@ -44,12 +44,17 @@ under the License.
 * Fix for [JSPWIKI-1324](https://issues.apache.org/jira/browse/JSPWIKI-1324): the time zone and time format lists of the user preferences are never wider than their form, so they stay within a narrow screen ([PR#578](https://github.com/apache/jspwiki/pull/578))
 * Fix for [JSPWIKI-1354](https://issues.apache.org/jira/browse/JSPWIKI-1354): a test of the search no longer fails when the index has not got to all the pages ([PR#585](https://github.com/apache/jspwiki/pull/585))
 * Fix for [JSPWIKI-492](https://issues.apache.org/jira/browse/JSPWIKI-492): the superscript digits `¹`, `²` and `³` were removed from the links to a page; they are kept now ([PR#573](https://github.com/apache/jspwiki/pull/573))
-* [JSPWIKI-1319](https://issues.apache.org/jira/browse/JSPWIKI-1319): `PropertyReader` ignored the `jspwiki.*` Java system properties passed with `-D`
+* [JSPWIKI-1319](https://issues.apache.org/jira/browse/JSPWIKI-1319): `PropertyReader` ignored the `jspwiki.*` Java system properties passed with `-D` ([PR#568](https://github.com/apache/jspwiki/pull/568))
+* Fix for [JSPWIKI-922](https://issues.apache.org/jira/browse/JSPWIKI-922): the `Content-Disposition` header of an attachment download carried a name with non-ASCII characters as a raw byte, which is not valid UTF-8; such names get an ASCII fallback and a `filename*` parameter with the UTF-8 name now ([PR#571](https://github.com/apache/jspwiki/pull/571))
+* Fix for [JSPWIKI-501](https://issues.apache.org/jira/browse/JSPWIKI-501): wildcard and prefix searches that contain an underscore find the pages ([PR#543](https://github.com/apache/jspwiki/pull/543))
+* Fix for [JSPWIKI-816](https://issues.apache.org/jira/browse/JSPWIKI-816): after a new user profile is saved from the login page with an empty redirect, the user is taken to the front page instead of getting a Forbidden error ([PR#562](https://github.com/apache/jspwiki/pull/562))
+* Fix for [JSPWIKI-1318](https://issues.apache.org/jira/browse/JSPWIKI-1318): a user preference whose value has a plus sign, such as the time zone GMT+5, is kept; the function that reads cookies turned the plus sign into a blank ([PR#564](https://github.com/apache/jspwiki/pull/564))
+* Fix for [JSPWIKI-851](https://issues.apache.org/jira/browse/JSPWIKI-851): when a save is refused because the session has expired, the text typed in the editor is no longer lost, as its draft is kept until the saved page is shown, and an initial page SessionExpired explains what happened ([PR#561](https://github.com/apache/jspwiki/pull/561))
+* [JSPWIKI-1326](https://issues.apache.org/jira/browse/JSPWIKI-1326): the 24 core wiki pages that were missing in the Finnish set are translated, so it has the 38 pages of the English one ([PR#579](https://github.com/apache/jspwiki/pull/579))
+* Fix for [JSPWIKI-1355](https://issues.apache.org/jira/browse/JSPWIKI-1355): the search, the user preferences and the workflow pages are no longer forbidden to every user ([PR#588](https://github.com/apache/jspwiki/pull/588))
 
 
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
-* [JSPWIKI-1326](https://issues.apache.org/jira/browse/JSPWIKI-1326): the 24 core wiki pages that were missing in the Finnish set are translated, so it has the 38 pages of the English one ([PR#579](https://github.com/apache/jspwiki/pull/579))
-* Fix for [JSPWIKI-1355](https://issues.apache.org/jira/browse/JSPWIKI-1355): the search, the user preferences and the workflow pages are no longer forbidden to every user ([PR#588](https://github.com/apache/jspwiki/pull/588))
 
 * _3.0.1-git-03_
 
@@ -73,8 +78,6 @@ under the License.
 
 
 
-* Fix for [JSPWIKI-922](https://issues.apache.org/jira/browse/JSPWIKI-922): the `Content-Disposition` header of an attachment download carried a name with non-ASCII characters as a raw byte, which is not valid UTF-8; such names get an ASCII fallback and a `filename*` parameter with the UTF-8 name now ([PR#571](https://github.com/apache/jspwiki/pull/571))
-* Fix for [JSPWIKI-501](https://issues.apache.org/jira/browse/JSPWIKI-501): wildcard and prefix searches that contain an underscore find the pages ([PR#543](https://github.com/apache/jspwiki/pull/543))
 
 
 
@@ -82,16 +85,13 @@ under the License.
 * Fix for [JSPWIKI-1164](https://issues.apache.org/jira/browse/JSPWIKI-1164): a page reached from a search result showed `<` as `&lt;` when the query was highlighted ([PR#538](https://github.com/apache/jspwiki/pull/538))
 
 * Fix for [JSPWIKI-919](https://issues.apache.org/jira/browse/JSPWIKI-919): `VersioningFileProvider#pageExists()` ignored the first version of a page that has no history, so a page dropped into the page directory was reported as missing when the page cache is off ([PR#539](https://github.com/apache/jspwiki/pull/539))
-* Fix for [JSPWIKI-816](https://issues.apache.org/jira/browse/JSPWIKI-816): after a new user profile is saved from the login page with an empty redirect, the user is taken to the front page instead of getting a Forbidden error ([PR#562](https://github.com/apache/jspwiki/pull/562))
 * Fix for [JSPWIKI-647](https://issues.apache.org/jira/browse/JSPWIKI-647): page aliases and redirects work when the page cache is disabled ([PR#536](https://github.com/apache/jspwiki/pull/536))
 * Fix for [JSPWIKI-529](https://issues.apache.org/jira/browse/JSPWIKI-529): a style is closed at its closing marker even when a letter follows it ([PR#557](https://github.com/apache/jspwiki/pull/557))
 * Fix for [JSPWIKI-1192](https://issues.apache.org/jira/browse/JSPWIKI-1192): image attachments are rendered with the attachment URL in Markdown pages ([PR#537](https://github.com/apache/jspwiki/pull/537))
-* Fix for [JSPWIKI-1318](https://issues.apache.org/jira/browse/JSPWIKI-1318): a user preference whose value has a plus sign, such as the time zone GMT+5, is kept; the function that reads cookies turned the plus sign into a blank ([PR#564](https://github.com/apache/jspwiki/pull/564))
 * Fix for [JSPWIKI-638](https://issues.apache.org/jira/browse/JSPWIKI-638): the HTML to wiki translator turns line breaks within text into a space instead of removing them ([PR#540](https://github.com/apache/jspwiki/pull/540))
 * Fix for [JSPWIKI-1305](https://issues.apache.org/jira/browse/JSPWIKI-1305): the workflows of each engine are kept apart, so that with several engines in one JVM each wiki receives the events of its own workflows ([PR#541](https://github.com/apache/jspwiki/pull/541))
 * Fix for [JSPWIKI-877](https://issues.apache.org/jira/browse/JSPWIKI-877): `jspwiki.policy.file` accepts the absolute path of the security policy file ([PR#545](https://github.com/apache/jspwiki/pull/545))
 * [JSPWIKI-1261](https://issues.apache.org/jira/browse/JSPWIKI-1261): document `TabbedSectionTag#validateDefaultTab` ([PR#546](https://github.com/apache/jspwiki/pull/546))
-* Fix for [JSPWIKI-851](https://issues.apache.org/jira/browse/JSPWIKI-851): when a save is refused because the session has expired, the text typed in the editor is no longer lost, as its draft is kept until the saved page is shown, and an initial page SessionExpired explains what happened ([PR#561](https://github.com/apache/jspwiki/pull/561))
 * [JSPWIKI-1201](https://issues.apache.org/jira/browse/JSPWIKI-1201): clarify in the Javadoc of `PageProvider` what a provider does with the methods it does not use ([PR#547](https://github.com/apache/jspwiki/pull/547))
 * Close the stream that loads the Denounce patterns ([PR#207](https://github.com/apache/jspwiki/pull/207))
 
