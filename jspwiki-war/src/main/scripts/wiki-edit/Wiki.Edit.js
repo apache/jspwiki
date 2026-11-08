@@ -146,7 +146,8 @@ function onbeforeunload( window, main ){
 
     main.form.addEvent("submit", function(){
 
-        localStorage.removeItem( LocalCache );
+        //keep the draft until the saved page is shown, see Wiki.domready
+        sessionStorage.setItem( LocalCache, "sent" );
         window.onbeforeunload = null;
 
     });
