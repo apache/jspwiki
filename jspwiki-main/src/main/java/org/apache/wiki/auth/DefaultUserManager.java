@@ -89,6 +89,11 @@ public class DefaultUserManager implements UserManager {
     private static final String PARAM_LOGINNAME = "loginname";
     private static final String UNKNOWN_CLASS = "<unknown>";
 
+    /** Property with the number of hours between two passes of {@link AccountLifecycle} over the accounts. */
+    static final String PROP_LIFECYCLE_HOURS = "jspwiki.credentials.lifecycle.hours";
+
+    private static final int DEFAULT_LIFECYCLE_HOURS = 24;
+
     private Engine m_engine;
 
     private static final Logger LOG = LogManager.getLogger( DefaultUserManager.class);
@@ -110,6 +115,13 @@ public class DefaultUserManager implements UserManager {
 
         //TODO: Replace with custom annotations. See JSPWIKI-566
         WikiAjaxDispatcherServlet.registerServlet( JSON_USERS, new JSONUserModule(this), new AllPermission(null));
+
+        // What happens to the accounts as their passwords get older, if the wiki is set up for it
+        final AccountLifecycle lifecycle = new AccountLifecycle( props, this::getUserDatabase, new AccountLifecycleMailer( engine ) );
+        if( lifecycle.isEnabled() ) {
+            final int hours = Math.max( 1, TextUtil.getIntegerProperty( props, PROP_LIFECYCLE_HOURS, DEFAULT_LIFECYCLE_HOURS ) );
+            new AccountLifecycleThread( engine, lifecycle, hours * 3600 ).start();
+        }
     }
 
     /** {@inheritDoc} */
