@@ -66,6 +66,15 @@ public final class PasswordExpiry {
     }
 
     /**
+     * Returns the number of days after which a password expires.
+     *
+     * @return the number of days, or 0 if passwords do not expire
+     */
+    public int getDays() {
+        return ( int )TimeUnit.MILLISECONDS.toDays( expiryMillis );
+    }
+
+    /**
      * Tells if passwords expire.
      *
      * @return {@code true} if a number of days is configured
