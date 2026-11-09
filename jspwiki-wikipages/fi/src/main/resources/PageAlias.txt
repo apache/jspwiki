@@ -1,0 +1,13 @@
+Joskus on hyödyllistä, että yksi sivu tarkoittaa ''oikeasti'' jotakin toista sivua.  Sinulla voi esimerkiksi olla sivu nimeltä "Page Aliases", mutta haluat sen olevan saatavilla myös nimellä "Aliases".  Silloin voit käyttää "sivun aliasta":
+
+Kirjoita seuraava sivulle "[PageAliases]":  (Siellä on esimerkkisivu, joten jos napsautat sitä, palaat takaisin tänne.)
+
+{{{
+[{SET alias='PageAlias'}]
+}}}
+
+Aina kun joku katsoo sivua "[PageAliases]", hänet ohjataan automaattisesti tälle sivulle.  Tämä on hyvin kätevää, jos haluat voida käyttää esimerkiksi epäsäännöllisiä monikkomuotoja.  Normaalisti JSPWiki tunnistaa sivujen nimien englanninkieliset monikkomuodot oikein, mutta se ei ole tarpeeksi älykäs tunnistamaan tiettyjä muotoja, kuten "aliases".
+
+!Alias- ja uudelleenohjaussivujen muokkaaminen
+
+Et tietenkään voi napsauttaa linkkiä "Muokkaa tätä sivua", koska sinut ohjataan aina, kun yrität katsoa sivua.  Voit kuitenkin muokata sivua suoraan kirjoittamalla perusosoitteen perään {{Edit.jsp?page=''sivunnimi''}}. Vaihtoehtoisesti voit käyttää muokkaamista varten määriteltyä interWikiRef-viitettä, jonka oletusarvo on "Edit" (eli [[Muokkaa alias-sivua|Edit:Aliases])
