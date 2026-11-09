@@ -1,0 +1,11 @@
+!Hei!  Ja tervetuloa wikiin!
+
+WikiWiki on havaijia ja tarkoittaa "nopeaa".  WikiWikin alkuperäinen ajatus oli luoda yhteistyöhön perustuva, nopea ympäristö, joka silti säilyttää sisältönsä.
+
+Kuka tahansa voi osallistua, jopa nimettömänä.  Kyllä, voit poistaa sen, mitä muut ovat kirjoittaneet, ja jopa kokonaisia sivuja, mutta yllättäen wiki [toimii|WikiWikiWeb:WhyWikiWorks].
+
+Muokatessasi voit helposti luoda (ja sinun pitäisi luoda) hyperlinkkejä laittamalla sanan hakasulkeisiin, [[tähän tapaan].  Jos sivua, johon viittaat, ei ole olemassa, syntyvällä sivulla nimi näkyy alleviivattuna ja sen perässä on kysymysmerkki.  Näin: [ThisPageDoesNotExist].  (Älä riko tätä esimerkkiä luomalla kyseistä sivua...)
+
+WikiNimet, joissa on välilyöntejä tai alaviivoja, puristetaan yhteen ja kirjoitetaan isoilla alkukirjaimilla, joten [[Tämä on linkki] muuttuu muotoon [[TämäOnLinkki].
+
+Wiki on ja sen pitää olla yksinkertainen.  Siksi monimutkaista HTML:ää ei tarvita.  Saat joitakin tehosteita, kuten __lihavoitua tekstiä__ ja ''kursivointia'', mutta et mitään kovin monimutkaista.  Ulkoasu on wikin oma huoli.  Lisätietoja on sivulla [TextFormattingRules].
