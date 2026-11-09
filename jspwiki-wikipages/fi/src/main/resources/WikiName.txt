@@ -1,0 +1,7 @@
+[WikiNames] kirjoitetaan perinteisesti ~InterCapping-tyylillä, joka tunnetaan myös nimellä ~CamelCase (alkaa isolla kirjaimella, ja wikilinkin sanassa on vähintään yksi muu iso kirjain). Se tekee sisäisten hyperlinkkien luomisesta todella helppoa.
+
+Tässä [WikiWiki]ssä [linkit|links] kirjoitetaan kuitenkin [[linkki]-merkinnällä, koska alkuperäinen ~InterCapping-linkitystyyli on toisinaan sekava.  Nimet noudattavat silti [WikiWiki]-standardia, kun katsot osoitetta selaimen yläreunassa.
+
+Nimet ''puristetaan'', eli [[Tämä on linkki] muuttuu muotoon [[TämäOnLinkki]. Alaviivat ja pisteet kuitenkin säilytetään, joten voit tehdä linkin näin: [[Tämä_on_linkki] tai [[Tämä.On.Linkki]. Kaikki muut kuin aakkosnumeeriset merkit paitsi '_' ja '.' poistetaan (eli kaikki merkit, jotka eivät ole kirjaimia tai numeroita), joten [[Jannen sivu] muuttuu muotoon [[JannenSivu].  Näin voit kirjoittaa tavallisia lauseita, jotka muuttuvat linkeiksi, kuten silloin kun puhutaan [wikietiketistä|Wiki etiquette].
+
+WikiName ei voi olla numero. Numeerisia nimiä käytetään [alaviitteissä|TextFormattingRules].

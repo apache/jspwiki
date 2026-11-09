@@ -139,14 +139,30 @@ public class DefaultRSSGenerator implements RSSGenerator {
         return sb.toString();
     }
 
+    /**
+     * Returns the latest version of a page that is older than the given one, or 0 if there is none. The versions of a page need not be
+     * contiguous, as any of them can have been deleted.
+     */
+    private int previousVersion( final Page page ) {
+        final List< Page > history = m_engine.getManager( PageManager.class ).getVersionHistory( page.getName() );
+        int previous = 0;
+        if( history != null ) {
+            for( final Page version : history ) {
+                if( version.getVersion() < page.getVersion() && version.getVersion() > previous ) {
+                    previous = version.getVersion();
+                }
+            }
+        }
+        return previous;
+    }
+
     private String getPageDescription( final Page page ) {
         final StringBuilder buf = new StringBuilder();
         final String author = getAuthor( page );
         final Context ctx = Wiki.context().create( m_engine, page );
-        if( page.getVersion() > 1 ) {
-            final String diff = m_engine.getManager( DifferenceManager.class ).getDiff( ctx,
-                                                                page.getVersion() - 1, // FIXME: Will fail when non-contiguous versions
-                                                                         page.getVersion() );
+        final int previous = previousVersion( page );
+        if( previous > 0 ) {
+            final String diff = m_engine.getManager( DifferenceManager.class ).getDiff( ctx, previous, page.getVersion() );
 
             buf.append( author ).append( " changed this page on " ).append( page.getLastModified() ).append( ":<br /><hr /><br />" );
             buf.append( diff );
