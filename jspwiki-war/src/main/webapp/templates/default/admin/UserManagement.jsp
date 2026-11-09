@@ -44,6 +44,9 @@ function refreshUserInfo()
 	   $('email').value = userprofile.email;
 	   $('lastmodified').innerHTML = userprofile.modified || "";
 	   $('creationdate').innerHTML = userprofile.created || "";
+	   $('locked').innerHTML = userprofile.locked ? "Locked" : "No";
+	   $('unlock').checked = false;
+	   $('unlock').disabled = !userprofile.locked;
    });
 }
 
@@ -55,6 +58,9 @@ function addNew()
   $('email').value = "";
   $('lastmodified').innerHTML = "";
   $('creationdate').innerHTML = "";
+  $('locked').innerHTML = "";
+  $('unlock').checked = false;
+  $('unlock').disabled = true;
 
   var idlist=$('userid');
   var len = idlist.options.length;
@@ -127,6 +133,13 @@ function addNew()
        </td>
      </tr>
 
+     <tr class="additinfo">
+       <th scope="row"><label for="unlock">Locked</label></th>
+       <td class="formvalue">
+         <span id="locked"></span>
+         <label><input type="checkbox" name="unlock" id="unlock" value="true" disabled="disabled" /> Unlock, with the new password given above</label>
+       </td>
+     </tr>
      <tr class="additinfo">
        <th scope="row"><label>Creation date</label></th>
        <td class="formvalue" id="creationdate">
