@@ -160,7 +160,14 @@ public class WikiContext implements Context, Command {
 
     private static final Logger LOG = LogManager.getLogger( WikiContext.class );
 
-    private static final Permission DUMMY_PERMISSION = new PropertyPermission( "os.name", "read" );
+    /**
+     * The permission that {@link #requiredPermission()} returns when a context needs none. The wiki policy does not grant it, so
+     * {@link org.apache.wiki.auth.AuthorizationManager#checkPermission(org.apache.wiki.api.core.Session, java.security.Permission)} allows it to
+     * every session.
+     *
+     * @since 3.0.1
+     */
+    public static final Permission DUMMY_PERMISSION = new PropertyPermission( "os.name", "read" );
 
     /**
      *  Note: it is preferred to use the DSL API for creating a wiki context. 
