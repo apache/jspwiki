@@ -1,0 +1,35 @@
+Kun [muokkaat sivuja|TextFormattingRules], pidä mielessä seuraavat säännöt:
+
+!!Yleistä
+* Ole mukava - älä ole töykeä tai loukkaava.
+* Kirjoita helposti ymmärrettävästi ja vältä paikallista slangia ja kielikuvia. Monille tekstisi lukijoista englanti ei ole äidinkieli.
+* Älä poista muiden kirjoittamaa (ellet tiedä mitä teet)
+* Älä käytä liikaa lyhenteitä (tai kirjoita ainakin sivu, joka selittää ne)
+* __Vältä ilmausta ''"napsauta tästä"''!!__ Älä sano: "Lisätietoa etiketistä löytyy [täältä|WikiEtiquette]" vaan käytä "Lisätietoa etiketistä löytyy sivulta [WikiEtiquette]". Ehdotan, että vältät sitä myös ulkoisissa linkeissä.
+* Lisää vain omaa sisältöä.  Linkit ovat hyviä, mutta älä kopioi ja liitä tekijänoikeudella suojattua aineistoa.
+* Kirjoitusvirheiden korjaaminen on ihan sallittua - itse asiassa se on erittäin hyvä tapa, koska se tekee verkkosivusta luettavamman.
+
+!!Kommenteista
+
+* Voit osallistua nimettömänä, mutta on suositeltavaa allekirjoittaa kommentit nimelläsi (tai nimimerkillä). On tavallista aloittaa allekirjoitus merkinnällä '--' näin: ''-- [Janne Jalkanen]'' (Samalla voit luoda oman wikisivun ja kertoa meille itsestäsi.)
+* Hyvä tapa on myös kirjoittaa nimesi ensin, näin: ''[Janne Jalkanen] : Haluaisin sanoa, että...''
+* Ajattele ennen kuin kommentoit.  [WikiWiki] ei ole nopea keskustelupalsta.  Se ei ole myöskään uutispalvelin.  Se, mitä sanot, jää tänne ikuisiksi ajoiksi (jos poistat kommenttisi, se on silti sivun aiemmassa versiossa) kaikkien nähtäväksi ja kommentoitavaksi.
+
+!!WikiNimien luominen
+* Hyvä [WikiName] on lyhyt ja kuvaava. Jos nimi on looginen ja helppo, moni muukin linkittää siihen.
+* Vaikka voit ottaa kokonaisen lauseen ja puristaa sen [WikiName]-nimeksi, on parempaa tyyliä rajoittaa se enintään viiteen sanaan.
+* Käytä sen sijaan [WikiName]-nimiä kuten käyttäisit kirjan lukujen otsikoita.
+* Tässä wikissä voit luoda sivuja, joiden nimenä on yksi sana, mutta yritä käyttää vähintään kahta sanaa - emme halua tyhjentää nimiavaruutta :-).
+* __Tarkista [WikiName]-nimet kirjoitusvirheiden varalta__ - muuten joku luo väärin nimetyn sivun!  Väärin nimetyt sivut ovat huonoja, koska niihin linkittäminen vaatii enemmän vaivaa kuin loogiseen, oikeaan [WikiName]-nimeen.
+
+!!Sivujen uudelleenjärjestely
+
+Uudelleenjärjestely on prosessi, jossa sivu tiivistetään, lyhennetään ja tehdään helpommin lähestyttäväksi. Kuka tahansa, joka siihen kykenee, voi ryhtyä toimeen, mutta suosittelemme, että jätät sen
+tiheään kävijöille (kokeneille).
+
+* Ole objektiivinen - sekä puolesta että vastaan puhuvat seikat on esitettävä oikein.
+* Ole varovainen allekirjoitettujen kirjoitusten kanssa - älä muuta niiden merkitystä.
+* Anna kunnia sille, jolle kunnia kuuluu.
+* Käytä yhteenvedossasi kolmatta persoonaa tai monikkoa yksikön ensimmäisen persoonan sijaan.
+
+(Kiitos [Sensein kirjastolle|http://senseis.xmp.net/] tästä alkuperäisestä tekstistä.)

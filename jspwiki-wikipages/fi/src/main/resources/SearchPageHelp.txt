@@ -1,0 +1,39 @@
+Tämä sivu antaa pikakatsauksen hakukoneen hakulausekkeiden syntaksiin.
+Tämän sivun nimi on [Search Page Help].
+
+Käytä '+'-merkkiä vaatiaksesi sanan ja '-'-merkkiä kieltääksesi sanan.  Esimerkiksi:
+
+{{{
+          +java -emacs jsp
+}}}
+
+löytää sivut, joilla PITÄÄ olla sana "java" ja joilla EI SAA olla sanaa
+"emacs".  Lisäksi sivut, joilla on sana "jsp", sijoitetaan
+ennen sivuja, joilla sitä ei ole.
+
+Kaikki haut ovat kirjainkoosta riippumattomia.  Jos sivulla on sekä
+kielletty että vaadittu hakusana, sitä ei näytetä.
+
+!! Hakulausekkeiden syntaksitaulukko
+
+Lisätietoja saat %%slimbox [Lucenen hakulausekkeiden syntaksista|http://lucene.apache.org/core/4_4_0/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description]/%.
+
+|| term  | yhden termin haku on helppoa   | {{hello}}
+|| "..." | sanaryhmän haku | {{"hello dolly"}}
+|| ?     | mikä tahansa yksittäinen merkki (? ei voi olla haun ensimmäinen merkki) | {{te?t}}
+|| *     | mikä tahansa määrä merkkejä (* ei voi olla haun ensimmäinen merkki) | {{test*}}
+|| OR    | osuu asiakirjaan, jos jompikumpi termeistä esiintyy | {{"hello dolly" hello}}\\{{"hello dolly" OR hello}}
+|| AND   | osuu asiakirjoihin, joissa molemmat termit esiintyvät | {{"hello dolly" AND "dolly lucy"}}
+|| +     | vaatii, että "+"-merkin jälkeinen termi esiintyy | {{+hello dolly}}
+|| -\\NOT | sulkee pois asiakirjat, joissa "-"-merkin jälkeinen termi esiintyy \\ poissulkeminen onnistuu myös sanalla NOT tai merkillä ! | {{"hello dolly" -"dolly lucy"}}\\{{"hello dolly" NOT "dolly lucy"}}
+|| (...) | sulkeilla voi muodostaa osahakuja | {{(hello OR dolly) AND website}}
+|| ~~    | ''sumea'' haku, joka osuu kirjoitusasultaan samankaltaisiin termeihin | {{roam~ }}
+|| ~n    | ''läheisyyshaku'', jossa etäisyys ilmaistaan sanojen lukumääränä | {{"hello dolly"~10}}
+|| ^n    | ''painokerroin'', joka lisää termin merkitystä haussa | {{"hello dolly"^4 "dolly lucy"}}
+|| \     | erikoismerkkien kumoaminen: __ + - && ~|~| ! ( ) { } [[ ] ^ " ~ * ? : \ __ | {{\(1\+1\)\:2}} hakee merkkijonon (1+1):2
+
+Voit rajata hakualuetta lisäämällä hakulausekkeen eteen etuliitteen:
+|| author:''term''     | hakee sivut, joita tietyt muokkaajat ovat muuttaneet | {{author:~JohnFoo}}
+|| attachment:''term'' | hakee sivut, joilla on tietyn niminen liite  | {{attachment:brushed*}}
+|| name:''term''       | hakee sivut, joilla on tietty sivun nimi        | {{name:Main}}
+|| content:''term''     | hakee sivut, joilla on tietty sisältö          | {{content:jspwiki}}
