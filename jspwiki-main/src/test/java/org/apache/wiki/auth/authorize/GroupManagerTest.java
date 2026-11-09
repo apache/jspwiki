@@ -95,6 +95,27 @@ public class GroupManagerTest
    }
 
     @Test
+    public void testAdminGroupCannotBeRemoved() throws WikiSecurityException
+    {
+        // other tests rely on a pre-existing Admin group, so it is only created, and later deleted, when it is missing
+        Group created = null;
+        try {
+            m_groupMgr.getGroup( "Admin" );
+        } catch( final NoSuchPrincipalException e ) {
+            created = m_groupMgr.parseGroup( "Admin", "Alice", true );
+            m_groupMgr.setGroup( m_session, created );
+        }
+        try {
+            Assertions.assertThrows( WikiSecurityException.class, () -> m_groupMgr.removeGroup( "Admin" ) );
+            Assertions.assertNotNull( m_groupMgr.getGroup( "Admin" ), "The Admin group must still exist" );
+        } finally {
+            if( created != null ) {
+                m_groupMgr.getGroupDatabase().delete( created );
+            }
+        }
+    }
+
+    @Test
     public void testParseGroup() throws WikiSecurityException
     {
         String members = "Biff";

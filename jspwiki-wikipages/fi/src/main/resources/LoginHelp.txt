@@ -1,0 +1,37 @@
+Tässä lyhyt ohje sisäänkirjautumiseen sovellukseen __[{$applicationname}]__. Tämä teksti on [täällä|LoginHelp]. \\
+JSPWikin tietoturvaominaisuuksista voit lukea lisää [dokumentaatiosivuilta|Doc:Security].
+
+!!  Kirjautuminen
+
+JSPWiki tukee useita __tunnistautumisen__ ja luottamuksen tasoja. Käyttäjä voi olla nimetön, hänellä voi olla evästeellä "väitetty" henkilöllisyys, hän voi olla tunnistautunut tai hän voi olla ylläpitäjä:
+
+|| Tila || Kuvaus || Käyttäjän tervehdys näyttää..
+| Nimetön | Käyttäjä ei ole kirjautunut eikä ole antanut evästettä | "Morjens, (anonyymi vieras)"
+| Väitetty | Käyttäjän selaimessa on eväste nimeltä {{~JSPWikiAssertedName}} | "Morjens, ''käyttäjätunnus'' (kirjautumaton)"
+| Tunnistautunut | Käyttäjä kirjautui tunnuksella ja salasanalla | "Morjens, ''käyttäjätunnus'' (kirjautunut)"
+
+Oletusarvoisesta tietoturvakäytännöstä ja sivujen käyttöoikeuksista riippuen käyttäjän on ehkä (tai ei ehkä) tunnistauduttava.
+
+Kun käyttäjä päättää kirjautua sisään - tai häntä pyydetään tekemään niin sivun käyttöoikeuksien tai tietoturvakäytännön vuoksi - hän näkee tavallisen verkkolomakkeen, jossa on käyttäjätunnuskenttä ja peitetty salasanakenttä. Kun lähetetty lomake on vastaanotettu, JSPWiki yrittää kirjata käyttäjän sisään.
+
+!! Hukattu salasana
+
+Jos hukkaat salasanasi, voit pyytää uuden, satunnaisen salasanan lähettämistä käyttäjäprofiiliisi tallennettuun sähköpostiosoitteeseen.
+
+!! Uuden käyttäjän rekisteröinti
+
+Vaikka jotkin wikit ovat nimettömiä, monet eivät ole. Usein wikit antavat käyttäjille mahdollisuuden luoda itselleen henkilöllisyys sivustolle.
+JSPWikissä on yksinkertainen itserekisteröintisivu, jonka avulla käyttäjät voivat luoda ja hallita omia wikiprofiilejaan.
+
+Oletuksena lomake kysyy:
+
+* Käyttäjätunnuksen
+* Salasanan
+* Käyttäjän toivoman "wikinimen" (esim. JanneJalkanen). Voit käyttää tätä nimeä käyttöoikeuslistoissa (ACL) tai wikiryhmissä
+* Sähköpostiosoitteen. Sitä voidaan käyttää, kun salasana pitää nollata. (katso Hukattu salasana)
+
+Jos käytössä on säilön (container) hallinnoima tunnistautuminen, käyttäjätunnusta ei voi muokata; säilö antaa sen arvon.
+
+Kun käyttäjä tallentaa profiilin, JSPWiki tarkistaa, ettei kukaan muu jo käytä uutta käyttäjätunnusta, wikinimeä tai koko nimeä. Jos käyttää, käyttäjälle annetaan mahdollisuus valita toiset arvot.
+
+Kun käyttäjä on luonut wikiprofiilin, hän voi muokata sitä myöhemmin ''Asetukset''-linkin kautta. Oletuksena käyttäjän on oltava tunnistautunut muokatakseen omaa profiiliaan.

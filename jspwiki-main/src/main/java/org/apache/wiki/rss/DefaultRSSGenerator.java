@@ -141,14 +141,30 @@ public class DefaultRSSGenerator implements RSSGenerator {
         return sb.toString();
     }
 
+    /**
+     * Returns the latest version of a page that is older than the given one, or 0 if there is none. The versions of a page need not be
+     * contiguous, as any of them can have been deleted.
+     */
+    private int previousVersion( final Page page ) {
+        final List< Page > history = m_engine.getManager( PageManager.class ).getVersionHistory( page.getName() );
+        int previous = 0;
+        if( history != null ) {
+            for( final Page version : history ) {
+                if( version.getVersion() < page.getVersion() && version.getVersion() > previous ) {
+                    previous = version.getVersion();
+                }
+            }
+        }
+        return previous;
+    }
+
     private String getPageDescription( final Page page ) {
         final StringBuilder buf = new StringBuilder();
         final String author = getAuthor( page );
         final Context ctx = Wiki.context().create( m_engine, page );
-        if( page.getVersion() > 1 ) {
-            final String diff = m_engine.getManager( DifferenceManager.class ).getDiff( ctx,
-                                                                page.getVersion() - 1, // FIXME: Will fail when non-contiguous versions
-                                                                         page.getVersion() );
+        final int previous = previousVersion( page );
+        if( previous > 0 ) {
+            final String diff = m_engine.getManager( DifferenceManager.class ).getDiff( ctx, previous, page.getVersion() );
 
             buf.append( author ).append( " changed this page on " ).append( page.getLastModified() ).append( ":<br /><hr /><br />" );
             buf.append( diff );
@@ -243,6 +259,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
         feed.setChannelDescription( m_channelDescription );
 
         final Set< Page > changed = m_engine.getManager( PageManager.class ).getRecentChanges();
+        final AuthorizationManager mgr = wikiContext.getEngine().getManager(AuthorizationManager.class);
 
         final Session session = Wiki.session().guest( m_engine );
         int items = 0;
@@ -250,7 +267,7 @@ public class DefaultRSSGenerator implements RSSGenerator {
             final Page page = i.next();
 
             //  Check if the anonymous user has view access to this page.
-            if( !m_engine.getManager( AuthorizationManager.class ).checkPermission(session, new PagePermission(page,PagePermission.VIEW_ACTION) ) ) {
+            if( !mgr.checkPermission(session, new PagePermission(page,PagePermission.VIEW_ACTION) ) ) {
                 // No permission, skip to the next one.
                 continue;
             }
@@ -294,10 +311,14 @@ public class DefaultRSSGenerator implements RSSGenerator {
         }
 
         changed.sort( new PageTimeComparator() );
+        final AuthorizationManager mgr = wikiContext.getEngine().getManager(AuthorizationManager.class);
 
         int items = 0;
         for( final Iterator< Page > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
             final Page page = i.next();
+            if( !mgr.checkPermission( wikiContext.getWikiSession(), new PagePermission(page, PagePermission.VIEW_ACTION) ) ) {
+                continue;
+            }
             final Entry e = new Entry();
             e.setPage( page );
             String url;
@@ -345,10 +366,14 @@ public class DefaultRSSGenerator implements RSSGenerator {
         }
 
         changed.sort( new PageTimeComparator() );
-
+        final AuthorizationManager mgr = wikiContext.getEngine().getManager(AuthorizationManager.class);
         int items = 0;
         for( final Iterator< Page > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
             final Page page = i.next();
+            if( !mgr.checkPermission( wikiContext.getWikiSession(), new PagePermission(page, PagePermission.VIEW_ACTION) ) ) {
+                continue;
+            }
+
             final Entry e = new Entry();
             e.setPage( page );
             final String url;

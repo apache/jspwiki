@@ -44,7 +44,8 @@ $.cookie = function (name, value, options) {
     if (value == undefined) {
         // read cookie
         value = document.cookie.match('(?:^|;)\\s*' + name + '=([^;]*)');
-        return (value) ? decodeURIComponent(value[1]).replace(/\+/g, " ") : null;
+        //a plus sign of the raw value is a blank (as written by Java), an encoded one (%2B) is a plus sign
+        return (value) ? decodeURIComponent(value[1].replace(/\+/g, " ")) : null;
     }
 
     // write or delete a cookie

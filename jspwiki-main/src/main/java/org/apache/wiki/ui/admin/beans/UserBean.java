@@ -97,6 +97,15 @@ public class UserBean extends SimpleAdminBean {
             }
         }
 
+        // A profile is locked because its password is too old, so it is unlocked by giving it a new one
+        if( p.isLocked() && Boolean.parseBoolean( request.getParameter( "unlock" ) ) ) {
+            if( password == null || password.isEmpty() ) {
+                session.addMessage( "A new password is needed to unlock the profile" );
+                return "";
+            }
+            p.setLockExpiry( null );
+        }
+
         p.setEmail( email );
         p.setFullname( fullname );
         if( password != null && !password.isEmpty() ) {
