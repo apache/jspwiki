@@ -82,4 +82,25 @@ public class RSSGeneratorTest {
         Assertions.assertTrue( blog.contains( "&lt;b&gt;Bar&lt;/b&gt;" ), "has proper Bar" );
     }
 
+    /** The feed is cached and shared, so an entry that the anonymous user may not view must not be listed in it. */
+    @Test
+    public void testBlogRSSSkipsEntriesTheAnonymousUserMayNotView() throws Exception {
+        final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
+        m_testEngine.saveText( "TestBlogAcl", "Foo1" );
+        String newPage = plugin.getNewEntryPage( m_testEngine, "TestBlogAcl" );
+        m_testEngine.saveText( newPage, "!PublicTitle\r\nPublic body" );
+        newPage = plugin.getNewEntryPage( m_testEngine, "TestBlogAcl" );
+        m_testEngine.saveText( newPage, "!HiddenTitle\r\n[{ALLOW view Admin}]\r\nHidden body" );
+
+        final Context context = Wiki.context().create( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage( "TestBlogAcl" ) );
+        final List< Page > entries = new WeblogPlugin().findBlogEntries( m_testEngine, "TestBlogAcl", new Date( 0 ), new Date( Long.MAX_VALUE ) );
+        Assertions.assertEquals( 2, entries.size(), "both entries are found" );
+
+        final String blog = m_testEngine.getManager( RSSGenerator.class ).generateBlogRSS( context, entries, new RSS10Feed( context ) );
+
+        Assertions.assertTrue( blog.contains( "PublicTitle" ), "the public entry is listed" );
+        Assertions.assertFalse( blog.contains( "HiddenTitle" ), "the title of the protected entry is not listed" );
+        Assertions.assertFalse( blog.contains( "Hidden body" ), "the text of the protected entry is not listed" );
+    }
+
 }

@@ -328,9 +328,16 @@ public class DefaultRSSGenerator implements RSSGenerator {
 
         changed.sort( new PageTimeComparator() );
 
+        final Session session = Wiki.session().guest( m_engine );
         int items = 0;
         for( final Iterator< Page > i = changed.iterator(); i.hasNext() && items < 15; items++ ) {
             final Page page = i.next();
+
+            //  The feed is cached and shared, so it lists only the entries that the anonymous user may view.
+            if( !m_engine.getManager( AuthorizationManager.class ).checkPermission( session, new PagePermission( page, PagePermission.VIEW_ACTION ) ) ) {
+                continue;
+            }
+
             final Entry e = new Entry();
             e.setPage( page );
             final String url;
