@@ -95,6 +95,29 @@ public class MarkdownRendererTest {
     }
 
     @Test
+    public void testInlineImageTextIsEscapedInTheAltAttribute() throws Exception {
+        final String html = translate( "[\" data-poc=\"1](https://example.org/x.png)" );
+
+        Assertions.assertTrue( html.contains( "<img" ), "the link is rendered as an inline image: " + html );
+        Assertions.assertFalse( html.contains( "data-poc=\"1\"" ), "the text of the link must not add an attribute: " + html );
+    }
+
+    @Test
+    public void testInlineImageUrlIsEscapedInTheSrcAttribute() throws Exception {
+        final String html = translate( "[an image](https://example.org/a\"data-poc=\"1\"x.png)" );
+
+        Assertions.assertTrue( html.contains( "<img" ), "the link is rendered as an inline image: " + html );
+        Assertions.assertFalse( html.contains( "data-poc=\"1\"" ), "the url must not add an attribute: " + html );
+    }
+
+    @Test
+    public void testInlineImageKeepsAPlainTextAndUrl() throws Exception {
+        final String html = translate( "[a plain text](https://example.org/x.png)" );
+
+        Assertions.assertTrue( html.contains( "src=\"https://example.org/x.png\" alt=\"a plain text\"" ), html );
+    }
+
+    @Test
     public void testAttachmentLink1() throws Exception {
         newPage( "Hyperlink" );
         final String expected = "<p>This should be a <a href=\"/test/attach/Link%20%3Cstrong%3Ebold%3C/strong%3E\" class=\"attachment\">Link &lt;strong&gt;bold&lt;/strong&gt;</a><a href=\"/test/PageInfo.jsp?page=Link%20%3Cstrong%3Ebold%3C/strong%3E\" class=\"infolink\"><img src=\"/test/images/attachment_small.png\" border=\"0\" alt=\"(info)\" /></a></p>\n";
