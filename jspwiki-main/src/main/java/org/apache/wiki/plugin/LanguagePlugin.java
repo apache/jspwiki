@@ -26,12 +26,11 @@ import org.apache.wiki.render.RenderingManager;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Shows the content that matches the language preference of the visitor, as the browser sends it in the {@code Accept-Language}
@@ -55,8 +54,8 @@ import java.util.regex.Pattern;
  */
 public class LanguagePlugin implements Plugin {
 
-    private static final Pattern BLOCK = Pattern.compile( ":([a-zA-Z]{2,3}):(.*?)::", Pattern.DOTALL );
-    private static final Pattern ELSE_BLOCK = Pattern.compile( ":else:(.*?)::", Pattern.DOTALL );
+    /** The code of the block that is shown when none of the languages of the visitor has a block. */
+    private static final String ELSE = "else";
 
     /** A language tag of the {@code Accept-Language} header with its quality value. */
     private static final class Preference {
@@ -91,26 +90,73 @@ public class LanguagePlugin implements Plugin {
         }
         final HttpServletRequest request = context.getHttpRequest();
         final String header = request == null ? null : request.getHeader( "Accept-Language" );
+        final Map< String, String > blocks = parseBlocks( body );
         String text = null;
         for( final String language : parse( header ) ) {
-            final Matcher blocks = BLOCK.matcher( body );
-            while( text == null && blocks.find() ) {
-                if( language.equalsIgnoreCase( blocks.group( 1 ) ) ) {
-                    text = blocks.group( 2 );
-                }
-            }
+            text = blocks.get( language.toLowerCase( Locale.ROOT ) );
             if( text != null ) {
                 break;
             }
         }
         if( text == null ) {
-            final Matcher fallback = ELSE_BLOCK.matcher( body );
-            if( !fallback.find() ) {
+            text = blocks.get( ELSE );
+            if( text == null ) {
                 return "";
             }
-            text = fallback.group( 1 );
         }
         return context.getEngine().getManager( RenderingManager.class ).textToHTML( context, text.trim() );
+    }
+
+    /**
+     * Splits the body into its blocks, written as {@code :xx:text::}. The body is scanned once, without regular expressions, because
+     * it is written by the authors of the page and a pattern with a lazy match would take a time that grows with the square of its
+     * length on a crafted body. When a code occurs more than once, the first block is kept.
+     *
+     * @param body the body of the plugin.
+     * @return the text of each block by its code in lower case, with the else block under {@code else}.
+     */
+    static Map< String, String > parseBlocks( final String body ) {
+        final Map< String, String > blocks = new HashMap<>();
+        int position = 0;
+        while( position < body.length() ) {
+            final int start = body.indexOf( ':', position );
+            if( start < 0 ) {
+                break;
+            }
+            final int codeEnd = body.indexOf( ':', start + 1 );
+            if( codeEnd < 0 ) {
+                break;
+            }
+            final String code = body.substring( start + 1, codeEnd );
+            if( isCode( code ) ) {
+                final int end = body.indexOf( "::", codeEnd + 1 );
+                if( end < 0 ) {
+                    break;
+                }
+                blocks.putIfAbsent( code.toLowerCase( Locale.ROOT ), body.substring( codeEnd + 1, end ) );
+                position = end + 2;
+            } else {
+                position = start + 1;
+            }
+        }
+        return blocks;
+    }
+
+    /** A code is a language of two or three letters, or the word else. */
+    private static boolean isCode( final String code ) {
+        if( ELSE.equals( code ) ) {
+            return true;
+        }
+        if( code.length() < 2 || code.length() > 3 ) {
+            return false;
+        }
+        for( int i = 0; i < code.length(); i++ ) {
+            final char c = code.charAt( i );
+            if( !( c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' ) ) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

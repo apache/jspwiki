@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.time.Duration;
 import java.util.List;
 
 class LanguagePluginTest {
@@ -114,6 +115,31 @@ class LanguagePluginTest {
         Assertions.assertEquals( List.of( "de", "en" ), LanguagePlugin.parse( "en;q=0.4, de-AT, *;q=0.1, fr;q=0, ;q=1" ) );
         Assertions.assertEquals( List.of(), LanguagePlugin.parse( null ) );
         Assertions.assertEquals( List.of( "en" ), LanguagePlugin.parse( "en;q=abc, en" ) );
+    }
+
+    @Test
+    void testParseBlocks() {
+        Assertions.assertEquals( "Willkommen", LanguagePlugin.parseBlocks( ":de:Willkommen:: :en:Welcome::" ).get( "de" ) );
+        Assertions.assertEquals( "Welcome", LanguagePlugin.parseBlocks( ":de:Willkommen:: :en:Welcome::" ).get( "en" ) );
+        Assertions.assertEquals( "Fallback", LanguagePlugin.parseBlocks( ":en:Welcome:: :else:Fallback::" ).get( "else" ) );
+        Assertions.assertEquals( "", LanguagePlugin.parseBlocks( ":de:::" ).get( "de" ), "an empty block is a block" );
+        Assertions.assertEquals( "first", LanguagePlugin.parseBlocks( ":de:first:: :de:second::" ).get( "de" ), "the first block of a code is kept" );
+        Assertions.assertEquals( "a: b\nc", LanguagePlugin.parseBlocks( ":de:a: b\nc::" ).get( "de" ), "a block may hold single colons and lines" );
+        Assertions.assertEquals( "x", LanguagePlugin.parseBlocks( ":DE:x::" ).get( "de" ), "the code is not case sensitive" );
+        Assertions.assertTrue( LanguagePlugin.parseBlocks( ":de:never closed" ).isEmpty(), "a block without its end is ignored" );
+        Assertions.assertTrue( LanguagePlugin.parseBlocks( "::: :1:x:: :toolong:x:: :d:x::" ).isEmpty(), "only codes of two or three letters, or else" );
+        Assertions.assertTrue( LanguagePlugin.parseBlocks( "" ).isEmpty() );
+    }
+
+    /** The body is written by the authors of the page; a long hostile one must not take a time that grows with its square. */
+    @Test
+    void testLongHostileBodiesAreHandledInLinearTime() {
+        final String[] hostile = { ":else:a".repeat( 150_000 ), ":de:a".repeat( 150_000 ), ":".repeat( 300_000 ), ":ab".repeat( 150_000 ) };
+        for( final String body : hostile ) {
+            Assertions.assertTimeoutPreemptively( Duration.ofSeconds( 5 ), () -> {
+                LanguagePlugin.parseBlocks( body );
+            }, "a body of " + body.length() + " characters" );
+        }
     }
 
 }
