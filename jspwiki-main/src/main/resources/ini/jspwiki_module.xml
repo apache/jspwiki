@@ -50,6 +50,11 @@
         <alias>If</alias>
     </plugin>
 
+    <plugin class="org.apache.wiki.plugin.LanguagePlugin">
+        <author>Ulf Dittmer</author>
+        <minVersion>3.0</minVersion>
+    </plugin>
+
     <plugin class="org.apache.wiki.plugin.Note">
         <author>Janne Jalkanen</author>
         <minVersion>2.4</minVersion>
