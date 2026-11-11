@@ -29,12 +29,17 @@ import org.jdom2.input.sax.XMLReaderJDOMFactory;
 import org.jdom2.output.XMLOutputter;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.AttributesImpl;
 import org.xml.sax.helpers.XMLFilterImpl;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Converting Html to Wiki Markup with NekoHtml for converting html to xhtml and
@@ -144,8 +149,27 @@ public class HtmlStringToWikiTranslator {
      */
     private static final class AttributeUriFilter extends XMLFilterImpl {
 
+        private static final Set< String > EXTERNAL_ENTITY_FEATURES = new HashSet<>( Arrays.asList(
+                "http://xml.org/sax/features/external-general-entities",
+                "http://xml.org/sax/features/external-parameter-entities" ) );
+
         AttributeUriFilter( final XMLReader parent ) {
             super( parent );
+        }
+
+        /**
+         * JDOM sets the features of its reader that handle external entities. The HTML parser never resolves them, and does not
+         * know those features, so whatever JDOM asks for is not an error.
+         */
+        @Override
+        public void setFeature( final String name, final boolean value ) throws SAXNotRecognizedException, SAXNotSupportedException {
+            try {
+                super.setFeature( name, value );
+            } catch( final SAXNotRecognizedException | SAXNotSupportedException e ) {
+                if( !EXTERNAL_ENTITY_FEATURES.contains( name ) ) {
+                    throw e;
+                }
+            }
         }
 
         @Override
