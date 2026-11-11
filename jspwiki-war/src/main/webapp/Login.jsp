@@ -109,6 +109,10 @@
         // If using custom auth, we need to do the login now
         String action = request.getParameter("action");
         if( request.getParameter("submitlogin") != null ) {
+            if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+                response.sendRedirect( "error/Forbidden.html" );
+                return;
+            }
             String uid    = request.getParameter( "j_username" );
             String passwd = request.getParameter( "j_password" );
             log.debug( "Attempting to authenticate user {}", uid );

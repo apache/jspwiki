@@ -57,6 +57,7 @@ public class PluginBeanTest {
                 + "<tr><td>Image</td><td></td><td>ASF</td><td></td></tr>"
                 + "<tr><td>IndexPlugin</td><td></td><td>ASF</td><td></td></tr>"
                 + "<tr><td>InsertPage</td><td></td><td>ASF</td><td></td></tr>"
+                + "<tr><td>LanguagePlugin</td><td></td><td>Ulf Dittmer</td><td></td></tr>"
                 + "<tr><td>ListLocksPlugin</td><td></td><td>ASF</td><td></td></tr>"
                 + "<tr><td>Note</td><td></td><td>Janne Jalkanen</td><td></td></tr>"
                 + "<tr><td>PageViewPlugin</td><td></td><td>ASF</td><td></td></tr>"
