@@ -53,6 +53,9 @@ under the License.
 * [JSPWIKI-1326](https://issues.apache.org/jira/browse/JSPWIKI-1326): the 24 core wiki pages that were missing in the Finnish set are translated, so it has the 38 pages of the English one ([PR#579](https://github.com/apache/jspwiki/pull/579))
 * Fix for [JSPWIKI-1355](https://issues.apache.org/jira/browse/JSPWIKI-1355): the search, the user preferences and the workflow pages are no longer forbidden to every user ([PR#588](https://github.com/apache/jspwiki/pull/588))
 * Improvement [JSPWIKI-1321](https://issues.apache.org/jira/browse/JSPWIKI-1321): in a page name search, a wildcard term with a * in the middle does not need a * at its end, and the relevance of a search result is at most 100 ([PR#575](https://github.com/apache/jspwiki/pull/575))
+* Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): a user can be subscribed to a page and gets an e-mail when the page changes. The subscriptions are kept in the user profile; the new `SubscriptionManager` sends the mails from a background thread and `jspwiki.subscription.baseURL` sets the host of the links. The subscribe button follows in a separate change.
+* [JSPWIKI-1352](https://issues.apache.org/jira/browse/JSPWIKI-1352): JDOM to 2.0.6.1; the filter around the HTML parser of the HTML to wiki translator accepts the external entity features that JDOM sets on its reader ([PR#584](https://github.com/apache/jspwiki/pull/584))
+* [JSPWIKI-530](https://issues.apache.org/jira/browse/JSPWIKI-530): new `LanguagePlugin` that shows the block of its body that matches the `Accept-Language` header of the visitor, based on the code that Ulf Dittmer attached to the issue ([PR#596](https://github.com/apache/jspwiki/pull/596))
 
 
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**

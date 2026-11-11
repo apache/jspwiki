@@ -120,11 +120,11 @@ public class RSSGeneratorTest {
             Assertions.assertTrue( blogAtom.contains( "Foo" ), "has Foo" );
             
             Assertions.assertTrue( blog.contains( "&lt;b&gt;Bar&lt;/b&gt;" ), "has proper Bar" );
-            Assertions.assertTrue( fullWikiRssFeed.contains( "Tanaka" ), "has hidden page" );
+            Assertions.assertFalse( fullWikiRssFeed.contains( "Tanaka" ), "the blog feed is shared, so it does not list the entry that only some users may view" );
             Assertions.assertTrue( wikiPageRss.contains( "Tanaka" ), "has hidden page" );
-            Assertions.assertTrue( fullWikiRssFeed20.contains( "Tanaka" ), "has hidden page" );
+            Assertions.assertFalse( fullWikiRssFeed20.contains( "Tanaka" ), "the blog feed is shared, so it does not list the entry that only some users may view" );
             Assertions.assertTrue( wikiPageRss20.contains( "Tanaka" ), "has hidden page" );
-            Assertions.assertTrue( fullWikiRssFeedAtom.contains( "Tanaka" ), "has hidden page" );
+            Assertions.assertFalse( fullWikiRssFeedAtom.contains( "Tanaka" ), "the blog feed is shared, so it does not list the entry that only some users may view" );
             Assertions.assertTrue( wikiPageRssAtom.contains( "Tanaka" ), "has hidden page" );
 
 
@@ -174,5 +174,31 @@ public class RSSGeneratorTest {
        
         
         
+    }
+
+    /** The feed is cached and shared, so an entry that the anonymous user may not view must not be listed in it. */
+    @Test
+    public void testBlogRSSSkipsEntriesTheAnonymousUserMayNotView() throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+        props.put( RSSGenerator.PROP_GENERATE_RSS, "true" );
+        final TestEngine engine = TestEngine.build( props );
+
+        final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
+        engine.saveText( "testBlogRSSAcl", "Foo1" );
+        String newPage = plugin.getNewEntryPage( engine, "testBlogRSSAcl" );
+        engine.saveText( newPage, "!PublicTitle\r\nPublic body" );
+        newPage = plugin.getNewEntryPage( engine, "testBlogRSSAcl" );
+        engine.saveText( newPage, "!HiddenTitle\r\n[{ALLOW view Admin}]\r\nHidden body" );
+
+        final Context context = Wiki.context().create( engine, engine.getManager( PageManager.class ).getPage( "testBlogRSSAcl" ) );
+        final List< Page > entries = new WeblogPlugin().findBlogEntries( engine, "testBlogRSSAcl", new Date( 0 ), new Date( Long.MAX_VALUE ) );
+        Assertions.assertEquals( 2, entries.size(), "both entries are found" );
+
+        final String blog = engine.getManager( RSSGenerator.class ).generateBlogRSS( context, entries, new RSS10Feed( context ) );
+        engine.shutdown();
+
+        Assertions.assertTrue( blog.contains( "PublicTitle" ), "the public entry is listed" );
+        Assertions.assertFalse( blog.contains( "HiddenTitle" ), "the title of the protected entry is not listed" );
+        Assertions.assertFalse( blog.contains( "Hidden body" ), "the text of the protected entry is not listed" );
     }
 }
