@@ -136,6 +136,33 @@ public class PageRenamerTest {
         Assertions.assertEquals( "TestPage2", refs.iterator().next(), "wrong ref" );
     }
 
+    private String renameTwiceWithBlanks( final String referrer ) throws Exception {
+        m_engine.saveText( "Test Page", "foofoo" );
+        m_engine.saveText( "TestPage2", referrer );
+
+        final Page p = m_engine.getManager( PageManager.class ).getPage( "Test Page" );
+        final Context context = Wiki.context().create( m_engine, p );
+        m_engine.getManager( PageRenamer.class ).renamePage( context, "Test Page", "Foo Test", true );
+        m_engine.getManager( PageRenamer.class ).renamePage( context, "Foo Test", "Bar Test", true );
+
+        return m_engine.getManager( PageManager.class ).getPureText( "TestPage2", WikiProvider.LATEST_VERSION ).trim();
+    }
+
+    @Test
+    public void testReferrerChangeMultiRenameWithBlanks() throws Exception {
+        Assertions.assertEquals( "[Test Page|Bar Test]", renameTwiceWithBlanks( "[Test Page]" ) );
+    }
+
+    @Test
+    public void testReferrerChangeMultiRenameWithBlanksAndAnchor() throws Exception {
+        Assertions.assertEquals( "[Test Page#Anchor|Bar Test]", renameTwiceWithBlanks( "[Test Page#Anchor]" ) );
+    }
+
+    @Test
+    public void testReferrerChangeLinkTextAndTargetWithBlanks() throws Exception {
+        Assertions.assertEquals( "[Alpha|Bar Test]", renameTwiceWithBlanks( "[Alpha|Test Page]" ) );
+    }
+
     @Test
     public void testReferrerChangeCC() throws Exception {
         m_engine.saveText("TestPage", "foofoo" );
@@ -521,6 +548,116 @@ public class PageRenamerTest {
         refs = m_engine.getManager( ReferenceManager.class ).findReferrers( "Link uno" );
         Assertions.assertEquals( 1, refs.size(), "new size" );
         Assertions.assertEquals( "RenameTest", refs.iterator().next() , "wrong ref");
+    }
+
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-656 */
+    @Test
+    public void testInsertPageReferenceIsUpdated() throws Exception {
+        m_engine.saveText( "Included", "included text" );
+        m_engine.saveText( "Includer", "before [{InsertPage page='Included'}] after" );
+
+        rename( "Included", "Moved" );
+
+        final String data = m_engine.getManager( PageManager.class ).getPureText( "Includer", WikiProvider.LATEST_VERSION );
+        Assertions.assertEquals( "before [{InsertPage page='Moved'}] after", data.trim() );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-656 */
+    @Test
+    public void testInsertPageReferenceWithBlanksAndDoubleQuotes() throws Exception {
+        m_engine.saveText( "Included page", "included text" );
+        m_engine.saveText( "Includer", "[{InsertPage page=\"Included page\" default='none'}]" );
+
+        rename( "Included page", "Moved page" );
+
+        final String data = m_engine.getManager( PageManager.class ).getPureText( "Includer", WikiProvider.LATEST_VERSION );
+        Assertions.assertEquals( "[{InsertPage page=\"Moved page\" default='none'}]", data.trim() );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-656 */
+    @Test
+    public void testInsertPageReferenceToOtherPageIsKept() throws Exception {
+        m_engine.saveText( "Included", "included text" );
+        m_engine.saveText( "Another", "another text" );
+        m_engine.saveText( "Includer", "[{InsertPage page='Another'}] and [{InsertPage page='Included'}]" );
+
+        rename( "Included", "Moved" );
+
+        final String data = m_engine.getManager( PageManager.class ).getPureText( "Includer", WikiProvider.LATEST_VERSION );
+        Assertions.assertEquals( "[{InsertPage page='Another'}] and [{InsertPage page='Moved'}]", data.trim() );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-656 */
+    @Test
+    public void testInsertPageReferenceIsKeptWhenReferrersAreNotChanged() throws Exception {
+        m_engine.saveText( "Included", "included text" );
+        m_engine.saveText( "Includer", "[{InsertPage page='Included'}]" );
+
+        final Context context = Wiki.context().create( m_engine, m_engine.getManager( PageManager.class ).getPage( "Included" ) );
+        m_engine.getManager( PageRenamer.class ).renamePage( context, "Included", "Moved", false );
+
+        final String data = m_engine.getManager( PageManager.class ).getPureText( "Includer", WikiProvider.LATEST_VERSION );
+        Assertions.assertEquals( "[{InsertPage page='Included'}]", data.trim() );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-656 */
+    @Test
+    public void testEscapedInsertPageIsKept() throws Exception {
+        m_engine.saveText( "Included", "included text" );
+        m_engine.saveText( "Includer", "[[{InsertPage page='Included'}]" );
+
+        rename( "Included", "Moved" );
+
+        final String data = m_engine.getManager( PageManager.class ).getPureText( "Includer", WikiProvider.LATEST_VERSION );
+        Assertions.assertEquals( "[[{InsertPage page='Included'}]", data.trim() );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-521 */
+    @Test
+    public void testAliasIsUpdated() throws Exception {
+        m_engine.saveText( "Target", "target text" );
+        m_engine.saveText( "Shortcut", "[{SET alias='Target'}] text" );
+
+        rename( "Target", "Moved" );
+
+        final String data = m_engine.getManager( PageManager.class ).getPureText( "Shortcut", WikiProvider.LATEST_VERSION );
+        Assertions.assertEquals( "[{SET alias='Moved'}] text", data.trim() );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-521 */
+    @Test
+    public void testOtherVariablesAreNotTouched() throws Exception {
+        m_engine.saveText( "Target", "target text" );
+        m_engine.saveText( "Other", "[{SET foo='Target'}] [{SET alias='Elsewhere'}]" );
+
+        rename( "Target", "Moved" );
+
+        final String data = m_engine.getManager( PageManager.class ).getPureText( "Other", WikiProvider.LATEST_VERSION );
+        Assertions.assertEquals( "[{SET foo='Target'}] [{SET alias='Elsewhere'}]", data.trim() );
+    }
+
+    /** The page that is renamed may reference itself. */
+    @Test
+    public void testPageAliasingItselfIsUpdated() throws Exception {
+        m_engine.saveText( "Target", "[{SET alias='Target'}]" );
+
+        rename( "Target", "Moved" );
+
+        final String data = m_engine.getManager( PageManager.class ).getPureText( "Moved", WikiProvider.LATEST_VERSION );
+        Assertions.assertEquals( "[{SET alias='Moved'}]", data.trim() );
+    }
+
+    /** Text around the parameter is preserved verbatim. */
+    @Test
+    public void testSpacingInsideInvocationIsPreserved() throws Exception {
+        m_engine.saveText( "Included", "included text" );
+        m_engine.saveText( "Includer", "[{  InsertPage   class='x'   page = 'Included'  }]" );
+
+        rename( "Included", "Moved" );
+
+        final String data = m_engine.getManager( PageManager.class ).getPureText( "Includer", WikiProvider.LATEST_VERSION );
+        Assertions.assertEquals( "[{  InsertPage   class='x'   page = 'Moved'  }]", data.trim() );
     }
 
 }

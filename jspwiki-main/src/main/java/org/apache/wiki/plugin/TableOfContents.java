@@ -217,7 +217,11 @@ public class TableOfContents implements Plugin, HeadingListener {
         }
 
         try {
-            String wikiText = engine.getManager( PageManager.class ).getPureText( page );
+            // The text being rendered may differ from the saved one, as it does in a preview
+            String wikiText = context.getVariable( Context.VAR_RENDERED_TEXT );
+            if( wikiText == null ) {
+                wikiText = engine.getManager( PageManager.class ).getPureText( page );
+            }
             final boolean runFilters = "true".equals( engine.getManager( VariableManager.class ).getValue( context, VariableManager.VAR_RUNFILTERS, "true" ) );
 
             if( runFilters ) {

@@ -31,7 +31,9 @@ import java.util.List;
 /**
  *  Each Wiki page provider should implement this interface.
  *  <P>
- *  You can build whatever page providers based on this, just leave the unused methods do something useful.
+ *  You can build whatever page providers based on this. Every method has to be implemented, but the ones a provider has no use for should
+ *  behave as if there was nothing to report instead of failing: return an empty collection, a version history that holds only the latest
+ *  version, or do nothing for a version that is not kept. The file providers in jspwiki-main work this way.
  *  <P>
  *  WikiPageProvider uses Strings and ints to refer to pages.  This may be a bit odd, since WikiAttachmentProviders all use Attachment
  *  instead of name/version.  We will perhaps modify these in the future.  In the mean time, name/version is quite sufficient.

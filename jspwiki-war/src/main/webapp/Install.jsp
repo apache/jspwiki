@@ -25,6 +25,7 @@
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
 <%@ page import="org.apache.wiki.ui.Installer" %>
+<%@ page import="org.apache.wiki.util.TextUtil" %>
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <%@ page import="org.apache.logging.log4j.LogManager" %>
 <%@ page import="java.util.ResourceBundle" %>
@@ -120,14 +121,14 @@ if ( !installer.adminExists() )
   <h3><fmt:message key="install.jsp.basics.title" /></h3>
 
     <label class="control-label" ><fmt:message key="install.jsp.basics.appname.label" />
-    <input class="form-control" type="text" name="<%=Installer.APP_NAME%>" size="20" value="<%=installer.getProperty( Installer.APP_NAME )%>"/>
+    <input class="form-control" type="text" name="<%=Installer.APP_NAME%>" size="20" value="<%=TextUtil.replaceEntities( installer.getProperty( Installer.APP_NAME ) )%>"/>
     </label>
     <div class="help-block">
       <fmt:message key="install.jsp.basics.appname.desc"/>
     </div>
 
     <label class="control-label" ><fmt:message key="install.jsp.basics.page.storage.label" />
-    <input class="form-control" type="text" name="<%=Installer.PAGE_DIR%>" size="60" value="<%=installer.getProperty( Installer.PAGE_DIR )%>"/>
+    <input class="form-control" type="text" name="<%=Installer.PAGE_DIR%>" size="60" value="<%=TextUtil.replaceEntities( installer.getProperty( Installer.PAGE_DIR ) )%>"/>
     </label>
     <div class="help-block">
       <fmt:message key="install.jsp.basics.page.storage.desc" />
@@ -165,7 +166,7 @@ if ( !installer.adminExists() )
   <h3><fmt:message key="install.jsp.adv.settings.title" /></h3>
 
     <label class="control-label" ><fmt:message key="install.jsp.adv.settings.workdir.label" />
-    <input class="form-control" type="text" name="<%=Installer.WORK_DIR%>" size="60" value="<%=installer.getProperty( Installer.WORK_DIR )%>"/>
+    <input class="form-control" type="text" name="<%=Installer.WORK_DIR%>" size="60" value="<%=TextUtil.replaceEntities( installer.getProperty( Installer.WORK_DIR ) )%>"/>
     </label>
     <div class="help-block">
       <fmt:message key="install.jsp.adv.settings.workdir.desc" />
@@ -174,7 +175,7 @@ if ( !installer.adminExists() )
 
     <p class="help-block">
       <fmt:message key="install.jsp.instr.desc" >
-        <fmt:param><%=installer.getPropertiesPath()%></fmt:param>
+        <fmt:param><%=TextUtil.replaceEntities( installer.getPropertiesPath() )%></fmt:param>
       </fmt:message>
     </p>
     <input class="btn btn-primary" type="submit" name="submit" value="<fmt:message key="install.jsp.instr.submit" />" />
@@ -189,7 +190,7 @@ if ( !installer.adminExists() )
       {
     %>
        <h3><fmt:message key="install.jsp.validated.new.props" /></h3>
-       <pre><%=installer.getPropertiesList()%></pre>
+       <pre><%=TextUtil.replaceEntities( installer.getPropertiesList() )%></pre>
    <%
      }
    %>

@@ -19,6 +19,7 @@
 package org.apache.wiki.workflow;
 
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
@@ -210,11 +211,28 @@ public class Workflow implements Serializable {
      * Constructs a new Workflow object with a supplied message key, owner Principal, and undefined unique identifier {@link #ID_NOT_SET}.
      * Once instantiated the Workflow is considered to be in the {@link #CREATED} state; a caller must explicitly invoke the
      * {@link #start(Context)} method to begin processing.
+     * <p>
+     * The Workflow is not bound to any engine, so every {@link WorkflowManager} in the JVM is notified of its creation. Use
+     * {@link #Workflow(Engine, String, Principal)} when several engines share the same classpath.
+     * </p>
      *
      * @param messageKey the message key used to construct a localized workflow name, such as <code>workflow.saveWikiPage</code>
      * @param owner the Principal who owns the Workflow. Typically, this is the user who created and submitted it
      */
     public Workflow( final String messageKey, final Principal owner ) {
+        this( null, messageKey, owner );
+    }
+
+    /**
+     * Constructs a new Workflow object like {@link #Workflow(String, Principal)}, bound to the engine that is going to track it. Only the
+     * {@link WorkflowManager} of that engine is notified of the creation of the Workflow.
+     *
+     * @param engine the engine that owns the Workflow, or {@code null} if it is not bound to any engine
+     * @param messageKey the message key used to construct a localized workflow name, such as <code>workflow.saveWikiPage</code>
+     * @param owner the Principal who owns the Workflow. Typically, this is the user who created and submitted it
+     * @since 3.0.1
+     */
+    public Workflow( final Engine engine, final String messageKey, final Principal owner ) {
         m_attributes = new ConcurrentHashMap<>();
         m_currentStep = null;
         m_history = new LinkedList<>();
@@ -224,7 +242,7 @@ public class Workflow implements Serializable {
         m_owner = owner;
         m_started = false;
         m_state = CREATED;
-        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.CREATED );
+        WikiEventEmitter.fireWorkflowEvent( this, WorkflowEvent.CREATED, engine );
     }
 
     /**

@@ -38,7 +38,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.Callable;
 import static org.apache.wiki.search.DefaultSearchManager.PluginSearch.AJAX_ACTION_PLUGINS;
@@ -198,6 +201,21 @@ class SearchManagerTest {
     }
 
     @Test
+    void testTitleSearchWithSuperscriptDigit() throws Exception {
+        final String name = "Metre\u00b2";
+        m_engine.saveText( name, "Nonsensical content that should not match" );
+
+        for( final String query : new String[] { "Metre", "name:Metre*", name } ) {
+            final Collection< SearchResult > res = new ArrayList<>();
+            Awaitility.await( "title search for " + query ).until( findsResultsFor( res, query ) );
+
+            Assertions.assertEquals( 1, res.size(), "no pages for " + query );
+            Assertions.assertEquals( name, res.iterator().next().getPage().getName(), "page for " + query );
+        }
+        m_engine.deleteTestPage( name );
+    }
+
+    @Test
     void testKeywordsSearch() throws Exception {
         final String txt = "[{SET keywords=perry,mason,attorney,law}] Nonsensical content that should not match";
 
@@ -212,6 +230,126 @@ class SearchManagerTest {
     }
     
     
+    Collection< String > pageNamesFor( final String text ) throws Exception {
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
+        final Collection< SearchResult > search = m_mgr.findPages( text, ctx );
+        final List< String > names = new ArrayList<>();
+        for( final SearchResult result : search ) {
+            names.add( result.getPage().getName() );
+        }
+        Collections.sort( names );
+        return names;
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-501 */
+    @Test
+    void testWildcardAfterUnderscoreInPageName() throws Exception {
+        m_engine.saveText( "Page_WithUnderscore", "some content" );
+        m_engine.saveText( "Pageant_Show", "other content" );
+        m_engine.saveText( "Unrelated", "nothing to see" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "Unrelated" ) );
+        Awaitility.await( "index2" ).until( findsResultsFor( new ArrayList<>(), "Pageant_Show" ) );
+
+        Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "Page_With*" ) );
+        Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "Page_*" ) );
+        Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "page_with?nderscore" ) );
+        Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "Page_WithUnderscore" ) );
+        Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore", "Pageant_Show" ), pageNamesFor( "Page*" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-501 */
+    @Test
+    void testWildcardAfterUnderscoreInContents() throws Exception {
+        m_engine.saveText( "SnakeCase", "uses snake_case_name for things" );
+        m_engine.saveText( "Other", "uses snake and case separately, plus snake_cased" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "separately" ) );
+        Awaitility.await( "index2" ).until( findsResultsFor( new ArrayList<>(), "SnakeCase" ) );
+
+        Assertions.assertEquals( Arrays.asList( "SnakeCase" ), pageNamesFor( "snake_case_na*" ) );
+        Assertions.assertEquals( Arrays.asList( "SnakeCase" ), pageNamesFor( "snake_ca?e_name" ) );
+        Assertions.assertEquals( Arrays.asList( "Other", "SnakeCase" ), pageNamesFor( "snake_case*" ) );
+        Assertions.assertEquals( Arrays.asList( "SnakeCase" ), pageNamesFor( "snake_case_*" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-501 */
+    @Test
+    void testWildcardKeepsMatchesOfTokensHoldingUnderscores() throws Exception {
+        m_engine.saveText( "Blog_blogentry_021126_1", "first entry" );
+        m_engine.saveText( "Blog_blogentry_021126_2", "second entry" );
+        m_engine.saveText( "Blog_blogentry_031226_1", "third entry" );
+        Awaitility.await( "index" ).until( () -> pageNamesFor( "name:blog" ).size() == 3 );
+
+        Assertions.assertEquals( Arrays.asList( "Blog_blogentry_021126_1", "Blog_blogentry_031226_1" ), pageNamesFor( "name:blog*26_1" ) );
+        Assertions.assertEquals( Arrays.asList( "Blog_blogentry_021126_1", "Blog_blogentry_021126_2", "Blog_blogentry_031226_1" ),
+                                 pageNamesFor( "name:blog*26_*" ) );
+        Assertions.assertEquals( Arrays.asList( "Blog_blogentry_021126_1", "Blog_blogentry_021126_2", "Blog_blogentry_031226_1" ),
+                                 pageNamesFor( "name:Blog_blogentry*" ) );
+        Assertions.assertEquals( Arrays.asList( "Blog_blogentry_021126_1", "Blog_blogentry_021126_2" ), pageNamesFor( "name:blogentry_021126*" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-501 */
+    @Test
+    void testWildcardWithoutUnderscoreIsUnchanged() throws Exception {
+        m_engine.saveText( "TestPage", "the dawn of the third age of mankind" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "mankind" ) );
+
+        Assertions.assertEquals( Arrays.asList( "TestPage" ), pageNamesFor( "man*" ) );
+        Assertions.assertEquals( Arrays.asList( "TestPage" ), pageNamesFor( "m?nkind" ) );
+        Assertions.assertEquals( Arrays.asList(), pageNamesFor( "woman*" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1321 */
+    @Test
+    void testStarAtTheEndOfPageNameTermIsOptional() throws Exception {
+        m_engine.saveText( "Weblog_blogentry_021126_1", "first entry" );
+        m_engine.saveText( "Weblog_blogentry_031226_1", "second entry" );
+        m_engine.saveText( "Weblog_blogentry_021127_2", "third entry" );
+        m_engine.saveText( "Man_Page", "a" );
+        Awaitility.await( "index" ).until( () -> pageNamesFor( "name:weblog" ).size() == 3 );
+        Awaitility.await( "index2" ).until( () -> pageNamesFor( "name:man" ).size() == 1 );
+
+        final List< String > withTwentySix = Arrays.asList( "Weblog_blogentry_021126_1", "Weblog_blogentry_031226_1" );
+        Assertions.assertEquals( withTwentySix, pageNamesFor( "name:blog*26" ) );
+        Assertions.assertEquals( withTwentySix, pageNamesFor( "name:blog*26*" ) );
+        Assertions.assertEquals( Arrays.asList( "Weblog_blogentry_021127_2" ), pageNamesFor( "name:blog*27" ) );
+        Assertions.assertEquals( Arrays.asList(), pageNamesFor( "name:blog*99" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1321 */
+    @Test
+    void testPageNameTermStillStartsAtTheWord() throws Exception {
+        m_engine.saveText( "Weblog_blogentry_021126_1", "first entry" );
+        m_engine.saveText( "Man_Page", "a" );
+        m_engine.saveText( "Human_Page", "b" );
+        m_engine.saveText( "Woman_Page", "c" );
+        Awaitility.await( "index" ).until( () -> pageNamesFor( "name:weblog" ).size() == 1 );
+        Awaitility.await( "index2" ).until( () -> pageNamesFor( "name:woman" ).size() == 1 );
+        Awaitility.await( "index3" ).until( () -> pageNamesFor( "name:human" ).size() == 1 );
+        Awaitility.await( "index4" ).until( () -> pageNamesFor( "name:man" ).size() == 1 );
+
+        Assertions.assertEquals( Arrays.asList( "Man_Page" ), pageNamesFor( "name:man*" ) );
+        Assertions.assertEquals( Arrays.asList(), pageNamesFor( "name:entry" ) );
+        Assertions.assertEquals( Arrays.asList(), pageNamesFor( "name:entry*" ) );
+        Assertions.assertEquals( Arrays.asList(), pageNamesFor( "name:entry*26" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1321 */
+    @Test
+    void testRelevanceIsBetweenZeroAndOneHundred() throws Exception {
+        m_engine.saveText( "Few", "mankind" );
+        m_engine.saveText( "Many", "mankind mankind mankind mankind mankind mankind mankind mankind" );
+        m_engine.saveText( "Padded", "mankind and a good many other words to lower the score of this page in the index" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "Padded" ) );
+
+        final Collection< SearchResult > res = new ArrayList<>();
+        Awaitility.await( "scores" ).until( findsResultsFor( res, "mankind" ) );
+        final int max = res.stream().mapToInt( SearchResult::getScore ).max().getAsInt();
+        Assertions.assertEquals( 3, res.size() );
+        Assertions.assertEquals( 100, max );
+        Assertions.assertTrue( res.stream().allMatch( r -> r.getScore() >= 0 && r.getScore() <= 100 ) );
+    }
+
     @Test
     public void getPluginList() throws Exception {
         DefaultSearchManager defaultSearchManager = new DefaultSearchManager(m_engine, m_engine.getWikiProperties());
