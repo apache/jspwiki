@@ -17,6 +17,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-11-11  Alex O'ree (alexoree AT apache DOT org)**
+
+* _3.0.1-git-05_
+
+* [JSPWIKI-1296](https://issues.apache.org/jira/browse/JSPWIKI-1206) see jira fo details
+
 **2026-11-04 Arturo Bernal (abernal AT apache DOT org)**
 
 * _3.0.1-git-04_
