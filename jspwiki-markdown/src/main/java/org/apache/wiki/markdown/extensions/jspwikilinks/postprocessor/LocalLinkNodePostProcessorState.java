@@ -70,7 +70,8 @@ public class LocalLinkNodePostProcessorState implements NodePostProcessorState< 
                 state.nodeAddedWithChildren( content );
                 addAttachmentLink( state, link );
             } else {
-                new ImageLinkNodePostProcessorState( wikiContext, attachment, link.hasRef() ).process( state, link );
+                final String attlink = wikiContext.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), attachment );
+                new ImageLinkNodePostProcessorState( wikiContext, attlink, link.hasRef() ).process( state, link );
             }
         } else if( hashMark != -1 ) { // It's an internal Wiki link, but to a named section
             final String namedSection = link.getUrl().toString().substring( hashMark + 1 );

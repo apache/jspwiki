@@ -70,6 +70,12 @@ public class HtmlStringToWikiTranslatorTest {
     }
 
     @Test
+    public void testLineBreakInTextIsWhitespace() throws Exception {
+        Assertions.assertEquals( "\nhello world\n", html2wiki.translate( "<p>hello\nworld</p>" ) );
+        Assertions.assertEquals( "\nhello world\n", html2wiki.translate( "<p>hello\r\nworld</p>" ) );
+    }
+
+    @Test
     public void testTable() throws Exception {
         Assertions.assertEquals( "a\n| erste\n", html2wiki.translate( "a <table border=\"1\"> <tbody><tr> <td> erste</td> </tr> </tbody> </table>" ) );
 
@@ -155,10 +161,10 @@ public class HtmlStringToWikiTranslatorTest {
     public void testPre() throws Exception {
         Assertions.assertEquals( "\n{{{hallo}}}\n", html2wiki.translate( "<pre>hallo</pre>" ) );
         Assertions.assertEquals( "\n{{{Hallo\nWelt!\n\n}}}\n", html2wiki.translate( "<pre>Hallo<br>Welt!<br><br></pre>" ) );
-        Assertions.assertEquals( "\n{{{\n\n\n\nHallo\n\n\n\nWelt!\n\n\n\n}}}\n",
+        Assertions.assertEquals( "\n{{{\n\n\nHallo\n\n\n\nWelt!\n\n\n\n}}}\n",
                 html2wiki.translate( "\n\n\n\n<pre>\n\n\n\nHallo\n\n\n\nWelt!\n\n\n\n</pre>\n\n\n\n" ) );
 
-        Assertions.assertEquals( "\n{{{\n\n* Baltramon \n  lasdjfh\n\n}}}\n", html2wiki.translate( "<pre>\n\n* Baltramon \n  lasdjfh\n\n</pre>" ) );
+        Assertions.assertEquals( "\n{{{\n* Baltramon \n  lasdjfh\n\n}}}\n", html2wiki.translate( "<pre>\n\n* Baltramon \n  lasdjfh\n\n</pre>" ) );
 
         /*
          * // The style "font-family: courier new" is no longer translated as monospace text, so this test case is no longer needed. Assertions.assertEquals(
@@ -271,7 +277,7 @@ public class HtmlStringToWikiTranslatorTest {
         Assertions.assertEquals( "Dies ist __bold__, ''italic'' und __''both''__ 3.",
                 html2wiki.translate( "Dies ist <strong>bold</strong>, <em>italic</em> und <strong><em>both</em></strong> 3." ) );
 
-        Assertions.assertEquals( "Wilma: ''Ich m\u00f6chte hiermal in allerDeutlichkeit sagen! ''",
+        Assertions.assertEquals( "Wilma: ''Ich m\u00f6chte hier mal in aller Deutlichkeit sagen! ''",
                 html2wiki.translate( "Wilma: <i>Ich             m\u00f6chte hier\nmal in aller\nDeutlichkeit sagen! </i>" ) );
 
     }
@@ -329,6 +335,13 @@ public class HtmlStringToWikiTranslatorTest {
 
         Assertions.assertEquals( "\n;__New Page Name__:[{FormInput type='text' name='newPageName'}]\n",
                 html2wiki.translate( "\n<dl><dt><b>New Page Name</b></dt><dd><input name=\"nbf_newPageName\" type=\"text\"></dd></dl>\n" ) );
+    }
+
+    @Test
+    public void testDataUrlImageKeepsBase64() throws Exception {
+        // base64 uses '+', which must not be read as an encoded space
+        Assertions.assertEquals( "[data:image/png;base64,iVBOR+/w0KGgo+AAA=]",
+                html2wiki.translate( "<img src=\"data:image/png;base64,iVBOR+/w0KGgo+AAA=\" alt=\"\">" ) );
     }
 
 }

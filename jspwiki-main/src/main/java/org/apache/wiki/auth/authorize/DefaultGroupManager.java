@@ -39,6 +39,7 @@ import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.ui.InputValidator;
+import org.apache.wiki.ui.Installer;
 import org.apache.wiki.util.ClassUtil;
 
 import java.security.Principal;
@@ -239,23 +240,26 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
             }
         }
         
-        if ("false".equalsIgnoreCase(m_engine.getWikiProperties().getProperty(Engine.PROP_USE_2_X_ACL_LOGIC, "false"))) {
-            //check to ensure that the group name does not conflict with any existing user account login, email or wiki name
-            UserManager userManger = m_engine.getManager(UserManager.class);
-            try { userManger.getUserDatabase().findByEmail(name);
+        if( "false".equalsIgnoreCase( m_engine.getWikiProperties().getProperty( Engine.PROP_USE_2_X_ACL_LOGIC, "false" ) ) ) {
+            // check to ensure that the group name does not conflict with any existing user account login, email or wiki name
+            final UserManager userManager = m_engine.getManager( UserManager.class );
+            try {
+                userManager.getUserDatabase().findByEmail( name );
                 throw new WikiSecurityException( "Group name conflicts with a user account" );
-            }catch (NoSuchPrincipalException e) {
-                //no issues here
+            } catch( final NoSuchPrincipalException e ) {
+                // no issues here
             }
-            try { userManger.getUserDatabase().findByLoginName(name);
+            try {
+                userManager.getUserDatabase().findByLoginName( name );
                 throw new WikiSecurityException( "Group name conflicts with a user account" );
-            }catch (NoSuchPrincipalException e) {
-                //no issues here
+            } catch( final NoSuchPrincipalException e ) {
+                // no issues here
             }
-            try { userManger.getUserDatabase().findByWikiName(name);
+            try {
+                userManager.getUserDatabase().findByWikiName( name );
                 throw new WikiSecurityException( "Group name conflicts with a user account" );
-            }catch (NoSuchPrincipalException e) {
-                //no issues here
+            }catch( final NoSuchPrincipalException e ) {
+                // no issues here
             }
         }
 
@@ -272,6 +276,11 @@ public class DefaultGroupManager implements GroupManager, Authorizer, WikiEventL
         final Group group = m_groups.get( new GroupPrincipal( index ) );
         if( group == null ) {
             throw new NoSuchPrincipalException( "Group " + index + " not found" );
+        }
+
+        // the default security policy grants AllPermission to this group, so removing it could leave the wiki without administrators
+        if( Installer.ADMIN_GROUP.equals( index ) ) {
+            throw new WikiSecurityException( "The " + Installer.ADMIN_GROUP + " group cannot be removed" );
         }
 
         // Delete the group

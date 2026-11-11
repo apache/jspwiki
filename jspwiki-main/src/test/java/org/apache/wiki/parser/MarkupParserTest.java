@@ -43,4 +43,20 @@ public class MarkupParserTest
         Assertions.assertEquals( "Clean (link)", MarkupParser.cleanLink("Clean (link)") );
     }
 
+    @Test
+    public void testCleanLinkKeepsSuperscriptDigits()
+    {
+        Assertions.assertEquals( "Metre\u00b2", MarkupParser.cleanLink( "Metre\u00b2" ) );
+        Assertions.assertEquals( "Metre\u00b3", MarkupParser.cleanLink( "[Metre\u00b3]" ) );
+    }
+
+    @Test
+    public void testMakeErrorEscapesHtml()
+    {
+        // Error messages are rendered with output escaping disabled, so makeError must
+        // neutralize markup carried in e.g. plugin exception messages.
+        final String text = MarkupParser.makeError( "Faulty pattern <img src=x onerror=alert(1)>" ).getText();
+        Assertions.assertEquals( "Faulty pattern &lt;img src=x onerror=alert(1)&gt;", text );
+    }
+
 }

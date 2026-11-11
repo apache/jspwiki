@@ -60,9 +60,13 @@ function HighlightQuery( node, query, template ){
 
         node.mapTextNodes( function(s){
 
-            return s.replace( /</g, "&lt;" ) //pre elements may contain xml <
-                    .replace( matchQuery, template || "<mark>$&</mark>" );
+            //only a text node with a match is turned into html; mapTextNodes keeps any other as plain text, which must not be escaped
+            if( s.search( matchQuery ) < 0 ){ return s; }
 
+            //pre elements may contain xml < and &, so escape all text around the matches (odd items of the split)
+            return s.split( matchQuery ).map( function(part, index){
+                return index % 2 ? part.replace( matchQuery, template || "<mark>$&</mark>" ) : part.escapeHtml();
+            }).join("");
 
         }, true /* includePreCodeNodes */ );
     }

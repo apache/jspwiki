@@ -22,6 +22,7 @@
  */
 package org.apache.wiki.rss;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.io.File;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
@@ -38,8 +39,16 @@ import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 import org.apache.commons.io.FileUtils;
+import org.apache.wiki.HttpMockFactory;
+import org.apache.wiki.WikiContext;
+import org.apache.wiki.WikiSession;
+import org.apache.wiki.api.core.Session;
+import org.apache.wiki.auth.AuthenticationManager;
+import org.apache.wiki.auth.UserManager;
 
 import static org.apache.wiki.auth.UserManager.PROP_DATABASE;
+import org.apache.wiki.auth.Users;
+import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.XMLGroupDatabase;
 import org.apache.wiki.auth.user.XMLUserDatabase;
 
@@ -49,34 +58,147 @@ public class RSSGeneratorTest {
   
     @Test
     public void testBlogRSS() throws Exception {
-        
         Properties props = TestEngine.getTestProperties();
-        File target = new File("target/" + UUID.randomUUID() + ".xml");
-        FileUtils.copyFile(new File("src/test/resources/userdatabase.xml"), target);
-        props.setProperty(XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath());
+        File userTarget = new File("target/" + UUID.randomUUID() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/userdatabase.xml"), userTarget);
+        props.setProperty(XMLUserDatabase.PROP_USERDATABASE, userTarget.getAbsolutePath());
         props.put(RSSGenerator.PROP_GENERATE_RSS, "true");
-        target = new File("target/" + UUID.randomUUID() + ".xml");
-        FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml"), target);
-        props.setProperty(XMLGroupDatabase.PROP_DATABASE, target.getAbsolutePath());
+        File groupTarget = new File("target/" + UUID.randomUUID() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml"), groupTarget);
+        props.setProperty(XMLGroupDatabase.PROP_DATABASE, groupTarget.getAbsolutePath());
+        props.setProperty(GroupManager.PROP_GROUPDATABASE, XMLGroupDatabase.class.getCanonicalName());
+        props.setProperty(UserManager.PROP_DATABASE, XMLUserDatabase.class.getCanonicalName());
+        
         TestEngine m_testEngine = TestEngine.build( props);
+        try{
+        
+
+            final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
+
+            m_testEngine.saveText( "testBlogRSS", "Foo1[{WeblogPlugin page='MyBlog' days='all' maxEntries='10'}]" );
+            String newPage = plugin.getNewEntryPage( m_testEngine, "testBlogRSS" );
+            m_testEngine.saveText( newPage, "!Title1\r\nFoo" );
+            newPage = plugin.getNewEntryPage( m_testEngine, "testBlogRSS" );
+            m_testEngine.saveText( newPage, "!Title2\r\n__Bar__" );
+
+            //make a new page that only mike can see...
+            newPage = plugin.getNewEntryPage( m_testEngine, "testBlogRSS" );
+            m_testEngine.saveText( newPage, "[{ALLOW view admin,Mike}]\r\n!Title3\r\n__Tanaka__" );
+
+            final RSSGenerator gen = m_testEngine.getManager( RSSGenerator.class );
+            WikiContext context = (WikiContext) Wiki.context().create( m_testEngine, 
+                    m_testEngine.getManager( PageManager.class ).getPage( "testBlogRSS" ) );
+
+            //run as the admin...
+            HttpServletRequest request = HttpMockFactory.createHttpRequest();
+            m_testEngine.getManager( AuthenticationManager.class ).login( m_testEngine.adminSession(), request,
+                    Users.ADMIN, Users.ADMIN_PASS );
+            context = (WikiContext) Wiki.context().create( m_testEngine, request, "/wiki");
+            final WeblogPlugin blogplugin = new WeblogPlugin();
+            List< Page > entries = blogplugin.findBlogEntries( m_testEngine, "testBlogRSS", 
+                    //get all pages since jan 1 1970 UTC and the heat death of the universe
+                    new Date( 0 ), 
+                    new Date( Long.MAX_VALUE ) );
+            Assertions.assertTrue(!entries.isEmpty());
+            Feed feed = new RSS10Feed( context );
+            final String blog = gen.generateBlogRSS( context, entries, feed );
+            final String fullWikiRssFeed = gen.generateBlogRSS( context, entries, feed );
+            final String wikiPageRss = gen.generateWikiPageRSS(context, entries, feed);
+
+            Feed feed20 = new RSS20Feed( context );
+            
+            final String blog20 = gen.generateBlogRSS( context, entries, feed20 );
+            final String fullWikiRssFeed20 = gen.generateBlogRSS( context, entries, feed20 );
+            final String wikiPageRss20 = gen.generateWikiPageRSS(context, entries, feed20);
+
+            Feed feedAtom = new AtomFeed( context );
+            final String blogAtom = gen.generateBlogRSS( context, entries, feedAtom );
+            final String fullWikiRssFeedAtom = gen.generateBlogRSS( context, entries, feedAtom );
+            final String wikiPageRssAtom = gen.generateWikiPageRSS(context, entries, feedAtom);
+            Assertions.assertTrue( blog.contains( "<description>Foo</description>" ), "has Foo" );
+            Assertions.assertTrue( blog20.contains( "Foo"), "has Foo" );
+            Assertions.assertTrue( blogAtom.contains( "Foo" ), "has Foo" );
+            
+            Assertions.assertTrue( blog.contains( "&lt;b&gt;Bar&lt;/b&gt;" ), "has proper Bar" );
+            Assertions.assertFalse( fullWikiRssFeed.contains( "Tanaka" ), "the blog feed is shared, so it does not list the entry that only some users may view" );
+            Assertions.assertTrue( wikiPageRss.contains( "Tanaka" ), "has hidden page" );
+            Assertions.assertFalse( fullWikiRssFeed20.contains( "Tanaka" ), "the blog feed is shared, so it does not list the entry that only some users may view" );
+            Assertions.assertTrue( wikiPageRss20.contains( "Tanaka" ), "has hidden page" );
+            Assertions.assertFalse( fullWikiRssFeedAtom.contains( "Tanaka" ), "the blog feed is shared, so it does not list the entry that only some users may view" );
+            Assertions.assertTrue( wikiPageRssAtom.contains( "Tanaka" ), "has hidden page" );
+
+
+            //login as janne...
+            request = HttpMockFactory.createHttpRequest();
+            m_testEngine.getManager( AuthenticationManager.class ).login( m_testEngine.janneSession(), request,
+                    Users.JANNE, Users.JANNE_PASS );
+            
+            context = (WikiContext) Wiki.context().create( m_testEngine, request, "/wiki");
+            final WikiContext janneContext = (WikiContext) Wiki.context().create( m_testEngine, 
+                    m_testEngine.getManager( PageManager.class ).getPage( "testBlogRSS" ) );
+            entries = blogplugin.findBlogEntries( m_testEngine, "testBlogRSS", 
+                    //get all pages since jan 1 1970 UTC and the heat death of the universe
+                    new Date( 0 ), 
+                    new Date( Long.MAX_VALUE ) );
+            Assertions.assertTrue(!entries.isEmpty());
+            feed = new RSS10Feed( janneContext );
+            final String janneblog = gen.generateBlogRSS( janneContext, entries, feed );
+            final String jannefullWikiRssFeed = gen.generateBlogRSS( janneContext, entries, feed );
+            final String jannewikiPageRss = gen.generateWikiPageRSS(janneContext, entries, feed);
+
+            feed20 = new RSS20Feed( janneContext );
+            final String janneblog20 = gen.generateBlogRSS( janneContext, entries, feed20 );
+            final String jannefullWikiRssFeed20 = gen.generateBlogRSS( janneContext, entries, feed20 );
+            final String jannewikiPageRss20 = gen.generateWikiPageRSS(janneContext, entries, feed20);
+
+            feedAtom = new AtomFeed( janneContext );
+            final String janneblogAtom = gen.generateBlogRSS( janneContext, entries, feed20 );
+            final String jannefullWikiRssFeedAtom = gen.generateBlogRSS( janneContext, entries, feed20 );
+            final String jannewikiPageRssAtom = gen.generateWikiPageRSS(janneContext, entries, feed20);
+
+            Assertions.assertTrue( janneblog.contains( "<description>Foo</description>" ), "has Foo" );
+            Assertions.assertTrue( janneblog20.contains( "Foo"), "has Foo" );
+            Assertions.assertTrue( janneblogAtom.contains( "Foo" ), "has Foo" );
+            
+            Assertions.assertTrue( janneblog.contains( "&lt;b&gt;Bar&lt;/b&gt;" ), "has proper Bar" );
+            Assertions.assertFalse( jannefullWikiRssFeed.contains( "Tanaka" ), "has hidden page" );
+            Assertions.assertFalse( jannewikiPageRss.contains( "Tanaka" ), "has hidden page" );
+            Assertions.assertFalse( jannefullWikiRssFeed20.contains( "Tanaka" ), "has hidden page" );
+            Assertions.assertFalse( jannewikiPageRss20.contains( "Tanaka" ), "has hidden page" );
+            Assertions.assertFalse( jannefullWikiRssFeedAtom.contains( "Tanaka" ), "has hidden page" );
+            Assertions.assertFalse( jannewikiPageRssAtom.contains( "Tanaka" ), "has hidden page" );
+
+        } finally {
+            m_testEngine.shutdown();
+        }
+       
+        
+        
+    }
+
+    /** The feed is cached and shared, so an entry that the anonymous user may not view must not be listed in it. */
+    @Test
+    public void testBlogRSSSkipsEntriesTheAnonymousUserMayNotView() throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+        props.put( RSSGenerator.PROP_GENERATE_RSS, "true" );
+        final TestEngine engine = TestEngine.build( props );
 
         final WeblogEntryPlugin plugin = new WeblogEntryPlugin();
-        m_testEngine.saveText( "testBlogRSS", "Foo1" );
-        String newPage = plugin.getNewEntryPage( m_testEngine, "testBlogRSS" );
-        m_testEngine.saveText( newPage, "!Title1\r\nFoo" );
-        newPage = plugin.getNewEntryPage( m_testEngine, "testBlogRSS" );
-        m_testEngine.saveText( newPage, "!Title2\r\n__Bar__" );
+        engine.saveText( "testBlogRSSAcl", "Foo1" );
+        String newPage = plugin.getNewEntryPage( engine, "testBlogRSSAcl" );
+        engine.saveText( newPage, "!PublicTitle\r\nPublic body" );
+        newPage = plugin.getNewEntryPage( engine, "testBlogRSSAcl" );
+        engine.saveText( newPage, "!HiddenTitle\r\n[{ALLOW view Admin}]\r\nHidden body" );
 
-        final RSSGenerator gen = m_testEngine.getManager( RSSGenerator.class );
-        final Context context = Wiki.context().create( m_testEngine, m_testEngine.getManager( PageManager.class ).getPage( "testBlogRSS" ) );
-        final WeblogPlugin blogplugin = new WeblogPlugin();
-        final List< Page > entries = blogplugin.findBlogEntries( m_testEngine, "testBlogRSS", new Date( 0 ), new Date( Long.MAX_VALUE ) );
-        final Feed feed = new RSS10Feed( context );
-        final String blog = gen.generateBlogRSS( context, entries, feed );
-        m_testEngine.shutdown();
-        Assertions.assertTrue( blog.contains( "<description>Foo</description>" ), "has Foo" );
-        Assertions.assertTrue( blog.contains( "&lt;b&gt;Bar&lt;/b&gt;" ), "has proper Bar" );
-        
-        
+        final Context context = Wiki.context().create( engine, engine.getManager( PageManager.class ).getPage( "testBlogRSSAcl" ) );
+        final List< Page > entries = new WeblogPlugin().findBlogEntries( engine, "testBlogRSSAcl", new Date( 0 ), new Date( Long.MAX_VALUE ) );
+        Assertions.assertEquals( 2, entries.size(), "both entries are found" );
+
+        final String blog = engine.getManager( RSSGenerator.class ).generateBlogRSS( context, entries, new RSS10Feed( context ) );
+        engine.shutdown();
+
+        Assertions.assertTrue( blog.contains( "PublicTitle" ), "the public entry is listed" );
+        Assertions.assertFalse( blog.contains( "HiddenTitle" ), "the title of the protected entry is not listed" );
+        Assertions.assertFalse( blog.contains( "Hidden body" ), "the text of the protected entry is not listed" );
     }
 }

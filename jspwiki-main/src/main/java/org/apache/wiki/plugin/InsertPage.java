@@ -104,7 +104,7 @@ public class InsertPage implements Plugin {
         final String includedPage = TextUtil.replaceEntities(params.get( PARAM_PAGENAME ));
         String style              = TextUtil.replaceEntities(params.get( PARAM_STYLE ));
         final boolean showOnce    = "once".equals( params.get( PARAM_SHOW ) );
-        final String defaultstr   = params.get( PARAM_DEFAULT );
+        final String defaultstr   = TextUtil.replaceEntities(params.get( PARAM_DEFAULT ));
         final int section         = TextUtil.parseIntParameter(params.get( PARAM_SECTION ), -1 );
         int maxlen                = TextUtil.parseIntParameter(params.get( PARAM_MAXLENGTH ), -1 );
 

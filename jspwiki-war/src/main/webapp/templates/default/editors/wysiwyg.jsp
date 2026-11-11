@@ -257,7 +257,7 @@
         To avoid this, double escape the & char =>  so &amp;lt; is converted to &lt;
         --%>
         <textarea name="htmlPageText"
-             autofocus="autofocus"><%= pageAsHtml.replace("&", "&amp;")%></textarea>
+             autofocus="autofocus"><%= pageAsHtml.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")%></textarea>
       </div>
       <div class="ajaxpreview">Preview comes here</div>
   </div>

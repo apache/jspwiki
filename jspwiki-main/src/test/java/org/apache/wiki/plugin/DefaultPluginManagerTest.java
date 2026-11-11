@@ -22,6 +22,7 @@ package org.apache.wiki.plugin;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
@@ -151,6 +152,18 @@ public class DefaultPluginManagerTest {
         engine.getManager( PageManager.class ).saveText(context, "[{SamplePlugin render=true}]");
         engine.getManager( RenderingManager.class ).getHTML( "Testpage" );
         Assertions.assertTrue( SamplePlugin.c_rendered );
+    }
+
+    /** Page markup must not load or instantiate arbitrary classpath classes; only plugins on the search path. */
+    @Test
+    public void testInsertArbitraryClass() {
+        final PluginException timer = Assertions.assertThrows( PluginException.class,
+                                                               () -> manager.execute( context, "{INSERT java.util.Timer}" ) );
+        final PluginException missing = Assertions.assertThrows( PluginException.class,
+                                                                 () -> manager.execute( context, "{INSERT java.util.NoSuchClass}" ) );
+        // Rejected with the same "could not find" error as a nonexistent class, so markup
+        // cannot be used as a classpath-probing oracle either.
+        Assertions.assertEquals( missing.getMessage().replace( "NoSuchClass", "Timer" ), timer.getMessage() );
     }
 
 }

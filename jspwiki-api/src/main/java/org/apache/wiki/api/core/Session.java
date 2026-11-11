@@ -128,7 +128,14 @@ public interface Session extends WikiEventListener {
      * @return the CSRF protection Token associated with this wiki session.
      */
     String antiCsrfToken();
-
+    
+     /**
+     * Regenerates the anti-CSRF token. Called when the session's privilege level changes (i.e. at login), so that
+     * a token observed before authentication cannot be replayed against the authenticated session.
+     * @since 3.0.1
+     */
+    void regenerateAntiCsrfToken();
+    
     /**
      *  Returns a cached Locale object for this user.  It's better to use WikiContext's corresponding getBundle() method, since that
      *  will actually react if the user changes the locale in the middle, but if that's not available (or, for some reason, you need
@@ -246,7 +253,10 @@ public interface Session extends WikiEventListener {
      * @param action the privileged action
      * @return the result of the privileged action; may be <code>null</code>
      * @throws java.security.AccessControlException if the action is not permitted by the security policy
+     * @deprecated JSPWiki does not use the access control context of the JVM to check permissions anymore, so there is no reason to run
+     *             anything in the context of a session; use {@link Subject#doAs(Subject, PrivilegedAction)} if the Subject is needed
      */
+    @Deprecated( since = "3.0.1" )
     static Object doPrivileged( final Session session, final PrivilegedAction<?> action ) throws AccessControlException {
         return Subject.doAsPrivileged( session.getSubject(), action, null );
     }

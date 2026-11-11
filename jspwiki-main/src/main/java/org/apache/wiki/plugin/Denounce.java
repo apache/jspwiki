@@ -87,13 +87,14 @@ public class Denounce implements Plugin {
         try {
             final PatternCompiler compiler = new GlobCompiler();
             final ClassLoader loader = Denounce.class.getClassLoader();
-            final InputStream in = loader.getResourceAsStream( PROPERTYFILE );
-            if( in == null ) {
-                throw new IOException( "No property file found! (Check the installation, it should be there.)" );
-            }
-
             final Properties props = new Properties();
-            props.load( in );
+            try( final InputStream in = loader.getResourceAsStream( PROPERTYFILE ) ) {
+                if( in == null ) {
+                    throw new IOException( "No property file found! (Check the installation, it should be there.)" );
+                }
+
+                props.load( in );
+            }
 
             c_denounceText = props.getProperty( PROP_DENOUNCETEXT, c_denounceText );
 
