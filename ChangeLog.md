@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-11-08 Arturo Bernal (abernal AT apache DOT org)**
+
+* _2.12.6-git-02_
+
+* Backport of [JSPWIKI-1319](https://issues.apache.org/jira/browse/JSPWIKI-1319): `PropertyReader` ignored the `jspwiki.*` Java system properties passed with `-D` ([PR#568](https://github.com/apache/jspwiki/pull/568))
+
+
 **2026-09-25  Juan Pablo Santos (juanpablo AT apache DOT org)**
 
 * _2.12.6-git-01_

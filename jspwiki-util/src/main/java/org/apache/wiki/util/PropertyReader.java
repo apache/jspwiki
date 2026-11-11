@@ -27,6 +27,7 @@ import javax.servlet.ServletContext;
 import java.io.*;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.nio.file.Files;
 
@@ -146,8 +147,8 @@ public final class PropertyReader {
             setWorkDir( context, props );
 
             // add system properties beginning with jspwiki...
-            final Map< String, String > sysprops = collectPropertiesFrom( System.getProperties().entrySet().stream()
-                                                                                .collect( Collectors.toMap( Object::toString, Object::toString ) ) );
+            final Map< String, String > sysprops = collectPropertiesFrom( System.getProperties().stringPropertyNames().stream()
+                                                                                .collect( Collectors.toMap( Function.identity(), System::getProperty ) ) );
             props.putAll( sysprops );
 
             // finally, expand the variables (new in 2.5)
