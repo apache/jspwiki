@@ -85,7 +85,8 @@ public class TabTag extends WikiTagBase {
      * @param url the URL
      */
     public void setUrl( final String url ) {
-        m_url = TextUtil.replaceEntities( url );
+        //  The url is written inside a single quoted attribute, and replaceEntities leaves the single quote alone.
+        m_url = url == null ? null : TextUtil.replaceEntities( url ).replace( "'", "&#39;" );
     }
 
     // insert <u> ..accesskey.. </u> in title

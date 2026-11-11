@@ -23,8 +23,10 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Enumeration;
-import java.util.Vector;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 
@@ -36,7 +38,7 @@ import java.util.stream.Collectors;
 public class AclEntryImpl implements AclEntry, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private final Vector< Permission > m_permissions = new Vector<>();
+    private final List< Permission > m_permissions = new CopyOnWriteArrayList<>();
     private Principal m_principal;
 
     /**
@@ -92,7 +94,7 @@ public class AclEntryImpl implements AclEntry, Serializable {
      */
     @Override
     public Enumeration< Permission > permissions() {
-        return m_permissions.elements();
+        return Collections.enumeration( m_permissions );
     }
 
     /**
