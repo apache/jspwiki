@@ -52,7 +52,7 @@
     <commons-collections.version>4.6.0</commons-collections.version>
     <commons-fileupload.version>2.0.0-M5</commons-fileupload.version>
     <commons-io.version>2.22.0</commons-io.version>
-    <commons-lang.version>3.20.0</commons-lang.version>
+    <commons-lang.version>3.21.0</commons-lang.version>
     <commons-net.version>3.13.0</commons-net.version>
     <commons-text.version>1.15.0</commons-text.version>
     <commons-validator.version>1.11.0</commons-validator.version>
@@ -73,10 +73,10 @@
     <java-diff-utils-version>4.16</java-diff-utils-version>
     <jacoco-version>0.8.16</jacoco-version>
     <jamm.version>0.4.0</jamm.version>
-    <jaxen.version>2.0.0</jaxen.version>
+    <jaxen.version>2.0.6</jaxen.version>
     <javax-mail.version>2.0.2</javax-mail.version>
     <javax-jsp-api.version>2.3.3</javax-jsp-api.version>
-    <jdom2.version>2.0.6</jdom2.version>
+    <jdom2.version>2.0.6.1</jdom2.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>6.1.3</junit.version>
     <log4j2.version>2.26.1</log4j2.version>
@@ -108,7 +108,7 @@
     <plugin.remote-resources.version>3.3.0</plugin.remote-resources.version>
     <plugin.resources.version>3.5.0</plugin.resources.version>
     <plugin.source.version>3.4.0</plugin.source.version>
-    <plugin.surefire.version>3.6.0</plugin.surefire.version>
+    <plugin.surefire.version>3.6.1</plugin.surefire.version>
     <plugin.surefire.junit5-tree-reporter.version>1.5.1</plugin.surefire.junit5-tree-reporter.version>
     <plugin.surefire.junit5-tree-reporter.enable-console>false</plugin.surefire.junit5-tree-reporter.enable-console>
     <plugin.war.version>3.5.1</plugin.war.version>
