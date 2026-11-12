@@ -88,6 +88,7 @@
     <sandler.version>0.5</sandler.version>
     <selenide.version>7.18.1</selenide.version>
     <slf4j.version>2.0.18</slf4j.version>
+    <snakeyaml.version>2.6</snakeyaml.version>
     <tika.version>3.3.2</tika.version>
     <tomcat.version>10.1.60</tomcat.version>
     <xstream.version>1.4.21</xstream.version>
@@ -475,6 +476,12 @@
         <groupId>org.awaitility</groupId>
         <artifactId>awaitility</artifactId>
         <version>${awaitility.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${snakeyaml.version}</version>
       </dependency>
 
       <dependency>

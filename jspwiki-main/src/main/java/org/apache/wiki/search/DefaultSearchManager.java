@@ -29,10 +29,13 @@ import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.FilterException;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.api.search.SearchResult;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
@@ -57,6 +60,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.plugin.PluginManager;
 import static org.apache.wiki.search.SearchManager.PLUGIN_SEARCH;
@@ -87,6 +91,52 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
         // TODO: Replace with custom annotations. See JSPWIKI-566
         WikiAjaxDispatcherServlet.registerServlet( JSON_SEARCH, new JSONSearch() );
         WikiAjaxDispatcherServlet.registerServlet( PLUGIN_SEARCH, new PluginSearch() );
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List< String > suggestPages( final String text, final int max, final Session session ) {
+        final AuthorizationManager mgr = m_engine.getManager( AuthorizationManager.class );
+        return suggest( text, max, name -> mgr.checkPermission( session, new PagePermission( m_engine.getApplicationName() + ":" + name, PagePermission.VIEW_ACTION ) ) );
+    }
+
+    /**
+     *  Looks for the names of the pages that start with the given text and that the filter accepts.
+     *
+     *  @param wikiName the page name, optionally followed by a slash and the beginning of an attachment name
+     *  @param maxLength maximum number of suggestions
+     *  @param accepted tells whether a name may be suggested
+     *  @return the suggestions
+     */
+    private List< String > suggest( String wikiName, final int maxLength, final Predicate< String > accepted ) {
+        final StopWatch sw = new StopWatch();
+        sw.start();
+        final List< String > list = new ArrayList<>( Math.min( maxLength, 100 ) );
+        if( !wikiName.isEmpty() ) {
+            // split pagename and attachment filename
+            String filename = "";
+            final int pos = wikiName.indexOf("/");
+            if( pos >= 0 ) {
+                filename = wikiName.substring( pos ).toLowerCase();
+                wikiName = wikiName.substring( 0, pos );
+            }
+
+            final String cleanWikiName = MarkupParser.cleanLink(wikiName).toLowerCase() + filename;
+            final String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
+            final Set< String > allPages = m_engine.getManager( ReferenceManager.class ).findCreated();
+
+            for( final Iterator< String > i = allPages.iterator(); i.hasNext() && list.size() < maxLength; ) {
+                final String p = i.next();
+                final String pp = p.toLowerCase();
+                if( ( pp.startsWith( cleanWikiName ) || pp.startsWith( oldStyleName ) ) && accepted.test( p ) ) {
+                    list.add( p );
+                }
+            }
+        }
+
+        sw.stop();
+        LOG.debug( "Suggestion request for {} done in {}", wikiName, sw );
+        return list;
     }
 
     /**
@@ -217,37 +267,8 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
          *  @param maxLength maximum number of suggestions
          *  @return the suggestions
          */
-        public List< String > getSuggestions( String wikiName, final int maxLength ) {
-            final StopWatch sw = new StopWatch();
-            sw.start();
-            final List< String > list = new ArrayList<>( maxLength );
-            if( !wikiName.isEmpty() ) {
-                // split pagename and attachment filename
-                String filename = "";
-                final int pos = wikiName.indexOf("/");
-                if( pos >= 0 ) {
-                    filename = wikiName.substring( pos ).toLowerCase();
-                    wikiName = wikiName.substring( 0, pos );
-                }
-
-                final String cleanWikiName = MarkupParser.cleanLink(wikiName).toLowerCase() + filename;
-                final String oldStyleName = MarkupParser.wikifyLink(wikiName).toLowerCase() + filename;
-                final Set< String > allPages = m_engine.getManager( ReferenceManager.class ).findCreated();
-               
-                int counter = 0;
-                for( final Iterator< String > i = allPages.iterator(); i.hasNext() && counter < maxLength; ) {
-                    final String p = i.next();
-                    final String pp = p.toLowerCase();
-                    if( pp.startsWith( cleanWikiName) || pp.startsWith( oldStyleName ) ) {
-                        list.add( p );
-                        counter++;
-                    }
-                }
-            }
-
-            sw.stop();
-            LOG.debug( "Suggestion request for {} done in {}", wikiName, sw );
-            return list;
+        public List< String > getSuggestions( final String wikiName, final int maxLength ) {
+            return suggest( wikiName, maxLength, name -> true );
         }
 
         /**
