@@ -515,7 +515,7 @@ public class LuceneSearchProvider implements SearchProvider {
                 if( page != null ) {
                     final PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
                     if( mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
-                        final int score = ( int ) ( hit.score * 100 );
+                        final int score = hits.scoreDocs[ 0 ].score > 0 ? Math.round( hit.score / hits.scoreDocs[ 0 ].score * 100 ) : 0;
 
                         // Get highlighted search contexts
                         final String text = doc.get( LUCENE_PAGE_CONTENTS );
@@ -644,14 +644,19 @@ public class LuceneSearchProvider implements SearchProvider {
             }
         }
 
+        /**
+         * A page name term with a {@code *} between other characters does not need a {@code *} at its end: {@code blog*26} is read as
+         * {@code blog*26*}, as a token of a name, such as {@code blogentry_021126_1}, goes on after the digits that are asked for.
+         */
         @Override
         protected Query getWildcardQuery( final String field, final String termStr ) throws ParseException {
-            final Query separated = field != null ? separated( field, termStr, false ) : null;
+            final String term = LUCENE_PAGE_NAME.equals( field ) && termStr.matches( "[^*].*\\*.*[^*]" ) ? termStr + "*" : termStr;
+            final Query separated = field != null ? separated( field, term, false ) : null;
             if( separated == null ) {
-                return super.getWildcardQuery( field, termStr );
+                return super.getWildcardQuery( field, term );
             }
             try {
-                return either( super.getWildcardQuery( field, termStr ), separated );
+                return either( super.getWildcardQuery( field, term ), separated );
             } catch( final ParseException e ) {
                 return separated; // the default handling does not accept the term, the separated one does
             }

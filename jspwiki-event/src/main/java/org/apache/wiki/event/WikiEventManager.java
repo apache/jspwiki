@@ -26,10 +26,11 @@ import org.apache.wiki.util.Synchronizer;
 import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -136,8 +137,8 @@ public final class WikiEventManager {
     /* The Map of client object to WikiEventDelegate. */
     private final Map< Object, WikiEventDelegate > m_delegates = new ConcurrentHashMap<>();
 
-    /* The Vector containing any preloaded WikiEventDelegates. */
-    private final Vector< WikiEventDelegate > m_preloadCache = new Vector<>();
+    /* The List containing any preloaded WikiEventDelegates, guarded by m_delegates. */
+    private final List< WikiEventDelegate > m_preloadCache = new ArrayList<>();
 
     /* Singleton instance of the WikiEventManager. */
     private static WikiEventManager c_instance;
@@ -151,6 +152,8 @@ public final class WikiEventManager {
      * @see java.util.concurrent.locks.ReentrantLock
      */
     private static final ReentrantLock instanceLock = new ReentrantLock();
+    /* Guards m_delegates and m_preloadCache when they are changed together. */
+    private final ReentrantLock delegatesLock = new ReentrantLock();
     private static final ReentrantLock removeWikiEventListenerLock = new ReentrantLock();
 
     /** Constructor for a WikiEventManager. */
@@ -272,8 +275,10 @@ public final class WikiEventManager {
     }
 
     private void removeDelegates() {
-        m_delegates.clear();
-        m_preloadCache.clear();
+        Synchronizer.synchronize( delegatesLock, () -> {
+            m_delegates.clear();
+            m_preloadCache.clear();
+        } );
     }
 
     public static void shutdown() {
@@ -324,33 +329,35 @@ public final class WikiEventManager {
      * @param client   the client Object, or alternately a Class reference
      * @return the WikiEventDelegate.
      */
-    private WikiEventDelegate getDelegateFor(final Object client) {
-        if (client == null || client instanceof Class) { // then preload the cache
-            final WikiEventDelegate delegate = new WikiEventDelegate(client);
-            m_preloadCache.add(delegate);
-            m_delegates.put(client, delegate);
-            return delegate;
-        } else if (!m_preloadCache.isEmpty()) {
-            // then see if any of the cached delegates match the class of the incoming client
-            for (int i = m_preloadCache.size() - 1; i >= 0; i--) { // start with most-recently added
-                final WikiEventDelegate delegate = m_preloadCache.elementAt(i);
-                if (delegate.getClientClass() == null || delegate.getClientClass().equals(client.getClass())) {
-                    // we have a hit, so use it, but only on a client we haven't seen before
-                    if (!m_delegates.containsKey(client)) {
-                        m_preloadCache.remove(delegate);
-                        m_delegates.put(client, delegate);
-                        return delegate;
+    private WikiEventDelegate getDelegateFor( final Object client ) {
+        return Synchronizer.synchronize( delegatesLock, () -> {
+            if( client == null || client instanceof Class ) { // then preload the cache
+                final WikiEventDelegate delegate = new WikiEventDelegate( client );
+                m_preloadCache.add( delegate );
+                m_delegates.put( client, delegate );
+                return delegate;
+            } else if( !m_preloadCache.isEmpty() ) {
+                // then see if any of the cached delegates match the class of the incoming client
+                for( int i = m_preloadCache.size()-1 ; i >= 0 ; i-- ) { // start with most-recently added
+                    final WikiEventDelegate delegate = m_preloadCache.get( i );
+                    if( delegate.getClientClass() == null || delegate.getClientClass().equals( client.getClass() ) ) {
+                        // we have a hit, so use it, but only on a client we haven't seen before
+                        if( !m_delegates.containsKey( client ) ) {
+                            m_preloadCache.remove( delegate );
+                            m_delegates.put( client, delegate );
+                            return delegate;
+                        }
                     }
                 }
             }
-        }
-        // otherwise treat normally...
-        WikiEventDelegate delegate = m_delegates.get(client);
-        if (delegate == null) {
-            delegate = new WikiEventDelegate(client);
-            m_delegates.put(client, delegate);
-        }
-        return delegate;
+            // otherwise treat normally...
+            WikiEventDelegate delegate = m_delegates.get( client );
+            if( delegate == null ) {
+                delegate = new WikiEventDelegate( client );
+                m_delegates.put( client, delegate );
+            }
+            return delegate;
+        } );
     }
 
 

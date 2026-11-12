@@ -25,9 +25,10 @@ import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
 
@@ -49,7 +50,7 @@ public class AclImpl implements Acl, Serializable {
     private final ReentrantLock lock = new ReentrantLock();
 
     private static final long serialVersionUID = 1L;
-    private final Vector< AclEntry > m_entries = new Vector<>();
+    private final List< AclEntry > m_entries = new CopyOnWriteArrayList<>();
 
     /** {@inheritDoc} */
     @Override
@@ -117,7 +118,7 @@ public class AclImpl implements Acl, Serializable {
     /** {@inheritDoc} */
     @Override
     public Enumeration< AclEntry > aclEntries() {
-        return m_entries.elements();
+        return Collections.enumeration(m_entries);
     }
 
     /** {@inheritDoc} */
