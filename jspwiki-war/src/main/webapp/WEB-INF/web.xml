@@ -184,6 +184,12 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <!-- REST API, version 1 -->
+    <servlet>
+        <servlet-name>ApiV1Servlet</servlet-name>
+        <servlet-class>org.apache.wiki.rest.ApiV1Servlet</servlet-class>
+    </servlet>
+
    <!-- Atom Publishing Protocol -->
    <servlet>
        <servlet-name>ATOM</servlet-name>
@@ -220,6 +226,11 @@
         <servlet-name>WikiAjaxDispatcherServlet</servlet-name>
         <url-pattern>/ajax/*</url-pattern>
         <url-pattern>/admin/ajax/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>ApiV1Servlet</servlet-name>
+        <url-pattern>/api/v1/*</url-pattern>
     </servlet-mapping>
 
     <!--

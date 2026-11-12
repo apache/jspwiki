@@ -526,7 +526,7 @@ public class LuceneSearchProvider implements SearchProvider {
             LOG.error( "Failed during lucene search", e );
         } catch( final ParseException e ) {
             LOG.error( "Broken query; cannot parse query: {}", query, e );
-            throw new ProviderException( "You have entered a query Lucene cannot process [" + query + "]: " + e.getMessage() );
+            throw new ProviderException( "You have entered a query Lucene cannot process [" + query + "]: " + e.getMessage(), e );
         } catch( final InvalidTokenOffsetsException e ) {
             LOG.error( "Tokens are incompatible with provided text ", e );
         }
