@@ -30,8 +30,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
-import java.util.Vector;
 import java.util.stream.Stream;
 
 
@@ -55,7 +55,7 @@ class TemplateManagerTest {
         }
 
         Mockito.doAnswer( invocationOnMock -> {
-            final HashMap< String, Vector< String > > map = invocationOnMock.getArgument( 1, HashMap.class );
+            final HashMap< String, List< String >> map = invocationOnMock.getArgument( 1, HashMap.class );
             Assertions.assertEquals( expected, map.get( type ).get( 0 ) );
             return null;
         } ).when( ctx ).setVariable( Mockito.eq( TemplateManager.RESOURCE_INCLUDES ), Mockito.any( HashMap.class ) );

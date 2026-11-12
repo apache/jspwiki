@@ -95,7 +95,7 @@ public final class FileUtil {
 
     /**
      *  Runs a simple command in given directory. The environment is inherited from the parent process (e.g. the
-     *  one in which this Java VM runs).
+     *  one in which this Java VM runs). The output of the command is decoded with the platform's default charset.
      *
      *  @return Standard output from the command.
      *  @param  command The command to run
@@ -104,12 +104,28 @@ public final class FileUtil {
      *  @throws InterruptedException If the command was halted
      */
     public static String runSimpleCommand( final String command, final String directory ) throws IOException, InterruptedException {
+        return runSimpleCommand( command, directory, Charset.defaultCharset() );
+    }
+
+    /**
+     *  Runs a simple command in given directory. The environment is inherited from the parent process (e.g. the
+     *  one in which this Java VM runs).
+     *
+     *  @return Standard output from the command.
+     *  @param  command The command to run
+     *  @param  directory The working directory to run the command in
+     *  @param  charset The charset the output of the command is decoded with
+     *  @throws IOException If the command failed
+     *  @throws InterruptedException If the command was halted
+     *  @since 3.0.1
+     */
+    public static String runSimpleCommand( final String command, final String directory, final Charset charset ) throws IOException, InterruptedException {
         LOG.info( "Running simple command " + command + " in " + directory );
         final StringBuilder result = new StringBuilder();
         final Process process = Runtime.getRuntime().exec( command, null, new File( directory ) );
 
-        try( final BufferedReader stdout = new BufferedReader( new InputStreamReader( process.getInputStream() ) );
-             final BufferedReader stderr = new BufferedReader( new InputStreamReader( process.getErrorStream() ) ) ) {
+        try( final BufferedReader stdout = new BufferedReader( new InputStreamReader( process.getInputStream(), charset ) );
+             final BufferedReader stderr = new BufferedReader( new InputStreamReader( process.getErrorStream(), charset ) ) ) {
             String line;
 
             while( (line = stdout.readLine()) != null ) {
