@@ -97,7 +97,7 @@ public class ForwardedHeaderFilterTest {
 
         // Execute the filter
         filter.doFilter(trustedRequest, response, trustedChain);
-        
+
         verify(trustedChain).doFilter(requestCaptor.capture(), eq(response));
         HttpServletRequest wrappedRequest = requestCaptor.getValue();
 
@@ -130,4 +130,106 @@ public class ForwardedHeaderFilterTest {
         assertEquals("evil injected\r\nvalue", HttpUtil.getRemoteAddress(wrappedGarbage));
     }
 
+    @Test
+    public void testCidrRangeMatching() throws Exception {
+        ForwardedHeaderFilter filter = new ForwardedHeaderFilter();
+        TestFitlerConfig config = new TestFitlerConfig();
+        config.settings.put("trustedProxies", "192.168.1.0/24");
+        config.settings.put("allowedHosts", "wiki.apache.org");
+        filter.init(config);
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        ArgumentCaptor<HttpServletRequest> captor = ArgumentCaptor.forClass(HttpServletRequest.class);
+
+        // 1. IP inside CIDR range (should be trusted)
+        HttpServletRequest insideRequest = mock(HttpServletRequest.class);
+        when(insideRequest.getRemoteAddr()).thenReturn("192.168.1.50");
+        when(insideRequest.getHeader("X-Forwarded-For")).thenReturn("203.0.113.5");
+        when(insideRequest.getHeader("X-Forwarded-Host")).thenReturn("wiki.apache.org");
+
+        FilterChain chain1 = mock(FilterChain.class);
+        filter.doFilter(insideRequest, response, chain1);
+        verify(chain1).doFilter(captor.capture(), eq(response));
+        assertEquals("203.0.113.5", HttpUtil.getRemoteAddress(captor.getValue()));
+
+        // 2. IP outside CIDR range (should be ignored, falls back to its own remote addr)
+        HttpServletRequest outsideRequest = mock(HttpServletRequest.class);
+        when(outsideRequest.getRemoteAddr()).thenReturn("192.168.2.50");
+        when(outsideRequest.getHeader("X-Forwarded-For")).thenReturn("203.0.113.5");
+        when(outsideRequest.getHeader("X-Forwarded-Host")).thenReturn("wiki.apache.org");
+
+        FilterChain chain2 = mock(FilterChain.class);
+        filter.doFilter(outsideRequest, response, chain2);
+        verify(chain2).doFilter(captor.capture(), eq(response));
+        assertEquals("192.168.2.50", HttpUtil.getRemoteAddress(captor.getValue()));
+    }
+
+    @Test
+    public void testPortAndProtocolHandling() throws Exception {
+        ForwardedHeaderFilter filter = new ForwardedHeaderFilter();
+        TestFitlerConfig config = new TestFitlerConfig();
+        config.settings.put("trustedProxies", "10.0.0.1");
+        config.settings.put("allowedHosts", "wiki.apache.org"); // Matches host portion
+        filter.init(config);
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRemoteAddr()).thenReturn("10.0.0.1");
+        when(request.getServerName()).thenReturn("wiki.apache.org");
+        when(request.getRemotePort()).thenReturn(8443);
+        // Ensure X-Forwarded-Host matches the allowed host or strip port matching
+        when(request.getHeader("X-Forwarded-Host")).thenReturn("wiki.apache.org");
+        when(request.getHeader("X-Forwarded-Proto")).thenReturn("https");
+        when(request.getHeader("X-Forwarded-Port")).thenReturn("8443");
+
+        FilterChain chain = mock(FilterChain.class);
+        ArgumentCaptor<HttpServletRequest> captor = ArgumentCaptor.forClass(HttpServletRequest.class);
+
+        filter.doFilter(request, response, chain);
+        verify(chain).doFilter(captor.capture(), eq(response));
+        HttpServletRequest wrapped = captor.getValue();
+
+        // Assert port and protocol extractions
+        assertEquals("wiki.apache.org", wrapped.getServerName());
+        assertEquals(8443, wrapped.getRemotePort());
+        assertEquals("https", wrapped.getScheme());
+        assertTrue(wrapped.isSecure());
+    }
+
+    @Test
+    public void testNonHttpServletRequestPassthrough() throws Exception {
+        ForwardedHeaderFilter filter = new ForwardedHeaderFilter();
+        filter.init(new TestFitlerConfig()); // Default/empty config
+
+        // Use a generic ServletRequest instead of HttpServletRequest
+        jakarta.servlet.ServletRequest rawRequest = mock(jakarta.servlet.ServletRequest.class);
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        FilterChain chain = mock(FilterChain.class);
+
+        // Should pass straight through without throwing any ClassCastException
+        filter.doFilter(rawRequest, response, chain);
+        verify(chain).doFilter(rawRequest, response);
+    }
+
+    @Test
+    public void testUnconfiguredSecureDefaults() throws Exception {
+        ForwardedHeaderFilter filter = new ForwardedHeaderFilter();
+        // Unconfigured (empty config)
+        filter.init(new TestFitlerConfig());
+
+        HttpServletResponse response = mock(HttpServletResponse.class);
+        HttpServletRequest request = mock(HttpServletRequest.class);
+        when(request.getRemoteAddr()).thenReturn("10.0.0.1");
+        when(request.getHeader("X-Forwarded-For")).thenReturn("198.51.100.7");
+        when(request.getHeader("X-Forwarded-Host")).thenReturn("wiki.apache.org");
+
+        FilterChain chain = mock(FilterChain.class);
+        ArgumentCaptor<HttpServletRequest> captor = ArgumentCaptor.forClass(HttpServletRequest.class);
+
+        filter.doFilter(request, response, chain);
+        verify(chain).doFilter(captor.capture(), eq(response));
+
+        // Because no trusted proxies or allowed hosts are configured, headers must be ignored
+        assertEquals("10.0.0.1", HttpUtil.getRemoteAddress(captor.getValue()));
+    }
 }

@@ -24,7 +24,8 @@ import java.util.List;
 import org.apache.wiki.util.URIScheme;
 
 /**
- *
+ * see {@link ForwardedHeaderFilter}
+ * @since 3.0.1
  */
 public class ForwardedRequest extends HttpServletRequestWrapper {
 
