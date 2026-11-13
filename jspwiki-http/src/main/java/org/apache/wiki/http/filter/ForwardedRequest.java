@@ -25,7 +25,6 @@ import org.apache.wiki.util.URIScheme;
 
 /**
  *
- * @author Dad
  */
 public class ForwardedRequest extends HttpServletRequestWrapper {
 
@@ -59,6 +58,14 @@ public class ForwardedRequest extends HttpServletRequestWrapper {
     @Override
     public String getServerName() {
         return requestHostname != null ? stripPort(requestHostname) : super.getServerName();
+    }
+
+    @Override
+    public int getRemotePort() {
+        if (requestPort != null) {
+            return Integer.parseInt(requestPort);
+        }
+        return super.getRemotePort();
     }
 
     @Override

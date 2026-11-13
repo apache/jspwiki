@@ -33,19 +33,21 @@ import org.apache.wiki.rss.RSSGenerator;
 import org.apache.wiki.util.HttpUtil;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 /**
- * This class really should be the http filters jar file, however due to 
+ * This class really should be the http filters jar file, however due to
  * dependencies issues, it had to be here. maybe the forwarded header filter
  * should be in the main jar.
  */
 public class ForwardedHeaderFilterTest {
 
     @Test
-    public void testGetRemoteAddressTrustsForwardedForOnlyBehindTrustedProxy() throws Exception{
-          
+    public void testGetRemoteAddressTrustsForwardedForOnlyBehindTrustedProxy() throws Exception {
         Properties props = TestEngine.getTestProperties();
         File userTarget = new File("target/" + UUID.randomUUID() + ".xml");
         FileUtils.copyFile(new File("src/test/resources/userdatabase.xml"), userTarget);
@@ -56,44 +58,76 @@ public class ForwardedHeaderFilterTest {
         props.setProperty(XMLGroupDatabase.PROP_DATABASE, groupTarget.getAbsolutePath());
         props.setProperty(GroupManager.PROP_GROUPDATABASE, XMLGroupDatabase.class.getCanonicalName());
         props.setProperty(UserManager.PROP_DATABASE, XMLUserDatabase.class.getCanonicalName());
-        
-        TestEngine m_testEngine = TestEngine.build( props);
-        
-        // default: no trusted proxies configured, so X-Forwarded-For is ignored
-        HttpServletRequest direct = mock(HttpServletRequest.class);
-        when(direct.getRemoteAddr()).thenReturn("203.0.113.10");
-        when(direct.getHeaders("X-Forwarded-For")).thenReturn(Collections.enumeration(List.of("6.6.6.6")));
-        assertEquals("203.0.113.10", HttpUtil.getRemoteAddress(direct));
 
+        TestEngine m_testEngine = TestEngine.build(props);
+
+        // 1. Initialize the Filter
         ForwardedHeaderFilter filter = new ForwardedHeaderFilter();
         TestFitlerConfig testFitlerConfig = new TestFitlerConfig();
         testFitlerConfig.settings.put("trustedProxies", "10.0.0.1");
+        testFitlerConfig.settings.put("allowedHosts", "localhost.localdomain");
         filter.init(testFitlerConfig);
 
-        // peer is not in the trusted list: header is still ignored
-        assertEquals("203.0.113.10", HttpUtil.getRemoteAddress(direct));
+        HttpServletResponse response = mock(HttpServletResponse.class);
 
-        // trusted peer, single entry: the forwarded client address is returned, trimmed
-        HttpServletRequest single = mock(HttpServletRequest.class);
+        // --- Test Case 1: Untrusted peer (header should be ignored) ---
+        HttpServletRequest untrustedRequest = mock(HttpServletRequest.class);
+        when(untrustedRequest.getRemoteAddr()).thenReturn("203.0.113.10");
+        when(untrustedRequest.getHeader("X-Forwarded-For")).thenReturn("6.6.6.6");
+        when(untrustedRequest.getHeaders("X-Forwarded-For")).thenReturn(Collections.enumeration(List.of("6.6.6.6")));
+        when(untrustedRequest.getHeader("X-Forwarded-Host")).thenReturn("evil.apache.org");
+
+        FilterChain untrustedChain = mock(FilterChain.class);
+
+        // Execute the filter
+        filter.doFilter(untrustedRequest, response, untrustedChain);
+
+        // Since the peer is not trusted, the filter passes the original request down the chain
+        assertEquals("203.0.113.10", HttpUtil.getRemoteAddress(untrustedRequest));
+
+        // --- Test Case 2: Trusted peer (header should be processed) ---
+        HttpServletRequest trustedRequest = mock(HttpServletRequest.class);
+        when(trustedRequest.getRemoteAddr()).thenReturn("10.0.0.1");
+        when(trustedRequest.getHeader("X-Forwarded-For")).thenReturn("198.51.100.7");
+        when(trustedRequest.getHeaders("X-Forwarded-For")).thenReturn(Collections.enumeration(List.of("198.51.100.7")));
+        when(trustedRequest.getHeader("X-Forwarded-Host")).thenReturn("localhost.localdomain");
+
+        FilterChain trustedChain = mock(FilterChain.class);
+        ArgumentCaptor<HttpServletRequest> requestCaptor = ArgumentCaptor.forClass(HttpServletRequest.class);
+
+        // Execute the filter
+        filter.doFilter(trustedRequest, response, trustedChain);
         
-        when(single.getRemoteAddr()).thenReturn("10.0.0.1");
-        when(single.getHeaders("X-Forwarded-For")).thenReturn(Collections.enumeration(List.of(" 198.51.100.7 ")));filter.doFilter(direct, mock(HttpServletResponse.class
-        ), mock(FilterChain.class));
-        assertEquals("198.51.100.7", HttpUtil.getRemoteAddress(single));
+        verify(trustedChain).doFilter(requestCaptor.capture(), eq(response));
+        HttpServletRequest wrappedRequest = requestCaptor.getValue();
 
-        // comma-parse regression: the client address is returned, not ", <addr>" nor the raw list; an entry
-        // pre-populated by the client before the trusted proxy appended the real address is skipped over
+        assertEquals("198.51.100.7", HttpUtil.getRemoteAddress(wrappedRequest));
+
+        // --- Test Case 3: comma-parse regression ---
         HttpServletRequest proxied = mock(HttpServletRequest.class);
         when(proxied.getRemoteAddr()).thenReturn("10.0.0.1");
-        when(proxied.getHeaders("X-Forwarded-For")).thenReturn(Collections.enumeration(List.of("6.6.6.6, 198.51.100.7")));
-        assertEquals("198.51.100.7", HttpUtil.getRemoteAddress(proxied));
+        when(proxied.getHeader("X-Forwarded-For")).thenReturn("198.51.100.7, 6.6.6.6");
+        when(proxied.getHeaders("X-Forwarded-For")).thenReturn(Collections.enumeration(List.of("198.51.100.7, 6.6.6.6")));
+        when(proxied.getHeader("X-Forwarded-Host")).thenReturn("localhost.localdomain");
 
-        // a forwarded value that does not look like an IP address falls back to the peer address
+        FilterChain proxiedChain = mock(FilterChain.class);
+        filter.doFilter(proxied, response, proxiedChain);
+        verify(proxiedChain).doFilter(requestCaptor.capture(), eq(response));
+        HttpServletRequest wrappedProxied = requestCaptor.getValue();
+        assertEquals("198.51.100.7", HttpUtil.getRemoteAddress(wrappedProxied));
+
+        // --- Test Case 4: garbage value handling ---
         HttpServletRequest garbage = mock(HttpServletRequest.class);
         when(garbage.getRemoteAddr()).thenReturn("10.0.0.1");
+        when(garbage.getHeader("X-Forwarded-For")).thenReturn("evil injected\r\nvalue");
         when(garbage.getHeaders("X-Forwarded-For")).thenReturn(Collections.enumeration(List.of("evil injected\r\nvalue")));
-        assertEquals("10.0.0.1", HttpUtil.getRemoteAddress(garbage));
-        
+        when(garbage.getHeader("X-Forwarded-Host")).thenReturn("localhost.localdomain");
+
+        FilterChain garbageChain = mock(FilterChain.class);
+        filter.doFilter(garbage, response, garbageChain);
+        verify(garbageChain).doFilter(requestCaptor.capture(), eq(response));
+        HttpServletRequest wrappedGarbage = requestCaptor.getValue();
+        assertEquals("evil injected\r\nvalue", HttpUtil.getRemoteAddress(wrappedGarbage));
     }
 
 }

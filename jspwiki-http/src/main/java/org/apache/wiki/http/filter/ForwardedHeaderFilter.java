@@ -34,7 +34,27 @@ import org.slf4j.LoggerFactory;
 
 /**
  * see JSPWIKI-1289 and JSPWIKI-1294
+ *
+ * This can be configured either via web.xml using the init parameters
+ * (trustedProxies, allowedHosts) or in jspwiki-custom.properties
+ * (forwarded.trustedProxies and forwarded.allowedHosts).
+ *
+ * Used for providing security filtering for when jspwiki is behind a reverse
+ * proxy and providing some security checks on inbound http headers.
+ *
+ * Trust Proxies can either be ip addresses, ip address range via CIDR notation,
+ * or hostnames. This would be the ip address/hostnames of your reverse proxy
+ * (httpd/nginx/etc)
+ *
+ * Allowed Hosts is the public facing URL/hostname. i.e. wiki.apache.org or
+ * whatever.
+ *
+ * If both checks do not pass, inbound http headers related to forwarded by are
+ * dropped from further processing.
  * 
+ * If neither is defined, it will default to a secure default setting, meaning
+ * all x forwarded by headers are dropped/ignored
+ *
  * @since 3.0.1, 2.12.6
  */
 public class ForwardedHeaderFilter implements Filter {
@@ -83,6 +103,7 @@ public class ForwardedHeaderFilter implements Filter {
      * otherwise.
      */
     boolean isTrustedProxy(final String addr, final String originalHostHeader) {
+        LOG.trace("isTrustedProxy " + addr + "," + originalHostHeader);
         if (trustedProxies.isEmpty() || allowedHosts.isEmpty()) {
             LOG.info("web.xml configuration has no trustedProxies or allowedHosts set, meaning we are not behind a reverse proxy. all requests will not honor x-forwarded-by headers");
             return false;
@@ -113,6 +134,7 @@ public class ForwardedHeaderFilter implements Filter {
         for (String host : allowedHosts) {
             if (host.equalsIgnoreCase(originalHostHeader)) {
                 LOG.info("Request has an allowed X-Forwarded-Host via hostname match, allowing access to X-Forwarded-By headers");
+                hostCheck = true;
             }
         }
         if (!hostCheck) {
@@ -129,10 +151,13 @@ public class ForwardedHeaderFilter implements Filter {
             throws IOException, ServletException {
 
         if (request instanceof HttpServletRequest req) {
+            String remoteAddr = req.getRemoteAddr();
+            String forwardedHost = req.getHeader("X-Forwarded-Host");
             chain.doFilter(new ForwardedRequest(req, isTrustedProxy(
-                    req.getRemoteAddr(),
-                    req.getHeader("X-Forwarded-Host"))), response);
+                    remoteAddr,
+                    forwardedHost)), response);
         } else {
+            LOG.warn("filter request does not extend from HttpServletRequest and thus all forwarded by headers will process unchecked!" + request.getClass().getCanonicalName());
             chain.doFilter(request, response);
         }
     }
