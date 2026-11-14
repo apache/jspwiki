@@ -16,6 +16,15 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+
+**2026-11-14  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-06_
+
+
+* Fix for [JSPWIKI-684](https://issues.apache.org/jira/browse/JSPWIKI-684): the HTML to wiki translator converts the line breaks of a plugin that has plugins nested in it, so saving a page with the WYSIWYG editor no longer adds backslashes to it ([PR#559](https://github.com/apache/jspwiki/pull/559))
+
+
 **2026-11-14 Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.1-git-05_
@@ -76,8 +85,6 @@ under the License.
 * Fix for [JSPWIKI-1322](https://issues.apache.org/jira/browse/JSPWIKI-1322): the page no longer flashes on reload, because the header keeps its space in the page instead of a script pushing the content down after the page has loaded, and the panes of the tabs, as in the login page, stay hidden until the script has built the tabs ([PR#576](https://github.com/apache/jspwiki/pull/576))
 * [JSPWIKI-1352](https://issues.apache.org/jira/browse/JSPWIKI-1352): JDOM to 2.0.6.1; the filter around the HTML parser of the HTML to wiki translator accepts the external entity features that JDOM sets on its reader ([PR#584](https://github.com/apache/jspwiki/pull/584))
 * [JSPWIKI-530](https://issues.apache.org/jira/browse/JSPWIKI-530): new `LanguagePlugin` that shows the block of its body that matches the `Accept-Language` header of the visitor, based on the code that Ulf Dittmer attached to the issue ([PR#596](https://github.com/apache/jspwiki/pull/596))
-* Fix for [JSPWIKI-684](https://issues.apache.org/jira/browse/JSPWIKI-684): the HTML to wiki translator converts the line breaks of a plugin that has plugins nested in it, so saving a page with the WYSIWYG editor no longer adds backslashes to it ([PR#559](https://github.com/apache/jspwiki/pull/559))
-
 
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
 
