@@ -21,14 +21,14 @@ under the License.
 * _3.0.1-git-08_
 
 * Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): a user can be subscribed to a page and gets an e-mail when the page changes. The subscriptions are kept in the user profile; the new `SubscriptionManager` sends the mails from a background thread and `jspwiki.subscription.baseURL` sets the host of the links. The subscribe button follows in a separate change.
-
+* Fix for [JSPWIKI-1297](https://issues.apache.org/jira/browse/JSPWIKI-1297): see jira for details
 
 **2026-11-14  Alex O'ree (alexoree AT apache DOT org)**
 
 * _3.0.1-git-07_
 
-* [JSPWIKI-1296](https://issues.apache.org/jira/browse/JSPWIKI-1206) see jira fo details
-* [JSPWIKI-1289](https://issues.apache.org/jira/browse/JSPWIKI-1289) see jira fo details
+* [JSPWIKI-1296](https://issues.apache.org/jira/browse/JSPWIKI-1206) see jira for details
+* [JSPWIKI-1289](https://issues.apache.org/jira/browse/JSPWIKI-1289) see jira for details
 
 **2026-11-14  Arturo Bernal (abernal AT apache DOT org)**
 
