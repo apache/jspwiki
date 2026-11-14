@@ -88,6 +88,35 @@
    </filter-mapping>
    
    <filter>
+      <filter-name>ForwardedHeaderFilter</filter-name>
+      <filter-class>org.apache.wiki.http.filter.ForwardedHeaderFilter</filter-class>
+      <init-param>
+          <description>used when jspwiki is behind a reverse proxy, this is a CSV of either
+          CIDR style ip addresses or hostnames. Requests that do no match both conditions will not honor
+              x-forwarded-by headers.
+             FYI, The filter has extensive logging for diagnostic purposes.
+          </description>
+          <param-name>trustedProxies</param-name>
+          <param-value></param-value>
+      </init-param>
+       <init-param>
+          <description>used when jspwiki is behind a reverse proxy, this is a CSV 
+          hostnames and ip addresses that are legitimate public addresses that route
+          to jspwiki. Requests that do no match both conditions will not honor
+              x-forwarded-by headers.
+            FYI, The filter has extensive logging for diagnostic purposes.
+          </description>
+          <param-name>allowedHosts</param-name>
+          <param-value></param-value>
+      </init-param>
+    </filter>
+
+    <filter-mapping>
+      <filter-name>ForwardedHeaderFilter</filter-name>
+      <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    
+   <filter>
       <filter-name>CsrfProtectionFilter</filter-name>
       <filter-class>org.apache.wiki.http.filter.CsrfProtectionFilter</filter-class>
     </filter>

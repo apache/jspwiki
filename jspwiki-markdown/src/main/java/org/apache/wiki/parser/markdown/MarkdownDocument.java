@@ -33,6 +33,7 @@ import org.apache.oro.text.regex.Pattern;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.markdown.MarkdownForJSPWikiExtension;
+import org.apache.wiki.markdown.extensions.attributesanitizer.AttributeSanitizerExtension;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 
@@ -76,7 +77,10 @@ public class MarkdownDocument extends WikiDocument {
                                                                          DefinitionExtension.create(),
                                                                          FootnoteExtension.create(),
                                                                          TablesExtension.create(),
-                                                                         TocExtension.create() } ) );
+                                                                         TocExtension.create(),
+                                                                         // must be registered last, so its attribute provider sees (and can strip)
+                                                                         // the author-supplied attributes assigned by AttributesExtension
+                                                                         AttributeSanitizerExtension.create() } ) );
         return options;
     }
 
