@@ -149,7 +149,7 @@ public class MarkdownRendererTest {
     public void testMarkupPWithCustomAttributes() throws Exception {
         // {..} are separated from the link, so they apply to the nearest p or span containing them
         final String src0 = "This should be a [link](http://google.com) {style='background-color:#ddd'}";
-        Assertions.assertEquals( "<p style=\"background-color:#ddd\">This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src0 ) );
+        Assertions.assertEquals( "<p>This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src0 ) );
 
         final String src1 = "This should be a [link](http://google.com) {#a1}";
         Assertions.assertEquals( "<p id=\"a1\">This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src1 ) );

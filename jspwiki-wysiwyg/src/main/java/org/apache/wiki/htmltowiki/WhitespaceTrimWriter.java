@@ -67,25 +67,55 @@ public class WhitespaceTrimWriter extends Writer {
 
     private String replacePluginNewlineBackslashes( String s )
     {
-        final Pattern p = Pattern.compile( "\\{\\{\\{(.*?)\\}\\}\\}|\\{\\{(.*?)\\}\\}|\\[\\{(.*?)\\}\\]", Pattern.DOTALL
-                                                                                                    + Pattern.MULTILINE );
+        final Pattern p = Pattern.compile( "\\{\\{\\{(.*?)\\}\\}\\}|\\{\\{(.*?)\\}\\}|\\[\\{", Pattern.DOTALL + Pattern.MULTILINE );
         final Matcher m = p.matcher( s );
-        final StringBuffer sb = new StringBuffer();
-        while( m.find() )
+        final StringBuilder sb = new StringBuilder();
+        int pos = 0;
+        while( m.find( pos ) )
         {
-            final String groupEscaped = m.group().replaceAll( "\\\\|\\$", "\\\\$0" );
-            if( m.group( 3 ) != null )
+            final boolean plugin = s.startsWith( "[{", m.start() );
+            final int end = plugin ? endOfPlugin( s, m.start() ) : m.end();
+            if( end < 0 )
             {
-                m.appendReplacement( sb, groupEscaped.replaceAll( "\\\\\\\\\\\\\\\\", "\n" ) );
+                sb.append( s, pos, m.end() );
+                pos = m.end();
+                continue;
             }
-            else
+            sb.append( s, pos, m.start() );
+            final String text = s.substring( m.start(), end );
+            sb.append( plugin ? text.replace( "\\\\", "\n" ) : text );
+            pos = end;
+        }
+        sb.append( s, pos, s.length() );
+        return sb.toString();
+    }
+
+    /**
+     *  Returns the index after the closing "}]" of the plugin that starts at {@code start}, counting the plugins nested in it.
+     *  When the brackets do not balance it falls back to the first "}]", and returns -1 when there is none.
+     */
+    private static int endOfPlugin( final String s, final int start )
+    {
+        int depth = 0;
+        for( int i = start; i < s.length() - 1; i++ )
+        {
+            if( s.startsWith( "[{", i ) )
             {
-                m.appendReplacement( sb, groupEscaped );
+                depth++;
+                i++;
+            }
+            else if( s.startsWith( "}]", i ) )
+            {
+                depth--;
+                if( depth == 0 )
+                {
+                    return i + 2;
+                }
+                i++;
             }
         }
-        m.appendTail( sb );
-        s = sb.toString();
-        return s;
+        final int first = s.indexOf( "}]", start + 2 );
+        return first < 0 ? -1 : first + 2;
     }
 
     /**

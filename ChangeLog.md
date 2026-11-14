@@ -17,6 +17,31 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-11-14  Alex O'ree (alexoree AT apache DOT org)**
+
+* _3.0.1-git-07_
+
+* [JSPWIKI-1296](https://issues.apache.org/jira/browse/JSPWIKI-1206) see jira fo details
+* [JSPWIKI-1289](https://issues.apache.org/jira/browse/JSPWIKI-1289) see jira fo details
+
+**2026-11-14  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-06_
+
+
+* Fix for [JSPWIKI-684](https://issues.apache.org/jira/browse/JSPWIKI-684): the HTML to wiki translator converts the line breaks of a plugin that has plugins nested in it, so saving a page with the WYSIWYG editor no longer adds backslashes to it ([PR#559](https://github.com/apache/jspwiki/pull/559))
+* Fix for [JSPWIKI-1226](https://issues.apache.org/jira/browse/JSPWIKI-1226): the links of the entries and of the feed are absolute in the RSS 1.0, RSS 2.0 and Atom feeds ([PR#535](https://github.com/apache/jspwiki/pull/535))
+
+
+**2026-11-14 Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.1-git-05_
+
+* Fix for [JSPWIKI-1351](https://issues.apache.org/jira/browser/JSPWIKI-1351) see jira for details
+
+
+
+
 **2026-11-04 Arturo Bernal (abernal AT apache DOT org)**
 
 * _3.0.1-git-04_
@@ -30,6 +55,11 @@ under the License.
 * Bump `jackson-databind` from 3.2.2 to 3.2.4 ([PR#587](https://github.com/apache/jspwiki/pull/587))
 * Bump `jacoco-maven-plugin` from 0.8.14 to 0.8.16 ([PR#586](https://github.com/apache/jspwiki/pull/586))
 * Bump `cargo-maven3-plugin` from 1.10.28 to 1.10.30 ([PR#581](https://github.com/apache/jspwiki/pull/581))
+* Bump `commons-lang3` from 3.20.0 to 3.21.0 ([PR#592](https://github.com/apache/jspwiki/pull/592))
+* Bump `maven-failsafe-plugin` from 3.6.0 to 3.6.1 ([PR#593](https://github.com/apache/jspwiki/pull/593))
+* Bump `jaxen` from 2.0.0 to 2.0.6 ([PR#595](https://github.com/apache/jspwiki/pull/595))
+* Bump `mockito` from 5.20.0 to 5.24.0 ([PR#601](https://github.com/apache/jspwiki/pull/601))
+* Bump `sonar-maven-plugin` from 5.3.0.6276 to 5.8.0.7211 ([PR#601](https://github.com/apache/jspwiki/pull/601))
 * [JSPWIKI-1254](https://issues.apache.org/jira/browse/JSPWIKI-1254): the lock of a user profile works: a locked profile cannot log in, and the XML and the JDBC user databases keep the lock expiry ([PR#550](https://github.com/apache/jspwiki/pull/550))
 * [JSPWIKI-1254](https://issues.apache.org/jira/browse/JSPWIKI-1254): passwords expire after the number of days of `jspwiki.credentials.expiry.days`, which is off by default ([PR#551](https://github.com/apache/jspwiki/pull/551))
 * [JSPWIKI-1254](https://issues.apache.org/jira/browse/JSPWIKI-1254): optional warning by e-mail, lock and deletion of the accounts whose password gets old, with `jspwiki.credentials.expiry.warnDays`, `jspwiki.credentials.lock.days` and `jspwiki.credentials.delete.days` ([PR#553](https://github.com/apache/jspwiki/pull/553))
@@ -65,7 +95,6 @@ under the License.
 * [JSPWIKI-530](https://issues.apache.org/jira/browse/JSPWIKI-530): new `LanguagePlugin` that shows the block of its body that matches the `Accept-Language` header of the visitor, based on the code that Ulf Dittmer attached to the issue ([PR#596](https://github.com/apache/jspwiki/pull/596))
 * Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): the "More..." menu of the default template has an entry to be notified of the changes of the page, or to stop being notified. It posts, with the anti-CSRF token, to the new `Subscribe.jsp`, which needs a logged-in user with an e-mail address in the profile.
 * Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): the editors of the default template have a "Notify me of changes" box, so a user can subscribe to a page while writing it, also when it is a new page. `Edit.jsp` subscribes the user after the save, when the profile has an e-mail address.
-
 
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
 
