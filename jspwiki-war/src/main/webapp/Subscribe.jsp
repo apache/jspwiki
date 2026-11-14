@@ -54,7 +54,7 @@
       // not a user of the wiki user database, so there is no profile to keep the subscription in
   }
   if( email == null || email.trim().isEmpty() ) {
-      response.sendRedirect( wiki.getURL( ContextEnum.WIKI_PREFS.getRequestContext(), null, null ) );
+      response.sendRedirect( wiki.getURL( ContextEnum.WIKI_PREFS.getRequestContext(), null, null ) + "?tab=profile&subscribe=email" );
       return;
   }
 
