@@ -117,9 +117,7 @@ public class Image implements Plugin {
     
     /**
      *  Accepts an author-supplied style only if every declaration sets an allow-listed presentational property.
-     *  CSS escapes and functions (backslash, parentheses) and negative lengths are rejected outright: they could
-     *  disguise a forbidden property (<tt>\\70 osition</tt>), smuggle a URL (<tt>url(...)</tt>), or drag the
-     *  rendered box over other page content (<tt>margin-top:-9999px</tt>).
+     *  CSS escapes, functions, and negative lengths are rejected outright.
      *
      *  @param style the author-supplied style parameter, already entity-encoded
      *  @return true if every declaration is allow-listed
@@ -138,7 +136,7 @@ public class Image implements Plugin {
             }
             final String property = declaration.substring( 0, colon ).trim().toLowerCase( Locale.ENGLISH );
             final String value = declaration.substring( colon + 1 );
-            if( !SAFE_STYLE_PROPERTIES.contains( property ) || value.matches( ".*-\\s*\\.?\\d.*" ) ) {
+            if( !SAFE_STYLE_PROPERTIES.contains( property ) || containsNegativeNumber( value ) ) {
                 return false;
             }
         }
@@ -146,16 +144,52 @@ public class Image implements Plugin {
     }
 
     /**
-     *  Restricts the <tt>class</tt> parameter to a whitespace-separated list of CSS identifiers, so it cannot
-     *  carry CSS or markup fragments.
+     *  Procedurally detects negative numbers or offsets (e.g., -5px, - 0.5em) in CSS values
+     *  in O(N) time without regular expressions, preventing ReDoS vulnerabilities.
+     */
+    private static boolean containsNegativeNumber( final String val ) {
+        final int len = val.length();
+        for( int i = 0; i < len; i++ ) {
+            if( val.charAt( i ) == '-' ) {
+                int j = i + 1;
+                while( j < len && Character.isWhitespace( val.charAt( j ) ) ) {
+                    j++;
+                }
+                if( j < len ) {
+                    final char c = val.charAt( j );
+                    if( Character.isDigit( c ) ) {
+                        return true;
+                    }
+                    if( c == '.' && j + 1 < len && Character.isDigit( val.charAt( j + 1 ) ) ) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     *  Restricts the <tt>class</tt> parameter to a whitespace-separated list of CSS identifiers,
+     *  refactored to avoid nested quantifiers and prevent ReDoS.
      *
      *  @param cssclass the author-supplied class parameter
      *  @return true if it is a plain list of identifiers
      */
     static boolean isSafeCssClass( final String cssclass ) {
-        return cssclass.matches( "[\\w][\\w-]*(\\s+[\\w][\\w-]*)*" );
+        if( cssclass == null || cssclass.isEmpty() ) {
+            return false;
+        }
+        final String[] tokens = cssclass.trim().split( "\\s+" );
+        for( final String token : tokens ) {
+            if( !token.matches( "[\\w][\\w-]*" ) ) {
+                return false;
+            }
+        }
+        return true;
     }
 
+    
     private boolean needsSanitization(String link) {
         String testVal = link.toLowerCase().replaceAll("\\s+", "").trim();
         if (testVal.startsWith("data")
