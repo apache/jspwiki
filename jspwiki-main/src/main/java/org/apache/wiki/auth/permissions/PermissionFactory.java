@@ -19,8 +19,11 @@
 package org.apache.wiki.auth.permissions;
 
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.util.Synchronizer;
 
 import java.util.WeakHashMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -42,6 +45,16 @@ public final class PermissionFactory
      *  cached page permissions.
      */
     private static final WeakHashMap<String, PagePermission> c_cache = new WeakHashMap<>();
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private static final ReentrantLock lock = new ReentrantLock();
     
     /**
      *  Get a permission object for a WikiPage and a set of actions.
@@ -77,7 +90,6 @@ public final class PermissionFactory
      */
     private static PagePermission getPagePermission( final String wiki, String page, final String actions )
     {
-        PagePermission perm;
         //
         //  The cache key must uniquely identify the (wiki, page, actions) triple.  The previous
         //  XOR-of-hashCodes key allowed two different pages to collide onto the same 32-bit
@@ -86,28 +98,26 @@ public final class PermissionFactory
         //  collision-free for any attacker-choosable page name.
         //
         final String key = wiki + ":" + page + ":" + actions;
-   
+        final AtomicReference<PagePermission> permRef = new AtomicReference<>();
+
         //
         //  It's fine if two threads update the cache, since the objects mean the same
         //  thing anyway.  And this avoids nasty blocking effects.
         //
-        synchronized( c_cache )
+        Synchronizer.synchronize( lock, () -> permRef.set( c_cache.get( key ) ) );
+
+        if( permRef.get() == null )
         {
-            perm = c_cache.get( key );
+            if( !wiki.isEmpty() ) page = wiki + ":" + page;
+            final PagePermission newPerm = new PagePermission( page, actions );
+
+            Synchronizer.synchronize( lock, () -> c_cache.put( key, newPerm ) );
+
+            return newPerm;
         }
-        
-        if( perm == null )
-        {
-            if( !wiki.isEmpty() ) page = wiki+":"+page;
-            perm = new PagePermission( page, actions );
-            
-            synchronized( c_cache )
-            {
-                c_cache.put( key, perm );
-            }
-        }
-        
-        return perm;
+
+        return permRef.get();
     }
+
 
 }

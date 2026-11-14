@@ -38,6 +38,7 @@ import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.TimedCounterList;
 
@@ -61,6 +62,7 @@ import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.auth.user.UserProfile;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -112,6 +114,16 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
 
     /** Keeps a list of the usernames who have attempted a login recently. */
     private final TimedCounterList< String > m_lastLoginAttempts = new TimedCounterList<>();
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * {@inheritDoc}
@@ -476,16 +488,20 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
      * {@inheritDoc}
      */
     @Override
-    public synchronized void addWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.addWikiEventListener( this, listener );
+    public void addWikiEventListener( final WikiEventListener listener ) {
+        Synchronizer.synchronize(lock, () -> {
+            WikiEventManager.addWikiEventListener( this, listener );
+        });
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public synchronized void removeWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.removeWikiEventListener( this, listener );
+    public void removeWikiEventListener( final WikiEventListener listener ) {
+        Synchronizer.synchronize(lock, () -> {
+            WikiEventManager.removeWikiEventListener( this, listener );
+        });
     }
 
     /**
