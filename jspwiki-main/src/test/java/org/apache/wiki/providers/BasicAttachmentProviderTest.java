@@ -135,6 +135,18 @@ public class BasicAttachmentProviderTest {
     }
 
     @Test
+    public void testAttachmentNamedWithDotsDoesNotLeaveItsDirectory() throws Exception {
+        final File in = makeAttachmentFile();
+        // the directory of the page has to exist for the names . and .. to be found there
+        m_provider.putAttachmentData( Wiki.contents().attachment( m_engine, NAME1, "seed.txt" ), Files.newInputStream( in.toPath() ) );
+
+        for( final String name : new String[] { ".", ".." } ) {
+            final Attachment att = Wiki.contents().attachment( m_engine, NAME1, name );
+            Assertions.assertThrows( ProviderException.class, () -> m_provider.putAttachmentData( att, Files.newInputStream( in.toPath() ) ), "the name '" + name + "'" );
+        }
+    }
+
+    @Test
     public void testGetAttachmentDataRaisesProviderExceptionIfInexistentFileOnDisk() {
         final Attachment att = Wiki.contents().attachment( m_engine, NAME1, "test1.txt" );
         Assertions.assertThrows( ProviderException.class, () -> m_provider.getAttachmentData( att ) );
