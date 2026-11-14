@@ -154,6 +154,14 @@
              placeholder="<fmt:message key='editor.plain.changenote'/>"
              value="${changenote}" />
       </li>
+      <wiki:UserCheck status="authenticated">
+      <li class="dropdown-header">
+        <label class="checkbox-inline">
+          <input type="checkbox" name="subscribe" id="subscribe" value="true" />
+          <fmt:message key="editor.subscribe"/>
+        </label>
+      </li>
+      </wiki:UserCheck>
       </wiki:CheckRequestContext>
       <wiki:CheckRequestContext context="comment">
       <li class="divider" />
