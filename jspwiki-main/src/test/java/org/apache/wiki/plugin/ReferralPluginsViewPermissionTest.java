@@ -36,7 +36,7 @@ import static org.apache.wiki.TestEngine.with;
 /** The plugins that list pages are shown to everybody, so they must not tell about a page that the viewer may not view. */
 public class ReferralPluginsViewPermissionTest {
 
-    private static final String[] PAGES = { "RpvTarget", "RpvPublic", "RpvSecret", "RpvJanne" };
+    private static final String[] PAGES = { "RpvTarget", "RpvPublic", "RpvSecret", "RpvJanne", "RpvSecretOrphan", "RpvJanneOrphan" };
 
     private TestEngine engine;
 
@@ -44,9 +44,11 @@ public class ReferralPluginsViewPermissionTest {
     public void setUp() throws Exception {
         engine = TestEngine.build( with( "jspwiki.cache.enable", "false" ) );
         engine.saveText( "RpvTarget", "The page that the other pages link to." );
-        engine.saveText( "RpvSecret", "[{ALLOW view Admin}]\nOnly the administrators. It links to [RpvTarget] and to [RpvPublic]." );
+        engine.saveText( "RpvSecret", "[{ALLOW view Admin}]\nOnly the administrators. It links to [RpvTarget], to [RpvPublic] and to [RpvUndefinedFromSecret]." );
         engine.saveText( "RpvJanne", "[{ALLOW view janne}]\nOnly janne. It links to [RpvTarget]." );
-        engine.saveText( "RpvPublic", "Everybody. It links to [RpvSecret] and to [RpvTarget]." );
+        engine.saveText( "RpvPublic", "Everybody. It links to [RpvSecret], to [RpvTarget] and to [RpvUndefinedPublic]." );
+        engine.saveText( "RpvSecretOrphan", "[{ALLOW view Admin}]\nOnly the administrators. Nobody links to it." );
+        engine.saveText( "RpvJanneOrphan", "[{ALLOW view janne}]\nOnly janne. Nobody links to it." );
     }
 
     @AfterEach
@@ -103,6 +105,30 @@ public class ReferralPluginsViewPermissionTest {
     }
 
     @Test
+    public void testUnusedPagesPluginDoesNotListAProtectedPage() throws Exception {
+        final String html = run( anonymous(), "UnusedPagesPlugin" );
+
+        Assertions.assertFalse( html.contains( "RpvSecretOrphan" ), html );
+        Assertions.assertFalse( html.contains( "RpvJanneOrphan" ), html );
+    }
+
+    @Test
+    public void testUndefinedPagesPluginDoesNotShowALinkWrittenOnlyInAProtectedPage() throws Exception {
+        final String html = run( anonymous(), "UndefinedPagesPlugin" );
+
+        Assertions.assertTrue( html.contains( "RpvUndefinedPublic" ), html );
+        Assertions.assertFalse( html.contains( "RpvUndefinedFromSecret" ), html );
+    }
+
+    @Test
+    public void testReferringUndefinedPagesPluginDoesNotListAProtectedPage() throws Exception {
+        final String html = run( anonymous(), "ReferringUndefinedPagesPlugin" );
+
+        Assertions.assertTrue( html.contains( "RpvPublic" ), html );
+        Assertions.assertFalse( html.contains( "RpvSecret" ), html );
+    }
+
+    @Test
     public void testAuthorizedViewerStillSeesTheirPage() throws Exception {
         final Context context = janne();
 
@@ -111,6 +137,9 @@ public class ReferralPluginsViewPermissionTest {
         Assertions.assertTrue( referring.contains( "RpvJanne" ), referring );
         Assertions.assertFalse( referring.contains( "RpvSecret" ), referring );
         Assertions.assertTrue( run( context, "ReferredPagesPlugin page=RpvJanne" ).contains( "RpvTarget" ) );
+        final String unused = run( context, "UnusedPagesPlugin" );
+        Assertions.assertTrue( unused.contains( "RpvJanneOrphan" ), unused );
+        Assertions.assertFalse( unused.contains( "RpvSecretOrphan" ), unused );
     }
 
 }
