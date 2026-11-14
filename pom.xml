@@ -80,7 +80,7 @@
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
     <junit.version>6.1.3</junit.version>
     <log4j2.version>2.26.1</log4j2.version>
-    <lucene.version>9.12.2</lucene.version>
+    <lucene.version>10.6.0</lucene.version>
     <mockito.version>5.24.0</mockito.version>
     <neko-htmlunit.version>5.7.0</neko-htmlunit.version>
     <oro.version>2.0.8</oro.version>
