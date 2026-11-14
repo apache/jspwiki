@@ -356,4 +356,12 @@ public class TextUtilTest {
         Assertions.assertEquals( "ThisIsALink", TextUtil.cleanString( " [ This is a link ] ", TextUtil.LEGACY_CHARS_ALLOWED ) );
     }
 
+    @Test
+    public void testCleanStringKeepsSuperscriptDigits() {
+        Assertions.assertEquals( "Metre\u00b2", TextUtil.cleanString( "Metre\u00b2", TextUtil.PUNCTUATION_CHARS_ALLOWED ) );
+        Assertions.assertEquals( "Metre\u00b3", TextUtil.cleanString( "Metre\u00b3", TextUtil.PUNCTUATION_CHARS_ALLOWED ) );
+        Assertions.assertEquals( "Note\u00b9", TextUtil.cleanString( "Note\u00b9", TextUtil.PUNCTUATION_CHARS_ALLOWED ) );
+        Assertions.assertEquals( "Metre", TextUtil.cleanString( "Metre\u00b2", TextUtil.LEGACY_CHARS_ALLOWED ) );
+    }
+
 }

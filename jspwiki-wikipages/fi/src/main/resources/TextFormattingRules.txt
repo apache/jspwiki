@@ -1,0 +1,166 @@
+Tämä sivu kuvaa JSPWikin käyttämän wikisyntaksin. Tietoa siitä, miten se eroaa Wikipedian käyttämästä syntaksista, löytyy sivulta [MigratingFromMediaWiki|JSPWiki:MigratingFromMediaWiki].
+
+[{TableOfContents }]
+\\
+Kun olet selvittänyt, miten editori toimii, lue [WikiEtiquette], jotta tiedät, miten käytät uusia taitojasi. [SandBox|http://sandbox.jspwiki.org] on erinomainen paikka kokeilla niitä.
+!Pikaopas
+{{{
+----       = tee vaakaviiva. Ylimääräiset '-'-merkit ohitetaan.
+\\         = pakota rivinvaihto
+
+[link]     = luo hyperlinkin sisäiselle WikiPage-sivulle nimeltä 'Link'.
+[this is also a link] = luo hyperlinkin sisäiselle WikiPage-sivulle nimeltä
+             'ThisIsAlsoALink', mutta näyttää linkin sellaisena kuin se kirjoitettiin, välilyönteineen.
+[a sample|link] = luo hyperlinkin sisäiselle WikiPage-sivulle nimeltä
+             'Link', mutta näyttää käyttäjälle tekstin 'a sample'
+             tekstin 'Link' sijaan.
+~NoLink    = estä linkin luominen CamelCase-muotoiselle sanalle.
+[1]        = tee viittaus alaviitteeseen numero 1.
+[#1]       = merkitse alaviite numero 1.
+[[link]     = luo tekstin '[link]'.
+
+!heading   = pieni otsikko, jonka teksti on 'heading'
+!!heading  = keskikokoinen otsikko, jonka teksti on 'heading'
+!!!heading = suuri otsikko, jonka teksti on 'heading'
+
+''text''   = tulosta 'text' kursiivilla.
+__text__   = tulosta 'text' lihavoituna.
+{{text}}   = tulosta 'text' tasalevyisellä fontilla.
+[text|]    = tulosta 'text' alleviivattuna (valelinkki)
+* text     = tee luettelokohta, jonka teksti on 'text'
+# text     = tee numeroitu luettelokohta, jonka teksti on 'text'
+;term:ex   = tee käsitteelle 'term' määritelmä selityksellä 'ex'
+}}}
+!Tekstin kirjoittaminen
+Wikin käyttö ei vaadi wikin tekstimuotoilusääntöjen tuntemista. Kirjoita vain tavallista tekstiä ja merkitse kappaleet tyhjällä rivillä.
+Se on aivan kuin sähköpostin kirjoittamista.
+Voit aina muokata tätä sivua (katso vasenta sivupalkkia) nähdäksesi, miten tämän sivun erilaisia
+tehosteita on käytetty.
+!Hyperlinkit
+Linkki voi olla myös suora URL-osoite, joka alkaa merkinnällä {{http:}}, {{ftp:}}, {{mailto:}}, {{https:}} tai {{news:}}, jolloin linkki osoittaa ulkoiseen kohteeseen. Jos esimerkiksi haluat osoittaa java.sun.com-kotisivulle, käytä merkintää {{[[http://java.sun.com]}}, josta tulee [http://java.sun.com/], tai {{[[Javan kotisivu|http://java.sun.com]}}, josta tulee [Javan kotisivu|http://java.sun.com].
+Jos et aloita linkkiä jollakin edellä mainituista "protokollista", wiki olettaa tavallisen linkin toiselle wikitilan sivulle, jolloin sivun nimen ensimmäisen merkin on oltava kirjain; pelkästään numeroista koostuvat sivunimet eivät ole sallittuja. Jos haluat käyttää hakasulkeita ({{[[]}}) sivulla luomatta hyperlinkkiä, käytä kahta alkuhakasulketta. Teksti {{[[[Example Non-Link]}} näkyy siis muodossa {{[[Example Non-Link]}}.
+Uuden sivun lisäät luomalla linkin siihen jostakin muualta. Eihän sivusta ole paljon hyötyä, jos siihen ei pääse! Kun palaat sille sivulle, näet sivun nimen alleviivattuna punaisella katkoviivalla. Napsauta sitä, niin olet luonut uuden sivun!
+[WikiName|JSPWiki:WikiName]-nimessä saa käyttää lähes mitä tahansa merkkejä, kunhan ne
+ovat kirjaimia tai numeroita.
+Huomaa myös, että tämä wiki voidaan määrittää tukemaan tavallista [CamelCase|JSPWiki:CamelCase]-linkitystä (jos se on tuettu, sanan CamelCase pitäisi olla linkki, ellei se ala merkeillä '~~'). Se on oletuksena pois päältä, mutta jos ystävällinen ylläpitäjäsi on ottanut sen käyttöön, niin CamelCase-sanoja saa sitten käyttää vapaasti =).
+!Alaviitteet
+Nämä ovat erityinen hyperlinkkien laji. Kun hyperlinkin sisällä on pelkkä numero,
+luot viittauksen alaviitteeseen, kuten tässä {{[[1]}}, joka
+luo alaviitteen[1]. Varsinaisen alaviitteen teet laittamalla {{[[#1]}}
+siihen kohtaan, johon alaviitteen halutaan osoittavan. Katso alaviite alta.
+Voit tehdä myös nimetyn alaviitteen aivan kuten tavallisen hyperlinkin, esimerkiksi {{[[Alaviitteen nimi|1]}}, mikä on toinen tapa viitata ensimmäiseen alaviitteeseen[Alaviitteen nimi|1]. Tai voit laittaa oman nimen itse alaviitteeseen[2].
+![InterWiki|JSPWiki:InterWiki]-linkit
+Voit tehdä linkkejä myös eri wikien välillä tuntematta URL-osoitetta. Käytä vain linkkiä muodossa {{[[Wiki:WikiPage]}}, niin JSPWiki luo linkin puolestasi. Esimerkiksi tämä linkki osoittaa [JSPWikin tekstimuotoilusääntöihin|JSPWiki:TextFormattingRules]. Sivulta [SystemInfo] näet lisätietoa siitä, mitkä wikilinkit ovat käytettävissä.
+Jos [InterWiki|JSPWiki:InterWiki]-linkkiä ei tueta, saat siitä ilmoituksen sivulle, kun
+tallennat sivusi.
+!Kuvien lisääminen
+Voit upottaa
+minkä tahansa kuvan wikikoodiin asettamalla kuvan saataville jonnekin verkkoon jossakin sallituista muodoista ja linkittämällä siihen.
+Jos annat linkille tekstin ({{[[this one here|http://example.com/example.png]}}), siitä tulee
+ALT-teksti niille, jotka eivät voi tai halua katsoa kuvia.
+Hyväksyttyjen kuvatyyppien luettelo riippuu wikistä. Eri kuvatyyppien luettelon näet sivulta [SystemInfo].
+Voit myös käyttää [Image-liitännäistä|JSPWiki:Image] saadaksesi enemmän hallintaa kuvan sijoitteluun ja ominaisuuksiin.
+Pakottaaksesi tekstin jatkumaan kuvan alapuolelta käytä merkintää \ \ \ (eli kolme peräkkäistä kenoviivaa kahden sijaan).
+!Luettelot
+Käytä tähteä (*) ensimmäisessä sarakkeessa tehdäksesi luettelon. Käytä useampaa tähteä saadaksesi syvempiä sisennyksiä. Esimerkiksi:
+{{{
+* Yksi \\ yksi ja puoli
+* Kaksi
+* Kolme
+** Kolme.Yksi}}}
+tekee
+* Yksi \\ yksi ja puoli
+* Kaksi
+* Kolme
+** Kolme.Yksi
+!Numeroidut luettelot
+Aivan kuten luetteloissa, mutta käytä risuaitaa (#) tähden sijaan. Näin:
+{{{
+# Yksi \\ yksi ja puoli
+# Kaksi
+# Kolme
+## Kolme.Yksi
+}}}
+tekee
+# Yksi \\ yksi ja puoli
+# Kaksi
+# Kolme
+## Kolme.Yksi
+Jos haluat kirjoittaa luettelokohdan usealle riville, lisää seuraavalle riville yksi tai useampi välilyönti, niin rivi liitetään automaattisesti
+edelliseen kohtaan. Esimerkiksi:
+{{{
+* Tämä on yhden rivin kohta.
+* Tämä on itse asiassa usean rivin kohta.
+  Jatkamme toista virkettä omalla rivillään.
+  Voimme aivan hyvin tehdä kolmannenkin rivin, kun kerran olemme asialla...
+  Huomaa kuitenkin, että kaikki nämä virkkeet tulevat yhden kohdan sisään!
+* Kolmas rivi on taas yhden rivin kohta mukavuutesi vuoksi.
+}}}
+tuottaa:
+* Tämä on yhden rivin kohta.
+* Tämä on itse asiassa usean rivin kohta.
+  Jatkamme toista virkettä omalla rivillään.
+  Voimme aivan hyvin tehdä kolmannenkin rivin, kun kerran olemme asialla...
+  Huomaa kuitenkin, että kaikki nämä virkkeet tulevat yhden kohdan sisään!
+* Kolmas rivi on taas yhden rivin kohta mukavuutesi vuoksi.
+!Määritelmäluettelot ja kommentit
+Yksinkertainen tapa tehdä määritelmäluettelo on käyttää ';:'-rakennetta:
+{{{
+;__Rakenne__:''Jotakin, jolla tehdään jotakin''
+}}}
+näkyy seuraavasti:
+;__Rakenne__:''Jotakin, jolla tehdään jotakin''
+Toinen hyvä käyttö ';:'-rakenteelle on se, että sillä voi kommentoida lyhyesti toisten kirjoittamaa tekstiä jättämällä määritelmän 'term'-osan tyhjäksi, näin:
+{{{
+;:''Kommentti tähän.''
+}}}
+Se näkyisi näin
+;:''Kommentti tähän.''
+!Tekstitehosteet
+Voit käyttää __lihavoitua__ tai ''kursivoitua'' tekstiä käyttämällä kahta alaviivaa (_) ja kahta yksinkertaista lainausmerkkiä ('). Jos käytät Windows-tietokonetta, varmista, että käytät oikeaa lainausmerkkiä, sillä on olemassa yksi, joka näyttää samalta mutta ei oikeasti ole sama.
+[Alleviivaus|] voidaan tehdä käyttämällä hyperlinkkiä ei mihinkään, [[tähän tapaan|]
+!Esimuotoiltu teksti
+Jos haluat lisätä esimuotoiltua tekstiä (kuten koodia), käytä kolmea peräkkäistä aaltosulkua ({) lohkon aloittamiseen ja kolmea peräkkäistä aaltosulkua (}) lohkon lopettamiseen. Katso esimerkki muokkaamalla tätä sivua.
+!Taulukot
+Voit tehdä yksinkertaisia taulukoita käyttämällä pystyviivoja ('|'). Käytä kahta peräkkäistä
+pystyviivaa taulukon otsikon aloittamiseen ja yksittäisiä pystyviivoja
+taulukon rivien kirjoittamiseen. Lopeta rivillä, joka ei ole taulukkoa.
+Esimerkiksi:
+{{{
+|| Otsikko 1 || Otsikko 2
+| ''Gobble'' | Bar \\ foo
+| [Main] | [SandBox]
+}}}
+antaa seuraavan taulukon. Huomaa, että linkkejä voi käyttää myös taulukoiden sisällä.
+|| Otsikko 1 || Otsikko 2
+| ''Gobble'' | Bar \\ foo
+| [Main] | [SandBox]
+!CSS-tyylit
+Vaikka se ei olekaan keep it simple -periaatteen mukaista, [CSS-tyylejä voi käyttää suoraan sivulla|JSPWiki:CSSInWikipages] niitä erityistilanteita varten, kun sivun jotakin osaa todella pitää korostaa.
+!Ristiriidat
+Jos joku sattuu muokkaamaan samaa sivua samaan aikaan kuin sinä, JSPWiki estää sinua tekemästä muutoksia ja näyttää sen sijaan ristiriitasivun. Valitettavasti ensimmäinen muutoksen tekijä voittaa...
+__Varoituksen sana:__ Jos käytät selaimen Takaisin-painiketta päästäksesi muokkaussivulle, saat lähes varmasti ristiriidan. Tämä johtuu siitä, että selain luulee yhä muokkaavansa sivun aiempaa kopiota.
+!Sivujen poistaminen
+Se ei ole mahdollista. Voit tietenkin poistaa kaikki linkit kyseiselle sivulle, jolloin siihen ei pääse. Tai voit lähettää sähköpostia ylläpitäjälle, ja minä poistan sivun. Voit myös lisätä [DELETEME|JSPWiki:DELETEME]-linkin.
+!Uusien sivujen lisääminen
+Luo linkki, joka osoittaa uuteen (ei vielä olemassa olevaan) sivuun, käyttäen sen [WikiName|JSPWiki:WikiName]-nimeä.
+Napsauta uutta linkkiä, jonka perässä pitäisi nyt olla kysymysmerkki (?), ja
+saat editorin uudelle sivulle. -- [Asser|JSPWiki:Asser]
+!Sivun alias
+Joskus haluat, että mikä tahansa linkki wikisivulle ohjaa heti toiselle sivulle. Se onnistuu [PageAlias]-sivun avulla.
+!Muuttujien lisääminen
+Sivulle voi lisätä monia muuttujia. Perusmuoto on:
+{{ [[{$variablename}], }}
+jossa ''variablename'' on lisättävän muuttujan nimi. Huomaa, että muuttujien nimet eivät ole kirjainkoosta riippuvaisia - eli "pagename" on sama kuin "paGeNamE" ja "PageName".
+Käytettävissä olevien muuttujien luettelon näet osoitteessa [WikiVariables|JSPWiki:WikiVariables].
+
+!Liitännäisten lisääminen
+Liitännäisen lisäämisen perusloitsu näyttää tältä:
+[[{INSERT <plugin class> WHERE param1=value, param2=value, ...}]
+Lisätietoja on sivulla [JSPWikiPlugins | JSPWiki:JSPWikiPlugins].
+----
+[#1] Tässä on alaviite, josta mainitsin.
+[2-Toinen alaviite|#2] Toinen alaviite. Huomaatko, että sen nimi on eri?
+----
+Onko sinulla [ideoita | JSPWiki:IdeasTextFormattingRules]?
+Onko sinulla [kysymyksiä | JSPWiki:TextFormattingRulesDiscussion]?

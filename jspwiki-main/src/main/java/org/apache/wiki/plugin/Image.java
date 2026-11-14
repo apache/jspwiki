@@ -27,6 +27,7 @@ import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.parser.LinkParsingOperations;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.util.TextUtil;
 
@@ -273,7 +274,7 @@ public class Image implements Plugin {
         }
 
         if(!context.getBooleanWikiProperty(MarkupParser.PROP_ALLOWHTML, false)) {
-            if (needsSanitization(src)) {
+            if (needsSanitization(src) && !LinkParsingOperations.isDataImage(src)) {
                 src = "http://invalid_url" + src;
             }
         }

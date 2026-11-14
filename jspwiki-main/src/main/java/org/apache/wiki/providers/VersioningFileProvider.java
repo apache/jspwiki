@@ -473,8 +473,10 @@ public class VersioningFileProvider extends AbstractFileProvider {
      */
     @Override
     public boolean pageExists( final String pageName, final int version ) {
-        if (version == PageProvider.LATEST_VERSION || version == findLatestVersion( pageName ) ) {
-            return pageExists(pageName);
+        final int latest = findLatestVersion( pageName );
+        // a page without history in OLD/ is version 1, see getPageInfo()
+        if( version == PageProvider.LATEST_VERSION || version == latest || ( version == 1 && latest == -1 ) ) {
+            return pageExists( pageName );
         }
 
         final File dir = findOldPageDir( pageName );

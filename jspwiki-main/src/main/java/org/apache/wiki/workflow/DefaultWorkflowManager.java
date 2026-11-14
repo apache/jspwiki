@@ -69,7 +69,7 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
         m_workflows = ConcurrentHashMap.newKeySet();
         m_approvers = new ConcurrentHashMap<>();
         m_queue = new DecisionQueue();
-        WikiEventEmitter.attach( this );
+        WikiEventEmitter.register( this );
     }
 
     /**
@@ -269,7 +269,7 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
      */
     @Override
     public void actionPerformed( final WikiEvent event ) {
-        if( event instanceof WorkflowEvent ) {
+        if( event instanceof WorkflowEvent && isOwnEvent( event ) ) {
             if( event.getSrc() instanceof Workflow ) {
                 final Workflow workflow = event.getSrc();
                 switch( event.getType() ) {
@@ -292,6 +292,29 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
             }
             serializeToDisk( new File( m_engine.getWorkDir(), SERIALIZATION_FILE ) );
         }
+    }
+
+    /**
+     * Workflow events are broadcast to every manager in the JVM, so each one has to tell if the event is about a workflow it tracks. A
+     * newly created Workflow is not tracked yet, so it belongs to the manager of the engine it was bound to, or to every manager if it
+     * was not bound to any.
+     *
+     * @param event a workflow event
+     * @return {@code true} if the event concerns a workflow of this manager
+     */
+    boolean isOwnEvent( final WikiEvent event ) {
+        if( event.getSrc() instanceof Workflow ) {
+            if( event.getType() == WorkflowEvent.CREATED ) {
+                final Engine engine = event.getArg( 0, Engine.class );
+                return engine == null || engine == m_engine;
+            }
+            return m_workflows.contains( event.< Workflow >getSrc() );
+        }
+        if( event.getSrc() instanceof Decision ) {
+            final int workflowId = event.< Decision >getSrc().getWorkflowId();
+            return m_workflows.stream().anyMatch( w -> w.getId() == workflowId );
+        }
+        return false;
     }
 
     /**

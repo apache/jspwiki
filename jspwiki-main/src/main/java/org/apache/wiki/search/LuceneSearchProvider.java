@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.classic.ClassicAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
@@ -35,14 +36,23 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.StoredFields;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queries.spans.SpanMultiTermQueryWrapper;
+import org.apache.lucene.queries.spans.SpanNearQuery;
+import org.apache.lucene.queries.spans.SpanQuery;
+import org.apache.lucene.queries.spans.SpanTermQuery;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MultiTermQuery;
+import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
@@ -470,7 +480,7 @@ public class LuceneSearchProvider implements SearchProvider {
         try( final Directory luceneDir = new NIOFSDirectory( new File( m_luceneDirectory ).toPath() );
              final IndexReader reader = DirectoryReader.open( luceneDir ) ) {
             final String[] queryfields = { LUCENE_PAGE_CONTENTS, LUCENE_PAGE_NAME, LUCENE_AUTHOR, LUCENE_ATTACHMENTS, LUCENE_PAGE_KEYWORDS };
-            final QueryParser qp = new MultiFieldQueryParser( queryfields, getLuceneAnalyzer() );
+            final QueryParser qp = new SeparatorAwareQueryParser( queryfields, getLuceneAnalyzer() );
             final Query luceneQuery = qp.parse( query );
             final IndexSearcher searcher = new IndexSearcher( reader, searchExecutor );
 
@@ -493,7 +503,7 @@ public class LuceneSearchProvider implements SearchProvider {
                 if( page != null ) {
                     final PagePermission pp = new PagePermission( page, PagePermission.VIEW_ACTION );
                     if( mgr.checkPermission( wikiContext.getWikiSession(), pp ) ) {
-                        final int score = ( int ) ( hit.score * 100 );
+                        final int score = hits.scoreDocs[ 0 ].score > 0 ? Math.round( hit.score / hits.scoreDocs[ 0 ].score * 100 ) : 0;
 
                         // Get highlighted search contexts
                         final String text = doc.get( LUCENE_PAGE_CONTENTS );
@@ -580,6 +590,114 @@ public class LuceneSearchProvider implements SearchProvider {
             }
 
             m_watchdog.exitState();
+        }
+
+    }
+
+    /**
+     * Query parser that lets wildcard terms cross the separators the analyzer splits on. The index holds {@code snake} and {@code case}
+     * for {@code snake_case}, so a term like {@code snake_ca*} would never find it. Such a term is split on the same separators and
+     * matched as adjacent tokens instead, with the wildcard applied to the token it is in. A trailing separator, as in
+     * {@code snake_*}, only requires the tokens before it.
+     */
+    static final class SeparatorAwareQueryParser extends MultiFieldQueryParser {
+
+        private static final String NON_SEPARATORS = "[\\p{L}\\p{N}*?]*";
+        private static final String SEPARATORS = "[^\\p{L}\\p{N}*?]+";
+
+        SeparatorAwareQueryParser( final String[] fields, final Analyzer analyzer ) {
+            super( fields, analyzer );
+        }
+
+        @Override
+        protected Query getPrefixQuery( final String field, final String termStr ) throws ParseException {
+            final Query separated = field != null ? separated( field, termStr, true ) : null;
+            if( separated == null ) {
+                return super.getPrefixQuery( field, termStr );
+            }
+            try {
+                return either( super.getPrefixQuery( field, termStr ), separated );
+            } catch( final ParseException e ) {
+                return separated; // the default handling does not accept the term, the separated one does
+            }
+        }
+
+        /**
+         * A page name term with a {@code *} between other characters does not need a {@code *} at its end: {@code blog*26} is read as
+         * {@code blog*26*}, as a token of a name, such as {@code blogentry_021126_1}, goes on after the digits that are asked for.
+         */
+        @Override
+        protected Query getWildcardQuery( final String field, final String termStr ) throws ParseException {
+            final String term = LUCENE_PAGE_NAME.equals( field ) && termStr.matches( "[^*].*\\*.*[^*]" ) ? termStr + "*" : termStr;
+            final Query separated = field != null ? separated( field, term, false ) : null;
+            if( separated == null ) {
+                return super.getWildcardQuery( field, term );
+            }
+            try {
+                return either( super.getWildcardQuery( field, term ), separated );
+            } catch( final ParseException e ) {
+                return separated; // the default handling does not accept the term, the separated one does
+            }
+        }
+
+        /**
+         * Matches what either query matches. The default query is kept because the analyzer does not always split on a separator, so
+         * a token like {@code blogentry_021126_1} can hold it and only the default query finds it.
+         */
+        private static Query either( final Query defaultQuery, final Query separated ) {
+            return new BooleanQuery.Builder()
+                    .add( defaultQuery, BooleanClause.Occur.SHOULD )
+                    .add( separated, BooleanClause.Occur.SHOULD )
+                    .build();
+        }
+
+        /**
+         * Builds the query for a term that holds separators, or returns {@code null} if the default handling applies.
+         *
+         * @param prefix {@code true} if the term is a prefix whose trailing {@code *} has already been removed
+         */
+        private Query separated( final String field, final String termStr, final boolean prefix ) throws ParseException {
+            if( termStr.matches( NON_SEPARATORS ) ) {
+                return null;
+            }
+
+            final boolean endsWithSeparator = termStr.matches( ".*" + SEPARATORS );
+            final List< SpanQuery > clauses = new ArrayList<>();
+            final String[] segments = Arrays.stream( termStr.split( SEPARATORS ) ).filter( segment -> !segment.isEmpty() ).toArray( String[]::new );
+            for( int i = 0; i < segments.length; i++ ) {
+                final String segment = segments[ i ];
+                if( segment.indexOf( '*' ) != -1 || segment.indexOf( '?' ) != -1 ) {
+                    final Term term = new Term( field, getAnalyzer().normalize( field, segment ) );
+                    clauses.add( new SpanMultiTermQueryWrapper<>( new WildcardQuery( term ) ) );
+                } else if( prefix && i == segments.length - 1 && !endsWithSeparator ) {
+                    final Term term = new Term( field, getAnalyzer().normalize( field, segment ) );
+                    clauses.add( new SpanMultiTermQueryWrapper<>( new PrefixQuery( term ) ) );
+                } else {
+                    for( final String token : tokens( field, segment ) ) {
+                        clauses.add( new SpanTermQuery( new Term( field, token ) ) );
+                    }
+                }
+            }
+
+            if( clauses.isEmpty() ) {
+                return null;
+            }
+            return clauses.size() == 1 ? clauses.get( 0 ) : new SpanNearQuery( clauses.toArray( new SpanQuery[ 0 ] ), 0, true );
+        }
+
+        private List< String > tokens( final String field, final String text ) throws ParseException {
+            final List< String > tokens = new ArrayList<>();
+            try( final TokenStream stream = getAnalyzer().tokenStream( field, text ) ) {
+                final CharTermAttribute term = stream.addAttribute( CharTermAttribute.class );
+                stream.reset();
+                while( stream.incrementToken() ) {
+                    tokens.add( term.toString() );
+                }
+                stream.end();
+            } catch( final IOException e ) {
+                throw new ParseException( "Cannot analyze '" + text + "': " + e.getMessage() );
+            }
+            return tokens;
         }
 
     }

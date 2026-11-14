@@ -53,8 +53,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.codelibs</groupId>
-      <artifactId>nekohtml</artifactId>
+      <groupId>org.htmlunit</groupId>
+      <artifactId>neko-htmlunit</artifactId>
     </dependency>
 
     <dependency>

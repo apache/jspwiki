@@ -45,8 +45,9 @@ public class TextElementDecorator {
     public void decorate( final Text element ) {
         String s = element.getText();
         if( preStack.isEmpty() ) {
-            // remove all "line terminator" characters
-            s = s.replaceAll( "[\\r\\n\\f\\u0085\\u2028\\u2029]", "" );
+            // a line terminator within text is rendered as a space, whereas in markup-only whitespace it is not significant
+            final String replacement = s.isBlank() ? "" : " ";
+            s = s.replaceAll( "[\\r\\n\\f\\u0085\\u2028\\u2029]", replacement );
         }
         out.print( s );
     }

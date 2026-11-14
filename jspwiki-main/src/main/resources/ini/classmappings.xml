@@ -120,6 +120,10 @@
     <mappedClass>org.apache.wiki.search.DefaultSearchManager</mappedClass>
   </mapping>
   <mapping>
+    <requestedClass>org.apache.wiki.notification.SubscriptionManager</requestedClass>
+    <mappedClass>org.apache.wiki.notification.DefaultSubscriptionManager</mappedClass>
+  </mapping>
+  <mapping>
     <requestedClass>org.apache.wiki.tasks.TasksManager</requestedClass>
     <mappedClass>org.apache.wiki.tasks.DefaultTasksManager</mappedClass>
   </mapping>

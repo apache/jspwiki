@@ -27,7 +27,6 @@ import org.apache.wiki.event.WikiEventManager;
 
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.security.AccessController;
 import java.security.Permission;
 import java.security.Principal;
 import org.apache.wiki.event.WikiSecurityEvent;
@@ -79,7 +78,7 @@ public interface AuthorizationManager extends Initializable {
      * <li>The {@link org.apache.wiki.api.core.Acl} for the page is obtained</li>
      * <li>The Subject associated with the current {@link org.apache.wiki.api.core.Session} is obtained</li>
      * <li>If the Subject's Principal set includes the Role Principal that is the administrator group, always allow the Permission</li>
-     * <li>For all permissions, check to see if the Permission is allowed according to the default security policy. If it isn't, deny
+     * <li>For all permissions, check to see if the Permission is allowed according to the security policy of the wiki. If it isn't, deny
      * the permission and halt further processing.</li>
      * <li>If there is an Acl, get the list of Principals assigned this Permission in the Acl: these will be role, group or user Principals,
      * or {@link org.apache.wiki.auth.acl.UnresolvedPrincipal}s (see below). Then iterate through the Subject's Principal set and determine
@@ -207,14 +206,12 @@ public interface AuthorizationManager extends Initializable {
     boolean allowedByLocalPolicy( Principal[] principals, Permission permission );
 
     /**
-     * Determines whether a Subject possesses a given "static" Permission as defined in the security policy file. This method uses standard
-     * Java 2 security calls to do its work. Note that the current access control context's <code>codeBase</code> is effectively <em>this
-     * class</em>, not that of the caller. Therefore, this method will work best when what matters in the policy is <em>who</em> makes the
-     * permission check, not what the caller's code source is. Internally, this method works by executing <code>Subject.doAsPrivileged</code>
-     * with a privileged action that simply calls {@link AccessController#checkPermission(Permission)}.
+     * Determines whether a Subject possesses a given "static" Permission as defined in the security policy file of the wiki. The Roles and
+     * the Principals of the session are looked up in the policy, see {@link #allowedByLocalPolicy(Principal[], Permission)}. A
+     * {@link org.apache.wiki.auth.permissions.GroupPermission} that is not granted as such is also checked as the
+     * {@code <groupmember>} of its group, if the Subject is a member of that group. The security policy of the JVM, set with the system
+     * property <code>java.security.policy</code>, is not consulted.
      *
-     * @see AccessController#checkPermission(Permission) . A caught exception (or lack thereof) determines whether the
-     *       privilege is absent (or present).
      * @param session the Session whose permission status is being queried
      * @param permission the Permission the Subject must possess
      * @return <code>true</code> if the Subject possesses the permission, <code>false</code> otherwise

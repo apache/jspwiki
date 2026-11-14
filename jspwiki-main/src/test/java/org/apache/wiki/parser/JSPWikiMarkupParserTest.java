@@ -44,8 +44,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Vector;
+import java.util.List;
 
 import static org.apache.wiki.TestEngine.with;
 
@@ -54,7 +55,7 @@ class JSPWikiMarkupParserTest {
 
     static final String PAGE_NAME = "testpage";
 
-    Vector< String > created = new Vector<>();
+    List< String > created = new ArrayList<>();
 
     TestEngine testEngine = TestEngine.build( with( "jspwiki.translatorReader.matchEnglishPlurals", "true" ) );
 
@@ -66,7 +67,7 @@ class JSPWikiMarkupParserTest {
 
     private void newPage( final String name ) throws WikiException {
         testEngine.saveText( name, "<test>" );
-        created.addElement( name );
+        created.add( name );
     }
 
     private String translate( final String src ) throws IOException {
@@ -469,7 +470,7 @@ class JSPWikiMarkupParserTest {
     void testAttachmentLink2() throws Exception {
         final TestEngine testEngine2 = TestEngine.build( with( "jspwiki.encoding", StandardCharsets.ISO_8859_1.name() ) );
         testEngine2.saveText( "Test", "foo " );
-        created.addElement( "Test" );
+        created.add( "Test" );
 
         final Attachment att = Wiki.contents().attachment( testEngine2, "Test", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
@@ -486,7 +487,7 @@ class JSPWikiMarkupParserTest {
     void testAttachmentLink3() throws Exception {
         final TestEngine testEngine2 = TestEngine.build();
         testEngine2.saveText( "TestPage", "foo " );
-        created.addElement( "TestPage" );
+        created.add( "TestPage" );
 
         final Attachment att = Wiki.contents().attachment( testEngine2, "TestPage", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
@@ -502,7 +503,7 @@ class JSPWikiMarkupParserTest {
     void testAttachmentLink4() throws Exception {
         final TestEngine testEngine2 = TestEngine.build();
         testEngine2.saveText( "TestPage", "foo " );
-        created.addElement( "TestPage" );
+        created.add( "TestPage" );
 
         final Attachment att = Wiki.contents().attachment( testEngine2, "TestPage", "TestAtt.txt" );
         att.setAuthor( "FirstPost" );
@@ -594,6 +595,56 @@ class JSPWikiMarkupParserTest {
     void testInlineImages4() throws Exception {
         final String src = "Link [test|http://foobar.jpg]";
         Assertions.assertEquals( "Link <img class=\"inline\" src=\"http://foobar.jpg\" alt=\"test\" />", translate( src ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1191 */
+    @Test
+    void testInlineDataImage() throws Exception {
+        final String src = "Link [data:image/png;base64,iVBORw0KGgo=]";
+        Assertions.assertEquals( "Link <img class=\"inline\" src=\"data:image/png;base64,iVBORw0KGgo=\" alt=\"\" />", translate( src ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1191 */
+    @Test
+    void testInlineDataImageWithAllBase64Characters() throws Exception {
+        final String src = "Link [data:image/png;base64,iVBOR+/w0KGgo+AAA=]";
+        Assertions.assertEquals( "Link <img class=\"inline\" src=\"data:image/png;base64,iVBOR+/w0KGgo+AAA=\" alt=\"\" />", translate( src ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1191 */
+    @Test
+    void testLongDataImagesAfterLineBreakAreKept() throws Exception {
+        final String first = "data:image/png;base64,iVBORw0KGgo" + "A".repeat( 20000 ) + "=";
+        final String second = "data:image/png;base64,iVBORw0KGgo" + "B".repeat( 20000 ) + "=";
+        final String html = translate( "\n[" + first + "][" + second + "]\n" );
+        Assertions.assertTrue( html.contains( "<img class=\"inline\" src=\"" + first + "\"" ), "first image was cut" );
+        Assertions.assertTrue( html.contains( "<img class=\"inline\" src=\"" + second + "\"" ), "second image was cut" );
+    }
+
+    /** A line longer than the pushback buffer must not lose its end when the parser looks ahead at it. */
+    @Test
+    void testLongLineAfterParagraphBreakIsKept() throws Exception {
+        final String line = "x".repeat( 30000 ) + " end";
+        Assertions.assertTrue( translate( "first\n\n" + line ).contains( line ) );
+    }
+
+    @Test
+    void testInlineDataImageWithAltText() throws Exception {
+        final String src = "Link [test|data:image/gif;base64,R0lGODlhAQABAAAAACw=]";
+        Assertions.assertEquals( "Link <img class=\"inline\" src=\"data:image/gif;base64,R0lGODlhAQABAAAAACw=\" alt=\"test\" />", translate( src ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1191 */
+    @Test
+    void testDataUrlsThatAreNotRasterImagesAreNotInlined() throws Exception {
+        for( final String url : new String[] { "data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==",
+                                               "data:image/svg+xml;base64,PHN2ZyBvbmxvYWQ9ImFsZXJ0KDEpIi8+",
+                                               "data:image/png,alert(1)",
+                                               "data:image/png;base64,AAAA\"onerror=\"alert(1)" } ) {
+            final String html = translate( "Link [" + url + "]" );
+            Assertions.assertFalse( html.contains( "src=\"data:" ), html );
+            Assertions.assertFalse( html.contains( "href=\"data:" ), html );
+        }
     }
 
     // No link text should be just embedded link.
@@ -1727,6 +1778,27 @@ class JSPWikiMarkupParserTest {
     void testSpanStyle4() throws Exception {
         final String src = "Johan %%(foo:bar;)test/%\n";
         Assertions.assertEquals( "Johan <span style=\"foo:bar;\">test</span>\n", translate( src ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-529 */
+    @Test
+    void testSpanStyleClosedByLettersDirectlyAfterMarker() throws Exception {
+        final String src = "Johan %%(foo:bar;)test/%cake\n";
+        Assertions.assertEquals( "Johan <span style=\"foo:bar;\">test</span>cake\n", translate( src ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-529 */
+    @Test
+    void testSpanClassClosedByLettersDirectlyAfterMarker() throws Exception {
+        final String src = "%%foo test/%cake\n";
+        Assertions.assertEquals( "<span class=\"foo\">test</span>cake\n", translate( src ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-529 */
+    @Test
+    void testSpanStyleClosedByParenthesisDirectlyAfterMarker() throws Exception {
+        final String src = "%%(foo:bar;)test/%(x)\n";
+        Assertions.assertEquals( "<span style=\"foo:bar;\">test</span>(x)\n", translate( src ) );
     }
 
     @Test

@@ -25,6 +25,7 @@
 <%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
 <%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
@@ -118,6 +119,10 @@
     log.debug("preview="+preview+", ok="+ok);
 
     if( ok != null || captcha != null ) {
+        if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+            response.sendRedirect( "/error/Forbidden.html" );
+            return;
+        }
         log.info("Saving page "+pagereq+". User="+user+", host="+HttpUtil.getRemoteAddress(request) );
 
         //

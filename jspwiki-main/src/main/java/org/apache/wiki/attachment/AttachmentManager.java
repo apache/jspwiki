@@ -298,6 +298,14 @@ public interface AttachmentManager {
 
         // Should help with IE 5.22 on OSX
         filename = filename.trim();
+        
+        //diretory traversal type things
+        filename = filename.replace("..", "_");
+        filename = filename.replace("/", "_");
+        filename = filename.replace("\\", "_");
+        
+        //remove any non-filename-safe characters
+        filename = filename.replaceAll("[/:*?\"<>|\\p{Cntrl}]", "_");
 
         // If file name ends with .jsp or .jspf, the user is being naughty!
         if( filename.toLowerCase().endsWith( ".jsp" ) || filename.toLowerCase().endsWith( ".jspf" ) ) {

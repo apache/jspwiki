@@ -23,11 +23,12 @@ create table users (
   email varchar_ignorecase(100),
   full_name varchar(100),
   login_name varchar(100) not null primary key,
-  password varchar(100),
+  password varchar(255),
   wiki_name varchar(100),
   created timestamp,
   modified timestamp,
   lock_expiry timestamp,
+  password_changed timestamp,
   attributes longvarchar,
 );
 

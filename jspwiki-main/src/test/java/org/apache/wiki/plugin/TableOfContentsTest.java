@@ -23,8 +23,11 @@
 package org.apache.wiki.plugin;
 
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.render.RenderingManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -40,6 +43,7 @@ public class TableOfContentsTest
     @AfterEach
     public void tearDown() throws Exception {
         testEngine.getManager( PageManager.class ).deletePage( "Test" );
+        testEngine.deleteTestPage( "TestChild" );
     }
 
     @Test
@@ -231,6 +235,42 @@ public class TableOfContentsTest
         Assertions.assertTrue( res.indexOf(  "id=\"section-Test-Test-2\"" ) != -1, "Final HTML 2" );
         Assertions.assertTrue( res.indexOf( "#section-Test-Test" ) != -1, "First test" );
         Assertions.assertTrue( res.indexOf( "#section-Test-Test-2" ) != -1, "2nd test" );
+    }
+
+    /** A preview renders text that is not saved yet, and the table of contents has to list its headings. */
+    @Test
+    public void testHeadingsOfTheRenderedTextAreListedNotThoseOfTheSavedPage() throws Exception {
+        testEngine.saveText( "Test", "[{TableOfContents}]\n\n!!!Alpha\n" );
+        final Context context = Wiki.context().create( testEngine, testEngine.getManager( PageManager.class ).getPage( "Test" ) );
+
+        final String res = testEngine.getManager( RenderingManager.class )
+                                     .textToHTML( context, "[{TableOfContents}]\n\n!!!Alpha\n\n!!!Beta\n" );
+
+        Assertions.assertTrue( res.contains( "<a class=\"wikipage\" href=\"#section-Test-Alpha\">Alpha</a>" ), "Alpha in the list" );
+        Assertions.assertTrue( res.contains( "<a class=\"wikipage\" href=\"#section-Test-Beta\">Beta</a>" ), "Beta in the list" );
+    }
+
+    /** Rendering a text must leave no trace in the context, whichever text was rendered before. */
+    @Test
+    public void testRenderedTextIsNotKeptInTheContext() throws Exception {
+        testEngine.saveText( "Test", "!!!Alpha\n" );
+        final Context context = Wiki.context().create( testEngine, testEngine.getManager( PageManager.class ).getPage( "Test" ) );
+
+        testEngine.getManager( RenderingManager.class ).textToHTML( context, "!!!Beta\n" );
+
+        Assertions.assertNull( context.getVariable( Context.VAR_RENDERED_TEXT ) );
+    }
+
+    /** A page inserted before the table of contents must not change which headings the table lists. */
+    @Test
+    public void testTableOfContentsAfterInsertedPageListsHeadingsOfItsOwnText() throws Exception {
+        testEngine.saveText( "TestChild", "!!!ChildHeading\n" );
+        testEngine.saveText( "Test", "[{InsertPage page='TestChild'}]\n\n[{TableOfContents}]\n\n!!!ParentHeading\n" );
+
+        final String res = testEngine.getI18nHTML( "Test" );
+
+        Assertions.assertTrue( res.contains( "<a class=\"wikipage\" href=\"#section-Test-ParentHeading\">ParentHeading</a>" ), "parent in the list" );
+        Assertions.assertFalse( res.contains( "<a class=\"wikipage\" href=\"#section-TestChild-ChildHeading\">" ), "child not in the list" );
     }
 
 }

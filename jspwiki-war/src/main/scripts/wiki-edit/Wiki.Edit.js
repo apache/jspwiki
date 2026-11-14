@@ -146,7 +146,8 @@ function onbeforeunload( window, main ){
 
     main.form.addEvent("submit", function(){
 
-        localStorage.removeItem( LocalCache );
+        //keep the draft until the saved page is shown, see Wiki.domready
+        sessionStorage.setItem( LocalCache, "sent" );
         window.onbeforeunload = null;
 
     });
@@ -223,6 +224,7 @@ function livepreview(content, preview, previewToggle){
                 'X-XSRF-TOKEN': wiki.CsrfProtection
             },
             update: preview,
+            evalScripts: false,
             onRequest: renderPreview,
             onSuccess: renderPreview.pass(true),
             onError: previewDone

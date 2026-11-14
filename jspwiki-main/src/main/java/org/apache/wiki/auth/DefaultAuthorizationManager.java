@@ -20,6 +20,7 @@ package org.apache.wiki.auth;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.wiki.WikiContext;
 import org.apache.wiki.api.core.Acl;
 import org.apache.wiki.api.core.AclEntry;
 import org.apache.wiki.api.core.Context;
@@ -34,6 +35,7 @@ import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.permissions.AllPermission;
+import org.apache.wiki.auth.permissions.GroupPermission;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.user.UserDatabase;
 import org.apache.wiki.event.WikiEventListener;
@@ -46,16 +48,12 @@ import org.apache.wiki.util.ClassUtil;
 import org.freshcookies.security.policy.LocalPolicy;
 
 import jakarta.servlet.http.HttpServletResponse;
-import javax.security.auth.Subject;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.security.AccessControlException;
-import java.security.AccessController;
 import java.security.CodeSource;
 import java.security.Permission;
 import java.security.Principal;
-import java.security.PrivilegedAction;
 import java.security.ProtectionDomain;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
@@ -104,6 +102,12 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
         }
 
         final Principal user = session.getLoginPrincipal();
+
+        // A context that needs no permission asks for the dummy one, which no policy grants
+        if( WikiContext.DUMMY_PERMISSION.equals( permission ) ) {
+            fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
+            return true;
+        }
 
         // Always allow the action if user has AllPermission
         final Permission allPermission = new AllPermission( m_engine.getApplicationName() );
@@ -310,22 +314,26 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
     /** {@inheritDoc} */
     @Override
     public boolean checkStaticPermission( final Session session, final Permission permission ) {
-        return ( Boolean )Subject.doAsPrivileged( session.getSubject(), ( PrivilegedAction< Boolean > )() -> {
-            try {
-                // Check the JVM-wide security policy first
-                AccessController.checkPermission( permission );
-                return Boolean.TRUE;
-            } catch( final AccessControlException e ) {
-                // Global policy denied the permission
-                LOG.debug(e.getMessage(), e);
-            }
+        // Check each Role/Group and User Principal
+        final Principal[] roles = session.getRoles();
+        final Principal[] principals = session.getPrincipals();
+        if( allowedByLocalPolicy( roles, permission ) || allowedByLocalPolicy( principals, permission ) ) {
+            return true;
+        }
 
-            // Try the local policy - check each Role/Group and User Principal
-            if ( allowedByLocalPolicy( session.getRoles(), permission ) || allowedByLocalPolicy( session.getPrincipals(), permission ) ) {
-                return Boolean.TRUE;
+        // What the policy grants to <groupmember> applies to the groups the user is a member of
+        if( permission instanceof GroupPermission ) {
+            final GroupPermission groupPermission = ( GroupPermission )permission;
+            if( isMemberOf( session, groupPermission.getGroup() ) ) {
+                final GroupPermission memberPermission = groupPermission.toMemberPermission();
+                return allowedByLocalPolicy( roles, memberPermission ) || allowedByLocalPolicy( principals, memberPermission );
             }
-            return Boolean.FALSE;
-        }, null );
+        }
+        return false;
+    }
+
+    private boolean isMemberOf( final Session session, final String group ) {
+        return session.getSubject().getPrincipals( GroupPrincipal.class ).stream().anyMatch( principal -> principal.getName().equals( group ) );
     }
 
     /** {@inheritDoc} */

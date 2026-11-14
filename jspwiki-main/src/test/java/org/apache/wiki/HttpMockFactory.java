@@ -32,6 +32,7 @@ import org.mockito.stubbing.Answer;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.Vector;
 
 
@@ -91,7 +92,7 @@ public class HttpMockFactory {
 
     public static HttpSession createHttpSession() {
         final HttpSession session = Mockito.mock( HttpSession.class );
-        Mockito.doReturn( "mock-session" ).when( session ).getId();
+        Mockito.doReturn( "mock-session" + UUID.randomUUID() ).when( session ).getId();
         return session;
     }
 

@@ -26,6 +26,9 @@ import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.HttpMockFactory;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
@@ -33,17 +36,25 @@ import org.apache.wiki.auth.authorize.Group;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.permissions.AllPermission;
+import org.apache.wiki.auth.permissions.GroupPermission;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.auth.permissions.WikiPermission;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.pages.PageManager;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.Permission;
+import java.security.Policy;
+import java.security.ProtectionDomain;
 import java.security.Principal;
 import java.util.Properties;
 
@@ -84,6 +95,27 @@ public class AuthorizationManagerTest {
         m_auth = m_engine.getManager( AuthorizationManager.class );
         m_groupMgr = m_engine.getManager( GroupManager.class );
         m_session = WikiSessionTest.adminSession( m_engine );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-877 */
+    @Test
+    public void testPolicyFileWithAbsolutePath( @TempDir final Path dir ) throws Exception {
+        final Path policy = dir.resolve( "custom.policy" );
+        Files.write( policy, ( "grant principal org.apache.wiki.auth.authorize.Role \"All\" {\n"
+                             + "    permission org.apache.wiki.auth.permissions.PagePermission \"*:Visible*\", \"view\";\n"
+                             + "};\n" ).getBytes( StandardCharsets.UTF_8 ) );
+        final Properties props = TestEngine.getTestProperties();
+        props.put( AuthorizationManager.POLICY, policy.toAbsolutePath().toString() );
+
+        final TestEngine engine = new TestEngine( props );
+        try {
+            final AuthorizationManager auth = engine.getManager( AuthorizationManager.class );
+            final Session session = WikiSessionTest.anonymousSession( engine );
+            Assertions.assertTrue( auth.checkPermission( session, PermissionFactory.getPagePermission( "*:VisiblePage", "view" ) ) );
+            Assertions.assertFalse( auth.checkPermission( session, PermissionFactory.getPagePermission( "*:HiddenPage", "view" ) ) );
+        } finally {
+            engine.stop();
+        }
     }
 
     /**
@@ -577,6 +609,15 @@ public class AuthorizationManagerTest {
         }
     }
 
+    /** The contexts that need no permission ask for the dummy one, which every session has. */
+    @Test
+    public void testContextsThatNeedNoPermission() {
+        for( final ContextEnum ctx : new ContextEnum[] { ContextEnum.WIKI_PREFS, ContextEnum.WIKI_FIND, ContextEnum.WIKI_WORKFLOW } ) {
+            final Context context = Wiki.context().create( m_engine, HttpMockFactory.createHttpRequest( "/" + ctx.getUrlPattern().replace( "%u", "" ) ), ctx.getRequestContext() );
+            Assertions.assertTrue( m_auth.checkPermission( context.getWikiSession(), context.requiredPermission() ), ctx.getRequestContext() );
+        }
+    }
+
     @Test
     public void testStaticPermission() throws Exception {
         Session s = WikiSessionTest.anonymousSession( m_engine );
@@ -632,6 +673,98 @@ public class AuthorizationManagerTest {
         Assertions.assertTrue( m_auth.checkStaticPermission( s, WikiPermission.EDIT_PROFILE ), "Admin profile" );
         Assertions.assertTrue( m_auth.checkStaticPermission( s, WikiPermission.CREATE_PAGES ), "Admin pages" );
         Assertions.assertTrue( m_auth.checkStaticPermission( s, WikiPermission.CREATE_GROUPS ), "Admin groups" );
+    }
+
+    private Permission groupPermission( final String group, final String actions ) {
+        return new GroupPermission( m_engine.getApplicationName() + ":" + group, actions );
+    }
+
+    /** The policy grants "edit" of the groups one is a member of ({@code <groupmember>}) to the authenticated users. */
+    @Test
+    public void testGroupMembersCanEditTheirGroup() throws Exception {
+        m_groupMgr.setGroup( m_session, m_groupMgr.parseGroup( "Test", "Alice \n Bob \n Charlie", true ) );
+        final Session bob = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+        final Session janne = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
+        try {
+            Assertions.assertTrue( m_auth.checkStaticPermission( bob, groupPermission( "Test", "edit" ) ), "member edit" );
+            Assertions.assertTrue( m_auth.checkStaticPermission( bob, groupPermission( "Test", "view" ) ), "member view" );
+            Assertions.assertFalse( m_auth.checkStaticPermission( janne, groupPermission( "Test", "edit" ) ), "non-member edit" );
+            Assertions.assertTrue( m_auth.checkStaticPermission( janne, groupPermission( "Test", "view" ) ), "non-member view" );
+        } finally {
+            m_groupMgr.removeGroup( "Test" );
+        }
+    }
+
+    /** Being a member of a group is not being a member of the other ones. */
+    @Test
+    public void testGroupMembershipOnlyCountsForThatGroup() throws Exception {
+        m_groupMgr.setGroup( m_session, m_groupMgr.parseGroup( "Test", "Alice \n Bob \n Charlie", true ) );
+        m_groupMgr.setGroup( m_session, m_groupMgr.parseGroup( "Other", "Alice \n Charlie", true ) );
+        final Session bob = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+        try {
+            Assertions.assertTrue( m_auth.checkStaticPermission( bob, groupPermission( "Test", "edit" ) ) );
+            Assertions.assertFalse( m_auth.checkStaticPermission( bob, groupPermission( "Other", "edit" ) ) );
+            Assertions.assertFalse( m_auth.checkStaticPermission( bob, groupPermission( "NoSuchGroup", "edit" ) ) );
+        } finally {
+            m_groupMgr.removeGroup( "Test" );
+            m_groupMgr.removeGroup( "Other" );
+        }
+    }
+
+    /** The grant is "edit", so a member cannot delete the group. */
+    @Test
+    public void testGroupMembersCannotDeleteTheirGroup() throws Exception {
+        m_groupMgr.setGroup( m_session, m_groupMgr.parseGroup( "Test", "Alice \n Bob \n Charlie", true ) );
+        final Session bob = WikiSessionTest.authenticatedSession( m_engine, Users.BOB, Users.BOB_PASS );
+        try {
+            Assertions.assertFalse( m_auth.checkStaticPermission( bob, groupPermission( "Test", "delete" ) ) );
+        } finally {
+            m_groupMgr.removeGroup( "Test" );
+        }
+    }
+
+    /** The grant is for authenticated users: a member who only asserted a name does not get it. */
+    @Test
+    public void testGroupMembershipOfAnAssertedUserDoesNotGrantEdit() throws Exception {
+        m_groupMgr.setGroup( m_session, m_groupMgr.parseGroup( "Test", "Alice \n Bob \n Charlie", true ) );
+        final Session bob = WikiSessionTest.assertedSession( m_engine, Users.BOB );
+        try {
+            Assertions.assertFalse( m_auth.checkStaticPermission( bob, groupPermission( "Test", "edit" ) ) );
+        } finally {
+            m_groupMgr.removeGroup( "Test" );
+        }
+    }
+
+    /** The administrator can edit every group. */
+    @Test
+    public void testAdministratorCanEditAnyGroup() throws Exception {
+        Assertions.assertTrue( m_auth.checkPermission( m_session, groupPermission( "Whatever", "edit" ) ) );
+    }
+
+    /** What the users may do is decided by the policy of the wiki alone, not by the one of the JVM. */
+    @Test
+    @SuppressWarnings( "removal" )
+    public void testPolicyOfTheJvmIsNotConsulted() throws Exception {
+        final Policy original = Policy.getPolicy();
+        final Policy grantsEverything = new Policy() {
+            @Override
+            public boolean implies( final ProtectionDomain domain, final Permission permission ) {
+                return true;
+            }
+        };
+        try {
+            Policy.setPolicy( grantsEverything );
+        } catch( final UnsupportedOperationException | SecurityException e ) {
+            Assumptions.abort( "The policy of the JVM cannot be set here: " + e.getMessage() );
+        }
+        try {
+            final Session anonymous = WikiSessionTest.anonymousSession( m_engine );
+            Assertions.assertFalse( m_auth.checkStaticPermission( anonymous, PagePermission.DELETE ), "Anonymous delete" );
+            Assertions.assertFalse( m_auth.checkStaticPermission( anonymous, WikiPermission.CREATE_GROUPS ), "Anonymous groups" );
+            Assertions.assertFalse( m_auth.checkPermission( anonymous, new AllPermission( m_engine.getApplicationName() ) ), "Anonymous all" );
+        } finally {
+            Policy.setPolicy( original );
+        }
     }
 
     @Test

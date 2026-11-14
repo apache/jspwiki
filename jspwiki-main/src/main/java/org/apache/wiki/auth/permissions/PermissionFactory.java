@@ -38,10 +38,10 @@ public final class PermissionFactory
     private PermissionFactory() {}
     
     /**
-     *  This is a WeakHashMap<Integer,PagePermission>, which stores the
+     *  This is a WeakHashMap<String,PagePermission>, which stores the
      *  cached page permissions.
      */
-    private static final WeakHashMap<Integer, PagePermission> c_cache = new WeakHashMap<>();
+    private static final WeakHashMap<String, PagePermission> c_cache = new WeakHashMap<>();
     
     /**
      *  Get a permission object for a WikiPage and a set of actions.
@@ -79,15 +79,13 @@ public final class PermissionFactory
     {
         PagePermission perm;
         //
-        //  Since this is pretty speed-critical, we try to avoid the StringBuffer creation
-        //  overhead by XORring the hashcodes.  However, if page name length > 32 characters,
-        //  this might result in two same hashCodes.
-        //  FIXME: Make this work for page-name lengths > 32 characters (use the alt implementation
-        //         if page.length() > 32?)
-        // Alternative implementation below, but it does create an extra StringBuffer.
-        //String         key = wiki+":"+page+":"+actions;
-        
-        final Integer key = wiki.hashCode() ^ page.hashCode() ^ actions.hashCode();
+        //  The cache key must uniquely identify the (wiki, page, actions) triple.  The previous
+        //  XOR-of-hashCodes key allowed two different pages to collide onto the same 32-bit
+        //  value, so an access check for one page could silently be evaluated against another
+        //  page's cached permission (and hence the wrong ACL).  The concatenated string key is
+        //  collision-free for any attacker-choosable page name.
+        //
+        final String key = wiki + ":" + page + ":" + actions;
    
         //
         //  It's fine if two threads update the cache, since the objects mean the same

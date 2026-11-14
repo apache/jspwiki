@@ -113,4 +113,17 @@ public class InsertPageTest {
         Assertions.assertEquals( "<div class=\"inserted-page \" >foo\n</div>\n", testEngine.getManager( RenderingManager.class ).getHTML( "ThisPage" ), "found != 1" );
     }
 
+    /**
+     * The 'default' parameter is author-controlled and appended to the plugin's HTML output on the
+     * missing-page branch; it must be entity-encoded like the class/page/style parameters are.
+     */
+    @Test
+    public void testDefaultParameterIsEscaped() throws Exception {
+        testEngine.saveText( "ThisPage", "[{InsertPage page='NonExistentPageXyz123' default='<script>alert(document.cookie)</script>'}]" );
+
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( "ThisPage" );
+        Assertions.assertFalse( res.contains( "<script>" ), res );
+        Assertions.assertTrue( res.contains( "&lt;script&gt;alert(document.cookie)&lt;/script&gt;" ), res );
+    }
+
 }

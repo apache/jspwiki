@@ -22,7 +22,8 @@ import org.apache.wiki.auth.GroupPrincipal;
 
 import java.security.Principal;
 import java.util.Date;
-import java.util.Vector;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * <p>
@@ -61,7 +62,7 @@ public class Group {
 
     static final String[]  RESTRICTED_GROUPNAMES = new String[] { "Anonymous", "All", "Asserted", "Authenticated" };
 
-    private final Vector<Principal>    m_members = new Vector<>();
+    private final List<Principal> m_members = new CopyOnWriteArrayList<>();
 
     private String          m_creator;
 

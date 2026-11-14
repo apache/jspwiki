@@ -69,7 +69,8 @@ public class LocalLinkAttributeProviderState implements NodeAttributeProviderSta
                 final String attlink = wikiContext.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), link.getWikiLink() );
                 attributes.replaceValue( "href", attlink );
             } else {
-                new ImageLinkAttributeProviderState( wikiContext, attachment, hasRef ).setAttributes( attributes, link );
+                final String attlink = wikiContext.getURL( ContextEnum.PAGE_ATTACH.getRequestContext(), attachment );
+                new ImageLinkAttributeProviderState( wikiContext, attlink, hasRef ).setAttributes( attributes, link );
             }
         } else if( hashMark != -1 ) { // It's an internal Wiki link, but to a named section
             final String namedSection = link.getUrl().toString().substring( hashMark + 1 );
