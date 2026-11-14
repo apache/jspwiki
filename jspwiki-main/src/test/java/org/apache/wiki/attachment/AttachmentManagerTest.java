@@ -360,4 +360,20 @@ public class AttachmentManagerTest {
 
     }
 
+    @Test
+    public void testNameMadeOfOneDotIsRefused() {
+        Assertions.assertThrows(WikiException.class, ()
+                -> AttachmentManager.validateFileName("."));
+        
+       
+    }
+
+    @Test
+    public void testFileNameChecks() throws WikiException {
+        Assertions.assertEquals("passwd", AttachmentManager.validateFileName("/etc/passwd"));
+        Assertions.assertEquals("web.xml", AttachmentManager.validateFileName("../../WEB-INF/web.xml"));
+        Assertions.assertEquals("_", AttachmentManager.validateFileName("../../"));
+        Assertions.assertEquals("_", AttachmentManager.validateFileName("..\\..\\"));
+    }
+
 }

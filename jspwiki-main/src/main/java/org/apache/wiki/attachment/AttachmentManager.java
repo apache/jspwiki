@@ -290,7 +290,9 @@ public interface AttachmentManager {
             // the caller should catch the exception and use the exception text as an i18n key
             throw new WikiException(  "attach.empty.file" );
         }
-
+        if (filename.equals(".")) {
+            throw new WikiException(  "attach.unwanted.file"  );
+        }
         //  Some browsers send the full path info with the filename, so we need
         //  to remove it here by simply splitting along slashes and then taking the path.
         final String[] splitpath = filename.split( "[/\\\\]" );
@@ -316,7 +318,7 @@ public interface AttachmentManager {
             // the caller should catch the exception and use the exception text as an i18n key
             throw new WikiException(  "attach.unwanted.file"  );
         }
-
+        
         //  Remove any characters that might be a problem. Most importantly - characters that might stop processing of the URL.
         return StringUtils.replaceChars( filename, "#?\"'", "____" );
     }
