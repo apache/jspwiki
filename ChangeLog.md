@@ -22,6 +22,7 @@ under the License.
 * _3.0.1-git-07_
 
 * [JSPWIKI-1296](https://issues.apache.org/jira/browse/JSPWIKI-1206) see jira fo details
+* [JSPWIKI-1289](https://issues.apache.org/jira/browse/JSPWIKI-1289) see jira fo details
 
 **2026-11-14  Arturo Bernal (abernal AT apache DOT org)**
 
