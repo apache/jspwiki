@@ -261,6 +261,7 @@ class SearchManagerTest {
         m_engine.saveText( "Unrelated", "nothing to see" );
         Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "Unrelated" ) );
         Awaitility.await( "index2" ).until( findsResultsFor( new ArrayList<>(), "Pageant_Show" ) );
+        Awaitility.await( "index3" ).until( findsResultsFor( new ArrayList<>(), "Page_WithUnderscore" ) );
 
         Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "Page_With*" ) );
         Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "Page_*" ) );
