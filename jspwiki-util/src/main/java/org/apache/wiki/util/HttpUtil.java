@@ -46,28 +46,30 @@ public final class HttpUtil {
     private static final int    ONE                   = 48;
     private static final int    NINE                  = 57;
     private static final int    DOT                   = 46;
+
     
     /** Private constructor to prevent direct instantiation. */
     private HttpUtil() {
     }
     
     /**
-     * returns the remote address by looking into {@code x-forwarded-for} header or, if unavailable, 
-     * into {@link HttpServletRequest#getRemoteAddr()}.
-     * 
+     * Returns the remote address of the request. By default this is {@link HttpServletRequest#getRemoteAddr()}:
+     * the client-supplied {@code X-Forwarded-For} header is only consulted when the immediate peer is listed in
+     * the {@value #PROP_TRUSTED_PROXIES} system property. When it is, the forwarded entries are walked from the
+     * one appended by the nearest trusted proxy towards the client, and the first address that does not belong to
+     * a trusted proxy is returned, so a client cannot spoof its address by pre-populating the header. Values that
+     * do not look like an IP address fall back to {@link HttpServletRequest#getRemoteAddr()}.
+     *
      * @param req http request
      * @return remote address associated to the request.
      */
     public static String getRemoteAddress( final HttpServletRequest req ) {
-        String realIP = StringUtils.isNotEmpty ( req.getHeader( "X-Forwarded-For" ) ) ? req.getHeader( "X-Forwarded-For" ) :
-                                                                                          req.getRemoteAddr();
-        // can be a comma-separated list of IPs
-        if (realIP.contains(","))
-                realIP = realIP.substring(realIP.indexOf(","));
-
-        return realIP;
-	
+        final String remoteAddr = req.getRemoteAddr();
+        
+        return remoteAddr;
     }
+
+   
 
     /**
      * Returns whether or not the IP address of the request equals a given IP,
