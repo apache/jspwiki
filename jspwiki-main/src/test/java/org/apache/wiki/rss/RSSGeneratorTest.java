@@ -33,6 +33,8 @@ import org.apache.wiki.plugin.WeblogEntryPlugin;
 import org.apache.wiki.plugin.WeblogPlugin;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import java.util.ArrayList;
+import org.mockito.Mockito;
 
 import java.util.Date;
 import java.util.List;
@@ -174,6 +176,34 @@ public class RSSGeneratorTest {
        
         
         
+    }
+
+    private static TestEngine buildRssEngine() throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+        props.put( RSSGenerator.PROP_GENERATE_RSS, "true" );
+        return TestEngine.build( props );
+    }
+
+    @Test
+    public void testEntryLinksAreAbsolute() throws Exception {
+        final TestEngine engine = buildRssEngine();
+        engine.saveText( "RssAbsoluteLink", "Foo" );
+
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        Mockito.doReturn( "http" ).when( request ).getScheme();
+        Mockito.doReturn( "localhost" ).when( request ).getServerName();
+        Mockito.doReturn( 8080 ).when( request ).getServerPort();
+        final Page page = engine.getManager( PageManager.class ).getPage( "RssAbsoluteLink" );
+        final Context context = Wiki.context().create( engine, request, page );
+        final RSSGenerator gen = engine.getManager( RSSGenerator.class );
+
+        for( final Feed feed : List.of( new RSS10Feed( context ), new RSS20Feed( context ), new AtomFeed( context ) ) ) {
+            final String xml = gen.generateWikiPageRSS( context, new ArrayList<>( List.of( page ) ), feed );
+
+            Assertions.assertTrue( xml.contains( "http://localhost:8080/test/Wiki.jsp?page=RssAbsoluteLink" ), xml );
+            Assertions.assertFalse( xml.contains( ">/test/Wiki.jsp" ) || xml.contains( "\"/test/Wiki.jsp" ), xml );
+        }
+        engine.shutdown();
     }
 
     /** The feed is cached and shared, so an entry that the anonymous user may not view must not be listed in it. */

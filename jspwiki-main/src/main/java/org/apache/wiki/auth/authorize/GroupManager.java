@@ -21,15 +21,18 @@ package org.apache.wiki.auth.authorize;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.engine.Initializable;
+import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.Authorizer;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.auth.permissions.AllPermission;
 import org.apache.wiki.event.WikiEventListener;
 import org.apache.wiki.event.WikiEventManager;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.wiki.event.WikiSecurityEvent;
 import org.apache.wiki.security.EventUtil;
+import org.apache.wiki.ui.Installer;
 
 
 /**
@@ -111,14 +114,21 @@ public interface GroupManager extends Initializable, Authorizer, WikiEventListen
      * @param create whether this method should create a new, empty Group if one with the requested name is not found. If <code>false</code>,
      *            groups that do not exist will cause a <code>NoSuchPrincipalException</code> to be thrown
      * @return a new, populated group
-     * @throws WikiSecurityException if the group name isn't allowed, or if <code>create</code> is <code>false</code>
-     *                               and the Group does not exist
+     * @throws WikiSecurityException if the group name isn't allowed, if the group is the Admin group and the current session does not have
+     *                               AllPermission, or if <code>create</code> is <code>false</code> and the Group does not exist
      */
     default Group parseGroup( final Context context, final boolean create ) throws WikiSecurityException {
         // Extract parameters
         final HttpServletRequest request = context.getHttpRequest();
         final String name = request.getParameter( "group" );
         final String memberLine = request.getParameter( "members" );
+
+        // The default policy grants AllPermission to the Admin group, so a page creates it only for a session that has that permission.
+        // The installer creates the group with the parseGroup that takes the name, so it is not affected.
+        if( create && Installer.ADMIN_GROUP.equals( name ) && !context.getEngine().getManager( AuthorizationManager.class )
+                .checkPermission( context.getWikiSession(), new AllPermission( context.getEngine().getApplicationName() ) ) ) {
+            throw new WikiSecurityException( "Illegal group name: " + name );
+        }
 
         // Create the named group; we pass on any NoSuchPrincipalExceptions
         // that may be thrown if create == false, or WikiSecurityExceptions

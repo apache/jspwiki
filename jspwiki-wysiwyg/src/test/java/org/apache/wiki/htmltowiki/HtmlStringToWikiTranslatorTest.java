@@ -239,6 +239,18 @@ public class HtmlStringToWikiTranslatorTest {
     }
 
     @Test
+    public void testPluginWithNestedPlugins() throws Exception {
+        final String flat = html2wiki.translate( "<p>\n[{Table style='x'\n<br>| Date: @date@\n<br>| Time: @time@\n<br>| Page: @page@\n<br>}]\n</p>" );
+        Assertions.assertFalse( flat.contains( "\\\\" ), flat );
+
+        final String nested = html2wiki.translate( "<p>\n[{Table style='x'\n<br>| Date: [{CurrentTimePlugin format='dd'}]\n"
+                + "<br>| Time: [{CurrentTimePlugin format='hh'}]\n<br>| Page: [{$pagename}]\n<br>}]\n</p>" );
+        Assertions.assertEquals( flat.replace( "@date@", "[{CurrentTimePlugin format='dd'}]" )
+                                     .replace( "@time@", "[{CurrentTimePlugin format='hh'}]" )
+                                     .replace( "@page@", "[{$pagename}]" ), nested );
+    }
+
+    @Test
     public void testCSS() throws Exception {
         Assertions.assertEquals( "%%( color: rgb(255, 0, 0); )Und niemand wird sie sehen/%, die",
                 html2wiki.translate( "<span style=\"color: rgb(255, 0, 0);\">Und niemand wird sie sehen</span>, die" ) );

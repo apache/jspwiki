@@ -20,6 +20,8 @@ package org.apache.wiki.search;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import static java.lang.System.out;
@@ -43,7 +45,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.Callable;
+import org.apache.commons.io.FileUtils;
+import org.apache.wiki.auth.authorize.XMLGroupDatabase;
+import org.apache.wiki.auth.user.XMLUserDatabase;
 import static org.apache.wiki.search.DefaultSearchManager.PluginSearch.AJAX_ACTION_PLUGINS;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +61,7 @@ class SearchManagerTest {
     Properties props;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         final Properties props = TestEngine.getTestProperties();
         final String workDir = props.getProperty( "jspwiki.workDir" );
         final String workRepo = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
@@ -65,7 +71,12 @@ class SearchManagerTest {
         props.setProperty( "jspwiki.lucene.initialdelay", "0" );
         props.setProperty( "jspwiki.workDir", workDir + System.currentTimeMillis() );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", workRepo + System.currentTimeMillis() );
-
+        File target = new File("target/XMLUserDatabaseTest" + UUID.randomUUID().toString() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/userdatabase.xml" ), target);
+        props.put( XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath() );
+        target = new File("target/XMLGroupDatabaseTest" + UUID.randomUUID().toString() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml"), target);
+        props.put(XMLGroupDatabase.PROP_DATABASE, target.getAbsolutePath());
         m_engine = TestEngine.build( props );
         m_mgr = m_engine.getManager( SearchManager.class );
     }
@@ -297,6 +308,57 @@ class SearchManagerTest {
         Assertions.assertEquals( Arrays.asList( "TestPage" ), pageNamesFor( "man*" ) );
         Assertions.assertEquals( Arrays.asList( "TestPage" ), pageNamesFor( "m?nkind" ) );
         Assertions.assertEquals( Arrays.asList(), pageNamesFor( "woman*" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1321 */
+    @Test
+    void testStarAtTheEndOfPageNameTermIsOptional() throws Exception {
+        m_engine.saveText( "Weblog_blogentry_021126_1", "first entry" );
+        m_engine.saveText( "Weblog_blogentry_031226_1", "second entry" );
+        m_engine.saveText( "Weblog_blogentry_021127_2", "third entry" );
+        m_engine.saveText( "Man_Page", "a" );
+        Awaitility.await( "index" ).until( () -> pageNamesFor( "name:weblog" ).size() == 3 );
+        Awaitility.await( "index2" ).until( () -> pageNamesFor( "name:man" ).size() == 1 );
+
+        final List< String > withTwentySix = Arrays.asList( "Weblog_blogentry_021126_1", "Weblog_blogentry_031226_1" );
+        Assertions.assertEquals( withTwentySix, pageNamesFor( "name:blog*26" ) );
+        Assertions.assertEquals( withTwentySix, pageNamesFor( "name:blog*26*" ) );
+        Assertions.assertEquals( Arrays.asList( "Weblog_blogentry_021127_2" ), pageNamesFor( "name:blog*27" ) );
+        Assertions.assertEquals( Arrays.asList(), pageNamesFor( "name:blog*99" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1321 */
+    @Test
+    void testPageNameTermStillStartsAtTheWord() throws Exception {
+        m_engine.saveText( "Weblog_blogentry_021126_1", "first entry" );
+        m_engine.saveText( "Man_Page", "a" );
+        m_engine.saveText( "Human_Page", "b" );
+        m_engine.saveText( "Woman_Page", "c" );
+        Awaitility.await( "index" ).until( () -> pageNamesFor( "name:weblog" ).size() == 1 );
+        Awaitility.await( "index2" ).until( () -> pageNamesFor( "name:woman" ).size() == 1 );
+        Awaitility.await( "index3" ).until( () -> pageNamesFor( "name:human" ).size() == 1 );
+        Awaitility.await( "index4" ).until( () -> pageNamesFor( "name:man" ).size() == 1 );
+
+        Assertions.assertEquals( Arrays.asList( "Man_Page" ), pageNamesFor( "name:man*" ) );
+        Assertions.assertEquals( Arrays.asList(), pageNamesFor( "name:entry" ) );
+        Assertions.assertEquals( Arrays.asList(), pageNamesFor( "name:entry*" ) );
+        Assertions.assertEquals( Arrays.asList(), pageNamesFor( "name:entry*26" ) );
+    }
+
+    /** https://issues.apache.org/jira/browse/JSPWIKI-1321 */
+    @Test
+    void testRelevanceIsBetweenZeroAndOneHundred() throws Exception {
+        m_engine.saveText( "Few", "mankind" );
+        m_engine.saveText( "Many", "mankind mankind mankind mankind mankind mankind mankind mankind" );
+        m_engine.saveText( "Padded", "mankind and a good many other words to lower the score of this page in the index" );
+        Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "Padded" ) );
+
+        final Collection< SearchResult > res = new ArrayList<>();
+        Awaitility.await( "scores" ).until( findsResultsFor( res, "mankind" ) );
+        final int max = res.stream().mapToInt( SearchResult::getScore ).max().getAsInt();
+        Assertions.assertEquals( 3, res.size() );
+        Assertions.assertEquals( 100, max );
+        Assertions.assertTrue( res.stream().allMatch( r -> r.getScore() >= 0 && r.getScore() <= 100 ) );
     }
 
     @Test
