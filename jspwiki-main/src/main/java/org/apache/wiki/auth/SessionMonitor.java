@@ -97,7 +97,10 @@ public class SessionMonitor implements HttpSessionListener {
         return monitor;
     }
 
-    /** Construct the SessionListener */
+    /** Constructs the SessionListener; the servlet container needs it, as web.xml declares this class as a listener. */
+    public SessionMonitor() {
+    }
+
     private SessionMonitor( final Engine engine ) {
         m_engine = engine;
     }
