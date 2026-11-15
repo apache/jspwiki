@@ -22,7 +22,7 @@
  */
 package org.apache.wiki.url;
 
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.WikiException;
