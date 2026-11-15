@@ -34,6 +34,8 @@ import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.api.spi.Wiki;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
@@ -121,7 +123,8 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
 
                 if( actionName.equals( AJAX_ACTION_SUGGESTIONS ) ) {
                     LOG.debug( "Calling getSuggestions() START" );
-                    final List< String > callResults = getSuggestions( itemId, maxResults );
+                    final Context wikiContext = Wiki.context().create( m_engine, req, ContextEnum.PAGE_VIEW.getRequestContext() );
+                    final List< String > callResults = getSuggestions( itemId, maxResults, wikiContext );
                     LOG.debug( "Calling getSuggestions() DONE. " + callResults.size() );
                     result = AjaxUtil.toJson( callResults );
                 } else if( actionName.equals( AJAX_ACTION_PAGES ) ) {
@@ -136,15 +139,23 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
             resp.getWriter().write( result );
         }
 
+        /** The suggestions are shown to everybody, so they hold only the names of the pages that the viewer may view. */
+        private boolean mayView( final Context wikiContext, final String pageName ) {
+            final Page page = m_engine.getManager( PageManager.class ).getPage( pageName );
+            return page == null || m_engine.getManager( AuthorizationManager.class )
+                                           .checkPermission( wikiContext.getWikiSession(), PermissionFactory.getPagePermission( page, "view" ) );
+        }
+
         /**
          *  Provides a list of suggestions to use for a page name. Currently, the algorithm just looks into the value parameter,
          *  and returns all page names from that.
          *
          *  @param wikiName the page name
          *  @param maxLength maximum number of suggestions
+         *  @param wikiContext the context of the viewer, whose view permission decides which page names are suggested
          *  @return the suggestions
          */
-        public List< String > getSuggestions( String wikiName, final int maxLength ) {
+        public List< String > getSuggestions( String wikiName, final int maxLength, final Context wikiContext ) {
             final StopWatch sw = new StopWatch();
             sw.start();
             final List< String > list = new ArrayList<>( maxLength );
@@ -165,7 +176,7 @@ public class DefaultSearchManager extends BasePageFilter implements SearchManage
                 for( final Iterator< String > i = allPages.iterator(); i.hasNext() && counter < maxLength; ) {
                     final String p = i.next();
                     final String pp = p.toLowerCase();
-                    if( pp.startsWith( cleanWikiName) || pp.startsWith( oldStyleName ) ) {
+                    if( ( pp.startsWith( cleanWikiName) || pp.startsWith( oldStyleName ) ) && mayView( wikiContext, p ) ) {
                         list.add( p );
                         counter++;
                     }
