@@ -22,6 +22,7 @@
  */
 package org.apache.wiki.url;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.exceptions.WikiException;
@@ -29,6 +30,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.Properties;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.mockito.Mockito;
 
 
 public class ShortURLConstructorTest
@@ -165,6 +168,47 @@ public class ShortURLConstructorTest
         final URLConstructor c = getConstructor("wiki/" );
 
         Assertions.assertEquals( "/test/wiki/", c.makeURL(ContextEnum.PAGE_VIEW.getRequestContext(),"",null) );
+    }
+    @Test
+    public void testGetForwardPageDefault() {
+        ShortURLConstructor urlConstructor = new ShortURLConstructor();
+        final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( request.getParameter( "do" ) ).thenReturn( null );
+
+        assertEquals( "Wiki.jsp", urlConstructor.getForwardPage( request ) );
+    }
+
+    @Test
+    public void testGetForwardPageValidActions() {
+        final String[] validActions = { "Wiki", "View", "Edit", "PageInfo", "UserPreferences", "Search" };
+        ShortURLConstructor urlConstructor = new ShortURLConstructor();
+        for( final String action : validActions ) {
+            final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+            Mockito.when( request.getParameter( "do" ) ).thenReturn( action );
+
+            assertEquals( action + ".jsp", urlConstructor.getForwardPage( request ) );
+        }
+    }
+
+    @Test
+    public void testGetForwardPageMaliciousQueryInjectionJSPWIKI1304() {
+        final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+        ShortURLConstructor urlConstructor = new ShortURLConstructor();
+        // Simulates payload: WEB-INF/userdatabase%3F
+        Mockito.when( request.getParameter( "do" ) ).thenReturn( "WEB-INF/userdatabase%3F" );
+
+        // Should fail strict allow-list validation and safely fall back to Wiki.jsp
+        assertEquals( "Wiki.jsp", urlConstructor.getForwardPage( request ) );
+    }
+
+    @Test
+    public void testGetForwardPagePathTraversal() {
+        ShortURLConstructor urlConstructor = new ShortURLConstructor();
+        final HttpServletRequest request = Mockito.mock( HttpServletRequest.class );
+        Mockito.when( request.getParameter( "do" ) ).thenReturn( "../WEB-INF/web" );
+
+        // Should fail validation due to slashes/dots and fall back to Wiki.jsp
+        assertEquals( "Wiki.jsp", urlConstructor.getForwardPage( request ) );
     }
 
 }
