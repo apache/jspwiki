@@ -140,7 +140,7 @@ public class IndexPlugin extends AbstractReferralPlugin implements Plugin {
         final Pattern excludePtrn = exclude != null ? Pattern.compile( exclude ) : Pattern.compile("\\p{Cntrl}"); // there are no control characters in page names
         final List< String > result;
         final Set< String > pages = context.getEngine().getManager( ReferenceManager.class ).findCreated();
-        result = pages.stream().filter(pageName -> !excludePtrn.matcher(pageName).matches()).filter(pageName -> includePtrn.matcher(pageName).matches()).collect(Collectors.toList());
+        result = pages.stream().filter(pageName -> !excludePtrn.matcher(pageName).matches()).filter(pageName -> includePtrn.matcher(pageName).matches()).filter(pageName -> mayView(context, pageName)).collect(Collectors.toList());
         return result;
     }
 

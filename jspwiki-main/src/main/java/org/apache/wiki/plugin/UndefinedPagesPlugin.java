@@ -24,6 +24,7 @@ import org.apache.wiki.references.ReferenceManager;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -46,7 +47,7 @@ public class UndefinedPagesPlugin extends AbstractReferralPlugin {
         super.initialize( context, params );
 
         Collection< String > links = refmgr.findUncreated();
-        links = filterAndSortCollection( links );
+        links = filterAndSortCollection( links.stream().filter( name -> hasViewableReferrer( context, refmgr, name ) ).collect( Collectors.toList() ) );
 
         if( m_lastModified ) {
             throw new PluginException( "parameter " + PARAM_LASTMODIFIED + " is not valid for the UndefinedPagesPlugin" );
