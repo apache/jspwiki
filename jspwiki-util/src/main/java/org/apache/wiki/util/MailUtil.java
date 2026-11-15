@@ -299,7 +299,8 @@ public final class MailUtil {
             Transport.send(msg);
             LOG.info("Sent e-mail to={}, subject=\"{}\", used {} mail session.", to, subject, (c_useJndi ? "JNDI" : "standalone") );
         } catch (final MessagingException e) {
-            LOG.error(e);
+            LOG.error("Email tranmission error: " + e.getMessage());
+            LOG.debug("Email tranmission error: " + e.getMessage(), e);
             throw e;
         }
     }

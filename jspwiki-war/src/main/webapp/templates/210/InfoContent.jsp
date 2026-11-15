@@ -17,6 +17,7 @@
     under the License.
 --%>
 
+<%@page import="org.apache.commons.text.StringEscapeUtils"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="java.security.Permission" %>
 <%@ page import="jakarta.servlet.jsp.jstl.fmt.*" %>
@@ -371,7 +372,7 @@
     %>
 
     <tr>
-      <td><div id="attach-<%= attachtype %>" class="attachtype"><%= attachtype %></div></td>
+      <td><div id="attach-<%= StringEscapeUtils.escapeHtml4(attachtype) %>" class="attachtype"><%= StringEscapeUtils.escapeHtml4(attachtype) %></div></td>
       <%--<td><wiki:LinkTo title="<%= name %>" ><%= sname %></wiki:LinkTo></td>--%>
       <%--FIXME classs parameter throws java exception
       <td><wiki:Link version='<%=Integer.toString(att.getVersion())%>'
@@ -379,7 +380,7 @@
                        class="attachment" ><wiki:PageVersion /></wiki:Link></td>
       --%>
       <td><a href="<wiki:Link version='<%=Integer.toString(att.getVersion())%>' format='url' />"
-                       title="<%= name %>"
+                       title="<%= TextUtil.replaceEntities(name) %>"
                        class="attachment" ><wiki:PageVersion /></a></td>
       <td style="white-space:nowrap;text-align:right;">
         <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0) %>' groupingUsed='false' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>

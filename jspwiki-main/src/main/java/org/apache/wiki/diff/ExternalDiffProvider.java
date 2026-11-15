@@ -32,7 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 /**
@@ -113,10 +112,8 @@ public class ExternalDiffProvider implements DiffProvider {
             String cmd = TextUtil.replaceString(m_diffCommand, "%s1", f1.getPath());
             cmd = TextUtil.replaceString(cmd, "%s2", f2.getPath());
 
-            final String output = FileUtil.runSimpleCommand(cmd, f1.getParent());
-
-            // FIXME: Should this rely on the system default encoding?
-            final String rawWikiDiff = new String( output.getBytes( StandardCharsets.ISO_8859_1 ), m_encoding );
+            // the command reads the temporary files, which are written with m_encoding, and echoes their lines
+            final String rawWikiDiff = FileUtil.runSimpleCommand( cmd, f1.getParent(), m_encoding );
             final String htmlWikiDiff = TextUtil.replaceEntities( rawWikiDiff );
 
             if (m_traditionalColorization) { //FIXME, see comment near declaration...

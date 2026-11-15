@@ -21,29 +21,33 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletResponse;
+import org.apache.wiki.util.HttpUtil;
+
 import java.io.IOException;
 
+
 /**
- *
- * @Strict-Transport-Security (HSTS): Enforces HTTPS-only communication,
+ * Strict-Transport-Security (HSTS): Enforces HTTPS-only communication,
  * preventing downgrade attacks and cookie hijacking.
  */
 public class STSFilter implements Filter {
 
     private String mode = "max-age=63072000; includeSubDomains; preload";
 
-    public void init(FilterConfig filterConfig) {
-        String configMode = filterConfig.getInitParameter("STSValue");
-        if (configMode != null) {
+    /** {@inheritDoc} */
+    @Override
+    public void init( final FilterConfig filterConfig ) {
+        final String configMode = FilterOperations.initValue( filterConfig, "STSValue", "sts.value" );
+        if( configMode != null ) {
             mode = configMode;
         }
     }
 
+    /** {@inheritDoc} */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletResponse res = (HttpServletResponse) response;
-        res.addHeader("Strict-Transport-Security", mode);
-        chain.doFilter(request, response);
+    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
+        HttpUtil.addHeader( response,"Strict-Transport-Security", mode );
+        chain.doFilter( request, response );
     }
+
 }

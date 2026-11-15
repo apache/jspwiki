@@ -88,6 +88,9 @@
         }
         if ( wikiSession.getMessages( "profile" ).length == 0 ) {
             String redirectPage = request.getParameter( "redirect" );
+            if( !wiki.getManager( PageManager.class ).wikiPageExists( redirectPage ) ) {
+                redirectPage = wiki.getFrontPage();
+            }
             response.sendRedirect( wikiContext.getViewURL(redirectPage) );
             return;
         }
@@ -106,6 +109,10 @@
         // If using custom auth, we need to do the login now
         String action = request.getParameter("action");
         if( request.getParameter("submitlogin") != null ) {
+            if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+                response.sendRedirect( "error/Forbidden.html" );
+                return;
+            }
             String uid    = request.getParameter( "j_username" );
             String passwd = request.getParameter( "j_password" );
             log.debug( "Attempting to authenticate user {}", uid );
@@ -115,7 +122,10 @@
                 log.info( "Successfully authenticated user {} (custom auth)", uid );
             } else {
                 log.info( "Failed to authenticate user {}", uid );
-                wikiSession.addMessage( "login", rb.getString( "login.error.password" ) );
+                // The login may have said already why it failed, e.g. that the password has expired
+                if( wikiSession.getMessages( "login" ).length == 0 ) {
+                    wikiSession.addMessage( "login", rb.getString( "login.error.password" ) );
+                }
             }
         }
     } else {

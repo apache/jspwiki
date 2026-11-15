@@ -158,6 +158,10 @@
       <td><input type="text" size="24" name="name" id="name" /></td>
     </tr>
     <tr>
+      <td><label for="resettoken"><fmt:message key="login.lostpw.token"/></label></td>
+      <td><input type="text" size="24" name="resettoken" id="resettoken" /></td>
+    </tr>
+    <tr>
       <td>&nbsp;</td>
       <td>
         <input type="hidden" name="action" value="resetPassword"/>

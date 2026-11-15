@@ -1,4 +1,4 @@
-# Apache JSPWiki 2.12 - Documentation
+# Apache JSPWiki 3.0 - Documentation
 
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -62,7 +62,7 @@ Since JSPWiki 2.1.153, JSPWiki comes with a really simple installation
 engine.  Just do the following:
 
 1) Install Tomcat from https://tomcat.apache.org/ (or any other servlet
-   container)
+   container) and unzip it somewhere.
 
 2) Rename the JSPWiki.war file from the download and rename it based on
    your desired URL (if you want it different from /JSPWiki).  For example,

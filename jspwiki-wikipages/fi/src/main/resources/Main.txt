@@ -1,0 +1,31 @@
+!!!Onnittelut!
+
+Olet asentanut [JSPWikin|About] onnistuneesti.
+
+Sinulle on valmiiksi tehty muutama sivu:
+
+!Pikaopas
+
+* Kokeiluja varten on [SandBox].
+* Nopea katsaus siihen, mitä wiki on: [OneMinuteWiki].
+* Hyvät toimintatavat wikissä: [WikiEtiquette].
+
+!Asennukseen liittyvät ongelmat
+
+* Jos käytät Microsoft Windowsia tai sinulla on ongelmia UTF-8:n kanssa, kannattaa lukea lisätietoja sivulta
+  [InstallationTips].
+
+!Dokumentaatio
+
+* Kaikki wikimerkinnät on kuvattu sivulla [TextFormattingRules].
+* Lähtökohta täydelle [JSPWikin dokumentaatiolle|JSPWiki:JSPWikiDocumentation]
+** [JSPWikin uudet ominaisuudet|JSPWiki:NewIn].
+
+!Sekalaista
+
+* JSPWikin [yhteisöön|Community] saa yhteyden usealla tavalla. Tutustu niihin!
+* Jos haluat tietää, mistä tässä wikissä on kyse, napsauta wikin nimeä
+  selainikkunan vasemmassa yläkulmassa tai [napsauta tästä|SystemInfo].
+
+Onnea matkaan, ja kiitos kun valitsit JSPWikin!
+

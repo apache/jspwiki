@@ -61,7 +61,7 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
         final ReferenceManager referenceManager = context.getEngine().getManager( ReferenceManager.class );
 
         final int items = TextUtil.parseIntParameter(params.get(PARAM_MAX), ALL_ITEMS);
-        String extras = params.get(PARAM_EXTRAS);
+        String extras = TextUtil.replaceEntities( params.get( PARAM_EXTRAS ) );
         if (extras == null) {
             extras = rb.getString("referringundefinedpagesplugin.more");
         }
@@ -72,7 +72,7 @@ public class ReferringUndefinedPagesPlugin extends AbstractReferralPlugin {
 
         final TreeMap< String, String > sortedMap;
         if( uncreatedPages != null ) {
-            sortedMap = uncreatedPages.stream().map(referenceManager::findReferrers).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toMap(referringPage -> referringPage, referringPage -> "", (a, b) -> b, TreeMap::new));
+            sortedMap = uncreatedPages.stream().map(referenceManager::findReferrers).filter(Objects::nonNull).flatMap(Collection::stream).filter(referringPage -> mayView(context, referringPage)).collect(Collectors.toMap(referringPage -> referringPage, referringPage -> "", (a, b) -> b, TreeMap::new));
             result = sortedMap.keySet();
         }
 

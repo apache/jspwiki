@@ -31,6 +31,7 @@ import org.apache.wiki.auth.acl.UnresolvedPrincipal;
 import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventEmitter;
 import org.apache.wiki.event.WorkflowEvent;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.*;
@@ -39,6 +40,7 @@ import java.security.Principal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -63,13 +65,23 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
     private int retainCompleted;
 
     /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
+
+    /**
      * Constructs a new WorkflowManager, with an empty workflow cache.
      */
     public DefaultWorkflowManager() {
         m_workflows = ConcurrentHashMap.newKeySet();
         m_approvers = new ConcurrentHashMap<>();
         m_queue = new DecisionQueue();
-        WikiEventEmitter.attach( this );
+        WikiEventEmitter.register( this );
     }
 
     /**
@@ -140,50 +152,54 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
      * @return the date when the data was last written on disk or {@code 0} if there has been problems reading from disk.
      */
     @SuppressWarnings( "unchecked" )
-    synchronized long unserializeFromDisk( final File f ) {
-        long saved = 0L;
-        final StopWatch sw = new StopWatch();
-        sw.start();
-        try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
-            final long ver = in.readLong();
-            if( ver != serialVersionUID ) {
-                LOG.warn( "File format has changed; Unable to recover workflows and decision queue from disk." );
-            } else {
-                saved        = in.readLong();
-                m_workflows  = ( Set< Workflow > )in.readObject();
-                m_queue      = ( DecisionQueue )in.readObject();
-                m_completed = new CircularFifoQueue<>( retainCompleted );
-                m_completed.addAll( ( Collection< Workflow > )in.readObject() );
-                LOG.debug( "Read serialized data successfully in " + sw );
+    long unserializeFromDisk( final File f ) {
+        return Synchronizer.synchronize(lock, () -> {
+            long saved = 0L;
+            final StopWatch sw = new StopWatch();
+            sw.start();
+            try( final ObjectInputStream in = new ObjectInputStream( new BufferedInputStream( Files.newInputStream( f.toPath() ) ) ) ) {
+                final long ver = in.readLong();
+                if( ver != serialVersionUID ) {
+                    LOG.warn( "File format has changed; Unable to recover workflows and decision queue from disk." );
+                } else {
+                    saved        = in.readLong();
+                    m_workflows  = ( Set< Workflow > )in.readObject();
+                    m_queue      = ( DecisionQueue )in.readObject();
+                    m_completed = new CircularFifoQueue<>( retainCompleted );
+                    m_completed.addAll( ( Collection< Workflow > )in.readObject() );
+                    LOG.debug( "Read serialized data successfully in " + sw );
+                }
+            } catch( final IOException | ClassNotFoundException e ) {
+                LOG.warn( "unable to recover from disk workflows and decision queue: " + e.getMessage() );
             }
-        } catch( final IOException | ClassNotFoundException e ) {
-            LOG.warn( "unable to recover from disk workflows and decision queue: " + e.getMessage() );
-        }
-        sw.stop();
+            sw.stop();
 
-        return saved;
+            return saved;
+        });
     }
 
     /**
      *  Serializes workflows and decisionqueue to disk.  The format is private, don't touch it.
      */
-    synchronized void serializeToDisk( final File f ) {
-        try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
-            final StopWatch sw = new StopWatch();
-            sw.start();
+    void serializeToDisk( final File f ) {
+        Synchronizer.synchronize(lock, () -> {
+            try( final ObjectOutputStream out = new ObjectOutputStream( new BufferedOutputStream( Files.newOutputStream( f.toPath() ) ) ) ) {
+                final StopWatch sw = new StopWatch();
+                sw.start();
 
-            out.writeLong( serialVersionUID );
-            out.writeLong( System.currentTimeMillis() ); // Timestamp
-            out.writeObject( m_workflows );
-            out.writeObject( m_queue );
-            out.writeObject( m_completed );
+                out.writeLong( serialVersionUID );
+                out.writeLong( System.currentTimeMillis() ); // Timestamp
+                out.writeObject( m_workflows );
+                out.writeObject( m_queue );
+                out.writeObject( m_completed );
 
-            sw.stop();
+                sw.stop();
 
-            LOG.debug( "serialization done - took " + sw );
-        } catch( final IOException ioe ) {
-            LOG.error( "Unable to serialize!", ioe );
-        }
+                LOG.debug( "serialization done - took " + sw );
+            } catch( final IOException ioe ) {
+                LOG.error( "Unable to serialize!", ioe );
+            }
+        });
     }
 
     /**
@@ -269,7 +285,7 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
      */
     @Override
     public void actionPerformed( final WikiEvent event ) {
-        if( event instanceof WorkflowEvent ) {
+        if( event instanceof WorkflowEvent && isOwnEvent( event ) ) {
             if( event.getSrc() instanceof Workflow ) {
                 final Workflow workflow = event.getSrc();
                 switch( event.getType() ) {
@@ -292,6 +308,29 @@ public class DefaultWorkflowManager implements WorkflowManager, Serializable {
             }
             serializeToDisk( new File( m_engine.getWorkDir(), SERIALIZATION_FILE ) );
         }
+    }
+
+    /**
+     * Workflow events are broadcast to every manager in the JVM, so each one has to tell if the event is about a workflow it tracks. A
+     * newly created Workflow is not tracked yet, so it belongs to the manager of the engine it was bound to, or to every manager if it
+     * was not bound to any.
+     *
+     * @param event a workflow event
+     * @return {@code true} if the event concerns a workflow of this manager
+     */
+    boolean isOwnEvent( final WikiEvent event ) {
+        if( event.getSrc() instanceof Workflow ) {
+            if( event.getType() == WorkflowEvent.CREATED ) {
+                final Engine engine = event.getArg( 0, Engine.class );
+                return engine == null || engine == m_engine;
+            }
+            return m_workflows.contains( event.< Workflow >getSrc() );
+        }
+        if( event.getSrc() instanceof Decision ) {
+            final int workflowId = event.< Decision >getSrc().getWorkflowId();
+            return m_workflows.stream().anyMatch( w -> w.getId() == workflowId );
+        }
+        return false;
     }
 
     /**

@@ -44,6 +44,7 @@ class IfPluginTest {
     @AfterEach
     public void tearDown() throws Exception {
         testEngine.getManager( PageManager.class ).deletePage( "Test" );
+        testEngine.getManager( PageManager.class ).deletePage( "SecretPage" );
     }
 
     /**
@@ -67,7 +68,7 @@ class IfPluginTest {
      */
     @Test
     void testIfPluginUserAllowed() throws WikiException {
-        final String src = "[{IfPlugin user='Janne Jalkanen'\n\nContent visible for Janne Jalkanen}]";
+        final String src = "[{IfPlugin user='janne'\n\nContent visible for Janne Jalkanen}]";
         final String expected = "<p>Content visible for Janne Jalkanen</p>\n";
 
         testEngine.saveText( "Test", src );
@@ -85,7 +86,7 @@ class IfPluginTest {
      */
     @Test
     void testIfPluginUserNotAllowed() throws WikiException {
-        final String src = "[{IfPlugin user='!Janne Jalkanen'\n\nContent NOT visible for Janne Jalkanen}]";
+        final String src = "[{IfPlugin user='!janne'\n\nContent NOT visible for Janne Jalkanen}]";
         final String expected = "\n";
 
         testEngine.saveText( "Test", src );
@@ -158,6 +159,27 @@ class IfPluginTest {
     @Test
     void testIfPluginIPNotAllowed() throws WikiException {
         final String src = "[{IfPlugin ip='!127.0.0.1'\n\nContent NOT visible for 127.0.0.1}]";
+        final String expected = "\n";
+
+        testEngine.saveText( "Test", src );
+        final Page page = testEngine.getManager( PageManager.class ).getPage( "Test", PageProvider.LATEST_VERSION );
+        final Context context = getJanneBasedWikiContextFor( page );
+
+        final String res = testEngine.getManager( RenderingManager.class ).getHTML( context, page );
+        Assertions.assertEquals( expected, res );
+    }
+
+    /**
+     * Checks that an ACL-protected page cannot be probed through the contains parameter:
+     * a denied page must behave exactly as if its content did not match.
+     *
+     * @throws WikiException test Assertions.failing.
+     */
+    @Test
+    void testIfPluginContainsAclProtectedPageNotLeaked() throws WikiException {
+        testEngine.saveText( "SecretPage", "[{ALLOW view Alice}]\nxyzzy" );
+
+        final String src = "[{IfPlugin page='SecretPage' contains='xyzzy'\n\nSecret page contains xyzzy}]";
         final String expected = "\n";
 
         testEngine.saveText( "Test", src );

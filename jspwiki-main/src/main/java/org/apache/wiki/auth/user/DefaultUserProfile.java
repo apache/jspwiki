@@ -45,6 +45,7 @@ public final class DefaultUserProfile implements UserProfile {
     private String email;
     private String fullname;
     private Date lockExpiry;
+    private Date passwordChanged;
     private String loginName;
     private Date modified;
     private String password;
@@ -70,7 +71,10 @@ public final class DefaultUserProfile implements UserProfile {
         if ( o instanceof UserProfile ) {
             final DefaultUserProfile u = ( DefaultUserProfile )o;
             return  same( fullname, u.fullname ) &&
-                    same( password, u.password ) &&
+                    //same( password, u.password ) &&
+                    //Note: this used to compare the password for some reason, but that was causing
+                    //issues when the user wanted to change their password. since this is called
+                    //from DefaultUserManager#setProfile
                     same( loginName, u.loginName ) &&
                     same( StringUtils.lowerCase( email ), StringUtils.lowerCase( u.email ) ) &&
                     same( wikiname, u.wikiname );
@@ -304,6 +308,22 @@ public final class DefaultUserProfile implements UserProfile {
         return isLocked() ? lockExpiry : null;
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Date getPasswordChanged() {
+        return passwordChanged;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setPasswordChanged( final Date date ) {
+        this.passwordChanged = date;
+    }
+
     /**
      * {@inheritDoc}
      */

@@ -21,8 +21,10 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletResponse;
+import org.apache.wiki.util.HttpUtil;
+
 import java.io.IOException;
+
 
 /**
  * Cross-Origin-Resource-Policy
@@ -31,18 +33,20 @@ public class CORPFilter implements Filter {
 
     private String mode = "same-origin";
 
-    public void init(FilterConfig filterConfig) {
-        String configMode = filterConfig.getInitParameter("CORPValue");
-        if (configMode != null) {
+    /** {@inheritDoc} */
+    @Override
+    public void init( final FilterConfig filterConfig ) {
+        final String configMode = FilterOperations.initValue( filterConfig, "CORPValue", "corp.value" );
+        if( configMode != null ) {
             mode = configMode;
         }
     }
 
+    /** {@inheritDoc} */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletResponse res = (HttpServletResponse) response;
-        res.addHeader("Cross-Origin-Resource-Policy", mode);
-        chain.doFilter(request, response);
+    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
+        HttpUtil.addHeader( response,"Cross-Origin-Resource-Policy", mode );
+        chain.doFilter( request, response );
     }
 
 }

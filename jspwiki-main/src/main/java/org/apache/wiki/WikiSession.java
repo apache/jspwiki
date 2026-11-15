@@ -150,6 +150,15 @@ public class WikiSession implements Session {
         return antiCsrfToken;
     }
 
+    /**
+     * Regenerates the anti-CSRF token. Called when the session's privilege level changes (i.e. at login), so that
+     * a token observed before authentication cannot be replayed against the authenticated session.
+     */
+    @Override
+    public void regenerateAntiCsrfToken() {
+        antiCsrfToken = UUID.randomUUID().toString();
+    }
+
     /** {@inheritDoc} */
     @Override
     public Locale getLocale() {
@@ -419,7 +428,7 @@ public class WikiSession implements Session {
             throw new IllegalStateException( "User database cannot be null." );
         }
         try {
-            final UserProfile profile = database.find( searchId );
+            final UserProfile profile = database.findByLoginName( searchId );
             final Principal[] principals = database.getPrincipals( profile.getLoginName() );
             for( final Principal principal : principals ) {
                 // Add the Principal to the Subject
@@ -428,6 +437,12 @@ public class WikiSession implements Session {
                 // Set the user principal if needed; we prefer FullName, but the WikiName will also work
                 final boolean isFullNamePrincipal = ( principal instanceof WikiPrincipal &&
                                                       ( ( WikiPrincipal )principal ).getType().equals( WikiPrincipal.FULL_NAME ) );
+                if (( principal instanceof WikiPrincipal &&
+                                                      ( ( WikiPrincipal )principal ).getType().equals( WikiPrincipal.LOGIN_NAME )) ){
+                    m_loginPrincipal = principal;
+                }
+                
+                
                 if ( isFullNamePrincipal ) {
                    m_userPrincipal = principal;
                 } else if ( !( m_userPrincipal instanceof WikiPrincipal ) ) {

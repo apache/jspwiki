@@ -55,7 +55,12 @@ import java.util.ServiceLoader;
  *  {@code Context#getEngine()} method or through {@code Wiki.engine().find(..)} DSL methods.
  */
 public interface Engine {
-
+    /**
+     * see JSPWIKI-130
+     * @since 3.0.0
+     */
+    String PROP_USE_2_X_ACL_LOGIC = "jspwiki.security.useOldPageAccessControlLogic";
+    
     /** The default inlining pattern.  Currently "*.png" */
     String DEFAULT_INLINEPATTERN = "*.png";
 
@@ -241,12 +246,23 @@ public interface Engine {
     ServletContext getServletContext();
 
     /**
-     * Looks up and obtains a configuration file inside the WEB-INF folder of a wiki webapp.
+     * Looks up and obtains a configuration file inside the WEB-INF folder of a wiki webapp. A name that is the absolute path of an existing
+     * file is used as is.
      *
      * @param name the file to obtain, <em>e.g.</em>, <code>jspwiki.policy</code>
      * @return the URL to the file
      */
     default URL findConfigFile( final String name ) {
+        final File absoluteFile = new File( name );
+        if( absoluteFile.isAbsolute() && absoluteFile.isFile() ) {
+            try {
+                return absoluteFile.toURI().toURL();
+            } catch( final MalformedURLException e ) {
+                // Shouldn't happen, but log it if it does
+                LogManager.getLogger( Engine.class ).warn( "Malformed URL: " + e.getMessage() );
+            }
+        }
+
         LogManager.getLogger( Engine.class ).info( "looking for " + name + " inside WEB-INF " );
         // Try creating an absolute path first
         File defaultFile = null;

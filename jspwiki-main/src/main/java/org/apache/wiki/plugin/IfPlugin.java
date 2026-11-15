@@ -20,17 +20,13 @@
 package org.apache.wiki.plugin;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.Pattern;
-import org.apache.oro.text.regex.PatternCompiler;
-import org.apache.oro.text.regex.PatternMatcher;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.Perl5Matcher;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.HttpUtil;
@@ -41,7 +37,10 @@ import java.security.Principal;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.apache.wiki.i18n.InternationalizationManager;
+import org.apache.wiki.util.TimeLimitedRegex;
 
 /**
  *  The IfPlugin allows parts of a WikiPage to be executed conditionally, and is intended as a flexible way
@@ -190,7 +189,15 @@ public class IfPlugin implements Plugin {
         include |= checkIP(context, ip);
 
         if( page != null ) {
-            final String content = context.getEngine().getManager( PageManager.class ).getPureText(page, WikiProvider.LATEST_VERSION).trim();
+            // Only read the target page's content if the requesting session is allowed to view it;
+            // otherwise behave exactly as if the content did not match, so ACL-protected content
+            // cannot be probed through the contains/is parameters.
+            String content = null;
+            final Page testedPage = context.getEngine().getManager( PageManager.class ).getPage( page );
+            if( testedPage != null && context.getEngine().getManager( AuthorizationManager.class )
+                    .checkPermission( context.getWikiSession(), PermissionFactory.getPagePermission( testedPage, "view" ) ) ) {
+                content = context.getEngine().getManager( PageManager.class ).getPureText(page, WikiProvider.LATEST_VERSION).trim();
+            }
             include |= checkContains(content,contains);
             include |= checkIs(content,is);
             include |= checkExists(context,page,exists);
@@ -294,13 +301,17 @@ public class IfPlugin implements Plugin {
     }
 
     private static boolean doMatch( final String content, final String pattern ) throws PluginException {
-        final PatternCompiler compiler = new Perl5Compiler();
-        final PatternMatcher  matcher  = new Perl5Matcher();
+     
 
         try {
-            final Pattern matchp = compiler.compile( pattern, Perl5Compiler.SINGLELINE_MASK );
-            return matcher.matches( content, matchp );
-        } catch( final MalformedPatternException e ) {
+              // DOTALL gives '.' the same match-newlines behaviour as the previous Perl5Compiler.SINGLELINE_MASK.
+            // The match is time-boxed: pattern and page content are both author-controlled, so an unbounded
+            // backtracking match is a render-time denial of service (see TimeLimitedRegex).
+            final Pattern matchp = Pattern.compile( pattern, Pattern.DOTALL );
+            return TimeLimitedRegex.matches( content, matchp );
+            //final Pattern matchp = compiler.compile( pattern, Perl5Compiler.SINGLELINE_MASK );
+            //return matcher.matches( content, matchp );
+        } catch( final PatternSyntaxException e ) {
             throw new PluginException( "Faulty pattern " + pattern );
         }
 

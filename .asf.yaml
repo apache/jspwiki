@@ -28,6 +28,25 @@ github:
     - jspwiki
     - wiki
 
+  rulesets:
+    - name: "Default Branch Protection"
+      type: branch
+      branches:
+        includes:
+          - "~DEFAULT_BRANCH"
+          - "release/*"
+          - "rel/*"
+        excludes: []
+      bypass_teams:
+        - root
+      restrict_deletion: true
+      restrict_force_push: true
+      
+  copilot_code_review:
+    enabled: true
+    review_drafts: false
+    review_on_push: true
+
 notifications:
   commits: commits@jspwiki.apache.org
   discussions: dev@jspwiki.apache.org

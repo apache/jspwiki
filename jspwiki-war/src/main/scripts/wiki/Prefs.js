@@ -87,7 +87,7 @@ Javascript routines to support JSPWiki UserPreferences
         });
 
         //FFS: add click-triggers to some preferences:  prefLayout, prefOrientation,
-        form.prefAppearance.onchange = function(event){
+        form.prefSkin.onchange = function(event){
             console.log( this, getValue(this) );
 
         }

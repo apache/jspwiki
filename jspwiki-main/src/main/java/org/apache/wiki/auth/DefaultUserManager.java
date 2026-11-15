@@ -21,7 +21,6 @@ package org.apache.wiki.auth;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.wiki.ajax.AjaxUtil;
 import org.apache.wiki.ajax.WikiAjaxDispatcherServlet;
 import org.apache.wiki.ajax.WikiAjaxServlet;
 import org.apache.wiki.api.core.Context;
@@ -47,6 +46,7 @@ import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.tasks.TasksManager;
 import org.apache.wiki.ui.InputValidator;
 import org.apache.wiki.util.ClassUtil;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.workflow.Decision;
 import org.apache.wiki.workflow.DecisionRequiredException;
@@ -69,9 +69,11 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.WeakHashMap;
+import org.apache.wiki.auth.authorize.Group;
+import org.apache.wiki.auth.authorize.GroupManager;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
-
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -89,6 +91,11 @@ public class DefaultUserManager implements UserManager {
     private static final String PARAM_LOGINNAME = "loginname";
     private static final String UNKNOWN_CLASS = "<unknown>";
 
+    /** Property with the number of hours between two passes of {@link AccountLifecycle} over the accounts. */
+    static final String PROP_LIFECYCLE_HOURS = "jspwiki.credentials.lifecycle.hours";
+
+    private static final int DEFAULT_LIFECYCLE_HOURS = 24;
+
     private Engine m_engine;
 
     private static final Logger LOG = LogManager.getLogger( DefaultUserManager.class);
@@ -98,6 +105,16 @@ public class DefaultUserManager implements UserManager {
 
     /** The user database loads, manages and persists user identities */
     private UserDatabase m_database;
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /** {@inheritDoc} */
     @Override
@@ -110,38 +127,47 @@ public class DefaultUserManager implements UserManager {
 
         //TODO: Replace with custom annotations. See JSPWIKI-566
         WikiAjaxDispatcherServlet.registerServlet( JSON_USERS, new JSONUserModule(this), new AllPermission(null));
+
+        // What happens to the accounts as their passwords get older, if the wiki is set up for it
+        final AccountLifecycle lifecycle = new AccountLifecycle( props, this::getUserDatabase, new AccountLifecycleMailer( engine ) );
+        if( lifecycle.isEnabled() ) {
+            final int hours = Math.max( 1, TextUtil.getIntegerProperty( props, PROP_LIFECYCLE_HOURS, DEFAULT_LIFECYCLE_HOURS ) );
+            new AccountLifecycleThread( engine, lifecycle, hours * 3600 ).start();
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public UserDatabase getUserDatabase() {
-        if( m_database != null ) {
-            return m_database;
-        }
-
-        String dbClassName = UNKNOWN_CLASS;
-
-        try {
-            dbClassName = TextUtil.getRequiredProperty( m_engine.getWikiProperties(), PROP_DATABASE );
-
-            LOG.info( "Attempting to load user database class {}", dbClassName );
-            m_database = ClassUtil.buildInstance( USERDATABASE_PACKAGE, dbClassName );
-            m_database.initialize( m_engine, m_engine.getWikiProperties() );
-            LOG.info( "UserDatabase initialized." );
-        } catch( final NoSuchElementException | NoRequiredPropertyException e ) {
-            LOG.error( "You have not set the '{}'. You need to do this if you want to enable user management by JSPWiki.", PROP_DATABASE, e );
-        } catch( final ReflectiveOperationException e ) {
-            LOG.error( "UserDatabase {} cannot be instantiated", dbClassName, e );
-        } catch( final WikiSecurityException e ) {
-            LOG.error( "Exception initializing user database: {}", e.getMessage(), e );
-        } finally {
-            if( m_database == null ) {
-                LOG.info( "I could not create a database object you specified (or didn't specify), so I am falling back to a default." );
-                m_database = new DummyUserDatabase();
+        return Synchronizer.synchronize( lock, () -> {
+            if( m_database != null ) {
+                return m_database;
             }
-        }
 
-        return m_database;
+            String dbClassName = UNKNOWN_CLASS;
+
+            try {
+                dbClassName = TextUtil.getRequiredProperty( m_engine.getWikiProperties(), PROP_DATABASE );
+
+                LOG.info( "Attempting to load user database class {}", dbClassName );
+                m_database = ClassUtil.buildInstance( USERDATABASE_PACKAGE, dbClassName );
+                m_database.initialize( m_engine, m_engine.getWikiProperties() );
+                LOG.info( "UserDatabase initialized." );
+            } catch( final NoSuchElementException | NoRequiredPropertyException e ) {
+                LOG.error( "You have not set the '{}'. You need to do this if you want to enable user management by JSPWiki.", PROP_DATABASE, e );
+            } catch( final ReflectiveOperationException e ) {
+                LOG.error( "UserDatabase {} cannot be instantiated", dbClassName, e );
+            } catch( final WikiSecurityException e ) {
+                LOG.error( "Exception initializing user database: {}", e.getMessage(), e );
+            } finally {
+                if( m_database == null ) {
+                    LOG.info( "I could not create a database object you specified (or didn't specify), so I am falling back to a default." );
+                    m_database = new DummyUserDatabase();
+                }
+            }
+
+            return m_database;
+        } );
     }
 
     /** {@inheritDoc} */
@@ -156,9 +182,9 @@ public class DefaultUserManager implements UserManager {
         if ( session.isAuthenticated() ) {
             user = session.getUserPrincipal();
             try {
-                profile = getUserDatabase().find( user.getName() );
+                profile = findExistingProfile( session, user );
                 newProfile = false;
-            } catch( final NoSuchPrincipalException e ) { 
+            } catch( final NoSuchPrincipalException e ) {
                 LOG.debug(e.getMessage(), e);
             }
         }
@@ -167,6 +193,8 @@ public class DefaultUserManager implements UserManager {
             profile = getUserDatabase().newProfile();
             if ( user != null ) {
                 profile.setLoginName( user.getName() );
+            } else {
+                LOG.warn("new profile however the user principal is null. this shouldn't happen");
             }
             if ( !profile.isNew() ) {
                 throw new IllegalStateException( "New profile should be marked 'new'. Check your UserProfile implementation." );
@@ -176,6 +204,22 @@ public class DefaultUserManager implements UserManager {
         // Stash the profile for next time
         m_profiles.put( session, profile );
         return profile;
+    }
+
+    /**
+     * Finds the stored profile of an authenticated user. The user principal usually carries the full name, which is not
+     * the wiki name when it has spaces, so the login name is tried first and the user principal name second.
+     */
+    private UserProfile findExistingProfile( final Session session, final Principal user ) throws NoSuchPrincipalException {
+        final Principal login = session.getLoginPrincipal();
+        if( login != null ) {
+            try {
+                return getUserDatabase().findByLoginName( login.getName() );
+            } catch( final NoSuchPrincipalException e ) {
+                LOG.debug( e.getMessage(), e );
+            }
+        }
+        return getUserDatabase().findByWikiName( user.getName() );
     }
 
     /** {@inheritDoc} */
@@ -202,7 +246,8 @@ public class DefaultUserManager implements UserManager {
             if( otherProfile != null && !otherProfile.equals( oldProfile ) ) {
                 throw new DuplicateUserException( "security.error.login.taken", profile.getLoginName() );
             }
-        } catch( final NoSuchPrincipalException e ) {
+        } catch (final NoSuchPrincipalException e) {
+            LOG.debug(e.getMessage(), e);
         }
         try {
             otherProfile = getUserDatabase().findByFullName( profile.getFullname() );
@@ -249,6 +294,7 @@ public class DefaultUserManager implements UserManager {
                 fireEvent( WikiSecurityEvent.PROFILE_SAVE, session, profile );
             }
         }
+        m_profiles.put( session, profile );
     }
 
     /** {@inheritDoc} */
@@ -390,31 +436,88 @@ public class DefaultUserManager implements UserManager {
         UserProfile otherProfile;
         final String fullName = profile.getFullname();
         final String loginName = profile.getLoginName();
+        final String wikiName = profile.getWikiName();
         final String email = profile.getEmail();
 
-        // It's illegal to use as a full name someone else's login name
-        try {
-            otherProfile = getUserDatabase().findByFullName(fullName );
-            if( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) ) {
-                final Object[] args = { fullName };
-                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalfullname" ), args ) );
+        
+        if ("true".equalsIgnoreCase(m_engine.getWikiProperties().getProperty(Engine.PROP_USE_2_X_ACL_LOGIC, "false"))) {
+            // It's illegal to use as a full name someone else's login name
+            try {
+                otherProfile = getUserDatabase().findByFullName(fullName );
+                if( otherProfile != null && !profile.equals( otherProfile ) && !fullName.equals( otherProfile.getFullname() ) ) {
+                    final Object[] args = { fullName };
+                    session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalfullname" ), args ) );
+                }
+            } catch( final NoSuchPrincipalException e ) {
+                LOG.debug(e.getMessage(), e);
+                /* It's clean */ 
             }
-        } catch( final NoSuchPrincipalException e ) {
-            LOG.debug(e.getMessage(), e);
-            /* It's clean */ 
-        }
 
-        // It's illegal to use as a login name someone else's full name
-        try {
-            otherProfile = getUserDatabase().findByLoginName(loginName );
-            if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
-                final Object[] args = { loginName };
-                session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );
+            // It's illegal to use as a login name someone else's full name
+            try {
+                otherProfile = getUserDatabase().findByLoginName(loginName );
+                if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
+                    final Object[] args = { loginName };
+                    session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );
+                }
+            } catch( final NoSuchPrincipalException e ) { 
+                LOG.debug(e.getMessage(), e);
+                /* It's clean */ 
             }
-        } catch( final NoSuchPrincipalException e ) { 
-            LOG.debug(e.getMessage(), e);
-            /* It's clean */ 
+        } else {
+            //JSPWIKI-130, v3+ behavior
+            // It is legal to use as a full name someone else's login name
+
+            // It's illegal to use as a login name someone else's full name
+            try {
+                otherProfile = getUserDatabase().findByLoginName(loginName );
+                if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
+                    final Object[] args = { loginName };
+                    session.addMessage( SESSION_MESSAGES, MessageFormat.format( 
+                            rb.getString( "security.error.illegalloginname" ), args ) );
+                }
+            } catch( final NoSuchPrincipalException e ) { 
+                LOG.debug(e.getMessage(), e);
+                /* It's clean */ 
+            }
+            //it's illegal to use a username, email or wiki name as a group name
+            try {
+                Group[] groups = m_engine.getManager(GroupManager.class).getGroupDatabase().groups();
+                for (Group grp : groups) {
+                    if (grp.getName().equals(loginName)) {
+                        final Object[] args = {loginName};
+                        session.addMessage(SESSION_MESSAGES,
+                                MessageFormat.format(rb.getString("security.error.illegalloginname"), args));
+                    }
+                    if (grp.getName().equals(wikiName)) {
+                        final Object[] args = {wikiName};
+                        session.addMessage(SESSION_MESSAGES,
+                                MessageFormat.format(rb.getString("security.error.illegalloginname"), args));
+                    }
+                    if (grp.getName().equals(email)) {
+                        final Object[] args = {email};
+                        session.addMessage(SESSION_MESSAGES,
+                                MessageFormat.format(rb.getString("security.error.illegalloginname"), args));
+                    }
+                }
+            } catch (WikiSecurityException ex) {
+                session.addMessage(SESSION_MESSAGES,
+                        "Processing failed. see log for details.");
+                LOG.error("failed to query for groups", ex);
+            }
+            //wiki names must be unique as well.
+            try {
+                otherProfile = getUserDatabase().findByWikiName(wikiName );
+                if( otherProfile != null && !profile.equals( otherProfile ) && !loginName.equals( otherProfile.getLoginName() ) ) {
+                    final Object[] args = { loginName };
+                    session.addMessage( SESSION_MESSAGES, MessageFormat.format( rb.getString( "security.error.illegalloginname" ), args ) );
+                }
+            } catch( final NoSuchPrincipalException e ) { 
+                LOG.debug(e.getMessage(), e);
+                /* It's clean */ 
+            }
         }
+        
 
         // It's illegal to use multiple accounts with the same email
         if (email != null && email.trim().length() > 0) {
@@ -446,8 +549,11 @@ public class DefaultUserManager implements UserManager {
      * This is a convenience method.
      * @param listener the event listener
      */
-    @Override public synchronized void addWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.addWikiEventListener( this, listener );
+    @Override
+    public void addWikiEventListener( final WikiEventListener listener ) {
+        Synchronizer.synchronize(lock, () -> {
+            WikiEventManager.addWikiEventListener( this, listener );
+        });
     }
 
     /**
@@ -455,8 +561,11 @@ public class DefaultUserManager implements UserManager {
      * This is a convenience method.
      * @param listener the event listener
      */
-    @Override public synchronized void removeWikiEventListener( final WikiEventListener listener ) {
-        WikiEventManager.removeWikiEventListener( this, listener );
+    @Override
+    public void removeWikiEventListener( final WikiEventListener listener ) {
+        Synchronizer.synchronize(lock, () -> {
+            WikiEventManager.removeWikiEventListener( this, listener );
+        });
     }
 
     /**
@@ -515,7 +624,7 @@ public class DefaultUserManager implements UserManager {
          */
         public UserProfile getUserInfo( final String uid ) throws NoSuchPrincipalException {
             if( m_manager != null ) {
-                return m_manager.getUserDatabase().findByWikiName( uid );
+                return m_manager.getUserDatabase().findByUid( uid );
             }
 
             throw new IllegalStateException( "The manager is offline." );

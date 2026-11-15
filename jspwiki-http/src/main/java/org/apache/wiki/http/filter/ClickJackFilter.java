@@ -21,29 +21,33 @@ import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
-import jakarta.servlet.http.HttpServletResponse;
+import org.apache.wiki.util.HttpUtil;
+
 import java.io.IOException;
 
+
 /**
- * X-Frame-Options: Prevents clickjacking attacks by controlling whether a page
- * can be rendered within an <frame>, <iframe>, <embed>, or <object>.
+ * X-Frame-Options: Prevents clickjacking attacks by controlling whether a page can be
+ * rendered within an {@code <frame>}, {@code <iframe>}, {@code <embed>}, or {@code <object>}.
  */
 public class ClickJackFilter implements Filter {
 
     private String mode = "DENY";
 
-    public void init(FilterConfig filterConfig) {
-        String configMode = filterConfig.getInitParameter("mode");
-        if (configMode != null && (configMode.equals("DENY") || configMode.equals("SAMEORIGIN"))) {
+    /** {@inheritDoc} */
+    @Override
+    public void init( final FilterConfig filterConfig ) {
+        final String configMode = FilterOperations.initValue( filterConfig, "mode", "clickjack.mode" );
+        if( configMode != null && ( configMode.equals( "DENY" ) || configMode.equals( "SAMEORIGIN" ) ) ) {
             mode = configMode;
         }
     }
 
+    /** {@inheritDoc} */
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        HttpServletResponse res = (HttpServletResponse) response;
-        res.addHeader("X-FRAME-OPTIONS", mode);
-        chain.doFilter(request, response);
+    public void doFilter( final ServletRequest request, final ServletResponse response, final FilterChain chain ) throws IOException, ServletException {
+        HttpUtil.addHeader( response,"X-FRAME-OPTIONS", mode );
+        chain.doFilter( request, response );
     }
 
 }

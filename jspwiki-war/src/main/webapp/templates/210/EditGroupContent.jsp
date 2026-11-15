@@ -105,7 +105,7 @@
       <fmt:message key="editgroup.savehelp"><fmt:param><%=name%></fmt:param></fmt:message>
     </div>
       <input type="submit" name="ok" value="<fmt:message key="editgroup.submit.save"/>" />
-      <input type="hidden" name="group" value="<%=name%>" />
+      <input type="hidden" name="group" value="<%= TextUtil.replaceEntities(name) %>" />
       <input type="hidden" name="action" value="save" />
   </form>
 
@@ -118,7 +118,7 @@
         method="POST" accept-charset="UTF-8">
       <wiki:CsrfProtection/>
       <input type="submit" name="ok" value="<fmt:message key="actions.deletegroup"/>" />
-      <input type="hidden" name="group" value="${param.group}" />
+      <input type="hidden" name="group" value="${ TextUtil.replaceEntities (param.group) }" />
   </form>
   </wiki:Permission>
 

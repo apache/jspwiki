@@ -19,7 +19,7 @@
 
 package org.apache.wiki.util.comparators;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 
 import java.util.Comparator;
 
@@ -38,7 +38,7 @@ public class JavaNaturalComparator implements Comparator<String>
      */
     @Override
     public int compare(final String str1, final String str2 ) {
-        if (StringUtils.equals( str1, str2 ) ) {
+        if( Strings.CS.equals( str1, str2 ) ) {
         	return 0; // the same object
         }
         if( str1 == null ) {

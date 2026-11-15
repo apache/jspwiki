@@ -132,16 +132,6 @@
     </label>
   </div>
 
-  <div class="form-group form-inline ">
-    <label class="control-label form-col-20" for="prefAppearance"><fmt:message key="prefs.user.appearance"/></label>
-    <label class="form-control form-switch xpref-appearance">
-      <!--<fmt:message key="prefs.user.appearance.light"/>-->
-      <input id="prefAppearance" name="prefAppearance"  data-pref="Appearance"
-           type="checkbox" class="" value="on" ${prefs.Appearance ? 'checked="checked"' : ''} >
-      <fmt:message key="prefs.user.appearance.dark"/>
-    </label>
-  </div>
-
   <c:if test='${not empty skins}'>
   <div class="form-group">
     <label class="control-label form-col-20" for="prefSkin"><fmt:message key="prefs.user.skin"/></label>

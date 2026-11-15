@@ -51,6 +51,15 @@ public interface Context extends Cloneable, Command {
     String VAR_WYSIWYG_EDITOR_MODE = "WYSIWYG_EDITOR_MODE";
 
     /**
+     *  Name of the variable that holds the markup being translated to HTML, as it was before the page filters ran. It is set while
+     *  the text is rendered, so that a plugin sees an edited text that is not saved yet, for instance in a preview. While nothing is
+     *  rendered its value is {@code null}.
+     *
+     *  @since 3.0.1
+     */
+    String VAR_RENDERED_TEXT = "_Rendering.text";
+
+    /**
      *  Returns the WikiPage that is being handled.
      *
      *  @return the WikiPage which was fetched.

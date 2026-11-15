@@ -1,0 +1,6 @@
+<modules>
+    <plugin class="org.apache.jspwiki.plugins.chartist.ChartistPlugin">
+        <author>ASF</author>
+        <minVersion>2.11</minVersion>
+    </plugin>
+</modules>

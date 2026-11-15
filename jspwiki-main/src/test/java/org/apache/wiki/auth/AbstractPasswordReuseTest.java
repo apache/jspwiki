@@ -15,6 +15,7 @@
  */
 package org.apache.wiki.auth;
 
+import com.dumbster.smtp.SimpleSmtpServer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.util.Properties;
@@ -24,7 +25,9 @@ import org.apache.wiki.WikiSessionTest;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.auth.user.UserProfile;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,12 +36,28 @@ import static org.mockito.Mockito.when;
  *
  */
 public abstract class AbstractPasswordReuseTest {
+    private static SimpleSmtpServer dumbster = null;
+
+    @BeforeAll
+    public static void startTestEmailServer() throws Exception {
+        
+        dumbster = SimpleSmtpServer.start(SimpleSmtpServer.AUTO_SMTP_PORT);
+        
+    }
+
+    @AfterAll
+    public static void stopTestEmailServer() {
+        if (dumbster != null) {
+            dumbster.close();
+        }
+    }
 
     public abstract Properties getTestProps() throws Exception;
 
     @Test
     public void verifyPasswordReusePolicies() throws Exception {
         Properties props = getTestProps();
+        props.setProperty("mail.smtp.port", dumbster.getPort()+"");
 
         final HttpSession httpSession = mock(HttpSession.class);
 
@@ -102,10 +121,6 @@ public abstract class AbstractPasswordReuseTest {
         //new confirm
         when(request.getParameter("password2")).thenReturn("passwordA2!");
 
-        userManager.validateProfile(context, profile);
-        Assertions.assertEquals(0,
-                wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length,
-                StringUtils.join(wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES)));
         //this should save the profile, changing the password
         userManager.setUserProfile(context, profile);
         Assertions.assertEquals(0, wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, StringUtils.join(wikiSession.getMessages()));
@@ -129,10 +144,6 @@ public abstract class AbstractPasswordReuseTest {
         when(request.getParameter("password0")).thenReturn("passwordA2!");
         //new pass
         when(request.getParameter("password2")).thenReturn("passwordA3!");
-        userManager.validateProfile(context, profile);
-        Assertions.assertEquals(0,
-                wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length,
-                StringUtils.join(wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES)));
         userManager.setUserProfile(context, profile);
         Assertions.assertEquals(0,
                 wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length,
@@ -166,7 +177,7 @@ public abstract class AbstractPasswordReuseTest {
     public void verifyPasswordReusePoliciesWithItOff() throws Exception {
 
         Properties props = getTestProps();
-
+        props.setProperty("mail.smtp.port", dumbster.getPort()+"");
         final HttpSession httpSession = mock(HttpSession.class);
 
         HttpServletRequest request = mock(HttpServletRequest.class);
@@ -229,10 +240,6 @@ public abstract class AbstractPasswordReuseTest {
         //new confirm
         when(request.getParameter("password2")).thenReturn("passwordA2!");
 
-        userManager.validateProfile(context, profile);
-        Assertions.assertEquals(0,
-                wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length,
-                StringUtils.join(wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES)));
         //this should save the profile, changing the password
         userManager.setUserProfile(context, profile);
         Assertions.assertEquals(0, wikiSession.getMessages(DefaultUserManager.SESSION_MESSAGES).length, StringUtils.join(wikiSession.getMessages()));

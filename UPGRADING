@@ -1,5 +1,5 @@
 
-Apache JSPWiki 2.12.0 - Upgrading Notes
+Apache JSPWiki 3.0.0 - Upgrading Notes
 ==================================================
 
     Licensed to the Apache Software Foundation (ASF) under one
@@ -20,6 +20,38 @@ Apache JSPWiki 2.12.0 - Upgrading Notes
     under the License.  
 
 The license file can be found in LICENSE.
+
+
+Upgrading JSPWiki to 3.0.1
+---------------------------
+
+1. Backwards incompatible changes:
+  * The security policy of the JVM, the one set with the system property java.security.policy, is not consulted anymore
+    to find out what the users of the wiki may do (JSPWIKI-129). If you granted permissions to wiki roles, groups or users
+    in such a policy, grant them in the policy file of the wiki instead: WEB-INF/jspwiki.policy, or the file set with
+    jspwiki.policy.file. The file jspwiki-container.policy, which was for running the wiki under a Java security manager,
+    is not shipped anymore.
+  * Session.doPrivileged is deprecated. JSPWiki does not use the access control context of the JVM anymore.
+
+
+Upgrading JSPWiki to 3.0.0
+---------------------------
+Please see https://jspwiki-wiki.apache.org/Wiki.jsp?page=NewIn3.0.0 for details
+
+1. New requirements
+  * Java 17 needed to run JSPWiki
+
+2. Backwards incompatible changes:
+  * Page level access controls (i.e. [ALLOW edit/view/etc User/Role] ) logic has been changed including the IF plugin.
+    See details with JSPWIKI-130.
+	
+	To maintain the behavior of JSPWiki 2.X use the following setting in jspwiki-custom.properties.
+		jspwiki.security.useOldPageAccessControlLogic=true
+	This is not recommended.
+	
+3. Many new security features have been added and enabled by default. Please review the default 
+	jspwiki.properties file 
+
 
 Upgrading JSPWiki to 2.12.0
 ---------------------------

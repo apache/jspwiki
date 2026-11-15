@@ -17,13 +17,12 @@
   specific language governing permissions and limitations
   under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.apache.jspwiki</groupId>
         <artifactId>jspwiki-builder</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.0.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -142,15 +141,7 @@
                             <!--<goal>jshint</goal>-->
                         </goals>
                         <configuration>
-                            <!--
-                            <targetGroups>all</targetGroups>
-                            <minimize>true</minimize>
-                            <cssDestinationFolder>d:/static/css/</cssDestinationFolder>
-                            <jsDestinationFolder>d:/static/js/</jsDestinationFolder>
-                            <ignoreMissingResources>false</ignoreMissingResources>
-                            -->
-                            <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/210/
-                            </cssDestinationFolder>
+                            <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/210/</cssDestinationFolder>
                             <wroFile>src/main/config/wro/wro.xml</wroFile>
                         </configuration>
                     </execution>
@@ -163,8 +154,7 @@
                             <goal>run</goal>
                         </goals>
                         <configuration>
-                            <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/
-                            </cssDestinationFolder>
+                            <cssDestinationFolder>${project.build.directory}/generated-sources/wro/templates/default/</cssDestinationFolder>
                             <wroFile>src/main/config/wro/wro-haddock.xml</wroFile>
                         </configuration>
                     </execution>
@@ -243,9 +233,12 @@
                         <resource>
                             <directory>${project.build.directory}/generated-sources/wro</directory>
                         </resource>
+                        <!--this direcotry use to host the dark mode css file, which was moved to
+                        the skins dir on templates/default/dark
                         <resource>
                             <directory>src/main/styles/static</directory>
                         </resource>
+                            -->
                     </webResources>
                 </configuration>
             </plugin>

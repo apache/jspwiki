@@ -17,6 +17,7 @@
     under the License.  
 --%>
 
+<%@page import="org.apache.wiki.http.filter.CsrfProtectionFilter"%>
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ page import="org.apache.logging.log4j.Logger" %>
 <%@ page import="org.apache.logging.log4j.LogManager" %>
@@ -36,8 +37,17 @@
   Engine wiki;
 %>
 <%
+    if (!"POST".equalsIgnoreCase(request.getMethod())) {
+        //requre post
+        return;
+    }
+    if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+        //no token, return redirect.
+        response.sendRedirect( "/error/Forbidden.html" );
+        return;
+    }
   // Copied from a top-level jsp -- which would be a better place to put this 
-  Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_VIEW.getRequestContext() );
+  Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_EDIT.getRequestContext() );
   if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
 
   response.setContentType("text/html; charset="+wiki.getContentEncoding() );

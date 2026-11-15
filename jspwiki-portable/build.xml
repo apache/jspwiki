@@ -110,6 +110,11 @@
     <copy todir="${jspwiki.woas.assembly.dir}/jspwiki/lib" overwrite="true">
       <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/WEB-INF/lib"/>
     </copy>
+	<copy todir="${jspwiki.woas.assembly.dir}/jspwiki/lib" overwrite="true">
+      <fileset dir="${basedir}/../jspwiki-plugins/jspwiki-plugins-chartist/target">
+		<filename name ="*.jar" />
+	  </fileset>
+    </copy>
     <!-- make the start scripts executable -->
     <chmod dir="${jspwiki.woas.assembly.dir}" includes="*.sh" perm="ugo+x"/>        
     <chmod dir="${jspwiki.woas.assembly.dir}/bin" includes="*.sh" perm="ugo+x"/>        

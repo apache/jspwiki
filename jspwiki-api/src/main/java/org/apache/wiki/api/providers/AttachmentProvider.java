@@ -99,7 +99,7 @@ public interface AttachmentProvider extends WikiProvider {
      *  
      *  @param page The parent page
      *  @param name The name of the attachment
-     *  @param version The version of the attachment (it's okay to use WikiPage.LATEST_VERSION to find the latest one)
+     *  @param version The version of the attachment (it's okay to use {@link WikiProvider#.LATEST_VERSION} to find the latest one)
      *  @return An attachment object
      *  @throws ProviderException If the attachment cannot be found or some other error occurs.
      */

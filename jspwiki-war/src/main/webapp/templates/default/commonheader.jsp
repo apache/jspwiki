@@ -74,10 +74,6 @@ String.I18N.PREFIX = "javascript.";
 <link rel="stylesheet" type="text/css" media="screen, projection, print" id="main-stylesheet"
      href="<wiki:Link format='url' templatefile='haddock.css'/>" />
 
-<c:if test="${prefs.Appearance }">
-<link rel="stylesheet" type="text/css" media="screen, projection, print" id="main-stylesheet"
-     href="<wiki:Link format='url' templatefile='haddock-dark.css'/>"/>
-</c:if>
 
 <wiki:IncludeResources type="stylesheet"/>
 <wiki:IncludeResources type="inlinecss" />
@@ -155,6 +151,11 @@ String.I18N.PREFIX = "javascript.";
      href="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs.SkinName}/skin.css' />" />
 <script type="text/javascript"
          src="<wiki:Link format='url' templatefile='skins/' /><c:out value='${prefs.SkinName}/skin.js' />" ></script>
+</c:if>
+<%-- Without a skin of their own choosing, users whose system asks for a dark colour scheme get the dark skin --%>
+<c:if test='${(empty prefs.SkinName || prefs.SkinName=="default" || prefs.SkinName=="PlainVanilla") && !prefs.isSetByUser("SkinName") }'>
+<link rel="stylesheet" type="text/css" media="screen and (prefers-color-scheme: dark)"
+     href="<wiki:Link format='url' templatefile='skins/' />dark/skin.css" />
 </c:if>
 
 <wiki:Include page="localheader.jsp"/>

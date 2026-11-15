@@ -164,6 +164,7 @@ public class TestEngine extends WikiEngine {
         try {
             return new TestEngine( props );
         } catch( final WikiException we ) {
+            LOG.error( "Failed to initialize TestEngine with properties: {}", props, we );
             throw new UnsupportedOperationException( "Unable to build TestEngine: " + we.getMessage(), we );
         }
     }

@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.1-SNAPSHOT</version>
   </parent>
 
   <artifactId>jspwiki-markdown</artifactId>
@@ -156,13 +156,13 @@
             <goals>
               <goal>run</goal>
             </goals>
-            <configuration>
-              <extraConfigFile>${project.basedir}/src/main/javascript/wro.properties</extraConfigFile>
-              <jsDestinationFolder>${project.build.outputDirectory}/META-INF/resources/plain/</jsDestinationFolder>
-              <wroFile>src/main/javascript/wro.xml</wroFile>
-            </configuration>
           </execution>
         </executions>
+        <configuration>
+          <extraConfigFile>${project.basedir}/src/main/javascript/wro.properties</extraConfigFile>
+          <jsDestinationFolder>${project.build.outputDirectory}/META-INF/resources/plain/</jsDestinationFolder>
+          <wroFile>src/main/javascript/wro.xml</wroFile>
+        </configuration>
       </plugin>
 
       <plugin>

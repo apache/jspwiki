@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.1-SNAPSHOT</version>
   </parent>
 
   <groupId>org.apache.jspwiki.it</groupId>
@@ -30,7 +30,11 @@
   <modelVersion>4.0.0</modelVersion>
   <description>selenium tests execution for jspwiki</description>
   <packaging>pom</packaging>
-
+  <distributionManagement>
+      <relocation>
+          <artifactId>jspwiki-it-builder</artifactId>
+      </relocation>
+  </distributionManagement>
   <modules>
     <module>jspwiki-selenide-tests</module>
     <module>jspwiki-it-test-custom</module>

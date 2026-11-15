@@ -82,4 +82,17 @@ public class WeblogPluginTest {
         Assertions.assertTrue( res.contains( "<div class=\"weblogentrybody\">\nAnother blog entry  <a href=\"/test/Wiki.jsp?page="+ blogEntryPage + "\">(more)</a>\n</div>\n" ), res );
     }
 
+    @Test
+    public void testEntryFormatIsEscaped() throws WikiException {
+        final WeblogEntryPlugin wep = new WeblogEntryPlugin();
+        testEngine.saveText( wep.getNewEntryPage( testEngine, "Test5" ), "Blog entry" );
+        // A SimpleDateFormat quoted literal in an author-supplied entryFormat must not be emitted as raw markup.
+        final String src = "[{WeblogPlugin days='90' entryFormat=\"'<script>alert(document.cookie)</script>'\"}]";
+        testEngine.saveText( "Test5", src );
+
+        final String res = testEngine.getI18nHTML( "Test5" );
+        Assertions.assertFalse( res.contains( "<script>" ), res );
+        Assertions.assertFalse( res.contains( "<script>alert(document.cookie)</script>" ), res );
+    }
+
 }

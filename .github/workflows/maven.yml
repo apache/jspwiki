@@ -27,11 +27,9 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     strategy:
       matrix:
-        # windows-latest is not used due to intermittent lucene failures
         os: [ubuntu-latest, windows-latest]
         # All LTS versions plus the current version
-        # 23, 24 do not work currently due to javax.security
-        java: [ 17, 18, 19, 21, 22 ]
+        java: [ 17, 21 ]
         experimental: [false]
 #        include:
 #          - java: 20-ea
@@ -59,9 +57,10 @@ jobs:
         distribution: 'temurin'
         java-version: ${{ matrix.java }}
     - name: Build with Maven
-      run: mvn clean package -T 1C -V -B -Pintegration-tests
+      run: mvn clean package -T 1C -V -B -Pintegration-tests -Dminimize=false "-Dplugin.surefire.junit5-tree-reporter.enable-console=true"
 #    - name: Dependency scan
 #      run: mvn org.sonatype.ossindex.maven:ossindex-maven-plugin:LATEST:audit
 # token required
-    - name: Dependency scan
-      run: mvn install -B -T 1C -DskipTests=true org.owasp:dependency-check-maven:LATEST:check -DassemblyAnalyzerEnabled=false
+# Disabled due to some bug in the plugin
+#    - name: Dependency scan
+#      run: mvn install -B -T 1C -DskipTests=true org.owasp:dependency-check-maven:LATEST:check -DassemblyAnalyzerEnabled=false

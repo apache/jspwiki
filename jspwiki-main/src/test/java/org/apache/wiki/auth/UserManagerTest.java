@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.auth;
 
+import com.dumbster.smtp.SimpleSmtpServer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import java.io.File;
@@ -56,10 +57,26 @@ import java.util.Properties;
 import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.apache.wiki.WikiEngine;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 
 
 class UserManagerTest {
+     private static SimpleSmtpServer dumbster = null;
 
+    @BeforeAll
+    public static void startTestEmailServer() throws Exception {
+        
+        dumbster = SimpleSmtpServer.start(SimpleSmtpServer.AUTO_SMTP_PORT);
+        
+    }
+
+    @AfterAll
+    public static void stopTestEmailServer() {
+        if (dumbster != null) {
+            dumbster.close();
+        }
+    }
     TestEngine m_engine;
     UserManager m_mgr;
     UserDatabase m_db;
@@ -71,7 +88,7 @@ class UserManagerTest {
     @BeforeEach
     void setUp() throws Exception {
         final Properties props = TestEngine.getTestProperties();
-
+        props.setProperty("mail.smtp.port", dumbster.getPort()+"");
         // Make sure user profile save workflow is OFF
         props.remove( "jspwiki.approver" + WorkflowManager.WF_UP_CREATE_SAVE_APPROVER );
 
@@ -97,7 +114,7 @@ class UserManagerTest {
     /** Call this setup program to use the save-profile workflow. */
     protected void setUpWithWorkflow() throws Exception {
         final Properties props = TestEngine.getTestProperties();
-
+        props.setProperty("mail.smtp.port", dumbster.getPort()+"");
         // Turn on user profile saves by the Admin group
         props.put( "jspwiki.approver." + WorkflowManager.WF_UP_CREATE_SAVE_APPROVER, "Admin" );
 
@@ -274,6 +291,33 @@ class UserManagerTest {
 
         m_engine.getManager( PageManager.class ).deletePage( pageName );
         Assertions.assertEquals( oldPageCount, pageManager.getTotalPageCount() );
+    }
+
+    @Test
+    void testGetUserProfileOfAuthenticatedUserWithSpacesInFullName() throws Exception {
+        final Session session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
+
+        final UserProfile profile = m_mgr.getUserProfile( session );
+
+        Assertions.assertFalse( profile.isNew() );
+        Assertions.assertEquals( Users.JANNE, profile.getLoginName() );
+        Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
+    }
+
+    @Test
+    void testSaveExistingUserProfileWithSpacesInFullName() throws Exception {
+        final Session session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
+        final Context context = Wiki.context().create( m_engine, HttpMockFactory.createHttpRequest(), "" );
+        final UserProfile profile = m_db.newProfile();
+        profile.setLoginName( Users.JANNE );
+        profile.setFullname( "Janne Jalkanen" );
+        profile.setEmail( "janne@ecyrd.com" );
+        profile.setPassword( "aNewP@5sw0rd" );
+        final Context sessionContext = Mockito.spy( context );
+        Mockito.when( sessionContext.getWikiSession() ).thenReturn( session );
+
+        Assertions.assertDoesNotThrow( () -> m_mgr.setUserProfile( sessionContext, profile ) );
+        Assertions.assertTrue( m_db.validatePassword( Users.JANNE, "aNewP@5sw0rd" ) );
     }
 
     @Test

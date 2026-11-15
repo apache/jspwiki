@@ -22,14 +22,14 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>35</version>
+    <version>40</version>
   </parent>
 
   <groupId>org.apache.jspwiki</groupId>
   <artifactId>jspwiki-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <name>Apache JSPWiki</name>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Apache JSPWiki is a leading open source WikiWiki engine, feature-rich
     and built around standard JEE components (Java, servlets, JSP).</description>
@@ -39,28 +39,29 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <project.build.outputTimestamp>2025-07-25T13:24:36Z</project.build.outputTimestamp> <!-- will be changed by release plugin during releases -->
+    <project.build.outputTimestamp>2026-08-16T18:19:17Z</project.build.outputTimestamp>
+<!-- will be changed by release plugin during releases -->
     <jdk.version>17</jdk.version>
-    <jdk.javadoc.doclet.version>2.2.3</jdk.javadoc.doclet.version>
+    <jdk.javadoc.doclet.version>2.3.2</jdk.javadoc.doclet.version>
     <maven.version>3.5</maven.version>
 
     <akismet-java.version>1.0.0</akismet-java.version>
     <awaitility.version>4.3.0</awaitility.version>
-    <aws-java-sdk-kendra.version>1.12.793</aws-java-sdk-kendra.version>
-    <commons-collections.version>4.5.0</commons-collections.version>
-    <commons-codec.version>1.20.0</commons-codec.version>
-    <commons-fileupload.version>2.0.0-M4</commons-fileupload.version>
-    <commons-io.version>2.21.0</commons-io.version>
-    <commons-lang.version>3.20.0</commons-lang.version>
-    <commons-net.version>3.12.0</commons-net.version>
-    <commons-text.version>1.14.0</commons-text.version>
-    <commons-validator.version>1.10.1</commons-validator.version>
+    <aws-java-sdk-kendra.version>1.12.797</aws-java-sdk-kendra.version>
+    <commons-codec.version>1.22.1</commons-codec.version>
+    <commons-collections.version>4.6.0</commons-collections.version>
+    <commons-fileupload.version>2.0.0-M5</commons-fileupload.version>
+    <commons-io.version>2.22.0</commons-io.version>
+    <commons-lang.version>3.21.0</commons-lang.version>
+    <commons-net.version>3.13.0</commons-net.version>
+    <commons-text.version>1.15.0</commons-text.version>
+    <commons-validator.version>1.11.0</commons-validator.version>
     <ehcache.version>2.10.9.2</ehcache.version>
     <flexmark.version>0.64.8</flexmark.version>
     <freshcookies-security.version>0.60</freshcookies-security.version>
     <gson.version>2.13.2</gson.version>
     <hsqldb.version>2.7.4</hsqldb.version>
-    <jackson-version>3.0.2</jackson-version>
+    <jackson-version>3.2.4</jackson-version>
     <jakarta-activation.version>2.0.1</jakarta-activation.version>
     <jakarta-activation-api.version>2.1.4</jakarta-activation-api.version>
     <jakarta-jsp-api.version>4.0.0</jakarta-jsp-api.version>
@@ -70,56 +71,56 @@
     <jakarta-mail-api.version>2.1.5</jakarta-mail-api.version>
     <jakarta-servlet-api.version>6.1.0</jakarta-servlet-api.version>
     <java-diff-utils-version>4.16</java-diff-utils-version>
-    <jacoco-version>0.8.14</jacoco-version>
+    <jacoco-version>0.8.16</jacoco-version>
     <jamm.version>0.4.0</jamm.version>
-    <jaxen.version>2.0.0</jaxen.version>
+    <jaxen.version>2.0.6</jaxen.version>
     <javax-mail.version>2.0.2</javax-mail.version>
     <javax-jsp-api.version>2.3.3</javax-jsp-api.version>
-    <jdom2.version>2.0.6</jdom2.version>
+    <jdom2.version>2.0.6.1</jdom2.version>
     <jrcs-diff.version>0.4.2</jrcs-diff.version>
-    <junit.version>6.0.1</junit.version>
-    <log4j2.version>2.25.2</log4j2.version>
+    <junit.version>6.1.3</junit.version>
+    <log4j2.version>2.26.1</log4j2.version>
     <lucene.version>9.12.2</lucene.version>
-    <mockito.version>5.20.0</mockito.version>
-    <nekohtml.version>2.1.3</nekohtml.version>
+    <mockito.version>5.24.0</mockito.version>
+    <neko-htmlunit.version>5.7.0</neko-htmlunit.version>
     <oro.version>2.0.8</oro.version>
     <rome.version>2.1.0</rome.version>
     <sandler.version>0.5</sandler.version>
-    <selenide.version>7.12.1</selenide.version>
-    <slf4j.version>2.0.17</slf4j.version>
-    <tika.version>3.2.3</tika.version>
-    <tomcat.version>10.1.49</tomcat.version>
-    <xmlrpc.version>2.0.1</xmlrpc.version>
+    <selenide.version>7.18.1</selenide.version>
+    <slf4j.version>2.0.18</slf4j.version>
+    <tika.version>3.3.2</tika.version>
+    <tomcat.version>10.1.60</tomcat.version>
     <xstream.version>1.4.21</xstream.version>
 
     <plugin.antrun.version>3.2.0</plugin.antrun.version>
-    <plugin.assembly.version>3.7.1</plugin.assembly.version>
+    <plugin.assembly.version>3.8.0</plugin.assembly.version>
     <plugin.clean.version>3.5.0</plugin.clean.version>
-    <plugin.compiler.version>3.14.1</plugin.compiler.version>
-    <plugin.dependency.version>3.9.0</plugin.dependency.version>
-    <plugin.enforcer.version>3.6.2</plugin.enforcer.version>
-    <plugin.install.version>3.1.4</plugin.install.version>
-    <plugin.jar.version>3.5.0</plugin.jar.version>
+    <plugin.compiler.version>3.16.0</plugin.compiler.version>
+    <plugin.dependency.version>3.11.0</plugin.dependency.version>
+    <plugin.enforcer.version>3.6.3</plugin.enforcer.version>
+    <plugin.failsafe.version>3.6.0</plugin.failsafe.version>
+    <plugin.install.version>3.2.0</plugin.install.version>
+    <plugin.jar.version>3.5.1</plugin.jar.version>
     <plugin.javadoc.version>3.12.0</plugin.javadoc.version>
     <plugin.jxr.version>3.6.0</plugin.jxr.version>
     <plugin.project-info-reports.version>3.9.0</plugin.project-info-reports.version>
-    <plugin.release.version>3.2.0</plugin.release.version>
+    <plugin.release.version>3.3.1</plugin.release.version>
     <plugin.remote-resources.version>3.3.0</plugin.remote-resources.version>
-    <plugin.resources.version>3.3.1</plugin.resources.version>
+    <plugin.resources.version>3.5.0</plugin.resources.version>
     <plugin.source.version>3.4.0</plugin.source.version>
-    <plugin.surefire.version>3.5.4</plugin.surefire.version>
+    <plugin.surefire.version>3.6.1</plugin.surefire.version>
     <plugin.surefire.junit5-tree-reporter.version>1.5.1</plugin.surefire.junit5-tree-reporter.version>
-    <plugin.war.version>3.5.0</plugin.war.version>
+    <plugin.surefire.junit5-tree-reporter.enable-console>false</plugin.surefire.junit5-tree-reporter.enable-console>
+    <plugin.war.version>3.5.1</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>5.0.0</plugin.jspc.version>
     <plugin.build-helper.version>3.6.1</plugin.build-helper.version>
     <plugin.checksum.version>1.11</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
-    <plugin.cargo.version>1.10.25</plugin.cargo.version>
+    <plugin.cargo.version>1.10.30</plugin.cargo.version>
     <plugin.clirr.version>2.8</plugin.clirr.version>
-    <plugin.cobertura.version>2.7</plugin.cobertura.version>
-    <plugin.cyclonedx.version>2.9.1</plugin.cyclonedx.version>
-    <plugin.sonar.version>5.3.0.6276</plugin.sonar.version>
+    <plugin.cyclonedx.version>2.9.3</plugin.cyclonedx.version>
+    <plugin.sonar.version>5.8.0.7211</plugin.sonar.version>
     <plugin.sonar-report.version>0.1</plugin.sonar-report.version>
     <plugin.wro4j.version>2.1.1</plugin.wro4j.version>
     <plugin.eclipse-lifecycle-mapping.version>1.0.0</plugin.eclipse-lifecycle-mapping.version>
@@ -148,9 +149,12 @@
     <module>jspwiki-markdown</module>
     <module>jspwiki-tika-searchprovider</module>
     <module>jspwiki-kendra-searchprovider</module>
+    <module>jspwiki-plugins</module>
+    <module>jspwiki-https-enabler</module>
     <module>jspwiki-210-test-adaptees</module>
     <module>jspwiki-210-adapters</module>
     <module>jspwiki-war</module>
+    <module>jspwiki-war-https</module>
     <module>jspwiki-portable</module>
     <module>jspwiki-it-tests</module><!-- IT tests are launched only if -Pintegration-tests is given -->
     <module>jspwiki-bom</module>
@@ -165,31 +169,31 @@
         <artifactId>aws-java-sdk-kendra</artifactId>
         <version>${aws-java-sdk-kendra.version}</version>
       </dependency>
-      
+
       <dependency>
         <groupId>com.codeborne</groupId>
         <artifactId>selenide</artifactId>
         <version>${selenide.version}</version>
       </dependency>
-      
+
        <dependency>
           <groupId>commons-codec</groupId>
           <artifactId>commons-codec</artifactId>
           <version>${commons-codec.version}</version>
       </dependency>
-      
+
       <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson-version}</version>
       </dependency>
-      
+
       <dependency>
           <groupId>commons-net</groupId>
           <artifactId>commons-net</artifactId>
           <version>${commons-net.version}</version>
       </dependency>
-      
+
       <dependency>
           <groupId>commons-validator</groupId>
           <artifactId>commons-validator</artifactId>
@@ -291,7 +295,7 @@
         <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
         <version>${jakarta-jstl-api.version}</version>
       </dependency>
-      
+
        <dependency>
             <groupId>io.github.java-diff-utils</groupId>
             <artifactId>java-diff-utils</artifactId>
@@ -309,7 +313,7 @@
           <artifactId>rome</artifactId>
           <version>${rome.version}</version>
       </dependency>
-    
+
       <dependency>
           <groupId>net.thauvin.erik</groupId>
           <artifactId>akismet-kotlin</artifactId>
@@ -419,9 +423,9 @@
       </dependency>
 
       <dependency>
-        <groupId>org.codelibs</groupId>
-        <artifactId>nekohtml</artifactId>
-        <version>${nekohtml.version}</version>
+        <groupId>org.htmlunit</groupId>
+        <artifactId>neko-htmlunit</artifactId>
+        <version>${neko-htmlunit.version}</version>
       </dependency>
 
       <dependency>
@@ -458,12 +462,6 @@
         <groupId>oro</groupId>
         <artifactId>oro</artifactId>
         <version>${oro.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>xmlrpc</groupId>
-        <artifactId>xmlrpc</artifactId>
-        <version>${xmlrpc.version}</version>
       </dependency>
 
       <!-- test dependencies -->
@@ -527,7 +525,7 @@
           </execution>
         </executions>
       </plugin>
-      
+
       <plugin>
         <groupId>net.nicoulaj.maven.plugins</groupId>
         <artifactId>checksum-maven-plugin</artifactId>
@@ -584,6 +582,7 @@
             <encoding>${project.build.sourceEncoding}</encoding>
             <source>${jdk.version}</source>
             <target>${jdk.version}</target>
+            <release>${jdk.version}</release>
             <compilerArgs>
               <arg>-Xlint:deprecation</arg>
               <arg>-parameters</arg>
@@ -615,6 +614,11 @@
         </plugin>
 
         <plugin>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${plugin.failsafe.version}</version>
+        </plugin>
+
+        <plugin>
           <artifactId>maven-install-plugin</artifactId>
           <version>${plugin.install.version}</version>
         </plugin>
@@ -635,8 +639,10 @@
               <groupId>nl.talsmasoftware</groupId>
               <artifactId>umldoclet</artifactId>
               <version>${jdk.javadoc.doclet.version}</version>
+              <classifier>full</classifier>
             </docletArtifact>
             <linksource>true</linksource>
+            <release>${jdk.version}</release>
             <sourcetab>4</sourcetab>
             <quiet>true</quiet>
             <useStandardDocletOptions>true</useStandardDocletOptions>
@@ -698,7 +704,7 @@
           <configuration>
             <argLine>@{argLine}</argLine>
             <consoleOutputReporter>
-              <disable>true</disable>
+              <disable>${plugin.surefire.junit5-tree-reporter.enable-console}</disable>
             </consoleOutputReporter>
             <reportFormat>plain</reportFormat>
             <statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
@@ -885,7 +891,17 @@
               <type>standalone</type>
               <home>${project.build.directory}/tomcat10x</home>
               <properties>
+                <cargo.protocol>http</cargo.protocol>
                 <cargo.servlet.port>8080</cargo.servlet.port>
+                <!--example for cargo plugin with https-->
+                <!--
+                <cargo.protocol>https</cargo.protocol>
+                <cargo.servlet.port>8443</cargo.servlet.port>
+                <cargo.tomcat.httpSecure>true</cargo.tomcat.httpSecure>
+                <cargo.tomcat.connector.sslProtocol>TLS</cargo.tomcat.connector.sslProtocol>
+                <cargo.tomcat.connector.keystoreFile>${project.basedir}/../jspwiki-portable/src/overlay/tomcat/conf/test-use-only.p12</cargo.tomcat.connector.keystoreFile>
+                <cargo.tomcat.connector.keystorePass></cargo.tomcat.connector.keystorePass>
+                -->
                 <cargo.jvmargs>-Xms256m -Xmx3072m -Xdebug -Xnoagent -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 -XX:+DisableExplicitGC -Xverify:none -Djava.awt.headless=true</cargo.jvmargs>
               </properties>
             </configuration>
@@ -909,18 +925,6 @@
         </plugin>
 
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>cobertura-maven-plugin</artifactId>
-          <version>${plugin.cobertura.version}</version>
-          <configuration>
-            <formats>
-              <format>html</format>
-              <format>xml</format>
-            </formats>
-          </configuration>
-        </plugin>
-
-        <plugin>
           <groupId>org.cyclonedx</groupId>
           <artifactId>cyclonedx-maven-plugin</artifactId>
           <version>${plugin.cyclonedx.version}</version>
@@ -938,72 +942,6 @@
           <version>${plugin.sonar-report.version}</version>
         </plugin>
 
-        <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>${plugin.eclipse-lifecycle-mapping.version}</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>io.leonard.maven.plugins</groupId>
-                    <artifactId>jspc-maven-plugin</artifactId>
-                    <versionRange>[2.4.6,)</versionRange>
-                    <goals><goal>compile</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>net.alchim31.maven</groupId>
-                    <artifactId>yuicompressor-maven-plugin</artifactId>
-                    <versionRange>[1.3.2,)</versionRange>
-                    <goals><goal>compress</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-antrun-plugin</artifactId>
-                    <versionRange>[1.7,)</versionRange>
-                    <goals><goal>run</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>jslint-maven-plugin</artifactId>
-                    <versionRange>[1.0.1,)</versionRange>
-                    <goals><goal>jslint</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>ro.isdc.wro4j</groupId>
-                    <artifactId>wro4j-maven-plugin</artifactId>
-                    <versionRange>[1.7.2,)</versionRange>
-                    <goals><goal>run</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <versionRange>[2.1,)</versionRange>
-                    <goals><goal>unpack</goal></goals>
-                  </pluginExecutionFilter>
-                  <action><ignore /></action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
-        </plugin>
         <plugin>
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
@@ -1066,10 +1004,10 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile> <!-- attach additional artifacts to build lifecycle -->
-      <id>attach-additional-artifacts</id> 
-      
+      <id>attach-additional-artifacts</id>
+
       <activation>
         <property>
           <name>additional_artifacts</name>
@@ -1144,6 +1082,89 @@
         </plugins>
       </build>
     </profile>
+
+	<profile>
+	  <id>m2e</id>
+      <!-- This profile is only active when the property "m2e.version"
+        is set, which is the case when building in Eclipse with m2e. -->
+      <activation>
+        <property>
+          <name>m2e.version</name>
+        </property>
+      </activation>
+
+	  <build>
+	    <pluginManagement>
+		  <plugins>
+		    <plugin>
+              <groupId>org.eclipse.m2e</groupId>
+              <artifactId>lifecycle-mapping</artifactId>
+              <version>${plugin.eclipse-lifecycle-mapping.version}</version>
+              <configuration>
+                <lifecycleMappingMetadata>
+                  <pluginExecutions>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>io.leonard.maven.plugins</groupId>
+                        <artifactId>jspc-maven-plugin</artifactId>
+                        <versionRange>[2.4.6,)</versionRange>
+                        <goals><goal>compile</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>net.alchim31.maven</groupId>
+                        <artifactId>yuicompressor-maven-plugin</artifactId>
+                        <versionRange>[1.3.2,)</versionRange>
+                        <goals><goal>compress</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <versionRange>[1.7,)</versionRange>
+                        <goals><goal>run</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>jslint-maven-plugin</artifactId>
+                        <versionRange>[1.0.1,)</versionRange>
+                        <goals><goal>jslint</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>ro.isdc.wro4j</groupId>
+                        <artifactId>wro4j-maven-plugin</artifactId>
+                        <versionRange>[1.7.2,)</versionRange>
+                        <goals><goal>run</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                    <pluginExecution>
+                      <pluginExecutionFilter>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <versionRange>[2.1,)</versionRange>
+                        <goals><goal>unpack</goal></goals>
+                      </pluginExecutionFilter>
+                      <action><ignore /></action>
+                    </pluginExecution>
+                  </pluginExecutions>
+                </lifecycleMappingMetadata>
+              </configuration>
+            </plugin>
+		  </plugins>
+		</pluginManagement>
+	  </build>
+	</profile>
   </profiles>
 
   <organization>

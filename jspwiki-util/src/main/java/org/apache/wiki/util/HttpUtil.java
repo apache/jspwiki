@@ -18,20 +18,21 @@
  */
 package org.apache.wiki.util;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.util.SubnetUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import org.apache.commons.net.util.SubnetUtils;
 
 
 /**
@@ -45,28 +46,30 @@ public final class HttpUtil {
     private static final int    ONE                   = 48;
     private static final int    NINE                  = 57;
     private static final int    DOT                   = 46;
+
     
     /** Private constructor to prevent direct instantiation. */
     private HttpUtil() {
     }
     
     /**
-     * returns the remote address by looking into {@code x-forwarded-for} header or, if unavailable, 
-     * into {@link HttpServletRequest#getRemoteAddr()}.
-     * 
+     * Returns the remote address of the request. By default this is {@link HttpServletRequest#getRemoteAddr()}:
+     * the client-supplied {@code X-Forwarded-For} header is only consulted when the immediate peer is listed in
+     * the {@value #PROP_TRUSTED_PROXIES} system property. When it is, the forwarded entries are walked from the
+     * one appended by the nearest trusted proxy towards the client, and the first address that does not belong to
+     * a trusted proxy is returned, so a client cannot spoof its address by pre-populating the header. Values that
+     * do not look like an IP address fall back to {@link HttpServletRequest#getRemoteAddr()}.
+     *
      * @param req http request
      * @return remote address associated to the request.
      */
     public static String getRemoteAddress( final HttpServletRequest req ) {
-        String realIP = StringUtils.isNotEmpty ( req.getHeader( "X-Forwarded-For" ) ) ? req.getHeader( "X-Forwarded-For" ) :
-                                                                                          req.getRemoteAddr();
-        // can be a comma-separated list of IPs
-        if (realIP.contains(","))
-                realIP = realIP.substring(realIP.indexOf(","));
-
-        return realIP;
-	
+        final String remoteAddr = req.getRemoteAddr();
+        
+        return remoteAddr;
     }
+
+   
 
     /**
      * Returns whether or not the IP address of the request equals a given IP,
@@ -347,6 +350,18 @@ public final class HttpUtil {
      */
     public static String getAbsoluteUrl(final HttpServletRequest request) {
         return getAbsoluteUrl(request, null);
+    }
+
+    /**
+     * Add's a header to the response
+     *
+     * @param response servlet response in which the header is added
+     * @param headerName header's name
+     * @param headerValue header's value
+     */
+    public static void addHeader( final ServletResponse response, final String headerName, final String headerValue ) {
+        final HttpServletResponse res = ( HttpServletResponse )response;
+        res.addHeader( headerName, headerValue );
     }
 
 }

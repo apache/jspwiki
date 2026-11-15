@@ -140,7 +140,12 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
                     res.setCharacterEncoding( m_engine.getContentEncoding().displayName() );
                     final String actionName = AjaxUtil.getNextPathPart( req.getRequestURI(), servlet.getServletMapping() );
                     if (!(servlet instanceof DefaultSearchManager.PluginSearch)) {
-                        final String xsrfToken = req.getParameter("X-XSRF-TOKEN");
+                        // Prefer the request header: a token sent as a GET parameter ends up in access logs and
+                        // browser history. The parameter is still accepted for compatibility with older clients.
+                        String xsrfToken = req.getHeader("X-XSRF-TOKEN");
+                        if (xsrfToken == null) {
+                            xsrfToken = req.getParameter("X-XSRF-TOKEN");
+                        }
                         if (!wikiSession.antiCsrfToken().equals(xsrfToken)) {
                             res.sendError(400, "X-XSRF-TOKEN missing or invalid.");
                             WikiEventManager.fireEvent(this,
