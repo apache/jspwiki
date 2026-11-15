@@ -1,0 +1,5 @@
+Nämä ovat näille sivuille viimeisen 30 päivän aikana tehdyt muutokset.  Kaikki muuttuneet sivut löydät sivulta [FullRecentChanges].
+
+Tämä palvelin sijaitsee aikavyöhykkeellä [{INSERT CurrentTimePlugin format=zzzz}] ja paikallinen aika on [{INSERT CurrentTimePlugin format='dd.MM.yyyy \'klo\' HH:mm'}].
+
+[{INSERT org.apache.wiki.plugin.RecentChangesPlugin since=30}]

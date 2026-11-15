@@ -53,8 +53,8 @@ public final class TextUtil {
      of JSPWiki. */
     public static final String LEGACY_CHARS_ALLOWED = "._";
 
-    /** Lists all punctuation characters allowed in page names. */
-    public static final String PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$";
+    /** Lists all punctuation characters, and the superscript digits one to three, allowed in page names. */
+    public static final String PUNCTUATION_CHARS_ALLOWED = " ()&+,-=._$\u00b9\u00b2\u00b3";
 
     /** Private constructor prevents instantiation. */
     private TextUtil() {}

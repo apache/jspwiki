@@ -46,7 +46,7 @@ public abstract class FormDecorator {
      */
     public void decorate( final Element e ) throws JDOMException {
         // remove the hidden input where name="formname" since a new one will be generated again when the xhtml is rendered.
-        final Element formName = XmlUtil.getXPathElement( e, "INPUT[@name='formname']" );
+        final Element formName = XmlUtil.getXPathElement( e, "input[@name='formname']" );
         if( formName != null ) {
             formName.detach();
         }

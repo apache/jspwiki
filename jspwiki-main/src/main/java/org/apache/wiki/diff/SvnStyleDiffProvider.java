@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.util.TextUtil;
 
 /**
  * SVN/Git style diff provider. Uses the DiffLib, ASF 2.0 licensed.
@@ -59,7 +60,7 @@ public class SvnStyleDiffProvider implements DiffProvider {
             while (currentOriginalLine < originalPosition && currentModifiedLine < modifiedPosition) {
                 ret.append(CSS_DIFF_UNCHANGED);
                 ret.append(lineNumber).append(CELL_CHANGE);
-                ret.append(original.get(currentOriginalLine));
+                ret.append(TextUtil.replaceEntities(original.get(currentOriginalLine)));
                 ret.append(CSS_DIFF_CLOSE);
                 //System.out.println("  " + lineNumber + " " + original.get(currentOriginalLine));
                 lineNumber++;
@@ -73,7 +74,7 @@ public class SvnStyleDiffProvider implements DiffProvider {
             for (String line : originalLines) {
                 ret.append(CSS_DIFF_REMOVED);
                 ret.append(lineNumber).append(CELL_CHANGE);
-                ret.append(line);
+                ret.append(TextUtil.replaceEntities(line));
                 ret.append(CSS_DIFF_CLOSE);
                 //System.out.println("- " + lineNumber + " " + line);
                 lineNumber++;
@@ -83,7 +84,7 @@ public class SvnStyleDiffProvider implements DiffProvider {
             for (String line : revisedLines) {
                 ret.append(CSS_DIFF_ADDED);
                 ret.append(lineNumber).append(CELL_CHANGE);
-                ret.append(line);
+                ret.append(TextUtil.replaceEntities(line));
                 ret.append(CSS_DIFF_CLOSE);
                 //System.out.println("+ " + lineNumber + " " + line);
                 lineNumber++;
@@ -95,7 +96,7 @@ public class SvnStyleDiffProvider implements DiffProvider {
         while (currentOriginalLine < original.size() && currentModifiedLine < modified.size()) {
             ret.append(CSS_DIFF_UNCHANGED);
             ret.append(lineNumber).append(CELL_CHANGE);
-            ret.append(original.get(currentOriginalLine));
+            ret.append(TextUtil.replaceEntities(original.get(currentOriginalLine)));
             ret.append(CSS_DIFF_CLOSE);
 
             //System.out.println("  " + lineNumber + " " + original.get(currentOriginalLine));

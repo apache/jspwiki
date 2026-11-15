@@ -30,12 +30,12 @@
     <name>Apache JSPWiki Main Jar</name>
 
     <dependencies>
-        
+
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
-      
+
         <dependency>
             <groupId>tools.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -91,12 +91,12 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-fileupload2-jakarta-servlet6</artifactId>
         </dependency>
-        
+
         <dependency>
           <groupId>net.thauvin.erik</groupId>
           <artifactId>akismet-kotlin</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.rometools</groupId>
             <artifactId>rome</artifactId>
@@ -116,7 +116,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>commons-validator</groupId>
             <artifactId>commons-validator</artifactId>
@@ -158,11 +158,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.codelibs</groupId>
-            <artifactId>nekohtml</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.freshcookies</groupId>
             <artifactId>freshcookies-security</artifactId>
         </dependency>
@@ -180,11 +175,6 @@
         <dependency>
             <groupId>oro</groupId>
             <artifactId>oro</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>xmlrpc</groupId>
-            <artifactId>xmlrpc</artifactId>
         </dependency>
 
         <dependency>
@@ -234,6 +224,13 @@
             <artifactId>sqltool</artifactId>
             <scope>test</scope>
             <classifier>jdk8</classifier>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.github.kirviq</groupId>
+            <artifactId>dumbster</artifactId>
+            <version>1.7.1</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -316,7 +313,8 @@
                     </includes>
                     <runOrder>random</runOrder>
                     <parallel>all</parallel> <!-- or classes, both, suites, etc. -->
-                    <perCoreThreadCount>1</perCoreThreadCount> <!-- Number of threads to use -->
+                    <perCoreThreadCount>true</perCoreThreadCount> <!-- Number of threads to use -->
+                    <threadCount>1</threadCount>
                 </configuration>
             </plugin>
 

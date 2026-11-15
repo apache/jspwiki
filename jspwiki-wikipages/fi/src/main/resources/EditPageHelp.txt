@@ -1,0 +1,36 @@
+Tässä lyhyt muistutus käytettävissäsi olevista elementeistä:
+{{{
+----             Vaakaviiva
+\\               Pakotettu rivinvaihto
+[link]           Luo hyperlinkin kohteeseen "link", joka voi olla joko sisäinen
+                 WikiName tai ulkoinen linkki (http://)
+[text|link]      Luo hyperlinkin, jonka teksti poikkeaa varsinaisesta
+                 linkin kohteesta.
+[text|wiki:link] Luo hyperlinkin, jonka teksti poikkeaa varsinaisesta
+                 linkin kohteesta ja joka osoittaa nimettyyn wikiin.
+                 Tämä tukee interWiki-linkitystä.
+
+*                Tee luettelo (täytyy olla ensimmäisessä sarakkeessa). Useammalla (**)
+                 saat syvempiä sisennyksiä.
+#                Tee numeroitu luettelo (täytyy olla ensimmäisessä sarakkeessa). Useammalla (##, ###)
+                 saat syvempiä sisennyksiä.
+
+!, !!, !!!       Aloita rivi huutomerkillä (!) tehdäksesi otsikon.
+                 Mitä enemmän huutomerkkejä, sitä suurempi otsikko.
+
+__text__         Tekee tekstistä lihavoidun.
+''text''         Tekee tekstistä kursivoidun (huomaa, että nämä ovat yksinkertaisia lainausmerkkejä ('))
+{{text}}         Tekee tekstistä tasalevyisellä fontilla.
+;term:def        Määrittelee käsitteen 'term' sisällöllä 'def'.  Jätä 'term' tyhjäksi, jos haluat tehdä lyhyitä kommentteja.
+
+|text|more text  Tekee taulukon. Kaksi pystyviivaa tekee taulukon otsikon.
+}}}
+
+Älä yritä käyttää HTML:ää, koska se ei yksinkertaisesti toimi.
+
+Upottaaksesi kuvia aseta ne saataville verkkoon jossakin hyväksytyistä muodoista, niin ne upotetaan automaattisesti. Hyväksyttyjen muotojen luettelon näet sivulta [SystemInfo].
+
+Koodilohkon saat käyttämällä kolmea {-merkkiä aloittamiseen ja kolmea }-merkkiä lopettamiseen.
+
+''(Mietitkö, mistä tämä teksti tulee?  Se on sivulla nimeltä [Edit Page Help], jota voit myös muokata!)''
+

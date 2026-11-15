@@ -18,24 +18,10 @@
  */
 package org.apache.wiki.auth.permissions;
 
-import org.apache.wiki.auth.GroupPrincipal;
-import org.apache.wiki.auth.WikiPrincipal;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import javax.security.auth.Subject;
-import java.security.AccessControlException;
 import java.security.Permission;
-import java.security.PrivilegedAction;
-
-import javax.security.auth.Subject;
-import org.apache.commons.lang3.SystemUtils;
-
-import org.apache.wiki.auth.GroupPrincipal;
-import org.apache.wiki.auth.WikiPrincipal;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Assumptions;
 
 public class GroupPermissionTest
 {
@@ -109,47 +95,62 @@ public class GroupPermissionTest
     }
 
     @Test
-    public final void testImpliesMember()
-    {
-        String ver = SystemUtils.JAVA_VERSION;
-        if (ver.indexOf(".")>=0) {
-            ver = ver.substring(0, ver.indexOf("."));
-        }
-        System.out.println("Running on JDK " + ver);
-        Assumptions.assumeFalse(Integer.parseInt(ver) >=25, "skipping on 25 due to security manager changes");
-        GroupPermission p1;
-        Permission p2;
-        Subject s;
+    public final void testToMemberPermission() {
+        final GroupPermission p = new GroupPermission( "mywiki:TestGroup", "edit" ).toMemberPermission();
 
-        // <groupmember> implies TestGroup if Subject has GroupPermission("TestGroup")
-        p1 = new GroupPermission( "*:<groupmember>", "view" );
-        p2 = new GroupPermission ("*:TestGroup", "view" );
-        s = new Subject();
-        s.getPrincipals().add( new GroupPrincipal( "TestGroup" ) );
-        Assertions.assertTrue( subjectImplies( s, p1, p2 ) );
-
-        // <groupmember> doesn't imply it if Subject has no GroupPermission("TestGroup")
-        s = new Subject();
-        s.getPrincipals().add( new WikiPrincipal( "TestGroup" ) );
-        Assertions.assertFalse( subjectImplies( s, p1, p2 ) );
-
-        // <groupmember> doesn't imply it if Subject's GP doesn't match
-        s = new Subject();
-        s.getPrincipals().add( new GroupPrincipal( "FooGroup" ) );
-        Assertions.assertFalse( subjectImplies( s, p1, p2 ) );
-
-        // <groupmember> doesn't imply it if p2 isn't GroupPermission type
-        p2 = new PagePermission ("*:TestGroup", "view" );
-        s = new Subject();
-        s.getPrincipals().add( new GroupPrincipal( "TestGroup" ) );
-        Assertions.assertFalse( subjectImplies( s, p1, p2 ) );
-
-        // <groupmember> implies TestGroup if not called with Subject combiner
-        p1 = new GroupPermission( "*:<groupmember>", "view" );
-        p2 = new GroupPermission ("*:TestGroup", "view" );
-        Assertions.assertFalse( p1.impliesMember( p2 ) );
+        Assertions.assertEquals( "mywiki", p.getWiki() );
+        Assertions.assertEquals( GroupPermission.MEMBER_TOKEN, p.getGroup() );
+        Assertions.assertEquals( "edit", p.getActions() );
     }
 
+    @Test
+    public final void testToMemberPermissionKeepsTheActions() {
+        Assertions.assertEquals( "delete,edit,view", new GroupPermission( "*:TestGroup", "view,edit,delete" ).toMemberPermission().getActions() );
+    }
+
+    @Test
+    public final void testToMemberPermissionOfAGroupOfAnyWiki() {
+        final GroupPermission p = new GroupPermission( "*:TestGroup", "view" ).toMemberPermission();
+
+        Assertions.assertEquals( "*", p.getWiki() );
+        Assertions.assertEquals( GroupPermission.MEMBER_TOKEN, p.getGroup() );
+    }
+
+    @Test
+    public final void testToMemberPermissionOfAGroupWithoutWiki() {
+        final GroupPermission p = new GroupPermission( ":TestGroup", "view" ).toMemberPermission();
+
+        Assertions.assertNull( p.getWiki() );
+        Assertions.assertEquals( GroupPermission.MEMBER_TOKEN, p.getGroup() );
+    }
+
+    @Test
+    public final void testGroupMemberGrantImpliesTheMemberPermission() {
+        final GroupPermission grant = new GroupPermission( "*:<groupmember>", "edit" );
+
+        Assertions.assertTrue( grant.implies( new GroupPermission( "mywiki:TestGroup", "edit" ).toMemberPermission() ) );
+        Assertions.assertTrue( grant.implies( new GroupPermission( "mywiki:TestGroup", "view" ).toMemberPermission() ) );
+        Assertions.assertFalse( grant.implies( new GroupPermission( "mywiki:TestGroup", "delete" ).toMemberPermission() ) );
+    }
+
+    @Test
+    public final void testGroupMemberGrantDoesNotImplyAGroupByItself() {
+        // Who is a member is for the one who checks the permission to find out, see AuthorizationManager.checkStaticPermission
+        final GroupPermission grant = new GroupPermission( "*:<groupmember>", "edit" );
+
+        Assertions.assertFalse( grant.implies( new GroupPermission( "*:TestGroup", "view" ) ) );
+        Assertions.assertFalse( grant.implies( new GroupPermission( "*:TestGroup", "edit" ) ) );
+    }
+
+    @Test
+    public final void testWildcardGrantDoesNotImplyTheMemberPermission() {
+        Assertions.assertFalse( new GroupPermission( "*:*", "edit" ).implies( new GroupPermission( "*:TestGroup", "edit" ).toMemberPermission() ) );
+    }
+
+    @Test
+    public final void testGroupMemberGrantDoesNotImplyOtherTypesOfPermission() {
+        Assertions.assertFalse( new GroupPermission( "*:<groupmember>", "view" ).implies( new PagePermission( "*:TestGroup", "view" ) ) );
+    }
 
     /*
      * Class under test for boolean implies(java.security.Permission)
@@ -316,28 +317,6 @@ public class GroupPermissionTest
     {
         final GroupPermission p = new GroupPermission( "Test", "VIEW,edit,delete" );
         Assertions.assertEquals( "delete,edit,view", p.getActions() );
-    }
-
-    /**
-     * Binds a Subject to the current AccessControlContext and calls
-     * p1.implies(p2).
-     * @param subject
-     * @param p1
-     * @param p2
-     * @return
-     */
-    protected final boolean subjectImplies( final Subject subject, final GroupPermission p1, final Permission p2 ) {
-        try {
-            final Boolean result = Subject.doAsPrivileged( subject, new PrivilegedAction< Boolean >() {
-                @Override
-                public Boolean run() {
-                    return p1.impliesMember( p2 );
-                }
-            }, null );
-            return result.booleanValue();
-        } catch( final AccessControlException e ) {
-            return false;
-        }
     }
 
 }

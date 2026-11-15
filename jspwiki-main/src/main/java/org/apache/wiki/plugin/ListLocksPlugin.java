@@ -24,6 +24,7 @@ import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.pages.PageLock;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.util.TextUtil;
 
 import java.util.List;
 import java.util.Locale;
@@ -70,8 +71,8 @@ public class ListLocksPlugin implements Plugin {
             int rowNum = 1;
             for( final PageLock lock : locks ) {
                 result.append( rowNum % 2 != 0 ? "<tr class=\"odd\">" : "<tr>" );
-                result.append( "<td>" ).append( lock.getPage() ).append( "</td>" );
-                result.append( "<td>" ).append( lock.getLocker() ).append( "</td>" );
+                result.append( "<td>" ).append( TextUtil.replaceEntities( lock.getPage() ) ).append( "</td>" );
+                result.append( "<td>" ).append( TextUtil.replaceEntities( lock.getLocker() ) ).append( "</td>" );
                 result.append( "<td>" ).append( Preferences.renderDate( context, lock.getAcquisitionTime(), Preferences.TimeFormat.DATETIME ) ).append( "</td>" );
                 result.append( "<td>" ).append( Preferences.renderDate( context, lock.getExpiryTime(), Preferences.TimeFormat.DATETIME ) ).append( "</td>" );
                 result.append( "</tr>\n" );

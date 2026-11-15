@@ -111,6 +111,10 @@
         }
     }
     if( "setAssertedName".equals( request.getParameter( "action" ) ) ) {
+        if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+            response.sendRedirect( "error/Forbidden.html" );
+            return;
+        }
         Preferences.reloadPreferences( pageContext );
         
         String assertedName = request.getParameter( "assertedName" );
@@ -127,6 +131,10 @@
         return;
     }
     if( "clearAssertedName".equals( request.getParameter( "action" ) ) ) {
+        if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+            response.sendRedirect( "error/Forbidden.html" );
+            return;
+        }
         HttpUtil.clearCookie( response, Preferences.COOKIE_USER_PREFS_NAME );
         CookieAssertionLoginModule.clearUserCookie( response );
         Preferences.reloadPreferences( pageContext );

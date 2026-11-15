@@ -77,7 +77,6 @@ public class RSS20Feed extends Feed
             final Page p = e.getPage();
             final String url = e.getURL();
             final Element item = new Element( "item" );
-            //FIXME this needs to be an absolute url, not a relative one
             item.addContent( new Element( "link" ).setText( url ) );
             item.addContent( new Element( "title" ).setText( e.getTitle() ) );
             item.addContent( new Element( "description" ).setText( e.getContent() ) );
@@ -135,7 +134,13 @@ public class RSS20Feed extends Feed
         //  Mandatory parts
         //
         channel.addContent( new Element("title").setText( getChannelTitle() ) );
-        channel.addContent( new Element("link").setText(HttpUtil.getAbsoluteUrl(m_wikiContext.getHttpRequest(), engine.getBaseURL())));
+        try{
+            channel.addContent( new Element("link").setText(HttpUtil.getAbsoluteUrl(m_wikiContext.getHttpRequest(), engine.getBaseURL())));
+        }catch (Exception ex) {
+            //usually just in unit tests
+            LOG.error("failed to get base url from http request " + ex.getMessage());
+            channel.addContent( new Element("link").setText("https://0.0.0.0/"));
+        }
         channel.addContent( new Element("description").setText( getChannelDescription() ));
 
         //

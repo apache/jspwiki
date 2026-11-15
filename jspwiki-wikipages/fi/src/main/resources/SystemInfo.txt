@@ -1,0 +1,42 @@
+Tässä joitakin strategisia lukuja ja muita mielenkiintoisia asioita tästä wikistä.  Kaikki nämä tiedot ovat saatavilla myös [wikimuuttujina|JSPWiki:WikiVariables], jos haluat käyttää niitä jollakin toisella sivulla.
+
+| __Sovelluksen nimi__               | [{$applicationname}]
+| __Perusosoite__                    | [{$baseurl}]
+| __JSPWiki-moottorin versio__       | [{$jspwikiversion}]
+| __Merkistökoodaus__                | [{$encoding}]
+| __Sivujen kokonaismäärä__          | [{$totalpages}]
+| __Aktiivisia istuntoja yhteensä__  | [{INSERT SessionsPlugin}]
+| __Aktiivisia wikin käyttäjiä__     | [{INSERT SessionsPlugin property=users}]
+| __Käyntiaika__                     | [{$uptime}]
+| __Nykyinen sivujen tallennusratkaisu__ | [{$pageprovider}]\\ \\[{$pageproviderdescription}]
+| __Nykyinen liitteiden tallennusratkaisu__ | [{$jspwiki.attachmentProvider}]
+| __Käytettävissä olevat InterWiki-linkit__ | [{$interwikilinks}]
+| __Upotetut kuvat ovat__            | [{$inlinedimages}]
+| __Liitännäisten lisähakupolku__    | [{$pluginpath}]
+| __Asennetut [PageFilters]__        | [{$pagefilters}]
+
+!Käytettävyys
+
+| __Kaunistetaanko otsikot?__ | [{$jspwiki.breakTitleWithSpaces}]
+| __Tunnistetaanko englanninkieliset monikkomuodot?__ | [{$jspwiki.translatorReader.matchEnglishPlurals}]
+| __Käytetäänkö CamelCase-linkkejä?__ | [{$jspwiki.translatorReader.camelCaseLinks}]
+| __Onko HTML sallittu sivuilla?__ | [{$jspwiki.translatorReader.allowHTML}]
+
+!RichSiteSummary
+
+| __Luodaanko RSS-tiedostoja?__ | [{$jspwiki.rss.generate}]
+| __Jos luodaan, mikä on tiedoston nimi?__ | [{$jspwiki.rss.fileName}]
+| __Kuinka usein RSS päivitetään?__ |  [{$jspwiki.rss.interval}]
+
+!Henkilötiedot
+
+Tässä on se, mitä tiedän sinusta tällä hetkellä:
+
+| __Käyttäjätunnus__    | [{$username}]
+| __Kirjautumistila__ | [{$loginstatus}]
+
+!Parhaillaan muokattavien sivujen luettelo
+
+[{ListLocksPlugin}]
+
+JSPWikin kotisivu on osoitteessa [http://jspwiki.apache.org/]. Tervetuloa!

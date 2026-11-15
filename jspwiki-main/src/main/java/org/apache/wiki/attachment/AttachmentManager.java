@@ -298,6 +298,22 @@ public interface AttachmentManager {
 
         // Should help with IE 5.22 on OSX
         filename = filename.trim();
+        
+        //diretory traversal type things
+        filename = filename.replace("..", "_");
+        filename = filename.replace("/", "_");
+        filename = filename.replace("\\", "_");
+        
+        //remove any non-filename-safe characters
+        filename = filename.replaceAll("[/:*?\"<>|\\p{Cntrl}]", "_");
+
+        // An attachment is stored in a directory of its own, so a name made only of dots, which stands for a directory, cannot be used.
+        if( filename.matches( "\\.+" ) ) {
+            LogManager.getLogger( AttachmentManager.class ).info( "Attempt to upload a file whose name is made only of dots." );
+
+            // the caller should catch the exception and use the exception text as an i18n key
+            throw new WikiException( "attach.unwanted.file" );
+        }
 
         // If file name ends with .jsp or .jspf, the user is being naughty!
         if( filename.toLowerCase().endsWith( ".jsp" ) || filename.toLowerCase().endsWith( ".jspf" ) ) {
