@@ -182,9 +182,9 @@ public class DefaultUserManager implements UserManager {
         if ( session.isAuthenticated() ) {
             user = session.getUserPrincipal();
             try {
-                profile = getUserDatabase().findByWikiName( user.getName());
+                profile = findExistingProfile( session, user );
                 newProfile = false;
-            } catch( final NoSuchPrincipalException e ) { 
+            } catch( final NoSuchPrincipalException e ) {
                 LOG.debug(e.getMessage(), e);
             }
         }
@@ -204,6 +204,22 @@ public class DefaultUserManager implements UserManager {
         // Stash the profile for next time
         m_profiles.put( session, profile );
         return profile;
+    }
+
+    /**
+     * Finds the stored profile of an authenticated user. The user principal usually carries the full name, which is not
+     * the wiki name when it has spaces, so the login name is tried first and the user principal name second.
+     */
+    private UserProfile findExistingProfile( final Session session, final Principal user ) throws NoSuchPrincipalException {
+        final Principal login = session.getLoginPrincipal();
+        if( login != null ) {
+            try {
+                return getUserDatabase().findByLoginName( login.getName() );
+            } catch( final NoSuchPrincipalException e ) {
+                LOG.debug( e.getMessage(), e );
+            }
+        }
+        return getUserDatabase().findByWikiName( user.getName() );
     }
 
     /** {@inheritDoc} */
