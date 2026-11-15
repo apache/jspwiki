@@ -475,7 +475,7 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
                                                                   true );
 
         final List< String > links = localCollector.getLinks();
-        if( pagedata.contains( INSERT_PAGE_PLUGIN ) ) {
+        if( pagedata != null && pagedata.contains( INSERT_PAGE_PLUGIN ) ) {
             links.addAll( insertedPages( page, pagedata ) );
         }
 

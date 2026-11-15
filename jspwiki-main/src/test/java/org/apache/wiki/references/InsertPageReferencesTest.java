@@ -79,4 +79,14 @@ public class InsertPageReferencesTest {
         Assertions.assertFalse( referrers( "IprChild" ).contains( "IprHost" ) );
     }
 
+
+    @Test
+    public void testAPageWithoutTextHasNoLinks() throws Exception {
+        final org.apache.wiki.api.core.Page page = engine.getManager( org.apache.wiki.pages.PageManager.class ).getPage( "IprHost" );
+
+        final Collection< String > links = engine.getManager( ReferenceManager.class ).scanWikiLinks( page, null );
+
+        Assertions.assertTrue( links.isEmpty(), links.toString() );
+    }
+
 }
