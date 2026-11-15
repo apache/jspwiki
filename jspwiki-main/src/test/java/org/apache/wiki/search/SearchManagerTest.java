@@ -44,6 +44,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.Callable;
@@ -244,12 +245,10 @@ class SearchManagerTest {
     Collection< String > pageNamesFor( final String text ) throws Exception {
         final HttpServletRequest request = HttpMockFactory.createHttpRequest();
         final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
-        final Collection< SearchResult > search = m_mgr.findPages( text, ctx );
+        // the provider has no answer until its index is built: wait for it, with the default timeout of Awaitility as the exit
+        final Collection< SearchResult > search = Awaitility.await( "an answer of the search provider for " + text )
+                                                            .until( () -> m_mgr.findPages( text, ctx ), Objects::nonNull );
         final List< String > names = new ArrayList<>();
-        if( search == null ) {
-            // the provider has no answer until its index is built, and the tests wait for a result with this method
-            return names;
-        }
         for( final SearchResult result : search ) {
             names.add( result.getPage().getName() );
         }
