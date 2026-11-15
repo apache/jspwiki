@@ -17,7 +17,6 @@
  * under the License.
  */
 
-buildRepo = 'https://github.com/apache/jspwiki'
 buildJdk11 = 'jdk_11_latest'
 buildJdk17 = 'jdk_17_latest'
 buildJdk21 = 'jdk_21_latest'
@@ -69,7 +68,7 @@ def buildSonarAndDeployIfSnapshotWith( jdk ) {
     node( 'ubuntu' ) {
         stage( jdk ) {
             cleanWs()
-            git url: buildRepo, poll: true
+            checkout scm
             withMaven( jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT', options: [ jacocoPublisher(), junitPublisher() ] ) {
                 sh "mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package org.jacoco:jacoco-maven-plugin:report -T 1C"
             }
@@ -94,7 +93,7 @@ def buildWith( jdk ) {
     node( 'ubuntu' ) {
         stage( jdk ) {
             cleanWs()
-            git url: buildRepo, poll: true
+            checkout scm
             withMaven( jdk: jdk, maven: buildMvn, publisherStrategy: 'EXPLICIT' ) {
                 sh 'mvn clean package -T 1C'
             }
