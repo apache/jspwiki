@@ -258,7 +258,11 @@
     } else if( cancel != null ) {
         log.debug("Cancelled editing "+pagereq);
         PageLock lock = (PageLock) session.getAttribute( "lock-"+pagereq );
-        if( lock != null ) {
+        //  An editor that is left by a link, not by its buttons, asks to cancel with the token of its load. When the
+        //  page was loaded again in the meantime (a reload), the token is not the current one and the lock is the one of the new editor.
+        boolean leftByAnotherLoad = request.getParameter( "leaving" ) != null &&
+                                    !String.valueOf( request.getParameter( "locktoken" ) ).equals( session.getAttribute( "locktoken-"+pagereq ) );
+        if( lock != null && !leftByAnotherLoad ) {
             wiki.getManager( PageManager.class ).unlockPage( lock );
             session.removeAttribute( "lock-"+pagereq );
         }
@@ -287,6 +291,10 @@
     if( lock != null ) {
         session.setAttribute( "lock-"+pagereq, lock );
     }
+    //  Every load of the editor gets its own token, see the cancel above.
+    String lockToken = UUID.randomUUID().toString();
+    session.setAttribute( "locktoken-"+pagereq, lockToken );
+    pageContext.setAttribute( "locktoken", lockToken, PageContext.REQUEST_SCOPE );
 
     String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "EditTemplate.jsp" );
 
