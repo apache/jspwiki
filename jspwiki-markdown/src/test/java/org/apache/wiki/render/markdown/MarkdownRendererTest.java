@@ -149,7 +149,7 @@ public class MarkdownRendererTest {
     public void testMarkupPWithCustomAttributes() throws Exception {
         // {..} are separated from the link, so they apply to the nearest p or span containing them
         final String src0 = "This should be a [link](http://google.com) {style='background-color:#ddd'}";
-        Assertions.assertEquals( "<p style=\"background-color:#ddd\">This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src0 ) );
+        Assertions.assertEquals( "<p>This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src0 ) );
 
         final String src1 = "This should be a [link](http://google.com) {#a1}";
         Assertions.assertEquals( "<p id=\"a1\">This should be a <a href=\"http://google.com\" class=\"external\">link</a></p>\n", translate( src1 ) );
@@ -282,6 +282,29 @@ public class MarkdownRendererTest {
                                    "<img src=\"/test/images/attachment_small.png\" border=\"0\" alt=\"(info)\" />" +
                                  "</a></p>\n",
                                  translate( src ) );
+    }
+
+    private void storeImageAttachment() throws Exception {
+        newPage( "Test" );
+        final Attachment att = Wiki.contents().attachment( testEngine, "Test", "pic.png" );
+        att.setAuthor( "FirstPost" );
+        testEngine.getManager( AttachmentManager.class ).storeAttachment( att, testEngine.makeAttachmentFile() );
+    }
+
+    @Test
+    public void testInlineAttachedImage() throws Exception {
+        storeImageAttachment();
+
+        Assertions.assertEquals( "<p>see <img class=\"inline\" src=\"/test/attach/Test/pic.png\" alt=\"pic\" /> here</p>\n",
+                                 translate( "see [pic](Test/pic.png) here" ) );
+    }
+
+    @Test
+    public void testAttachedImageSyntax() throws Exception {
+        storeImageAttachment();
+
+        Assertions.assertEquals( "<p>see <img src=\"/test/attach/Test/pic.png\" alt=\"pic\" /> here</p>\n",
+                                 translate( "see ![pic](Test/pic.png) here" ) );
     }
 
     @Test

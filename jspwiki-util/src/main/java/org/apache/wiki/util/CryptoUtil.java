@@ -18,10 +18,13 @@
  */
 package org.apache.wiki.util;
 
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Base64;
 import java.util.Random;
 
@@ -41,6 +44,69 @@ public final class CryptoUtil {
     private static final Random RANDOM = new SecureRandom();
 
     private static final int DEFAULT_SALT_SIZE = 8;
+
+    /** Name of the PBKDF2-HMAC-SHA256 algorithm, as used in {@code jspwiki.credentials.hash.algorithm}. */
+    public static final String PBKDF2_SHA256 = "PBKDF2-SHA256";
+
+    /** Name of the PBKDF2-HMAC-SHA512 algorithm, as used in {@code jspwiki.credentials.hash.algorithm}. */
+    public static final String PBKDF2_SHA512 = "PBKDF2-SHA512";
+
+    /** Prefix of PBKDF2-HMAC-SHA256 password entries, the format used by default. */
+    public static final String PBKDF2_PREFIX = "{" + PBKDF2_SHA256 + "}";
+
+    /** Prefix of PBKDF2-HMAC-SHA512 password entries. */
+    public static final String PBKDF2_SHA512_PREFIX = "{" + PBKDF2_SHA512 + "}";
+
+    /** Algorithm used for new password entries unless configured otherwise. */
+    public static final String DEFAULT_PBKDF2_ALGORITHM = PBKDF2_SHA256;
+
+    private static final int PBKDF2_SALT_SIZE = 16;
+
+    /**
+     * The PBKDF2 flavours that can be used to store passwords. The default iteration counts follow the current OWASP password-storage
+     * guidance for each of them.
+     */
+    private enum Pbkdf2 {
+
+        SHA256( PBKDF2_SHA256, "PBKDF2WithHmacSHA256", 32, 600_000 ),
+        SHA512( PBKDF2_SHA512, "PBKDF2WithHmacSHA512", 64, 210_000 );
+
+        private final String algorithm;
+        private final String jcaName;
+        private final int keyLengthBytes;
+        private final int defaultIterations;
+
+        Pbkdf2( final String algorithm, final String jcaName, final int keyLengthBytes, final int defaultIterations ) {
+            this.algorithm = algorithm;
+            this.jcaName = jcaName;
+            this.keyLengthBytes = keyLengthBytes;
+            this.defaultIterations = defaultIterations;
+        }
+
+        String prefix() {
+            return "{" + algorithm + "}";
+        }
+
+        static Pbkdf2 forAlgorithm( final String algorithm ) {
+            for( final Pbkdf2 pbkdf2 : values() ) {
+                if( pbkdf2.algorithm.equals( algorithm ) ) {
+                    return pbkdf2;
+                }
+            }
+            throw new IllegalArgumentException( "Unsupported password hash algorithm: " + algorithm );
+        }
+
+        static Pbkdf2 forEntry( final String entry ) {
+            if( entry != null ) {
+                for( final Pbkdf2 pbkdf2 : values() ) {
+                    if( entry.startsWith( pbkdf2.prefix() ) ) {
+                        return pbkdf2;
+                    }
+                }
+            }
+            return null;
+        }
+    }
 
     private static final Object HELP = "--help";
 
@@ -175,6 +241,146 @@ public final class CryptoUtil {
     }
 
     /**
+     * <p>Creates an iterated, salted PBKDF2-HMAC-SHA256 hash of the given password, suitable for storage. Unlike the
+     * single-iteration digests above, the work factor makes offline cracking of a disclosed user database
+     * expensive. The format is <code>{PBKDF2-SHA256}<var>iterations</var>$base64(salt)$base64(hash)</code>, so the
+     * iteration count of stored entries can be raised in the future without breaking old entries.</p>
+     *
+     * @param password the password to be hashed
+     * @return the password entry, prepended by <code>{PBKDF2-SHA256}</code>
+     * @throws NoSuchAlgorithmException If your JVM does not supply the necessary algorithm. Should not happen.
+     */
+    public static String getPbkdf2SaltedPassword( final byte[] password ) throws NoSuchAlgorithmException {
+        return getPbkdf2SaltedPassword( password, DEFAULT_PBKDF2_ALGORITHM, defaultPbkdf2Iterations( DEFAULT_PBKDF2_ALGORITHM ) );
+    }
+
+    /**
+     * Creates an iterated, salted PBKDF2 hash of the given password with the given algorithm and iteration count, in the format
+     * <code>{<var>algorithm</var>}<var>iterations</var>$base64(salt)$base64(hash)</code>.
+     *
+     * @param password the password to be hashed
+     * @param algorithm one of {@link #PBKDF2_SHA256} and {@link #PBKDF2_SHA512}
+     * @param iterations the iteration count, which must be positive
+     * @return the password entry, prepended by the algorithm
+     * @throws NoSuchAlgorithmException If your JVM does not supply the necessary algorithm. Should not happen.
+     * @throws IllegalArgumentException if the algorithm is not supported or the iteration count is not positive
+     * @since 3.0.1
+     */
+    public static String getPbkdf2SaltedPassword( final byte[] password, final String algorithm, final int iterations ) throws NoSuchAlgorithmException {
+        final byte[] salt = new byte[ PBKDF2_SALT_SIZE ];
+        RANDOM.nextBytes( salt );
+        return getPbkdf2SaltedPassword( password, salt, algorithm, iterations );
+    }
+
+    static String getPbkdf2SaltedPassword( final byte[] password, final byte[] salt, final String algorithm, final int iterations ) throws NoSuchAlgorithmException {
+        final Pbkdf2 pbkdf2 = Pbkdf2.forAlgorithm( algorithm );
+        if( iterations < 1 ) {
+            throw new IllegalArgumentException( "The iteration count must be positive: " + iterations );
+        }
+        final byte[] hash = pbkdf2( password, salt, pbkdf2, iterations );
+        final Base64.Encoder encoder = Base64.getEncoder();
+        return pbkdf2.prefix() + iterations + "$" + encoder.encodeToString( salt ) + "$" + encoder.encodeToString( hash );
+    }
+
+    /**
+     * Verifies a password against a PBKDF2 entry created by {@link #getPbkdf2SaltedPassword(byte[])} or
+     * {@link #getPbkdf2SaltedPassword(byte[], String, int)}, with whatever algorithm and iteration count it was created with.
+     * The comparison is constant-time.
+     *
+     * @param password the password to verify
+     * @param entry the stored password entry
+     * @return true if the password matches the entry
+     * @throws NoSuchAlgorithmException If your JVM does not supply the necessary algorithm. Should not happen.
+     */
+    public static boolean verifyPbkdf2SaltedPassword( final byte[] password, final String entry ) throws NoSuchAlgorithmException {
+        final Pbkdf2 pbkdf2 = Pbkdf2.forEntry( entry );
+        if( pbkdf2 == null ) {
+            throw new IllegalArgumentException( "Hash not prefixed by expected algorithm; is it really a PBKDF2 hash?" );
+        }
+        final String[] fields = entry.substring( pbkdf2.prefix().length() ).split( "\\$" );
+        if( fields.length != 3 ) {
+            throw new IllegalArgumentException( "Malformed PBKDF2 password entry" );
+        }
+        final int iterations = Integer.parseInt( fields[ 0 ] );
+        final byte[] salt = Base64.getDecoder().decode( fields[ 1 ] );
+        final byte[] expected = Base64.getDecoder().decode( fields[ 2 ] );
+        final byte[] hash = pbkdf2( password, salt, pbkdf2, iterations );
+        return MessageDigest.isEqual( expected, hash );
+    }
+
+    /**
+     * Tells if the entry is a PBKDF2 password entry of any of the supported algorithms.
+     *
+     * @param entry a stored password entry, which may be {@code null}
+     * @return {@code true} if the entry starts with the prefix of a supported PBKDF2 algorithm
+     * @since 3.0.1
+     */
+    public static boolean isPbkdf2Entry( final String entry ) {
+        return Pbkdf2.forEntry( entry ) != null;
+    }
+
+    /**
+     * Tells if a stored entry was created with exactly the given algorithm and iteration count, which is how to find out that an
+     * entry has to be hashed again after the settings changed.
+     *
+     * @param entry a stored password entry
+     * @param algorithm one of {@link #PBKDF2_SHA256} and {@link #PBKDF2_SHA512}
+     * @param iterations the iteration count
+     * @return {@code true} if the entry is a well formed PBKDF2 entry of that algorithm and iteration count
+     * @since 3.0.1
+     */
+    public static boolean hasPbkdf2Parameters( final String entry, final String algorithm, final int iterations ) {
+        final Pbkdf2 pbkdf2 = Pbkdf2.forEntry( entry );
+        if( pbkdf2 == null || !pbkdf2.algorithm.equals( algorithm ) ) {
+            return false;
+        }
+        final String[] fields = entry.substring( pbkdf2.prefix().length() ).split( "\\$" );
+        if( fields.length != 3 ) {
+            return false;
+        }
+        try {
+            return Integer.parseInt( fields[ 0 ] ) == iterations;
+        } catch( final NumberFormatException e ) {
+            return false;
+        }
+    }
+
+    /**
+     * Tells if the algorithm is one of those that can be used to hash new passwords.
+     *
+     * @param algorithm the name of an algorithm, which may be {@code null}
+     * @return {@code true} for {@link #PBKDF2_SHA256} and {@link #PBKDF2_SHA512}
+     * @since 3.0.1
+     */
+    public static boolean isSupportedPbkdf2Algorithm( final String algorithm ) {
+        return PBKDF2_SHA256.equals( algorithm ) || PBKDF2_SHA512.equals( algorithm );
+    }
+
+    /**
+     * Returns the iteration count used for an algorithm unless configured otherwise.
+     *
+     * @param algorithm one of {@link #PBKDF2_SHA256} and {@link #PBKDF2_SHA512}
+     * @return the default iteration count
+     * @throws IllegalArgumentException if the algorithm is not supported
+     * @since 3.0.1
+     */
+    public static int defaultPbkdf2Iterations( final String algorithm ) {
+        return Pbkdf2.forAlgorithm( algorithm ).defaultIterations;
+    }
+
+    private static byte[] pbkdf2( final byte[] password, final byte[] salt, final Pbkdf2 pbkdf2, final int iterations ) throws NoSuchAlgorithmException {
+        final char[] chars = new String( password, StandardCharsets.UTF_8 ).toCharArray();
+        final PBEKeySpec spec = new PBEKeySpec( chars, salt, iterations, pbkdf2.keyLengthBytes * 8 );
+        try {
+            return SecretKeyFactory.getInstance( pbkdf2.jcaName ).generateSecret( spec ).getEncoded();
+        } catch( final InvalidKeySpecException e ) {
+            throw new NoSuchAlgorithmException( "Unable to compute PBKDF2 hash", e );
+        } finally {
+            spec.clearPassword();
+        }
+    }
+
+    /**
      *  Compares a password to a given entry and returns true, if it matches.
      *
      *  @param password The password in bytes.
@@ -183,11 +389,23 @@ public final class CryptoUtil {
      *  @throws NoSuchAlgorithmException If there is no SHA available.
      */
     public static boolean verifySaltedPassword( final byte[] password, final String entry ) throws NoSuchAlgorithmException {
-        if( !entry.startsWith( SSHA ) && !entry.startsWith( SHA256 ) ) {
+        if( !entry.startsWith( SSHA ) && !entry.startsWith( SHA256 ) && !isPbkdf2Entry( entry ) ) {
             throw new IllegalArgumentException( "Hash not prefixed by expected algorithm; is it really a salted hash?" );
         }
-        final String algorithm = entry.startsWith( SSHA ) ? SSHA : SHA256;
-        final byte[] challenge = Base64.getDecoder().decode( entry.substring( algorithm.length() ).getBytes( StandardCharsets.UTF_8 ) );
+        final String algorithm;
+        if( isPbkdf2Entry( entry ) ) {
+            return verifyPbkdf2SaltedPassword( password, entry );
+        } else if (entry.startsWith(SSHA)) {
+            algorithm = SSHA;
+        } else if (entry.startsWith(SHA256)) {
+            algorithm = SHA256;
+        } else {
+            throw new NoSuchAlgorithmException("unknown hash algorithm prefix");
+        }
+
+        String hash2 = entry.substring( algorithm.length() );
+        byte[] bits = hash2.getBytes( StandardCharsets.UTF_8 );
+        final byte[] challenge = Base64.getDecoder().decode(bits);
 
         // Extract the password hash and salt
         final byte[] passwordHash = extractPasswordHash( challenge, algorithm.equals( SSHA ) ? 20 : 32 );

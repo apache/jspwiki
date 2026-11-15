@@ -41,10 +41,12 @@ import java.security.Permission;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -61,6 +63,9 @@ public class DefaultAclManager implements AclManager {
 
     private AuthorizationManager m_auth;
     private Engine m_engine;
+
+    /** The pages whose ACL this thread is reading right now. */
+    private final ThreadLocal< Set< String > > parsing = ThreadLocal.withInitial( HashSet::new );
     private static final String PERM_REGEX = "("
                                               + PagePermission.COMMENT_ACTION + "|"
                                               + PagePermission.DELETE_ACTION  + "|"
@@ -144,9 +149,18 @@ public class DefaultAclManager implements AclManager {
                 acl = getPermissions(parent);
             } else {
                 //  Or, try parsing the page
-                final Context ctx = Wiki.context().create( m_engine, page );
-                ctx.setVariable( Context.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
-                m_engine.getManager( RenderingManager.class ).getHTML(ctx, page);
+                final String key = page.getName() + ":" + page.getVersion();
+                if( !parsing.get().add( key ) ) {
+                    // A page filter asked for the permissions of this page while its ACL is being read; rendering it again would never end
+                    return Wiki.acls().acl();
+                }
+                try {
+                    final Context ctx = Wiki.context().create( m_engine, page );
+                    ctx.setVariable( Context.VAR_EXECUTE_PLUGINS, Boolean.FALSE );
+                    m_engine.getManager( RenderingManager.class ).getHTML(ctx, page);
+                } finally {
+                    parsing.get().remove( key );
+                }
 
                 if (page.getAcl() == null) {
                     page.setAcl( Wiki.acls().acl() );

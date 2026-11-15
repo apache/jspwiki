@@ -19,14 +19,17 @@
 package org.apache.wiki.auth.acl;
 
 import org.apache.wiki.api.core.AclEntry;
+import org.apache.wiki.util.Synchronizer;
 
 import java.io.Serializable;
 import java.security.Permission;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -36,14 +39,18 @@ import java.util.Vector;
  */
 public class AclImpl implements Acl, Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private final Vector< AclEntry > m_entries = new Vector<>();
-
     /**
-     * Constructs a new AclImpl instance.
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
      */
-    public AclImpl() {
-    }
+    private final ReentrantLock lock = new ReentrantLock();
+
+    private static final long serialVersionUID = 1L;
+    private final List< AclEntry > m_entries = new CopyOnWriteArrayList<>();
 
     /** {@inheritDoc} */
     @Override
@@ -86,30 +93,32 @@ public class AclImpl implements Acl, Serializable {
 
     /** {@inheritDoc} */
     @Override
-    public synchronized boolean addEntry( final AclEntry entry ) {
-        if( entry.getPrincipal() == null ) {
-            throw new IllegalArgumentException( "Entry principal cannot be null" );
-        }
+    public boolean addEntry( final AclEntry entry ) {
+        return Synchronizer.synchronize(lock, () -> {
+            if( entry.getPrincipal() == null ) {
+                throw new IllegalArgumentException( "Entry principal cannot be null" );
+            }
 
-        if( hasEntry( entry ) ) {
-            return false;
-        }
+            if( hasEntry( entry ) ) {
+                return false;
+            }
 
-        m_entries.add( entry );
+            m_entries.add( entry );
 
-        return true;
+            return true;
+        });
     }
 
     /** {@inheritDoc} */
     @Override
-    public synchronized boolean removeEntry( final AclEntry entry ) {
-        return m_entries.remove( entry );
+    public boolean removeEntry( final AclEntry entry ) {
+        return Synchronizer.synchronize(lock, () -> m_entries.remove( entry ));
     }
 
     /** {@inheritDoc} */
     @Override
     public Enumeration< AclEntry > aclEntries() {
-        return m_entries.elements();
+        return Collections.enumeration(m_entries);
     }
 
     /** {@inheritDoc} */

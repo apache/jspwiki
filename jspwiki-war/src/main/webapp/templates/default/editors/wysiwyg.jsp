@@ -148,6 +148,14 @@
              placeholder="<fmt:message key='editor.plain.changenote'/>"
              value="${changenote}" />
       </li>
+      <wiki:UserCheck status="authenticated">
+      <li class="dropdown-header">
+        <label class="checkbox-inline">
+          <input type="checkbox" name="subscribe" id="subscribe" value="true" />
+          <fmt:message key="editor.subscribe"/>
+        </label>
+      </li>
+      </wiki:UserCheck>
       </wiki:CheckRequestContext>
       <wiki:CheckRequestContext context="comment">
       <li class="divider" />
@@ -257,7 +265,7 @@
         To avoid this, double escape the & char =>  so &amp;lt; is converted to &lt;
         --%>
         <textarea name="htmlPageText"
-             autofocus="autofocus"><%= pageAsHtml.replace("&", "&amp;")%></textarea>
+             autofocus="autofocus"><%= pageAsHtml.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")%></textarea>
       </div>
       <div class="ajaxpreview">Preview comes here</div>
   </div>
@@ -279,12 +287,21 @@ Wiki.add("[name=htmlPageText]", function( element){
         form.htmlPageText.setStyle("height", editorHeight());
     }
 
+    function isChanged(){ return editor && editorContent() != initialContent; }
+
     var form = element.form,
         editor,
+        initialContent,  //content of the editor once it is attached, to know when the user has changed it
         preview = form.getElement(".ajaxpreview"),
         resizer = form.getElement(".resizer"),
         resizeCookie = "editorHeight",
         html2markup = Wiki.getXHRPreview( editorContent, preview );
+
+    //like the plain editor, ask before leaving the page with changes that are not saved
+    window.onbeforeunload = function(){
+        if( isChanged() ){ return "edit.areyousure".localize(); }
+    };
+    form.addEvent("submit", function(){ window.onbeforeunload = null; });
 
     Wiki.configPrefs( form, function(cmd, isChecked){
         if(isChecked && (cmd=="livepreview")){ html2markup(); }
@@ -300,6 +317,7 @@ Wiki.add("[name=htmlPageText]", function( element){
   		onAttach: function(){
 
   		    editor = this;
+            initialContent = editorContent();
             Wiki.resizer(resizer, $$(editor.iframe), resizePreview );
             html2markup();
             resizePreview();

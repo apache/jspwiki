@@ -1,0 +1,64 @@
+[{TableOfContents}]
+
+!! Microsoft Windowsin ongelmat
+
+!Wikin asetukset
+Kivuttomin tapa määrittää wikitiedostojen sijainti on pitää ne samalla asemalla kuin Tomcat (tai muu verkkopalvelin) on asennettuna ja antaa sijainti Unix-muodossa. Esimerkiksi tiedostot hakemistossa C:\JSPWiki\files määritellään asetustiedostossa muodossa /JSPWiki/files.
+
+Muuta myös asetus {{log4j.appender.~FileLog.File}} tiedostossa {{jspwiki.properties}}, jos haluat lokitiedoston syntyvän. Tämä asetus on piilotettu melko hyvin asetustiedoston loppupuolelle. Muoto on sama kuin asetuksella {{jspwiki.fileSystemProvider.pageDir}}, eli kenoviivat on kirjoitettava kahdesti.
+
+!! UTF-8-ongelmat
+
+Jos sinulla on ongelmia Tomcat 5.x:n (tai uudemman) ja JSPWikin kanssa UTF-8:n kanssa, huomaa seuraava!
+
+Sinun täytyy muokata Tomcatin tiedostoa server.xml (se on Tomcatin conf-hakemistossa). Lisää kohtaan
+
+{{{<Connector port="8080"
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+               enableLookups="false" redirectPort="8443" acceptCount="100"
+               debug="0" connectionTimeout="20000"
+               disableUploadTimeout="true"/>}}}
+
+termi '{{{URIEncoding="UTF-8"}}}'.
+
+Sen pitäisi näyttää tältä:
+
+{{{
+<Connector port="8080"
+               maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+               enableLookups="false" redirectPort="8443" acceptCount="100"
+               debug="0" connectionTimeout="20000"
+               disableUploadTimeout="true"
+               URIEncoding="UTF-8"/>
+}}}
+
+Muista, että jos käytät mod_jk:ta, sinun pitää määritellä {{URIEncoding}} myös JK-liittimelle :
+
+{{{
+.........
+  <service name="Catalina">
+    <connector port="8080" />
+.........
+    <connector protocol="AJP/1.3" uriencoding="UTF-8" port="8009" />
+.........
+  </service>
+}}}
+
+!! Muita vinkkejä
+
+!Vasemman reunan valikon muokkaaminen.
+
+Vasemman reunan valikko (tuolla <-----) on tavallinen wikisivu nimeltä [LeftMenu].
+
+Jos sinä (ylläpitäjä) et halua kenenkään muun muokkaavan sitä, voit aina muokata sivua [LeftMenu] ja tehdä sen jälkeen sivusta kirjoitussuojatun lisäämällä siihen ACL:n.
+
+
+Vasemman reunan alaosa on vastaavasti nimeltään [LeftMenuFooter], ja sitäkin voi muokata vapaasti.
+
+!Ota [RSS|http://blogspace.com/rss/]-syöte käyttöön
+
+Aseta tiedostossa jspwiki.properties asetus "jspwiki.rss.generate" arvoon "true".
+
+!En pidä siitä, että ~SivujenNimet ~OvatKiinniToisissaan otsikoissa.  Mitä voin tehdä?
+
+Kuten suomalainen sanoisi: "voe tokkiinsa". Aseta vain tiedostossa jspwiki.properties asetus "jspwiki.breakTitleWithSpaces" arvoon "true".

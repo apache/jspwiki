@@ -281,6 +281,9 @@ public class DefaultRenderingManager implements RenderingManager {
 
         final StopWatch sw = new StopWatch();
         sw.start();
+        // A text can be rendered while another one is, for instance by InsertPage, so the previous one is put back afterwards
+        final Object enclosingText = context.getVariable( Context.VAR_RENDERED_TEXT );
+        context.setVariable( Context.VAR_RENDERED_TEXT, pagedata );
         try {
             if( runFilters ) {
                 pagedata = m_engine.getManager( FilterManager.class ).doPreTranslateFiltering( context, pagedata );
@@ -294,6 +297,8 @@ public class DefaultRenderingManager implements RenderingManager {
         } catch( final FilterException e ) {
             LOG.error( "page filter threw exception: ", e );
             // FIXME: Don't yet know what to do
+        } finally {
+            context.setVariable( Context.VAR_RENDERED_TEXT, enclosingText );
         }
         sw.stop();
         LOG.debug( "Page {} rendered, took {}", context.getRealPage().getName(), sw );

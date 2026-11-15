@@ -25,6 +25,7 @@
 <%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.api.exceptions.WikiException" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.content.PageRenamer" %>
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
@@ -32,6 +33,7 @@
 <%@ page import="org.apache.wiki.tags.BreadcrumbsTag.FixedQueue" %>
 <%@ page import="org.apache.wiki.ui.TemplateManager" %>
 <%@ page import="org.apache.wiki.util.TextUtil" %>
+<%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page errorPage="/Error.jsp" %>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
@@ -41,12 +43,21 @@
 %>
 
 <%
+    if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+        response.sendRedirect( "/error/Forbidden.html" );
+        return;
+    }
     Engine wiki = Wiki.engine().find( getServletConfig() );
     // Create wiki context and check for authorization
 	Context wikiContext = Wiki.context().create( wiki, request, ContextEnum.PAGE_RENAME.getRequestContext() );
 	if( !wiki.getManager( AuthorizationManager.class ).hasAccess( wikiContext, response ) ) return;
     if( wikiContext.getCommand().getTarget() == null ) {
         response.sendRedirect( wikiContext.getURL( wikiContext.getRequestContext(), wikiContext.getName() ) );
+        return;
+    }
+
+    if( !CsrfProtectionFilter.isCsrfProtectedPost( request ) ) {
+        response.sendRedirect( "/error/Forbidden.html" );
         return;
     }
 

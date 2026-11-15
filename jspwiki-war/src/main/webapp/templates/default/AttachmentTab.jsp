@@ -33,11 +33,12 @@
   Context c = Context.findContext(pageContext);
 %>
 <c:set var="progressId" value="<%= c.getEngine().getManager( ProgressManager.class ).getNewProgressIdentifier() %>" />
-<c:set var="csrfProtection" value="<%= c.getWikiSession().antiCsrfToken() %>" />
 <div class="page-content">
 <wiki:Permission permission="upload">
 
-  <form action="<wiki:Link jsp='attach' format='url'><wiki:Param name='progressid' value='${progressId}'/><wiki:Param name='X-XSRF-TOKEN' value='${csrfProtection}'/></wiki:Link>"
+  <%-- The anti-CSRF token travels as a hidden multipart form field (see <wiki:CsrfProtection/> below), NOT as a
+       query-string parameter: query strings end up in access logs, proxies and browser history. --%>
+  <form action="<wiki:Link jsp='attach' format='url'><wiki:Param name='progressid' value='${progressId}'/></wiki:Link>"
          class="accordion<wiki:HasAttachments></wiki:HasAttachments>"
             id="uploadform"
         method="post"

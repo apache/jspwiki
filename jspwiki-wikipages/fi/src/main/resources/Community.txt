@@ -1,0 +1,46 @@
+[{TableOfContents}]
+
+!! Postituslistat
+JSPWikillä on postituslista niitä keskusteluja varten, joita käydään tämän wikin ulkopuolella.  Se sopii hyvin esimerkiksi korjausten, ongelmien ja kehityksen pohtimiseen.
+
+Listoja on tällä hetkellä kolme: ''jspwiki-users'', ''jspwiki-dev'' ja ''jspwiki-commits''.
+
+!JSPWiki-user
+
+Postituslista jspwiki-user sijaitsee Apachella.  Voit liittyä siihen lähettämällä sähköpostia osoitteeseen [user-subscribe@jspwiki.apache.org|mailto:user-subscribe@jspwiki.apache.org]. Listan arkisto on osoitteessa [http://mail-archives.apache.org/mod_mbox/jspwiki-user/|http://mail-archives.apache.org/mod_mbox/jspwiki-user/]
+
+[Vanha listaarkisto|http://www.ecyrd.com/pipermail/jspwiki-users/] on myös saatavilla. Toissijainen [arkisto|http://www.nabble.com/JspWiki---User-f2680.html] löytyy Nabblesta.
+
+!JSPWiki-dev
+
+Tämä on JSPWikin kehittäjien lista.  Älä liity, jos pelkäät nörttipuhetta.  Lista jspwiki-dev sijaitsee Apachella, joten liityt lähettämällä sähköpostia osoitteeseen [dev-subscribe@jspwiki.apache.org|mailto:dev-subscribe@jspwiki.apache.org].  Listan arkisto on osoitteessa [http://mail-archives.apache.org/mod_mbox/jspwiki-dev/|http://mail-archives.apache.org/mod_mbox/jspwiki-dev/]
+
+!JSPWiki-commits
+
+Kun tilaat tämän listan, saat sähköpostia aina, kun (committer) tallentaa uusia tai muuttuneita tiedostoja SVN-säilöön.
+Lista jspwiki-commits sijaitsee Apachella, ja siihen liitytään lähettämällä sähköpostia osoitteeseen [commits-subscribe@jspwiki.apache.org|mailto:commits-subscribe@jspwiki.apache.org].
+Listan arkisto on osoitteessa http://mail-archives.apache.org/mod_mbox/jspwiki-commits/
+
+!Tilauksen peruminen
+
+Tilauksen peruminen on yhtä helppoa: lähetä sähköpostia osoitteeseen <user|dev|commits>-unsubscribe@jspwiki.apache.org samasta osoitteesta, jolla alun perin liityit.
+
+Vanhat JSPWiki-dev-arkistot (lokakuuhun 2007 asti) ovat [myös saatavilla|http://www.ecyrd.com/pipermail/jspwiki-dev/], jos haluat tutustua mielenkiintoisiin aiheisiin.
+
+!! Muita lähteitä
+
+! IrcChannel - keskustele kehittäjien kanssa suorassa lähetyksessä!
+
+JSPWikillä on [IRC|http://www.mirc.com/irc.html]-kanava [Freenodessa|http://www.freenode.net], nimeltään #jspwiki. Pistäydy, jos sinulla on kysyttävää tai haluat vain jutella.
+
+Huomaa, että kanava on tiettyinä vuorokaudenaikoina melko hiljainen, joten älä lannistu, jos et saa vastausta.  Jää vain hetkeksi odottamaan...
+
+Kanavan vakiokävijät:
+* [Janne Jalkanen|http://www.ecyrd.com/JSPWiki/wiki/JanneJalkanen] (Ecyrd): Asuu aikavyöhykkeellä GMT+2.
+
+! [FaceBook | http://www.facebook.com/group.php?gid=11138025370]
+
+Ihan huvikseni perustin JSPWikin käyttäjille ryhmän Facebookiin.  Jos käytät Facebookia säännöllisesti, pistäydy!
+
+(Eikä, emme aio korvata sillä mitään olemassa olevaa sivustoa.  Mutta koska kaikki tuntuvat olevan Facebookissa, ajattelin ettei ylimääräinen kanava ole huono idea)
+-- Janne 17/09/07

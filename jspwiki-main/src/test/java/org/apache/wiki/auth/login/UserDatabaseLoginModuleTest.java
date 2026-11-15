@@ -17,22 +17,30 @@
     under the License.
  */
 package org.apache.wiki.auth.login;
+import java.io.File;
 import java.security.Principal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.AccountLockedException;
+import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
+import org.apache.wiki.auth.UserManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.user.UserDatabase;
+import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.auth.user.XMLUserDatabase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Assertions;
@@ -136,6 +144,66 @@ public class UserDatabaseLoginModuleTest
             System.err.println( e.getMessage() );
             Assertions.fail();
         }
+    }
+
+    private UserDatabase newDatabaseWithJanneLockedUntil( final Date lockExpiry ) throws Exception {
+        final Properties props = TestEngine.getTestProperties();
+        final File file = new File( "target/UserDatabaseLoginModuleTest" + UUID.randomUUID() + ".xml" );
+        FileUtils.copyFile( new File( "src/test/resources/userdatabase.xml" ), file );
+        props.put( XMLUserDatabase.PROP_USERDATABASE, file.getAbsolutePath() );
+        m_engine = new TestEngine( props );
+        final UserDatabase db = m_engine.getManager( UserManager.class ).getUserDatabase();
+        final UserProfile profile = db.findByLoginName( "janne" );
+        profile.setLockExpiry( lockExpiry );
+        db.save( profile );
+        return db;
+    }
+
+    private void login( final String username, final String password ) throws LoginException {
+        final CallbackHandler handler = new WikiCallbackHandler( m_engine, null, username, password );
+        final LoginModule module = new UserDatabaseLoginModule();
+        module.initialize( m_subject, handler, new HashMap<String, Object>(), new HashMap<String, Object>() );
+        module.login();
+        module.commit();
+    }
+
+    /** A locked profile cannot log in, even with the right password. */
+    @Test
+    public final void testLockedProfileCannotLogin() throws Exception {
+        newDatabaseWithJanneLockedUntil( new Date( System.currentTimeMillis() + 3_600_000L ) );
+
+        Assertions.assertThrows( AccountLockedException.class, () -> login( "janne", "myP@5sw0rd" ) );
+        Assertions.assertTrue( m_subject.getPrincipals().isEmpty() );
+    }
+
+    /** A locked profile does not tell that it is locked to someone who does not know the password. */
+    @Test
+    public final void testLockedProfileWithWrongPasswordIsAnOrdinaryFailure() throws Exception {
+        newDatabaseWithJanneLockedUntil( new Date( System.currentTimeMillis() + 3_600_000L ) );
+
+        final LoginException e = Assertions.assertThrows( LoginException.class, () -> login( "janne", "wrong" ) );
+        Assertions.assertFalse( e instanceof AccountLockedException );
+        Assertions.assertInstanceOf( FailedLoginException.class, e );
+    }
+
+    /** Once the lock has expired the profile can log in again. */
+    @Test
+    public final void testProfileWithExpiredLockCanLogin() throws Exception {
+        newDatabaseWithJanneLockedUntil( new Date( System.currentTimeMillis() - 1_000L ) );
+
+        login( "janne", "myP@5sw0rd" );
+
+        Assertions.assertTrue( m_subject.getPrincipals().contains( new WikiPrincipal( "janne", WikiPrincipal.LOGIN_NAME ) ) );
+    }
+
+    /** Only the locked profile is affected. */
+    @Test
+    public final void testOtherProfilesCanLoginWhileOneIsLocked() throws Exception {
+        newDatabaseWithJanneLockedUntil( new Date( System.currentTimeMillis() + 3_600_000L ) );
+
+        login( "user", "password" );
+
+        Assertions.assertTrue( m_subject.getPrincipals().contains( new WikiPrincipal( "user", WikiPrincipal.LOGIN_NAME ) ) );
     }
 
 }

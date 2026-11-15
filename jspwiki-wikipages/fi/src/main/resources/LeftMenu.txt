@@ -1,0 +1,11 @@
+* [Pääsivu|Main]
+* [Tietoa|About]
+* [Uutiset|News]
+* [Viimeisimmät muutokset|Recent Changes]
+* [Wikietiketti|WikiEtiquette]
+
+* [Etsi sivuja|Search]
+* [Käyttämättömät sivut|UnusedPages]
+* [Puuttuvat sivut|UndefinedPages]
+* [Sivuhakemisto|Page Index]
+* [Järjestelmätiedot|SystemInfo]

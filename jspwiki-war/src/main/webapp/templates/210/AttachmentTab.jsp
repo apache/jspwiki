@@ -17,6 +17,7 @@
     under the License.
 --%>
 
+<%@page import="org.apache.commons.text.StringEscapeUtils"%>
 <%@ taglib uri="http://jspwiki.apache.org/tags" prefix="wiki" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.auth.*" %>
@@ -31,12 +32,13 @@
   Context c = Context.findContext(pageContext);
 %>
 <c:set var="progressId" value="<%= c.getEngine().getManager( ProgressManager.class ).getNewProgressIdentifier() %>" />
-<c:set var="csrfProtection" value="<%= c.getWikiSession().antiCsrfToken() %>" />
 
 <div id="addattachment">
 <h3><fmt:message key="attach.add"/></h3>
 <wiki:Permission permission="upload">
-  <form action="<wiki:Link jsp='attach' format='url'><wiki:Param name='progressid' value='${progressId}'/><wiki:Param name='X-XSRF-TOKEN' value='${csrfProtection}'/></wiki:Link>"
+  <%-- The anti-CSRF token travels as a hidden multipart form field (see <wiki:CsrfProtection/> below), NOT as a
+       query-string parameter: query strings end up in access logs, proxies and browser history. --%>
+  <form action="<wiki:Link jsp='attach' format='url'><wiki:Param name='progressid' value='${progressId}'/></wiki:Link>"
          class="wikiform"
             id="uploadform"
         method="post"
@@ -119,8 +121,8 @@
       if( sname.length() > MAXATTACHNAMELENGTH ) sname = sname.substring(0,MAXATTACHNAMELENGTH) + "...";
     %>
     <tr>
-      <td><div id="attach-<%= attachtype %>" class="attachtype"><%= attachtype %></div></td>
-      <td><wiki:LinkTo title="<%= name %>" ><%= sname %></wiki:LinkTo></td>
+      <td><div id="attach-<%= StringEscapeUtils.escapeHtml4(attachtype) %>" class="attachtype"><%= StringEscapeUtils.escapeHtml4(attachtype) %></div></td>
+      <td><wiki:LinkTo title="<%= StringEscapeUtils.escapeHtml4(name) %>" ><%= StringEscapeUtils.escapeHtml4(sname) %></wiki:LinkTo></td>
       <td style="white-space:nowrap;text-align:right;">
         <fmt:formatNumber value='<%=Double.toString(att.getSize()/1000.0)%>' maxFractionDigits='1' minFractionDigits='1'/>&nbsp;<fmt:message key="info.kilobytes"/>
       </td>

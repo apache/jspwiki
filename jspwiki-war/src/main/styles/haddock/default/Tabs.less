@@ -47,6 +47,16 @@ DOM structure:  ( based on Bootstrap conventions, without [data-toggle=tab] )
 
 }
 
+//Until the script has built the tabs, every pane is in view and the page shrinks when it hides all but one.
+//The selectors are the ones the script builds tabs from; without a script they do not apply.
+@unbuilt-tabs: ~".tabs:not(.tab-content):has( > :is(h1, h2, h3, h4):first-child )";
+@unbuilt-sections: ~".tabbedSection:not(.tab-content):has( > [class^=tab-]:first-child )";
+@media (scripting: enabled) {
+    @{unbuilt-tabs}, @{unbuilt-sections} {
+        display:none;
+    }
+}
+
 [class^=tab-] *:first-child {
     margin-top:0;
 }

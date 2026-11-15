@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  *  Displays the pages referring to the current page.
@@ -108,7 +109,7 @@ public class ReferringPagesPlugin extends AbstractReferralPlugin {
             LOG.debug( "Fetching referring pages for {} with a max of {}", page.getName(), items );
 
             if( links != null && !links.isEmpty()) {
-                links = filterAndSortCollection( links );
+                links = filterAndSortCollection( links.stream().filter( name -> mayView( context, name ) ).collect( Collectors.toList() ) );
                 wikitext = wikitizeCollection( links, m_separator, items );
 
                 result.append( applyColumnsStyle( makeHTML( context, wikitext ) ) );

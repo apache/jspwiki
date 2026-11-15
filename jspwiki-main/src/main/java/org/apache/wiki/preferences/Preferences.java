@@ -19,6 +19,7 @@
 package org.apache.wiki.preferences;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
 import org.apache.commons.lang3.LocaleUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -36,11 +37,13 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.TimeZone;
 
 
@@ -50,6 +53,9 @@ import java.util.TimeZone;
 public class Preferences extends HashMap< String,String > {
 
     private static final long serialVersionUID = 1L;
+
+    /** The names of the preferences whose value comes from the user's cookie, and not from the defaults. */
+    private final Set< String > setByUser = new HashSet<>();
 
     /**
      * The name under which a Preferences object is stored in the HttpSession. Its value is {@value}.
@@ -123,25 +129,54 @@ public class Preferences extends HashMap< String,String > {
 
 
     /**
-     * Parses new-style preferences stored as JSON objects and stores them in the session.  Everything in the cookie is stored.
+     * Parses new-style preferences stored as JSON objects and stores them in the session.  Everything in the cookie is stored. The cookie
+     * comes from the client, so one that cannot be decoded or is not a JSON object is ignored and the default preferences stay.
      *
      * @param request
      * @param prefs The default hashmap of preferences
      */
-	private static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs ) {
-        final String prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, COOKIE_USER_PREFS_NAME ) );
+    static void parseJSONPreferences( final HttpServletRequest request, final Preferences prefs ) {
+        final String prefVal;
+        try {
+            prefVal = TextUtil.urlDecodeUTF8( HttpUtil.retrieveCookieValue( request, COOKIE_USER_PREFS_NAME ) );
+        } catch( final IllegalArgumentException e ) {
+            LOG.warn( "Ignoring the {} cookie, it cannot be decoded: {}", COOKIE_USER_PREFS_NAME, e.getMessage() );
+            return;
+        }
         if( prefVal != null ) {
             // Convert prefVal JSON to a generic hashmap
-            @SuppressWarnings( "unchecked" ) final Map< String, String > map = new Gson().fromJson( prefVal, Map.class );
+            final Map< String, String > map;
+            try {
+                @SuppressWarnings( "unchecked" ) final Map< String, String > parsed = new Gson().fromJson( prefVal, Map.class );
+                map = parsed;
+            } catch( final JsonParseException e ) {
+                LOG.warn( "Ignoring the {} cookie, its value is not a JSON object: {}", COOKIE_USER_PREFS_NAME, e.getMessage() );
+                return;
+            }
+            if( map == null ) { // an empty value or the JSON literal null
+                return;
+            }
             for( String key : map.keySet() ) {
                 key = TextUtil.replaceEntities( key );
                 // Sometimes this is not a String as it comes from the Cookie set by Javascript
                 final Object value = map.get( key );
                 if( value != null ) {
                     prefs.put( key, value.toString() );
+                    prefs.setByUser.add( key );
                 }
             }
         }
+    }
+
+    /**
+     *  Tells whether the user chose the value of a preference, as opposed to getting the default one.
+     *
+     *  @param name the name of the preference.
+     *  @return {@code true} if the value comes from the user's cookie.
+     *  @since 3.0.1
+     */
+    public boolean isSetByUser( final String name ) {
+        return setByUser.contains( name );
     }
 
     /**
