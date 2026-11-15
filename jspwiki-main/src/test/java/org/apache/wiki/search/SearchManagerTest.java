@@ -246,6 +246,10 @@ class SearchManagerTest {
         final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
         final Collection< SearchResult > search = m_mgr.findPages( text, ctx );
         final List< String > names = new ArrayList<>();
+        if( search == null ) {
+            // the provider has no answer until its index is built, and the tests wait for a result with this method
+            return names;
+        }
         for( final SearchResult result : search ) {
             names.add( result.getPage().getName() );
         }
