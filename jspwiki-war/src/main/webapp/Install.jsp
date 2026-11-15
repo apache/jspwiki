@@ -75,7 +75,9 @@ if( request.getParameter("submit") != null )
     }
 }
 
-if ( !installer.adminExists() )
+// the account is looked up after the installer may have created it
+boolean adminExists = installer.adminExists();
+if ( !adminExists )
 {
 	wikiSession.addMessage( Installer.INSTALL_WARNING, rb.getString( "install.jsp.install.msg.admin.notexists" ) );
 }
@@ -138,10 +140,8 @@ if ( !installer.adminExists() )
   <h3><fmt:message key="install.jsp.security.title" /></h3>
 
     <%
-      if( validated )
+      if( adminExists )
       {
-        if ( password != null )
-        {
     %>
       <label class="control-label" ><fmt:message key="install.jsp.security.admaccount.label" /></label>
       <p><fmt:message key="install.jsp.security.admaccount.enabled" /></p>
@@ -149,7 +149,6 @@ if ( !installer.adminExists() )
         <fmt:message key="install.jsp.security.admaccount.enabled.desc" />
       </div>
     <%
-        }
       }
       else
       {
