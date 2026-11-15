@@ -16,6 +16,18 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+
+**2026-11-14  Multiple authors**
+
+* _3.0.1-git-09
+* [JSPWIKI-1300](https://issues.apache.org/jira/browse/JSPWIKI-1300): see jira for details
+* [JSPWIKI-1288](https://issues.apache.org/jira/browse/JSPWIKI-1288): see jira for details
+* [JSPWIKI-375](https://issues.apache.org/jira/browse/JSPWIKI-375): Release the lock of the page when the editor is left by a link
+* [JSPWIKI-1066](https://issues.apache.org/jira/browse/JSPWIKI-1066):Inserted page is not considered as referenced
+* [JSPWIKI-1361](https://issues.apache.org/jira/browse/JSPWIKI-1361): fix install.jsp display logic
+* [JSPWIKI-1353](https://issues.apache.org/jira/browse/JSPWIKI-1353): Draw the relevance bars of the search results on a scale from 0 to 100
+
+
 **2026-11-14  Arturo Bernal (abernal AT apache DOT org)**
 
 * _3.0.1-git-08_
@@ -25,7 +37,7 @@ under the License.
 * Fix for [JSPWIKI-1359](https://issues.apache.org/jira/browse/JSPWIKI-1359): see jira for details
 * Fix for [JSPWIKI-1178](https://issues.apache.org/jira/browse/JSPWIKI-1178): the `synchronized` blocks and methods that guard shared state use a `ReentrantLock` through the new `Synchronizer` helper, so that virtual threads are not pinned ([PR#307](https://github.com/apache/jspwiki/pull/307))
 
-**2026-11-14  Alex O'ree (alexoree AT apache DOT org)**
+**2026-11-14  Alex O'Ree (alexoree AT apache DOT org)**
 
 * _3.0.1-git-07_
 
