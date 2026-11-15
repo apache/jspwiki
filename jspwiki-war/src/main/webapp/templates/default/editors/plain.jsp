@@ -87,6 +87,7 @@
   <wiki:CsrfProtection/>
   <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
   <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
+  <input type="hidden" name="locktoken" value="${locktoken}" />
   <input type="hidden" name="action" value="save" />
   <wiki:SpamFilterInputs/>
 
