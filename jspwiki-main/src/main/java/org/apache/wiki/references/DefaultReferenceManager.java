@@ -37,9 +37,15 @@ import org.apache.wiki.event.WikiEvent;
 import org.apache.wiki.event.WikiEventManager;
 import org.apache.wiki.event.WikiPageEvent;
 import org.apache.wiki.pages.PageManager;
+import org.apache.wiki.parser.MarkupParser;
+import org.apache.wiki.parser.PluginContent;
+import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
+
+import org.jdom2.Content;
+import org.jdom2.filter.Filters;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -130,6 +136,9 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
     private final boolean m_matchEnglishPlurals;
 
     private static final Logger LOG = LogManager.getLogger( DefaultReferenceManager.class);
+    private static final String INSERT_PAGE_PLUGIN = "InsertPage";
+    private static final String INSERT_PAGE_CLASS = "org.apache.wiki.plugin.InsertPage";
+    private static final String INSERT_PAGE_PARAMETER = "page";
     private static final String SERIALIZATION_FILE = "refmgr.ser";
     private static final String SERIALIZATION_DIR  = "refmgr-attr";
 
@@ -465,7 +474,39 @@ public class DefaultReferenceManager extends BasePageFilter implements Reference
                                                                   false,
                                                                   true );
 
-        return localCollector.getLinks();
+        final List< String > links = localCollector.getLinks();
+        if( pagedata.contains( INSERT_PAGE_PLUGIN ) ) {
+            links.addAll( insertedPages( page, pagedata ) );
+        }
+
+        return links;
+    }
+
+    /**
+     *  The parser reports the links of a text but not the pages that a plugin names, so the pages that the plugin InsertPage
+     *  includes are found in the parsed text: a page that is inserted in another one is referenced by it, as if it were linked.
+     */
+    private List< String > insertedPages( final Page page, final String pagedata ) {
+        final List< String > pages = new ArrayList<>();
+        try {
+            final WikiDocument document = m_engine.getManager( RenderingManager.class )
+                                                  .getParser( Wiki.context().create( m_engine, page ), pagedata )
+                                                  .parse();
+            for( final Content content : document.getDescendants( Filters.content() ) ) {
+                if( content instanceof PluginContent ) {
+                    final PluginContent plugin = ( PluginContent ) content;
+                    final String name = plugin.getPluginName();
+                    final String inserted = plugin.getParameter( INSERT_PAGE_PARAMETER );
+                    if( inserted != null && ( INSERT_PAGE_PLUGIN.equals( name ) || INSERT_PAGE_CLASS.equals( name ) ) ) {
+                        pages.add( MarkupParser.cleanLink( inserted ) );
+                    }
+                }
+            }
+        } catch( final IOException e ) {
+            LOG.warn( "Could not look for the pages inserted in {}: {}", page.getName(), e.getMessage() );
+        }
+
+        return pages;
     }
 
     /**
