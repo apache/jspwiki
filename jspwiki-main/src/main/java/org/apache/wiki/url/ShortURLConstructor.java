@@ -28,6 +28,7 @@ import org.apache.wiki.util.TextUtil;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
 import java.util.Properties;
+import org.apache.wiki.security.AuditLogger;
 
 
 /**
@@ -159,9 +160,16 @@ public class ShortURLConstructor extends DefaultURLConstructor {
         String jspPage = req.getParameter( "do" );
         if( jspPage == null ) {
             jspPage = "Wiki";
+        } else {
+            // Block path traversal, slashes, backslashes, query delimiters, percent encoding, 
+            // and control characters to prevent JSPWIKI-1304 while supporting international characters.
+            if( jspPage.contains( ".." ) || jspPage.contains( "/" ) || jspPage.contains( "\\" ) || 
+                jspPage.contains( "?" ) || jspPage.contains( "%" ) || jspPage.matches( ".*[\\p{Cntrl}].*" ) ) {
+                LOG.warn( "Invalid characters or path traversal detected in 'do' parameter: {}. Falling back to default Wiki page.", TextUtil.replaceEntities( jspPage ) );
+                jspPage = "Wiki";
+            }
         }
     
         return jspPage + ".jsp";
     }
-
 }
