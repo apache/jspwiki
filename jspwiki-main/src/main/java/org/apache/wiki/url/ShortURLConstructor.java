@@ -28,7 +28,6 @@ import org.apache.wiki.util.TextUtil;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
 import java.util.Properties;
-import org.apache.wiki.security.AuditLogger;
 
 
 /**
