@@ -20,6 +20,7 @@ under the License.
 **2026-11-14  Multiple authors**
 
 * _3.0.1-git-09
+* [JSPWIKI-1304](https://issues.apache.org/jira/browse/JSPWIKI-1304): see jira for details
 * [JSPWIKI-1300](https://issues.apache.org/jira/browse/JSPWIKI-1300): see jira for details
 * [JSPWIKI-1288](https://issues.apache.org/jira/browse/JSPWIKI-1288): see jira for details
 * [JSPWIKI-375](https://issues.apache.org/jira/browse/JSPWIKI-375): Release the lock of the page when the editor is left by a link
