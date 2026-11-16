@@ -114,7 +114,7 @@
     <plugin.war.version>3.5.1</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>5.0.0</plugin.jspc.version>
-    <plugin.build-helper.version>3.6.1</plugin.build-helper.version>
+    <plugin.build-helper.version>3.8.0</plugin.build-helper.version>
     <plugin.checksum.version>1.11</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
     <plugin.cargo.version>1.10.30</plugin.cargo.version>
