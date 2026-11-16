@@ -439,7 +439,7 @@ public class PageViewPlugin extends AbstractReferralPlugin implements Plugin, In
 
                                 // check minimum/maximum count
                                 final int value = entry.getValue().getValue();
-                                boolean use = min <= value && value <= max;
+                                boolean use = min <= value && value <= max && mayView( context, name );
 
                                 // did we specify a refer-to page?
                                 if( use && atomicReferrers.get() != null ) {
