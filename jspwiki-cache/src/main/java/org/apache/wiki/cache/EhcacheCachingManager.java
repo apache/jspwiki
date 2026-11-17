@@ -22,6 +22,8 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
+import net.sf.ehcache.config.Configuration;
+import net.sf.ehcache.config.ConfigurationFactory;
 import net.sf.ehcache.event.CacheEventListenerAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,6 +39,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -57,8 +60,8 @@ public class EhcacheCachingManager implements CachingManager, Initializable {
     /** {@inheritDoc} */
     @Override
     public void shutdown() {
-        if(!cacheMap.isEmpty()) {
-            CacheManager.getInstance().shutdown();
+        if( !cacheMap.isEmpty() ) {
+            cacheManager.shutdown();
             cacheMap.clear();
             cacheStats.clear();
         }
@@ -79,7 +82,10 @@ public class EhcacheCachingManager implements CachingManager, Initializable {
             if (location == null ) {
                 LOG.error( "The ehcache configuration file from classpath on {} could not be loaded. Check setting {}", val , PROP_CACHE_CONF_FILE);
             }
-            cacheManager = CacheManager.create( location );
+            // The shared CacheManager would give every engine of the same class loader the caches of the others.
+            final Configuration configuration = ConfigurationFactory.parseConfiguration( location );
+            configuration.setName( "jspwiki-" + UUID.randomUUID() );
+            cacheManager = CacheManager.newInstance( configuration );
             registerCache( CACHE_ATTACHMENTS );
             registerCache( CACHE_ATTACHMENTS_COLLECTION );
             registerCache( CACHE_ATTACHMENTS_DYNAMIC );

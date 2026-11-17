@@ -55,6 +55,26 @@ public class EhcacheCachingManagerTest {
     }
 
     @Test
+    void testManagersDoNotShareCaches() throws Exception {
+        final EhcacheCachingManager first = new EhcacheCachingManager();
+        final EhcacheCachingManager second = new EhcacheCachingManager();
+        first.initialize( null, new Properties() );
+        second.initialize( null, new Properties() );
+        try {
+            first.put( CachingManager.CACHE_PAGES, "OnlyInFirst", "content" );
+            Assertions.assertNull( second.get( CachingManager.CACHE_PAGES, "OnlyInFirst", () -> null ) );
+            Assertions.assertTrue( second.keys( CachingManager.CACHE_PAGES ).isEmpty() );
+
+            first.shutdown();
+            second.put( CachingManager.CACHE_PAGES, "InSecond", "content" );
+            Assertions.assertEquals( "content", second.get( CachingManager.CACHE_PAGES, "InSecond", () -> null ) );
+        } finally {
+            first.shutdown();
+            second.shutdown();
+        }
+    }
+
+    @Test
     void testEnabled() {
         Assertions.assertTrue( ecm.enabled( CachingManager.CACHE_PAGES ) );
         Assertions.assertFalse( ecm.enabled( "Trucutru" ) );

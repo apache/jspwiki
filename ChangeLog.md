@@ -17,6 +17,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-11-17  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-10_
+
+* Fix for [JSPWIKI-1371](https://issues.apache.org/jira/browse/JSPWIKI-1371): each caching manager uses its own Ehcache cache manager, so engines running in the same JVM no longer share the page caches nor shut them down for each other
+
 **2026-11-14  Multiple authors**
 
 * _3.0.1-git-09
