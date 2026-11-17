@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-11-17 Arturo Bernal (abernal AT apache DOT org)**
+
+* _2.12.6-git-03_
+
+* Backport of [JSPWIKI-1368](https://issues.apache.org/jira/browse/JSPWIKI-1368): the portable module unpacks the war and copies the wikis when the package is built, so `mvn test` no longer fails on it
+
+
 **2026-11-08 Arturo Bernal (abernal AT apache DOT org)**
 
 * _2.12.6-git-02_
