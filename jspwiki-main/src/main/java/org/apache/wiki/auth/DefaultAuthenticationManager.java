@@ -308,6 +308,27 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         }
         return false;
     }
+    
+    @Override
+    public Boolean isPasswordExpiredByLoginName(String loginName) {
+        final UserDatabase db = m_engine.getManager( UserManager.class ).getUserDatabase();
+        try {
+            final UserProfile profile = db.findByLoginName( loginName );
+            final Date now = new Date();
+            if( profile.getPasswordChanged() == null ) {
+                profile.setPasswordChanged( now );
+                db.save( profile );
+                return false;
+            } else if( m_passwordExpiry.isExpired( profile, now ) ) {
+                return true;
+            }
+        } catch( final NoSuchPrincipalException e ) {
+            LOG.debug( "No profile for {} in the user database, so its password cannot expire", loginName, e );
+        } catch( final WikiSecurityException e ) {
+            LOG.error( "Could not record the date of the password of {}: {}", loginName, e.getMessage(), e );
+        }
+        return false;
+    }
 
     /**
      * Tells if the password of a user who has just authenticated with the wiki's user database has expired, and tells the user so. The
