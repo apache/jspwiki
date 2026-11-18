@@ -45,6 +45,12 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>jspwiki-oidc</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jspwiki-markdown</artifactId>
             <version>${project.version}</version>
         </dependency>

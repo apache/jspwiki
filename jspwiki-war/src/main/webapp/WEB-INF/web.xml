@@ -74,6 +74,50 @@
      <filter-class>org.apache.wiki.ui.WikiJSPFilter</filter-class>
    </filter>
 
+   <!-- OpenID Connect login. The filters must be declared before the ones of the wiki, which pick up the user from the request. -->
+   <filter>
+     <filter-name>OidcCallbackFilter</filter-name>
+     <filter-class>org.pac4j.jee.filter.CallbackFilter</filter-class>
+     <init-param>
+       <param-name>defaultUrl</param-name>
+       <param-value>/oidc/login.jsp</param-value>
+     </init-param>
+     <init-param>
+       <param-name>renewSession</param-name>
+       <param-value>true</param-value>
+     </init-param>
+   </filter>
+   <filter-mapping>
+     <filter-name>OidcCallbackFilter</filter-name>
+     <url-pattern>/oidc/callback</url-pattern>
+   </filter-mapping>
+
+   <filter>
+     <filter-name>OidcSecurityFilter</filter-name>
+     <filter-class>org.pac4j.jee.filter.SecurityFilter</filter-class>
+     <init-param>
+       <param-name>configFactory</param-name>
+       <param-value>org.apache.wiki.oidc.OidcConfigFactory</param-value>
+     </init-param>
+     <init-param>
+       <param-name>clients</param-name>
+       <param-value>KeycloakOidcClient</param-value>
+     </init-param>
+   </filter>
+   <filter-mapping>
+     <filter-name>OidcSecurityFilter</filter-name>
+     <url-pattern>/oidc/login.jsp</url-pattern>
+   </filter-mapping>
+
+   <filter>
+     <filter-name>OidcIdentityFilter</filter-name>
+     <filter-class>org.apache.wiki.oidc.OidcIdentityFilter</filter-class>
+   </filter>
+   <filter-mapping>
+     <filter-name>OidcIdentityFilter</filter-name>
+     <url-pattern>/*</url-pattern>
+   </filter-mapping>
+
    <filter-mapping>
      <filter-name>WikiServletFilter</filter-name>
      <url-pattern>/attach/*</url-pattern>
