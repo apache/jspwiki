@@ -24,8 +24,12 @@ import java.util.Properties;
 import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
+import org.pac4j.core.client.Client;
 import org.pac4j.core.config.ConfigFactory;
+import org.pac4j.core.context.CallContext;
+import org.pac4j.core.engine.DefaultLogoutLogic;
 import org.pac4j.core.http.url.DefaultUrlResolver;
+import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.oidc.authorization.generator.KeycloakRolesAuthorizationGenerator;
 import org.pac4j.oidc.client.KeycloakOidcClient;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
@@ -59,8 +63,17 @@ public class OidcConfigFactory implements ConfigFactory {
         oidc.setDiscoveryURI( required( props, "oidc.discoveryUri" ) );
         final KeycloakOidcClient client = new KeycloakOidcClient( oidc );
         client.addAuthorizationGenerator( new KeycloakRolesAuthorizationGenerator() );
-        client.setUrlResolver( new DefaultUrlResolver( true ) );
-        return new Config( new Clients( required( props, "oidc.callbackUrl" ), client ) );
+        final UrlResolver urlResolver = new DefaultUrlResolver( true );
+        client.setUrlResolver( urlResolver );
+        final Config config = new Config( new Clients( required( props, "oidc.callbackUrl" ), client ) );
+        // the identity provider needs an absolute URL to return to after the logout
+        config.setLogoutLogic( new DefaultLogoutLogic() {
+            @Override
+            protected String enhanceRedirectUrl( final CallContext ctx, final Config config, final Client client, final String redirectUrl ) {
+                return urlResolver.compute( redirectUrl, ctx.webContext() );
+            }
+        } );
+        return config;
     }
 
     private static String required( final Properties props, final String key ) {

@@ -76,8 +76,9 @@
 
    <!--
       OpenID Connect login (JSPWIKI-94). To enable it, add the jspwiki-oidc module and its dependencies to WEB-INF/lib, put a
-      jspwiki-oidc.properties in WEB-INF/classes and remove the comment marks around the filters below. The filters must be
-      declared before the ones of the wiki, which pick up the user from the request. Users log in through /oidc/login.jsp.
+      jspwiki-oidc.properties in WEB-INF/classes, set jspwiki.authorizer = org.apache.wiki.oidc.OidcAuthorizer in
+      jspwiki-custom.properties and remove the comment marks around the filters below. The filters must be declared before
+      the ones of the wiki, which pick up the user from the request.
    -->
    <!-- REMOVE ME TO ENABLE OPENID CONNECT
    <filter>
@@ -85,7 +86,7 @@
      <filter-class>org.pac4j.jee.filter.CallbackFilter</filter-class>
      <init-param>
        <param-name>defaultUrl</param-name>
-       <param-value>/oidc/login.jsp</param-value>
+       <param-value>/Wiki.jsp</param-value>
      </init-param>
      <init-param>
        <param-name>renewSession</param-name>
@@ -111,7 +112,36 @@
    </filter>
    <filter-mapping>
      <filter-name>OidcSecurityFilter</filter-name>
-     <url-pattern>/oidc/login.jsp</url-pattern>
+     <url-pattern>/Login.jsp</url-pattern>
+   </filter-mapping>
+
+   <filter>
+     <filter-name>OidcLogoutFilter</filter-name>
+     <filter-class>org.pac4j.jee.filter.LogoutFilter</filter-class>
+     <init-param>
+       <param-name>configFactory</param-name>
+       <param-value>org.apache.wiki.oidc.OidcConfigFactory</param-value>
+     </init-param>
+     <init-param>
+       <param-name>defaultUrl</param-name>
+       <param-value>/Wiki.jsp</param-value>
+     </init-param>
+     <init-param>
+       <param-name>localLogout</param-name>
+       <param-value>true</param-value>
+     </init-param>
+     <init-param>
+       <param-name>centralLogout</param-name>
+       <param-value>true</param-value>
+     </init-param>
+     <init-param>
+       <param-name>destroySession</param-name>
+       <param-value>true</param-value>
+     </init-param>
+   </filter>
+   <filter-mapping>
+     <filter-name>OidcLogoutFilter</filter-name>
+     <url-pattern>/Logout.jsp</url-pattern>
    </filter-mapping>
 
    <filter>
