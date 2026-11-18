@@ -29,6 +29,7 @@ import org.pac4j.jee.context.session.JEESessionStore;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
@@ -40,6 +41,14 @@ import jakarta.servlet.http.HttpServletResponse;
  * the user from {@code getRemoteUser()} and {@code getUserPrincipal()} of the request, as it does with a container login.
  */
 public class OidcIdentityFilter implements Filter {
+
+    private String usernameClaim;
+
+    /** {@inheritDoc} */
+    @Override
+    public void init( final FilterConfig filterConfig ) {
+        usernameClaim = OidcSettings.load().usernameClaim();
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -54,11 +63,24 @@ public class OidcIdentityFilter implements Filter {
         final Optional< UserProfile > profile = profiles.getProfile();
         if( profile.isPresent() ) {
             final UserProfile user = profile.get();
-            final String name = user.getUsername() != null ? user.getUsername() : user.getId();
-            chain.doFilter( new OidcRequestWrapper( req, name, Set.copyOf( user.getRoles() ) ), response );
+            chain.doFilter( new OidcRequestWrapper( req, userName( user, usernameClaim ), Set.copyOf( user.getRoles() ) ), response );
         } else {
             chain.doFilter( request, response );
         }
+    }
+
+    /**
+     * Name of the user in the wiki: the claim configured for it, or else the e-mail address, or else the identifier of the user at
+     * the provider.
+     */
+    static String userName( final UserProfile profile, final String claim ) {
+        for( final String name : new String[] { claim, "email" } ) {
+            final Object value = profile.getAttribute( name );
+            if( value != null && !value.toString().isBlank() ) {
+                return value.toString().trim();
+            }
+        }
+        return profile.getId();
     }
 
 }

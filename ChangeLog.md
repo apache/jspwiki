@@ -22,6 +22,7 @@ under the License.
 * _3.0.1-git-10_
 
 * Fix for [JSPWIKI-94](https://issues.apache.org/jira/browse/JSPWIKI-94): the new module jspwiki-oidc logs users in with OpenID Connect, with the pac4j filters, and presents them to the wiki as users authenticated by the container, including their roles and the logout. It is not included in the war unless it is built with the profile oidc, and its filters are disabled in web.xml
+* Fix for [JSPWIKI-1375](https://issues.apache.org/jira/browse/JSPWIKI-1375): the OpenID Connect login of the module jspwiki-oidc works with any OpenID Connect provider, with the claims for the name and the roles of the user configurable
 
 **2026-11-14  Multiple authors**
 

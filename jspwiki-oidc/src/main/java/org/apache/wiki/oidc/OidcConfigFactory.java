@@ -18,54 +18,47 @@
  */
 package org.apache.wiki.oidc;
 
-import java.io.InputStream;
-import java.util.Properties;
-
-import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
+import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.config.Config;
-import org.pac4j.core.client.Client;
 import org.pac4j.core.config.ConfigFactory;
 import org.pac4j.core.context.CallContext;
 import org.pac4j.core.engine.DefaultLogoutLogic;
+import org.pac4j.core.http.callback.NoParameterCallbackUrlResolver;
 import org.pac4j.core.http.url.DefaultUrlResolver;
 import org.pac4j.core.http.url.UrlResolver;
-import org.pac4j.oidc.authorization.generator.KeycloakRolesAuthorizationGenerator;
-import org.pac4j.oidc.client.KeycloakOidcClient;
-import org.pac4j.oidc.config.KeycloakOidcConfiguration;
+import org.pac4j.oidc.client.OidcClient;
+import org.pac4j.oidc.config.OidcConfiguration;
+
+import com.nimbusds.oauth2.sdk.auth.ClientAuthenticationMethod;
 
 /**
- * Builds the pac4j configuration from {@code jspwiki-oidc.properties}, which has to be in the classpath of the web application.
+ * Builds the pac4j configuration for any OpenID Connect provider, as Keycloak, Google or Microsoft Entra ID, from
+ * {@code jspwiki-oidc.properties}.
  */
 public class OidcConfigFactory implements ConfigFactory {
-
-    static final String CONFIG_FILE = "/jspwiki-oidc.properties";
 
     /** {@inheritDoc} */
     @Override
     public Config build( final Object... parameters ) {
-        final Properties props = new Properties();
-        try( InputStream in = OidcConfigFactory.class.getResourceAsStream( CONFIG_FILE ) ) {
-            if( in == null ) {
-                throw new IllegalStateException( CONFIG_FILE + " not found in the classpath" );
-            }
-            props.load( in );
-        } catch( final java.io.IOException e ) {
-            throw new IllegalStateException( "Could not read " + CONFIG_FILE, e );
-        }
-        final KeycloakOidcConfiguration oidc = new KeycloakOidcConfiguration();
-        oidc.setClientId( required( props, "oidc.clientId" ) );
-        oidc.setSecret( required( props, "oidc.secret" ) );
-        oidc.setScope( props.getProperty( "oidc.scope", "openid email profile" ) );
+        final OidcSettings settings = OidcSettings.load();
+        final OidcConfiguration oidc = new OidcConfiguration();
+        oidc.setClientId( settings.clientId() );
+        oidc.setSecret( settings.secret() );
+        oidc.setScope( settings.scope() );
+        oidc.setDiscoveryURI( settings.discoveryUri() );
         oidc.setClientAuthenticationMethod( ClientAuthenticationMethod.CLIENT_SECRET_BASIC );
-        oidc.setRealm( required( props, "oidc.realm" ) );
-        oidc.setBaseUri( required( props, "oidc.baseUri" ) );
-        oidc.setDiscoveryURI( required( props, "oidc.discoveryUri" ) );
-        final KeycloakOidcClient client = new KeycloakOidcClient( oidc );
-        client.addAuthorizationGenerator( new KeycloakRolesAuthorizationGenerator() );
+        final OidcClient client = new OidcClient( oidc );
+        client.setName( OidcSettings.CLIENT_NAME );
+        if( settings.rolesClaim() != null ) {
+            client.addAuthorizationGenerator( new ClaimRolesAuthorizationGenerator( settings.rolesClaim(), settings.roleMapping() ) );
+        }
         final UrlResolver urlResolver = new DefaultUrlResolver( true );
         client.setUrlResolver( urlResolver );
-        final Config config = new Config( new Clients( required( props, "oidc.callbackUrl" ), client ) );
+        final Clients clients = new Clients( settings.callbackUrl(), client );
+        // there is a single client, so the callback URL needs no parameter and can be registered as is in the provider
+        clients.setCallbackUrlResolver( new NoParameterCallbackUrlResolver() );
+        final Config config = new Config( clients );
         // the identity provider needs an absolute URL to return to after the logout
         config.setLogoutLogic( new DefaultLogoutLogic() {
             @Override
@@ -74,14 +67,6 @@ public class OidcConfigFactory implements ConfigFactory {
             }
         } );
         return config;
-    }
-
-    private static String required( final Properties props, final String key ) {
-        final String value = props.getProperty( key );
-        if( value == null || value.isBlank() ) {
-            throw new IllegalStateException( CONFIG_FILE + " does not define " + key );
-        }
-        return value;
     }
 
 }

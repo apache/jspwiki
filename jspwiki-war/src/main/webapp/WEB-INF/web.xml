@@ -92,6 +92,10 @@
        <param-name>renewSession</param-name>
        <param-value>true</param-value>
      </init-param>
+     <init-param>
+       <param-name>defaultClient</param-name>
+       <param-value>jspwiki-oidc</param-value>
+     </init-param>
    </filter>
    <filter-mapping>
      <filter-name>OidcCallbackFilter</filter-name>
@@ -107,7 +111,7 @@
      </init-param>
      <init-param>
        <param-name>clients</param-name>
-       <param-value>KeycloakOidcClient</param-value>
+       <param-value>jspwiki-oidc</param-value>
      </init-param>
    </filter>
    <filter-mapping>
