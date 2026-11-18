@@ -17,6 +17,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-11-18  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-10_
+
+* Proof of concept for [JSPWIKI-94](https://issues.apache.org/jira/browse/JSPWIKI-94): the new module jspwiki-oidc logs users in with OpenID Connect, with the pac4j filters, and presents them to the wiki as users authenticated by the container. The filters are disabled in web.xml
+
 **2026-11-14  Multiple authors**
 
 * _3.0.1-git-09
