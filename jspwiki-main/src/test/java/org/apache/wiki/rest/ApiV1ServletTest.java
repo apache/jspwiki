@@ -458,6 +458,20 @@ class ApiV1ServletTest {
     }
 
     @Test
+    void aNameThatCouldLeaveTheDirectoryOfThePagesIsABadRequest() throws Exception {
+        startEngine( null );
+
+        for( final String name : new String[] { "..", "a..b", "a\\b", "a\u0000b", "a\nb" } ) {
+            for( final String suffix : new String[] { "", "/history", "/attachments" } ) {
+                final Reply reply = call( requestTo( "/pages/" + name + suffix ) );
+
+                assertMatchesContract( suffix.isEmpty() ? "/pages/{name}" : "/pages/{name}" + suffix, reply );
+                Assertions.assertEquals( 400, reply.status, name + suffix );
+            }
+        }
+    }
+
+    @Test
     void pagesWithoutANameIs404() throws Exception {
         startEngine( null );
 

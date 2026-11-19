@@ -170,6 +170,10 @@ public class ApiV1Servlet extends HttpServlet {
             error( resp, HttpServletResponse.SC_NOT_FOUND, "No such resource." );
             return;
         }
+        if( !plausible( name ) ) {
+            error( resp, HttpServletResponse.SC_BAD_REQUEST, "The name of the page is not valid." );
+            return;
+        }
         final Session session = authorized( req, resp );
         if( session == null ) {
             return;
@@ -226,6 +230,14 @@ public class ApiV1Servlet extends HttpServlet {
             entries.add( new AttachmentEntry( attachment ) );
         }
         json( resp, HttpServletResponse.SC_OK, entries );
+    }
+
+    /**
+     * Tells whether the text can be the name of a page. The providers encode the names they turn into files, so this is only an extra
+     * barrier before a name that comes from the caller reaches them: no parent directory, no backslash and no control character.
+     */
+    private static boolean plausible( final String name ) {
+        return !name.contains( ".." ) && name.indexOf( '\\' ) < 0 && name.chars().noneMatch( Character::isISOControl );
     }
 
     /** Returns the version parameter, the latest version when it is absent, and 0 after answering 400 when it is not a positive integer. */
