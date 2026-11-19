@@ -24,6 +24,7 @@ import com.vladsch.flexmark.util.sequence.CharSubSequence;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.markdown.nodes.JSPWikiLink;
 import org.apache.wiki.parser.LinkParsingOperations;
+import org.apache.wiki.util.TextUtil;
 
 
 /**
@@ -48,9 +49,10 @@ public class ImageLinkNodePostProcessorState implements NodePostProcessorState< 
      */
     @Override
     public void process( final NodeTracker state, final JSPWikiLink link ) {
+        //  Both values come from the page and are written inside attributes, so they are encoded.
         final WikiHtmlInline img = WikiHtmlInline.of( "<img class=\"inline\" " +
-                                                               "src=\"" + urlRef + "\" " +
-                                                               "alt=\"" + link.getText().toString() + "\" />" );
+                                                               "src=\"" + TextUtil.replaceEntities( urlRef ) + "\" " +
+                                                               "alt=\"" + TextUtil.replaceEntities( link.getText().toString() ) + "\" />" );
         if( ( isLinkFromText && linkOperations.isExternalLink( link.getText().toString() ) ) ||
                 ( isLinkFromText && linkOperations.linkExists( link.getText().toString() ) ) ) {
             link.setUrl( CharSubSequence.of( urlRef ) );

@@ -29,6 +29,8 @@ import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
 import org.apache.wiki.attachment.Attachment;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.i18n.InternationalizationManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.preferences.Preferences;
@@ -48,6 +50,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 
 /**
@@ -117,6 +120,13 @@ public class RecentChangesPlugin extends AbstractReferralPlugin implements Plugi
         Collection< Page > changes = engine.getManager( PageManager.class ).getRecentChanges();
         super.initialize( context, params );
         changes = filterWikiPageCollection( changes );
+
+        // The list is shown to everybody, so it holds only the pages and attachments that the viewer may view.
+        final AuthorizationManager authorizationManager = engine.getManager( AuthorizationManager.class );
+        changes = changes.stream()
+                         .filter( page -> authorizationManager.checkPermission( context.getWikiSession(),
+                                                                                PermissionFactory.getPagePermission( page, "view" ) ) )
+                         .collect( Collectors.toList() );
         
         if ( changes != null ) {
             Date olddate = new Date( 0 );

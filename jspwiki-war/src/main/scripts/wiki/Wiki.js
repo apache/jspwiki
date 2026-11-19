@@ -648,6 +648,36 @@ var Wiki = {
         }
     },
 
+    /*
+    Function: releaseLockOnLeave
+        The editor locks the page. When the user leaves the editor by a way that is not one of the buttons of its
+        form (a link, the address bar, the back button), the lock stays until it expires. When the page is really
+        left, this asks the server to cancel the edit, which releases the lock.
+
+        The submit of the form clears window.onbeforeunload, so while it is still set the page is left by another
+        way. A question to leave that is answered no does not unload the page, so nothing is sent then.
+
+    Arguments:
+        form - the form of the editor, with the fields page, locktoken and X-XSRF-TOKEN
+    */
+    releaseLockOnLeave: function( form ){
+
+        window.addEventListener( "pagehide", function(){
+
+            if( !window.onbeforeunload || !navigator.sendBeacon ){ return; }
+
+            var data = new URLSearchParams();
+            data.append( "page", form.elements.page.value );
+            data.append( "cancel", "cancel" );
+            data.append( "leaving", "true" );
+            data.append( "locktoken", form.elements.locktoken.value );
+            data.append( "X-XSRF-TOKEN", form.elements["X-XSRF-TOKEN"].value );
+            //the form has a field named action, so form.action is that field and not the url
+            navigator.sendBeacon( form.getAttribute( "action" ), data );
+
+        });
+    },
+
     getXHRPreview: function( getContent, previewElement ){
 
         var wiki = this,

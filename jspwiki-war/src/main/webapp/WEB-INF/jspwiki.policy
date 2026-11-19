@@ -94,6 +94,9 @@ grant principal org.apache.wiki.auth.authorize.Role "Authenticated" {
 // jspwiki.properties. Two administative groups are set up below:
 // the wiki group "Admin" (stored by default in wiki page GroupAdmin)
 // and the container role "Admin" (managed by the web container).
+// The installer creates the wiki group "Admin". From the wiki, a user can
+// create that group only when the session already has AllPermission, since
+// whoever is in it can do anything.
 
 grant principal org.apache.wiki.auth.GroupPrincipal "Admin" {
     permission org.apache.wiki.auth.permissions.AllPermission "*";

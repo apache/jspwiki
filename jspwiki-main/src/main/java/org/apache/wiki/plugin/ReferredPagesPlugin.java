@@ -122,6 +122,10 @@ public class ReferredPagesPlugin implements Plugin {
         if( rootname == null ) {
             rootname = page.getName() ;
         }
+        // the links of a page that the viewer may not view are not shown either
+        if( !AbstractReferralPlugin.mayView( context, rootname ) ) {
+            return "";
+        }
 
         String format = params.get( PARAM_FORMAT );
         if( format == null) {
@@ -254,6 +258,9 @@ public class ReferredPagesPlugin implements Plugin {
 
             if( !m_engine.getManager( PageManager.class ).wikiPageExists( link ) ) {
                 continue; // hide links to non-existing pages
+            }
+            if( !AbstractReferralPlugin.mayView( context, link ) ) {
+                continue; // hide the pages that the viewer may not view
             }
             // author-controlled patterns: time-box each match so a pathological
             // regexp can't pin the rendering thread (see TimeLimitedRegex)
