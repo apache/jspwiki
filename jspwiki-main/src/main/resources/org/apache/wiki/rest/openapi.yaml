@@ -180,6 +180,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Revision'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -203,6 +205,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Attachment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '403':
@@ -273,7 +277,7 @@ components:
       name: name
       in: path
       required: true
-      description: Name of the page.
+      description: Name of the page. A name with "..", a backslash or a control character is not valid.
       schema:
         type: string
         minLength: 1
