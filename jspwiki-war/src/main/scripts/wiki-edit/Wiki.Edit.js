@@ -151,6 +151,9 @@ function onbeforeunload( window, main ){
         window.onbeforeunload = null;
 
     });
+
+    //leaving the editor by another way than its buttons releases the lock of the page
+    Wiki.releaseLockOnLeave( main.form );
 }
 
 

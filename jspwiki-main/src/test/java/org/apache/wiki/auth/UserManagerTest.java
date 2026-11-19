@@ -294,6 +294,33 @@ class UserManagerTest {
     }
 
     @Test
+    void testGetUserProfileOfAuthenticatedUserWithSpacesInFullName() throws Exception {
+        final Session session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
+
+        final UserProfile profile = m_mgr.getUserProfile( session );
+
+        Assertions.assertFalse( profile.isNew() );
+        Assertions.assertEquals( Users.JANNE, profile.getLoginName() );
+        Assertions.assertEquals( "Janne Jalkanen", profile.getFullname() );
+    }
+
+    @Test
+    void testSaveExistingUserProfileWithSpacesInFullName() throws Exception {
+        final Session session = WikiSessionTest.authenticatedSession( m_engine, Users.JANNE, Users.JANNE_PASS );
+        final Context context = Wiki.context().create( m_engine, HttpMockFactory.createHttpRequest(), "" );
+        final UserProfile profile = m_db.newProfile();
+        profile.setLoginName( Users.JANNE );
+        profile.setFullname( "Janne Jalkanen" );
+        profile.setEmail( "janne@ecyrd.com" );
+        profile.setPassword( "aNewP@5sw0rd" );
+        final Context sessionContext = Mockito.spy( context );
+        Mockito.when( sessionContext.getWikiSession() ).thenReturn( session );
+
+        Assertions.assertDoesNotThrow( () -> m_mgr.setUserProfile( sessionContext, profile ) );
+        Assertions.assertTrue( m_db.validatePassword( Users.JANNE, "aNewP@5sw0rd" ) );
+    }
+
+    @Test
     void testSetUserProfile() throws Exception {
         // First, count the number of users in the db now.
         final int oldUserCount = m_db.getWikiNames().length;

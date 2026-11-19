@@ -62,6 +62,12 @@
   </div>
 
   <c:if test="${param.tab eq 'profile'}" >
+  <c:if test="${param.subscribe eq 'email'}" >
+  <div class="">
+    <span class="form-col-20 control-label"></span>
+    <div class="alert alert-info form-col-50"><fmt:message key="prefs.subscribe.needemail"/></div>
+  </div>
+  </c:if>
   <div class="">
     <span class="form-col-20 control-label"></span>
     <fmt:message key="prefs.errorprefix.profile" var="msg"/>

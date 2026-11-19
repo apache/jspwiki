@@ -33,12 +33,15 @@ import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.PluginException;
 import org.apache.wiki.api.plugin.Plugin;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.pages.PageSorter;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.parser.WikiDocument;
 import org.apache.wiki.preferences.Preferences;
 import org.apache.wiki.preferences.Preferences.TimeFormat;
+import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.util.TextUtil;
 import org.apache.wiki.util.comparators.CollatorComparator;
@@ -231,6 +234,35 @@ public abstract class AbstractReferralPlugin implements Plugin {
         }
 
         initSorter( context, params );
+    }
+
+    /**
+     *  Tells whether the viewer of the context may view a page. The lists of pages are shown to everybody, so they must
+     *  hold only the pages that the viewer may view. A name that is not the name of a page has no ACL to check.
+     *
+     *  @param context The context of the viewer.
+     *  @param pageName The name of the page.
+     *  @return {@code true} if the page does not exist or the viewer has the view permission of the page.
+     */
+    static boolean mayView( final Context context, final String pageName ) {
+        final Engine engine = context.getEngine();
+        final Page page = engine.getManager( PageManager.class ).getPage( pageName );
+        return page == null || engine.getManager( AuthorizationManager.class )
+                                     .checkPermission( context.getWikiSession(), PermissionFactory.getPagePermission( page, "view" ) );
+    }
+
+    /**
+     *  Tells whether a page that does not exist yet is linked from at least one page that the viewer may view. A link
+     *  that is written only inside pages that the viewer may not view says something about the content of those pages.
+     *
+     *  @param context The context of the viewer.
+     *  @param referenceManager The reference manager.
+     *  @param pageName The name of the page that does not exist.
+     *  @return {@code true} if a page that the viewer may view links to it.
+     */
+    static boolean hasViewableReferrer( final Context context, final ReferenceManager referenceManager, final String pageName ) {
+        final Collection< String > referrers = referenceManager.findReferrers( pageName );
+        return referrers != null && referrers.stream().anyMatch( referrer -> mayView( context, referrer ) );
     }
 
     protected List< Page > filterWikiPageCollection( final Collection< Page > pages ) {

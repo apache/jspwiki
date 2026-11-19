@@ -69,10 +69,16 @@ public class EhcacheCachingManager implements CachingManager, Initializable {
     public void initialize( final Engine engine, final Properties props ) throws WikiException {
         final String cacheEnabled = TextUtil.getStringProperty( props, PROP_CACHE_ENABLE, PROP_USECACHE_DEPRECATED, "true" );
         final boolean useCache = "true".equalsIgnoreCase( cacheEnabled );
-        final String confLocation = "/" + TextUtil.getStringProperty( props, PROP_CACHE_CONF_FILE, "ehcache-jspwiki.xml" );
         if( useCache ) {
-            final URL location = this.getClass().getResource( confLocation );
+            String val = TextUtil.getStringProperty( props, PROP_CACHE_CONF_FILE, "ehcache-jspwiki.xml" );
+            URL location = this.getClass().getResource( "/" + val );
+            if (location == null) {
+                location = this.getClass().getResource( val );
+            }
             LOG.info( "Reading ehcache configuration file from classpath on /{}", location );
+            if (location == null ) {
+                LOG.error( "The ehcache configuration file from classpath on {} could not be loaded. Check setting {}", val , PROP_CACHE_CONF_FILE);
+            }
             cacheManager = CacheManager.create( location );
             registerCache( CACHE_ATTACHMENTS );
             registerCache( CACHE_ATTACHMENTS_COLLECTION );

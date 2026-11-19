@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 /**
  * Plugin for displaying pages that are not linked to in other pages.
@@ -65,7 +66,7 @@ public class UnusedPagesPlugin extends AbstractReferralPlugin {
         }
 
         super.initialize( context, params );
-        links = filterAndSortCollection( links );
+        links = filterAndSortCollection( links.stream().filter( name -> mayView( context, name ) ).collect( Collectors.toList() ) );
 
         String wikitext;
         if( m_show.equals( PARAM_SHOW_VALUE_COUNT ) ) {

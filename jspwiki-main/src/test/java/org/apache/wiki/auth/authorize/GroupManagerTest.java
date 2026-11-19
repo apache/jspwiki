@@ -19,10 +19,16 @@
 package org.apache.wiki.auth.authorize;
 
 import org.apache.commons.lang3.ArrayUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
 import org.apache.wiki.WikiSessionTest;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Session;
+import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.GroupPrincipal;
 import org.apache.wiki.auth.NoSuchPrincipalException;
 import org.apache.wiki.auth.SecurityEventTrap;
@@ -34,6 +40,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.security.Principal;
 import java.util.Properties;
@@ -225,6 +232,48 @@ public class GroupManagerTest
 
         // Clean up
         m_groupMgr.removeGroup( "Events" );
+    }
+
+    /** The page that creates a group runs the context version of parseGroup with the parameters of the request. */
+    private Context contextOfLoggedInUser( final String login, final String password, final String group, final String members ) throws Exception {
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        Mockito.doReturn( group ).when( request ).getParameter( "group" );
+        Mockito.doReturn( members ).when( request ).getParameter( "members" );
+        final Session session = Wiki.session().find( m_engine, request );
+        m_engine.getManager( AuthenticationManager.class ).login( session, request, login, password );
+        Assertions.assertTrue( session.isAuthenticated() );
+        return Wiki.context().create( m_engine, request, ContextEnum.WIKI_CREATE_GROUP.getRequestContext() );
+    }
+
+    @Test
+    public void testUserWithoutPrivilegesCannotCreateTheAdminGroupFromAPage() throws Exception
+    {
+        final Context context = contextOfLoggedInUser( Users.JANNE, Users.JANNE_PASS, "Admin", Users.JANNE );
+
+        Assertions.assertThrows( WikiSecurityException.class, () -> m_groupMgr.parseGroup( context, true ) );
+    }
+
+    @Test
+    public void testAdministratorCanCreateTheAdminGroupFromAPage() throws Exception
+    {
+        final Context context = contextOfLoggedInUser( Users.ADMIN, Users.ADMIN_PASS, "Admin", Users.ADMIN );
+
+        Assertions.assertEquals( "Admin", m_groupMgr.parseGroup( context, true ).getName() );
+    }
+
+    @Test
+    public void testUserWithoutPrivilegesCanCreateOtherGroupsFromAPage() throws Exception
+    {
+        final Context context = contextOfLoggedInUser( Users.JANNE, Users.JANNE_PASS, "Team", Users.JANNE );
+
+        Assertions.assertEquals( "Team", m_groupMgr.parseGroup( context, true ).getName() );
+    }
+
+    @Test
+    public void testInstallerCanStillCreateTheAdminGroup() throws Exception
+    {
+        // the installer has no logged in user and calls the version of parseGroup that takes the name
+        Assertions.assertEquals( "Admin", m_groupMgr.parseGroup( "Admin", "Administrator", true ).getName() );
     }
 
 }

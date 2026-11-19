@@ -151,6 +151,12 @@
               name="name" id="name" />
     </div>
     <div class="form-group">
+      <p class="help-block"><fmt:message key="login.lostpw.token.help"/></p>
+      <input class="form-control" type="text" size="24"
+       placeholder="<fmt:message key='login.lostpw.token'/>"
+              name="resettoken" id="resettoken" />
+    </div>
+    <div class="form-group">
       <input type="hidden" name="action" value="resetPassword"/>
       <input class="btn btn-success btn-block" type="submit" name="Submit" value="<fmt:message key='login.lostpw.submit'/>" />
     </div>

@@ -124,7 +124,8 @@
                      fmtkey="info.pagination"
                     onclick="$('start').value=%s; SearchBox.runfullsearch();" />
 
-    <div class="graphBars">
+    <%-- the score goes from 0 to 100, so a bar is that part of the full bar of 400 px, not a place between the lowest and the highest score --%>
+    <div class="graphBars-minv0-maxv100-min0-max400">
     <div class="zebra-table">
     <table class="wikitable  table-striped" aria-describedby="find-heading-results">
 

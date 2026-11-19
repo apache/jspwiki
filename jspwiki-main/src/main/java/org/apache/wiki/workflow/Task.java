@@ -18,9 +18,14 @@
  */
 package org.apache.wiki.workflow;
 
+import org.apache.wiki.util.Synchronizer;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -38,6 +43,21 @@ public abstract class Task extends AbstractStep {
     private static final long serialVersionUID = 4630293957752430807L;
 
     private Step m_successor;
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private transient ReentrantLock lock = new ReentrantLock();
+
+    private void readObject( final ObjectInputStream in ) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        // Locks are not part of the serialized form, so data written by earlier releases has none either.
+        lock = new ReentrantLock();
+    }
 
     /**
      * Public constructor that creates a new Task with a specified message key. After construction, the protected method
@@ -81,8 +101,10 @@ public abstract class Task extends AbstractStep {
      *
      * @param step the successor
      */
-    public final synchronized void setSuccessor( final Step step ) {
-        m_successor = step;
+    public final void setSuccessor( final Step step ) {
+        Synchronizer.synchronize(lock, () -> {
+            m_successor = step;
+        });
     }
 
     /**
@@ -91,8 +113,8 @@ public abstract class Task extends AbstractStep {
      *
      * @return the next step
      */
-    public final synchronized Step getSuccessor() {
-        return m_successor;
+    public final Step getSuccessor() {
+        return Synchronizer.synchronize(lock, () -> m_successor);
     }
 
 }

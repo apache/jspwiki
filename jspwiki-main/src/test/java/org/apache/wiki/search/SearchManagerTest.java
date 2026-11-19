@@ -20,6 +20,8 @@ package org.apache.wiki.search;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import static java.lang.System.out;
@@ -42,8 +44,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.Callable;
+import org.apache.commons.io.FileUtils;
+import org.apache.wiki.auth.authorize.XMLGroupDatabase;
+import org.apache.wiki.auth.user.XMLUserDatabase;
 import static org.apache.wiki.search.DefaultSearchManager.PluginSearch.AJAX_ACTION_PLUGINS;
 import static org.mockito.Mockito.when;
 
@@ -55,7 +62,7 @@ class SearchManagerTest {
     Properties props;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         final Properties props = TestEngine.getTestProperties();
         final String workDir = props.getProperty( "jspwiki.workDir" );
         final String workRepo = props.getProperty( "jspwiki.fileSystemProvider.pageDir" );
@@ -65,7 +72,12 @@ class SearchManagerTest {
         props.setProperty( "jspwiki.lucene.initialdelay", "0" );
         props.setProperty( "jspwiki.workDir", workDir + System.currentTimeMillis() );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", workRepo + System.currentTimeMillis() );
-
+        File target = new File("target/XMLUserDatabaseTest" + UUID.randomUUID().toString() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/userdatabase.xml" ), target);
+        props.put( XMLUserDatabase.PROP_USERDATABASE, target.getAbsolutePath() );
+        target = new File("target/XMLGroupDatabaseTest" + UUID.randomUUID().toString() + ".xml");
+        FileUtils.copyFile(new File("src/test/resources/groupdatabase.xml"), target);
+        props.put(XMLGroupDatabase.PROP_DATABASE, target.getAbsolutePath());
         m_engine = TestEngine.build( props );
         m_mgr = m_engine.getManager( SearchManager.class );
     }
@@ -233,7 +245,9 @@ class SearchManagerTest {
     Collection< String > pageNamesFor( final String text ) throws Exception {
         final HttpServletRequest request = HttpMockFactory.createHttpRequest();
         final Context ctx = Wiki.context().create( m_engine, request, ContextEnum.PAGE_EDIT.getRequestContext() );
-        final Collection< SearchResult > search = m_mgr.findPages( text, ctx );
+        // the provider has no answer until its index is built: wait for it, with the default timeout of Awaitility as the exit
+        final Collection< SearchResult > search = Awaitility.await( "an answer of the search provider for " + text )
+                                                            .until( () -> m_mgr.findPages( text, ctx ), Objects::nonNull );
         final List< String > names = new ArrayList<>();
         for( final SearchResult result : search ) {
             names.add( result.getPage().getName() );
@@ -250,6 +264,7 @@ class SearchManagerTest {
         m_engine.saveText( "Unrelated", "nothing to see" );
         Awaitility.await( "index" ).until( findsResultsFor( new ArrayList<>(), "Unrelated" ) );
         Awaitility.await( "index2" ).until( findsResultsFor( new ArrayList<>(), "Pageant_Show" ) );
+        Awaitility.await( "index3" ).until( findsResultsFor( new ArrayList<>(), "Page_WithUnderscore" ) );
 
         Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "Page_With*" ) );
         Assertions.assertEquals( Arrays.asList( "Page_WithUnderscore" ), pageNamesFor( "Page_*" ) );
