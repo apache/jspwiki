@@ -65,6 +65,7 @@ under the License.
 * [JSPWIKI-530](https://issues.apache.org/jira/browse/JSPWIKI-530): new `LanguagePlugin` that shows the block of its body that matches the `Accept-Language` header of the visitor, based on the code that Ulf Dittmer attached to the issue ([PR#596](https://github.com/apache/jspwiki/pull/596))
 * [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search` is the first endpoint of a versioned REST API, described by the OpenAPI file `openapi.yaml` ([PR#589](https://github.com/apache/jspwiki/pull/589))
 * [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search/suggestions` and `GET /api/v1/plugins` are added to the REST API; the suggestions leave out the pages the caller may not view ([PR#590](https://github.com/apache/jspwiki/pull/590))
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/pages/{name}`, `GET /api/v1/pages/{name}/history` and `GET /api/v1/pages/{name}/attachments` are added to the REST API, to read a page, its versions and its attachments if the caller may view the page
 
 
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**

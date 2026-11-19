@@ -28,24 +28,32 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.plugin.Plugin;
+import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.search.SearchManager;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -63,6 +71,10 @@ public class ApiV1Servlet extends HttpServlet {
 
     /** Number of entries returned when the request does not say how many it wants. */
     static final int DEFAULT_MAX = 20;
+
+    private static final String PAGES = "/pages/";
+    private static final String HISTORY = "/history";
+    private static final String ATTACHMENTS = "/attachments";
 
     private transient Engine engine;
 
@@ -83,6 +95,8 @@ public class ApiV1Servlet extends HttpServlet {
             suggestions( req, resp );
         } else if( "/plugins".equals( path ) ) {
             plugins( req, resp );
+        } else if( path != null && path.startsWith( PAGES ) ) {
+            pages( req, resp, path.substring( PAGES.length() ) );
         } else {
             error( resp, HttpServletResponse.SC_NOT_FOUND, "No such resource." );
         }
@@ -146,6 +160,99 @@ public class ApiV1Servlet extends HttpServlet {
             entries.add( new PluginEntry( plugin.getDisplayName( locale ), plugin.getSnipExample() ) );
         }
         json( resp, HttpServletResponse.SC_OK, entries );
+    }
+
+    /** Serves a page, its history or its attachments. The part of the path before the optional suffix is the page name. */
+    private void pages( final HttpServletRequest req, final HttpServletResponse resp, final String rest ) throws IOException {
+        final String suffix = rest.endsWith( HISTORY ) ? HISTORY : rest.endsWith( ATTACHMENTS ) ? ATTACHMENTS : "";
+        final String name = rest.substring( 0, rest.length() - suffix.length() );
+        if( name.isEmpty() ) {
+            error( resp, HttpServletResponse.SC_NOT_FOUND, "No such resource." );
+            return;
+        }
+        final Session session = authorized( req, resp );
+        if( session == null ) {
+            return;
+        }
+        // The permission is checked before the existence of the page, so that the answer does not depend on whether a page is there
+        if( !engine.getManager( AuthorizationManager.class ).checkPermission( session, PermissionFactory.getPagePermission( Wiki.contents().page( engine, name ), PagePermission.VIEW_ACTION ) ) ) {
+            denied( resp, session );
+            return;
+        }
+        final int version = HISTORY.equals( suffix ) || ATTACHMENTS.equals( suffix ) ? WikiProvider.LATEST_VERSION : version( req, resp );
+        if( version == 0 ) {
+            return;
+        }
+
+        try {
+            final Page page = engine.getManager( PageManager.class ).getPageInfo( name, version );
+            if( page == null ) {
+                error( resp, HttpServletResponse.SC_NOT_FOUND, "The page does not exist." );
+            } else if( HISTORY.equals( suffix ) ) {
+                history( resp, page );
+            } else if( ATTACHMENTS.equals( suffix ) ) {
+                attachments( resp, page );
+            } else {
+                final String text = engine.getManager( PageManager.class ).getPageText( name, page.getVersion() );
+                json( resp, HttpServletResponse.SC_OK, new PageContent( page, text ) );
+            }
+        } catch( final ProviderException e ) {
+            LOG.error( "The request for the page {} of the REST API failed", name, e );
+            error( resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "The page could not be read." );
+        }
+    }
+
+    private void history( final HttpServletResponse resp, final Page page ) throws IOException {
+        final List< Page > versions = engine.getManager( PageManager.class ).getVersionHistory( page.getName() );
+        if( versions == null ) {
+            error( resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "The history of the page could not be read." );
+            return;
+        }
+        final List< Revision > revisions = new ArrayList<>();
+        for( final Page version : versions ) {
+            revisions.add( new Revision( version ) );
+        }
+        if( revisions.isEmpty() ) {
+            // A page that was put in the page directory by hand has no history, but it still has its current version
+            revisions.add( new Revision( page ) );
+        }
+        revisions.sort( Comparator.comparingInt( ( Revision revision ) -> revision.version ).reversed() );
+        json( resp, HttpServletResponse.SC_OK, revisions );
+    }
+
+    private void attachments( final HttpServletResponse resp, final Page page ) throws ProviderException, IOException {
+        final List< AttachmentEntry > entries = new ArrayList<>();
+        for( final Attachment attachment : engine.getManager( AttachmentManager.class ).listAttachments( page ) ) {
+            entries.add( new AttachmentEntry( attachment ) );
+        }
+        json( resp, HttpServletResponse.SC_OK, entries );
+    }
+
+    /** Returns the version parameter, the latest version when it is absent, and 0 after answering 400 when it is not a positive integer. */
+    private static int version( final HttpServletRequest req, final HttpServletResponse resp ) throws IOException {
+        final String value = req.getParameter( "version" );
+        if( value == null ) {
+            return WikiProvider.LATEST_VERSION;
+        }
+        try {
+            final int version = Integer.parseInt( value.trim() );
+            if( version > 0 ) {
+                return version;
+            }
+        } catch( final NumberFormatException e ) {
+            // answered below
+        }
+        error( resp, HttpServletResponse.SC_BAD_REQUEST, "The parameter version must be an integer greater than zero." );
+        return 0;
+    }
+
+    /** A provider that keeps no old versions numbers its only version -1, which the API reports as 1. */
+    private static int number( final int version ) {
+        return Math.max( 1, version );
+    }
+
+    private static String instant( final Date date ) {
+        return date == null ? null : date.toInstant().toString();
     }
 
     /** Returns the session of the caller, or null after answering 401 or 403 when the caller may not read. */
@@ -224,6 +331,55 @@ public class ApiV1Servlet extends HttpServlet {
         PluginEntry( final String displayName, final String snip ) {
             this.displayName = displayName;
             this.snip = snip;
+        }
+    }
+
+    /** The content of a page. */
+    private static final class PageContent {
+        private final String name;
+        private final int version;
+        private final String author;
+        private final String lastModified;
+        private final String text;
+
+        PageContent( final Page page, final String text ) {
+            this.name = page.getName();
+            this.version = number( page.getVersion() );
+            this.author = page.getAuthor();
+            this.lastModified = instant( page.getLastModified() );
+            this.text = text;
+        }
+    }
+
+    /** An entry of the history of a page. */
+    private static final class Revision {
+        private final int version;
+        private final String author;
+        private final String lastModified;
+        private final String changeNote;
+
+        Revision( final Page page ) {
+            this.version = number( page.getVersion() );
+            this.author = page.getAuthor();
+            this.lastModified = instant( page.getLastModified() );
+            this.changeNote = page.getAttribute( Page.CHANGENOTE );
+        }
+    }
+
+    /** An entry of the list of attachments of a page. */
+    private static final class AttachmentEntry {
+        private final String name;
+        private final int version;
+        private final long size;
+        private final String author;
+        private final String lastModified;
+
+        AttachmentEntry( final Attachment attachment ) {
+            this.name = attachment.getFileName();
+            this.version = number( attachment.getVersion() );
+            this.size = attachment.getSize();
+            this.author = attachment.getAuthor();
+            this.lastModified = instant( attachment.getLastModified() );
         }
     }
 

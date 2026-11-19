@@ -104,6 +104,82 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+  /pages/{name}:
+    get:
+      operationId: getPage
+      summary: Read a page the caller may view, in the latest version or in the one asked for.
+      parameters:
+        - $ref: '#/components/parameters/name'
+        - name: version
+          in: query
+          required: false
+          description: Version of the page. The latest version when absent.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: The page with its markup.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /pages/{name}/history:
+    get:
+      operationId: getPageHistory
+      summary: List the versions of a page the caller may view, the latest first.
+      parameters:
+        - $ref: '#/components/parameters/name'
+      responses:
+        '200':
+          description: The versions of the page. A provider that does not keep old versions lists only the current one.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Revision'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /pages/{name}/attachments:
+    get:
+      operationId: listPageAttachments
+      summary: List the attachments of a page the caller may view, sorted by name.
+      parameters:
+        - $ref: '#/components/parameters/name'
+      responses:
+        '200':
+          description: The attachments of the page. Empty when it has none or when attachments are disabled.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attachment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
 components:
   securitySchemes:
     sessionCookie:
@@ -111,6 +187,14 @@ components:
       in: cookie
       name: JSESSIONID
   parameters:
+    name:
+      name: name
+      in: path
+      required: true
+      description: Name of the page.
+      schema:
+        type: string
+        minLength: 1
     max:
       name: max
       in: query
@@ -131,6 +215,52 @@ components:
         score:
           type: integer
           description: Relevance of the page for the query. Higher is better.
+    Page:
+      type: object
+      required: [name, version, text]
+      properties:
+        name:
+          type: string
+        version:
+          type: integer
+        author:
+          type: string
+        lastModified:
+          type: string
+          format: date-time
+        text:
+          type: string
+          description: Wiki markup of the page, without any conversion.
+    Revision:
+      type: object
+      required: [version]
+      properties:
+        version:
+          type: integer
+        author:
+          type: string
+        lastModified:
+          type: string
+          format: date-time
+        changeNote:
+          type: string
+    Attachment:
+      type: object
+      required: [name, version, size]
+      properties:
+        name:
+          type: string
+          description: File name of the attachment.
+        version:
+          type: integer
+        size:
+          type: integer
+          description: Size in bytes.
+        author:
+          type: string
+        lastModified:
+          type: string
+          format: date-time
     Plugin:
       type: object
       required: [displayName, snip]
@@ -163,6 +293,12 @@ components:
             $ref: '#/components/schemas/Error'
     Forbidden:
       description: The caller is authenticated but lacks the permission.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The page does not exist.
       content:
         application/json:
           schema:

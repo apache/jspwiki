@@ -19,6 +19,7 @@
 package org.apache.wiki.rest;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
@@ -27,11 +28,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.wiki.HttpMockFactory;
 import org.apache.wiki.TestEngine;
+import org.apache.wiki.api.core.Attachment;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.spi.Wiki;
+import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.AuthenticationManager;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.Users;
+import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.search.SearchManager;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -41,6 +45,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -276,6 +281,192 @@ class ApiV1ServletTest {
     }
 
     @Test
+    void pageAnswersWithTheContract() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiReadPage", "Some *markup* here." );
+
+        final Reply reply = call( requestTo( "/pages/ApiReadPage" ) );
+
+        assertMatchesContract( "/pages/{name}", reply );
+        Assertions.assertEquals( 200, reply.status );
+        final JsonObject page = reply.json().getAsJsonObject();
+        Assertions.assertEquals( "ApiReadPage", page.get( "name" ).getAsString() );
+        Assertions.assertEquals( 1, page.get( "version" ).getAsInt() );
+        Assertions.assertTrue( page.get( "text" ).getAsString().contains( "Some *markup* here." ) );
+    }
+
+    @Test
+    void pageInAnOlderVersionAnswersWithThatText() throws Exception {
+        startEngine( null, "0", "VersioningFileProvider" );
+        engine.saveText( "ApiReadVersions", "first text" );
+        engine.saveText( "ApiReadVersions", "second text" );
+
+        final Reply latest = call( requestTo( "/pages/ApiReadVersions" ) );
+        final Reply first = call( requestTo( "/pages/ApiReadVersions", "version", "1" ) );
+
+        assertMatchesContract( "/pages/{name}", first );
+        Assertions.assertEquals( 2, latest.json().getAsJsonObject().get( "version" ).getAsInt() );
+        Assertions.assertTrue( latest.json().getAsJsonObject().get( "text" ).getAsString().contains( "second text" ) );
+        Assertions.assertEquals( 1, first.json().getAsJsonObject().get( "version" ).getAsInt() );
+        Assertions.assertTrue( first.json().getAsJsonObject().get( "text" ).getAsString().contains( "first text" ) );
+    }
+
+    @Test
+    void pageThatDoesNotExistIs404() throws Exception {
+        startEngine( null );
+
+        final Reply reply = call( requestTo( "/pages/ApiNoSuchPage" ) );
+
+        assertMatchesContract( "/pages/{name}", reply );
+        Assertions.assertEquals( 404, reply.status );
+    }
+
+    @Test
+    void pageWithAVersionThatIsNotAPositiveIntegerIsABadRequest() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiReadBadVersion", "text" );
+
+        for( final String version : new String[] { "0", "-1", "last", "" } ) {
+            final Reply reply = call( requestTo( "/pages/ApiReadBadVersion", "version", version ) );
+
+            assertMatchesContract( "/pages/{name}", reply );
+            Assertions.assertEquals( 400, reply.status, "version=" + version );
+        }
+    }
+
+    @Test
+    void pageTheCallerMayNotViewIs401ForAnAnonymousCallerAnd403ForALoggedInOne() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiReadSecret", "[{ALLOW view Admin}] secret" );
+
+        final Reply anonymous = call( requestTo( "/pages/ApiReadSecret" ) );
+        final HttpServletRequest request = requestTo( "/pages/ApiReadSecret" );
+        final Session session = Wiki.session().find( engine, request );
+        engine.getManager( AuthenticationManager.class ).login( session, request, Users.JANNE, Users.JANNE_PASS );
+        final Reply loggedIn = call( request );
+
+        assertMatchesContract( "/pages/{name}", anonymous );
+        assertMatchesContract( "/pages/{name}", loggedIn );
+        Assertions.assertEquals( 401, anonymous.status );
+        Assertions.assertEquals( 403, loggedIn.status );
+        Assertions.assertFalse( anonymous.body.toString().contains( "secret" ) );
+        Assertions.assertFalse( loggedIn.body.toString().contains( "secret" ) );
+    }
+
+    @Test
+    void historyAnswersWithTheVersionsLatestFirst() throws Exception {
+        startEngine( null, "0", "VersioningFileProvider" );
+        engine.saveText( "ApiReadHistory", "one" );
+        engine.saveText( "ApiReadHistory", "two" );
+        engine.saveText( "ApiReadHistory", "three" );
+
+        final Reply reply = call( requestTo( "/pages/ApiReadHistory/history" ) );
+
+        assertMatchesContract( "/pages/{name}/history", reply );
+        Assertions.assertEquals( 200, reply.status );
+        final List< Integer > versions = new ArrayList<>();
+        reply.json().getAsJsonArray().forEach( entry -> versions.add( entry.getAsJsonObject().get( "version" ).getAsInt() ) );
+        Assertions.assertEquals( List.of( 3, 2, 1 ), versions );
+    }
+
+    @Test
+    void historyOfAPageWithoutOldVersionsListsTheCurrentOne() throws Exception {
+        startEngine( null, "0", "VersioningFileProvider" );
+        Files.write( Path.of( engine.getWikiProperties().getProperty( "jspwiki.fileSystemProvider.pageDir" ), "ApiReadByHand.txt" ),
+                     "put here by hand".getBytes( StandardCharsets.UTF_8 ) );
+
+        final Reply reply = call( requestTo( "/pages/ApiReadByHand/history" ) );
+
+        assertMatchesContract( "/pages/{name}/history", reply );
+        Assertions.assertEquals( 200, reply.status );
+        Assertions.assertEquals( 1, reply.json().getAsJsonArray().size() );
+        Assertions.assertEquals( 1, reply.json().getAsJsonArray().get( 0 ).getAsJsonObject().get( "version" ).getAsInt() );
+    }
+
+    @Test
+    void historyOfAPageThatDoesNotExistIs404() throws Exception {
+        startEngine( null );
+
+        final Reply reply = call( requestTo( "/pages/ApiNoSuchPage/history" ) );
+
+        assertMatchesContract( "/pages/{name}/history", reply );
+        Assertions.assertEquals( 404, reply.status );
+    }
+
+    @Test
+    void historyOfAPageTheCallerMayNotViewIs401() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiReadSecretHistory", "[{ALLOW view Admin}] secret" );
+
+        final Reply reply = call( requestTo( "/pages/ApiReadSecretHistory/history" ) );
+
+        assertMatchesContract( "/pages/{name}/history", reply );
+        Assertions.assertEquals( 401, reply.status );
+    }
+
+    @Test
+    void attachmentsAnswerWithTheContract() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiReadAttachments", "text" );
+        final Attachment attachment = Wiki.contents().attachment( engine, "ApiReadAttachments", "b.txt" );
+        engine.getManager( AttachmentManager.class ).storeAttachment( attachment, new ByteArrayInputStream( "hello".getBytes( StandardCharsets.UTF_8 ) ) );
+        final Attachment other = Wiki.contents().attachment( engine, "ApiReadAttachments", "a.txt" );
+        engine.getManager( AttachmentManager.class ).storeAttachment( other, new ByteArrayInputStream( "hi".getBytes( StandardCharsets.UTF_8 ) ) );
+
+        final Reply reply = call( requestTo( "/pages/ApiReadAttachments/attachments" ) );
+
+        assertMatchesContract( "/pages/{name}/attachments", reply );
+        Assertions.assertEquals( 200, reply.status );
+        final JsonArray entries = reply.json().getAsJsonArray();
+        Assertions.assertEquals( 2, entries.size() );
+        Assertions.assertEquals( "a.txt", entries.get( 0 ).getAsJsonObject().get( "name" ).getAsString() );
+        Assertions.assertEquals( 2, entries.get( 0 ).getAsJsonObject().get( "size" ).getAsInt() );
+        Assertions.assertEquals( "b.txt", entries.get( 1 ).getAsJsonObject().get( "name" ).getAsString() );
+    }
+
+    @Test
+    void attachmentsOfAPageWithoutAttachmentsAreAnEmptyList() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiReadNoAttachments", "text" );
+
+        final Reply reply = call( requestTo( "/pages/ApiReadNoAttachments/attachments" ) );
+
+        assertMatchesContract( "/pages/{name}/attachments", reply );
+        Assertions.assertEquals( 200, reply.status );
+        Assertions.assertEquals( 0, reply.json().getAsJsonArray().size() );
+    }
+
+    @Test
+    void attachmentsOfAPageTheCallerMayNotViewAre401() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiReadSecretAttachments", "[{ALLOW view Admin}] secret" );
+
+        final Reply reply = call( requestTo( "/pages/ApiReadSecretAttachments/attachments" ) );
+
+        assertMatchesContract( "/pages/{name}/attachments", reply );
+        Assertions.assertEquals( 401, reply.status );
+    }
+
+    @Test
+    void attachmentsOfAPageThatDoesNotExistAre404() throws Exception {
+        startEngine( null );
+
+        final Reply reply = call( requestTo( "/pages/ApiNoSuchPage/attachments" ) );
+
+        assertMatchesContract( "/pages/{name}/attachments", reply );
+        Assertions.assertEquals( 404, reply.status );
+    }
+
+    @Test
+    void pagesWithoutANameIs404() throws Exception {
+        startEngine( null );
+
+        final Reply reply = call( requestTo( "/pages/" ) );
+
+        Assertions.assertEquals( 404, reply.status );
+    }
+
+    @Test
     void contractDeclaresTheParametersTheServletEnforces() {
         final Map< String, Object > get = map( map( map( CONTRACT, "paths" ), "/search" ), "get" );
         final List< Object > parameters = list( get, "parameters" );
@@ -295,12 +486,19 @@ class ApiV1ServletTest {
     }
 
     private void startEngine( final String policy, final String initialIndexDelay ) {
+        startEngine( policy, initialIndexDelay, null );
+    }
+
+    private void startEngine( final String policy, final String initialIndexDelay, final String pageProvider ) {
         final Properties props = TestEngine.getTestProperties();
         props.setProperty( SearchManager.PROP_SEARCHPROVIDER, "LuceneSearchProvider" );
         props.setProperty( "jspwiki.lucene.indexdelay", "0" );
         props.setProperty( "jspwiki.lucene.initialdelay", initialIndexDelay );
         props.setProperty( "jspwiki.workDir", props.getProperty( "jspwiki.workDir" ) + System.currentTimeMillis() );
         props.setProperty( "jspwiki.fileSystemProvider.pageDir", props.getProperty( "jspwiki.fileSystemProvider.pageDir" ) + System.currentTimeMillis() );
+        if( pageProvider != null ) {
+            props.setProperty( PageManager.PROP_PAGEPROVIDER, pageProvider );
+        }
         if( policy != null ) {
             props.setProperty( AuthorizationManager.POLICY, policy );
         }
