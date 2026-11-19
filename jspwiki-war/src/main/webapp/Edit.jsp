@@ -23,12 +23,15 @@
 <%@ page import="java.util.*" %>
 <%@ page import="org.apache.wiki.api.core.*" %>
 <%@ page import="org.apache.wiki.api.exceptions.RedirectException" %>
+<%@ page import="org.apache.wiki.api.exceptions.WikiException" %>
 <%@ page import="org.apache.wiki.api.spi.Wiki" %>
 <%@ page import="org.apache.wiki.auth.AuthorizationManager" %>
+<%@ page import="org.apache.wiki.auth.UserManager" %>
 <%@ page import="org.apache.wiki.http.filter.CsrfProtectionFilter" %>
 <%@ page import="org.apache.wiki.util.HttpUtil" %>
 <%@ page import="org.apache.wiki.filters.SpamFilter" %>
 <%@ page import="org.apache.wiki.htmltowiki.HtmlStringToWikiTranslator" %>
+<%@ page import="org.apache.wiki.notification.SubscriptionManager" %>
 <%@ page import="org.apache.wiki.pages.PageLock" %>
 <%@ page import="org.apache.wiki.pages.PageManager" %>
 <%@ page import="org.apache.wiki.preferences.Preferences" %>
@@ -224,6 +227,19 @@
             return;
         }
 
+        // the "notify me of changes" box of the editor; the subscription needs an address to send the mails to
+        if( request.getParameter( "subscribe" ) != null && wikiContext.getWikiSession().isAuthenticated() ) {
+            final String loginName = wikiContext.getWikiSession().getLoginPrincipal().getName();
+            try {
+                final String email = wiki.getManager( UserManager.class ).getUserDatabase().findByLoginName( loginName ).getEmail();
+                if( email != null && !email.trim().isEmpty() ) {
+                    wiki.getManager( SubscriptionManager.class ).subscribe( loginName, pagereq );
+                }
+            } catch( final WikiException e ) {
+                log.warn( "Could not subscribe " + loginName + " to " + pagereq + ": " + e.getMessage() );
+            }
+        }
+
         response.sendRedirect(wikiContext.getViewURL(pagereq));
         return;
     } else if( preview != null ) {
@@ -242,7 +258,11 @@
     } else if( cancel != null ) {
         log.debug("Cancelled editing "+pagereq);
         PageLock lock = (PageLock) session.getAttribute( "lock-"+pagereq );
-        if( lock != null ) {
+        //  An editor that is left by a link, not by its buttons, asks to cancel with the token of its load. When the
+        //  page was loaded again in the meantime (a reload), the token is not the current one and the lock is the one of the new editor.
+        boolean leftByAnotherLoad = request.getParameter( "leaving" ) != null &&
+                                    !String.valueOf( request.getParameter( "locktoken" ) ).equals( session.getAttribute( "locktoken-"+pagereq ) );
+        if( lock != null && !leftByAnotherLoad ) {
             wiki.getManager( PageManager.class ).unlockPage( lock );
             session.removeAttribute( "lock-"+pagereq );
         }
@@ -271,6 +291,10 @@
     if( lock != null ) {
         session.setAttribute( "lock-"+pagereq, lock );
     }
+    //  Every load of the editor gets its own token, see the cancel above.
+    String lockToken = UUID.randomUUID().toString();
+    session.setAttribute( "locktoken-"+pagereq, lockToken );
+    pageContext.setAttribute( "locktoken", lockToken, PageContext.REQUEST_SCOPE );
 
     String contentPage = wiki.getManager( TemplateManager.class ).findJSP( pageContext, wikiContext.getTemplate(), "EditTemplate.jsp" );
 

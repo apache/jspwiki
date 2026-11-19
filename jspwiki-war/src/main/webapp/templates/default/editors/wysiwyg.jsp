@@ -131,6 +131,7 @@
   <wiki:CsrfProtection/>
   <%-- Edit.jsp relies on these being found.  So be careful, if you make changes. --%>
   <input type="hidden" name="page" value="<wiki:Variable var='pagename' />" />
+  <input type="hidden" name="locktoken" value="${locktoken}" />
   <input type="hidden" name="action" value="save" />
   <wiki:SpamFilterInputs/>
 
@@ -148,6 +149,14 @@
              placeholder="<fmt:message key='editor.plain.changenote'/>"
              value="${changenote}" />
       </li>
+      <wiki:UserCheck status="authenticated">
+      <li class="dropdown-header">
+        <label class="checkbox-inline">
+          <input type="checkbox" name="subscribe" id="subscribe" value="true" />
+          <fmt:message key="editor.subscribe"/>
+        </label>
+      </li>
+      </wiki:UserCheck>
       </wiki:CheckRequestContext>
       <wiki:CheckRequestContext context="comment">
       <li class="divider" />
@@ -294,6 +303,7 @@ Wiki.add("[name=htmlPageText]", function( element){
         if( isChanged() ){ return "edit.areyousure".localize(); }
     };
     form.addEvent("submit", function(){ window.onbeforeunload = null; });
+    Wiki.releaseLockOnLeave( form );
 
     Wiki.configPrefs( form, function(cmd, isChecked){
         if(isChecked && (cmd=="livepreview")){ html2markup(); }

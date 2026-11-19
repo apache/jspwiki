@@ -46,6 +46,7 @@ import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.search.SearchProvider;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.IOException;
@@ -61,6 +62,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static java.lang.String.format;
 
@@ -93,8 +95,15 @@ public class KendraSearchProvider implements SearchProvider {
     private static final String PROP_KENDRA_INDEXDELAY = "jspwiki.kendra.indexdelay";
     private static final String PROP_KENDRA_INITIALDELAY = "jspwiki.kendra.initialdelay";
 
-    public KendraSearchProvider() {
-    }
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      * {@inheritDoc}
@@ -114,7 +123,7 @@ public class KendraSearchProvider implements SearchProvider {
 
         // Start the Kendra update thread, which waits first for a little while
         // before starting to go through the "pages that need updating".
-        if ( initialDelay >= 0 ) {
+        if( initialDelay >= 0 ) {
             final KendraUpdater updater = new KendraUpdater( engine, this, initialDelay, indexDelay );
             updater.start();
         }
@@ -122,7 +131,7 @@ public class KendraSearchProvider implements SearchProvider {
 
     private Map< String, Object > getContentTypes() {
         final Gson gson = new GsonBuilder().create();
-        try ( final InputStream in = KendraSearchProvider.class.getResourceAsStream( "content_types.json" ) ) {
+        try( final InputStream in = KendraSearchProvider.class.getResourceAsStream( "content_types.json" ) ) {
             if ( in != null ) {
                 final Type collectionType = new TypeToken< HashMap< String, Object > >() {
                 }.getType();
@@ -148,8 +157,7 @@ public class KendraSearchProvider implements SearchProvider {
     @Override
     public void pageRemoved( final Page page ) {
         final String pageName = page.getName();
-        final BatchDeleteDocumentRequest request = new BatchDeleteDocumentRequest().withIndexId( indexId )
-                .withDocumentIdList( pageName );
+        final BatchDeleteDocumentRequest request = new BatchDeleteDocumentRequest().withIndexId( indexId ).withDocumentIdList( pageName );
         final BatchDeleteDocumentResult result = getKendra().batchDeleteDocument( request );
         if (result.getFailedDocuments().isEmpty()) {
             LOG.debug( "Page '{}' was removed from index", pageName );
@@ -163,9 +171,9 @@ public class KendraSearchProvider implements SearchProvider {
      */
     @Override
     public void reindexPage( final Page page ) {
-        if ( page != null ) {
+        if( page != null ) {
             updates.add( page );
-            LOG.debug( format( "Scheduling page '%s' for indexing ...", page.getName() ) );
+            LOG.debug( "Scheduling page '{}' for indexing ...", page.getName() );
         }
     }
 
@@ -199,16 +207,15 @@ public class KendraSearchProvider implements SearchProvider {
                                     new String[]{ documentExcerpt } );
                             searchResults.add( searchResult );
                         } else {
-                            LOG.error( format( "Page '%s' is not accessible", documentId ) );
+                            LOG.error( "Page '{}' is not accessible", documentId );
                         }
                     } else {
-                        LOG.error(
-                                format( "Kendra found a result page '%s' that could not be loaded, removing from index", documentId ) );
+                        LOG.error( "Kendra found a result page '{}' that could not be loaded, removing from index", documentId );
                         pageRemoved( Wiki.contents().page( this.engine, documentId ) );
                     }
                     break;
                 default:
-                    LOG.error( format( "Unknown query result type: %s", item.getType() ) );
+                    LOG.error( "Unknown query result type: {}", item.getType() );
             }
         }
         return searchResults;
@@ -314,7 +321,7 @@ public class KendraSearchProvider implements SearchProvider {
             if ( pages.isEmpty() ) {
                 return;
             }
-            LOG.debug( format( "Indexing all %d pages. Please wait ...", pages.size() ) );
+            LOG.debug( "Indexing all {} pages. Please wait ...", pages.size() );
             final String executionId = startExecution();
             for ( final Page page : pages ) {
                 // Since I do not want to handle the size limit
@@ -335,20 +342,21 @@ public class KendraSearchProvider implements SearchProvider {
      * index pages that have been modified
      */
     private void doPartialReindex() {
-        if ( updates.isEmpty() ) {
+        if (updates.isEmpty()) {
             return;
         }
-        LOG.debug( "Indexing updated pages. Please wait ..." );
+        LOG.debug("Indexing updated pages. Please wait ...");
         final String executionId = startExecution();
-        synchronized ( updates ) {
+
+        Synchronizer.synchronize(lock, () -> {
             try {
                 while (!updates.isEmpty()) {
-                    indexOnePage( updates.remove( 0 ), executionId );
+                    indexOnePage(updates.remove(0), executionId);
                 }
             } finally {
                 stopExecution();
             }
-        }
+        });
     }
 
     /**
@@ -382,18 +390,17 @@ public class KendraSearchProvider implements SearchProvider {
         final String pageName = page.getName();
         try {
             final Document document = newDocument( page, executionId );
-            final BatchPutDocumentRequest request = new BatchPutDocumentRequest().withIndexId( indexId )
-                    .withDocuments( document );
+            final BatchPutDocumentRequest request = new BatchPutDocumentRequest().withIndexId( indexId ).withDocuments( document );
             final BatchPutDocumentResult result = getKendra().batchPutDocument( request );
-            if (result.getFailedDocuments().isEmpty()) {
-                LOG.info( format( "Successfully indexed Page '%s' as %s", page.getName(), document.getContentType() ) );
+            if ( result.getFailedDocuments().isEmpty() ) {
+                LOG.info( "Successfully indexed Page '{}' as {}", page.getName(), document.getContentType() );
             } else {
                 for ( final BatchPutDocumentResponseFailedDocument failedDocument : result.getFailedDocuments() ) {
-                    LOG.error( format( "Failed to index Page '%s': %s", failedDocument.getId(), failedDocument.getErrorMessage() ) );
+                    LOG.error( "Failed to index Page '{}': {}", failedDocument.getId(), failedDocument.getErrorMessage() );
                 }
             }
         } catch ( final IOException e ) {
-            LOG.error( format( "Failed to index Page '%s': %s", pageName, e.getMessage() ) );
+            LOG.error( "Failed to index Page '{}': {}", pageName, e.getMessage() );
         }
     }
 

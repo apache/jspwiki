@@ -181,4 +181,25 @@ public class PageViewPluginTest {
         testEngine.deleteTestPage( "TestPage04" );
     }
 
+
+    @Test
+    public void testShowCountsDoesNotListAProtectedPage() throws Exception {
+        testEngine.saveText( "TestPageSecret", "[{ALLOW view Admin}]\nOnly the administrators. [{PageViewPlugin}]" );
+        final Page secret = testEngine.getManager( PageManager.class ).getPage( "TestPageSecret" );
+        final Page page1 = testEngine.getManager( PageManager.class ).getPage( "TestPage01" );
+        // an administrator reads both pages, which counts the views
+        testEngine.getManager( RenderingManager.class ).getHTML( Wiki.context().create( testEngine, secret ), secret );
+        testEngine.getManager( RenderingManager.class ).getHTML( Wiki.context().create( testEngine, page1 ), page1 );
+
+        testEngine.saveText( "PageViews", "[{PageViewPlugin show='list''\n\n* {1} ({2} views)\n}]" );
+        final Page pageviews = testEngine.getManager( PageManager.class ).getPage( "PageViews" );
+        // the context of the list is an anonymous visitor, who may not view TestPageSecret
+        final String result = testEngine.getManager( RenderingManager.class ).getHTML( Wiki.context().create( testEngine, pageviews ), pageviews );
+
+        Assertions.assertTrue( result.contains( "Test Page 01" ), result );
+        Assertions.assertFalse( result.contains( "Test Page Secret" ), result );
+
+        testEngine.deleteTestPage( "TestPageSecret" );
+    }
+
 }

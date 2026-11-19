@@ -31,6 +31,7 @@ import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.parser.MarkupParser;
 import org.apache.wiki.preferences.Preferences;
+import org.apache.wiki.util.Synchronizer;
 import org.apache.wiki.util.TextUtil;
 
 import java.io.PrintWriter;
@@ -43,6 +44,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  *  Provides a handler for bug reports.  Still under construction.
@@ -72,6 +74,16 @@ public class BugReportHandler implements Plugin {
     public static final String PARAM_MAPPINGS       = "map";
     /** Parameter name for setting the page.  Value is <tt>{@value}</tt>. */
     public static final String PARAM_PAGE           = "page";
+
+    /**
+     * A lock used to ensure thread safety when accessing shared resources.
+     * This lock provides more flexibility and capabilities than the intrinsic locking mechanism,
+     * such as the ability to attempt to acquire a lock with a timeout, or to interrupt a thread
+     * waiting to acquire a lock.
+     *
+     * @see java.util.concurrent.locks.ReentrantLock
+     */
+    private final ReentrantLock lock = new ReentrantLock();
 
     /**
      *  {@inheritDoc}
@@ -166,17 +178,18 @@ public class BugReportHandler implements Plugin {
      *  Finds a free page name for adding the bug report.  Tries to construct a page, and if it's found, adds a number to it
      *  and tries again.
      */
-    private synchronized String findNextPage( final Context context, final String title, final String baseName ) {
-        final String basicPageName = ( ( baseName != null ) ? baseName : "Bug" ) + MarkupParser.cleanLink( title );
-        final Engine engine = context.getEngine();
+    private String findNextPage( final Context context, final String title, final String baseName ) {
+        return Synchronizer.synchronize(lock, () -> {
+            final String basicPageName = ( ( baseName != null ) ? baseName : "Bug" ) + MarkupParser.cleanLink( title );
+            final Engine engine = context.getEngine();
 
-        String pageName = basicPageName;
-        long   lastbug  = 2;
-        while( engine.getManager( PageManager.class ).wikiPageExists( pageName ) ) {
-            pageName = basicPageName + lastbug++;
-        }
-
-        return pageName;
+            String pageName = basicPageName;
+            long   lastbug  = 2;
+            while( engine.getManager( PageManager.class ).wikiPageExists( pageName ) ) {
+                pageName = basicPageName + lastbug++;
+            }
+            return pageName;
+        });
     }
 
     /**

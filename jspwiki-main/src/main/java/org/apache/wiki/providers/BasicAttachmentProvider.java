@@ -166,20 +166,30 @@ public class BasicAttachmentProvider implements AttachmentProvider {
      *  Finds the dir in which the attachment lives.
      */
     private File findAttachmentDir( final Attachment att ) throws ProviderException {
-        File f = new File( findPageDir( att.getParentName() ), mangleName( att.getFileName() + ATTDIR_EXTENSION ) );
+        final File pageDir = findPageDir( att.getParentName() );
+        File f = new File( pageDir, mangleName( att.getFileName() + ATTDIR_EXTENSION ) );
 
         //  Migration code for earlier versions of JSPWiki. Originally, we used plain filename.  Then we realized we need
         //  to urlencode it.  Then we realized that we have to use a postfix to make sure illegal file names are never formed.
         if( !f.exists() ) {
-            File oldf = new File( findPageDir( att.getParentName() ), mangleName( att.getFileName() ) );
+            File oldf = new File( pageDir, mangleName( att.getFileName() ) );
             if( oldf.exists() ) {
                 f = oldf;
             } else {
-                oldf = new File( findPageDir( att.getParentName() ), att.getFileName() );
+                oldf = new File( pageDir, att.getFileName() );
                 if( oldf.exists() ) {
                     f = oldf;
                 }
             }
+        }
+
+        // The directory of an attachment is always a direct child of the directory of its page; a name such as . or .. would leave it.
+        try {
+            if( !pageDir.getCanonicalFile().equals( f.getCanonicalFile().getParentFile() ) ) {
+                throw new ProviderException( "The name '" + att.getFileName() + "' does not give a directory of its own to the attachment" );
+            }
+        } catch( final IOException e ) {
+            throw new ProviderException( "Cannot check the directory of the attachment '" + att.getFileName() + "': " + e.getMessage() );
         }
 
         return f;
