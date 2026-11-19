@@ -104,6 +104,37 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '403':
           $ref: '#/components/responses/Forbidden'
+  /pages:
+    get:
+      operationId: listPages
+      summary: List the names of the pages the caller may view, sorted by name.
+      parameters:
+        - $ref: '#/components/parameters/max'
+        - name: offset
+          in: query
+          required: false
+          description: Number of names to skip, to read the next entries of a long list.
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Page names. Empty when there are no more.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /pages/{name}:
     get:
       operationId: getPage
@@ -180,6 +211,57 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalError'
+  /pages/{name}/references:
+    get:
+      operationId: getPageReferences
+      summary: List the pages that link to a page and the pages it links to, leaving out the ones the caller may not view.
+      parameters:
+        - $ref: '#/components/parameters/name'
+      responses:
+        '200':
+          description: The links of the page, each list sorted by name. A page that is linked but not written yet is listed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/References'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /pages/{name}/html:
+    get:
+      operationId: getPageHtml
+      summary: Read a page rendered to HTML, as the wiki shows it to the caller.
+      parameters:
+        - $ref: '#/components/parameters/name'
+        - name: version
+          in: query
+          required: false
+          description: Version of the page. The latest version when absent.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: The HTML of the page, without the template around it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RenderedPage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
 components:
   securitySchemes:
     sessionCookie:
@@ -231,6 +313,28 @@ components:
         text:
           type: string
           description: Wiki markup of the page, without any conversion.
+    RenderedPage:
+      type: object
+      required: [name, version, html]
+      properties:
+        name:
+          type: string
+        version:
+          type: integer
+        html:
+          type: string
+    References:
+      type: object
+      required: [referredBy, refersTo]
+      properties:
+        referredBy:
+          type: array
+          items:
+            type: string
+        refersTo:
+          type: array
+          items:
+            type: string
     Revision:
       type: object
       required: [version]

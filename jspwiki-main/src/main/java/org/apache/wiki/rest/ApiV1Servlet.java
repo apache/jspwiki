@@ -45,6 +45,8 @@ import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.plugin.PluginManager;
+import org.apache.wiki.references.ReferenceManager;
+import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.SearchManager;
 
 import java.io.IOException;
@@ -75,6 +77,8 @@ public class ApiV1Servlet extends HttpServlet {
     private static final String PAGES = "/pages/";
     private static final String HISTORY = "/history";
     private static final String ATTACHMENTS = "/attachments";
+    private static final String REFERENCES = "/references";
+    private static final String HTML = "/html";
 
     private transient Engine engine;
 
@@ -95,6 +99,8 @@ public class ApiV1Servlet extends HttpServlet {
             suggestions( req, resp );
         } else if( "/plugins".equals( path ) ) {
             plugins( req, resp );
+        } else if( "/pages".equals( path ) ) {
+            list( req, resp );
         } else if( path != null && path.startsWith( PAGES ) ) {
             pages( req, resp, path.substring( PAGES.length() ) );
         } else {
@@ -164,7 +170,8 @@ public class ApiV1Servlet extends HttpServlet {
 
     /** Serves a page, its history or its attachments. The part of the path before the optional suffix is the page name. */
     private void pages( final HttpServletRequest req, final HttpServletResponse resp, final String rest ) throws IOException {
-        final String suffix = rest.endsWith( HISTORY ) ? HISTORY : rest.endsWith( ATTACHMENTS ) ? ATTACHMENTS : "";
+        final String suffix = rest.endsWith( HISTORY ) ? HISTORY : rest.endsWith( ATTACHMENTS ) ? ATTACHMENTS
+                            : rest.endsWith( REFERENCES ) ? REFERENCES : rest.endsWith( HTML ) ? HTML : "";
         final String name = rest.substring( 0, rest.length() - suffix.length() );
         if( name.isEmpty() ) {
             error( resp, HttpServletResponse.SC_NOT_FOUND, "No such resource." );
@@ -179,7 +186,7 @@ public class ApiV1Servlet extends HttpServlet {
             denied( resp, session );
             return;
         }
-        final int version = HISTORY.equals( suffix ) || ATTACHMENTS.equals( suffix ) ? WikiProvider.LATEST_VERSION : version( req, resp );
+        final int version = suffix.isEmpty() || HTML.equals( suffix ) ? version( req, resp ) : WikiProvider.LATEST_VERSION;
         if( version == 0 ) {
             return;
         }
@@ -192,6 +199,11 @@ public class ApiV1Servlet extends HttpServlet {
                 history( resp, page );
             } else if( ATTACHMENTS.equals( suffix ) ) {
                 attachments( resp, page );
+            } else if( REFERENCES.equals( suffix ) ) {
+                references( req, resp, page );
+            } else if( HTML.equals( suffix ) ) {
+                final Context context = Wiki.context().create( engine, req, page );
+                json( resp, HttpServletResponse.SC_OK, new Rendered( page, engine.getManager( RenderingManager.class ).getHTML( context, page ) ) );
             } else {
                 final String text = engine.getManager( PageManager.class ).getPageText( name, page.getVersion() );
                 json( resp, HttpServletResponse.SC_OK, new PageContent( page, text ) );
@@ -200,6 +212,71 @@ public class ApiV1Servlet extends HttpServlet {
             LOG.error( "The request for the page {} of the REST API failed", name, e );
             error( resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "The page could not be read." );
         }
+    }
+
+    /** Lists the names of the pages the caller may view, sorted by name, from the position given by offset. */
+    private void list( final HttpServletRequest req, final HttpServletResponse resp ) throws IOException {
+        final Session session = authorized( req, resp );
+        final int max = session == null ? 0 : max( req, resp );
+        final int offset = max < 1 ? -1 : offset( req, resp );
+        if( offset < 0 ) {
+            return;
+        }
+        try {
+            final AuthorizationManager mgr = engine.getManager( AuthorizationManager.class );
+            final List< String > names = new ArrayList<>();
+            for( final Page page : engine.getManager( PageManager.class ).getAllPages() ) {
+                if( mgr.checkPermission( session, PermissionFactory.getPagePermission( page, PagePermission.VIEW_ACTION ) ) ) {
+                    names.add( page.getName() );
+                }
+            }
+            names.sort( engine.getManager( PageManager.class ).getPageSorter() );
+            json( resp, HttpServletResponse.SC_OK, names.subList( Math.min( offset, names.size() ), ( int )Math.min( offset + ( long )max, names.size() ) ) );
+        } catch( final ProviderException e ) {
+            LOG.error( "The list of pages for the REST API failed", e );
+            error( resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "The pages could not be listed." );
+        }
+    }
+
+    /** Answers with the pages that link to the page and the pages it links to, leaving out the ones the caller may not view. */
+    private void references( final HttpServletRequest req, final HttpServletResponse resp, final Page page ) throws IOException {
+        final Session session = Wiki.session().find( engine, req );
+        final ReferenceManager references = engine.getManager( ReferenceManager.class );
+        json( resp, HttpServletResponse.SC_OK, new References( viewable( session, references.findReferrers( page.getName() ) ),
+                                                               viewable( session, references.findRefersTo( page.getName() ) ) ) );
+    }
+
+    /** Returns the names the session may view, sorted. A name without a page, such as a link to a page not yet written, is kept. */
+    private List< String > viewable( final Session session, final Collection< String > names ) {
+        final List< String > viewable = new ArrayList<>();
+        if( names != null ) {
+            final AuthorizationManager mgr = engine.getManager( AuthorizationManager.class );
+            for( final String name : names ) {
+                if( mgr.checkPermission( session, PermissionFactory.getPagePermission( Wiki.contents().page( engine, name ), PagePermission.VIEW_ACTION ) ) ) {
+                    viewable.add( name );
+                }
+            }
+        }
+        viewable.sort( engine.getManager( PageManager.class ).getPageSorter() );
+        return viewable;
+    }
+
+    /** Returns the offset parameter, zero when it is absent, and -1 after answering 400 when it is not an integer of zero or more. */
+    private static int offset( final HttpServletRequest req, final HttpServletResponse resp ) throws IOException {
+        final String value = req.getParameter( "offset" );
+        if( value == null ) {
+            return 0;
+        }
+        try {
+            final int offset = Integer.parseInt( value.trim() );
+            if( offset >= 0 ) {
+                return offset;
+            }
+        } catch( final NumberFormatException e ) {
+            // answered below
+        }
+        error( resp, HttpServletResponse.SC_BAD_REQUEST, "The parameter offset must be an integer of zero or more." );
+        return -1;
     }
 
     private void history( final HttpServletResponse resp, final Page page ) throws IOException {
@@ -348,6 +425,30 @@ public class ApiV1Servlet extends HttpServlet {
             this.author = page.getAuthor();
             this.lastModified = instant( page.getLastModified() );
             this.text = text;
+        }
+    }
+
+    /** The page rendered to HTML. */
+    private static final class Rendered {
+        private final String name;
+        private final int version;
+        private final String html;
+
+        Rendered( final Page page, final String html ) {
+            this.name = page.getName();
+            this.version = number( page.getVersion() );
+            this.html = html;
+        }
+    }
+
+    /** The links of a page. */
+    private static final class References {
+        private final List< String > referredBy;
+        private final List< String > refersTo;
+
+        References( final List< String > referredBy, final List< String > refersTo ) {
+            this.referredBy = referredBy;
+            this.refersTo = refersTo;
         }
     }
 

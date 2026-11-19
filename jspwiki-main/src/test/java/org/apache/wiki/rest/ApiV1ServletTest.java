@@ -458,6 +458,127 @@ class ApiV1ServletTest {
     }
 
     @Test
+    void pagesListTheNamesSortedAndLeaveOutTheOnesTheCallerMayNotView() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiListB", "b" );
+        engine.saveText( "ApiListA", "a" );
+        engine.saveText( "ApiListSecret", "[{ALLOW view Admin}] secret" );
+
+        final Reply reply = call( requestTo( "/pages", "max", "1000" ) );
+
+        assertMatchesContract( "/pages", reply );
+        Assertions.assertEquals( 200, reply.status );
+        final List< String > names = new ArrayList<>();
+        reply.json().getAsJsonArray().forEach( name -> names.add( name.getAsString() ) );
+        Assertions.assertTrue( names.indexOf( "ApiListA" ) >= 0 && names.indexOf( "ApiListA" ) < names.indexOf( "ApiListB" ) );
+        Assertions.assertFalse( names.contains( "ApiListSecret" ) );
+    }
+
+    @Test
+    void pagesListInChunksWithMaxAndOffset() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiChunkA", "a" );
+        engine.saveText( "ApiChunkB", "b" );
+        engine.saveText( "ApiChunkC", "c" );
+        final List< String > all = new ArrayList<>();
+        call( requestTo( "/pages", "max", "1000" ) ).json().getAsJsonArray().forEach( name -> all.add( name.getAsString() ) );
+
+        final Reply second = call( requestTo( "/pages", "max", "2", "offset", "1" ) );
+
+        assertMatchesContract( "/pages", second );
+        final List< String > chunk = new ArrayList<>();
+        second.json().getAsJsonArray().forEach( name -> chunk.add( name.getAsString() ) );
+        Assertions.assertEquals( all.subList( 1, 3 ), chunk );
+        final Reply beyond = call( requestTo( "/pages", "offset", "100000" ) );
+        Assertions.assertEquals( 0, beyond.json().getAsJsonArray().size() );
+    }
+
+    @Test
+    void pagesWithAnOffsetThatIsNotAnIntegerOfZeroOrMoreIsABadRequest() throws Exception {
+        startEngine( null );
+
+        for( final String offset : new String[] { "-1", "x", "" } ) {
+            final Reply reply = call( requestTo( "/pages", "offset", offset ) );
+
+            assertMatchesContract( "/pages", reply );
+            Assertions.assertEquals( 400, reply.status, "offset=" + offset );
+        }
+    }
+
+    @Test
+    void pagesListByAnAnonymousCallerWithoutPermissionIs401( @TempDir final Path dir ) throws Exception {
+        startEngine( policy( dir, "Authenticated" ) );
+
+        final Reply reply = call( requestTo( "/pages" ) );
+
+        assertMatchesContract( "/pages", reply );
+        Assertions.assertEquals( 401, reply.status );
+    }
+
+    @Test
+    void referencesListTheLinksInBothDirectionsWithoutTheSecretOnes() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiRefTarget", "the target" );
+        engine.saveText( "ApiRefSource", "links to [ApiRefTarget] and to [ApiRefNotWritten]" );
+        engine.saveText( "ApiRefSecret", "[{ALLOW view Admin}] links to [ApiRefTarget]" );
+
+        final Reply target = call( requestTo( "/pages/ApiRefTarget/references" ) );
+        final Reply source = call( requestTo( "/pages/ApiRefSource/references" ) );
+
+        assertMatchesContract( "/pages/{name}/references", target );
+        assertMatchesContract( "/pages/{name}/references", source );
+        final List< String > referredBy = new ArrayList<>();
+        target.json().getAsJsonObject().getAsJsonArray( "referredBy" ).forEach( name -> referredBy.add( name.getAsString() ) );
+        Assertions.assertEquals( List.of( "ApiRefSource" ), referredBy );
+        final List< String > refersTo = new ArrayList<>();
+        source.json().getAsJsonObject().getAsJsonArray( "refersTo" ).forEach( name -> refersTo.add( name.getAsString() ) );
+        Assertions.assertEquals( List.of( "ApiRefNotWritten", "ApiRefTarget" ), refersTo );
+    }
+
+    @Test
+    void referencesOfAPageThatDoesNotExistAre404AndOfASecretPageAre401() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiRefHidden", "[{ALLOW view Admin}] hidden" );
+
+        final Reply missing = call( requestTo( "/pages/ApiRefNone/references" ) );
+        final Reply hidden = call( requestTo( "/pages/ApiRefHidden/references" ) );
+
+        assertMatchesContract( "/pages/{name}/references", missing );
+        assertMatchesContract( "/pages/{name}/references", hidden );
+        Assertions.assertEquals( 404, missing.status );
+        Assertions.assertEquals( 401, hidden.status );
+    }
+
+    @Test
+    void htmlAnswersWithThePageRendered() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiHtmlPage", "Some __bold__ text." );
+
+        final Reply reply = call( requestTo( "/pages/ApiHtmlPage/html" ) );
+
+        assertMatchesContract( "/pages/{name}/html", reply );
+        Assertions.assertEquals( 200, reply.status );
+        final JsonObject page = reply.json().getAsJsonObject();
+        Assertions.assertEquals( "ApiHtmlPage", page.get( "name" ).getAsString() );
+        Assertions.assertTrue( page.get( "html" ).getAsString().contains( "<b>bold</b>" ), page.get( "html" ).getAsString() );
+    }
+
+    @Test
+    void htmlOfAPageThatDoesNotExistIs404AndOfASecretPageIs401() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiHtmlHidden", "[{ALLOW view Admin}] hidden" );
+
+        final Reply missing = call( requestTo( "/pages/ApiHtmlNone/html" ) );
+        final Reply hidden = call( requestTo( "/pages/ApiHtmlHidden/html" ) );
+
+        assertMatchesContract( "/pages/{name}/html", missing );
+        assertMatchesContract( "/pages/{name}/html", hidden );
+        Assertions.assertEquals( 404, missing.status );
+        Assertions.assertEquals( 401, hidden.status );
+        Assertions.assertFalse( hidden.body.toString().contains( "hidden" ) );
+    }
+
+    @Test
     void pagesWithoutANameIs404() throws Exception {
         startEngine( null );
 
