@@ -75,7 +75,7 @@ class ApiV1ServletTest {
         engine.saveText( "ApiSearchOther", "Another page about mankind." );
 
         final Reply[] reply = new Reply[ 1 ];
-        Awaitility.await( "both pages are indexed" ).until( () -> {
+        Awaitility.await( "both pages are indexed" ).ignoreExceptions().until( () -> {
             reply[ 0 ] = search( null, "query", "mankind" );
             return reply[ 0 ].json().getAsJsonArray().size() == 2;
         } );
@@ -90,7 +90,12 @@ class ApiV1ServletTest {
     void searchWithoutMatchesAnswersWithAnEmptyList() throws Exception {
         startEngine( null );
 
-        final Reply reply = search( null, "query", "nothingwillmatchthis" );
+        final Reply[] answer = new Reply[ 1 ];
+        Awaitility.await( "the index is built" ).until( () -> {
+            answer[ 0 ] = search( null, "query", "nothingwillmatchthis" );
+            return answer[ 0 ].status != 503;
+        } );
+        final Reply reply = answer[ 0 ];
 
         assertMatchesContract( "/search", reply );
         Assertions.assertEquals( 200, reply.status );
@@ -102,7 +107,7 @@ class ApiV1ServletTest {
         startEngine( null );
         engine.saveText( "ApiMaxOne", "common words here" );
         engine.saveText( "ApiMaxTwo", "common words there" );
-        Awaitility.await( "both pages are indexed" ).until( () -> search( null, "query", "common" ).json().getAsJsonArray().size() == 2 );
+        Awaitility.await( "both pages are indexed" ).ignoreExceptions().until( () -> search( null, "query", "common" ).json().getAsJsonArray().size() == 2 );
 
         final Reply reply = search( null, "query", "common", "max", "1" );
 
@@ -124,7 +129,12 @@ class ApiV1ServletTest {
     void searchWithAQueryThatCannotBeParsedIsABadRequest() throws Exception {
         startEngine( null );
 
-        final Reply reply = search( null, "query", "\"unbalanced" );
+        final Reply[] answer = new Reply[ 1 ];
+        Awaitility.await( "the index is built" ).until( () -> {
+            answer[ 0 ] = search( null, "query", "\"unbalanced" );
+            return answer[ 0 ].status != 503;
+        } );
+        final Reply reply = answer[ 0 ];
 
         assertMatchesContract( "/search", reply );
         Assertions.assertEquals( 400, reply.status );
