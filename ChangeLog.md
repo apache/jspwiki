@@ -22,6 +22,12 @@ under the License.
 * Fix for [JSPWIKI-1369](https://issues.apache.org/jira/browse/JSPWIKI-1369): the integration tests wait for the menus, the live preview and the page loads they depend on, use the user database schema and the web descriptor namespace the wiki expects, and check the name the wiki shows for the logged in user
 
 
+**2026-11-17  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-10_
+
+* Fix for [JSPWIKI-1374](https://issues.apache.org/jira/browse/JSPWIKI-1374): the PostgreSQL script that creates the user database tables runs on PostgreSQL
+
 **2026-11-14  Multiple authors**
 
 * _3.0.1-git-09
