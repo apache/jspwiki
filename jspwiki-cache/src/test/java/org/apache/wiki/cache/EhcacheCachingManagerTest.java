@@ -22,6 +22,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Properties;
 
 
@@ -80,6 +85,29 @@ public class EhcacheCachingManagerTest {
 
         Assertions.assertNull( ecm.get( CachingManager.CACHE_PAGES, null,  () -> retrieveFromBackend ) );
         Assertions.assertNull( ecm.get( "trucutru", "key",  () -> retrieveFromBackend ) );
+    }
+
+
+    /** The jar is in a library shared by several web applications, so the configuration is only seen by the context class loader. */
+    @Test
+    void testConfigurationOnlyVisibleToTheContextClassLoader() throws Exception {
+        final File dir = Files.createTempDirectory( "ehcache-context" ).toFile();
+        final File conf = new File( dir, "ehcache-context-only.xml" );
+        Files.write( conf.toPath(), "<ehcache><defaultCache maxEntriesLocalHeap=\"10\" eternal=\"false\" timeToLiveSeconds=\"60\"/></ehcache>".getBytes( StandardCharsets.UTF_8 ) );
+        final Properties props = new Properties();
+        props.setProperty( CachingManager.PROP_CACHE_CONF_FILE, "ehcache-context-only.xml" );
+        final ClassLoader original = Thread.currentThread().getContextClassLoader();
+        try( URLClassLoader context = new URLClassLoader( new URL[] { dir.toURI().toURL() }, original ) ) {
+            Thread.currentThread().setContextClassLoader( context );
+            final EhcacheCachingManager manager = new EhcacheCachingManager();
+            manager.initialize( null, props );
+            Assertions.assertEquals( 7, manager.cacheMap.size() );
+            manager.shutdown();
+        } finally {
+            Thread.currentThread().setContextClassLoader( original );
+            conf.delete();
+            dir.delete();
+        }
     }
 
 }
