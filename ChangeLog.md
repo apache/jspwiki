@@ -17,6 +17,12 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-11-20 Arturo Bernal (abernal AT apache DOT org)**
+
+* _2.12.6-git-03_
+
+* Fix for the build with Maven 3.10 and later: `jspwiki-markdown` declared the dependency `commons-text` twice, which those versions reject
+
 **2026-11-08 Arturo Bernal (abernal AT apache DOT org)**
 
 * _2.12.6-git-02_
