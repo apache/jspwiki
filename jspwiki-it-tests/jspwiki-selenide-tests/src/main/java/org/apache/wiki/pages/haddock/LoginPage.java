@@ -21,6 +21,10 @@ package org.apache.wiki.pages.haddock;
 import com.codeborne.selenide.Selenide;
 import org.apache.wiki.its.environment.Env;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import java.time.Duration;
 
 /**
  * Actions available on the Login page.
@@ -46,8 +50,17 @@ public class LoginPage implements HaddockPage {
     public ViewWikiPage performLogin(final String login, final String password ) {
         Selenide.$( By.id( "j_username" ) ).val( login );
         Selenide.$( By.id( "j_password" ) ).val( password );
-        Selenide.$( By.name( "submitlogin" ) ).click();
-        
+        final WebElement submit = Selenide.$( By.name( "submitlogin" ) ).toWebElement();
+        submit.click();
+        // the page that comes next, the view page or the login page again, is a different one: wait for it to load
+        Selenide.Wait().withTimeout( Duration.ofSeconds( 10L ) ).until( driver -> {
+            try {
+                return ExpectedConditions.stalenessOf( submit ).apply( driver );
+            } catch( final WebDriverException e ) {
+                return true; // the browser has already replaced the document the button belonged to
+            }
+        } );
+
         return new ViewWikiPage();
     }
 

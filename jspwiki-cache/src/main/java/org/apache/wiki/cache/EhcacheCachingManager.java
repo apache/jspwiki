@@ -73,11 +73,8 @@ public class EhcacheCachingManager implements CachingManager, Initializable {
         final String cacheEnabled = TextUtil.getStringProperty( props, PROP_CACHE_ENABLE, PROP_USECACHE_DEPRECATED, "true" );
         final boolean useCache = "true".equalsIgnoreCase( cacheEnabled );
         if( useCache ) {
-            String val = TextUtil.getStringProperty( props, PROP_CACHE_CONF_FILE, "ehcache-jspwiki.xml" );
-            URL location = this.getClass().getResource( "/" + val );
-            if (location == null) {
-                location = this.getClass().getResource( val );
-            }
+            final String val = TextUtil.getStringProperty( props, PROP_CACHE_CONF_FILE, "ehcache-jspwiki.xml" );
+            final URL location = findConfiguration( val );
             LOG.info( "Reading ehcache configuration file from classpath on /{}", location );
             if (location == null ) {
                 LOG.error( "The ehcache configuration file from classpath on {} could not be loaded. Check setting {}", val , PROP_CACHE_CONF_FILE);
@@ -94,6 +91,25 @@ public class EhcacheCachingManager implements CachingManager, Initializable {
             registerCache( CACHE_PAGES_HISTORY );
             registerCache( CACHE_PAGES_TEXT );
         }
+    }
+
+    /**
+     * Looks for the configuration file with the class loader of this class and, if it is not there, with the one of the
+     * thread. When this jar is in a library shared by several web applications, as in the portable builds, only the
+     * second one sees the classes folder of the web application.
+     */
+    URL findConfiguration( final String name ) {
+        URL url = this.getClass().getResource( "/" + name );
+        if( url == null ) {
+            url = this.getClass().getResource( name );
+        }
+        if( url == null ) {
+            final ClassLoader context = Thread.currentThread().getContextClassLoader();
+            if( context != null ) {
+                url = context.getResource( name.startsWith( "/" ) ? name.substring( 1 ) : name );
+            }
+        }
+        return url;
     }
 
     void registerCache( final String cacheName ) {
