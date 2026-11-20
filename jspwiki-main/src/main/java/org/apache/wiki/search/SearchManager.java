@@ -20,6 +20,7 @@ package org.apache.wiki.search;
 
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.core.Page;
+import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.filters.PageFilter;
 import org.apache.wiki.api.search.SearchResult;
@@ -28,6 +29,7 @@ import org.apache.wiki.modules.InternalModule;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -54,6 +56,17 @@ public interface SearchManager extends PageFilter, InternalModule, WikiEventList
      *  @return The current SearchProvider.
      */
     SearchProvider getSearchEngine();
+
+    /**
+     *  Suggests the names of the pages that start with the given text, leaving out the pages the session may not view.
+     *
+     *  @param text the beginning of a page name, optionally followed by a slash and the beginning of an attachment name.
+     *  @param max the maximum number of names to return.
+     *  @param session the session of the caller.
+     *  @return the names of the pages, in no particular order.
+     *  @since 3.0.1
+     */
+    List< String > suggestPages( String text, int max, Session session );
 
     /**
      *  Sends a search to the current search provider. The query is is whatever native format the query engine wants to use.
