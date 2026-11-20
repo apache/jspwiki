@@ -18,7 +18,7 @@
  */
 package org.apache.wiki.rest;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -48,6 +48,8 @@ import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.references.ReferenceManager;
 import org.apache.wiki.render.RenderingManager;
 import org.apache.wiki.search.SearchManager;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -69,7 +71,10 @@ public class ApiV1Servlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOG = LogManager.getLogger( ApiV1Servlet.class );
-    private static final Gson GSON = new Gson();
+    /** Leaves out the fields without a value, as the page that has no author. */
+    private static final JsonMapper JSON = JsonMapper.builder()
+        .changeDefaultPropertyInclusion( value -> value.withValueInclusion( JsonInclude.Include.NON_NULL ) )
+        .build();
 
     /** Number of entries returned when the request does not say how many it wants. */
     static final int DEFAULT_MAX = 20;
@@ -297,7 +302,7 @@ public class ApiV1Servlet extends HttpServlet {
             // A page that was put in the page directory by hand has no history, but it still has its current version
             revisions.add( new Revision( page ) );
         }
-        revisions.sort( Comparator.comparingInt( ( Revision revision ) -> revision.version ).reversed() );
+        revisions.sort( Comparator.comparingInt( ( Revision revision ) -> revision.version() ).reversed() );
         json( resp, HttpServletResponse.SC_OK, revisions );
     }
 
@@ -398,113 +403,61 @@ public class ApiV1Servlet extends HttpServlet {
         resp.setStatus( status );
         resp.setContentType( "application/json" );
         resp.setCharacterEncoding( StandardCharsets.UTF_8.name() );
-        resp.getWriter().write( GSON.toJson( body ) );
+        try {
+            resp.getWriter().write( JSON.writeValueAsString( body ) );
+        } catch( final JacksonException e ) {
+            // the bodies are built here, so this is a bug and not a failure of the caller
+            throw new IOException( e );
+        }
     }
 
     /** An entry of the answer to a search. */
-    private static final class Hit {
-        private final String page;
-        private final int score;
-
-        Hit( final String page, final int score ) {
-            this.page = page;
-            this.score = score;
-        }
+    private record Hit( String page, int score ) {
     }
 
     /** An entry of the list of plugins. */
-    private static final class PluginEntry {
-        private final String displayName;
-        private final String snip;
-
-        PluginEntry( final String displayName, final String snip ) {
-            this.displayName = displayName;
-            this.snip = snip;
-        }
+    private record PluginEntry( String displayName, String snip ) {
     }
 
     /** The content of a page. */
-    private static final class PageContent {
-        private final String name;
-        private final int version;
-        private final String author;
-        private final String lastModified;
-        private final String text;
+    private record PageContent( String name, int version, String author, String lastModified, String text ) {
 
         PageContent( final Page page, final String text ) {
-            this.name = page.getName();
-            this.version = number( page.getVersion() );
-            this.author = page.getAuthor();
-            this.lastModified = instant( page.getLastModified() );
-            this.text = text;
+            this( page.getName(), number( page.getVersion() ), page.getAuthor(), instant( page.getLastModified() ), text );
         }
     }
 
     /** The page rendered to HTML. */
-    private static final class Rendered {
-        private final String name;
-        private final int version;
-        private final String html;
+    private record Rendered( String name, int version, String html ) {
 
         Rendered( final Page page, final String html ) {
-            this.name = page.getName();
-            this.version = number( page.getVersion() );
-            this.html = html;
+            this( page.getName(), number( page.getVersion() ), html );
         }
     }
 
     /** The links of a page. */
-    private static final class References {
-        private final List< String > referredBy;
-        private final List< String > refersTo;
-
-        References( final List< String > referredBy, final List< String > refersTo ) {
-            this.referredBy = referredBy;
-            this.refersTo = refersTo;
-        }
+    private record References( List< String > referredBy, List< String > refersTo ) {
     }
 
     /** An entry of the history of a page. */
-    private static final class Revision {
-        private final int version;
-        private final String author;
-        private final String lastModified;
-        private final String changeNote;
+    private record Revision( int version, String author, String lastModified, String changeNote ) {
 
         Revision( final Page page ) {
-            this.version = number( page.getVersion() );
-            this.author = page.getAuthor();
-            this.lastModified = instant( page.getLastModified() );
-            this.changeNote = page.getAttribute( Page.CHANGENOTE );
+            this( number( page.getVersion() ), page.getAuthor(), instant( page.getLastModified() ), page.getAttribute( Page.CHANGENOTE ) );
         }
     }
 
     /** An entry of the list of attachments of a page. */
-    private static final class AttachmentEntry {
-        private final String name;
-        private final int version;
-        private final long size;
-        private final String author;
-        private final String lastModified;
+    private record AttachmentEntry( String name, int version, long size, String author, String lastModified ) {
 
         AttachmentEntry( final Attachment attachment ) {
-            this.name = attachment.getFileName();
-            this.version = number( attachment.getVersion() );
-            this.size = attachment.getSize();
-            this.author = attachment.getAuthor();
-            this.lastModified = instant( attachment.getLastModified() );
+            this( attachment.getFileName(), number( attachment.getVersion() ), attachment.getSize(), attachment.getAuthor(),
+                  instant( attachment.getLastModified() ) );
         }
     }
 
     /** The body of every answer that is not a success. */
-    private static final class Failure {
-        private final int status;
-        private final String message;
-
-        Failure( final int status, final String message ) {
-            this.status = status;
-            this.message = message;
-        }
+    private record Failure( int status, String message ) {
     }
 
 }

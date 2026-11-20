@@ -24,6 +24,7 @@ under the License.
 * [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search/suggestions` and `GET /api/v1/plugins` are added to the REST API; the suggestions leave out the pages the caller may not view ([PR#590](https://github.com/apache/jspwiki/pull/590))
 * [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/pages/{name}`, `GET /api/v1/pages/{name}/history` and `GET /api/v1/pages/{name}/attachments` are added to the REST API, to read a page, its versions and its attachments if the caller may view the page
 * [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/pages`, `GET /api/v1/pages/{name}/references` and `GET /api/v1/pages/{name}/html` are added to the REST API, to list the pages in chunks, to read the links of a page and to read a page rendered to HTML
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): the REST API is in its own module `jspwiki-rest-api` and writes its JSON with Jackson, which the wiki already uses, and not with Gson
 
 **2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
 * _3.0.2-git-1_

@@ -18,10 +18,6 @@
  */
 package org.apache.wiki.rest;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,6 +40,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 import org.yaml.snakeyaml.Yaml;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -61,7 +59,7 @@ import java.util.Set;
 
 class ApiV1ServletTest {
 
-    private static final Gson GSON = new Gson();
+    private static final JsonMapper JSON = JsonMapper.builder().build();
     private static final Map< String, Object > CONTRACT = contract();
 
     private TestEngine engine;
@@ -82,13 +80,13 @@ class ApiV1ServletTest {
         final Reply[] reply = new Reply[ 1 ];
         Awaitility.await( "both pages are indexed" ).ignoreExceptions().until( () -> {
             reply[ 0 ] = search( null, "query", "mankind" );
-            return reply[ 0 ].json().getAsJsonArray().size() == 2;
+            return reply[ 0 ].json().size() == 2;
         } );
 
         assertMatchesContract( "/search", reply[ 0 ] );
         Assertions.assertEquals( 200, reply[ 0 ].status );
-        final JsonObject first = reply[ 0 ].json().getAsJsonArray().get( 0 ).getAsJsonObject();
-        Assertions.assertTrue( first.get( "page" ).getAsString().startsWith( "ApiSearch" ) );
+        final JsonNode first = reply[ 0 ].json().get( 0 );
+        Assertions.assertTrue( first.get( "page" ).asString().startsWith( "ApiSearch" ) );
     }
 
     @Test
@@ -104,7 +102,7 @@ class ApiV1ServletTest {
 
         assertMatchesContract( "/search", reply );
         Assertions.assertEquals( 200, reply.status );
-        Assertions.assertEquals( 0, reply.json().getAsJsonArray().size() );
+        Assertions.assertEquals( 0, reply.json().size() );
     }
 
     @Test
@@ -112,12 +110,12 @@ class ApiV1ServletTest {
         startEngine( null );
         engine.saveText( "ApiMaxOne", "common words here" );
         engine.saveText( "ApiMaxTwo", "common words there" );
-        Awaitility.await( "both pages are indexed" ).ignoreExceptions().until( () -> search( null, "query", "common" ).json().getAsJsonArray().size() == 2 );
+        Awaitility.await( "both pages are indexed" ).ignoreExceptions().until( () -> search( null, "query", "common" ).json().size() == 2 );
 
         final Reply reply = search( null, "query", "common", "max", "1" );
 
         assertMatchesContract( "/search", reply );
-        Assertions.assertEquals( 1, reply.json().getAsJsonArray().size() );
+        Assertions.assertEquals( 1, reply.json().size() );
     }
 
     @Test
@@ -214,7 +212,7 @@ class ApiV1ServletTest {
         final Reply reply = call( requestTo( "/search/suggestions", "query", "ApiSug", "max", "1" ) );
 
         assertMatchesContract( "/search/suggestions", reply );
-        Assertions.assertEquals( 1, reply.json().getAsJsonArray().size() );
+        Assertions.assertEquals( 1, reply.json().size() );
     }
 
     @Test
@@ -258,7 +256,7 @@ class ApiV1ServletTest {
         assertMatchesContract( "/plugins", reply );
         Assertions.assertEquals( 200, reply.status );
         final List< String > displayNames = new ArrayList<>();
-        reply.json().getAsJsonArray().forEach( entry -> displayNames.add( entry.getAsJsonObject().get( "displayName" ).getAsString() ) );
+        reply.json().forEach( entry -> displayNames.add( entry.get( "displayName" ).asString() ) );
         Assertions.assertFalse( displayNames.isEmpty(), "the wiki has plugins" );
         final List< String > sorted = new ArrayList<>( displayNames );
         sorted.sort( null );
@@ -287,7 +285,7 @@ class ApiV1ServletTest {
         final Reply reply = call( request );
 
         Assertions.assertEquals( 404, reply.status );
-        Assertions.assertEquals( 404, reply.json().getAsJsonObject().get( "status" ).getAsInt() );
+        Assertions.assertEquals( 404, reply.json().get( "status" ).asInt() );
     }
 
     @Test
@@ -299,10 +297,10 @@ class ApiV1ServletTest {
 
         assertMatchesContract( "/pages/{name}", reply );
         Assertions.assertEquals( 200, reply.status );
-        final JsonObject page = reply.json().getAsJsonObject();
-        Assertions.assertEquals( "ApiReadPage", page.get( "name" ).getAsString() );
-        Assertions.assertEquals( 1, page.get( "version" ).getAsInt() );
-        Assertions.assertTrue( page.get( "text" ).getAsString().contains( "Some *markup* here." ) );
+        final JsonNode page = reply.json();
+        Assertions.assertEquals( "ApiReadPage", page.get( "name" ).asString() );
+        Assertions.assertEquals( 1, page.get( "version" ).asInt() );
+        Assertions.assertTrue( page.get( "text" ).asString().contains( "Some *markup* here." ) );
     }
 
     @Test
@@ -315,10 +313,10 @@ class ApiV1ServletTest {
         final Reply first = call( requestTo( "/pages/ApiReadVersions", "version", "1" ) );
 
         assertMatchesContract( "/pages/{name}", first );
-        Assertions.assertEquals( 2, latest.json().getAsJsonObject().get( "version" ).getAsInt() );
-        Assertions.assertTrue( latest.json().getAsJsonObject().get( "text" ).getAsString().contains( "second text" ) );
-        Assertions.assertEquals( 1, first.json().getAsJsonObject().get( "version" ).getAsInt() );
-        Assertions.assertTrue( first.json().getAsJsonObject().get( "text" ).getAsString().contains( "first text" ) );
+        Assertions.assertEquals( 2, latest.json().get( "version" ).asInt() );
+        Assertions.assertTrue( latest.json().get( "text" ).asString().contains( "second text" ) );
+        Assertions.assertEquals( 1, first.json().get( "version" ).asInt() );
+        Assertions.assertTrue( first.json().get( "text" ).asString().contains( "first text" ) );
     }
 
     @Test
@@ -375,7 +373,7 @@ class ApiV1ServletTest {
         assertMatchesContract( "/pages/{name}/history", reply );
         Assertions.assertEquals( 200, reply.status );
         final List< Integer > versions = new ArrayList<>();
-        reply.json().getAsJsonArray().forEach( entry -> versions.add( entry.getAsJsonObject().get( "version" ).getAsInt() ) );
+        reply.json().forEach( entry -> versions.add( entry.get( "version" ).asInt() ) );
         Assertions.assertEquals( List.of( 3, 2, 1 ), versions );
     }
 
@@ -389,8 +387,8 @@ class ApiV1ServletTest {
 
         assertMatchesContract( "/pages/{name}/history", reply );
         Assertions.assertEquals( 200, reply.status );
-        Assertions.assertEquals( 1, reply.json().getAsJsonArray().size() );
-        Assertions.assertEquals( 1, reply.json().getAsJsonArray().get( 0 ).getAsJsonObject().get( "version" ).getAsInt() );
+        Assertions.assertEquals( 1, reply.json().size() );
+        Assertions.assertEquals( 1, reply.json().get( 0 ).get( "version" ).asInt() );
     }
 
     @Test
@@ -427,11 +425,11 @@ class ApiV1ServletTest {
 
         assertMatchesContract( "/pages/{name}/attachments", reply );
         Assertions.assertEquals( 200, reply.status );
-        final JsonArray entries = reply.json().getAsJsonArray();
+        final JsonNode entries = reply.json();
         Assertions.assertEquals( 2, entries.size() );
-        Assertions.assertEquals( "a.txt", entries.get( 0 ).getAsJsonObject().get( "name" ).getAsString() );
-        Assertions.assertEquals( 2, entries.get( 0 ).getAsJsonObject().get( "size" ).getAsInt() );
-        Assertions.assertEquals( "b.txt", entries.get( 1 ).getAsJsonObject().get( "name" ).getAsString() );
+        Assertions.assertEquals( "a.txt", entries.get( 0 ).get( "name" ).asString() );
+        Assertions.assertEquals( 2, entries.get( 0 ).get( "size" ).asInt() );
+        Assertions.assertEquals( "b.txt", entries.get( 1 ).get( "name" ).asString() );
     }
 
     @Test
@@ -443,7 +441,7 @@ class ApiV1ServletTest {
 
         assertMatchesContract( "/pages/{name}/attachments", reply );
         Assertions.assertEquals( 200, reply.status );
-        Assertions.assertEquals( 0, reply.json().getAsJsonArray().size() );
+        Assertions.assertEquals( 0, reply.json().size() );
     }
 
     @Test
@@ -479,7 +477,7 @@ class ApiV1ServletTest {
         assertMatchesContract( "/pages", reply );
         Assertions.assertEquals( 200, reply.status );
         final List< String > names = new ArrayList<>();
-        reply.json().getAsJsonArray().forEach( name -> names.add( name.getAsString() ) );
+        reply.json().forEach( name -> names.add( name.asString() ) );
         Assertions.assertTrue( names.indexOf( "ApiListA" ) >= 0 && names.indexOf( "ApiListA" ) < names.indexOf( "ApiListB" ) );
         Assertions.assertFalse( names.contains( "ApiListSecret" ) );
     }
@@ -491,16 +489,16 @@ class ApiV1ServletTest {
         engine.saveText( "ApiChunkB", "b" );
         engine.saveText( "ApiChunkC", "c" );
         final List< String > all = new ArrayList<>();
-        call( requestTo( "/pages", "max", "1000" ) ).json().getAsJsonArray().forEach( name -> all.add( name.getAsString() ) );
+        call( requestTo( "/pages", "max", "1000" ) ).json().forEach( name -> all.add( name.asString() ) );
 
         final Reply second = call( requestTo( "/pages", "max", "2", "offset", "1" ) );
 
         assertMatchesContract( "/pages", second );
         final List< String > chunk = new ArrayList<>();
-        second.json().getAsJsonArray().forEach( name -> chunk.add( name.getAsString() ) );
+        second.json().forEach( name -> chunk.add( name.asString() ) );
         Assertions.assertEquals( all.subList( 1, 3 ), chunk );
         final Reply beyond = call( requestTo( "/pages", "offset", "100000" ) );
-        Assertions.assertEquals( 0, beyond.json().getAsJsonArray().size() );
+        Assertions.assertEquals( 0, beyond.json().size() );
     }
 
     @Test
@@ -538,10 +536,10 @@ class ApiV1ServletTest {
         assertMatchesContract( "/pages/{name}/references", target );
         assertMatchesContract( "/pages/{name}/references", source );
         final List< String > referredBy = new ArrayList<>();
-        target.json().getAsJsonObject().getAsJsonArray( "referredBy" ).forEach( name -> referredBy.add( name.getAsString() ) );
+        target.json().get( "referredBy" ).forEach( name -> referredBy.add( name.asString() ) );
         Assertions.assertEquals( List.of( "ApiRefSource" ), referredBy );
         final List< String > refersTo = new ArrayList<>();
-        source.json().getAsJsonObject().getAsJsonArray( "refersTo" ).forEach( name -> refersTo.add( name.getAsString() ) );
+        source.json().get( "refersTo" ).forEach( name -> refersTo.add( name.asString() ) );
         Assertions.assertEquals( List.of( "ApiRefNotWritten", "ApiRefTarget" ), refersTo );
     }
 
@@ -568,9 +566,9 @@ class ApiV1ServletTest {
 
         assertMatchesContract( "/pages/{name}/html", reply );
         Assertions.assertEquals( 200, reply.status );
-        final JsonObject page = reply.json().getAsJsonObject();
-        Assertions.assertEquals( "ApiHtmlPage", page.get( "name" ).getAsString() );
-        Assertions.assertTrue( page.get( "html" ).getAsString().contains( "<b>bold</b>" ), page.get( "html" ).getAsString() );
+        final JsonNode page = reply.json();
+        Assertions.assertEquals( "ApiHtmlPage", page.get( "name" ).asString() );
+        Assertions.assertTrue( page.get( "html" ).asString().contains( "<b>bold</b>" ), page.get( "html" ).asString() );
     }
 
     @Test
@@ -706,30 +704,30 @@ class ApiV1ServletTest {
         assertMatchesSchema( resolve( map( content, reply.contentType ).get( "schema" ) ), reply.json(), "body" );
     }
 
-    private static void assertMatchesSchema( final Map< String, Object > schema, final JsonElement value, final String where ) {
+    private static void assertMatchesSchema( final Map< String, Object > schema, final JsonNode value, final String where ) {
         switch( String.valueOf( schema.get( "type" ) ) ) {
             case "array":
-                Assertions.assertTrue( value.isJsonArray(), where + " must be an array" );
-                value.getAsJsonArray().forEach( item -> assertMatchesSchema( resolve( schema.get( "items" ) ), item, where + "[]" ) );
+                Assertions.assertTrue( value.isArray(), where + " must be an array" );
+                value.forEach( item -> assertMatchesSchema( resolve( schema.get( "items" ) ), item, where + "[]" ) );
                 break;
             case "object":
-                Assertions.assertTrue( value.isJsonObject(), where + " must be an object" );
-                final JsonObject object = value.getAsJsonObject();
+                Assertions.assertTrue( value.isObject(), where + " must be an object" );
+                final JsonNode object = value;
                 for( final Object required : list( schema, "required" ) ) {
                     Assertions.assertTrue( object.has( required.toString() ), where + " lacks " + required );
                 }
                 final Map< String, Object > properties = map( schema, "properties" );
-                for( final String name : object.keySet() ) {
+                for( final String name : object.propertyNames() ) {
                     Assertions.assertTrue( properties.containsKey( name ), where + "." + name + " is not in the contract" );
                     assertMatchesSchema( resolve( properties.get( name ) ), object.get( name ), where + "." + name );
                 }
                 break;
             case "string":
-                Assertions.assertTrue( value.isJsonPrimitive() && value.getAsJsonPrimitive().isString(), where + " must be a string" );
+                Assertions.assertTrue( value.isString(), where + " must be a string" );
                 break;
             case "integer":
-                Assertions.assertTrue( value.isJsonPrimitive() && value.getAsJsonPrimitive().isNumber()
-                                       && value.getAsDouble() == Math.rint( value.getAsDouble() ), where + " must be an integer" );
+                Assertions.assertTrue( value.isNumber()
+                                       && value.asDouble() == Math.rint( value.asDouble() ), where + " must be an integer" );
                 break;
             default:
                 Assertions.fail( "the test does not know the type of " + where );
@@ -769,7 +767,7 @@ class ApiV1ServletTest {
 
     private static Set< String > names( final Reply reply ) {
         final Set< String > names = new HashSet<>();
-        reply.json().getAsJsonArray().forEach( name -> names.add( name.getAsString() ) );
+        reply.json().forEach( name -> names.add( name.asString() ) );
         return names;
     }
 
@@ -779,8 +777,8 @@ class ApiV1ServletTest {
         String contentType;
         final StringWriter body = new StringWriter();
 
-        JsonElement json() {
-            return GSON.fromJson( body.toString(), JsonElement.class );
+        JsonNode json() {
+            return JSON.readTree( body.toString() );
         }
     }
 

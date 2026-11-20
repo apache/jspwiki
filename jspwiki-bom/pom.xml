@@ -99,6 +99,12 @@
 
       <dependency>
         <groupId>org.apache.jspwiki</groupId>
+        <artifactId>jspwiki-rest-api</artifactId>
+        <version>${jspwiki.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.jspwiki</groupId>
         <artifactId>jspwiki-portable</artifactId>
         <version>${jspwiki.version}</version>
       </dependency>
