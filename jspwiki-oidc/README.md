@@ -61,7 +61,12 @@ below follow what these providers document, and have not been tried with them.
    redirect URI if the provider has that setting.
 
 The links to log in and out of the wiki then use the provider: `Login.jsp` sends the user to it, and `Logout.jsp` ends the session of the
-wiki and of the provider. The wiki is not asked for passwords, and its own user profiles are not used.
+wiki and of the provider. The wiki is not asked for passwords.
+
+The first time a user logs in, the wiki creates a profile in its user database with the full name (the claim `name`, or else
+`given_name` and `family_name`, or else the login name) and the e-mail address (the claim `email`) that the provider sends, so that
+the wiki shows the name of the person and can write to them. The profile has no password. A profile that exists is never changed by
+the login, and none is created if another user already has the same full name or wiki name.
 
 ## Providers
 

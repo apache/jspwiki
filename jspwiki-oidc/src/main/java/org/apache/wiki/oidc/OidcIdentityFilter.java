@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.wiki.api.core.Engine;
+import org.apache.wiki.auth.UserManager;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.jee.context.JEEContext;
@@ -30,11 +32,13 @@ import org.pac4j.jee.context.session.JEESessionStore;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Hands the user logged in with OpenID Connect to the wiki. It has to run before {@code WikiServletFilter}, which takes
@@ -42,12 +46,20 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 public class OidcIdentityFilter implements Filter {
 
+    /** Session attribute that says the profile of the user was looked for, so that it is done once per session. */
+    private static final String PROVISIONED = "jspwiki.oidc.provisioned";
+
+    /** Attribute of the servlet context where the wiki keeps its engine. */
+    private static final String ENGINE = "org.apache.wiki.WikiEngine";
+
     private String usernameClaim;
+    private ServletContext servletContext;
 
     /** {@inheritDoc} */
     @Override
     public void init( final FilterConfig filterConfig ) {
         usernameClaim = OidcSettings.load().usernameClaim();
+        servletContext = filterConfig.getServletContext();
     }
 
     /** {@inheritDoc} */
@@ -63,9 +75,24 @@ public class OidcIdentityFilter implements Filter {
         final Optional< UserProfile > profile = profiles.getProfile();
         if( profile.isPresent() ) {
             final UserProfile user = profile.get();
-            chain.doFilter( new OidcRequestWrapper( req, userName( user, usernameClaim ), Set.copyOf( user.getRoles() ) ), response );
+            final String name = userName( user, usernameClaim );
+            provision( req, name, user );
+            chain.doFilter( new OidcRequestWrapper( req, name, Set.copyOf( user.getRoles() ) ), response );
         } else {
             chain.doFilter( request, response );
+        }
+    }
+
+    /** Creates the profile of the user in the wiki, once per session. Nothing is done if the wiki is not running. */
+    private void provision( final HttpServletRequest req, final String name, final UserProfile user ) {
+        final HttpSession session = req.getSession( false );
+        if( session == null || session.getAttribute( PROVISIONED ) != null ) {
+            return;
+        }
+        final Object engine = servletContext == null ? null : servletContext.getAttribute( ENGINE );
+        if( engine instanceof Engine ) {
+            OidcUserProvisioner.provision( ( ( Engine )engine ).getManager( UserManager.class ).getUserDatabase(), name, user );
+            session.setAttribute( PROVISIONED, Boolean.TRUE );
         }
     }
 
