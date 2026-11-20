@@ -81,6 +81,11 @@
         <groupId>io.leonard.maven.plugins</groupId>
         <artifactId>jspc-maven-plugin</artifactId>
         <dependencies>
+          <dependency> <!-- first, so that this compiler and not the old one that the plugin brings compiles the JSPs at the level of the project -->
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>ecj</artifactId>
+            <version>3.21.0</version>
+          </dependency>
           <dependency> <!-- so jspwiki custom taglibs can be seen by the jsp compiler -->
             <groupId>${project.groupId}</groupId>
             <artifactId>jspwiki-main</artifactId>
