@@ -16,6 +16,36 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-11-20  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.2-git-2_
+
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search` is the first endpoint of a versioned REST API, described by the OpenAPI file `openapi.yaml` ([PR#589](https://github.com/apache/jspwiki/pull/589))
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search/suggestions` and `GET /api/v1/plugins` are added to the REST API; the suggestions leave out the pages the caller may not view ([PR#590](https://github.com/apache/jspwiki/pull/590))
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/pages/{name}`, `GET /api/v1/pages/{name}/history` and `GET /api/v1/pages/{name}/attachments` are added to the REST API, to read a page, its versions and its attachments if the caller may view the page
+
+**2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
+* _3.0.2-git-1_
+
+* Bump tools.jackson.core:jackson-databind from 3.2.4 to 3.3.0
+* Bump org.codehaus.mojo:build-helper-maven-plugin from 3.6.1 to 3.8.0dependenciesjava
+* Fix for [JSPWIKI-1373](https://issues.apache.org/jira/browse/JSPWIKI-1373): the HSQL script that creates the user database tables defines the `oldhashes` column
+* Fix for [JSPWIKI-1369](https://issues.apache.org/jira/browse/JSPWIKI-1369): the integration tests wait for the menus, the live preview and the page loads they depend on, use the user database schema and the web descriptor namespace the wiki expects, and check the name the wiki shows for the logged in user
+* Fix for [JSPWIKI-1374](https://issues.apache.org/jira/browse/JSPWIKI-1374) Make the PostgreSQL user database script run on PostgreSQL
+* Fix for [JSPWIKI-1381](https://issues.apache.org/jira/browse/JSPWIKI-1381) Related to JSPWIKI-1207. Look for the ehcache configuration with the class loader of the thread too
+* Fix f9r [JSPWIKI-1371](https://issues.apache.org/jira/browse/JSPWIKI-1371) SearchManagerTest failed once in the CI of the release branch with an extra page ThisPage in the result. Ehcache now supports the "portable" build style deployments
+
+**2026-11-17  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-10_
+
+* Fix for [JSPWIKI-1374](https://issues.apache.org/jira/browse/JSPWIKI-1374): the PostgreSQL script that creates the user database tables runs on PostgreSQL
+
+**2026-11-17  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-10_
+
+* Fix for [JSPWIKI-1371](https://issues.apache.org/jira/browse/JSPWIKI-1371): each caching manager uses its own Ehcache cache manager, so engines running in the same JVM no longer share the page caches nor shut them down for each other
 
 **2026-11-14  Multiple authors**
 
@@ -116,9 +146,6 @@ under the License.
 * [JSPWIKI-530](https://issues.apache.org/jira/browse/JSPWIKI-530): new `LanguagePlugin` that shows the block of its body that matches the `Accept-Language` header of the visitor, based on the code that Ulf Dittmer attached to the issue ([PR#596](https://github.com/apache/jspwiki/pull/596))
 * Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): the "More..." menu of the default template has an entry to be notified of the changes of the page, or to stop being notified. It posts, with the anti-CSRF token, to the new `Subscribe.jsp`, which needs a logged-in user with an e-mail address in the profile.
 * Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): the editors of the default template have a "Notify me of changes" box, so a user can subscribe to a page while writing it, also when it is a new page. `Edit.jsp` subscribes the user after the save, when the profile has an e-mail address.
-* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search` is the first endpoint of a versioned REST API, described by the OpenAPI file `openapi.yaml` ([PR#589](https://github.com/apache/jspwiki/pull/589))
-* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search/suggestions` and `GET /api/v1/plugins` are added to the REST API; the suggestions leave out the pages the caller may not view ([PR#590](https://github.com/apache/jspwiki/pull/590))
-* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/pages/{name}`, `GET /api/v1/pages/{name}/history` and `GET /api/v1/pages/{name}/attachments` are added to the REST API, to read a page, its versions and its attachments if the caller may view the page
 
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
 
