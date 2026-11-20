@@ -18,9 +18,14 @@ under the License.
 -->
 **2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
 * _3.0.2-git-1_
+
+* Bump tools.jackson.core:jackson-databind from 3.2.4 to 3.3.0
+* Bump org.codehaus.mojo:build-helper-maven-plugin from 3.6.1 to 3.8.0dependenciesjava
 * Fix for [JSPWIKI-1373](https://issues.apache.org/jira/browse/JSPWIKI-1373): the HSQL script that creates the user database tables defines the `oldhashes` column
 * Fix for [JSPWIKI-1369](https://issues.apache.org/jira/browse/JSPWIKI-1369): the integration tests wait for the menus, the live preview and the page loads they depend on, use the user database schema and the web descriptor namespace the wiki expects, and check the name the wiki shows for the logged in user
-
+* Fix for [JSPWIKI-1374](https://issues.apache.org/jira/browse/JSPWIKI-1374) Make the PostgreSQL user database script run on PostgreSQL
+* Fix for [JSPWIKI-1381](https://issues.apache.org/jira/browse/JSPWIKI-1381) Related to JSPWIKI-1207. Look for the ehcache configuration with the class loader of the thread too
+* Fix f9r [JSPWIKI-1371](https://issues.apache.org/jira/browse/JSPWIKI-1371) SearchManagerTest failed once in the CI of the release branch with an extra page ThisPage in the result. Ehcache now supports the "portable" build style deployments
 
 **2026-11-17  Arturo Bernal (abernal AT apache DOT org)**
 
