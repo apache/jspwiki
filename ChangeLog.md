@@ -16,15 +16,37 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-11-20  Arturo Bernal (abernal AT apache DOT org)**
 
-**2026-11-18  Arturo Bernal (abernal AT apache DOT org)**
-
-* _3.0.1-git-10_
+* _3.0.2-git-2_
 
 * Fix for [JSPWIKI-94](https://issues.apache.org/jira/browse/JSPWIKI-94): the new module jspwiki-oidc logs users in with OpenID Connect, with the pac4j filters, and presents them to the wiki as users authenticated by the container, including their roles and the logout. It is not included in the war unless it is built with the profile oidc, and its filters are disabled in web.xml
 * Fix for [JSPWIKI-1375](https://issues.apache.org/jira/browse/JSPWIKI-1375): the OpenID Connect login of the module jspwiki-oidc works with any OpenID Connect provider, with the claims for the name and the roles of the user configurable
 * [JSPWIKI-1375](https://issues.apache.org/jira/browse/JSPWIKI-1375): the tests of the OpenID Connect login run the whole login, the identity of the next requests and the logout through the filters of `web.xml` in an embedded Tomcat, against an OpenID Connect provider that runs in the test
 * [JSPWIKI-1375](https://issues.apache.org/jira/browse/JSPWIKI-1375): the first login with OpenID Connect creates the profile of the user in the user database of the wiki, with the full name and the e-mail address that the provider sends
+
+**2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
+* _3.0.2-git-1_
+
+* Bump tools.jackson.core:jackson-databind from 3.2.4 to 3.3.0
+* Bump org.codehaus.mojo:build-helper-maven-plugin from 3.6.1 to 3.8.0dependenciesjava
+* Fix for [JSPWIKI-1373](https://issues.apache.org/jira/browse/JSPWIKI-1373): the HSQL script that creates the user database tables defines the `oldhashes` column
+* Fix for [JSPWIKI-1369](https://issues.apache.org/jira/browse/JSPWIKI-1369): the integration tests wait for the menus, the live preview and the page loads they depend on, use the user database schema and the web descriptor namespace the wiki expects, and check the name the wiki shows for the logged in user
+* Fix for [JSPWIKI-1374](https://issues.apache.org/jira/browse/JSPWIKI-1374) Make the PostgreSQL user database script run on PostgreSQL
+* Fix for [JSPWIKI-1381](https://issues.apache.org/jira/browse/JSPWIKI-1381) Related to JSPWIKI-1207. Look for the ehcache configuration with the class loader of the thread too
+* Fix f9r [JSPWIKI-1371](https://issues.apache.org/jira/browse/JSPWIKI-1371) SearchManagerTest failed once in the CI of the release branch with an extra page ThisPage in the result. Ehcache now supports the "portable" build style deployments
+
+**2026-11-17  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-10_
+
+* Fix for [JSPWIKI-1374](https://issues.apache.org/jira/browse/JSPWIKI-1374): the PostgreSQL script that creates the user database tables runs on PostgreSQL
+
+**2026-11-17  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.1-git-10_
+
+* Fix for [JSPWIKI-1371](https://issues.apache.org/jira/browse/JSPWIKI-1371): each caching manager uses its own Ehcache cache manager, so engines running in the same JVM no longer share the page caches nor shut them down for each other
 
 **2026-11-14  Multiple authors**
 

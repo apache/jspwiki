@@ -73,12 +73,31 @@ public class ViewWikiPage implements HaddockPage {
     }
 
     /**
+     * Hovers the trigger until its container is open. The behaviours of the page are attached a little after the load event,
+     * so a hover done right after opening the page may not open the menu. If the menu does not open in ten seconds the
+     * method returns and the step that follows reports the failure.
+     *
+     * @param trigger element to hover.
+     * @param opened locator of the container once it is open.
+     */
+    private static void hoverUntilOpen( final By trigger, final By opened ) {
+        for( int i = 0; i < 40; i++ ) {
+            Selenide.$( By.tagName( "body" ) ).hover(); // leave the trigger, so the next hover enters it again
+            Selenide.$( trigger ).hover();
+            Selenide.sleep( 250L );
+            if( Selenide.$( opened ).exists() ) {
+                return;
+            }
+        }
+    }
+
+    /**
      * Hover's the user's icon, so the login area gets visible.
      *
      * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
     public ViewWikiPage hoverLoginArea() {
-        Selenide.$( By.className( "icon-user" ) ).hover();
+        hoverUntilOpen( By.className( "icon-user" ), By.cssSelector( ".userbox.open" ) );
         return this;
     }
 
@@ -88,7 +107,7 @@ public class ViewWikiPage implements HaddockPage {
      * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
     public ViewWikiPage hoverMoreArea() {
-        Selenide.$( By.id( "more" ) ).hover();
+        hoverUntilOpen( By.id( "more" ), By.cssSelector( "#more.open" ) );
         return this;
     }
 
@@ -109,7 +128,7 @@ public class ViewWikiPage implements HaddockPage {
      * @return {@link SearchResultsPage} instance, to allow chaining of actions.
      */
     public SearchResultsPage searchFor( final String text ) {
-        Selenide.$( By.className( "icon-search" ) ).hover();
+        hoverUntilOpen( By.className( "icon-search" ), By.cssSelector( ".searchbox.open" ) );
         Selenide.$( By.id( "query" ) ).click();
         Selenide.$( By.id( "query" ) ).val( text );
         Selenide.$( By.id( "searchSubmit" ) ).click();
