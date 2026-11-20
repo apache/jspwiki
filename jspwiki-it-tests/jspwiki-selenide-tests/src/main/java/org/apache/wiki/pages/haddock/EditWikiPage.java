@@ -20,6 +20,7 @@ package org.apache.wiki.pages.haddock;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideElement;
 import org.apache.wiki.pages.Page;
 import org.openqa.selenium.By;
 
@@ -70,10 +71,20 @@ public class EditWikiPage implements HaddockPage {
      * @return {@link ViewWikiPage} instance, to allow chaining of actions.
      */
     public ViewWikiPage saveText(final String text, final String preview ) {
-        Selenide.$( By.cssSelector( EDIT_TEXTAREA ) ).clear();
-        Selenide.$( By.cssSelector( EDIT_TEXTAREA ) ).val( text );
-        Selenide.$( By.className( "ajaxpreview" ) ).shouldBe( Condition.text( preview ), Duration.ofSeconds( 1L ) );
+        final SelenideElement editor = Selenide.$( By.cssSelector( EDIT_TEXTAREA ) );
+        editor.clear();
+        // the editor script binds shortly after load, and it refreshes the preview on input events, which setting the value does not fire
+        for( int i = 0; i < 20; i++ ) {
+            editor.val( text );
+            Selenide.executeJavaScript( "arguments[0].dispatchEvent( new Event( 'input', { bubbles: true } ) );", editor );
+            Selenide.sleep( 500L );
+            if( !Selenide.$( By.className( "ajaxpreview" ) ).has( Condition.cssClass( "empty" ) ) ) {
+                break;
+            }
+        }
+        Selenide.$( By.className( "ajaxpreview" ) ).shouldBe( Condition.text( preview ), Duration.ofSeconds( 10L ) );
         Selenide.$( By.name( "ok" ) ).click();
+        Selenide.$( By.cssSelector( EDIT_TEXTAREA ) ).should( Condition.disappear, Duration.ofSeconds( 10L ) );
         return new ViewWikiPage();
     }
 

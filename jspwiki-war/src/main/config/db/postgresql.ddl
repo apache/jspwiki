@@ -18,9 +18,12 @@ drop table groups;
 drop table group_members;
 drop user jspwiki;
 
+-- the e-mail of a user is looked up with the case the user typed, as varchar_ignorecase does on HSQL
+create collation if not exists case_insensitive (provider = icu, locale = 'und-u-ks-level2', deterministic = false);
+
 create table users (
   uid varchar(100),
-  email varchar_ignorecase(100),
+  email varchar(100) collate case_insensitive,
   full_name varchar(100),
   login_name varchar(100) not null primary key,
   password varchar(255),
@@ -29,7 +32,8 @@ create table users (
   modified timestamp,
   lock_expiry timestamp,
   password_changed timestamp,
-  attributes longvarchar,
+  attributes text,
+  oldhashes text
 );
 
 create table roles (
@@ -52,7 +56,7 @@ create table group_members (
     primary key (name,member)
 );
 
-create user jspwiki with encrypted password 'password' nocreatedb nocreateuser;
+create user jspwiki with encrypted password 'password' nosuperuser nocreatedb nocreaterole;
 
 grant select, insert, update, delete on users to jspwiki;
 grant select, insert, update, delete on roles to jspwiki;
@@ -101,8 +105,8 @@ insert into group_members (
   'Administrator'
 );
 
-#drop table users;
-#drop table roles;
-#drop table groups;
-#drop table group_members;
-#drop user jspwiki;
+--drop table users;
+--drop table roles;
+--drop table groups;
+--drop table group_members;
+--drop user jspwiki;
