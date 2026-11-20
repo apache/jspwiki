@@ -16,12 +16,11 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-
-**2026-11-17  Arturo Bernal (abernal AT apache DOT org)**
-
-* _3.0.1-git-10_
-
+**2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
+* _3.0.2-git-1_
+* Fix for [JSPWIKI-1373](https://issues.apache.org/jira/browse/JSPWIKI-1373): the HSQL script that creates the user database tables defines the `oldhashes` column
 * Fix for [JSPWIKI-1369](https://issues.apache.org/jira/browse/JSPWIKI-1369): the integration tests wait for the menus, the live preview and the page loads they depend on, use the user database schema and the web descriptor namespace the wiki expects, and check the name the wiki shows for the logged in user
+
 
 **2026-11-14  Multiple authors**
 
