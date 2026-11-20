@@ -30,6 +30,7 @@ create table users (
   lock_expiry timestamp,
   password_changed timestamp,
   attributes longvarchar,
+  oldhashes longvarchar,
   constraint users primary key (uid)
 );
 
