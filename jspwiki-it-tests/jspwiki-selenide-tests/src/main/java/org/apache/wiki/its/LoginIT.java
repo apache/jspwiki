@@ -45,7 +45,7 @@ public class LoginIT extends WithIntegrationTestSetup {
         
         main = login.performLogin();
         Assertions.assertEquals( "JSPWiki: Main", main.title() );
-        Assertions.assertEquals( "G’day, Janne Jalkanen (authenticated)", main.hoverLoginArea().authenticatedText() );
+        Assertions.assertEquals( "G’day, janne (authenticated)", main.hoverLoginArea().authenticatedText() );
         
         main.clickOnLogout();
         Assertions.assertEquals( "G’day (anonymous guest)", main.hoverLoginArea().authenticatedText() );
