@@ -74,6 +74,7 @@ import org.apache.wiki.auth.authorize.GroupManager;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.node.ObjectNode;
 import java.util.concurrent.locks.ReentrantLock;
+import org.apache.wiki.plugin.UserManagementPlugin;
 
 
 /**
@@ -127,6 +128,7 @@ public class DefaultUserManager implements UserManager {
 
         //TODO: Replace with custom annotations. See JSPWIKI-566
         WikiAjaxDispatcherServlet.registerServlet( JSON_USERS, new JSONUserModule(this), new AllPermission(null));
+        WikiAjaxDispatcherServlet.registerServlet( UserManagementPlugin.PATH, new UserManagementPlugin(m_engine));
 
         // What happens to the accounts as their passwords get older, if the wiki is set up for it
         final AccountLifecycle lifecycle = new AccountLifecycle( props, this::getUserDatabase, new AccountLifecycleMailer( engine ) );

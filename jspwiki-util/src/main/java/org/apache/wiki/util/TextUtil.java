@@ -218,6 +218,7 @@ public final class TextUtil {
         src = replaceString( src, "<", "&lt;" );
         src = replaceString( src, ">", "&gt;" );
         src = replaceString( src, "\"", "&quot;" );
+        src = replaceString (src, "'", "&apos;");
 
         return src;
     }

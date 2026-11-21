@@ -117,9 +117,17 @@ public final class WikiSecurityEvent extends WikiEvent {
     public static final int   LOW_STORAGE              = 55;
     /** Login audit alert, multiple concurrent logins from the different ip addresses . */
     public static final int   LOGIN_ALERT = 56;
+    /** login was administratively or self deleted */
+    public static final int LOGIN_DELETED = 57;
+    /** login was administratively locked or locked due to too many incorrect password attempts */
+    public static final int LOGIN_LOCKED = 58;
     
+    /** login was administratively unlock */
+    public static  final int LOGIN_UNLOCKED = 59;
+
     /** The security logging service. */
     private static final Logger LOG = LogManager.getLogger( "SecurityLog" );
+   
     
     private final Principal m_principal;
     

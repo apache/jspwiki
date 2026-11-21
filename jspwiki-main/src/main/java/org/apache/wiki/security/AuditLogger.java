@@ -16,7 +16,6 @@
 package org.apache.wiki.security;
 
 import com.google.gson.Gson;
-import jakarta.mail.MessagingException;
 import java.io.File;
 import java.util.Date;
 import java.util.Locale;
@@ -26,7 +25,6 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import org.apache.log4j.Logger;
 import org.apache.wiki.WikiEngine;
 import org.apache.wiki.event.WikiEvent;
