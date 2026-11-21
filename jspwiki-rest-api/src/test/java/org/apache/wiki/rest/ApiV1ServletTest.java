@@ -589,6 +589,119 @@ class ApiV1ServletTest {
     }
 
     @Test
+    void theDifferenceBetweenTwoVersionsAnswersWithTheContract() throws Exception {
+        startEngine( null, "0", "VersioningFileProvider" );
+        engine.saveText( "ApiDiff", "first line" );
+        engine.saveText( "ApiDiff", "first line\nsecond added line" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDiff/diff", "from", "1", "to", "2" ) );
+
+        assertMatchesContract( "/pages/{name}/diff", reply );
+        Assertions.assertEquals( 200, reply.status );
+        Assertions.assertEquals( "ApiDiff", reply.json().get( "name" ).asString() );
+        Assertions.assertEquals( 1, reply.json().get( "from" ).asInt() );
+        Assertions.assertEquals( 2, reply.json().get( "to" ).asInt() );
+        Assertions.assertTrue( reply.json().get( "html" ).asString().contains( "second added line" ), reply.body.toString() );
+        Assertions.assertTrue( reply.json().get( "html" ).asString().contains( "diffadd" ), "an added line is marked: " + reply.body );
+    }
+
+    @Test
+    void theDifferenceGoesToTheLatestVersionWhenToIsAbsent() throws Exception {
+        startEngine( null, "0", "VersioningFileProvider" );
+        engine.saveText( "ApiDiffLatest", "one" );
+        engine.saveText( "ApiDiffLatest", "one two" );
+        engine.saveText( "ApiDiffLatest", "one two three" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDiffLatest/diff", "from", "1" ) );
+
+        Assertions.assertEquals( 200, reply.status );
+        Assertions.assertEquals( 3, reply.json().get( "to" ).asInt() );
+    }
+
+    @Test
+    void theDifferenceOfAVersionWithItselfHasNoMarkedChange() throws Exception {
+        startEngine( null, "0", "VersioningFileProvider" );
+        engine.saveText( "ApiDiffSame", "one" );
+        engine.saveText( "ApiDiffSame", "one two" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDiffSame/diff", "from", "2", "to", "2" ) );
+
+        assertMatchesContract( "/pages/{name}/diff", reply );
+        Assertions.assertEquals( 200, reply.status );
+        final String html = reply.json().get( "html" ).asString();
+        Assertions.assertFalse( html.contains( "diffadd" ) || html.contains( "diffrem" ) || html.contains( "diffchange" ), html );
+    }
+
+    @Test
+    void theDifferenceNeedsTheParameterFrom() throws Exception {
+        startEngine( null, "0", "VersioningFileProvider" );
+        engine.saveText( "ApiDiffNoFrom", "one" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDiffNoFrom/diff" ) );
+
+        assertMatchesContract( "/pages/{name}/diff", reply );
+        Assertions.assertEquals( 400, reply.status );
+    }
+
+    @Test
+    void aVersionThatIsNotANumberInTheDifferenceIs400() throws Exception {
+        startEngine( null, "0", "VersioningFileProvider" );
+        engine.saveText( "ApiDiffBad", "one" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDiffBad/diff", "from", "1", "to", "x" ) );
+
+        assertMatchesContract( "/pages/{name}/diff", reply );
+        Assertions.assertEquals( 400, reply.status );
+    }
+
+    @Test
+    void theDifferenceWithAVersionThatDoesNotExistIs404() throws Exception {
+        startEngine( null, "0", "VersioningFileProvider" );
+        engine.saveText( "ApiDiffMissing", "one" );
+        engine.saveText( "ApiDiffMissing", "one two" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDiffMissing/diff", "from", "1", "to", "9" ) );
+
+        assertMatchesContract( "/pages/{name}/diff", reply );
+        Assertions.assertEquals( 404, reply.status );
+    }
+
+    @Test
+    void theDifferenceOfAPageThatDoesNotExistIs404() throws Exception {
+        startEngine( null, "0", "VersioningFileProvider" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDiffNoPage/diff", "from", "1" ) );
+
+        assertMatchesContract( "/pages/{name}/diff", reply );
+        Assertions.assertEquals( 404, reply.status );
+    }
+
+    @Test
+    void theDifferenceOfAPageTheCallerMayNotViewIs401() throws Exception {
+        startEngine( null, "0", "VersioningFileProvider" );
+        engine.saveText( "ApiDiffSecret", "[{ALLOW view Admin}] secret" );
+        engine.saveText( "ApiDiffSecret", "[{ALLOW view Admin}] secret changed" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDiffSecret/diff", "from", "1", "to", "2" ) );
+
+        assertMatchesContract( "/pages/{name}/diff", reply );
+        Assertions.assertEquals( 401, reply.status );
+        Assertions.assertFalse( reply.body.toString().contains( "changed" ), reply.body.toString() );
+    }
+
+    @Test
+    void theDifferenceOnAProviderWithoutVersionsKnowsOnlyVersionOne() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiDiffNoVersions", "one" );
+
+        final Reply known = call( requestTo( "/pages/ApiDiffNoVersions/diff", "from", "1" ) );
+        final Reply unknown = call( requestTo( "/pages/ApiDiffNoVersions/diff", "from", "2" ) );
+
+        Assertions.assertEquals( 200, known.status );
+        Assertions.assertEquals( 404, unknown.status );
+    }
+
+    @Test
     void pagesListTheNamesSortedAndLeaveOutTheOnesTheCallerMayNotView() throws Exception {
         startEngine( null );
         engine.saveText( "ApiListB", "b" );

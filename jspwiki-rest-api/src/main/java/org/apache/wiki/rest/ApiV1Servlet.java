@@ -44,6 +44,7 @@ import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.attachment.AttachmentServlet;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
+import org.apache.wiki.diff.DifferenceManager;
 import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.plugin.PluginManager;
 import org.apache.wiki.references.ReferenceManager;
@@ -86,6 +87,7 @@ public class ApiV1Servlet extends HttpServlet {
     private static final String ATTACHMENTS = "/attachments";
     private static final String REFERENCES = "/references";
     private static final String HTML = "/html";
+    private static final String DIFF = "/diff";
 
     private transient Engine engine;
 
@@ -184,7 +186,7 @@ public class ApiV1Servlet extends HttpServlet {
         final String file = download > 0 ? rest.substring( download + ATTACHMENTS.length() + 1 ) : "";
         final boolean content = !file.isEmpty() && file.indexOf( '/' ) < 0;
         final String suffix = content ? ATTACHMENTS : rest.endsWith( HISTORY ) ? HISTORY : rest.endsWith( ATTACHMENTS ) ? ATTACHMENTS
-                            : rest.endsWith( REFERENCES ) ? REFERENCES : rest.endsWith( HTML ) ? HTML : "";
+                            : rest.endsWith( REFERENCES ) ? REFERENCES : rest.endsWith( HTML ) ? HTML : rest.endsWith( DIFF ) ? DIFF : "";
         final String name = content ? rest.substring( 0, download ) : rest.substring( 0, rest.length() - suffix.length() );
         if( name.isEmpty() ) {
             error( resp, HttpServletResponse.SC_NOT_FOUND, "No such resource." );
@@ -221,6 +223,8 @@ public class ApiV1Servlet extends HttpServlet {
                 attachments( resp, page );
             } else if( REFERENCES.equals( suffix ) ) {
                 references( req, resp, page );
+            } else if( DIFF.equals( suffix ) ) {
+                diff( req, resp, page );
             } else if( HTML.equals( suffix ) ) {
                 final Context context = Wiki.context().create( engine, req, page );
                 json( resp, HttpServletResponse.SC_OK, new Rendered( page, engine.getManager( RenderingManager.class ).getHTML( context, page ) ) );
@@ -317,6 +321,29 @@ public class ApiV1Servlet extends HttpServlet {
         json( resp, HttpServletResponse.SC_OK, revisions );
     }
 
+    /** Sends the difference between two versions of a page, as the wiki shows it. The parameter to is the latest version when absent. */
+    private void diff( final HttpServletRequest req, final HttpServletResponse resp, final Page page ) throws ProviderException, IOException {
+        if( req.getParameter( "from" ) == null ) {
+            error( resp, HttpServletResponse.SC_BAD_REQUEST, "The parameter from is required." );
+            return;
+        }
+        final int from = version( req, resp, "from" );
+        final int to = from == 0 ? 0 : version( req, resp, "to" );
+        if( to == 0 ) {
+            return;
+        }
+        final PageManager manager = engine.getManager( PageManager.class );
+        final Page first = manager.getPageInfo( page.getName(), from );
+        final Page second = manager.getPageInfo( page.getName(), to );
+        // A provider that keeps no old versions answers with the current page whatever the version asked for
+        if( first == null || second == null || number( first.getVersion() ) != from || to != WikiProvider.LATEST_VERSION && number( second.getVersion() ) != to ) {
+            error( resp, HttpServletResponse.SC_NOT_FOUND, "The version of the page does not exist." );
+            return;
+        }
+        final String html = engine.getManager( DifferenceManager.class ).getDiff( Wiki.context().create( engine, req, page ), first.getVersion(), second.getVersion() );
+        json( resp, HttpServletResponse.SC_OK, new Difference( page.getName(), number( first.getVersion() ), number( second.getVersion() ), html ) );
+    }
+
     private void attachments( final HttpServletResponse resp, final Page page ) throws ProviderException, IOException {
         final List< AttachmentEntry > entries = new ArrayList<>();
         for( final Attachment attachment : engine.getManager( AttachmentManager.class ).listAttachments( page ) ) {
@@ -368,7 +395,12 @@ public class ApiV1Servlet extends HttpServlet {
 
     /** Returns the version parameter, the latest version when it is absent, and 0 after answering 400 when it is not a positive integer. */
     private static int version( final HttpServletRequest req, final HttpServletResponse resp ) throws IOException {
-        final String value = req.getParameter( "version" );
+        return version( req, resp, "version" );
+    }
+
+    /** Returns the parameter with that name as a version, the latest version when it is absent, and 0 after answering 400 when it is not a positive integer. */
+    private static int version( final HttpServletRequest req, final HttpServletResponse resp, final String parameter ) throws IOException {
+        final String value = req.getParameter( parameter );
         if( value == null ) {
             return WikiProvider.LATEST_VERSION;
         }
@@ -380,7 +412,7 @@ public class ApiV1Servlet extends HttpServlet {
         } catch( final NumberFormatException e ) {
             // answered below
         }
-        error( resp, HttpServletResponse.SC_BAD_REQUEST, "The parameter version must be an integer greater than zero." );
+        error( resp, HttpServletResponse.SC_BAD_REQUEST, "The parameter " + parameter + " must be an integer greater than zero." );
         return 0;
     }
 
@@ -477,6 +509,10 @@ public class ApiV1Servlet extends HttpServlet {
         Rendered( final Page page, final String html ) {
             this( page.getName(), number( page.getVersion() ), html );
         }
+    }
+
+    /** The difference between two versions of a page, as the wiki shows it, in HTML. */
+    private record Difference( String name, int from, int to, String html ) {
     }
 
     /** The links of a page. */
