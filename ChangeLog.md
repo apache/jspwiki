@@ -16,6 +16,12 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-11-21  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.2-git-2_
+
+* [JSPWIKI-572](https://issues.apache.org/jira/browse/JSPWIKI-572): tests for the `IndexPlugin`: the pages are grouped by their first letter and sorted, no entry is empty, and the pages whose names differ only in the case of a letter are all listed.
+
 **2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
 * _3.0.2-git-1_
 
