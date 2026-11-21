@@ -117,11 +117,92 @@
         </executions>
       </plugin>
       <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <!-- Unpack the JSP Wiki web archive -->
+          <execution>
+            <id>unpack-jspwiki-war</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.jspwiki</groupId>
+                  <artifactId>jspwiki-war</artifactId>
+                  <version>${project.version}</version>
+                  <type>war</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}/unpack/jspwiki-war</outputDirectory>
+            </configuration>
+          </execution>
+          <!-- Unpack the JSP Wiki Pages for the "personal" wiki -->
+          <execution>
+            <id>unpack-wikipages-personal</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.jspwiki.wikipages</groupId>
+                  <artifactId>jspwiki-wikipages-${jspwiki.woas.language}</artifactId>
+                  <version>${project.version}</version>
+                </artifactItem>
+              </artifactItems>
+              <excludes>META-INF/**</excludes>
+              <outputDirectory>${project.build.directory}/woas/data/personal</outputDirectory>
+            </configuration>
+          </execution>
+          <!-- Unpack the JSP Wiki Pages for the "department" wiki -->
+          <execution>
+            <id>unpack-wikipages-department</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.jspwiki.wikipages</groupId>
+                  <artifactId>jspwiki-wikipages-${jspwiki.woas.language}</artifactId>
+                  <version>${project.version}</version>
+                </artifactItem>
+              </artifactItems>
+              <excludes>META-INF/**</excludes>
+              <outputDirectory>${project.build.directory}/woas/data/department</outputDirectory>
+            </configuration>
+          </execution>
+          <!-- Unpack the tomcat distribution -->
+          <execution>
+            <id>unpack-tomcat-zip</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>unpack</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>org.apache.tomcat</groupId>
+                  <artifactId>tomcat</artifactId>
+                  <version>${tomcat.version}</version>
+                  <type>zip</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}/unpack/tomcat</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
             <id>woas:copy-woas</id>
-            <phase>process-resources</phase>
+            <phase>prepare-package</phase>
             <configuration>
               <target>
                 <property name="jspwiki.woas.version" value="${woas.version}" />
@@ -162,87 +243,6 @@
             <goals>
               <goal>run</goal>
             </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <!-- Unpack the JSP Wiki web archive -->
-          <execution>
-            <id>unpack-jspwiki-war</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.jspwiki</groupId>
-                  <artifactId>jspwiki-war</artifactId>
-                  <version>${project.version}</version>
-                  <type>war</type>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${project.build.directory}/unpack/jspwiki-war</outputDirectory>
-            </configuration>
-          </execution>
-          <!-- Unpack the JSP Wiki Pages for the "personal" wiki -->
-          <execution>
-            <id>unpack-wikipages-personal</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.jspwiki.wikipages</groupId>
-                  <artifactId>jspwiki-wikipages-${jspwiki.woas.language}</artifactId>
-                  <version>${project.version}</version>
-                </artifactItem>
-              </artifactItems>
-              <excludes>META-INF/**</excludes>
-              <outputDirectory>${project.build.directory}/woas/data/personal</outputDirectory>
-            </configuration>
-          </execution>
-          <!-- Unpack the JSP Wiki Pages for the "department" wiki -->
-          <execution>
-            <id>unpack-wikipages-department</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.jspwiki.wikipages</groupId>
-                  <artifactId>jspwiki-wikipages-${jspwiki.woas.language}</artifactId>
-                  <version>${project.version}</version>
-                </artifactItem>
-              </artifactItems>
-              <excludes>META-INF/**</excludes>
-              <outputDirectory>${project.build.directory}/woas/data/department</outputDirectory>
-            </configuration>
-          </execution>
-          <!-- Unpack the tomcat distribution -->
-          <execution>
-            <id>unpack-tomcat-zip</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>unpack</goal>
-            </goals>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.tomcat</groupId>
-                  <artifactId>tomcat</artifactId>
-                  <version>${tomcat.version}</version>
-                  <type>zip</type>
-                </artifactItem>
-              </artifactItems>
-              <outputDirectory>${project.build.directory}/unpack/tomcat</outputDirectory>
-            </configuration>
           </execution>
         </executions>
       </plugin>
