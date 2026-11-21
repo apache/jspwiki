@@ -10,6 +10,12 @@
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>2.3.232</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>jspwiki-main</artifactId>
             <version>${project.version}</version>

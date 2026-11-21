@@ -1,4 +1,4 @@
-# Installing this plugin
+# Installing the JDBC Page and Attachment Providers
 
 1. Add the JAR from this module into your jspwiki/WEB-INF/lib folder
 2. Add all the JDBC drivers from your database vendor of choice to jspwiki/WEB-INF/lib folder
@@ -9,12 +9,18 @@
     jspwiki.pageProvider = org.apache.wiki.providers.JdbcPageProvider
     jspwiki.jdbcPageProvider.autoCreateSchema = true
 
+    jspwiki.attachment.provider = org.apache.wiki.providers.JdbcAttachmentProvider
+    jspwiki.jdbcAttachmentProvider.dataSource = java:comp/env/jdbc/WikiDS
+    # Optional:
+    # jspwiki.basicAttachmentProvider.disableCache = .*\.xlsx
+
     # Option A: Direct JDBC URL (SQLite / PostgreSQL / MariaDB / MSSQL)
     jspwiki.jdbcPageProvider.url = jdbc:postgresql://localhost:5432/jspwiki
     jspwiki.jdbcPageProvider.user = jspwiki
     jspwiki.jdbcPageProvider.password = secret
 
     # Option B: Container/App-managed DataSource via JNDI (recommended for production pools)
+    # so in tomcat, the connection specifics go in wiki/META-INF/context.xml
     # jspwiki.jdbcPageProvider.jndiName = java:comp/env/jdbc/JSPWikiDB
 
     # more efficient searches, however turn off if you use some kind of obfuscation algorithm
