@@ -30,6 +30,9 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.auth.acl.adv.RoleNode;
+import org.apache.wiki.auth.acl.adv.RuleNode;
+import org.apache.wiki.auth.acl.adv.RuleParser;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageLock;
@@ -51,12 +54,6 @@ import java.util.StringTokenizer;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.wiki.auth.acl.adv.AdvancedAcl;
-import org.apache.wiki.auth.acl.adv.NotNode;
-import org.apache.wiki.auth.acl.adv.OperatorNode;
-import org.apache.wiki.auth.acl.adv.RoleNode;
-import org.apache.wiki.auth.acl.adv.RuleNode;
-import org.apache.wiki.auth.acl.adv.RuleParser;
 
 /**
  * Default implementation that parses Acls from wiki page markup.
@@ -84,6 +81,12 @@ public class DefaultAclManager implements AclManager {
     private static final String ACL_REGEX = "\\[\\{\\s*ALLOW\\s+" + PERM_REGEX + "\\s*(.*?)\\s*\\}\\]";
 
     /**
+     * Identifies an advanced rule, which is a rule that has AND, OR or NOT written in upper case as a word of its own. A name that
+     * contains one of them has to be written without spaces around it, or in lower case, to be read as a name.
+     */
+    private static final Pattern ADVANCED_RULE = Pattern.compile( "(?:^|[\\s(])(?:AND|OR|NOT)(?=[\\s(]|$)" );
+
+    /**
      * Identifies ACL strings in wiki text; the first group is the action (view, edit) and
      * the second is the list of Principals separated by commas. The overall match is
      * the ACL string from [{ to }].
@@ -102,43 +105,21 @@ public class DefaultAclManager implements AclManager {
     public Acl parseAcl( final Page page, final String ruleLine ) throws WikiSecurityException {
         Acl acl = page.getAcl();
         if (acl == null) {
-            acl = Wiki.acls().acl();    
+            acl = Wiki.acls().acl();
         }
 
         try {
-            if (ruleLine.contains(" AND ")
-                    || ruleLine.contains(" NOT ")
-                    || ruleLine.contains(" OR ")) {
-                try {
-                    if (acl == null || !(acl instanceof AdvancedAcl)) {
-                        acl = new AdvancedAcl();
-                    }
-                    final StringTokenizer fieldToks = new StringTokenizer(ruleLine);
-                    //burn off the allow tag
-                    fieldToks.nextToken();
-                    //get the permission flag. i.e. edit, view, etc
-                    final String actions = fieldToks.nextToken();
-                    StringBuilder sb = new StringBuilder();
-                    while (fieldToks.hasMoreTokens()) {
-                        sb.append(fieldToks.nextToken() + " ");
-                    }
-                    RuleParser parser = new RuleParser(sb.toString());
-                    RuleNode node = parser.parse();
-                    ((AdvancedAcl) acl).addRuleNode(node, actions);
-                    recursiveResolve(node);
-                    page.setAcl(acl);
-                    LOG.debug(acl.toString());
-                    return acl;
-                } catch (final NoSuchElementException nsee) {
-                    LOG.warn("Invalid access rule: " + ruleLine + " - defaults will be used.");
-                    throw new WikiSecurityException("Invalid access rule: " + ruleLine, nsee);
-                } catch (final IllegalArgumentException iae) {
-                    throw new WikiSecurityException("Invalid permission type: " + ruleLine, iae);
-                }
-            }
             final StringTokenizer fieldToks = new StringTokenizer(ruleLine);
             fieldToks.nextToken();
             final String actions = fieldToks.nextToken();
+
+            final String expression = ruleLine.substring( ruleLine.indexOf( actions ) + actions.length() ).trim();
+            if( ADVANCED_RULE.matcher( expression ).find() ) {
+                addAdvancedRule( acl, page, actions, expression, ruleLine );
+                page.setAcl( acl );
+                LOG.debug( acl.toString() );
+                return acl;
+            }
 
             while( fieldToks.hasMoreTokens() ) {
                 final String principalName = fieldToks.nextToken(",").trim();
@@ -169,18 +150,24 @@ public class DefaultAclManager implements AclManager {
 
         return acl;
     }
-  private void recursiveResolve(RuleNode node) {
-        if (node == null) {
-            return;
+    /**
+     * Adds an advanced rule to an ACL. The ACL has to be one of the implementation of this manager, as that is the one that keeps rules.
+     */
+    private void addAdvancedRule( final Acl acl, final Page page, final String actions, final String expression, final String ruleLine )
+            throws WikiSecurityException {
+        if( !( acl instanceof AclImpl ) ) {
+            throw new WikiSecurityException( "Access rules with AND, OR or NOT are not supported by the ACL of this page: " + ruleLine );
         }
-        if (node instanceof OperatorNode) {
-            recursiveResolve(((OperatorNode) node).getLeft());
-            recursiveResolve(((OperatorNode) node).getRight());
-        } else if (node instanceof NotNode) {
-            recursiveResolve(((NotNode) node).getChild());
-        } else if (node instanceof RoleNode) {
-            ((RoleNode) node).setPrincipal(m_auth.resolvePrincipal(((RoleNode) node).getRole()));
+        final RuleNode rule;
+        try {
+            rule = new RuleParser( expression ).parse();
+        } catch( final IllegalArgumentException iae ) {
+            throw new WikiSecurityException( "Invalid access rule: " + ruleLine + " (" + iae.getMessage() + ")", iae );
         }
+        for( final RoleNode role : rule.getRoleNodes() ) {
+            role.setPrincipal( m_auth.resolvePrincipal( role.getRole() ) );
+        }
+        ( ( AclImpl ) acl ).addRule( PermissionFactory.getPagePermission( page, actions ), rule );
     }
 
     /** {@inheritDoc} */
@@ -288,6 +275,11 @@ public class DefaultAclManager implements AclManager {
                 }
             }
             s.append( "}]\n" );
+        }
+        if( acl instanceof AclImpl ) {
+            for( final Map.Entry< Permission, RuleNode > rule : ( ( AclImpl ) acl ).getRules() ) {
+                s.append( "[{ALLOW " ).append( rule.getKey().getActions() ).append( " " ).append( rule.getValue() ).append( "}]\n" );
+            }
         }
         return s.toString();
     }

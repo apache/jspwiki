@@ -15,117 +15,105 @@
  */
 package org.apache.wiki.auth.acl.adv;
 
-import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.Set;
 
 /**
- * tests the rule parser for the advanced acl tool chain
- *
- * @see AdvancedAcl
- * @since 3.0.0
-
+ * Tests the parser of the expressions of advanced access rules.
  */
 public class RuleParserTest {
 
-    public RuleParserTest() {
+    private static RuleNode parse( final String expression ) {
+        return new RuleParser( expression ).parse();
     }
 
     @Test
     public void simpleOrStatement() {
-        RuleParser instance = new RuleParser("bob or mary");
-        RuleNode result = instance.parse();
-        Assertions.assertEquals(2, result.getAllRoles().size());
-        Assertions.assertTrue(result.evaluate(Set.of("bob")));
-        Assertions.assertTrue(result.evaluate(Set.of("mary")));
-        Assertions.assertFalse(result.evaluate(Set.of("john")));
+        final RuleNode result = parse( "bob OR mary" );
+        Assertions.assertEquals( 2, result.getAllRoles().size() );
+        Assertions.assertTrue( result.evaluate( Set.of( "bob" ) ) );
+        Assertions.assertTrue( result.evaluate( Set.of( "mary" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "john" ) ) );
     }
 
     @Test
     public void simpleAndStatement() {
-        RuleParser instance = new RuleParser("accounting AND finance");
-        RuleNode result = instance.parse();
-        Assertions.assertEquals(2, result.getAllRoles().size());
-        Assertions.assertTrue(result.evaluate(Set.of("accounting", "finance")));
-        Assertions.assertTrue(result.evaluate(Set.of("accounting", "finance", "otherDepartment")));
-        Assertions.assertFalse(result.evaluate(Set.of("accounting")));
-        Assertions.assertFalse(result.evaluate(Set.of("finance")));
-        Assertions.assertFalse(result.evaluate(Set.of("john")));
+        final RuleNode result = parse( "accounting AND finance" );
+        Assertions.assertEquals( 2, result.getAllRoles().size() );
+        Assertions.assertTrue( result.evaluate( Set.of( "accounting", "finance" ) ) );
+        Assertions.assertTrue( result.evaluate( Set.of( "accounting", "finance", "otherDepartment" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "accounting" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "finance" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "john" ) ) );
     }
 
     @Test
     public void complexSetup() {
-        RuleParser instance = new RuleParser("accounting AND (finance OR admin)");
-        RuleNode result = instance.parse();
-        Assertions.assertEquals(3, result.getAllRoles().size());
-        Assertions.assertTrue(result.evaluate(Set.of("accounting", "finance")));
-        Assertions.assertTrue(result.evaluate(Set.of("accounting", "finance", "otherDepartment")));
-        Assertions.assertTrue(result.evaluate(Set.of("accounting", "finance", "admin")));
-        Assertions.assertTrue(result.evaluate(Set.of("accounting", "admin")));
-        Assertions.assertFalse(result.evaluate(Set.of("accounting")));
-        Assertions.assertFalse(result.evaluate(Set.of("finance")));
-        Assertions.assertFalse(result.evaluate(Set.of("john")));
+        final RuleNode result = parse( "accounting AND (finance OR admin)" );
+        Assertions.assertEquals( 3, result.getAllRoles().size() );
+        Assertions.assertTrue( result.evaluate( Set.of( "accounting", "finance" ) ) );
+        Assertions.assertTrue( result.evaluate( Set.of( "accounting", "finance", "otherDepartment" ) ) );
+        Assertions.assertTrue( result.evaluate( Set.of( "accounting", "finance", "admin" ) ) );
+        Assertions.assertTrue( result.evaluate( Set.of( "accounting", "admin" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "accounting" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "finance" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "john" ) ) );
     }
 
     @Test
     public void complexSetupNot() {
-        RuleParser instance = new RuleParser("accounting AND finance AND NOT(bob)");
-        instance = new RuleParser("(accounting AND finance AND NOT(bob))");
-        RuleNode result = instance.parse();
-        Assertions.assertEquals(3, result.getAllRoles().size());
-        Assertions.assertTrue(result.evaluate(Set.of("accounting", "finance")));
-        Assertions.assertTrue(result.evaluate(Set.of("accounting", "finance", "otherDepartment")));
-        Assertions.assertFalse(result.evaluate(Set.of("accounting", "finance", "bob")));
-        Assertions.assertFalse(result.evaluate(Set.of("accounting", "admin")));
-        Assertions.assertFalse(result.evaluate(Set.of("accounting")));
-        Assertions.assertFalse(result.evaluate(Set.of("finance")));
-        Assertions.assertFalse(result.evaluate(Set.of("john")));
+        final RuleNode result = parse( "(accounting AND finance AND NOT(bob))" );
+        Assertions.assertEquals( 3, result.getAllRoles().size() );
+        Assertions.assertTrue( result.evaluate( Set.of( "accounting", "finance" ) ) );
+        Assertions.assertTrue( result.evaluate( Set.of( "accounting", "finance", "otherDepartment" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "accounting", "finance", "bob" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "accounting", "admin" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "accounting" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "john" ) ) );
     }
 
     @Test
-    public void mismatchedParan() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> {
-            RuleParser instance = new RuleParser("(accounting AND finance AND NOT(bob)");
-            RuleNode parse = instance.parse();
-            System.out.println(parse);
-        });
+    public void notBindsTighterThanAndAndAndTighterThanOr() {
+        final RuleNode result = parse( "a OR b AND NOT c" );
+        Assertions.assertTrue( result.evaluate( Set.of( "a", "c" ) ) );
+        Assertions.assertTrue( result.evaluate( Set.of( "b" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of( "b", "c" ) ) );
+        Assertions.assertFalse( result.evaluate( Set.of() ) );
+    }
 
-        RuleParser instance = new RuleParser("(accounting AND finance AND NOT(bob))");
-        instance.parse();
+    @Test
+    public void roleNodesKeepTheOrderTheyWereWritten() {
+        final RuleNode result = parse( "x AND (y OR NOT z)" );
+        Assertions.assertEquals( 3, result.getRoleNodes().size() );
+        Assertions.assertEquals( "x", result.getRoleNodes().get( 0 ).getRole() );
+        Assertions.assertEquals( "z", result.getRoleNodes().get( 2 ).getRole() );
+    }
 
-        List<String> invalidExprs = List.of(
-                "role1 AND",
-                "AND role1",
-                "role1 OR OR role2",
-                "role1 (role2 OR role3)",
-                "(role1 AND role2",
-                "role1 AND role2)",
-                "role1 AND NOT",
-                "NOT",
-                "role1 OR AND role2",
-                "()",
-                "( )",
-                "role1 AND (OR role2)",
-                "role1 AND (role2 OR)",
-                "role1 role2",
-                "role1 AND (NOT)",
-                "(role1 AND) OR role2",
-                "role1 AND ((role2)",
-                "role1 AND )role2(",
-                "role1 AND NOT ( )",
-                "NOT (role1 AND)"
-        );
+    @Test
+    public void operatorsAreUpperCase() {
+        // a lower case word is a name, so this is two names without an operator between them
+        Assertions.assertThrows( IllegalArgumentException.class, () -> parse( "bob or mary" ) );
+        Assertions.assertEquals( Set.of( "and", "or", "not" ), parse( "and AND or AND not" ).getAllRoles() );
+    }
 
-        for (String expr : invalidExprs) {
-            try {
-                RuleParser parser = new RuleParser(expr);
-                parser.parse();
-                System.out.println("❌ Should have failed but parsed: " + expr);
-            } catch (Exception e) {
-                System.out.println("✅ Correctly failed: " + expr + " → " + e.getMessage());
-            }
-        }
+    @Test
+    public void printedRuleReadsBackTheSame() {
+        final String expression = "x AND (y OR NOT z)";
+        final RuleNode first = parse( expression );
+        Assertions.assertEquals( first.toString(), parse( first.toString() ).toString() );
+    }
+
+    @ParameterizedTest
+    @ValueSource( strings = { "", "   ", "role1 AND", "AND role1", "role1 OR OR role2", "role1 (role2 OR role3)", "(role1 AND role2",
+                              "role1 AND role2)", "role1 AND NOT", "NOT", "role1 OR AND role2", "()", "( )", "role1 AND (OR role2)",
+                              "role1 AND (role2 OR)", "role1 role2", "role1 AND (NOT)", "(role1 AND) OR role2", "role1 AND ((role2)",
+                              "role1 AND )role2(", "role1 AND NOT ( )", "NOT (role1 AND)", "role1 OR role2, role3", "role1 , role2" } )
+    public void invalidExpressionsAreRejected( final String expression ) {
+        Assertions.assertThrows( IllegalArgumentException.class, () -> parse( expression ) );
     }
 
 }

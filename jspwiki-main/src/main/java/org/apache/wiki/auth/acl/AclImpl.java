@@ -19,6 +19,7 @@
 package org.apache.wiki.auth.acl;
 
 import org.apache.wiki.api.core.AclEntry;
+import org.apache.wiki.auth.acl.adv.RuleNode;
 import org.apache.wiki.util.Synchronizer;
 
 import java.io.Serializable;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -51,6 +53,65 @@ public class AclImpl implements Acl, Serializable {
 
     private static final long serialVersionUID = 1L;
     private final List< AclEntry > m_entries = new CopyOnWriteArrayList<>();
+    private final List< AdvancedRule > m_rules = new CopyOnWriteArrayList<>();
+
+    /** An advanced rule and the permission it grants to the users that satisfy it. */
+    private static final class AdvancedRule implements Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        private final Permission permission;
+        private final RuleNode rule;
+
+        private AdvancedRule( final Permission permission, final RuleNode rule ) {
+            this.permission = permission;
+            this.rule = rule;
+        }
+    }
+
+    /**
+     * Adds an advanced rule, which grants a permission to the users that satisfy an expression of roles, groups and users joined by
+     * AND, OR and NOT. A rule adds to the entries and to the other rules of the same permission: a user is granted the permission if
+     * any of them grants it.
+     *
+     * @param permission the permission the rule grants.
+     * @param rule the expression.
+     * @since 3.0.2
+     */
+    public void addRule( final Permission permission, final RuleNode rule ) {
+        m_rules.add( new AdvancedRule( permission, rule ) );
+    }
+
+    /**
+     * Returns the advanced rules that grant a permission, which are the ones of that permission and of the permissions that imply it.
+     *
+     * @param permission the permission asked for.
+     * @return the expressions of the rules, in the order they were added.
+     * @since 3.0.2
+     */
+    public List< RuleNode > findRules( final Permission permission ) {
+        final List< RuleNode > rules = new ArrayList<>();
+        for( final AdvancedRule r : m_rules ) {
+            if( r.permission.implies( permission ) ) {
+                rules.add( r.rule );
+            }
+        }
+        return rules;
+    }
+
+    /**
+     * Returns the permissions that advanced rules grant, with the expressions of the rules, in the order they were added.
+     *
+     * @return one entry for each rule.
+     * @since 3.0.2
+     */
+    public List< Map.Entry< Permission, RuleNode > > getRules() {
+        final List< Map.Entry< Permission, RuleNode > > rules = new ArrayList<>();
+        for( final AdvancedRule r : m_rules ) {
+            rules.add( Map.entry( r.permission, r.rule ) );
+        }
+        return rules;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -131,7 +192,7 @@ public class AclImpl implements Acl, Serializable {
     /** {@inheritDoc} */
     @Override
     public boolean isEmpty() {
-        return m_entries.isEmpty();
+        return m_entries.isEmpty() && m_rules.isEmpty();
     }
 
     /** {@inheritDoc} */
@@ -151,6 +212,9 @@ public class AclImpl implements Acl, Serializable {
                 sb.append( perm.toString() );
             }
             sb.append( ")\n" );
+        }
+        for( final AdvancedRule r : m_rules ) {
+            sb.append( "  rule = " ).append( r.rule ).append( ": (" ).append( r.permission ).append( ")\n" );
         }
         return sb.toString();
     }
