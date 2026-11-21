@@ -18,38 +18,13 @@
  */
 package org.apache.wiki.providers;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import org.apache.wiki.TestEngine;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.providers.PageProvider;
 import org.apache.wiki.api.search.QueryItem;
 import org.apache.wiki.api.search.SearchResult;
-import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.UUID;
-import java.util.stream.Stream;
-import org.apache.wiki.TestEngine;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -61,6 +36,34 @@ import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContext;
 import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 import org.junit.platform.commons.util.StringUtils;
+import org.mockito.Mockito;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(JdbcPageProviderTest.DatabaseMatrixProvider.class)
 class JdbcPageProviderTest {
@@ -86,8 +89,6 @@ class JdbcPageProviderTest {
 
         TestContext(final DbTarget target) throws Exception {
             this.engine = TestEngine.build();
-            Mockito.mock(Engine.class);
-            //Mockito.when(this.engine.getApplicationName()).thenReturn("JSPWiki");
             if (target.sqlite()) {
                 this.tempSqliteFile = Files.createTempFile("jspwiki-jdbc-test-", ".db");
                 final String sqliteUrl = "jdbc:sqlite:" + this.tempSqliteFile.toAbsolutePath();
@@ -123,9 +124,21 @@ class JdbcPageProviderTest {
 
         private void cleanExternalTables() throws Exception {
             try (final Connection conn = openRawConnection(); final Statement st = conn.createStatement()) {
-                st.executeUpdate("DELETE FROM wiki_page_properties");
-                st.executeUpdate("DELETE FROM wiki_page_versions");
-                st.executeUpdate("DELETE FROM wiki_pages");
+                st.executeUpdate("DELETE FROM " + JdbcPageProvider.TABLE_PAGE_PROPERTIES);
+                st.executeUpdate("DELETE FROM " + JdbcPageProvider.TABLE_PAGE_VERSIONS);
+                st.executeUpdate("DELETE FROM " + JdbcPageProvider.TABLE_PAGES);
+            }
+        }
+
+        int countRowsForPage(final String tableName, final String pageName) throws Exception {
+            final String sql = "SELECT COUNT(*) FROM " + tableName
+                    + " WHERE " + JdbcPageProvider.COL_PAGE_NAME + " = ?";
+            try (final Connection conn = openRawConnection();
+                 final PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setString(1, pageName);
+                try (final ResultSet rs = ps.executeQuery()) {
+                    return rs.next() ? rs.getInt(1) : 0;
+                }
             }
         }
 
@@ -142,6 +155,9 @@ class JdbcPageProviderTest {
         void close() throws Exception {
             if (sqliteKeepAlive != null && !sqliteKeepAlive.isClosed()) {
                 sqliteKeepAlive.close();
+            }
+            if (tempSqliteFile != null) {
+                Files.deleteIfExists(tempSqliteFile);
             }
         }
     }
@@ -235,37 +251,37 @@ class JdbcPageProviderTest {
 
                     return List.of(
                             new BeforeEachCallback() {
-                        @Override
-                        public void beforeEach(final ExtensionContext extCtx) throws Exception {
-                            extCtx.getStore(ExtensionContext.Namespace.create(JdbcPageProviderTest.class))
-                                    .put(ctxKey, new TestContext(target));
-                        }
-                    },
+                                @Override
+                                public void beforeEach(final ExtensionContext extCtx) throws Exception {
+                                    extCtx.getStore(ExtensionContext.Namespace.create(JdbcPageProviderTest.class))
+                                            .put(ctxKey, new TestContext(target));
+                                }
+                            },
                             new AfterEachCallback() {
-                        @Override
-                        public void afterEach(final ExtensionContext extCtx) throws Exception {
-                            final TestContext tc = extCtx.getStore(
-                                    ExtensionContext.Namespace.create(JdbcPageProviderTest.class))
-                                    .remove(ctxKey, TestContext.class);
-                            if (tc != null) {
-                                tc.close();
-                            }
-                        }
-                    },
+                                @Override
+                                public void afterEach(final ExtensionContext extCtx) throws Exception {
+                                    final TestContext tc = extCtx.getStore(
+                                            ExtensionContext.Namespace.create(JdbcPageProviderTest.class))
+                                            .remove(ctxKey, TestContext.class);
+                                    if (tc != null) {
+                                        tc.close();
+                                    }
+                                }
+                            },
                             new ParameterResolver() {
-                        @Override
-                        public boolean supportsParameter(final ParameterContext paramCtx,
-                                final ExtensionContext extCtx) {
-                            return paramCtx.getParameter().getType() == TestContext.class;
-                        }
+                                @Override
+                                public boolean supportsParameter(final ParameterContext paramCtx,
+                                        final ExtensionContext extCtx) {
+                                    return paramCtx.getParameter().getType() == TestContext.class;
+                                }
 
-                        @Override
-                        public Object resolveParameter(final ParameterContext paramCtx,
-                                final ExtensionContext extCtx) {
-                            return extCtx.getStore(ExtensionContext.Namespace.create(JdbcPageProviderTest.class))
-                                    .get(ctxKey, TestContext.class);
-                        }
-                    }
+                                @Override
+                                public Object resolveParameter(final ParameterContext paramCtx,
+                                        final ExtensionContext extCtx) {
+                                    return extCtx.getStore(ExtensionContext.Namespace.create(JdbcPageProviderTest.class))
+                                            .get(ctxKey, TestContext.class);
+                                }
+                            }
                     );
                 }
             };
@@ -273,7 +289,7 @@ class JdbcPageProviderTest {
     }
 
     private JdbcPageProvider createAndInitProvider(final TestContext ctx, final boolean searchPreFilter) throws Exception {
-        DbTarget db = ctx.target;
+        final DbTarget db = ctx.target;
         final Properties props = new Properties();
         props.setProperty(JdbcPageProvider.PROP_JDBC_URL, Objects.requireNonNull(db.url(), "url must not be null"));
         if (StringUtils.isNotBlank(db.user())) {
@@ -294,9 +310,8 @@ class JdbcPageProviderTest {
     }
 
     private Page newPage(final String name, final String author, final String changeNote, final Date modified) {
-
         final Page page = Mockito.mock(Page.class);
-        final java.util.Map<String, Object> attrs = new java.util.HashMap<>();
+        final Map<String, Object> attrs = new HashMap<>();
         final String[] holder = new String[1];
         holder[0] = author;
 
@@ -314,7 +329,7 @@ class JdbcPageProviderTest {
             return null;
         }).when(page).setVersion(Mockito.anyInt());
 
-        final Date[] mod = new Date[]{modified};
+        final Date[] mod = new Date[]{ modified };
         Mockito.when(page.getLastModified()).thenAnswer(inv -> mod[0]);
         Mockito.doAnswer(inv -> {
             mod[0] = inv.getArgument(0);
@@ -348,6 +363,7 @@ class JdbcPageProviderTest {
         assertTrue(m_provider.pageExists("Main", 2));
         assertFalse(m_provider.pageExists("Main", 3));
         assertEquals(1, m_provider.getPageCount());
+        assertEquals(2, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGE_VERSIONS, "Main"));
 
         assertEquals("Version 1 content", m_provider.getPageText("Main", 1));
         assertEquals("Version 2 content", m_provider.getPageText("Main", 2));
@@ -380,6 +396,7 @@ class JdbcPageProviderTest {
         p.setAttribute("nonCustomAttr", "ignored");
 
         m_provider.putPageText(p, "Body");
+        assertEquals(2, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGE_PROPERTIES, "PropPage"));
 
         final Page loaded = m_provider.getPageInfo("PropPage", PageProvider.LATEST_VERSION);
         assertNotNull(loaded);
@@ -387,7 +404,6 @@ class JdbcPageProviderTest {
         assertEquals("1", loaded.getAttribute("@priority"));
         assertNull(loaded.getAttribute("nonCustomAttr"));
 
-        // Non-ASCII value in custom property should fail validation
         final Page bad = newPage("BadPropPage", "alice", null, new Date(1_700_000_000_000L));
         bad.setAttribute("@emoji", "\u2603");
         assertThrows(ProviderException.class, () -> m_provider.putPageText(bad, "Body"));
@@ -439,6 +455,9 @@ class JdbcPageProviderTest {
         m_provider.deletePage("PublishedNote");
         assertFalse(m_provider.pageExists("PublishedNote"));
         assertEquals(0, m_provider.getPageCount());
+        assertEquals(0, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGES, "PublishedNote"));
+        assertEquals(0, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGE_VERSIONS, "PublishedNote"));
+        assertEquals(0, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGE_PROPERTIES, "PublishedNote"));
     }
 
     @TestTemplate
@@ -451,28 +470,25 @@ class JdbcPageProviderTest {
                 newPage("Unrelated", "alice", null, new Date(2_000L)),
                 "Completely different content about cooking");
 
-        // Search for literal "100%" (must escape '%' so it doesn't match "100" alone)
         final QueryItem literalPercent = new QueryItem();
         literalPercent.word = "100%";
         literalPercent.type = QueryItem.REQUESTED;
 
-        final Collection<SearchResult> percentMatches = m_provider.findPages(new QueryItem[]{literalPercent});
+        final Collection<SearchResult> percentMatches = m_provider.findPages(new QueryItem[]{ literalPercent });
         assertEquals(1, percentMatches.size());
         assertEquals("PoolGuide", percentMatches.iterator().next().getPage().getName());
 
-        // Search for literal "sub_dir" (must escape '_' so it doesn't match "subXdir")
         final QueryItem literalUnderscore = new QueryItem();
         literalUnderscore.word = "sub_dir";
         literalUnderscore.type = QueryItem.REQUESTED;
 
-        final Collection<SearchResult> underscoreMatches = m_provider.findPages(new QueryItem[]{literalUnderscore});
+        final Collection<SearchResult> underscoreMatches = m_provider.findPages(new QueryItem[]{ literalUnderscore });
         assertEquals(1, underscoreMatches.size());
         assertEquals("PoolGuide", underscoreMatches.iterator().next().getPage().getName());
 
-        // Verify identical results with pre-filter disabled
         final JdbcPageProvider noFilterProvider = createAndInitProvider(ctx, false);
-        final Collection<SearchResult> noFilterMatches
-                = noFilterProvider.findPages(new QueryItem[]{literalPercent});
+        final Collection<SearchResult> noFilterMatches =
+                noFilterProvider.findPages(new QueryItem[]{ literalPercent });
         assertEquals(1, noFilterMatches.size());
         assertEquals("PoolGuide", noFilterMatches.iterator().next().getPage().getName());
     }
@@ -503,7 +519,7 @@ class JdbcPageProviderTest {
         requestedZfs.type = QueryItem.REQUESTED;
 
         final Collection<SearchResult> matches = m_provider.findPages(
-                new QueryItem[]{requiredHomelab, forbiddenDeprecated, requestedZfs});
+                new QueryItem[]{ requiredHomelab, forbiddenDeprecated, requestedZfs });
 
         assertEquals(1, matches.size());
         assertEquals("ActiveSetup", matches.iterator().next().getPage().getName());
@@ -522,19 +538,22 @@ class JdbcPageProviderTest {
 
         m_provider.movePage("Scratchpad", "ArchitectureNotes");
 
-        // Source page and versions should be gone
         assertFalse(m_provider.pageExists("Scratchpad"));
         assertFalse(m_provider.pageExists("Scratchpad", 1));
         assertFalse(m_provider.pageExists("Scratchpad", 2));
         assertNull(m_provider.getPageInfo("Scratchpad", PageProvider.LATEST_VERSION));
+        assertEquals(0, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGES, "Scratchpad"));
+        assertEquals(0, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGE_VERSIONS, "Scratchpad"));
+        assertEquals(0, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGE_PROPERTIES, "Scratchpad"));
 
-        // Destination page and both versions should exist with content and metadata
         assertTrue(m_provider.pageExists("ArchitectureNotes"));
         assertTrue(m_provider.pageExists("ArchitectureNotes", 1));
         assertTrue(m_provider.pageExists("ArchitectureNotes", 2));
         assertEquals("Draft v1 text", m_provider.getPageText("ArchitectureNotes", 1));
         assertEquals("Draft v2 text", m_provider.getPageText("ArchitectureNotes", 2));
         assertEquals("Draft v2 text", m_provider.getPageText("ArchitectureNotes", PageProvider.LATEST_VERSION));
+        assertEquals(2, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGE_VERSIONS, "ArchitectureNotes"));
+        assertEquals(2, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGE_PROPERTIES, "ArchitectureNotes"));
 
         final Page movedV1 = m_provider.getPageInfo("ArchitectureNotes", 1);
         assertNotNull(movedV1);
@@ -553,7 +572,6 @@ class JdbcPageProviderTest {
         assertEquals(2, history.get(0).getVersion());
         assertEquals(1, history.get(1).getVersion());
 
-        // Moving onto an already-existing page should fail with ProviderException
         m_provider.putPageText(newPage("ExistingTarget", "alice", null, new Date(3_000L)), "keep me");
         assertThrows(ProviderException.class,
                 () -> m_provider.movePage("ArchitectureNotes", "ExistingTarget"));
@@ -587,20 +605,20 @@ class JdbcPageProviderTest {
         assertFalse(m_provider.pageExists("TempSpec", 2));
         assertNull(m_provider.getPageInfo("TempSpec", PageProvider.LATEST_VERSION));
         assertNull(m_provider.getPageInfo("TempSpec", 1));
-        assertTrue(m_provider.getVersionHistory("TempSpec").isEmpty());
-        //assertThrows(NoSuchVersionException.class, () -> m_provider.getPageText("TempSpec", 1));
+        assertEquals(Collections.emptyList(), m_provider.getVersionHistory("TempSpec"));
         assertNull(m_provider.getPageText("TempSpec", 1));
         assertNull(m_provider.getPageText("TempSpec", 2));
         assertNull(m_provider.getPageText("TempSpec", PageProvider.LATEST_VERSION));
+        assertEquals(0, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGES, "TempSpec"));
+        assertEquals(0, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGE_VERSIONS, "TempSpec"));
+        assertEquals(0, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGE_PROPERTIES, "TempSpec"));
 
-        // Bystander page and its metadata remain intact
         assertTrue(m_provider.pageExists("KeepMe"));
         assertEquals("Do not delete", m_provider.getPageText("KeepMe", PageProvider.LATEST_VERSION));
         final Page keptInfo = m_provider.getPageInfo("KeepMe", PageProvider.LATEST_VERSION);
         assertNotNull(keptInfo);
         assertEquals("alice", keptInfo.getAttribute("@owner"));
 
-        // Re-creating a page with the same name starts fresh at version 1 with no stale @reviewed attribute
         final Page recreated = newPage("TempSpec", "charlie", "fresh start", new Date(3_000L));
         m_provider.putPageText(recreated, "Fresh content");
         assertEquals(1, m_provider.getVersionHistory("TempSpec").size());
@@ -615,7 +633,6 @@ class JdbcPageProviderTest {
         final JdbcPageProvider m_provider = ctx.provider;
         assertTrue(m_provider.getAllPages().isEmpty());
 
-        // Insert out of alphabetical order with multiple versions on some pages
         final Page zulu = newPage("ZuluPage", "alice", "zulu note", new Date(5_000L));
         zulu.setAttribute("@section", "ops");
         m_provider.putPageText(zulu, "Zulu body");
@@ -677,6 +694,7 @@ class JdbcPageProviderTest {
         assertTrue(m_provider.pageExists("Runbook", 1));
         assertFalse(m_provider.pageExists("Runbook", 2));
         assertTrue(m_provider.pageExists("Runbook", 3));
+        assertEquals(2, ctx.countRowsForPage(JdbcPageProvider.TABLE_PAGE_VERSIONS, "Runbook"));
 
         assertEquals("Runbook v1", m_provider.getPageText("Runbook", 1));
         assertThrows(NoSuchVersionException.class, () -> m_provider.getPageText("Runbook", 2));
@@ -705,7 +723,6 @@ class JdbcPageProviderTest {
         v3.setAttribute("@phase", "broken");
         m_provider.putPageText(v3, "Accidental overwrite");
 
-        // Delete latest (v3) -> promotes v2 to current page state
         m_provider.deleteVersion("Checklist", PageProvider.LATEST_VERSION);
 
         assertTrue(m_provider.pageExists("Checklist"));
@@ -721,7 +738,6 @@ class JdbcPageProviderTest {
         assertNotNull(promoted);
         assertEquals(2, promoted.getVersion());
         assertEquals("bob", promoted.getAuthor());
-        //assertEquals("expanded", promoted.getAttribute("@phase"));
         assertEquals("execute", promoted.getAttribute("@phase"));
         assertEquals("expanded", promoted.getAttribute(Page.CHANGENOTE));
     }

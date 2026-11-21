@@ -68,6 +68,29 @@ public class JdbcPageProvider implements PageProvider {
     public static final String PROP_JDBC_DRIVER = "jspwiki.jdbcPageProvider.driver";
     public static final String PROP_JDBC_JNDI = "jspwiki.jdbcPageProvider.jndiName";
     public static final String PROP_AUTO_CREATE_SCHEMA = "jspwiki.jdbcPageProvider.autoCreateSchema";
+    public static final String PROP_SEARCH_PREFILTER = "jspwiki.jdbcPageProvider.searchPreFilter";
+
+    // Table and index names
+    public static final String TABLE_PAGES = "wiki_pages";
+    public static final String TABLE_PAGE_VERSIONS = "wiki_page_versions";
+    public static final String TABLE_PAGE_PROPERTIES = "wiki_page_properties";
+    public static final String IDX_PAGES_MODIFIED = "idx_wiki_pages_modified";
+
+    // Shared / wiki_pages column names
+    public static final String COL_PAGE_NAME = "page_name";
+    public static final String COL_LATEST_VERSION = "latest_version";
+    public static final String COL_AUTHOR = "author";
+    public static final String COL_CHANGE_NOTE = "change_note";
+    public static final String COL_VIEW_COUNT = "view_count";
+    public static final String COL_LAST_MODIFIED = "last_modified";
+    public static final String COL_PAGE_TEXT = "page_text";
+
+    // wiki_page_versions column names
+    public static final String COL_VERSION_NUM = "version_num";
+
+    // wiki_page_properties column names
+    public static final String COL_PROP_KEY = "prop_key";
+    public static final String COL_PROP_VALUE = "prop_value";
 
     private enum Dialect {
         SQLITE, POSTGRESQL, MARIADB, MSSQL, GENERIC;
@@ -99,7 +122,6 @@ public class JdbcPageProvider implements PageProvider {
     private String m_jdbcPassword;
     private Dialect m_dialect = Dialect.GENERIC;
     private String m_dbProductName = "JDBC";
-    public static final String PROP_SEARCH_PREFILTER = "jspwiki.jdbcPageProvider.searchPreFilter";
     private boolean m_searchPreFilter = true;
     private int m_maxPropLimit = AbstractFileProvider.DEFAULT_MAX_PROPLIMIT;
     private int m_maxPropKeyLength = AbstractFileProvider.DEFAULT_MAX_PROPKEYLENGTH;
@@ -202,45 +224,50 @@ public class JdbcPageProvider implements PageProvider {
                 break;
         }
 
-        final String pagesSql = "CREATE TABLE IF NOT EXISTS wiki_pages ("
-                + "page_name VARCHAR(255) NOT NULL PRIMARY KEY, "
-                + "latest_version INTEGER NOT NULL, "
-                + "author VARCHAR(255), "
-                + "change_note " + noteType + ", "
-                + "view_count BIGINT, "
-                + "last_modified BIGINT NOT NULL, "
-                + "page_text " + textType + " NOT NULL)";
+        final String pagesSql = "CREATE TABLE IF NOT EXISTS " + TABLE_PAGES + " ("
+                + COL_PAGE_NAME + " VARCHAR(255) NOT NULL PRIMARY KEY, "
+                + COL_LATEST_VERSION + " INTEGER NOT NULL, "
+                + COL_AUTHOR + " VARCHAR(255), "
+                + COL_CHANGE_NOTE + " " + noteType + ", "
+                + COL_VIEW_COUNT + " BIGINT, "
+                + COL_LAST_MODIFIED + " BIGINT NOT NULL, "
+                + COL_PAGE_TEXT + " " + textType + " NOT NULL)";
 
-        final String versionsSql = "CREATE TABLE IF NOT EXISTS wiki_page_versions ("
-                + "page_name VARCHAR(255) NOT NULL, "
-                + "version_num INTEGER NOT NULL, "
-                + "author VARCHAR(255), "
-                + "change_note " + noteType + ", "
-                + "view_count BIGINT, "
-                + "last_modified BIGINT NOT NULL, "
-                + "page_text " + textType + " NOT NULL, "
-                + "PRIMARY KEY (page_name, version_num), "
-                + "CONSTRAINT fk_versions_page FOREIGN KEY (page_name) "
-                + "REFERENCES wiki_pages (page_name) ON DELETE CASCADE)";
+        final String versionsSql = "CREATE TABLE IF NOT EXISTS " + TABLE_PAGE_VERSIONS + " ("
+                + COL_PAGE_NAME + " VARCHAR(255) NOT NULL, "
+                + COL_VERSION_NUM + " INTEGER NOT NULL, "
+                + COL_AUTHOR + " VARCHAR(255), "
+                + COL_CHANGE_NOTE + " " + noteType + ", "
+                + COL_VIEW_COUNT + " BIGINT, "
+                + COL_LAST_MODIFIED + " BIGINT NOT NULL, "
+                + COL_PAGE_TEXT + " " + textType + " NOT NULL, "
+                + "PRIMARY KEY (" + COL_PAGE_NAME + ", " + COL_VERSION_NUM + "), "
+                + "CONSTRAINT fk_versions_page FOREIGN KEY (" + COL_PAGE_NAME + ") "
+                + "REFERENCES " + TABLE_PAGES + " (" + COL_PAGE_NAME + ") ON DELETE CASCADE)";
 
-        final String propsSql = "CREATE TABLE IF NOT EXISTS wiki_page_properties ("
-                + "page_name VARCHAR(255) NOT NULL, "
-                + "version_num INTEGER NOT NULL, "
-                + "prop_key VARCHAR(255) NOT NULL, "
-                + "prop_value " + propValType + " NOT NULL, "
-                + "PRIMARY KEY (page_name, version_num, prop_key), "
-                + "CONSTRAINT fk_props_version FOREIGN KEY (page_name, version_num) "
-                + "REFERENCES wiki_page_versions (page_name, version_num) ON DELETE CASCADE)";
+        final String propsSql = "CREATE TABLE IF NOT EXISTS " + TABLE_PAGE_PROPERTIES + " ("
+                + COL_PAGE_NAME + " VARCHAR(255) NOT NULL, "
+                + COL_VERSION_NUM + " INTEGER NOT NULL, "
+                + COL_PROP_KEY + " VARCHAR(255) NOT NULL, "
+                + COL_PROP_VALUE + " " + propValType + " NOT NULL, "
+                + "PRIMARY KEY (" + COL_PAGE_NAME + ", " + COL_VERSION_NUM + ", " + COL_PROP_KEY + "), "
+                + "CONSTRAINT fk_props_version FOREIGN KEY (" + COL_PAGE_NAME + ", " + COL_VERSION_NUM + ") "
+                + "REFERENCES " + TABLE_PAGE_VERSIONS + " (" + COL_PAGE_NAME + ", " + COL_VERSION_NUM + ") ON DELETE CASCADE)";
 
-        final String idxSql = "CREATE INDEX IF NOT EXISTS idx_wiki_pages_modified ON wiki_pages (last_modified)";
+        final String idxSql = "CREATE INDEX IF NOT EXISTS " + IDX_PAGES_MODIFIED
+                + " ON " + TABLE_PAGES + " (" + COL_LAST_MODIFIED + ")";
 
         try (final Statement st = conn.createStatement()) {
             if (m_dialect == Dialect.MSSQL) {
-                st.execute("IF OBJECT_ID('dbo.wiki_pages', 'U') IS NULL " + pagesSql.replace("IF NOT EXISTS ", ""));
-                st.execute("IF OBJECT_ID('dbo.wiki_page_versions', 'U') IS NULL " + versionsSql.replace("IF NOT EXISTS ", ""));
-                st.execute("IF OBJECT_ID('dbo.wiki_page_properties', 'U') IS NULL " + propsSql.replace("IF NOT EXISTS ", ""));
-                st.execute("IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_wiki_pages_modified' AND object_id = OBJECT_ID('dbo.wiki_pages')) "
-                        + "CREATE INDEX idx_wiki_pages_modified ON wiki_pages (last_modified)");
+                st.execute("IF OBJECT_ID('dbo." + TABLE_PAGES + "', 'U') IS NULL "
+                        + pagesSql.replace("IF NOT EXISTS ", ""));
+                st.execute("IF OBJECT_ID('dbo." + TABLE_PAGE_VERSIONS + "', 'U') IS NULL "
+                        + versionsSql.replace("IF NOT EXISTS ", ""));
+                st.execute("IF OBJECT_ID('dbo." + TABLE_PAGE_PROPERTIES + "', 'U') IS NULL "
+                        + propsSql.replace("IF NOT EXISTS ", ""));
+                st.execute("IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = '" + IDX_PAGES_MODIFIED
+                        + "' AND object_id = OBJECT_ID('dbo." + TABLE_PAGES + "')) "
+                        + "CREATE INDEX " + IDX_PAGES_MODIFIED + " ON " + TABLE_PAGES + " (" + COL_LAST_MODIFIED + ")");
             } else {
                 st.execute(pagesSql);
                 st.execute(versionsSql);
@@ -269,7 +296,7 @@ public class JdbcPageProvider implements PageProvider {
         if (page == null) {
             return false;
         }
-        final String sql = "SELECT 1 FROM wiki_pages WHERE page_name = ?";
+        final String sql = "SELECT 1 FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?";
         try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, page);
             try (final ResultSet rs = ps.executeQuery()) {
@@ -292,7 +319,8 @@ public class JdbcPageProvider implements PageProvider {
         if (version <= 0) {
             return false;
         }
-        final String sql = "SELECT 1 FROM wiki_page_versions WHERE page_name = ? AND version_num = ?";
+        final String sql = "SELECT 1 FROM " + TABLE_PAGE_VERSIONS
+                + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?";
         try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, page);
             ps.setInt(2, version);
@@ -318,8 +346,9 @@ public class JdbcPageProvider implements PageProvider {
             final int targetVersion = resolveVersion(page, version, latest);
 
             final String sql = (targetVersion == latest)
-                    ? "SELECT page_text FROM wiki_pages WHERE page_name = ?"
-                    : "SELECT page_text FROM wiki_page_versions WHERE page_name = ? AND version_num = ?";
+                    ? "SELECT " + COL_PAGE_TEXT + " FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?"
+                    : "SELECT " + COL_PAGE_TEXT + " FROM " + TABLE_PAGE_VERSIONS
+                            + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?";
 
             try (final PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, page);
@@ -406,8 +435,13 @@ public class JdbcPageProvider implements PageProvider {
             final int targetVersion = resolveVersion(page, version, latest);
 
             final String sql = (targetVersion == latest)
-                    ? "SELECT latest_version, author, change_note, view_count, last_modified FROM wiki_pages WHERE page_name = ?"
-                    : "SELECT version_num, author, change_note, view_count, last_modified FROM wiki_page_versions WHERE page_name = ? AND version_num = ?";
+                    ? "SELECT " + COL_LATEST_VERSION + ", " + COL_AUTHOR + ", " + COL_CHANGE_NOTE + ", "
+                            + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED
+                            + " FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?"
+                    : "SELECT " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", " + COL_CHANGE_NOTE + ", "
+                            + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED
+                            + " FROM " + TABLE_PAGE_VERSIONS
+                            + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?";
 
             try (final PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, page);
@@ -447,26 +481,28 @@ public class JdbcPageProvider implements PageProvider {
         if (page == null) {
             return Collections.emptyList();
         }
-        final String sql = "SELECT version_num, author, change_note, view_count, last_modified "
-                + "FROM wiki_page_versions WHERE page_name = ? ORDER BY version_num DESC";
+        final String sql = "SELECT " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", " + COL_CHANGE_NOTE + ", "
+                + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED
+                + " FROM " + TABLE_PAGE_VERSIONS
+                + " WHERE " + COL_PAGE_NAME + " = ? ORDER BY " + COL_VERSION_NUM + " DESC";
         final List<Page> history = new ArrayList<>();
         try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, page);
             try (final ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    final int ver = rs.getInt("version_num");
+                    final int ver = rs.getInt(COL_VERSION_NUM);
                     final Page p = Wiki.contents().page(m_engine, page);
                     p.setVersion(ver);
-                    p.setAuthor(rs.getString("author"));
-                    final String note = rs.getString("change_note");
+                    p.setAuthor(rs.getString(COL_AUTHOR));
+                    final String note = rs.getString(COL_CHANGE_NOTE);
                     if (note != null) {
                         p.setAttribute(Page.CHANGENOTE, note);
                     }
-                    final long vc = rs.getLong("view_count");
+                    final long vc = rs.getLong(COL_VIEW_COUNT);
                     if (!rs.wasNull()) {
                         p.setAttribute(Page.VIEWCOUNT, Long.toString(vc));
                     }
-                    p.setLastModified(new Date(rs.getLong("last_modified")));
+                    p.setLastModified(new Date(rs.getLong(COL_LAST_MODIFIED)));
                     loadCustomProperties(conn, page, ver, p);
                     history.add(p);
                 }
@@ -479,25 +515,28 @@ public class JdbcPageProvider implements PageProvider {
 
     @Override
     public Collection<Page> getAllPages() throws ProviderException {
-        final String sql = "SELECT page_name, latest_version, author, change_note, view_count, last_modified "
-                + "FROM wiki_pages ORDER BY page_name";
+        final String sql = "SELECT " + COL_PAGE_NAME + ", " + COL_LATEST_VERSION + ", " + COL_AUTHOR + ", "
+                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED
+                + " FROM " + TABLE_PAGES + " ORDER BY " + COL_PAGE_NAME;
         final List<Page> pages = new ArrayList<>();
-        try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql); final ResultSet rs = ps.executeQuery()) {
+        try (final Connection conn = openConnection();
+             final PreparedStatement ps = conn.prepareStatement(sql);
+             final ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                final String name = rs.getString("page_name");
-                final int ver = rs.getInt("latest_version");
+                final String name = rs.getString(COL_PAGE_NAME);
+                final int ver = rs.getInt(COL_LATEST_VERSION);
                 final Page p = Wiki.contents().page(m_engine, name);
                 p.setVersion(ver);
-                p.setAuthor(rs.getString("author"));
-                final String note = rs.getString("change_note");
+                p.setAuthor(rs.getString(COL_AUTHOR));
+                final String note = rs.getString(COL_CHANGE_NOTE);
                 if (note != null) {
                     p.setAttribute(Page.CHANGENOTE, note);
                 }
-                final long vc = rs.getLong("view_count");
+                final long vc = rs.getLong(COL_VIEW_COUNT);
                 if (!rs.wasNull()) {
                     p.setAttribute(Page.VIEWCOUNT, Long.toString(vc));
                 }
-                p.setLastModified(new Date(rs.getLong("last_modified")));
+                p.setLastModified(new Date(rs.getLong(COL_LAST_MODIFIED)));
                 loadCustomProperties(conn, name, ver, p);
                 pages.add(p);
             }
@@ -512,27 +551,28 @@ public class JdbcPageProvider implements PageProvider {
         if (date == null) {
             return Collections.emptyList();
         }
-        final String sql = "SELECT page_name, latest_version, author, change_note, view_count, last_modified "
-                + "FROM wiki_pages WHERE last_modified > ? ORDER BY last_modified DESC";
+        final String sql = "SELECT " + COL_PAGE_NAME + ", " + COL_LATEST_VERSION + ", " + COL_AUTHOR + ", "
+                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED
+                + " FROM " + TABLE_PAGES + " WHERE " + COL_LAST_MODIFIED + " > ? ORDER BY " + COL_LAST_MODIFIED + " DESC";
         final List<Page> changed = new ArrayList<>();
         try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, date.getTime());
             try (final ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    final String name = rs.getString("page_name");
-                    final int ver = rs.getInt("latest_version");
+                    final String name = rs.getString(COL_PAGE_NAME);
+                    final int ver = rs.getInt(COL_LATEST_VERSION);
                     final Page p = Wiki.contents().page(m_engine, name);
                     p.setVersion(ver);
-                    p.setAuthor(rs.getString("author"));
-                    final String note = rs.getString("change_note");
+                    p.setAuthor(rs.getString(COL_AUTHOR));
+                    final String note = rs.getString(COL_CHANGE_NOTE);
                     if (note != null) {
                         p.setAttribute(Page.CHANGENOTE, note);
                     }
-                    final long vc = rs.getLong("view_count");
+                    final long vc = rs.getLong(COL_VIEW_COUNT);
                     if (!rs.wasNull()) {
                         p.setAttribute(Page.VIEWCOUNT, Long.toString(vc));
                     }
-                    p.setLastModified(new Date(rs.getLong("last_modified")));
+                    p.setLastModified(new Date(rs.getLong(COL_LAST_MODIFIED)));
                     loadCustomProperties(conn, name, ver, p);
                     changed.add(p);
                 }
@@ -545,8 +585,10 @@ public class JdbcPageProvider implements PageProvider {
 
     @Override
     public int getPageCount() {
-        final String sql = "SELECT COUNT(*) FROM wiki_pages";
-        try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql); final ResultSet rs = ps.executeQuery()) {
+        final String sql = "SELECT COUNT(*) FROM " + TABLE_PAGES;
+        try (final Connection conn = openConnection();
+             final PreparedStatement ps = conn.prepareStatement(sql);
+             final ResultSet rs = ps.executeQuery()) {
             return rs.next() ? rs.getInt(1) : 0;
         } catch (final SQLException e) {
             LOG.error("Failed counting pages", e);
@@ -562,7 +604,8 @@ public class JdbcPageProvider implements PageProvider {
         }
 
         final List<String> positiveTerms = extractPositiveSearchTerms(query);
-        final StringBuilder sql = new StringBuilder("SELECT page_name, page_text FROM wiki_pages");
+        final StringBuilder sql = new StringBuilder(
+                "SELECT " + COL_PAGE_NAME + ", " + COL_PAGE_TEXT + " FROM " + TABLE_PAGES);
         final List<String> params = new ArrayList<>();
 
         if (m_searchPreFilter && !positiveTerms.isEmpty()) {
@@ -571,7 +614,8 @@ public class JdbcPageProvider implements PageProvider {
                 if (i > 0) {
                     sql.append(" OR ");
                 }
-                sql.append("(LOWER(page_name) LIKE ? ESCAPE '\\' OR LOWER(page_text) LIKE ? ESCAPE '\\')");
+                sql.append("(LOWER(").append(COL_PAGE_NAME).append(") LIKE ? ESCAPE '\\' OR LOWER(")
+                        .append(COL_PAGE_TEXT).append(") LIKE ? ESCAPE '\\')");
                 final String pattern = "%" + escapeLikePattern(positiveTerms.get(i).toLowerCase()) + "%";
                 params.add(pattern);
                 params.add(pattern);
@@ -585,8 +629,8 @@ public class JdbcPageProvider implements PageProvider {
             }
             try (final ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    final String pageName = rs.getString("page_name");
-                    final String pageText = deobfuscate(rs.getString("page_text"));
+                    final String pageName = rs.getString(COL_PAGE_NAME);
+                    final String pageText = deobfuscate(rs.getString(COL_PAGE_TEXT));
                     final SearchResult match = matcher.matchPageContent(pageName, pageText);
                     if (match != null) {
                         results.add(match);
@@ -641,7 +685,8 @@ public class JdbcPageProvider implements PageProvider {
 
                 deletePropertiesForVersion(conn, pageName, targetVersion);
                 try (final PreparedStatement delVer = conn.prepareStatement(
-                        "DELETE FROM wiki_page_versions WHERE page_name = ? AND version_num = ?")) {
+                        "DELETE FROM " + TABLE_PAGE_VERSIONS
+                                + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?")) {
                     delVer.setString(1, pageName);
                     delVer.setInt(2, targetVersion);
                     final int deleted = delVer.executeUpdate();
@@ -653,22 +698,24 @@ public class JdbcPageProvider implements PageProvider {
                 if (targetVersion == latest) {
                     // Promote remaining highest version, or delete page if none remain
                     try (final PreparedStatement findPrev = conn.prepareStatement(
-                            "SELECT version_num, author, change_note, view_count, last_modified, page_text "
-                            + "FROM wiki_page_versions WHERE page_name = ? ORDER BY version_num DESC")) {
+                            "SELECT " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", " + COL_CHANGE_NOTE + ", "
+                                    + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                                    + " FROM " + TABLE_PAGE_VERSIONS
+                                    + " WHERE " + COL_PAGE_NAME + " = ? ORDER BY " + COL_VERSION_NUM + " DESC")) {
                         findPrev.setString(1, pageName);
                         try (final ResultSet rs = findPrev.executeQuery()) {
                             if (rs.next()) {
-                                final int prevVer = rs.getInt("version_num");
-                                final String author = rs.getString("author");
-                                final String note = rs.getString("change_note");
-                                final long vcLong = rs.getLong("view_count");
+                                final int prevVer = rs.getInt(COL_VERSION_NUM);
+                                final String author = rs.getString(COL_AUTHOR);
+                                final String note = rs.getString(COL_CHANGE_NOTE);
+                                final long vcLong = rs.getLong(COL_VIEW_COUNT);
                                 final Long vc = rs.wasNull() ? null : vcLong;
-                                final long mod = rs.getLong("last_modified");
-                                final String text = rs.getString("page_text");
+                                final long mod = rs.getLong(COL_LAST_MODIFIED);
+                                final String text = rs.getString(COL_PAGE_TEXT);
                                 updatePageRow(conn, pageName, prevVer, author, note, vc, mod, text);
                             } else {
                                 try (final PreparedStatement delPage = conn.prepareStatement(
-                                        "DELETE FROM wiki_pages WHERE page_name = ?")) {
+                                        "DELETE FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?")) {
                                     delPage.setString(1, pageName);
                                     delPage.executeUpdate();
                                 }
@@ -700,17 +747,17 @@ public class JdbcPageProvider implements PageProvider {
             conn.setAutoCommit(false);
             try {
                 try (final PreparedStatement p1 = conn.prepareStatement(
-                        "DELETE FROM wiki_page_properties WHERE page_name = ?")) {
+                        "DELETE FROM " + TABLE_PAGE_PROPERTIES + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     p1.setString(1, pageName);
                     p1.executeUpdate();
                 }
                 try (final PreparedStatement p2 = conn.prepareStatement(
-                        "DELETE FROM wiki_page_versions WHERE page_name = ?")) {
+                        "DELETE FROM " + TABLE_PAGE_VERSIONS + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     p2.setString(1, pageName);
                     p2.executeUpdate();
                 }
                 try (final PreparedStatement p3 = conn.prepareStatement(
-                        "DELETE FROM wiki_pages WHERE page_name = ?")) {
+                        "DELETE FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     p3.setString(1, pageName);
                     p3.executeUpdate();
                 }
@@ -734,14 +781,13 @@ public class JdbcPageProvider implements PageProvider {
         try (final Connection conn = openConnection()) {
             conn.setAutoCommit(false);
             try {
-                // Ensure target does not already exist
                 if (getLatestVersion(conn, to) > 0) {
                     throw new ProviderException("Target page '" + to + "' already exists");
-
                 }
 
                 try (final PreparedStatement checkSource = conn.prepareStatement(
-                        "SELECT 1 FROM wiki_page_versions WHERE page_name = ? AND version_num = ?")) {
+                        "SELECT 1 FROM " + TABLE_PAGE_VERSIONS
+                                + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?")) {
                     final int sourceLatest = getLatestVersion(conn, from);
                     if (sourceLatest <= 0) {
                         throw new ProviderException("Source page '" + from + "' does not exist");
@@ -757,9 +803,12 @@ public class JdbcPageProvider implements PageProvider {
                 }
 
                 try (final PreparedStatement copyPage = conn.prepareStatement(
-                        "INSERT INTO wiki_pages (page_name, latest_version, author, change_note, view_count, last_modified, page_text) "
-                        + "SELECT ?, latest_version, author, change_note, view_count, last_modified, page_text "
-                        + "FROM wiki_pages WHERE page_name = ?")) {
+                        "INSERT INTO " + TABLE_PAGES + " ("
+                                + COL_PAGE_NAME + ", " + COL_LATEST_VERSION + ", " + COL_AUTHOR + ", "
+                                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                                + ") SELECT ?, " + COL_LATEST_VERSION + ", " + COL_AUTHOR + ", "
+                                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                                + " FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     copyPage.setString(1, to);
                     copyPage.setString(2, from);
                     final int inserted = copyPage.executeUpdate();
@@ -769,35 +818,39 @@ public class JdbcPageProvider implements PageProvider {
                 }
 
                 try (final PreparedStatement copyVers = conn.prepareStatement(
-                        "INSERT INTO wiki_page_versions (page_name, version_num, author, change_note, view_count, last_modified, page_text) "
-                        + "SELECT ?, version_num, author, change_note, view_count, last_modified, page_text "
-                        + "FROM wiki_page_versions WHERE page_name = ?")) {
+                        "INSERT INTO " + TABLE_PAGE_VERSIONS + " ("
+                                + COL_PAGE_NAME + ", " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", "
+                                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                                + ") SELECT ?, " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", "
+                                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                                + " FROM " + TABLE_PAGE_VERSIONS + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     copyVers.setString(1, to);
                     copyVers.setString(2, from);
                     copyVers.executeUpdate();
                 }
 
                 try (final PreparedStatement copyProps = conn.prepareStatement(
-                        "INSERT INTO wiki_page_properties (page_name, version_num, prop_key, prop_value) "
-                        + "SELECT ?, version_num, prop_key, prop_value "
-                        + "FROM wiki_page_properties WHERE page_name = ?")) {
+                        "INSERT INTO " + TABLE_PAGE_PROPERTIES + " ("
+                                + COL_PAGE_NAME + ", " + COL_VERSION_NUM + ", " + COL_PROP_KEY + ", " + COL_PROP_VALUE
+                                + ") SELECT ?, " + COL_VERSION_NUM + ", " + COL_PROP_KEY + ", " + COL_PROP_VALUE
+                                + " FROM " + TABLE_PAGE_PROPERTIES + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     copyProps.setString(1, to);
                     copyProps.setString(2, from);
                     copyProps.executeUpdate();
                 }
 
                 try (final PreparedStatement delProps = conn.prepareStatement(
-                        "DELETE FROM wiki_page_properties WHERE page_name = ?")) {
+                        "DELETE FROM " + TABLE_PAGE_PROPERTIES + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     delProps.setString(1, from);
                     delProps.executeUpdate();
                 }
                 try (final PreparedStatement delVers = conn.prepareStatement(
-                        "DELETE FROM wiki_page_versions WHERE page_name = ?")) {
+                        "DELETE FROM " + TABLE_PAGE_VERSIONS + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     delVers.setString(1, from);
                     delVers.executeUpdate();
                 }
                 try (final PreparedStatement delPage = conn.prepareStatement(
-                        "DELETE FROM wiki_pages WHERE page_name = ?")) {
+                        "DELETE FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     delPage.setString(1, from);
                     delPage.executeUpdate();
                 }
@@ -824,7 +877,7 @@ public class JdbcPageProvider implements PageProvider {
 
     // --- Internal JDBC Helpers ---
     private int getLatestVersion(final Connection conn, final String pageName) throws SQLException {
-        final String sql = "SELECT latest_version FROM wiki_pages WHERE page_name = ?";
+        final String sql = "SELECT " + COL_LATEST_VERSION + " FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?";
         try (final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, pageName);
             try (final ResultSet rs = ps.executeQuery()) {
@@ -848,9 +901,10 @@ public class JdbcPageProvider implements PageProvider {
     private void insertPageRow(final Connection conn, final String pageName, final int version,
             final String author, final String changeNote, final Long viewCount,
             final long lastModified, final String text) throws SQLException {
-        final String sql = "INSERT INTO wiki_pages "
-                + "(page_name, latest_version, author, change_note, view_count, last_modified, page_text) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO " + TABLE_PAGES + " ("
+                + COL_PAGE_NAME + ", " + COL_LATEST_VERSION + ", " + COL_AUTHOR + ", "
+                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, pageName);
             ps.setInt(2, version);
@@ -870,8 +924,10 @@ public class JdbcPageProvider implements PageProvider {
     private void updatePageRow(final Connection conn, final String pageName, final int version,
             final String author, final String changeNote, final Long viewCount,
             final long lastModified, final String text) throws SQLException {
-        final String sql = "UPDATE wiki_pages SET latest_version = ?, author = ?, change_note = ?, "
-                + "view_count = ?, last_modified = ?, page_text = ? WHERE page_name = ?";
+        final String sql = "UPDATE " + TABLE_PAGES + " SET "
+                + COL_LATEST_VERSION + " = ?, " + COL_AUTHOR + " = ?, " + COL_CHANGE_NOTE + " = ?, "
+                + COL_VIEW_COUNT + " = ?, " + COL_LAST_MODIFIED + " = ?, " + COL_PAGE_TEXT + " = ? "
+                + "WHERE " + COL_PAGE_NAME + " = ?";
         try (final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, version);
             ps.setString(2, author);
@@ -891,9 +947,10 @@ public class JdbcPageProvider implements PageProvider {
     private void insertVersionRow(final Connection conn, final String pageName, final int version,
             final String author, final String changeNote, final Long viewCount,
             final long lastModified, final String text) throws SQLException {
-        final String sql = "INSERT INTO wiki_page_versions "
-                + "(page_name, version_num, author, change_note, view_count, last_modified, page_text) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?)";
+        final String sql = "INSERT INTO " + TABLE_PAGE_VERSIONS + " ("
+                + COL_PAGE_NAME + ", " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", "
+                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                + ") VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, pageName);
             ps.setInt(2, version);
@@ -946,8 +1003,9 @@ public class JdbcPageProvider implements PageProvider {
         if (props.isEmpty()) {
             return;
         }
-        final String sql = "INSERT INTO wiki_page_properties (page_name, version_num, prop_key, prop_value) "
-                + "VALUES (?, ?, ?, ?)";
+        final String sql = "INSERT INTO " + TABLE_PAGE_PROPERTIES + " ("
+                + COL_PAGE_NAME + ", " + COL_VERSION_NUM + ", " + COL_PROP_KEY + ", " + COL_PROP_VALUE
+                + ") VALUES (?, ?, ?, ?)";
         try (final PreparedStatement ps = conn.prepareStatement(sql)) {
             final Enumeration<?> names = props.propertyNames();
             while (names.hasMoreElements()) {
@@ -964,8 +1022,9 @@ public class JdbcPageProvider implements PageProvider {
 
     private void loadCustomProperties(final Connection conn, final String pageName,
             final int versionNum, final Page page) throws SQLException {
-        final String sql = "SELECT prop_key, prop_value FROM wiki_page_properties "
-                + "WHERE page_name = ? AND version_num = ?";
+        final String sql = "SELECT " + COL_PROP_KEY + ", " + COL_PROP_VALUE
+                + " FROM " + TABLE_PAGE_PROPERTIES
+                + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?";
         try (final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, pageName);
             ps.setInt(2, versionNum);
@@ -980,7 +1039,8 @@ public class JdbcPageProvider implements PageProvider {
     private void deletePropertiesForVersion(final Connection conn, final String pageName, final int versionNum)
             throws SQLException {
         try (final PreparedStatement ps = conn.prepareStatement(
-                "DELETE FROM wiki_page_properties WHERE page_name = ? AND version_num = ?")) {
+                "DELETE FROM " + TABLE_PAGE_PROPERTIES
+                        + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?")) {
             ps.setString(1, pageName);
             ps.setInt(2, versionNum);
             ps.executeUpdate();
