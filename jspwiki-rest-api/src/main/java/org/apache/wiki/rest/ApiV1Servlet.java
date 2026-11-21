@@ -41,6 +41,7 @@ import org.apache.wiki.api.search.SearchResult;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.attachment.AttachmentManager;
+import org.apache.wiki.attachment.AttachmentServlet;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageManager;
@@ -52,6 +53,7 @@ import tools.jackson.core.JacksonException;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -173,16 +175,22 @@ public class ApiV1Servlet extends HttpServlet {
         json( resp, HttpServletResponse.SC_OK, entries );
     }
 
-    /** Serves a page, its history or its attachments. The part of the path before the optional suffix is the page name. */
+    /**
+     * Serves a page, its history, its attachments or the content of one attachment. The part of the path before the optional suffix is
+     * the page name, and the file name of an attachment follows the last {@code /attachments/}.
+     */
     private void pages( final HttpServletRequest req, final HttpServletResponse resp, final String rest ) throws IOException {
-        final String suffix = rest.endsWith( HISTORY ) ? HISTORY : rest.endsWith( ATTACHMENTS ) ? ATTACHMENTS
+        final int download = rest.lastIndexOf( ATTACHMENTS + "/" );
+        final String file = download > 0 ? rest.substring( download + ATTACHMENTS.length() + 1 ) : "";
+        final boolean content = !file.isEmpty() && file.indexOf( '/' ) < 0;
+        final String suffix = content ? ATTACHMENTS : rest.endsWith( HISTORY ) ? HISTORY : rest.endsWith( ATTACHMENTS ) ? ATTACHMENTS
                             : rest.endsWith( REFERENCES ) ? REFERENCES : rest.endsWith( HTML ) ? HTML : "";
-        final String name = rest.substring( 0, rest.length() - suffix.length() );
+        final String name = content ? rest.substring( 0, download ) : rest.substring( 0, rest.length() - suffix.length() );
         if( name.isEmpty() ) {
             error( resp, HttpServletResponse.SC_NOT_FOUND, "No such resource." );
             return;
         }
-        if( !plausible( name ) ) {
+        if( !plausible( name ) || content && !plausible( file ) ) {
             error( resp, HttpServletResponse.SC_BAD_REQUEST, "The name of the page is not valid." );
             return;
         }
@@ -195,15 +203,18 @@ public class ApiV1Servlet extends HttpServlet {
             denied( resp, session );
             return;
         }
-        final int version = suffix.isEmpty() || HTML.equals( suffix ) ? version( req, resp ) : WikiProvider.LATEST_VERSION;
+        // The version parameter is the one of the page, except for the content of an attachment, where it is the one of the attachment
+        final int version = suffix.isEmpty() || HTML.equals( suffix ) || content ? version( req, resp ) : WikiProvider.LATEST_VERSION;
         if( version == 0 ) {
             return;
         }
 
         try {
-            final Page page = engine.getManager( PageManager.class ).getPageInfo( name, version );
+            final Page page = engine.getManager( PageManager.class ).getPageInfo( name, content ? WikiProvider.LATEST_VERSION : version );
             if( page == null ) {
                 error( resp, HttpServletResponse.SC_NOT_FOUND, "The page does not exist." );
+            } else if( content ) {
+                content( req, resp, session, page, file, version );
             } else if( HISTORY.equals( suffix ) ) {
                 history( resp, page );
             } else if( ATTACHMENTS.equals( suffix ) ) {
@@ -312,6 +323,39 @@ public class ApiV1Servlet extends HttpServlet {
             entries.add( new AttachmentEntry( attachment ) );
         }
         json( resp, HttpServletResponse.SC_OK, entries );
+    }
+
+    /**
+     * Sends the content of an attachment. It is always sent as a download and never as a page of the wiki, because what the users upload
+     * can be a page with script, and this servlet answers on the origin of the wiki.
+     */
+    private void content( final HttpServletRequest req, final HttpServletResponse resp, final Session session, final Page page,
+                          final String file, final int version ) throws ProviderException, IOException {
+        final AttachmentManager manager = engine.getManager( AttachmentManager.class );
+        final Attachment attachment = manager.getAttachmentInfo( page.getName() + "/" + file, version );
+        if( attachment == null ) {
+            error( resp, HttpServletResponse.SC_NOT_FOUND, "The attachment does not exist." );
+            return;
+        }
+        if( !engine.getManager( AuthorizationManager.class ).checkPermission( session, PermissionFactory.getPagePermission( attachment, PagePermission.VIEW_ACTION ) ) ) {
+            denied( resp, session );
+            return;
+        }
+
+        final String type = getServletContext().getMimeType( attachment.getFileName().toLowerCase( Locale.ROOT ) );
+        resp.setStatus( HttpServletResponse.SC_OK );
+        resp.setContentType( type == null ? "application/octet-stream" : type );
+        resp.setHeader( "Content-Disposition", "attachment; filename=\"" + AttachmentServlet.encodeFileName( attachment.getFileName() ) );
+        resp.setHeader( "X-Content-Type-Options", "nosniff" );
+        if( attachment.getLastModified() != null ) {
+            resp.setDateHeader( "Last-Modified", attachment.getLastModified().getTime() );
+        }
+        if( attachment.getSize() >= 0 ) {
+            resp.setContentLengthLong( attachment.getSize() );
+        }
+        try( InputStream in = manager.getAttachmentStream( Wiki.context().create( engine, req, attachment ), attachment ) ) {
+            in.transferTo( resp.getOutputStream() );
+        }
     }
 
     /**

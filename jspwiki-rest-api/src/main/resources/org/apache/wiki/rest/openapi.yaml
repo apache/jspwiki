@@ -229,6 +229,46 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalError'
+  /pages/{name}/attachments/{file}:
+    get:
+      operationId: getPageAttachment
+      tags: [Pages]
+      summary: Download the content of an attachment of a page the caller may view.
+      description: The content is always sent as a download, with the header Content-Disposition set to attachment, and never as a page of the wiki. Its type is the one the server knows for the extension of the file, and application/octet-stream when it knows none.
+      parameters:
+        - $ref: '#/components/parameters/name'
+        - name: file
+          in: path
+          required: true
+          description: File name of the attachment.
+          schema:
+            type: string
+            minLength: 1
+        - name: version
+          in: query
+          required: false
+          description: Version of the attachment. The latest version when absent.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: The content of the attachment.
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
   /pages/{name}/references:
     get:
       operationId: getPageReferences

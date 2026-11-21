@@ -20,6 +20,8 @@ package org.apache.wiki.rest;
 
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.wiki.HttpMockFactory;
@@ -44,6 +46,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -51,6 +54,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -465,6 +469,125 @@ class ApiV1ServletTest {
         Assertions.assertEquals( 404, reply.status );
     }
 
+    private void store( final String page, final String file, final String content ) throws Exception {
+        final Attachment attachment = Wiki.contents().attachment( engine, page, file );
+        engine.getManager( AttachmentManager.class ).storeAttachment( attachment, new ByteArrayInputStream( content.getBytes( StandardCharsets.UTF_8 ) ) );
+    }
+
+    @Test
+    void anAttachmentIsDownloadedWithItsContentAndTypeAsADownload() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiDownload", "text" );
+        store( "ApiDownload", "b.txt", "hello" );
+        Mockito.doReturn( "text/plain" ).when( engine.getServletContext() ).getMimeType( "b.txt" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDownload/attachments/b.txt" ) );
+
+        Assertions.assertEquals( 200, reply.status );
+        Assertions.assertEquals( "text/plain", reply.contentType );
+        Assertions.assertEquals( "hello", reply.bytes.toString( StandardCharsets.UTF_8 ) );
+        Assertions.assertEquals( 5, reply.length );
+        Assertions.assertEquals( "attachment; filename=\"b.txt\";", reply.headers.get( "Content-Disposition" ) );
+        Assertions.assertEquals( "nosniff", reply.headers.get( "X-Content-Type-Options" ) );
+    }
+
+    @Test
+    void anAttachmentOfAnUnknownTypeIsSentAsOctetStream() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiDownloadType", "text" );
+        store( "ApiDownloadType", "data.zzzz", "1234" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDownloadType/attachments/data.zzzz" ) );
+
+        Assertions.assertEquals( 200, reply.status );
+        Assertions.assertEquals( "application/octet-stream", reply.contentType );
+    }
+
+    @Test
+    void aWebPageAsAttachmentIsNeverSentInline() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiDownloadHtml", "text" );
+        store( "ApiDownloadHtml", "x.html", "<script>alert(1)</script>" );
+        Mockito.doReturn( "text/html" ).when( engine.getServletContext() ).getMimeType( "x.html" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDownloadHtml/attachments/x.html" ) );
+
+        Assertions.assertEquals( 200, reply.status );
+        Assertions.assertTrue( reply.headers.get( "Content-Disposition" ).startsWith( "attachment;" ), reply.headers.toString() );
+        Assertions.assertEquals( "nosniff", reply.headers.get( "X-Content-Type-Options" ) );
+    }
+
+    @Test
+    void aVersionOfAnAttachmentCanBeDownloaded() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiDownloadVersions", "text" );
+        store( "ApiDownloadVersions", "v.txt", "first" );
+        store( "ApiDownloadVersions", "v.txt", "second" );
+
+        final Reply latest = call( requestTo( "/pages/ApiDownloadVersions/attachments/v.txt" ) );
+        final Reply first = call( requestTo( "/pages/ApiDownloadVersions/attachments/v.txt", "version", "1" ) );
+
+        Assertions.assertEquals( "second", latest.bytes.toString( StandardCharsets.UTF_8 ) );
+        Assertions.assertEquals( "first", first.bytes.toString( StandardCharsets.UTF_8 ) );
+    }
+
+    @Test
+    void anAttachmentThatDoesNotExistIs404() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiDownloadMissing", "text" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDownloadMissing/attachments/none.txt" ) );
+
+        assertMatchesContract( "/pages/{name}/attachments/{file}", reply );
+        Assertions.assertEquals( 404, reply.status );
+    }
+
+    @Test
+    void anAttachmentOfAPageThatDoesNotExistIs404() throws Exception {
+        startEngine( null );
+
+        final Reply reply = call( requestTo( "/pages/ApiDownloadNoPage/attachments/a.txt" ) );
+
+        assertMatchesContract( "/pages/{name}/attachments/{file}", reply );
+        Assertions.assertEquals( 404, reply.status );
+    }
+
+    @Test
+    void anAttachmentOfAPageTheCallerMayNotViewIs401AndItsContentIsNotSent() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiDownloadSecret", "[{ALLOW view Admin}] secret" );
+        store( "ApiDownloadSecret", "s.txt", "secret content" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDownloadSecret/attachments/s.txt" ) );
+
+        assertMatchesContract( "/pages/{name}/attachments/{file}", reply );
+        Assertions.assertEquals( 401, reply.status );
+        Assertions.assertEquals( 0, reply.bytes.size() );
+    }
+
+    @Test
+    void aFileNameThatLeavesTheDirectoryIs400() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiDownloadDots", "text" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDownloadDots/attachments/..", "version", "1" ) );
+
+        assertMatchesContract( "/pages/{name}/attachments/{file}", reply );
+        Assertions.assertEquals( 400, reply.status );
+    }
+
+    @Test
+    void aVersionThatIsNotANumberIs400() throws Exception {
+        startEngine( null );
+        engine.saveText( "ApiDownloadBadVersion", "text" );
+        store( "ApiDownloadBadVersion", "a.txt", "a" );
+
+        final Reply reply = call( requestTo( "/pages/ApiDownloadBadVersion/attachments/a.txt", "version", "x" ) );
+
+        assertMatchesContract( "/pages/{name}/attachments/{file}", reply );
+        Assertions.assertEquals( 400, reply.status );
+    }
+
     @Test
     void pagesListTheNamesSortedAndLeaveOutTheOnesTheCallerMayNotView() throws Exception {
         startEngine( null );
@@ -689,6 +812,25 @@ class ApiV1ServletTest {
         Mockito.doAnswer( invocation -> reply.status = invocation.getArgument( 0 ) ).when( response ).setStatus( Mockito.anyInt() );
         Mockito.doAnswer( invocation -> reply.contentType = invocation.getArgument( 0 ) ).when( response ).setContentType( Mockito.anyString() );
         Mockito.doReturn( new PrintWriter( reply.body ) ).when( response ).getWriter();
+        Mockito.doReturn( new ServletOutputStream() {
+            @Override
+            public void write( final int b ) {
+                reply.bytes.write( b );
+            }
+
+            @Override
+            public boolean isReady() {
+                return true;
+            }
+
+            @Override
+            public void setWriteListener( final WriteListener listener ) {
+                // writes never block here
+            }
+        } ).when( response ).getOutputStream();
+        Mockito.doAnswer( invocation -> reply.headers.put( invocation.getArgument( 0 ), invocation.getArgument( 1 ) ) )
+               .when( response ).setHeader( Mockito.anyString(), Mockito.anyString() );
+        Mockito.doAnswer( invocation -> reply.length = invocation.getArgument( 0 ) ).when( response ).setContentLengthLong( Mockito.anyLong() );
         servlet.service( request, response );
         return reply;
     }
@@ -775,7 +917,10 @@ class ApiV1ServletTest {
     private static final class Reply {
         int status;
         String contentType;
+        long length = -1;
         final StringWriter body = new StringWriter();
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        final Map< String, String > headers = new HashMap<>();
 
         JsonNode json() {
             return JSON.readTree( body.toString() );

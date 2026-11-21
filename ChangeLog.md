@@ -26,6 +26,7 @@ under the License.
 * [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/pages`, `GET /api/v1/pages/{name}/references` and `GET /api/v1/pages/{name}/html` are added to the REST API, to list the pages in chunks, to read the links of a page and to read a page rendered to HTML
 * [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): the REST API is in its own module `jspwiki-rest-api` and writes its JSON with Jackson, which the wiki already uses, and not with Gson
 * [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): the operations of `openapi.yaml` are grouped with the tags Search, Plugins and Pages, so that code generators such as openapi-generator make one class per tag, and a description that made the generator for JAX-RS interfaces write code that does not compile is reworded. A client and the JAX-RS interfaces generated with openapi-generator 7.27.0 compile, and the client reads the responses of a running wiki.
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/pages/{name}/attachments/{file}` is added to the REST API, to download the content of an attachment of a page the caller may view, as a download and never as a page of the wiki. `AttachmentServlet.encodeFileName` is public, so that the API writes the file name in the header the same way.
 
 **2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
 * _3.0.2-git-1_
