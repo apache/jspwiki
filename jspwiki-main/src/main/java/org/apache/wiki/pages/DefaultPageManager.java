@@ -37,6 +37,7 @@ import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.auth.WikiPrincipal;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.auth.acl.AclImpl;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.user.UserProfile;
 import org.apache.wiki.cache.CachingManager;
@@ -749,6 +750,9 @@ public class DefaultPageManager implements PageManager {
             }
             for( final AclEntry entry : entriesToAdd ) {
                 acl.addEntry( entry );
+            }
+            if( acl instanceof AclImpl && ( ( AclImpl ) acl ).renameInRules( oldPrincipals, newPrincipal ) ) {
+                pageChanged = true;
             }
         }
         return pageChanged;

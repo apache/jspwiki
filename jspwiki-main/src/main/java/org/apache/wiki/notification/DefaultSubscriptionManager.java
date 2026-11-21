@@ -27,6 +27,7 @@ import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.api.exceptions.WikiException;
 import org.apache.wiki.auth.UserManager;
+import org.apache.wiki.auth.acl.AclImpl;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.auth.user.UserDatabase;
@@ -41,6 +42,7 @@ import org.apache.wiki.pages.PageManager;
 import org.apache.wiki.util.MailUtil;
 import org.apache.wiki.util.TextUtil;
 
+import java.security.Permission;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -177,7 +179,11 @@ public class DefaultSubscriptionManager implements SubscriptionManager, Initiali
 
     private boolean isViewRestricted( final Page page ) {
         final Acl acl = m_engine.getManager( AclManager.class ).getPermissions( page );
-        return acl != null && acl.findPrincipals( PermissionFactory.getPagePermission( page, "view" ) ).length > 0;
+        if( acl == null ) {
+            return false;
+        }
+        final Permission view = PermissionFactory.getPagePermission( page, "view" );
+        return acl.findPrincipals( view ).length > 0 || acl instanceof AclImpl && !( ( AclImpl ) acl ).findRules( view ).isEmpty();
     }
 
     private void sendMail( final UserProfile profile, final Page page ) {

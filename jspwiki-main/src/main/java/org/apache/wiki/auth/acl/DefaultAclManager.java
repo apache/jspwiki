@@ -30,6 +30,9 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.WikiSecurityException;
+import org.apache.wiki.auth.acl.adv.RoleNode;
+import org.apache.wiki.auth.acl.adv.RuleNode;
+import org.apache.wiki.auth.acl.adv.RuleParser;
 import org.apache.wiki.auth.permissions.PagePermission;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.pages.PageLock;
@@ -78,6 +81,12 @@ public class DefaultAclManager implements AclManager {
     private static final String ACL_REGEX = "\\[\\{\\s*ALLOW\\s+" + PERM_REGEX + "\\s*(.*?)\\s*\\}\\]";
 
     /**
+     * Identifies an advanced rule, which is a rule without commas that has AND, OR or NOT written in upper case as a word of its own.
+     * A name that contains one of them is a name when it is written without spaces around it, or in lower case, or in a list with commas.
+     */
+    private static final Pattern ADVANCED_RULE = Pattern.compile( "(?:^|[\\s()])(?:AND|OR|NOT)(?=[\\s()]|$)" );
+
+    /**
      * Identifies ACL strings in wiki text; the first group is the action (view, edit) and
      * the second is the list of Principals separated by commas. The overall match is
      * the ACL string from [{ to }].
@@ -103,6 +112,15 @@ public class DefaultAclManager implements AclManager {
             final StringTokenizer fieldToks = new StringTokenizer(ruleLine);
             fieldToks.nextToken();
             final String actions = fieldToks.nextToken();
+
+            // a list of names with commas is a simple rule, as it always was, whatever words its names have
+            final String expression = ruleLine.trim().replaceFirst( "^\\S+\\s+\\S+", "" ).trim();
+            if( expression.indexOf( ',' ) < 0 && ADVANCED_RULE.matcher( expression ).find() ) {
+                addAdvancedRule( acl, page, actions, expression, ruleLine );
+                page.setAcl( acl );
+                LOG.debug( acl.toString() );
+                return acl;
+            }
 
             while( fieldToks.hasMoreTokens() ) {
                 final String principalName = fieldToks.nextToken(",").trim();
@@ -134,6 +152,25 @@ public class DefaultAclManager implements AclManager {
         return acl;
     }
 
+    /**
+     * Adds an advanced rule to an ACL. The ACL has to be one of the implementation of this manager, as that is the one that keeps rules.
+     */
+    private void addAdvancedRule( final Acl acl, final Page page, final String actions, final String expression, final String ruleLine )
+            throws WikiSecurityException {
+        if( !( acl instanceof AclImpl ) ) {
+            throw new WikiSecurityException( "Access rules with AND, OR or NOT are not supported by the ACL of this page: " + ruleLine );
+        }
+        final RuleNode rule;
+        try {
+            rule = new RuleParser( expression ).parse();
+        } catch( final IllegalArgumentException iae ) {
+            throw new WikiSecurityException( "Invalid access rule: " + ruleLine + " (" + iae.getMessage() + ")", iae );
+        }
+        for( final RoleNode role : rule.getRoleNodes() ) {
+            role.setPrincipal( m_auth.resolvePrincipal( role.getRole() ) );
+        }
+        ( ( AclImpl ) acl ).addRule( PermissionFactory.getPagePermission( page, actions ), rule );
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -240,6 +277,11 @@ public class DefaultAclManager implements AclManager {
                 }
             }
             s.append( "}]\n" );
+        }
+        if( acl instanceof AclImpl ) {
+            for( final Map.Entry< Permission, RuleNode > rule : ( ( AclImpl ) acl ).getRules() ) {
+                s.append( "[{ALLOW " ).append( rule.getKey().getActions() ).append( " " ).append( rule.getValue() ).append( "}]\n" );
+            }
         }
         return s.toString();
     }

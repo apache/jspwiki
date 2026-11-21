@@ -29,6 +29,7 @@ import org.apache.wiki.api.filters.BasePageFilter;
 import org.apache.wiki.api.spi.Wiki;
 import org.apache.wiki.auth.AuthorizationManager;
 import org.apache.wiki.auth.WikiPrincipal;
+import org.apache.wiki.auth.WikiSecurityException;
 import org.apache.wiki.auth.permissions.PermissionFactory;
 import org.apache.wiki.filters.FilterManager;
 import org.apache.wiki.pages.PageManager;
@@ -39,8 +40,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
+import org.apache.wiki.auth.acl.adv.RuleNode;
 
 public class DefaultAclManagerTest
 {
@@ -50,6 +54,12 @@ public class DefaultAclManagerTest
     public void setUp() throws Exception {
         m_engine.saveText( "TestDefaultPage", "Foo" );
         m_engine.saveText( "TestAclPage", "Bar. [{ALLOW edit Charlie, Herman}] " );
+
+        m_engine.saveText("TestAdvAclPage", "Bar. [{ALLOW edit Charlie OR Herman}] [{ALLOW view Charlie OR Herman}] ");
+
+        m_engine.saveText("TestAdvAclPage2", "Bar. [{ALLOW edit Charlie OR Admin OR NOT Accounting}] ");
+        m_engine.saveText("TestAdvAclPage3", "Bar. [{ALLOW edit Group1 AND (Group2 OR Group3)}] ");
+
     }
 
     @AfterEach
@@ -57,6 +67,11 @@ public class DefaultAclManagerTest
         try {
             m_engine.getManager( PageManager.class ).deletePage( "TestDefaultPage" );
             m_engine.getManager( PageManager.class ).deletePage( "TestAclPage" );
+            m_engine.getManager( PageManager.class ).deletePage( "TestAdvAclPage" );
+            m_engine.getManager( PageManager.class ).deletePage( "TestAdvAclPage2" );
+            m_engine.getManager( PageManager.class ).deletePage( "TestAdvAclPage3" );
+
+
         } catch ( final ProviderException e ) {
         }
     }
@@ -124,6 +139,177 @@ public class DefaultAclManagerTest
         p = acl.findPrincipals( PermissionFactory.getPagePermission(page, "delete") );
         Assertions.assertEquals( 0, p.length );
     }
+
+    private static RuleNode onlyRule( final Acl acl, final Page page, final String action ) {
+        final List< RuleNode > rules = ( ( AclImpl ) acl ).findRules( PermissionFactory.getPagePermission( page, action ) );
+        Assertions.assertEquals( 1, rules.size() );
+        return rules.get( 0 );
+    }
+
+    @Test
+    public void testGetPermissionsAdvancedAcl() {
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestAdvAclPage" );
+        final Acl acl = m_engine.getManager( AclManager.class ).getPermissions( page );
+        Assertions.assertFalse( acl.isEmpty() );
+
+        // The page has a rule for view and another for edit, and reading is implied by editing, so both grant it
+        final List< RuleNode > view = ( ( AclImpl ) acl ).findRules( PermissionFactory.getPagePermission( page, "view" ) );
+        Assertions.assertEquals( 2, view.size() );
+        Assertions.assertTrue( view.get( 0 ).evaluate( Set.of( "Charlie" ) ) );
+        Assertions.assertTrue( view.get( 1 ).evaluate( Set.of( "Herman" ) ) );
+        Assertions.assertFalse( view.get( 0 ).evaluate( Set.of( "Alice" ) ) );
+
+        final RuleNode edit = onlyRule( acl, page, "edit" );
+        Assertions.assertTrue( edit.evaluate( Set.of( "Herman" ) ) );
+        Assertions.assertFalse( edit.evaluate( Set.of( "Alice" ) ) );
+
+        // the rule does not grant what editing does not imply
+        Assertions.assertTrue( ( ( AclImpl ) acl ).findRules( PermissionFactory.getPagePermission( page, "delete" ) ).isEmpty() );
+    }
+
+    @Test
+    public void testGetPermissionsAdvancedAcl2() {
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestAdvAclPage2" );
+        final Acl acl = m_engine.getManager( AclManager.class ).getPermissions( page );
+        Assertions.assertFalse( acl.isEmpty() );
+
+        final RuleNode node = onlyRule( acl, page, "edit" );
+        Assertions.assertTrue( node.evaluate( Set.of( "Charlie" ) ) );
+        Assertions.assertTrue( node.evaluate( Set.of( "Admin" ) ) );
+        Assertions.assertFalse( node.evaluate( Set.of( "Accounting" ) ) );
+        Assertions.assertTrue( node.evaluate( Set.of() ) );
+    }
+
+    @Test
+    public void testGetPermissionsAdvancedAcl3() {
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestAdvAclPage3" );
+        final Acl acl = m_engine.getManager( AclManager.class ).getPermissions( page );
+        Assertions.assertFalse( acl.isEmpty() );
+
+        final RuleNode node = onlyRule( acl, page, "edit" );
+        Assertions.assertFalse( node.evaluate( Set.of( "Group1" ) ) );
+        Assertions.assertFalse( node.evaluate( Set.of( "Group2" ) ) );
+        Assertions.assertFalse( node.evaluate( Set.of( "Group3" ) ) );
+        Assertions.assertTrue( node.evaluate( Set.of( "Group1", "Group2" ) ) );
+        Assertions.assertTrue( node.evaluate( Set.of( "Group1", "Group3" ) ) );
+        Assertions.assertTrue( node.evaluate( Set.of( "Group1", "Group2", "Group3" ) ) );
+        Assertions.assertFalse( node.evaluate( Set.of( "Admin" ) ) );
+    }
+
+    /** A simple rule and an advanced one on the same page keep both, whatever their order. */
+    @Test
+    public void testSimpleAndAdvancedRulesAreKept() throws Exception {
+        final AclManager mgr = m_engine.getManager( AclManager.class );
+        for( final String text : new String[] { "[{ALLOW view Alice}] [{ALLOW edit Bob OR Charlie}]",
+                                                "[{ALLOW edit Bob OR Charlie}] [{ALLOW view Alice}]" } ) {
+            m_engine.saveText( "TestMixedAclPage", text );
+            final Page page = m_engine.getManager( PageManager.class ).getPage( "TestMixedAclPage" );
+            final Acl acl = mgr.getPermissions( page );
+            final Principal[] viewers = acl.findPrincipals( PermissionFactory.getPagePermission( page, "view" ) );
+            Assertions.assertEquals( 1, viewers.length, text );
+            Assertions.assertEquals( "Alice", viewers[ 0 ].getName(), text );
+            Assertions.assertEquals( 1, ( ( AclImpl ) acl ).findRules( PermissionFactory.getPagePermission( page, "edit" ) ).size(), text );
+            m_engine.getManager( PageManager.class ).deletePage( "TestMixedAclPage" );
+        }
+    }
+
+    /** Two advanced rules for the same action add up, as simple rules do. */
+    @Test
+    public void testAdvancedRulesOfTheSameActionAddUp() throws Exception {
+        m_engine.saveText( "TestTwoRulesPage", "[{ALLOW edit Alice OR Bob}] [{ALLOW edit Charlie AND Herman}]" );
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestTwoRulesPage" );
+        final Acl acl = m_engine.getManager( AclManager.class ).getPermissions( page );
+        Assertions.assertEquals( 2, ( ( AclImpl ) acl ).findRules( PermissionFactory.getPagePermission( page, "edit" ) ).size() );
+        m_engine.getManager( PageManager.class ).deletePage( "TestTwoRulesPage" );
+    }
+
+    @Test
+    public void testInvalidAdvancedRuleIsRejected() {
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestDefaultPage" );
+        final AclManager mgr = m_engine.getManager( AclManager.class );
+        for( final String rule : new String[] { "Alice AND", "(Alice OR Bob", "NOT", "AND OR" } ) {
+            final WikiSecurityException e = Assertions.assertThrows( WikiSecurityException.class,
+                                                                     () -> mgr.parseAcl( page, "ALLOW edit " + rule ), rule );
+            Assertions.assertTrue( e.getMessage().startsWith( "Invalid access rule: ALLOW edit " + rule ), e.getMessage() );
+        }
+        Assertions.assertTrue( page.getAcl() == null || page.getAcl().isEmpty() );
+    }
+
+    /** A list with commas is a simple rule, as it always was, even when the name of one of them has an upper case operator inside. */
+    @Test
+    public void testListWithCommasIsASimpleRule() throws Exception {
+        m_engine.saveText( "TestCommaPage", "[{ALLOW view Alice, Bob AND Charlie}]" );
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestCommaPage" );
+        final Acl acl = m_engine.getManager( AclManager.class ).getPermissions( page );
+        Assertions.assertEquals( 2, acl.findPrincipals( PermissionFactory.getPagePermission( page, "view" ) ).length );
+        Assertions.assertTrue( ( ( AclImpl ) acl ).findRules( PermissionFactory.getPagePermission( page, "view" ) ).isEmpty() );
+        m_engine.getManager( PageManager.class ).deletePage( "TestCommaPage" );
+    }
+
+    @Test
+    public void testOperatorsNextToParenthesesAreOperators() throws Exception {
+        m_engine.saveText( "TestParenPage", "[{ALLOW view (Alice)AND(Bob)}]" );
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestParenPage" );
+        final Acl acl = m_engine.getManager( AclManager.class ).getPermissions( page );
+        Assertions.assertEquals( 0, acl.findPrincipals( PermissionFactory.getPagePermission( page, "view" ) ).length );
+        Assertions.assertEquals( 1, ( ( AclImpl ) acl ).findRules( PermissionFactory.getPagePermission( page, "view" ) ).size() );
+        m_engine.getManager( PageManager.class ).deletePage( "TestParenPage" );
+    }
+
+    /** Rendering a page again, as it happens when the cache is not used, must not add its rules again. */
+    @Test
+    public void testParsingAPageAgainDoesNotRepeatItsRules() throws Exception {
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestAdvAclPage2" );
+        final AclManager mgr = m_engine.getManager( AclManager.class );
+        mgr.parseAcl( page, "ALLOW edit Charlie OR Admin OR NOT Accounting" );
+        mgr.parseAcl( page, "ALLOW edit Charlie OR Admin OR NOT Accounting" );
+        Assertions.assertEquals( 1, ( ( AclImpl ) mgr.getPermissions( page ) ).findRules( PermissionFactory.getPagePermission( page, "edit" ) ).size() );
+        // another expression for the same action is another rule
+        mgr.parseAcl( page, "ALLOW edit Alice OR Bob" );
+        Assertions.assertEquals( 2, ( ( AclImpl ) mgr.getPermissions( page ) ).findRules( PermissionFactory.getPagePermission( page, "edit" ) ).size() );
+    }
+
+    /** A renamed profile keeps its access to the pages whose advanced rules name it. */
+    @Test
+    public void testRenamingAUserChangesTheAdvancedRules() throws Exception {
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestAdvAclPage3" );
+        final AclImpl acl = ( AclImpl ) m_engine.getManager( AclManager.class ).getPermissions( page );
+        final Principal newName = new WikiPrincipal( "Group9" );
+        Assertions.assertTrue( acl.renameInRules( new Principal[] { new WikiPrincipal( "Group2" ) }, newName ) );
+        final RuleNode node = onlyRule( acl, page, "edit" );
+        Assertions.assertTrue( node.evaluate( Set.of( "Group1", "Group9" ) ) );
+        Assertions.assertFalse( node.evaluate( Set.of( "Group1", "Group2" ) ) );
+        Assertions.assertTrue( node.evaluate( Set.of( "Group1", "Group3" ) ) );
+        Assertions.assertFalse( acl.renameInRules( new Principal[] { new WikiPrincipal( "Nobody" ) }, newName ) );
+    }
+
+    /** Names that only contain the words of the operators are names, and a lower case operator is a name too. */
+    @Test
+    public void testOperatorWordsInsideNamesAreNames() throws Exception {
+        m_engine.saveText( "TestWordsPage", "[{ALLOW edit ANDY, ORACLE, NOTARY, order, Brand}]" );
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestWordsPage" );
+        final Acl acl = m_engine.getManager( AclManager.class ).getPermissions( page );
+        Assertions.assertEquals( 5, acl.findPrincipals( PermissionFactory.getPagePermission( page, "edit" ) ).length );
+        Assertions.assertTrue( ( ( AclImpl ) acl ).findRules( PermissionFactory.getPagePermission( page, "edit" ) ).isEmpty() );
+        m_engine.getManager( PageManager.class ).deletePage( "TestWordsPage" );
+    }
+
+    @Test
+    public void testPrintAclKeepsAdvancedRules() throws Exception {
+        m_engine.saveText( "TestPrintPage", "[{ALLOW view Alice}] [{ALLOW edit Bob AND (Charlie OR NOT Herman)}]" );
+        final Page page = m_engine.getManager( PageManager.class ).getPage( "TestPrintPage" );
+        final String printed = DefaultAclManager.printAcl( m_engine.getManager( AclManager.class ).getPermissions( page ) );
+        Assertions.assertTrue( printed.contains( "[{ALLOW view Alice}]" ), printed );
+        Assertions.assertTrue( printed.contains( "[{ALLOW edit (Bob AND (Charlie OR (NOT Herman)))}]" ), printed );
+
+        // what is printed reads back as the same rule
+        m_engine.saveText( "TestPrintPage2", printed );
+        final Page page2 = m_engine.getManager( PageManager.class ).getPage( "TestPrintPage2" );
+        Assertions.assertEquals( printed, DefaultAclManager.printAcl( m_engine.getManager( AclManager.class ).getPermissions( page2 ) ) );
+        m_engine.getManager( PageManager.class ).deletePage( "TestPrintPage" );
+        m_engine.getManager( PageManager.class ).deletePage( "TestPrintPage2" );
+    }
+
 
     @Test
     public void testAclRegex()
