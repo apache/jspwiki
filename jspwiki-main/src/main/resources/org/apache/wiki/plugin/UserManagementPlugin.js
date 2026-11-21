@@ -16,7 +16,7 @@ async function sendPostRequest(url, payload, callback) {
 }
 
 function UserManagementPluginLockuser(btnid, otherbtnid, username) {
-    sendPostRequest('/search/suggestions/lock', [username], function (result) {
+    sendPostRequest('/admin-user-management/lock', [username], function (result) {
         if (!result) {
             //operation failed, show a message?
             alert(result);
