@@ -81,10 +81,10 @@ public class DefaultAclManager implements AclManager {
     private static final String ACL_REGEX = "\\[\\{\\s*ALLOW\\s+" + PERM_REGEX + "\\s*(.*?)\\s*\\}\\]";
 
     /**
-     * Identifies an advanced rule, which is a rule that has AND, OR or NOT written in upper case as a word of its own. A name that
-     * contains one of them has to be written without spaces around it, or in lower case, to be read as a name.
+     * Identifies an advanced rule, which is a rule without commas that has AND, OR or NOT written in upper case as a word of its own.
+     * A name that contains one of them is a name when it is written without spaces around it, or in lower case, or in a list with commas.
      */
-    private static final Pattern ADVANCED_RULE = Pattern.compile( "(?:^|[\\s(])(?:AND|OR|NOT)(?=[\\s(]|$)" );
+    private static final Pattern ADVANCED_RULE = Pattern.compile( "(?:^|[\\s()])(?:AND|OR|NOT)(?=[\\s()]|$)" );
 
     /**
      * Identifies ACL strings in wiki text; the first group is the action (view, edit) and
@@ -113,8 +113,9 @@ public class DefaultAclManager implements AclManager {
             fieldToks.nextToken();
             final String actions = fieldToks.nextToken();
 
-            final String expression = ruleLine.substring( ruleLine.indexOf( actions ) + actions.length() ).trim();
-            if( ADVANCED_RULE.matcher( expression ).find() ) {
+            // a list of names with commas is a simple rule, as it always was, whatever words its names have
+            final String expression = ruleLine.trim().replaceFirst( "^\\S+\\s+\\S+", "" ).trim();
+            if( expression.indexOf( ',' ) < 0 && ADVANCED_RULE.matcher( expression ).find() ) {
                 addAdvancedRule( acl, page, actions, expression, ruleLine );
                 page.setAcl( acl );
                 LOG.debug( acl.toString() );
@@ -150,6 +151,7 @@ public class DefaultAclManager implements AclManager {
 
         return acl;
     }
+
     /**
      * Adds an advanced rule to an ACL. The ACL has to be one of the implementation of this manager, as that is the one that keeps rules.
      */

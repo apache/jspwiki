@@ -19,6 +19,7 @@
 package org.apache.wiki.auth.acl.adv;
 
 import java.io.Serializable;
+import java.security.Principal;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,15 @@ public abstract class RuleNode implements Serializable {
      * @return the role nodes of this expression.
      */
     public abstract List< RoleNode > getRoleNodes();
+
+    /**
+     * Returns a copy of this expression in which the given names stand for another principal, as when a user renames a profile.
+     *
+     * @param oldNames the names to replace.
+     * @param newPrincipal the principal the names are replaced with.
+     * @return the new expression, or this one if it does not mention any of the names.
+     */
+    public abstract RuleNode rename( Set< String > oldNames, Principal newPrincipal );
 
     /**
      * Returns the names of all the roles, groups and users this expression mentions.

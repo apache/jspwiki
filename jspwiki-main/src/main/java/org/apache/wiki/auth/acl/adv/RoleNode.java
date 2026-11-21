@@ -78,6 +78,17 @@ public class RoleNode extends RuleNode {
 
     /** {@inheritDoc} */
     @Override
+    public RuleNode rename( final Set< String > oldNames, final Principal newPrincipal ) {
+        if( !oldNames.contains( role ) ) {
+            return this;
+        }
+        final RoleNode renamed = new RoleNode( newPrincipal.getName() );
+        renamed.setPrincipal( newPrincipal );
+        return renamed;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public List< RoleNode > getRoleNodes() {
         return List.of( this );
     }

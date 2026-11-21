@@ -169,6 +169,16 @@ public class AdvancedAclAuthorizationTest {
         Assertions.assertFalse( can( user( Users.CHARLIE ), "edit" ) );
     }
 
+    /** NOT alone is true for everybody that does not hold the name, the users that are not logged in included. */
+    @Test
+    public void testNotAloneIsTrueForUsersThatAreNotLoggedIn() throws Exception {
+        engine.saveText( PAGE, "Text. [{ALLOW view NOT Banned}]" );
+
+        Assertions.assertTrue( can( anonymous(), "view" ) );
+        Assertions.assertTrue( can( user( Users.ALICE ), "view" ) );
+        Assertions.assertFalse( can( user( Users.CHARLIE ), "view" ) );
+    }
+
     @Test
     public void testPageWithoutAdvancedRulesIsAsBefore() throws Exception {
         engine.saveText( PAGE, "Text. [{ALLOW edit Alice, Bob}]" );

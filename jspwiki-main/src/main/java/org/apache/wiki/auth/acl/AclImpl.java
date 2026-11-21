@@ -29,7 +29,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -79,7 +81,42 @@ public class AclImpl implements Acl, Serializable {
      * @since 3.0.2
      */
     public void addRule( final Permission permission, final RuleNode rule ) {
-        m_rules.add( new AdvancedRule( permission, rule ) );
+        // The same page is parsed again each time it is rendered without the cache, and that must not add its rules again
+        Synchronizer.synchronize( lock, () -> {
+            for( final AdvancedRule r : m_rules ) {
+                if( r.permission.equals( permission ) && r.rule.toString().equals( rule.toString() ) ) {
+                    return;
+                }
+            }
+            m_rules.add( new AdvancedRule( permission, rule ) );
+        } );
+    }
+
+    /**
+     * Replaces the names of some principals in the advanced rules with another principal, as when a user renames a profile.
+     *
+     * @param oldPrincipals the principals to replace.
+     * @param newPrincipal the principal that takes their place.
+     * @return {@code true} if any rule was changed.
+     * @since 3.0.2
+     */
+    public boolean renameInRules( final Principal[] oldPrincipals, final Principal newPrincipal ) {
+        final Set< String > oldNames = new HashSet<>();
+        for( final Principal p : oldPrincipals ) {
+            oldNames.add( p.getName() );
+        }
+        return Synchronizer.synchronize( lock, () -> {
+            boolean changed = false;
+            for( int i = 0; i < m_rules.size(); i++ ) {
+                final AdvancedRule r = m_rules.get( i );
+                final RuleNode renamed = r.rule.rename( oldNames, newPrincipal );
+                if( renamed != r.rule ) {
+                    m_rules.set( i, new AdvancedRule( r.permission, renamed ) );
+                    changed = true;
+                }
+            }
+            return changed;
+        } );
     }
 
     /**

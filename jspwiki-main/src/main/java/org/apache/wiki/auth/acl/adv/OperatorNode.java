@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.auth.acl.adv;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -83,6 +84,14 @@ public class OperatorNode extends RuleNode {
     public boolean evaluate( final Set< String > userRoles ) {
         return operator == Operator.AND ? left.evaluate( userRoles ) && right.evaluate( userRoles )
                                         : left.evaluate( userRoles ) || right.evaluate( userRoles );
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RuleNode rename( final Set< String > oldNames, final Principal newPrincipal ) {
+        final RuleNode newLeft = left.rename( oldNames, newPrincipal );
+        final RuleNode newRight = right.rename( oldNames, newPrincipal );
+        return newLeft == left && newRight == right ? this : new OperatorNode( operator, newLeft, newRight );
     }
 
     /** {@inheritDoc} */

@@ -18,6 +18,7 @@
  */
 package org.apache.wiki.auth.acl.adv;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
@@ -54,6 +55,13 @@ public class NotNode extends RuleNode {
     @Override
     public boolean evaluate( final Set< String > userRoles ) {
         return !child.evaluate( userRoles );
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public RuleNode rename( final Set< String > oldNames, final Principal newPrincipal ) {
+        final RuleNode renamed = child.rename( oldNames, newPrincipal );
+        return renamed == child ? this : new NotNode( renamed );
     }
 
     /** {@inheritDoc} */
