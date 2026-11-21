@@ -28,10 +28,18 @@ servers:
   - url: /api/v1
 security:
   - sessionCookie: []
+tags:
+  - name: Search
+    description: Finding pages by text or by the start of their name.
+  - name: Plugins
+    description: The plugins the wiki offers.
+  - name: Pages
+    description: Reading pages, their history, attachments and references.
 paths:
   /search:
     get:
       operationId: searchPages
+      tags: [Search]
       summary: Search the pages the caller may view.
       parameters:
         - name: query
@@ -63,6 +71,7 @@ paths:
   /search/suggestions:
     get:
       operationId: suggestPages
+      tags: [Search]
       summary: Suggest the names of the pages that start with the given text and that the caller may view.
       parameters:
         - name: query
@@ -90,6 +99,7 @@ paths:
   /plugins:
     get:
       operationId: listPlugins
+      tags: [Plugins]
       summary: List the plugins discovered by the wiki, sorted by display name for the locale of the request.
       responses:
         '200':
@@ -107,6 +117,7 @@ paths:
   /pages:
     get:
       operationId: listPages
+      tags: [Pages]
       summary: List the names of the pages the caller may view, sorted by name.
       parameters:
         - $ref: '#/components/parameters/max'
@@ -138,6 +149,7 @@ paths:
   /pages/{name}:
     get:
       operationId: getPage
+      tags: [Pages]
       summary: Read a page the caller may view, in the latest version or in the one asked for.
       parameters:
         - $ref: '#/components/parameters/name'
@@ -168,6 +180,7 @@ paths:
   /pages/{name}/history:
     get:
       operationId: getPageHistory
+      tags: [Pages]
       summary: List the versions of a page the caller may view, the latest first.
       parameters:
         - $ref: '#/components/parameters/name'
@@ -193,6 +206,7 @@ paths:
   /pages/{name}/attachments:
     get:
       operationId: listPageAttachments
+      tags: [Pages]
       summary: List the attachments of a page the caller may view, sorted by name.
       parameters:
         - $ref: '#/components/parameters/name'
@@ -218,6 +232,7 @@ paths:
   /pages/{name}/references:
     get:
       operationId: getPageReferences
+      tags: [Pages]
       summary: List the pages that link to a page and the pages it links to, leaving out the ones the caller may not view.
       parameters:
         - $ref: '#/components/parameters/name'
@@ -239,6 +254,7 @@ paths:
   /pages/{name}/html:
     get:
       operationId: getPageHtml
+      tags: [Pages]
       summary: Read a page rendered to HTML, as the wiki shows it to the caller.
       parameters:
         - $ref: '#/components/parameters/name'
@@ -277,7 +293,7 @@ components:
       name: name
       in: path
       required: true
-      description: Name of the page. A name with "..", a backslash or a control character is not valid.
+      description: Name of the page. A name with two dots in a row, a backslash or a control character is not valid.
       schema:
         type: string
         minLength: 1
