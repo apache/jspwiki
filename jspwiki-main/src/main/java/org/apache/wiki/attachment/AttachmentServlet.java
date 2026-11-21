@@ -324,7 +324,7 @@ public class AttachmentServlet extends HttpServlet {
      * @return The rest of the header value: the file name, the closing quote and the terminating semicolon.
      * @since 3.0.1
      */
-    static String encodeFileName( final String fileName ) {
+    public static String encodeFileName( final String fileName ) {
         boolean plain = true;
         final StringBuilder fallback = new StringBuilder( fileName.length() );
         for( int i = 0; i < fileName.length(); i++ ) {

@@ -51,6 +51,12 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>jspwiki-rest-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>jspwiki-210-adapters</artifactId>
             <version>${project.version}</version>
         </dependency>
