@@ -32,6 +32,7 @@
 
   <modules>
     <module>jspwiki-plugins-chartist</module>
+	<module>jspwiki-plugins-jdbc</module>
   </modules>
 
 </project>

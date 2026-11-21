@@ -64,3 +64,101 @@ jobs:
 # Disabled due to some bug in the plugin
 #    - name: Dependency scan
 #      run: mvn install -B -T 1C -DskipTests=true org.owasp:dependency-check-maven:LATEST:check -DassemblyAnalyzerEnabled=false
+
+  jdbc-matrix:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [ 17, 21 ]
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: jspwiki_test
+          POSTGRES_USER: jspwiki
+          POSTGRES_PASSWORD: jspwiki_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
+      mariadb:
+        image: mariadb:11
+        env:
+          MARIADB_DATABASE: jspwiki_test
+          MARIADB_USER: jspwiki
+          MARIADB_PASSWORD: jspwiki_password
+          MARIADB_ROOT_PASSWORD: root_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 20
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java }}
+
+      - name: Wait for MSSQL database and create test DB
+        run: |
+          for i in $(seq 1 30); do
+            if /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P "YourStrong!Passw0rd" -C -Q "SELECT 1" >/dev/null 2>&1 \
+               || /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1" >/dev/null 2>&1; then
+              break
+            fi
+            sleep 2
+          done
+          if command -v /opt/mssql-tools18/bin/sqlcmd >/dev/null 2>&1; then
+            /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P "YourStrong!Passw0rd" -C \
+              -Q "IF DB_ID('jspwiki_test') IS NULL CREATE DATABASE jspwiki_test;"
+          else
+            /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U sa -P "YourStrong!Passw0rd" \
+              -Q "IF DB_ID('jspwiki_test') IS NULL CREATE DATABASE jspwiki_test;"
+          fi
+
+      - name: Run JdbcPageProviderTest across SQLite, PostgreSQL, MariaDB, and MSSQL
+        env:
+          JSPWIKI_TEST_PG_URL: jdbc:postgresql://localhost:5432/jspwiki_test
+          JSPWIKI_TEST_PG_USER: jspwiki
+          JSPWIKI_TEST_PG_PASSWORD: jspwiki_password
+          JSPWIKI_TEST_PG_DRIVER: org.postgresql.Driver
+
+          JSPWIKI_TEST_MARIADB_URL: jdbc:mariadb://localhost:3306/jspwiki_test
+          JSPWIKI_TEST_MARIADB_USER: jspwiki
+          JSPWIKI_TEST_MARIADB_PASSWORD: jspwiki_password
+          JSPWIKI_TEST_MARIADB_DRIVER: org.mariadb.jdbc.Driver
+
+          JSPWIKI_TEST_MSSQL_URL: jdbc:sqlserver://localhost:1433;databaseName=jspwiki_test;encrypt=true;trustServerCertificate=true
+          JSPWIKI_TEST_MSSQL_USER: sa
+          JSPWIKI_TEST_MSSQL_PASSWORD: "YourStrong!Passw0rd"
+          JSPWIKI_TEST_MSSQL_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
+        run: mvn test -B -Dtest=JdbcPageProviderTest "-Dplugin.surefire.junit5-tree-reporter.enable-console=true"

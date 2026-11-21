@@ -11,3 +11,4 @@ nb-configuration.xml
 **/node_modules/*
 .vscode
 release.properties
+jdbc-test-local.properties
