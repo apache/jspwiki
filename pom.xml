@@ -29,7 +29,7 @@
   <artifactId>jspwiki-builder</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <name>Apache JSPWiki</name>
-  <version>3.0.1-SNAPSHOT</version>
+  <version>3.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
   <description>Apache JSPWiki is a leading open source WikiWiki engine, feature-rich
     and built around standard JEE components (Java, servlets, JSP).</description>
@@ -39,7 +39,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <project.build.outputTimestamp>2026-08-16T18:19:17Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2026-11-16T22:50:33Z</project.build.outputTimestamp>
 <!-- will be changed by release plugin during releases -->
     <jdk.version>17</jdk.version>
     <jdk.javadoc.doclet.version>2.3.2</jdk.javadoc.doclet.version>
@@ -61,7 +61,7 @@
     <freshcookies-security.version>0.60</freshcookies-security.version>
     <gson.version>2.15.0</gson.version>
     <hsqldb.version>2.7.4</hsqldb.version>
-    <jackson-version>3.2.4</jackson-version>
+    <jackson-version>3.3.0</jackson-version>
     <jakarta-activation.version>2.0.1</jakarta-activation.version>
     <jakarta-activation-api.version>2.1.4</jakarta-activation-api.version>
     <jakarta-jsp-api.version>4.0.0</jakarta-jsp-api.version>
@@ -114,7 +114,7 @@
     <plugin.war.version>3.5.1</plugin.war.version>
     <plugin.inmemdb.version>1.4.3</plugin.inmemdb.version>
     <plugin.jspc.version>5.0.0</plugin.jspc.version>
-    <plugin.build-helper.version>3.6.1</plugin.build-helper.version>
+    <plugin.build-helper.version>3.8.0</plugin.build-helper.version>
     <plugin.checksum.version>1.11</plugin.checksum.version>
     <plugin.jslint.version>1.0.1</plugin.jslint.version>
     <plugin.cargo.version>1.10.30</plugin.cargo.version>

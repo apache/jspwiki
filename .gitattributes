@@ -1,0 +1,7 @@
+# Line endings: the files of the working tree have LF on every system, so the sources that are
+# packaged in a release do not depend on the core.autocrlf setting of whoever builds it.
+* text=auto eol=lf
+
+# Windows scripts
+*.bat text=auto eol=crlf
+*.cmd text=auto eol=crlf
