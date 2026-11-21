@@ -16,6 +16,17 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-11-20  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.2-git-2_
+
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search` is the first endpoint of a versioned REST API, described by the OpenAPI file `openapi.yaml` ([PR#589](https://github.com/apache/jspwiki/pull/589))
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search/suggestions` and `GET /api/v1/plugins` are added to the REST API; the suggestions leave out the pages the caller may not view ([PR#590](https://github.com/apache/jspwiki/pull/590))
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/pages/{name}`, `GET /api/v1/pages/{name}/history` and `GET /api/v1/pages/{name}/attachments` are added to the REST API, to read a page, its versions and its attachments if the caller may view the page
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/pages`, `GET /api/v1/pages/{name}/references` and `GET /api/v1/pages/{name}/html` are added to the REST API, to list the pages in chunks, to read the links of a page and to read a page rendered to HTML
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): the REST API is in its own module `jspwiki-rest-api` and writes its JSON with Jackson, which the wiki already uses, and not with Gson
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): the operations of `openapi.yaml` are grouped with the tags Search, Plugins and Pages, so that code generators such as openapi-generator make one class per tag, and a description that made the generator for JAX-RS interfaces write code that does not compile is reworded. A client and the JAX-RS interfaces generated with openapi-generator 7.27.0 compile, and the client reads the responses of a running wiki.
+
 **2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
 * _3.0.2-git-1_
 
