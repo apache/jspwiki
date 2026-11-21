@@ -207,6 +207,30 @@ public class RSSGeneratorTest {
     }
 
     /** The feed is cached and shared, so an entry that the anonymous user may not view must not be listed in it. */
+    /** JSPWIKI-1226: a feed validator wants a guid in every item and a link to the feed itself. */
+    @Test
+    public void testRss20HasGuidAndLinkToItself() throws Exception {
+        final TestEngine engine = buildRssEngine();
+        engine.saveText( "RssGuid", "Foo" );
+
+        final HttpServletRequest request = HttpMockFactory.createHttpRequest();
+        Mockito.doReturn( "http" ).when( request ).getScheme();
+        Mockito.doReturn( "localhost" ).when( request ).getServerName();
+        Mockito.doReturn( 8080 ).when( request ).getServerPort();
+        final Page page = engine.getManager( PageManager.class ).getPage( "RssGuid" );
+        final Context context = Wiki.context().create( engine, request, page );
+        final RSSGenerator gen = engine.getManager( RSSGenerator.class );
+
+        final String rss20 = gen.generateWikiPageRSS( context, new ArrayList<>( List.of( page ) ), new RSS20Feed( context ) );
+        final String atom = gen.generateWikiPageRSS( context, new ArrayList<>( List.of( page ) ), new AtomFeed( context ) );
+
+        Assertions.assertTrue( rss20.contains( "xmlns:atom=\"http://www.w3.org/2005/Atom\"" ), rss20 );
+        Assertions.assertTrue( rss20.contains( "<atom:link href=\"http://localhost:8080/test/rss.jsp?page=RssGuid&amp;mode=wiki&amp;type=rss20\" rel=\"self\" type=\"application/rss+xml\" />" ), rss20 );
+        Assertions.assertTrue( rss20.contains( "<guid isPermaLink=\"true\">http://localhost:8080/test/Wiki.jsp?page=RssGuid" ), rss20 );
+        Assertions.assertTrue( atom.contains( "rel=\"self\" href=\"http://localhost:8080/test/rss.jsp?page=RssGuid&amp;mode=wiki&amp;type=atom\"" ), atom );
+        engine.shutdown();
+    }
+
     @Test
     public void testBlogRSSSkipsEntriesTheAnonymousUserMayNotView() throws Exception {
         final Properties props = TestEngine.getTestProperties();
