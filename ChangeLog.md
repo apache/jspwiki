@@ -17,6 +17,13 @@ specific language governing permissions and limitations
 under the License.
 -->
 
+**2026-11-20 Arturo Bernal (abernal AT apache DOT org)**
+
+* _2.12.6-git-03_
+
+* Fix for the build with Maven 3.10 and later: `jspwiki-markdown` declared the dependency `commons-text` twice, which those versions reject
+* Fix for the build with Maven 3.10 and later: the compiler of the JSPs of `jspwiki-war` is the `ecj` 3.21.0 that the plugin already brings, declared first, because with those versions the old `ecj` 4.6.1 came first, did not know the Java level of the project, and the 117 JSPs failed to compile
+
 **2026-11-08 Arturo Bernal (abernal AT apache DOT org)**
 
 * _2.12.6-git-02_
