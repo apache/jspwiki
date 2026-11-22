@@ -71,7 +71,7 @@ public class EhcacheCachingManager implements CachingManager, Initializable {
         final boolean useCache = "true".equalsIgnoreCase( cacheEnabled );
         final String confLocation = "/" + TextUtil.getStringProperty( props, PROP_CACHE_CONF_FILE, "ehcache-jspwiki.xml" );
         if( useCache ) {
-            final URL location = this.getClass().getResource( confLocation );
+            final URL location = findConfiguration( confLocation );
             LOG.info( "Reading ehcache configuration file from classpath on /{}", location );
             cacheManager = CacheManager.create( location );
             registerCache( CACHE_ATTACHMENTS );
@@ -82,6 +82,22 @@ public class EhcacheCachingManager implements CachingManager, Initializable {
             registerCache( CACHE_PAGES_HISTORY );
             registerCache( CACHE_PAGES_TEXT );
         }
+    }
+
+    /**
+     * Looks for the configuration file with the class loader of this class and, if it is not there, with the one of the
+     * thread. When this jar is in a library shared by several web applications, as in the portable builds, only the
+     * second one sees the classes folder of the web application.
+     */
+    URL findConfiguration( final String location ) {
+        URL url = this.getClass().getResource( location );
+        if( url == null ) {
+            final ClassLoader context = Thread.currentThread().getContextClassLoader();
+            if( context != null ) {
+                url = context.getResource( location.startsWith( "/" ) ? location.substring( 1 ) : location );
+            }
+        }
+        return url;
     }
 
     void registerCache( final String cacheName ) {
