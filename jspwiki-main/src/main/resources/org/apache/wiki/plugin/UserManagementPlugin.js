@@ -6,7 +6,7 @@ async function sendPostRequest(url, payload, callback) {
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            body: payload
+            data: payload
         });
         callback(response);
 
@@ -16,8 +16,8 @@ async function sendPostRequest(url, payload, callback) {
 }
 
 function UserManagementPluginLockuser(btnid, otherbtnid, username) {
-    sendPostRequest('/admin-user-management/lock', [username], function (result) {
-        if (!result) {
+    sendPostRequest('ajax/admin-user-management/lock', {"username": username}, function (result) {
+        if (!result.ok) {
             //operation failed, show a message?
             alert(result);
         } else {
@@ -27,8 +27,8 @@ function UserManagementPluginLockuser(btnid, otherbtnid, username) {
     });
 }
 function UserManagementPluginUnlockUser(btnid, otherbtnid, username) {
-    sendPostRequest('/admin-user-management/unlock', [username], function (result) {
-        if (!result) {
+    sendPostRequest('ajax/admin-user-management/unlock', {"username": username}, function (result) {
+        if (!result.ok) {
             //operation failed, show a message?
             alert(result);
         } else {
@@ -38,8 +38,8 @@ function UserManagementPluginUnlockUser(btnid, otherbtnid, username) {
     });
 }
 function UserManagementPluginExpirePassword(btnid, username) {
-    sendPostRequest('/admin-user-management/expire', [username], function (result) {
-        if (!result) {
+    sendPostRequest('ajax/admin-user-management/expire', {"username": username}, function (result) {
+        if (!result.ok) {
             //operation failed, show a message?
             alert(result);
         } else {
@@ -48,8 +48,8 @@ function UserManagementPluginExpirePassword(btnid, username) {
     });
 }
 function UserManagementPluginDeleteUser(rowid, username) {
-    sendPostRequest('/admin-user-management/delete', [username], function (result) {
-        if (!result) {
+    sendPostRequest('ajax/admin-user-management/delete', {"username": username}, function (result) {
+        if (!result.ok) {
             //operation failed, show a message?
             alert(result);
         } else {

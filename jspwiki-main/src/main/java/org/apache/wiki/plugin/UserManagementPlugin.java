@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -49,6 +50,11 @@ import org.apache.wiki.util.TextUtil;
  *
  */
 public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
+
+    @Override
+    public String getDisplayName(Locale locale) {
+        return "User Management";
+    }
 
     static String idCssSafeId() {
         return "id-" + UUID.randomUUID().toString().replace("-", "");
@@ -117,8 +123,8 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 }
                 String disabledLock = locked ? disabled : "";
                 String disabledUnlock = locked ? "" : disabled;
-                String expirePassword = passwordExpired ? disabled :"";
-                String disableDelete = isAdmin ? disabled: "";
+                String expirePassword = passwordExpired ? disabled : "";
+                String disableDelete = isAdmin ? disabled : "";
 
                 String lockId = idCssSafeId();
                 String unlockId = idCssSafeId();
