@@ -160,12 +160,8 @@ public class AtomFeed extends Feed {
         root.addContent( getElement( "link" ).setAttribute( "href", engine.getBaseURL() ) );
         root.addContent( getElement( "generator" ).setText( "JSPWiki " + Release.VERSTR ) );
 
-        final String rssFeedURL  = engine.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "rss.jsp",
-                                                 "page=" + engine.encodeName( m_wikiContext.getPage().getName() ) +
-                                                 "&mode=" + m_mode +
-                                                 "&type=atom" );
         final Element self = getElement( "link" ).setAttribute( "rel","self" );
-        self.setAttribute( "href", rssFeedURL );
+        self.setAttribute( "href", getSelfURL( RSSGenerator.ATOM ) );
         root.addContent( self );
 
         //  Items

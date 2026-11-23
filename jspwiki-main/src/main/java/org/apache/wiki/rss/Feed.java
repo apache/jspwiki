@@ -20,8 +20,10 @@ package org.apache.wiki.rss;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.ContextEnum;
 import org.apache.wiki.api.core.Engine;
 import org.apache.wiki.api.exceptions.NoSuchVariableException;
+import org.apache.wiki.util.HttpUtil;
 import org.apache.wiki.variables.VariableManager;
 
 import jakarta.servlet.ServletContext;
@@ -170,6 +172,24 @@ public abstract class Feed {
      */
     public void setFeedURL( final String feedurl) {
         m_feedURL = feedurl;
+    }
+
+    /**
+     * Returns the address of this feed, for the link that tells a feed reader where the feed is. The address is absolute when the
+     * request is known, because a feed reader has no page to resolve a relative one against.
+     *
+     * @param type the type of the feed, one of the types of {@link RSSGenerator}.
+     * @return the URL of this feed.
+     * @since 3.0.2
+     */
+    protected String getSelfURL( final String type ) {
+        final Engine engine = m_wikiContext.getEngine();
+        final String url = engine.getURL( ContextEnum.PAGE_NONE.getRequestContext(), "rss.jsp",
+                                          "page=" + engine.encodeName( m_wikiContext.getPage().getName() ) + "&mode=" + m_mode + "&type=" + type );
+        if( m_wikiContext.getHttpRequest() == null || !url.startsWith( "/" ) ) {
+            return url;
+        }
+        return HttpUtil.getAbsoluteUrl( m_wikiContext.getHttpRequest(), url );
     }
 
     /**

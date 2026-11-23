@@ -16,6 +16,12 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-11-21  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.2-git-2_
+
+* [JSPWIKI-1226](https://issues.apache.org/jira/browse/JSPWIKI-1226): every item of the RSS 2.0 feed has a `guid`, and the channel has an `atom:link` with `rel="self"` that tells a feed reader where the feed is, as feed validators ask. The link to the feed itself in the Atom feed is absolute too.
+
 **2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
 * _3.0.2-git-1_
 

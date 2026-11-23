@@ -28,6 +28,7 @@ import org.apache.wiki.api.exceptions.ProviderException;
 import org.apache.wiki.attachment.AttachmentManager;
 import org.apache.wiki.variables.VariableManager;
 import org.jdom2.Element;
+import org.jdom2.Namespace;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
@@ -51,6 +52,8 @@ import org.apache.wiki.util.HttpUtil;
 public class RSS20Feed extends Feed
 {
     private static final Logger LOG = LogManager.getLogger( RSS20Feed.class );
+
+    private static final Namespace NS_ATOM = Namespace.getNamespace( "atom", "http://www.w3.org/2005/Atom" );
 
     /**
      *  Creates an RSS 2.0 feed for the specified Context.
@@ -78,6 +81,8 @@ public class RSS20Feed extends Feed
             final String url = e.getURL();
             final Element item = new Element( "item" );
             item.addContent( new Element( "link" ).setText( url ) );
+            // the address of an entry includes its version, so it never identifies another entry
+            item.addContent( new Element( "guid" ).setAttribute( "isPermaLink", "true" ).setText( url ) );
             item.addContent( new Element( "title" ).setText( e.getTitle() ) );
             item.addContent( new Element( "description" ).setText( e.getContent() ) );
 
@@ -126,6 +131,7 @@ public class RSS20Feed extends Feed
         final Engine engine = m_wikiContext.getEngine();
         final Element root = new Element("rss");
         root.setAttribute("version","2.0");
+        root.addNamespaceDeclaration( NS_ATOM );
 
         final Element channel = new Element("channel");
         root.addContent( channel );
@@ -142,6 +148,9 @@ public class RSS20Feed extends Feed
             channel.addContent( new Element("link").setText("https://0.0.0.0/"));
         }
         channel.addContent( new Element("description").setText( getChannelDescription() ));
+        channel.addContent( new Element( "link", NS_ATOM ).setAttribute( "href", getSelfURL( RSSGenerator.RSS20 ) )
+                                                         .setAttribute( "rel", "self" )
+                                                         .setAttribute( "type", "application/rss+xml" ) );
 
         //
         //  Optional
