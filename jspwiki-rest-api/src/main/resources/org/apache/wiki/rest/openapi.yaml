@@ -1,0 +1,531 @@
+#  Licensed to the Apache Software Foundation (ASF) under one
+#  or more contributor license agreements.  See the NOTICE file
+#  distributed with this work for additional information
+#  regarding copyright ownership.  The ASF licenses this file
+#  to you under the Apache License, Version 2.0 (the
+#  "License"); you may not use this file except in compliance
+#  with the License.  You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing,
+#  software distributed under the License is distributed on an
+#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+#  KIND, either express or implied.  See the License for the
+#  specific language governing permissions and limitations
+#  under the License.
+
+# Description of the REST API of the wiki, JSPWIKI-1310. A test compares it with the answers of ApiV1Servlet.
+openapi: 3.0.3
+info:
+  title: JSPWiki API
+  version: 1.0.0
+  description: Search of the pages the caller may view, page name suggestions and the installed plugins.
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: /api/v1
+security:
+  - sessionCookie: []
+tags:
+  - name: Search
+    description: Finding pages by text or by the start of their name.
+  - name: Plugins
+    description: The plugins the wiki offers.
+  - name: Pages
+    description: Reading pages, their history, attachments and references.
+paths:
+  /search:
+    get:
+      operationId: searchPages
+      tags: [Search]
+      summary: Search the pages the caller may view.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - $ref: '#/components/parameters/max'
+      responses:
+        '200':
+          description: Matching pages, best match first. Empty when nothing matches.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+        '503':
+          $ref: '#/components/responses/Unavailable'
+  /search/suggestions:
+    get:
+      operationId: suggestPages
+      tags: [Search]
+      summary: Suggest the names of the pages that start with the given text and that the caller may view.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+        - $ref: '#/components/parameters/max'
+      responses:
+        '200':
+          description: Page names. Empty when there is no suggestion.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /plugins:
+    get:
+      operationId: listPlugins
+      tags: [Plugins]
+      summary: List the plugins discovered by the wiki, sorted by display name for the locale of the request.
+      responses:
+        '200':
+          description: The plugins with an example of how to insert each one.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plugin'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /pages:
+    get:
+      operationId: listPages
+      tags: [Pages]
+      summary: List the names of the pages the caller may view, sorted by name.
+      parameters:
+        - $ref: '#/components/parameters/max'
+        - name: offset
+          in: query
+          required: false
+          description: Number of names to skip, to read the next entries of a long list.
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Page names. Empty when there are no more.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /pages/{name}:
+    get:
+      operationId: getPage
+      tags: [Pages]
+      summary: Read a page the caller may view, in the latest version or in the one asked for.
+      parameters:
+        - $ref: '#/components/parameters/name'
+        - name: version
+          in: query
+          required: false
+          description: Version of the page. The latest version when absent.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: The page with its markup.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /pages/{name}/history:
+    get:
+      operationId: getPageHistory
+      tags: [Pages]
+      summary: List the versions of a page the caller may view, the latest first.
+      parameters:
+        - $ref: '#/components/parameters/name'
+      responses:
+        '200':
+          description: The versions of the page. A provider that does not keep old versions lists only the current one.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Revision'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /pages/{name}/attachments:
+    get:
+      operationId: listPageAttachments
+      tags: [Pages]
+      summary: List the attachments of a page the caller may view, sorted by name.
+      parameters:
+        - $ref: '#/components/parameters/name'
+      responses:
+        '200':
+          description: The attachments of the page. Empty when it has none or when attachments are disabled.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Attachment'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /pages/{name}/attachments/{file}:
+    get:
+      operationId: getPageAttachment
+      tags: [Pages]
+      summary: Download the content of an attachment of a page the caller may view.
+      description: The content is always sent as a download, with the header Content-Disposition set to attachment, and never as a page of the wiki. Its type is the one the server knows for the extension of the file, and application/octet-stream when it knows none.
+      parameters:
+        - $ref: '#/components/parameters/name'
+        - name: file
+          in: path
+          required: true
+          description: File name of the attachment.
+          schema:
+            type: string
+            minLength: 1
+        - name: version
+          in: query
+          required: false
+          description: Version of the attachment. The latest version when absent.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: The content of the attachment.
+          content:
+            '*/*':
+              schema:
+                type: string
+                format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /pages/{name}/references:
+    get:
+      operationId: getPageReferences
+      tags: [Pages]
+      summary: List the pages that link to a page and the pages it links to, leaving out the ones the caller may not view.
+      parameters:
+        - $ref: '#/components/parameters/name'
+      responses:
+        '200':
+          description: The links of the page, each list sorted by name. A page that is linked but not written yet is listed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/References'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /pages/{name}/diff:
+    get:
+      operationId: getPageDiff
+      tags: [Pages]
+      summary: Read the difference between two versions of a page, as the wiki shows it.
+      parameters:
+        - $ref: '#/components/parameters/name'
+        - name: from
+          in: query
+          required: true
+          description: Version to compare from.
+          schema:
+            type: integer
+            minimum: 1
+        - name: to
+          in: query
+          required: false
+          description: Version to compare to. The latest version when absent.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: The difference as HTML, in the markup the wiki uses to show it. Two equal versions have no marked change.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Difference'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+  /pages/{name}/html:
+    get:
+      operationId: getPageHtml
+      tags: [Pages]
+      summary: Read a page rendered to HTML, as the wiki shows it to the caller.
+      parameters:
+        - $ref: '#/components/parameters/name'
+        - name: version
+          in: query
+          required: false
+          description: Version of the page. The latest version when absent.
+          schema:
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: The HTML of the page, without the template around it.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RenderedPage'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: JSESSIONID
+  parameters:
+    name:
+      name: name
+      in: path
+      required: true
+      description: Name of the page. A name with two dots in a row, a backslash or a control character is not valid.
+      schema:
+        type: string
+        minLength: 1
+    max:
+      name: max
+      in: query
+      required: false
+      description: Maximum number of entries to return.
+      schema:
+        type: integer
+        minimum: 1
+        default: 20
+  schemas:
+    SearchResult:
+      type: object
+      required: [page, score]
+      properties:
+        page:
+          type: string
+          description: Name of the page.
+        score:
+          type: integer
+          description: Relevance of the page for the query. Higher is better.
+    Page:
+      type: object
+      required: [name, version, text]
+      properties:
+        name:
+          type: string
+        version:
+          type: integer
+        author:
+          type: string
+        lastModified:
+          type: string
+          format: date-time
+        text:
+          type: string
+          description: Wiki markup of the page, without any conversion.
+    RenderedPage:
+      type: object
+      required: [name, version, html]
+      properties:
+        name:
+          type: string
+        version:
+          type: integer
+        html:
+          type: string
+    Difference:
+      type: object
+      required: [name, from, to, html]
+      properties:
+        name:
+          type: string
+        from:
+          type: integer
+        to:
+          type: integer
+        html:
+          type: string
+    References:
+      type: object
+      required: [referredBy, refersTo]
+      properties:
+        referredBy:
+          type: array
+          items:
+            type: string
+        refersTo:
+          type: array
+          items:
+            type: string
+    Revision:
+      type: object
+      required: [version]
+      properties:
+        version:
+          type: integer
+        author:
+          type: string
+        lastModified:
+          type: string
+          format: date-time
+        changeNote:
+          type: string
+    Attachment:
+      type: object
+      required: [name, version, size]
+      properties:
+        name:
+          type: string
+          description: File name of the attachment.
+        version:
+          type: integer
+        size:
+          type: integer
+          description: Size in bytes.
+        author:
+          type: string
+        lastModified:
+          type: string
+          format: date-time
+    Plugin:
+      type: object
+      required: [displayName, snip]
+      properties:
+        displayName:
+          type: string
+        snip:
+          type: string
+          description: Example of the markup that inserts the plugin.
+    Error:
+      type: object
+      required: [status, message]
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+  responses:
+    BadRequest:
+      description: A required parameter is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: The caller is not authenticated and anonymous access is not allowed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Forbidden:
+      description: The caller is authenticated but lacks the permission.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: The page does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    InternalError:
+      description: The request could not be served because of an error of the wiki.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unavailable:
+      description: The search index is not available, for instance right after the wiki has started.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
