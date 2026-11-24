@@ -16,6 +16,12 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-11-20  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.2-git-2_
+
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search` is the first endpoint of a versioned REST API, described by the OpenAPI file `openapi.yaml` ([PR#589](https://github.com/apache/jspwiki/pull/589))
+
 **2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
 * _3.0.2-git-1_
 
@@ -142,6 +148,7 @@ under the License.
 * [JSPWIKI-530](https://issues.apache.org/jira/browse/JSPWIKI-530): new `LanguagePlugin` that shows the block of its body that matches the `Accept-Language` header of the visitor, based on the code that Ulf Dittmer attached to the issue ([PR#596](https://github.com/apache/jspwiki/pull/596))
 * Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): the "More..." menu of the default template has an entry to be notified of the changes of the page, or to stop being notified. It posts, with the anti-CSRF token, to the new `Subscribe.jsp`, which needs a logged-in user with an e-mail address in the profile.
 * Fix for [JSPWIKI-90](https://issues.apache.org/jira/browse/JSPWIKI-90): the editors of the default template have a "Notify me of changes" box, so a user can subscribe to a page while writing it, also when it is a new page. `Edit.jsp` subscribes the user after the save, when the profile has an e-mail address.
+* [JSPWIKI-1310](https://issues.apache.org/jira/browse/JSPWIKI-1310): `GET /api/v1/search` is the first endpoint of a versioned REST API, described by the OpenAPI file `openapi.yaml` ([PR#589](https://github.com/apache/jspwiki/pull/589))
 
 **2026-10-29 Arturo Bernal (abernal AT apache DOT org)**
 
