@@ -259,7 +259,7 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 sb.append("</button>\n");
 
                 sb.append("<button class='btn btn-info' type='button' id='");
-                sb.append(lockId);
+                sb.append(unlockId);
                 sb.append("' onclick=\"UserManagementPluginUnlockUser('");
                 sb.append(StringEscapeUtils.escapeEcmaScript(unlockId));
                 sb.append("','");
@@ -274,7 +274,7 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 sb.append("</button>\n");
 
                 sb.append("<button class='btn btn-warning' type='button' id='");
-                sb.append(lockId);
+                sb.append(expireId);
                 sb.append("' onclick=\"UserManagementPluginExpirePassword('");
                 sb.append(StringEscapeUtils.escapeEcmaScript(expireId));
 
@@ -287,9 +287,9 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                         "userinfo.aciton.expirepassword"));
                 sb.append("</button>\n");
 
-                sb.append("<button class='btn btn-danger' type='button' id='");
-                sb.append(lockId);
-                sb.append("' onclick=\"UserManagementPluginDeleteUser('");
+                sb.append("<button class='btn btn-danger' type='button' ");
+                //no id needed for this one
+                sb.append(" onclick=\"UserManagementPluginDeleteUser('");
                 sb.append(StringEscapeUtils.escapeEcmaScript(rowId));
 
                 sb.append("','");
