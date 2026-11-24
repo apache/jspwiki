@@ -16,6 +16,15 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-11-20  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.2-git-2_
+
+* Fix for [JSPWIKI-94](https://issues.apache.org/jira/browse/JSPWIKI-94): the new module jspwiki-oidc logs users in with OpenID Connect, with the pac4j filters, and presents them to the wiki as users authenticated by the container, including their roles and the logout. It is not included in the war unless it is built with the profile oidc, and its filters are disabled in web.xml
+* Fix for [JSPWIKI-1375](https://issues.apache.org/jira/browse/JSPWIKI-1375): the OpenID Connect login of the module jspwiki-oidc works with any OpenID Connect provider, with the claims for the name and the roles of the user configurable
+* [JSPWIKI-1375](https://issues.apache.org/jira/browse/JSPWIKI-1375): the tests of the OpenID Connect login run the whole login, the identity of the next requests and the logout through the filters of `web.xml` in an embedded Tomcat, against an OpenID Connect provider that runs in the test
+* [JSPWIKI-1375](https://issues.apache.org/jira/browse/JSPWIKI-1375): the first login with OpenID Connect creates the profile of the user in the user database of the wiki, with the full name and the e-mail address that the provider sends
+
 **2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
 * _3.0.2-git-1_
 
