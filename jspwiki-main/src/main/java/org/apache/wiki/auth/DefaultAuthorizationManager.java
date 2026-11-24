@@ -30,8 +30,11 @@ import org.apache.wiki.api.core.Page;
 import org.apache.wiki.api.core.Session;
 import org.apache.wiki.api.exceptions.NoRequiredPropertyException;
 import org.apache.wiki.api.exceptions.WikiException;
+import org.apache.wiki.auth.acl.AclImpl;
 import org.apache.wiki.auth.acl.AclManager;
 import org.apache.wiki.auth.acl.UnresolvedPrincipal;
+import org.apache.wiki.auth.acl.adv.RoleNode;
+import org.apache.wiki.auth.acl.adv.RuleNode;
 import org.apache.wiki.auth.authorize.GroupManager;
 import org.apache.wiki.auth.authorize.Role;
 import org.apache.wiki.auth.permissions.AllPermission;
@@ -59,9 +62,11 @@ import java.security.ProtectionDomain;
 import java.security.cert.Certificate;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -169,8 +174,38 @@ public class DefaultAuthorizationManager implements AuthorizationManager {
                 return true;
             }
         }
+
+        // The advanced rules grant the permission as well, to the users that satisfy any of them.
+        if( acl instanceof AclImpl ) {
+            for( final RuleNode rule : ( ( AclImpl ) acl ).findRules( permission ) ) {
+                if( satisfies( session, rule ) ) {
+                    fireEvent( WikiSecurityEvent.ACCESS_ALLOWED, user, permission );
+                    return true;
+                }
+            }
+        }
         fireEvent( WikiSecurityEvent.ACCESS_DENIED, user, permission );
         return false;
+    }
+
+    /**
+     * Tells if the user of a session satisfies an advanced rule. A name counts as held only if the user really has the role or is the
+     * logged in user, so a name that is only asserted does not.
+     */
+    private boolean satisfies( final Session session, final RuleNode rule ) {
+        final Set< String > held = new HashSet<>();
+        for( final RoleNode node : rule.getRoleNodes() ) {
+            Principal principal = node.getPrincipal();
+            if( principal == null || principal instanceof UnresolvedPrincipal ) {
+                // Same as for the entries of an ACL: a group or user created after the page was read can be resolved now
+                principal = resolvePrincipal( node.getRole() );
+                node.setPrincipal( principal );
+            }
+            if( hasRoleOrPrincipal( session, principal ) ) {
+                held.add( node.getRole() );
+            }
+        }
+        return rule.evaluate( held );
     }
 
     /** {@inheritDoc} */

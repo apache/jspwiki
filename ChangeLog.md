@@ -16,6 +16,11 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-11-21  Arturo Bernal (abernal AT apache DOT org)**
+* _3.0.2-git-2_
+
+* Fix for [JSPWIKI-1210](https://issues.apache.org/jira/browse/JSPWIKI-1210) Access rules can combine roles, groups and users with AND, OR, NOT and parentheses, as in `[{ALLOW edit Editors AND (Reviewers OR NOT Banned)}]`. An advanced rule grants its permission together with the other rules of the page, the operators are written in upper case, and a name with an operator word inside it, such as ANDY, is still a name. Based on the work of Alex O'Ree
+
 **2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
 * _3.0.2-git-1_
 

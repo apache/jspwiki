@@ -137,9 +137,11 @@ class DefaultSubscriptionManagerTest {
     @Test
     void aPageWithRestrictedViewIsNotNotified() throws Exception {
         manager.subscribe( "subscriber", "RestrictedPage" );
+        manager.subscribe( "subscriber", "RestrictedAdvancedPage" );
         manager.subscribe( "subscriber", "SubscribedPage" );
 
         engine.saveText( "RestrictedPage", "[{ALLOW view Admin}]\nsecret" );
+        engine.saveText( "RestrictedAdvancedPage", "[{ALLOW view Admin OR Editors}]\nsecret" );
         engine.saveText( "SubscribedPage", "public" );
 
         final List< SmtpMessage > mails = awaitMails( 1 );
