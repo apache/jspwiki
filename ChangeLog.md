@@ -30,6 +30,7 @@ under the License.
 * Bump `org.sonarsource.scanner.maven:sonar-maven-plugin` from 5.8.0.7211 to 5.9.0.7382 ([PR#648](https://github.com/apache/jspwiki/pull/648))
 * Fix for [JSPWIKI-1384](https://issues.apache.org/jira/browse/JSPWIKI-1384): move `SampleAjaxPlugin` from the main sources to the test sources
 * Fix for [JSPWIKI-1387](https://issues.apache.org/jira/browse/JSPWIKI-1387): a user who logs in to a locked account with the right password is told that the account is locked, instead of "Not a valid login"
+* Fix for [JSPWIKI-1391](https://issues.apache.org/jira/browse/JSPWIKI-1391): the CSS of a `%%add-css` block is not shown before the script has turned it into a style element
 
 **2026-11-17  Arturo Bernal (abernal AT apache DOT org)**
 
