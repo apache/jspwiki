@@ -1,0 +1,121 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.  
+-->
+
+<!--
+  This project builds a "WikiOnAStick" based on JSPWiki.
+-->
+<project name="woas" default="woas:info" basedir=".">
+
+  <!-- import environment variables -->
+  <property environment="env"/>
+
+  <!-- the build version if not overwritten by the caller -->
+  <property name="jspwiki.woas.version" value="${jspwiki.woas.version}" />
+  
+  <!-- define the temporary build directory -->
+  <property name="jspwiki.woas.target.dir" value="${basedir}/target" />
+  
+  <!-- the temporary directory for the build -->
+  <property name="jspwiki.woas.unpack.dir" value="${jspwiki.woas.target.dir}/unpack" />
+
+	<property name="jspwiki.woas.assembly.dir" value="${basedir}/target/tomcat"/>
+
+  <!-- the Tomcat version to use --> 
+  <property name="jspwiki.tomcat.version" value="${jspwiki.tomcat.version}"/>
+
+  <!-- the Tomcat distribution to use --> 
+  <property name="jspwiki.tomcat.distribution" value="apache-tomcat-${jspwiki.tomcat.version}"/>
+
+  <property name="jspwiki.launch4j.install.dir" value="${jspwiki.woas.unpack.dir}/launch4j"/>
+  <property name="jspwiki.appbundler.install.dir" value="${jspwiki.woas.unpack.dir}/appbundler"/>
+
+  <!-- ############################################################## -->
+  <!-- General Targets                                                -->
+  <!-- ############################################################## -->
+
+  <target name="woas:info" description="Build the project">
+    <echo>jspwiki.woas.version = ${jspwiki.woas.version}</echo>
+    <echo>jspwiki.woas.assembly.dir = ${jspwiki.woas.assembly.dir}</echo>
+    <echo>jspwiki.woas.unpack.dir = ${jspwiki.woas.unpack.dir}</echo>
+    <echo>jspwiki.tomcat.distribution = ${jspwiki.tomcat.distribution}</echo>
+  </target>
+
+  <target name="woas:clean" description="Clean the project">
+    <delete dir="${jspwiki.woas.target.dir}"/>
+  </target>
+
+  <!-- ############################################################## -->
+  <!-- Misc                                                           -->
+  <!-- ############################################################## -->
+
+  <target name="woas:copy-woas" description="Prepares a customized JSPWiki installation">  
+   
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/personal/WEB-INF/lib"/>    
+    <!-- copy the exploded war for the "department" wiki -->
+    <copy todir="${jspwiki.woas.assembly.dir}/webapps/department" overwrite="true">
+      <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/"/>
+    </copy>
+
+    <!-- overlay the custom configuration for JSPWiki -->  
+    <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
+      <fileset dir="${basedir}/src/overlay/woas"/>
+    </copy>        
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/department/WEB-INF/lib"/>        
+  </target>  
+
+  <!-- ############################################################## -->
+  <!-- Tomcat 10 Distribution                                         -->
+  <!-- ############################################################## -->
+
+  <target name="woas:copy-tomcat" description="Prepares an unpacked Tomcat deployment">
+    <!-- copy the stuff to the assembly directory -->
+    <copy todir="${jspwiki.woas.assembly.dir}">
+      <fileset dir="${jspwiki.woas.unpack.dir}/tomcat/${jspwiki.tomcat.distribution}"/>
+    </copy>
+    <!-- delete some undesired Tomcat stuff -->
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/docs"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/examples"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/host-manager"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/manager"/>    
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/ROOT"/>    
+    <!-- create a work dir for JSPs - see http://jetty.4.n6.nabble.com/jetty-users-How-to-change-the-extracted-directory-td4501308.html -->
+    <mkdir dir ="${jspwiki.woas.assembly.dir}/work"/>    
+    <!-- create a temp dir -->
+    <mkdir dir ="${jspwiki.woas.assembly.dir}/temp"/>    
+    <!-- copy customized Tomcat configuration data -->
+    <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
+      <fileset dir="${basedir}/src/overlay/tomcat"/>
+    </copy>
+    <!-- copy the JSPWiki libraries to tomcat -->
+    <copy todir="${jspwiki.woas.assembly.dir}/jspwiki/lib" overwrite="true">
+      <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/WEB-INF/lib"/>
+    </copy>
+	
+	<copy todir="${jspwiki.woas.assembly.dir}/jspwiki/lib" overwrite="true">
+      <fileset dir="${basedir}/../../jspwiki-plugins/jspwiki-plugins-jdbc/target">
+		<filename name ="*.jar" />
+	  </fileset>
+    </copy>
+    <!-- make the start scripts executable -->
+   
+   
+  </target>
+
+
+</project>
