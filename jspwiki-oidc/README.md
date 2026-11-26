@@ -52,3 +52,21 @@ container. It has been tried with Keycloak, see [JSPWIKI-94](https://issues.apac
 
 The links to log in and out of the wiki then use the identity provider: `Login.jsp` sends the user to it, and `Logout.jsp` ends the
 session of the wiki and of the identity provider. The wiki is not asked for passwords, and its own user profiles are not used.
+
+## Setting up a Keycloak server by hand
+
+These steps set up a Keycloak server for manual testing, as outlined by Alex O'Ree in
+[PR #643](https://github.com/apache/jspwiki/pull/643):
+
+1. Download and start the Keycloak server (a JBoss based distribution), or start its Docker image.
+2. Create a realm, and add to it the roles the wiki is to receive, for example `Admin` and `Authenticated`.
+3. Create a client scope named `openid`, type default, protocol OpenID Connect.
+4. In that scope, under Mappers, add the predefined mappers for email, full name, groups and username.
+5. Under Clients, create a client of type OpenID Connect, for example `jspwiki-client`. Turn on client authentication,
+   keep the standard flow checked, and set the callback URL of the wiki and the one of `Logout.jsp` as valid redirect
+   URIs, each ending in `*`, for example `https://jspwiki:8443/wiki/keycloak/callback*`.
+6. On the Credentials tab of the client, the client authenticator should be Client Id and Secret; copy both into
+   `jspwiki-oidc.properties` as `oidc.clientId` and `oidc.secret`.
+7. On the Client scopes tab of the client, make sure `email`, `openid`, `phone` and `profile` are selected; without
+   `phone` some setups have had issues.
+8. Under Users, create a test user, set its password, and give it the roles the wiki should see. Then try to log in.
