@@ -172,6 +172,7 @@ public class InsertPage implements Plugin {
 
                 final Context includedContext = context.clone();
                 includedContext.setPage( page );
+                includedContext.setRealPage( page );
 
                 String pageData = engine.getManager( PageManager.class ).getPureText( page );
                 String moreLink = "";

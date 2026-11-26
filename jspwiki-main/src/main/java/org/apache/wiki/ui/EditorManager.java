@@ -21,7 +21,15 @@ package org.apache.wiki.ui;
 import org.apache.wiki.api.core.Context;
 import org.apache.wiki.api.engine.Initializable;
 import org.apache.wiki.modules.ModuleManager;
-
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.util.HttpUtil;
+import org.apache.wiki.api.core.Context;
+import org.apache.wiki.api.core.Page;
+ import org.apache.wiki.api.engine.Initializable;
+import org.apache.wiki.auth.AuthorizationManager;
+import org.apache.wiki.auth.permissions.PagePermission;
+import org.apache.wiki.auth.permissions.PermissionFactory;
 import jakarta.servlet.jsp.PageContext;
 
 
@@ -101,10 +109,23 @@ public interface EditorManager extends ModuleManager, Initializable {
      *  @return the edited text, if present in the session page context or as a parameter
      */
     static String getEditedText( final PageContext ctx ) {
-        String usertext = ctx.getRequest().getParameter( REQ_EDITEDTEXT );
+        String usertext = null;
+        final Object ctxAttr = ctx.getAttribute( Context.ATTR_CONTEXT );
+        final Context wikiContext = ( ctxAttr instanceof Context ) ? ( Context )ctxAttr : null;
+
+        if( wikiContext != null && wikiContext.getEngine() != null ) {
+            final AuthorizationManager authMgr = wikiContext.getEngine().getManager( AuthorizationManager.class );
+            final Page page = wikiContext.getRealPage() != null ? wikiContext.getRealPage() : wikiContext.getPage();
+            if( authMgr != null && page != null && authMgr.checkPermission(
+                    wikiContext.getWikiSession(),
+                    PermissionFactory.getPagePermission( page, PagePermission.EDIT_ACTION ) ) ) {
+                usertext = ctx.getRequest().getParameter( REQ_EDITEDTEXT );
+            }
+        }
+
         if( usertext == null ) {
             usertext = ( String )ctx.findAttribute( ATTR_EDITEDTEXT );
-        }
+         }
 
         return usertext;
     }
