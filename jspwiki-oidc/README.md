@@ -45,7 +45,9 @@ container. It has been tried with Keycloak, see [JSPWIKI-94](https://issues.apac
    ```
 
    The roles the wiki takes from the identity provider are `Admin` and `Authenticated`. Change them with the property
-   `jspwiki.oidc.roles`, a comma separated list.
+   `jspwiki.oidc.roles`, a comma separated list. Only the roles listed here are visible to the wiki's access controls:
+   a page ACL that names a Keycloak role missing from this list will not grant access to users who have that role,
+   since not every access check in JSPWiki goes through `HttpServletRequest.isUserInRole()`.
 4. In `WEB-INF/web.xml`, remove the comment marks around the OpenID Connect filters.
 5. In Keycloak, create a confidential client whose valid redirect URIs and post logout redirect URIs include the address of the wiki,
    and the realm roles `Admin` and `Authenticated`, which are assigned to the users.

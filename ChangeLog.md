@@ -16,6 +16,12 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-11-27  Arturo Bernal (abernal AT apache DOT org)**
+
+* _3.0.2-git-3_
+
+* Fix for [JSPWIKI-94](https://issues.apache.org/jira/browse/JSPWIKI-94): the OpenID Connect logout redirect sent to the identity provider lost the web application's context path, sending the user back to the server root instead of the wiki; the module's README now also notes that a page ACL can only use a Keycloak role declared in `jspwiki.oidc.roles`
+
 **2026-11-20  Arturo Bernal (abernal AT apache DOT org)**
 
 * _3.0.2-git-2_

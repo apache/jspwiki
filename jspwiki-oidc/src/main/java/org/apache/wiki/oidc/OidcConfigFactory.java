@@ -27,9 +27,11 @@ import org.pac4j.core.config.Config;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.config.ConfigFactory;
 import org.pac4j.core.context.CallContext;
+import org.pac4j.core.context.WebContext;
 import org.pac4j.core.engine.DefaultLogoutLogic;
 import org.pac4j.core.http.url.DefaultUrlResolver;
 import org.pac4j.core.http.url.UrlResolver;
+import org.pac4j.jee.context.JEEContext;
 import org.pac4j.oidc.authorization.generator.KeycloakRolesAuthorizationGenerator;
 import org.pac4j.oidc.client.KeycloakOidcClient;
 import org.pac4j.oidc.config.KeycloakOidcConfiguration;
@@ -66,14 +68,31 @@ public class OidcConfigFactory implements ConfigFactory {
         final UrlResolver urlResolver = new DefaultUrlResolver( true );
         client.setUrlResolver( urlResolver );
         final Config config = new Config( new Clients( required( props, "oidc.callbackUrl" ), client ) );
-        // the identity provider needs an absolute URL to return to after the logout
+        // the identity provider needs an absolute URL to return to after the logout; DefaultUrlResolver only adds the
+        // scheme, host and port, so a webapp deployed under a context path (anything but ROOT) would lose it here
         config.setLogoutLogic( new DefaultLogoutLogic() {
             @Override
             protected String enhanceRedirectUrl( final CallContext ctx, final Config config, final Client client, final String redirectUrl ) {
-                return urlResolver.compute( redirectUrl, ctx.webContext() );
+                return logoutRedirectUrl( ctx.webContext(), redirectUrl, urlResolver );
             }
         } );
         return config;
+    }
+
+    /**
+     * Builds the absolute URL the identity provider is told to send the user back to after the logout. {@code redirectUrl}
+     * is the {@code defaultUrl} of the logout filter, a path relative to the root of the web application (for example
+     * {@code /Wiki.jsp}); {@link DefaultUrlResolver} only turns it into {@code scheme://host:port} plus that path, which
+     * drops the context path of a webapp that is not deployed at the server root.
+     */
+    static String logoutRedirectUrl( final WebContext webContext, final String redirectUrl, final UrlResolver urlResolver ) {
+        if( redirectUrl.startsWith( "/" ) && webContext instanceof JEEContext ) {
+            final String contextPath = ( ( JEEContext )webContext ).getNativeRequest().getContextPath();
+            if( !contextPath.isEmpty() ) {
+                return urlResolver.compute( contextPath + redirectUrl, webContext );
+            }
+        }
+        return urlResolver.compute( redirectUrl, webContext );
     }
 
     private static String required( final Properties props, final String key ) {
