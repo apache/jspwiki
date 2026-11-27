@@ -155,4 +155,4 @@ jobs:
           JSPWIKI_TEST_MSSQL_USER: sa
           JSPWIKI_TEST_MSSQL_PASSWORD: "YourStrong!Passw0rd"
           JSPWIKI_TEST_MSSQL_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
-        run: mvn test -B -Dtest=JdbcPageProviderTest,JdbcAttachmentProviderTest "-Dplugin.surefire.junit5-tree-reporter.enable-console=true"
+        run: mvn test -B -Dsurefire.failIfNoSpecifiedTests=false -Dtest=JdbcPageProviderTest,JdbcAttachmentProviderTest "-Dplugin.surefire.junit5-tree-reporter.enable-console=true"
