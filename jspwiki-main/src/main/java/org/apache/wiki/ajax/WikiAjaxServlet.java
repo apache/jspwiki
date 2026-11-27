@@ -19,8 +19,6 @@
  */
 package org.apache.wiki.ajax;
 
-import org.apache.wiki.plugin.SampleAjaxPlugin;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -29,7 +27,7 @@ import java.util.List;
 
 /**
  * An interface for a servlet that wants to use Ajax functionality.
- * See {@link SampleAjaxPlugin}
+ * See {@code SampleAjaxPlugin} in the test sources for an example.
  *
  * @since 2.10.2-svn12
  */

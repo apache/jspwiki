@@ -26,6 +26,10 @@ under the License.
 * Fix for [JSPWIKI-1374](https://issues.apache.org/jira/browse/JSPWIKI-1374) Make the PostgreSQL user database script run on PostgreSQL
 * Fix for [JSPWIKI-1381](https://issues.apache.org/jira/browse/JSPWIKI-1381) Related to JSPWIKI-1207. Look for the ehcache configuration with the class loader of the thread too
 * Fix f9r [JSPWIKI-1371](https://issues.apache.org/jira/browse/JSPWIKI-1371) SearchManagerTest failed once in the CI of the release branch with an extra page ThisPage in the result. Ehcache now supports the "portable" build style deployments
+* Bump `org.codehaus.mojo:clirr-maven-plugin` from 2.8 to 2.9 ([PR#647](https://github.com/apache/jspwiki/pull/647))
+* Bump `org.sonarsource.scanner.maven:sonar-maven-plugin` from 5.8.0.7211 to 5.9.0.7382 ([PR#648](https://github.com/apache/jspwiki/pull/648))
+* Fix for [JSPWIKI-1384](https://issues.apache.org/jira/browse/JSPWIKI-1384): move `SampleAjaxPlugin` from the main sources to the test sources
+* Fix for [JSPWIKI-1387](https://issues.apache.org/jira/browse/JSPWIKI-1387): a user who logs in to a locked account with the right password is told that the account is locked, instead of "Not a valid login"
 
 **2026-11-17  Arturo Bernal (abernal AT apache DOT org)**
 

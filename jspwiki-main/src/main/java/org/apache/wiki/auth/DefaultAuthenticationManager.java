@@ -44,6 +44,7 @@ import org.apache.wiki.util.TimedCounterList;
 
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 import jakarta.servlet.http.HttpServletRequest;
@@ -58,6 +59,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.wiki.WikiContext;
 import org.apache.wiki.WikiSession;
 import org.apache.wiki.auth.user.UserDatabase;
@@ -290,7 +292,8 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
         final CallbackHandler handler = new WikiCallbackHandler( m_engine, null, username, password );
 
         // Execute the user's specified login module
-        final Set< Principal > principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions );
+        final AtomicReference< LoginException > failure = new AtomicReference<>();
+        final Set< Principal > principals = doJAASLogin( m_loginModuleClass, handler, m_loginModuleOptions, failure );
         if(!principals.isEmpty()) {
             if( passwordExpired( session, principals ) ) {
                 return false;
@@ -305,6 +308,13 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             injectAuthorizerRoles( session, m_engine.getManager( AuthorizationManager.class ).getAuthorizer(), null );
 
             return true;
+        }
+        // The login module only says that the account is locked to someone who knew the password
+        if( failure.get() instanceof AccountLockedException ) {
+            LOG.info( "Login denied for {}: the account is locked", username );
+            final ResourceBundle rb = m_engine.getManager( InternationalizationManager.class )
+                                              .getBundle( InternationalizationManager.CORE_BUNDLE, session.getLocale() );
+            session.addMessage( "login", rb.getString( "login.error.accountLocked" ) );
         }
         return false;
     }
@@ -450,6 +460,18 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
     public Set< Principal > doJAASLogin( final Class< ? extends LoginModule > clazz,
                                          final CallbackHandler handler,
                                          final Map< String, String > options ) throws WikiSecurityException {
+        return doJAASLogin( clazz, handler, options, new AtomicReference<>() );
+    }
+
+    /**
+     * Same as {@link #doJAASLogin(Class, CallbackHandler, Map)}, and tells why the login failed, if it did.
+     *
+     * @param failure receives the exception thrown by the login module when the login fails
+     */
+    private Set< Principal > doJAASLogin( final Class< ? extends LoginModule > clazz,
+                                          final CallbackHandler handler,
+                                          final Map< String, String > options,
+                                          final AtomicReference< LoginException > failure ) throws WikiSecurityException {
         // Instantiate the login module
         final LoginModule loginModule;
         try {
@@ -472,6 +494,7 @@ public class DefaultAuthenticationManager implements AuthenticationManager {
             }
         } catch( final LoginException e ) {
             LOG.debug(e.getMessage(), e);
+            failure.set( e );
             // Login or commit failed! No principal for you!
         }
 
