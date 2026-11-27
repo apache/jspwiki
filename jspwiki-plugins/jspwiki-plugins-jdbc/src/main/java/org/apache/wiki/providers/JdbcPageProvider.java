@@ -57,6 +57,7 @@ import java.util.TreeSet;
 /**
  * JDBC-backed {@link PageProvider} supporting SQLite, PostgreSQL, MariaDB, and
  * Microsoft SQL Server without an ORM.
+ *
  * @since 3.1
  */
 public class JdbcPageProvider implements PageProvider {
@@ -181,14 +182,14 @@ public class JdbcPageProvider implements PageProvider {
         }
 
         LOG.info("Initialized JdbcPageProvider ({}) using {}", m_dbProductName, m_dialect);
-        
+
         //some initial seeding work. this will load an existing file system based
         //page store into the database but only if the database is currently empty.
         //it does not delete anything from disk.
-        try{
+        try {
             if (getAllPages().isEmpty()) {
                 PageProvider existingFiles = (PageProvider) Class.forName(
-                        properties.getProperty("jspwiki.jdbcPageProvider.preloadFrom.provider", 
+                        properties.getProperty("jspwiki.jdbcPageProvider.preloadFrom.provider",
                                 VersioningFileProvider.class.getCanonicalName())).getDeclaredConstructor().newInstance();
                 final Properties p2 = new Properties();
                 String fsRoot = properties.getProperty("jspwiki.jdbcPageProvider.preloadFrom.pageDir");
@@ -205,12 +206,12 @@ public class JdbcPageProvider implements PageProvider {
                 //jspwiki.jdbcPageProvider.preloadFrom.pageDir
                 //jspwiki.jdbcPageProvider.preloadFrom.attachmentProvider
                 //jspwiki.jdbcPageProvider.preloadFrom.attachmentDir
-                        }
-           
+            }
+
         } catch (Exception ex) {
             LOG.warn("Initial JDBC page seeding/migration failed", ex);
         }
-        
+
     }
 
     private Connection openConnection() throws SQLException {
@@ -379,7 +380,7 @@ public class JdbcPageProvider implements PageProvider {
             final String sql = (targetVersion == latest)
                     ? "SELECT " + COL_PAGE_TEXT + " FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?"
                     : "SELECT " + COL_PAGE_TEXT + " FROM " + TABLE_PAGE_VERSIONS
-                            + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?";
+                    + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?";
 
             try (final PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, page);
@@ -467,12 +468,12 @@ public class JdbcPageProvider implements PageProvider {
 
             final String sql = (targetVersion == latest)
                     ? "SELECT " + COL_LATEST_VERSION + ", " + COL_AUTHOR + ", " + COL_CHANGE_NOTE + ", "
-                            + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED
-                            + " FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?"
+                    + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED
+                    + " FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?"
                     : "SELECT " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", " + COL_CHANGE_NOTE + ", "
-                            + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED
-                            + " FROM " + TABLE_PAGE_VERSIONS
-                            + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?";
+                    + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED
+                    + " FROM " + TABLE_PAGE_VERSIONS
+                    + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?";
 
             try (final PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, page);
@@ -645,11 +646,13 @@ public class JdbcPageProvider implements PageProvider {
                 if (i > 0) {
                     sql.append(" OR ");
                 }
-                sql.append("(LOWER(").append(COL_PAGE_NAME).append(") LIKE ? ESCAPE '\\' OR LOWER(")
-                        .append(COL_PAGE_TEXT).append(") LIKE ? ESCAPE '\\')");
+                sql.append("(LOWER(").append(COL_PAGE_NAME).append(") LIKE ? ESCAPE ? OR LOWER(")
+                        .append(COL_PAGE_TEXT).append(") LIKE ? ESCAPE ?)");
                 final String pattern = "%" + escapeLikePattern(positiveTerms.get(i).toLowerCase()) + "%";
                 params.add(pattern);
+                params.add("\\");
                 params.add(pattern);
+                params.add("\\");
             }
         }
 
@@ -717,7 +720,7 @@ public class JdbcPageProvider implements PageProvider {
                 deletePropertiesForVersion(conn, pageName, targetVersion);
                 try (final PreparedStatement delVer = conn.prepareStatement(
                         "DELETE FROM " + TABLE_PAGE_VERSIONS
-                                + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?")) {
+                        + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?")) {
                     delVer.setString(1, pageName);
                     delVer.setInt(2, targetVersion);
                     final int deleted = delVer.executeUpdate();
@@ -730,9 +733,9 @@ public class JdbcPageProvider implements PageProvider {
                     // Promote remaining highest version, or delete page if none remain
                     try (final PreparedStatement findPrev = conn.prepareStatement(
                             "SELECT " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", " + COL_CHANGE_NOTE + ", "
-                                    + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
-                                    + " FROM " + TABLE_PAGE_VERSIONS
-                                    + " WHERE " + COL_PAGE_NAME + " = ? ORDER BY " + COL_VERSION_NUM + " DESC")) {
+                            + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                            + " FROM " + TABLE_PAGE_VERSIONS
+                            + " WHERE " + COL_PAGE_NAME + " = ? ORDER BY " + COL_VERSION_NUM + " DESC")) {
                         findPrev.setString(1, pageName);
                         try (final ResultSet rs = findPrev.executeQuery()) {
                             if (rs.next()) {
@@ -818,7 +821,7 @@ public class JdbcPageProvider implements PageProvider {
 
                 try (final PreparedStatement checkSource = conn.prepareStatement(
                         "SELECT 1 FROM " + TABLE_PAGE_VERSIONS
-                                + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?")) {
+                        + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?")) {
                     final int sourceLatest = getLatestVersion(conn, from);
                     if (sourceLatest <= 0) {
                         throw new ProviderException("Source page '" + from + "' does not exist");
@@ -835,11 +838,11 @@ public class JdbcPageProvider implements PageProvider {
 
                 try (final PreparedStatement copyPage = conn.prepareStatement(
                         "INSERT INTO " + TABLE_PAGES + " ("
-                                + COL_PAGE_NAME + ", " + COL_LATEST_VERSION + ", " + COL_AUTHOR + ", "
-                                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
-                                + ") SELECT ?, " + COL_LATEST_VERSION + ", " + COL_AUTHOR + ", "
-                                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
-                                + " FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?")) {
+                        + COL_PAGE_NAME + ", " + COL_LATEST_VERSION + ", " + COL_AUTHOR + ", "
+                        + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                        + ") SELECT ?, " + COL_LATEST_VERSION + ", " + COL_AUTHOR + ", "
+                        + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                        + " FROM " + TABLE_PAGES + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     copyPage.setString(1, to);
                     copyPage.setString(2, from);
                     final int inserted = copyPage.executeUpdate();
@@ -850,11 +853,11 @@ public class JdbcPageProvider implements PageProvider {
 
                 try (final PreparedStatement copyVers = conn.prepareStatement(
                         "INSERT INTO " + TABLE_PAGE_VERSIONS + " ("
-                                + COL_PAGE_NAME + ", " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", "
-                                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
-                                + ") SELECT ?, " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", "
-                                + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
-                                + " FROM " + TABLE_PAGE_VERSIONS + " WHERE " + COL_PAGE_NAME + " = ?")) {
+                        + COL_PAGE_NAME + ", " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", "
+                        + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                        + ") SELECT ?, " + COL_VERSION_NUM + ", " + COL_AUTHOR + ", "
+                        + COL_CHANGE_NOTE + ", " + COL_VIEW_COUNT + ", " + COL_LAST_MODIFIED + ", " + COL_PAGE_TEXT
+                        + " FROM " + TABLE_PAGE_VERSIONS + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     copyVers.setString(1, to);
                     copyVers.setString(2, from);
                     copyVers.executeUpdate();
@@ -862,9 +865,9 @@ public class JdbcPageProvider implements PageProvider {
 
                 try (final PreparedStatement copyProps = conn.prepareStatement(
                         "INSERT INTO " + TABLE_PAGE_PROPERTIES + " ("
-                                + COL_PAGE_NAME + ", " + COL_VERSION_NUM + ", " + COL_PROP_KEY + ", " + COL_PROP_VALUE
-                                + ") SELECT ?, " + COL_VERSION_NUM + ", " + COL_PROP_KEY + ", " + COL_PROP_VALUE
-                                + " FROM " + TABLE_PAGE_PROPERTIES + " WHERE " + COL_PAGE_NAME + " = ?")) {
+                        + COL_PAGE_NAME + ", " + COL_VERSION_NUM + ", " + COL_PROP_KEY + ", " + COL_PROP_VALUE
+                        + ") SELECT ?, " + COL_VERSION_NUM + ", " + COL_PROP_KEY + ", " + COL_PROP_VALUE
+                        + " FROM " + TABLE_PAGE_PROPERTIES + " WHERE " + COL_PAGE_NAME + " = ?")) {
                     copyProps.setString(1, to);
                     copyProps.setString(2, from);
                     copyProps.executeUpdate();
@@ -1071,7 +1074,7 @@ public class JdbcPageProvider implements PageProvider {
             throws SQLException {
         try (final PreparedStatement ps = conn.prepareStatement(
                 "DELETE FROM " + TABLE_PAGE_PROPERTIES
-                        + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?")) {
+                + " WHERE " + COL_PAGE_NAME + " = ? AND " + COL_VERSION_NUM + " = ?")) {
             ps.setString(1, pageName);
             ps.setInt(2, versionNum);
             ps.executeUpdate();
