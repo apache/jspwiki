@@ -127,20 +127,17 @@ jobs:
 
       - name: Wait for MSSQL database and create test DB
         run: |
+          MSSQL_CID=$(docker ps -q --filter "ancestor=mcr.microsoft.com/mssql/server:2022-latest" | head -n 1)
+          test -n "$MSSQL_CID"
           for i in $(seq 1 30); do
-            if /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P "YourStrong!Passw0rd" -C -Q "SELECT 1" >/dev/null 2>&1 \
-               || /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1" >/dev/null 2>&1; then
+            if docker exec "$MSSQL_CID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -C -Q "SELECT 1" >/dev/null 2>&1 \
+               || docker exec "$MSSQL_CID" /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -Q "SELECT 1" >/dev/null 2>&1; then
               break
             fi
             sleep 2
           done
-          if command -v /opt/mssql-tools18/bin/sqlcmd >/dev/null 2>&1; then
-            /opt/mssql-tools18/bin/sqlcmd -S localhost,1433 -U sa -P "YourStrong!Passw0rd" -C \
-              -Q "IF DB_ID('jspwiki_test') IS NULL CREATE DATABASE jspwiki_test;"
-          else
-            /opt/mssql-tools/bin/sqlcmd -S localhost,1433 -U sa -P "YourStrong!Passw0rd" \
-              -Q "IF DB_ID('jspwiki_test') IS NULL CREATE DATABASE jspwiki_test;"
-          fi
+          docker exec "$MSSQL_CID" /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "YourStrong!Passw0rd" -C \
+            -Q "IF DB_ID('jspwiki_test') IS NULL CREATE DATABASE jspwiki_test;"
 
       - name: Run JDBC provider tests across SQLite, PostgreSQL, MariaDB, and MSSQL
         env:
