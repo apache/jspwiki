@@ -70,7 +70,6 @@
     <copy todir="${jspwiki.woas.assembly.dir}/webapps/personal" overwrite="true">
       <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/"/>
     </copy>
-    <delete dir="${jspwiki.woas.assembly.dir}/webapps/personal/WEB-INF/lib"/>    
     <!-- copy the exploded war for the "department" wiki -->
     <copy todir="${jspwiki.woas.assembly.dir}/webapps/department" overwrite="true">
       <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/"/>
@@ -80,7 +79,6 @@
     <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
       <fileset dir="${basedir}/src/overlay/woas"/>
     </copy>        
-    <delete dir="${jspwiki.woas.assembly.dir}/webapps/department/WEB-INF/lib"/>        
   </target>  
 
   <!-- ############################################################## -->
@@ -106,14 +104,16 @@
     <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
       <fileset dir="${basedir}/src/overlay/tomcat"/>
     </copy>
-    <!-- copy the JSPWiki libraries to tomcat -->
-    <copy todir="${jspwiki.woas.assembly.dir}/jspwiki/lib" overwrite="true">
-      <fileset dir="${jspwiki.woas.unpack.dir}/jspwiki-war/WEB-INF/lib"/>
+    <!-- copy all additional plugins to both deployments -->
+    <copy todir="${jspwiki.woas.assembly.dir}/webapps/personal/WEB-INF/lib" overwrite="true">
+        <fileset dir="${basedir}/../jspwiki-plugins/jspwiki-plugins-chartist/target">
+            <filename name ="*.jar" />
+        </fileset>
     </copy>
-	<copy todir="${jspwiki.woas.assembly.dir}/jspwiki/lib" overwrite="true">
-      <fileset dir="${basedir}/../jspwiki-plugins/jspwiki-plugins-chartist/target">
-		<filename name ="*.jar" />
-	  </fileset>
+    <copy todir="${jspwiki.woas.assembly.dir}/webapps/department/WEB-INF/lib" overwrite="true">
+        <fileset dir="${basedir}/../jspwiki-plugins/jspwiki-plugins-chartist/target">
+            <filename name ="*.jar" />
+        </fileset>
     </copy>
     <!-- make the start scripts executable -->
     <chmod dir="${jspwiki.woas.assembly.dir}" includes="*.sh" perm="ugo+x"/>        
