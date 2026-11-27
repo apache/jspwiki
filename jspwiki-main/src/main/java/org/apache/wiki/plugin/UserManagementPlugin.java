@@ -65,9 +65,9 @@ import org.slf4j.LoggerFactory;
  *
  * in retrospect, this might have been easier and cleaner (especially with the
  * i18n bits) if this was a jsp instead.
- * 
- * TODO - figure out how to determine if a given user account is admin
- * - a confirmation prompt might be nice
+ *
+ * TODO - figure out how to determine if a given user account is admin - a
+ * confirmation prompt might be nice
  *
  * @since 3.0.2
  */
@@ -154,7 +154,7 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 if (locked && passwordExpired) {
                     status = i18n.get(InternationalizationManager.CORE_BUNDLE, locale,
                             "userinfo.status.locked");
-                    status += i18n.get(InternationalizationManager.CORE_BUNDLE, locale,
+                    status += "<br>" +i18n.get(InternationalizationManager.CORE_BUNDLE, locale,
                             "userinfo.status.pwexpired");
                 }
                 String disabledLock = locked ? disabled : "";
@@ -250,7 +250,7 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 sb.append("','");
                 sb.append(StringEscapeUtils.escapeEcmaScript(unlockId));
                 sb.append("','");
-                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()));
+                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace("\"", "\\\"").replace("'", "\\'"));
                 sb.append("')\" ");
                 sb.append(disabledLock);
                 sb.append(">");
@@ -265,7 +265,7 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 sb.append("','");
                 sb.append(StringEscapeUtils.escapeEcmaScript(lockId));
                 sb.append("','");
-                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()));
+                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace("\"", "\\\"").replace("'", "\\'"));
                 sb.append("')\" ");
                 sb.append(disabledUnlock);
                 sb.append(">");
@@ -279,7 +279,7 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 sb.append(StringEscapeUtils.escapeEcmaScript(expireId));
 
                 sb.append("','");
-                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()));
+                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace("\"", "\\\"").replace("'", "\\'"));
                 sb.append("')\" ");
                 sb.append(expirePassword);
                 sb.append(">");
@@ -293,7 +293,7 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 sb.append(StringEscapeUtils.escapeEcmaScript(rowId));
 
                 sb.append("','");
-                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()));
+                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace("\"", "\\\"").replace("'", "\\'"));
                 sb.append("')\" ");
                 sb.append(disableDelete);
                 sb.append(">");
@@ -355,12 +355,12 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
         }
         String username = null;
 
-        UserProfile findByLoginName = null;
+        UserProfile findByWikiName = null;
         long lockDuration = 24 * 60 * 60 * 1000L;
         if (!params.isEmpty()) {
             username = params.get(0);
             try {
-                findByLoginName = mgr.getUserDatabase().findByWikiName(username);
+                findByWikiName = mgr.getUserDatabase().findByWikiName(username);
             } catch (NoSuchPrincipalException ex) {
                 response.setStatus(400);
                 response.getWriter().write(i18n.get(InternationalizationManager.CORE_BUNDLE, locale,
@@ -369,24 +369,39 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 return;
             }
             if (params.size() > 1 && params.get(1) != null) {
-                lockDuration = Long.parseLong(params.get(1));
+                try {
+                    lockDuration = Long.parseLong(params.get(1));
+                    if (lockDuration < 0) {
+                        lockDuration = 24 * 60 * 60 * 1000L;
+                    }
+                } catch (Exception ex) {
+                    LOG.warn("dropping requested value for lockDuration, might be invalid " + ex.getMessage());
+                }
             }
         }
-        //check for csrf token
+        //note: csrf token has handled by WikiAjaxDispatcherServlet
         //check the action and execute
         //return a useful message
         switch (actionName) {
             case "unlock":
-                if (!findByLoginName.isLocked()) {
+                if (findByWikiName == null) {
+                    response.setStatus(400);
+                    response.getWriter().write(i18n.get(InternationalizationManager.CORE_BUNDLE, locale,
+                            "errors.unknownuser"));
+
+                    return;
+                }
+                if (!findByWikiName.isLocked()) {
                     response.setStatus(400);
                     response.getWriter().write(i18n.get(InternationalizationManager.CORE_BUNDLE, locale,
                             "errors.accountalreadyunlocked"));
                     return;
                 }
-                findByLoginName.setLockExpiry(null);
+                findByWikiName.setLockExpiry(null);
 
                 try {
-                    userDatabase.save(findByLoginName);
+                    userDatabase.save(findByWikiName);
+                    LOG.warn("AUDIT " + wikiContext + " has unlocked " + findByWikiName.getLoginName());
                     mgr.fireEvent(org.apache.wiki.event.WikiSecurityEvent.LOGIN_UNLOCKED, wikiContext.getWikiSession(), engine);
 
                 } catch (WikiSecurityException ex) {
@@ -401,7 +416,19 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 break;
 
             case "lock":
-                if (findByLoginName.isLocked()) {
+                if (findByWikiName == null) {
+                    response.setStatus(400);
+                    response.getWriter().write(i18n.get(InternationalizationManager.CORE_BUNDLE, locale,
+                            "errors.unknownuser"));
+
+                    return;
+                }
+                if (wikiContext.getCurrentUser().getName().equals(findByWikiName.getLoginName())) {
+                    response.setStatus(400);
+                    response.getWriter().write("Refusing to lock requestor's account");
+                    return;
+                }
+                if (findByWikiName.isLocked()) {
                     response.setStatus(400);
                     response.getWriter().write(i18n.get(InternationalizationManager.CORE_BUNDLE, locale,
                             "errors.accountalreadylocked"));
@@ -409,14 +436,16 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                     return;
                 }
                 Date d = new Date(System.currentTimeMillis() + lockDuration);
-                findByLoginName.setLockExpiry(d);
+                findByWikiName.setLockExpiry(d);
 
                 try {
-                    userDatabase.save(findByLoginName);
+                    userDatabase.save(findByWikiName);
+                    LOG.warn("AUDIT " + wikiContext.getCurrentUser().getName() + " has locked " + findByWikiName.getLoginName() + " lock expires at " + d.toString());
+
                     mgr.fireEvent(org.apache.wiki.event.WikiSecurityEvent.LOGIN_LOCKED,
-                            wikiContext.getWikiSession(), findByLoginName);
+                            wikiContext.getWikiSession(), findByWikiName);
                     SessionMonitor instance = SessionMonitor.getInstance(engine);
-                    List<Session> findOtherSessionsByUsername = instance.findOtherSessionsByUsername(findByLoginName.getLoginName());
+                    List<Session> findOtherSessionsByUsername = instance.findOtherSessionsByUsername(findByWikiName.getLoginName());
                     for (Session s : findOtherSessionsByUsername) {
                         s.invalidate();
                     }
@@ -434,17 +463,25 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                     Principal[] users = mgr.getUserDatabase().getWikiNames();
                     for (Principal p : users) {
                         try {
-                            UserProfile findByWikiName = userDatabase.findByWikiName(p.getName());
-                            findByWikiName.setPasswordChanged(new Date(0));
-                            userDatabase.save(findByWikiName);
+                            UserProfile targetUser = userDatabase.findByWikiName(p.getName());
+
+                            if (wikiContext.getCurrentUser().getName().equals(targetUser.getLoginName())) {
+                                //don't lock the requestors account
+                                continue;
+                            }
+
+                            targetUser.setPasswordChanged(new Date(0));
+                            userDatabase.save(targetUser);
+                            LOG.warn("AUDIT " + wikiContext.getCurrentUser().getName() + " has expired the password for " + targetUser.getLoginName());
+
                             SessionMonitor instance = SessionMonitor.getInstance(engine);
-                            List<Session> findOtherSessionsByUsername = instance.findOtherSessionsByUsername(findByWikiName.getLoginName());
+                            List<Session> findOtherSessionsByUsername = instance.findOtherSessionsByUsername(targetUser.getLoginName());
                             for (Session s : findOtherSessionsByUsername) {
                                 s.invalidate();
                             }
                             //not sure this is doing what needs to be done here
                             mgr.fireEvent(org.apache.wiki.event.WikiSecurityEvent.LOGIN_CREDENTIAL_EXPIRED,
-                                    wikiContext.getWikiSession(), findByWikiName);
+                                    wikiContext.getWikiSession(), targetUser);
                         } catch (NoSuchPrincipalException ex) {
                             LOG.error(ex.getMessage(), ex);
                         }
@@ -458,18 +495,31 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 break;
             }
             case "expire":
+                if (findByWikiName == null) {
+                    response.setStatus(400);
+                    response.getWriter().write(i18n.get(InternationalizationManager.CORE_BUNDLE, locale,
+                            "errors.unknownuser"));
 
-                findByLoginName.setPasswordChanged(new Date(0));
+                    return;
+                }
+                if (wikiContext.getCurrentUser().getName().equals(findByWikiName.getLoginName())) {
+                    response.setStatus(400);
+                    response.getWriter().write("Refusing to expire requestor's account");
+                    return;
+                }
+                findByWikiName.setPasswordChanged(new Date(0));
                 try {
-                    userDatabase.save(findByLoginName);
+                    userDatabase.save(findByWikiName);
+                    LOG.warn("AUDIT " + wikiContext.getCurrentUser().getName() + " has expired the password for " + findByWikiName.getLoginName());
+
                     SessionMonitor instance = SessionMonitor.getInstance(engine);
-                    List<Session> findOtherSessionsByUsername = instance.findOtherSessionsByUsername(findByLoginName.getLoginName());
+                    List<Session> findOtherSessionsByUsername = instance.findOtherSessionsByUsername(findByWikiName.getLoginName());
                     for (Session s : findOtherSessionsByUsername) {
                         s.invalidate();
                     }
                     //not sure this is doing what needs to be done here
                     mgr.fireEvent(org.apache.wiki.event.WikiSecurityEvent.LOGIN_CREDENTIAL_EXPIRED,
-                            wikiContext.getWikiSession(), findByLoginName);
+                            wikiContext.getWikiSession(), findByWikiName);
                 } catch (WikiSecurityException ex) {
                     LOG.error(ex.getMessage(), ex);
                     response.setStatus(500);
@@ -481,11 +531,25 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 break;
 
             case "delete": {
+                if (findByWikiName == null) {
+                    response.setStatus(400);
+                    response.getWriter().write(i18n.get(InternationalizationManager.CORE_BUNDLE, locale,
+                            "errors.unknownuser"));
+
+                    return;
+                }
+                if (wikiContext.getCurrentUser().getName().equals(findByWikiName.getLoginName())) {
+                    response.setStatus(400);
+                    response.getWriter().write("Refusing to delete requestor's account");
+                    return;
+                }
                 try {
-                    userDatabase.deleteByLoginName(findByLoginName.getLoginName());
+                    userDatabase.deleteByLoginName(findByWikiName.getLoginName());
+                    LOG.warn("AUDIT " + wikiContext.getCurrentUser().getName() + " has deleted the user account for " + findByWikiName.getLoginName());
+
                     //not sure this is doing what needs to be done here
                     mgr.fireEvent(org.apache.wiki.event.WikiSecurityEvent.LOGIN_DELETED,
-                            wikiContext.getWikiSession(), findByLoginName);
+                            wikiContext.getWikiSession(), findByWikiName);
 
                 } catch (WikiSecurityException ex) {
                     LOG.error(ex.getMessage(), ex);

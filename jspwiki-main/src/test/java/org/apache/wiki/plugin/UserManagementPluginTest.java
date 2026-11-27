@@ -71,7 +71,7 @@ import static org.mockito.Mockito.when;
 class UserManagementPluginTest {
 
     private static final String APP_NAME = "JSPWiki";
-
+    @Mock private Principal currentUser;
     @Mock private Engine engine;
     @Mock private Context context;
     @Mock private Session session;
@@ -93,7 +93,8 @@ class UserManagementPluginTest {
     @BeforeEach
     void setUp() throws Exception {
         plugin = new UserManagementPlugin(engine);
-
+        lenient().when(currentUser.getName()).thenReturn("admin");
+        lenient().when(context.getCurrentUser()).thenReturn(currentUser);
         lenient().when(engine.getApplicationName()).thenReturn(APP_NAME);
         lenient().when(engine.getManager(AuthorizationManager.class)).thenReturn(authorizationManager);
         lenient().when(engine.getManager(AuthenticationManager.class)).thenReturn(authenticationManager);
@@ -360,5 +361,59 @@ class UserManagementPluginTest {
             verify(response).setStatus(400);
             assertTrue(responseWriter.toString().contains("errors.badrequest"));
         }
+    }
+    
+    @Test
+    void refusesLockingRequestorsOwnAccount() throws Exception {
+        UserProfile adminProfile = createProfile("admin", "Admin", false, false);
+        when(userDatabase.findByWikiName("Admin")).thenReturn(adminProfile);
+
+        plugin.service(request, response, "lock", List.of("Admin"));
+
+        verify(response).setStatus(400);
+        assertTrue(responseWriter.toString().contains("Refusing to lock requestor's account"));
+        verify(userDatabase, never()).save(any());
+    }
+
+    @Test
+    void refusesExpiringRequestorsOwnAccount() throws Exception {
+        UserProfile adminProfile = createProfile("admin", "Admin", false, false);
+        when(userDatabase.findByWikiName("Admin")).thenReturn(adminProfile);
+
+        plugin.service(request, response, "expire", List.of("Admin"));
+
+        verify(response).setStatus(400);
+        assertTrue(responseWriter.toString().contains("Refusing to expire requestor's account"));
+        verify(userDatabase, never()).save(any());
+    }
+
+    @Test
+    void refusesDeletingRequestorsOwnAccount() throws Exception {
+        UserProfile adminProfile = createProfile("admin", "Admin", false, false);
+        when(userDatabase.findByWikiName("Admin")).thenReturn(adminProfile);
+
+        plugin.service(request, response, "delete", List.of("Admin"));
+
+        verify(response).setStatus(400);
+        assertTrue(responseWriter.toString().contains("Refusing to delete requestor's account"));
+        verify(userDatabase, never()).deleteByLoginName(anyString());
+    }
+
+    @Test
+    void expireAllSkipsRequestorsAccountAndExpiresOthers() throws Exception {
+        Principal pAdmin = () -> "Admin";
+        Principal pBob = () -> "Bob";
+        UserProfile adminProfile = createProfile("admin", "Admin", false, false);
+        UserProfile bobProfile = createProfile("bob", "Bob", false, false);
+        when(userDatabase.getWikiNames()).thenReturn(new Principal[]{pAdmin, pBob});
+        when(userDatabase.findByWikiName("Admin")).thenReturn(adminProfile);
+        when(userDatabase.findByWikiName("Bob")).thenReturn(bobProfile);
+
+        plugin.service(request, response, "expireAll", List.of());
+
+        verify(adminProfile, never()).setPasswordChanged(any());
+        verify(userDatabase, never()).save(adminProfile);
+        verify(bobProfile).setPasswordChanged(new Date(0));
+        verify(userDatabase).save(bobProfile);
     }
 }
