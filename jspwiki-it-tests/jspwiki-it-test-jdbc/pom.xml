@@ -21,7 +21,7 @@
 
   <parent>
     <groupId>org.apache.jspwiki</groupId>
-    <artifactId>jspwiki-builder</artifactId>
+    <artifactId>jspwiki-it-tests</artifactId>
     <version>3.0.2-SNAPSHOT</version>
   </parent>
 
