@@ -1,3 +1,21 @@
+/*
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+    KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+ */
 package org.apache.wiki.providers;
 
 import org.apache.logging.log4j.LogManager;
@@ -12,7 +30,6 @@ import org.apache.wiki.api.providers.WikiProvider;
 import org.apache.wiki.api.search.QueryItem;
 import org.apache.wiki.pages.PageTimeComparator;
 import org.apache.wiki.util.FileUtil;
-import org.apache.wiki.util.TextUtil;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -23,7 +40,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -34,9 +51,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
+import static org.apache.wiki.providers.JdbcPageProvider.Dialect.MSSQL;
+import static org.apache.wiki.providers.JdbcPageProvider.Dialect.SQLITE;
+import static org.apache.wiki.providers.JdbcPageProvider.PROP_AUTO_CREATE_SCHEMA;
 
 public class JdbcAttachmentProvider implements AttachmentProvider {
 
@@ -45,71 +65,97 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
     public static final String PROP_DATASOURCE = "jspwiki.jdbcAttachmentProvider.dataSource";
     public static final String PROP_AUTO_CREATE = "jspwiki.jdbcAttachmentProvider.autoCreateTable";
     public static final String PROP_DISABLECACHE = BasicAttachmentProvider.PROP_DISABLECACHE;
+    public static final String PROP_JDBCATTACHMENT_URL = "jspwiki.jdbcAttachmentProvider.url";
+    public static final String PROP_JDBCATTACHMENT_USER = "jspwiki.jdbcAttachmentProvider.user";
+    public static final String PROP_JDBCATTACHMENT_PASSWORD = "jspwiki.jdbcAttachmentProvider.password";
+    public static final String PROP_JDBCATTACHMENT_DRIVER = "jspwiki.jdbcAttachmentProvider.driver";
+    public static final String PROP_JDBCATTACHMENT_JNDI = "jspwiki.jdbcAttachmentProvider.jndiName";
 
-    private enum DbDialect {
-        POSTGRES, MARIADB, MSSQL, SQLITE, OTHER
-    }
-
+    private String m_dbProductName = "JDBC";
     private Engine m_engine;
     private DataSource m_dataSource;
-    private DbDialect m_dialect = DbDialect.OTHER;
+    private JdbcPageProvider.Dialect m_dialect = JdbcPageProvider.Dialect.GENERIC;
     private Pattern m_disableCache;
+    private String m_jdbcUrl;
+    private String m_jdbcUser;
+    private String m_jdbcPassword;
 
     @Override
     public void initialize(final Engine engine, final Properties properties) throws NoRequiredPropertyException, IOException {
         m_engine = engine;
 
-        final String jndiName = properties.getProperty(PROP_DATASOURCE);
-        if (jndiName == null || jndiName.isBlank()) {
-            throw new NoRequiredPropertyException("Missing required property " + PROP_DATASOURCE, PROP_DATASOURCE);
+        final String jndiName = properties.getProperty(PROP_JDBCATTACHMENT_JNDI);
+        if (StringUtils.isNotBlank(jndiName)) {
+            try {
+                final InitialContext ctx = new InitialContext();
+                m_dataSource = (DataSource) ctx.lookup(jndiName);
+            } catch (final NamingException e) {
+                throw new IOException("Failed to look up JNDI DataSource '" + jndiName + "'", e);
+            }
+        } else {
+            m_jdbcUrl = properties.getProperty(PROP_JDBCATTACHMENT_URL);
+            if (StringUtils.isBlank(m_jdbcUrl)) {
+                throw new NoRequiredPropertyException("Missing required property: " + PROP_JDBCATTACHMENT_URL, PROP_JDBCATTACHMENT_URL);
+            }
+            m_jdbcUser = properties.getProperty(PROP_JDBCATTACHMENT_USER);
+            m_jdbcPassword = properties.getProperty(PROP_JDBCATTACHMENT_PASSWORD);
+
+            final String driverClass = properties.getProperty(PROP_JDBCATTACHMENT_DRIVER);
+            if (StringUtils.isNotBlank(driverClass)) {
+                try {
+                    Class.forName(driverClass);
+                } catch (final ClassNotFoundException e) {
+                    throw new IOException("JDBC driver class not found: " + driverClass, e);
+                }
+            }
         }
 
-        try {
-            final InitialContext ctx = new InitialContext();
-            final Object lookedUp = ctx.lookup(jndiName);
-            if (!(lookedUp instanceof DataSource)) {
-                throw new IOException("JNDI resource '" + jndiName + "' is not a javax.sql.DataSource");
-            }
-            m_dataSource = (DataSource) lookedUp;
-        } catch (final NamingException e) {
-            throw new IOException("Failed to look up DataSource '" + jndiName + "'", e);
-        }
+        try (final Connection conn = openConnection()) {
+            m_dbProductName = conn.getMetaData().getDatabaseProductName();
+            m_dialect = JdbcPageProvider.Dialect.detect(m_jdbcUrl, m_dbProductName);
 
-        try (final Connection conn = m_dataSource.getConnection()) {
-            m_dialect = detectDialect(conn.getMetaData());
-            if (m_dialect == DbDialect.SQLITE) {
-                applySqlitePragmas(conn);
-            }
-            final boolean autoCreate = TextUtil.getBooleanProperty(properties, PROP_AUTO_CREATE, false);
+            final boolean autoCreate = Boolean.parseBoolean(
+                    properties.getProperty(PROP_AUTO_CREATE_SCHEMA, "false"));
             if (autoCreate) {
-                createSchemaIfMissing(conn, m_dialect);
+                createSchemaIfNeeded(conn, m_dialect);
             }
         } catch (final SQLException e) {
-            throw new IOException("Failed to initialize JDBC metadata/schema", e);
+            throw new IOException("Failed to initialize JDBC connection for JdbcPageProvider", e);
         }
 
         final String patternString = properties.getProperty(PROP_DISABLECACHE);
         if (patternString != null && !patternString.isBlank()) {
             m_disableCache = Pattern.compile(patternString);
         }
+        
+        try {
+            AttachmentProvider attachment = (AttachmentProvider) Class.forName(properties.getProperty("jspwiki.jdbcPageProvider.preloadFrom.attachmentProvide",
+                    BasicAttachmentProvider.class.getCanonicalName())).getDeclaredConstructor().newInstance();
+            String fsRoot = properties.getProperty("jspwiki.jdbcPageProvider.preloadFrom.attachmentDir");
+            Properties p2 = new Properties();
+            p2.setProperty(FileSystemProvider.PROP_PAGEDIR, fsRoot);
+            MigrationTool.migrateAttachmentProvider(engine, attachment, this, false, false);
+        } catch (Exception ex) {
+
+        }
+                             
     }
 
-    private DbDialect detectDialect(final DatabaseMetaData meta) throws SQLException {
-        final String product = meta.getDatabaseProductName();
-        final String lower = (product != null) ? product.toLowerCase(Locale.ROOT) : "";
-        if (lower.contains("postgres")) {
-            return DbDialect.POSTGRES;
+    private Connection openConnection() throws SQLException {
+        final Connection conn;
+        if (m_dataSource != null) {
+            conn = m_dataSource.getConnection();
+        } else if (StringUtils.isNotBlank(m_jdbcUser)) {
+            conn = DriverManager.getConnection(m_jdbcUrl, m_jdbcUser, m_jdbcPassword);
+        } else {
+            conn = DriverManager.getConnection(m_jdbcUrl);
         }
-        if (lower.contains("mariadb") || lower.contains("mysql")) {
-            return DbDialect.MARIADB;
+        if (m_dialect == JdbcPageProvider.Dialect.SQLITE) {
+            try (final Statement st = conn.createStatement()) {
+                st.execute("PRAGMA foreign_keys = ON");
+            }
         }
-        if (lower.contains("microsoft sql server") || lower.contains("sql server")) {
-            return DbDialect.MSSQL;
-        }
-        if (lower.contains("sqlite")) {
-            return DbDialect.SQLITE;
-        }
-        return DbDialect.OTHER;
+        return conn;
     }
 
     private void applySqlitePragmas(final Connection conn) throws SQLException {
@@ -119,10 +165,10 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
         }
     }
 
-    private void createSchemaIfMissing(final Connection conn, final DbDialect dialect) throws SQLException {
+    private void createSchemaIfNeeded(final Connection conn, final JdbcPageProvider.Dialect dialect) throws SQLException {
         final String ddl;
         switch (dialect) {
-            case POSTGRES ->
+            case POSTGRESQL ->
                 ddl = """
                 CREATE TABLE IF NOT EXISTS wiki_attachment_versions (
                     id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
@@ -137,7 +183,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
                     CONSTRAINT uq_att_page_file_ver UNIQUE (parent_page, file_name, version)
                 )
                 """;
-            case OTHER ->
+            case GENERIC ->
                 ddl = """
                 CREATE TABLE IF NOT EXISTS wiki_attachment_versions (
                     id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
@@ -204,7 +250,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
 
         try (final Statement st = conn.createStatement()) {
             st.execute(ddl);
-            if (dialect != DbDialect.MSSQL) {
+            if (dialect != MSSQL) {
                 st.execute("CREATE INDEX IF NOT EXISTS idx_att_page_file ON wiki_attachment_versions (parent_page, file_name)");
                 st.execute("CREATE INDEX IF NOT EXISTS idx_att_last_mod ON wiki_attachment_versions (last_modified)");
             }
@@ -238,7 +284,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
             try (final Connection conn = m_dataSource.getConnection()) {
-                if (m_dialect == DbDialect.SQLITE) {
+                if (m_dialect ==    SQLITE) {
                     applySqlitePragmas(conn);
                 }
                 conn.setAutoCommit(false);
@@ -301,7 +347,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
         ResultSet rs = null;
         try {
             conn = m_dataSource.getConnection();
-            if (m_dialect == DbDialect.SQLITE) {
+            if (m_dialect == SQLITE) {
                 applySqlitePragmas(conn);
             }
             ps = conn.prepareStatement(sql);

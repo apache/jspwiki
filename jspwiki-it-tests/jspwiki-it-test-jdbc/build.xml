@@ -76,7 +76,13 @@
     <copy todir="${jspwiki.woas.assembly.dir}" overwrite="true">
       <fileset dir="${basedir}/src/overlay/woas"/>
     </copy>        
-    <delete dir="${jspwiki.woas.assembly.dir}/webapps/department/WEB-INF/lib"/>        
+    <delete dir="${jspwiki.woas.assembly.dir}/webapps/department/WEB-INF/lib"/>       
+	<!-- initial data -->  
+	<copy todir="${jspwiki.woas.assembly.dir}/data/department" overwrite="true">
+      <fileset dir="${basedir}/../../jspwiki-wikipages/en/src/main/resources">
+		<exclude name="**/markdown/*"/>
+	  </fileset>
+    </copy> 
   </target>  
 
   <!-- ############################################################## -->

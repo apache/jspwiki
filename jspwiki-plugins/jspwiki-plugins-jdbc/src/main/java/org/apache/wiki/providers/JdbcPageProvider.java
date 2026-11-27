@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
+import org.apache.wiki.api.providers.AttachmentProvider;
 
 /**
  * JDBC-backed {@link PageProvider} supporting SQLite, PostgreSQL, MariaDB, and
@@ -92,7 +93,7 @@ public class JdbcPageProvider implements PageProvider {
     public static final String COL_PROP_KEY = "prop_key";
     public static final String COL_PROP_VALUE = "prop_value";
 
-    private enum Dialect {
+    public enum Dialect {
         SQLITE, POSTGRESQL, MARIADB, MSSQL, GENERIC;
 
         static Dialect detect(final String url, final String productName) {
@@ -180,6 +181,36 @@ public class JdbcPageProvider implements PageProvider {
         }
 
         LOG.info("Initialized JdbcPageProvider ({}) using {}", m_dbProductName, m_dialect);
+        
+        //some initial seeding work. this will load an existing file system based
+        //page store into the database but only if the database is currently empty.
+        //it does not delete anything from disk.
+        try{
+            if (getAllPages().isEmpty()) {
+                PageProvider existingFiles = (PageProvider) Class.forName(
+                        properties.getProperty("jspwiki.jdbcPageProvider.preloadFrom.provider", 
+                                VersioningFileProvider.class.getCanonicalName())).getDeclaredConstructor().newInstance();
+                final Properties p2 = new Properties();
+                String fsRoot = properties.getProperty("jspwiki.jdbcPageProvider.preloadFrom.pageDir");
+                p2.setProperty(FileSystemProvider.PROP_PAGEDIR, fsRoot);
+                if (engine != null && engine.getWikiProperties() != null) {
+                    final String encoding = properties.getProperty(Engine.PROP_ENCODING);
+                    if (encoding != null) {
+                        p2.setProperty(Engine.PROP_ENCODING, encoding);
+                    }
+                }
+                existingFiles.initialize(engine, p2);
+                MigrationTool.migratePageProviders(engine, existingFiles, this);
+                //jspwiki.jdbcPageProvider.preloadFrom.provider
+                //jspwiki.jdbcPageProvider.preloadFrom.pageDir
+                //jspwiki.jdbcPageProvider.preloadFrom.attachmentProvider
+                //jspwiki.jdbcPageProvider.preloadFrom.attachmentDir
+                        }
+           
+        } catch (Exception ex) {
+            LOG.warn("Initial JDBC page seeding/migration failed", ex);
+        }
+        
     }
 
     private Connection openConnection() throws SQLException {
