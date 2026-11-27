@@ -16,6 +16,14 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+**2026-11-27  Alex O'Ree (alexoree AT apache DOT org)**
+
+* _3.0.2-git-2_
+* [JSPWIKI-1393](https://issues.apache.org/jira/browse/JSPWIKI-1393)  fix for forbidden page having a strange html title
+* [JSPWIKI-1389](https://issues.apache.org/jira/browse/JSPWIKI-1389) fix for portable build and the never ending classpath issues 
+* [JSPWIKI-1392](https://issues.apache.org/jira/browse/JSPWIKI-1392) see jira for details
+
+
 **2026-11-19  Arturo Bernal (abernal AT apache DOT org)**
 * _3.0.2-git-1_
 
