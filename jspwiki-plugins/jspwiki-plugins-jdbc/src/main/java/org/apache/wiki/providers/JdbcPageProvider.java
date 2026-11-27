@@ -57,6 +57,7 @@ import java.util.TreeSet;
 /**
  * JDBC-backed {@link PageProvider} supporting SQLite, PostgreSQL, MariaDB, and
  * Microsoft SQL Server without an ORM.
+ * @since 3.1
  */
 public class JdbcPageProvider implements PageProvider {
 

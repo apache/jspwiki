@@ -42,16 +42,9 @@ import org.junit.jupiter.api.extension.TestTemplateInvocationContextProvider;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
-import javax.naming.NamingException;
-import javax.naming.spi.InitialContextFactory;
-import javax.sql.DataSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -59,11 +52,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,7 +78,6 @@ class JdbcAttachmentProviderTest {
     private static final String LOCAL_CONFIG_RESOURCE = "jdbc-test-local.properties";
     private static final String CONFIG_PATH_SYS_PROP = "jspwiki.test.jdbc.config";
     private static final String CONFIG_PATH_ENV_VAR = "JSPWIKI_TEST_JDBC_CONFIG";
-    private static final String JNDI_NAME = "java:comp/env/jdbc/TestWikiAttachmentsDS";
     private static final String TABLE_NAME = "wiki_attachment_versions";
 
     private static MockedStatic<Wiki> wikiStaticMock;
@@ -135,7 +125,6 @@ class JdbcAttachmentProviderTest {
                 this.target = target;
             }
 
-            bindTargetToJndi(this.target);
             this.provider = initProvider(this.target, true, null);
 
             if (!this.target.sqlite()) {
@@ -145,23 +134,24 @@ class JdbcAttachmentProviderTest {
 
         JdbcAttachmentProvider initProvider(final DbTarget db, final boolean autoCreate, final String disableCache)
                 throws Exception {
-            bindTargetToJndi(db);
             final Properties props = new Properties();
-            props.setProperty(JdbcAttachmentProvider.PROP_DATASOURCE, JNDI_NAME);
-            props.setProperty(JdbcAttachmentProvider.PROP_AUTO_CREATE, Boolean.toString(autoCreate));
+            props.setProperty(JdbcAttachmentProvider.PROP_JDBCATTACHMENT_URL, db.url());
+            if (StringUtils.isNotBlank(db.user())) {
+                props.setProperty(JdbcAttachmentProvider.PROP_JDBCATTACHMENT_USER, db.user());
+            }
+            if (StringUtils.isNotBlank(db.password())) {
+                props.setProperty(JdbcAttachmentProvider.PROP_JDBCATTACHMENT_PASSWORD, db.password());
+            }
+            if (StringUtils.isNotBlank(db.driver())) {
+                props.setProperty(JdbcAttachmentProvider.PROP_JDBCATTACHMENT_DRIVER, db.driver());
+            }
+            props.setProperty(JdbcPageProvider.PROP_AUTO_CREATE_SCHEMA, Boolean.toString(autoCreate));
             if (StringUtils.isNotBlank(disableCache)) {
                 props.setProperty(JdbcAttachmentProvider.PROP_DISABLECACHE, disableCache);
             }
             final JdbcAttachmentProvider p = new JdbcAttachmentProvider();
             p.initialize(this.engine, props);
             return p;
-        }
-
-        private void bindTargetToJndi(final DbTarget db) throws Exception {
-            InMemoryJndiContextFactory.clear();
-            InMemoryJndiContextFactory.bind(JNDI_NAME, new DriverManagerDataSource(db));
-            System.setProperty(Context.INITIAL_CONTEXT_FACTORY, InMemoryJndiContextFactory.class.getName());
-            new InitialContext();
         }
 
         private void cleanExternalTable() throws Exception {
@@ -198,7 +188,6 @@ class JdbcAttachmentProviderTest {
                 } catch (final Exception ignored) {
                 }
             }
-            InMemoryJndiContextFactory.clear();
             if (tempSqliteFile != null) {
                 Files.deleteIfExists(tempSqliteFile);
             }
@@ -382,7 +371,7 @@ class JdbcAttachmentProviderTest {
     }
 
     @Test
-    void initializeMissingDataSourceThrows() {
+    void initializeMissingUrlThrows() {
         final JdbcAttachmentProvider p = new JdbcAttachmentProvider();
         assertThrows(NoRequiredPropertyException.class, () -> p.initialize(mock(Engine.class), new Properties()));
     }
@@ -500,101 +489,5 @@ class JdbcAttachmentProviderTest {
     void missingAttachmentThrowsProviderException(final TestContext ctx) {
         final Attachment missing = newAttachment("NoPage", "missing.bin");
         assertThrows(ProviderException.class, () -> ctx.provider.getAttachmentData(missing));
-    }
-
-    private static final class DriverManagerDataSource implements DataSource {
-
-        private final DbTarget target;
-
-        private DriverManagerDataSource(final DbTarget target) {
-            this.target = target;
-        }
-
-        @Override
-        public Connection getConnection() throws SQLException {
-            if (StringUtils.isNotBlank(target.driver())) {
-                try {
-                    Class.forName(target.driver());
-                } catch (final ClassNotFoundException e) {
-                    throw new SQLException("JDBC driver not found: " + target.driver(), e);
-                }
-            }
-            if (StringUtils.isNotBlank(target.user())) {
-                return DriverManager.getConnection(target.url(), target.user(), target.password());
-            }
-            return DriverManager.getConnection(target.url());
-        }
-
-        @Override
-        public Connection getConnection(final String username, final String password) throws SQLException {
-            return DriverManager.getConnection(target.url(), username, password);
-        }
-
-        @Override
-        public PrintWriter getLogWriter() {
-            return null;
-        }
-
-        @Override
-        public void setLogWriter(final PrintWriter out) {
-        }
-
-        @Override
-        public void setLoginTimeout(final int seconds) {
-        }
-
-        @Override
-        public int getLoginTimeout() {
-            return 0;
-        }
-
-        @Override
-        public java.util.logging.Logger getParentLogger() {
-            return java.util.logging.Logger.getGlobal();
-        }
-
-        @Override
-        public <T> T unwrap(final Class<T> iface) throws SQLException {
-            if (iface.isInstance(this)) {
-                return iface.cast(this);
-            }
-            throw new SQLException("Cannot unwrap to " + iface.getName());
-        }
-
-        @Override
-        public boolean isWrapperFor(final Class<?> iface) {
-            return iface.isInstance(this);
-        }
-    }
-
-    public static class InMemoryJndiContextFactory implements InitialContextFactory {
-
-        private static final ConcurrentHashMap<String, Object> BINDINGS = new ConcurrentHashMap<>();
-
-        static void bind(final String name, final Object obj) {
-            BINDINGS.put(name, obj);
-        }
-
-        static void clear() {
-            BINDINGS.clear();
-        }
-
-        @Override
-        public Context getInitialContext(final Hashtable<?, ?> environment) {
-            final Context ctx = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
-            try {
-                when(ctx.lookup(anyString())).thenAnswer(inv -> {
-                    final String key = inv.getArgument(0);
-                    final Object val = BINDINGS.get(key);
-                    if (val == null) {
-                        throw new NameNotFoundException("Not bound: " + key);
-                    }
-                    return val;
-                });
-            } catch (final NamingException e) {
-                throw new IllegalStateException(e);
-            }
-            return ctx;
-        }
     }
 }

@@ -58,6 +58,10 @@ import static org.apache.wiki.providers.JdbcPageProvider.Dialect.MSSQL;
 import static org.apache.wiki.providers.JdbcPageProvider.Dialect.SQLITE;
 import static org.apache.wiki.providers.JdbcPageProvider.PROP_AUTO_CREATE_SCHEMA;
 
+/**
+ * JDBC based attachment provider
+ * @since 3.1
+ */
 public class JdbcAttachmentProvider implements AttachmentProvider {
 
     private static final Logger LOG = LogManager.getLogger(JdbcAttachmentProvider.class);
