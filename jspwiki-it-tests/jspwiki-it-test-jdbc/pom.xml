@@ -170,7 +170,7 @@
   
   <dependencies>
     <dependency><!-- added so we can issue safe, parallel builds -->
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.jspwiki</groupId>
       <artifactId>jspwiki-war</artifactId>
       <version>${project.version}</version>
       <type>war</type>
@@ -190,7 +190,7 @@
     </dependency>
    
 	<dependency>
-      <groupId>${project.groupId}</groupId>
+      <groupId>org.apache.jspwiki</groupId>
       <artifactId>jspwiki-plugins-jdbc</artifactId>
       <version>${project.version}</version>
     </dependency>
