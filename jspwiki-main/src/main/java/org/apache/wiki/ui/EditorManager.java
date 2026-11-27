@@ -110,7 +110,7 @@ public interface EditorManager extends ModuleManager, Initializable {
      */
     static String getEditedText( final PageContext ctx ) {
         String usertext = null;
-        final Object ctxAttr = ctx.getAttribute( Context.ATTR_CONTEXT );
+        final Object ctxAttr = ctx.getRequest().getAttribute( Context.ATTR_CONTEXT );
         final Context wikiContext = ( ctxAttr instanceof Context ) ? ( Context )ctxAttr : null;
 
         if( wikiContext != null && wikiContext.getEngine() != null ) {
