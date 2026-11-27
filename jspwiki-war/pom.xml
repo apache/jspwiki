@@ -270,4 +270,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!-- includes the OpenID Connect login, see the comments in web.xml to enable it: mvn package -Poidc -->
+        <profile>
+            <id>oidc</id>
+            <dependencies>
+                <dependency>
+                    <groupId>${project.groupId}</groupId>
+                    <artifactId>jspwiki-oidc</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>
