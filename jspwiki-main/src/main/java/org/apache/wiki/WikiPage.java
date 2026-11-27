@@ -25,7 +25,7 @@ import org.apache.wiki.auth.acl.Acl;
 import org.apache.wiki.auth.acl.AclEntry;
 import org.apache.wiki.auth.acl.AclImpl;
 import org.apache.wiki.pages.PageManager;
-
+import org.apache.wiki.auth.acl.AclEntryImpl;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -322,9 +322,14 @@ public class WikiPage implements Page {
 
         if( m_accessList != null ) {
             p.m_accessList = new AclImpl();
-            for( final Enumeration< AclEntry > entries = m_accessList.entries(); entries.hasMoreElements(); ) {
-                final AclEntry e = entries.nextElement();
-                p.m_accessList.addEntry( e );
+            for( final Enumeration<org.apache.wiki.api.core.AclEntry> entries = m_accessList.aclEntries(); entries.hasMoreElements(); ) {
+                final org.apache.wiki.api.core.AclEntry e = entries.nextElement();
+                final org.apache.wiki.api.core.AclEntry copy = new AclEntryImpl();
+                copy.setPrincipal( e.getPrincipal() );
+                for( final java.util.Enumeration<java.security.Permission> perms = e.permissions(); perms.hasMoreElements(); ) {
+                    copy.addPermission( perms.nextElement() );
+                }
+                p.m_accessList.addEntry( copy );
             }
         }
             
