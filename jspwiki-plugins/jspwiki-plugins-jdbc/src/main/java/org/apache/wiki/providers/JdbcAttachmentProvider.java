@@ -115,7 +115,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
             m_dialect = JdbcPageProvider.Dialect.detect(m_jdbcUrl, m_dbProductName);
 
             final boolean autoCreate = Boolean.parseBoolean(
-                    properties.getProperty(PROP_AUTO_CREATE_SCHEMA, "false"));
+                    properties.getProperty(PROP_AUTO_CREATE_SCHEMA, "true"));
             if (autoCreate) {
                 createSchemaIfNeeded(conn, m_dialect);
             }
@@ -136,7 +136,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
             p2.setProperty(FileSystemProvider.PROP_PAGEDIR, fsRoot);
             MigrationTool.migrateAttachmentProvider(engine, attachment, this, false, false);
         } catch (Exception ex) {
-
+            LOG.error("migration failed", ex);
         }
                              
     }
@@ -283,7 +283,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
                     + "(parent_page, file_name, version, author, change_note, file_size, last_modified, content) "
                     + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
-            try (final Connection conn = m_dataSource.getConnection()) {
+            try (final Connection conn = openConnection()) {
                 if (m_dialect ==    SQLITE) {
                     applySqlitePragmas(conn);
                 }
@@ -346,7 +346,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            conn = m_dataSource.getConnection();
+            conn = openConnection();
             if (m_dialect == SQLITE) {
                 applySqlitePragmas(conn);
             }
@@ -411,7 +411,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
                 + "ORDER BY v.file_name";
 
         final List< Attachment> results = new ArrayList<>();
-        try (final Connection conn = m_dataSource.getConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, page.getName());
             try (final ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -443,7 +443,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
                 + "WHERE v.last_modified > ?";
 
         final List< Attachment> list = new ArrayList<>();
-        try (final Connection conn = m_dataSource.getConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, timestamp.getTime());
             try (final ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -473,7 +473,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
                 + "FROM wiki_attachment_versions "
                 + "WHERE parent_page = ? AND file_name = ? AND version = ?";
 
-        try (final Connection conn = m_dataSource.getConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, parentPage);
             ps.setString(2, name);
             ps.setInt(3, version);
@@ -496,7 +496,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
                 + "ORDER BY version DESC";
 
         final List< Attachment> history = new ArrayList<>();
-        try (final Connection conn = m_dataSource.getConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, att.getParentName());
             ps.setString(2, att.getFileName());
             try (final ResultSet rs = ps.executeQuery()) {
@@ -521,7 +521,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
         }
 
         final String sql = "DELETE FROM wiki_attachment_versions WHERE parent_page = ? AND file_name = ? AND version = ?";
-        try (final Connection conn = m_dataSource.getConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, att.getParentName());
             ps.setString(2, att.getFileName());
             ps.setInt(3, targetVersion);
@@ -534,7 +534,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
     @Override
     public void deleteAttachment(final Attachment att) throws ProviderException {
         final String sql = "DELETE FROM wiki_attachment_versions WHERE parent_page = ? AND file_name = ?";
-        try (final Connection conn = m_dataSource.getConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, att.getParentName());
             ps.setString(2, att.getFileName());
             ps.executeUpdate();
@@ -546,7 +546,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
     @Override
     public void moveAttachmentsForPage(final String oldParent, final String newParent) throws ProviderException {
         final String sql = "UPDATE wiki_attachment_versions SET parent_page = ? WHERE parent_page = ?";
-        try (final Connection conn = m_dataSource.getConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, newParent);
             ps.setString(2, oldParent);
             ps.executeUpdate();
@@ -560,7 +560,7 @@ public class JdbcAttachmentProvider implements AttachmentProvider {
             return requestedVersion;
         }
         final String sql = "SELECT MAX(version) FROM wiki_attachment_versions WHERE parent_page = ? AND file_name = ?";
-        try (final Connection conn = m_dataSource.getConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (final Connection conn = openConnection(); final PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, parentPage);
             ps.setString(2, fileName);
             try (final ResultSet rs = ps.executeQuery()) {

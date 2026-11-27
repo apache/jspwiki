@@ -53,7 +53,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
-import org.apache.wiki.api.providers.AttachmentProvider;
 
 /**
  * JDBC-backed {@link PageProvider} supporting SQLite, PostgreSQL, MariaDB, and
@@ -172,7 +171,7 @@ public class JdbcPageProvider implements PageProvider {
             m_dialect = Dialect.detect(m_jdbcUrl, m_dbProductName);
 
             final boolean autoCreate = Boolean.parseBoolean(
-                    properties.getProperty(PROP_AUTO_CREATE_SCHEMA, "false"));
+                    properties.getProperty(PROP_AUTO_CREATE_SCHEMA, "true"));
             if (autoCreate) {
                 createSchemaIfNeeded(conn);
             }
