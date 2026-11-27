@@ -109,10 +109,7 @@ jobs:
           MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
         ports:
           - 1433:1433
-        options: >-
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 20
+
 
     steps:
       - uses: actions/checkout@v3
@@ -145,7 +142,7 @@ jobs:
               -Q "IF DB_ID('jspwiki_test') IS NULL CREATE DATABASE jspwiki_test;"
           fi
 
-      - name: Run JdbcPageProviderTest across SQLite, PostgreSQL, MariaDB, and MSSQL
+      - name: Run JDBC provider tests across SQLite, PostgreSQL, MariaDB, and MSSQL
         env:
           JSPWIKI_TEST_PG_URL: jdbc:postgresql://localhost:5432/jspwiki_test
           JSPWIKI_TEST_PG_USER: jspwiki
@@ -161,4 +158,4 @@ jobs:
           JSPWIKI_TEST_MSSQL_USER: sa
           JSPWIKI_TEST_MSSQL_PASSWORD: "YourStrong!Passw0rd"
           JSPWIKI_TEST_MSSQL_DRIVER: com.microsoft.sqlserver.jdbc.SQLServerDriver
-        run: mvn test -B -Dtest=JdbcPageProviderTest "-Dplugin.surefire.junit5-tree-reporter.enable-console=true"
+        run: mvn test -B -Dtest=JdbcPageProviderTest,JdbcAttachmentProviderTest "-Dplugin.surefire.junit5-tree-reporter.enable-console=true"
