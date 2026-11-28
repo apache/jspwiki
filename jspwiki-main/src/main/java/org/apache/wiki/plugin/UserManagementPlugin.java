@@ -250,7 +250,7 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 sb.append("','");
                 sb.append(StringEscapeUtils.escapeEcmaScript(unlockId));
                 sb.append("','");
-                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace("\"", "\\\"").replace("'", "\\'"));
+                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace(",", "\\,").replace("\"", "\\\"").replace("'", "\\'"));
                 sb.append("')\" ");
                 sb.append(disabledLock);
                 sb.append(">");
@@ -265,7 +265,7 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 sb.append("','");
                 sb.append(StringEscapeUtils.escapeEcmaScript(lockId));
                 sb.append("','");
-                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace("\"", "\\\"").replace("'", "\\'"));
+                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace(",", "\\,").replace("\"", "\\\"").replace("'", "\\'"));
                 sb.append("')\" ");
                 sb.append(disabledUnlock);
                 sb.append(">");
@@ -279,7 +279,7 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 sb.append(StringEscapeUtils.escapeEcmaScript(expireId));
 
                 sb.append("','");
-                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace("\"", "\\\"").replace("'", "\\'"));
+                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace(",", "\\,").replace("\"", "\\\"").replace("'", "\\'"));
                 sb.append("')\" ");
                 sb.append(expirePassword);
                 sb.append(">");
@@ -293,7 +293,7 @@ public class UserManagementPlugin implements Plugin, WikiAjaxServlet {
                 sb.append(StringEscapeUtils.escapeEcmaScript(rowId));
 
                 sb.append("','");
-                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace("\"", "\\\"").replace("'", "\\'"));
+                sb.append(StringEscapeUtils.escapeEcmaScript(profile.getWikiName()).replace(",", "\\,").replace("\"", "\\\"").replace("'", "\\'"));
                 sb.append("')\" ");
                 sb.append(disableDelete);
                 sb.append(">");
