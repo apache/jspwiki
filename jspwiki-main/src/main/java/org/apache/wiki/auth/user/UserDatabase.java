@@ -40,6 +40,7 @@ public interface UserDatabase {
      * classes that persist to the file system may wish to make this method <code>synchronized</code>.
      *
      * @param loginName the login name of the user profile that shall be deleted
+     * @throws org.apache.wiki.auth.NoSuchPrincipalException
      */
     void deleteByLoginName( String loginName ) throws NoSuchPrincipalException, WikiSecurityException;
 

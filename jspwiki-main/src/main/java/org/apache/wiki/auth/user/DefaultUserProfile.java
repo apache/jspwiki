@@ -340,7 +340,7 @@ public final class DefaultUserProfile implements UserProfile {
     public boolean isLocked() {
         final boolean locked = lockExpiry != null && System.currentTimeMillis() < lockExpiry.getTime();
         // Clear the lock if it's expired already
-        if( !locked && lockExpiry != null ) {
+            if( !locked && lockExpiry != null ) {
             lockExpiry = null;
         }
         return locked;

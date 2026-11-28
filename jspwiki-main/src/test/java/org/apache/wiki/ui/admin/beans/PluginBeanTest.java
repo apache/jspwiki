@@ -71,6 +71,7 @@ public class PluginBeanTest {
                 + "<tr><td>TableOfContents</td><td></td><td>ASF</td><td></td></tr>"
                 + "<tr><td>UndefinedPagesPlugin</td><td></td><td>ASF</td><td></td></tr>"
                 + "<tr><td>UnusedPagesPlugin</td><td></td><td>ASF</td><td></td></tr>"
+                + "<tr><td>UserManagementPlugin</td><td></td><td>ASF</td><td></td></tr>"
                 + "<tr><td>WeblogArchivePlugin</td><td></td><td>ASF</td><td></td></tr>"
                 + "<tr><td>WeblogEntryPlugin</td><td></td><td>ASF</td><td></td></tr>"
                 + "<tr><td>WeblogPlugin</td><td></td><td>ASF</td><td></td></tr></table></div>";

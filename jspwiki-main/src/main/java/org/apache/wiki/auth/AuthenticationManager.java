@@ -237,5 +237,16 @@ public interface AuthenticationManager extends Initializable {
                     EventUtil.applyFrom(new WikiSecurityEvent( this, type, principal, target ), request ) );
         }
     }
+    /**
+     * Returns true if the specific login name is expired.
+     * Does not apply to container based authentication (return null in this case)
+     * @since 3.1
+     * @param loginName
+     * @return true if expired and the login is jspwiki managed, container based auth
+     * return null. all other cases, return false
+     */
+    default Boolean isPasswordExpiredByLoginName(String loginName) {
+        return null;
+    }
 
 }

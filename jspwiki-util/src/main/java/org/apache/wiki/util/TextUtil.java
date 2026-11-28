@@ -208,7 +208,8 @@ public final class TextUtil {
 
     /**
      *  Replaces the relevant entities inside the String. All &amp; &gt;, &lt;, and &quot; are replaced by their respective names.
-     *
+     *  NOTE: this does not do single quotes. use with caution when handing fields off to javascript functions.
+     *  See {@link StringEscapeUtils}
      *  @since 1.6.1
      *  @param src The source string.
      *  @return The encoded string.

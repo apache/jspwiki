@@ -160,7 +160,10 @@ public class WikiAjaxDispatcherServlet extends HttpServlet {
                     List< String > paramValues = new ArrayList<>();
                     if( params != null ) {
                         if( StringUtils.isNotBlank( params ) ) {
-                            paramValues = Arrays.asList( params.trim().split( "," ) );
+                            //split on commas but not escaped commas
+                            //so foo,bar should produce [foo, bar]
+                            //and foo\,bar should produce "foo,bar"
+                            paramValues = Arrays.asList( params.trim().split("(?<!\\\\),") );
                         }
                     }
                     servlet.service( req, res, actionName, paramValues );
