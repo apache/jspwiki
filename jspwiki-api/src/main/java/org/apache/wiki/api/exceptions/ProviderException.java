@@ -36,5 +36,15 @@ public class ProviderException extends WikiException {
     public ProviderException( final String msg ) {
         super( msg );
     }
+    
+    /**
+     *  Creates a ProviderException.
+     *
+     *  @param msg exception message.
+     * @param cause
+     */
+    public ProviderException( final String msg, final Exception cause ) {
+        super( msg, cause );
+    }
 
 }

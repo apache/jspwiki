@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!--
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -7,33 +7,28 @@
     to you under the Apache License, Version 2.0 (the
     "License"); you may not use this file except in compliance
     with the License.  You may obtain a copy of the License at
-
        http://www.apache.org/licenses/LICENSE-2.0
-
     Unless required by applicable law or agreed to in writing,
     software distributed under the License is distributed on an
     "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
     KIND, either express or implied.  See the License for the
     specific language governing permissions and limitations
     under the License.
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-
+--><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>org.apache.jspwiki</groupId>
     <artifactId>jspwiki-builder</artifactId>
     <version>3.0.2-SNAPSHOT</version>
   </parent>
-
   <groupId>org.apache.jspwiki.it</groupId>
   <artifactId>jspwiki-it-tests</artifactId>
   <modelVersion>4.0.0</modelVersion>
   <description>selenium tests execution for jspwiki</description>
   <packaging>pom</packaging>
   <distributionManagement>
-      <relocation>
-          <artifactId>jspwiki-it-builder</artifactId>
-      </relocation>
+    <relocation>
+      <artifactId>jspwiki-it-builder</artifactId>
+    </relocation>
   </distributionManagement>
   <modules>
     <module>jspwiki-selenide-tests</module>
@@ -42,9 +37,9 @@
     <module>jspwiki-it-test-custom-jdbc</module>
     <module>jspwiki-it-test-cma</module>
     <module>jspwiki-it-test-cma-jdbc</module>
-	<module>jspwiki-test-plugin</module>
+    <module>jspwiki-test-plugin</module>
+    <module>jspwiki-it-test-jdbc</module>
   </modules>
-
   <dependencies>
     <dependency>
       <groupId>org.apache.jspwiki</groupId>
@@ -52,55 +47,48 @@
       <version>${project.version}</version>
       <type>war</type>
     </dependency>
-
     <dependency>
       <groupId>org.hsqldb</groupId>
       <artifactId>hsqldb</artifactId>
       <scope>provided</scope>
       <classifier>jdk8</classifier>
     </dependency>
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-params</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
   <profiles>
     <profile>
       <id>integration-tests</id>
-
       <properties>
         <hsqldb.daemon>true</hsqldb.daemon>
       </properties>
-
       <build>
-        <testResources><!-- tests reuse [1/2]: share common resources -->
+        <testResources>
+          <!-- tests reuse [1/2]: share common resources -->
           <testResource>
             <directory>${project.basedir}/../jspwiki-selenide-tests/src/test/resources</directory>
           </testResource>
         </testResources>
-
         <resources>
-          <resource><!-- tests reuse [2/2]: share common resources -->
+          <resource>
+            <!-- tests reuse [2/2]: share common resources -->
             <directory>${project.basedir}/../jspwiki-selenide-tests/src/main/resources</directory>
             <filtering>true</filtering>
           </resource>
         </resources>
-
         <pluginManagement>
           <plugins>
             <plugin>
@@ -131,12 +119,10 @@
                 </execution>
               </executions>
             </plugin>
-
             <plugin>
               <artifactId>maven-war-plugin</artifactId>
               <version>${plugin.war.version}</version>
             </plugin>
-
             <!-- Activates the HSQLDB database for IT tests -->
             <plugin>
               <groupId>com.btmatthews.maven.plugins.inmemdb</groupId>
@@ -148,24 +134,34 @@
                 <daemon>${hsqldb.daemon}</daemon>
                 <database>jspwiki</database>
                 <username>SA</username>
-                <password />
+                <password/>
                 <sources>
                   <!-- ensure ITs can load data when run from either it-builder, their submodules or jspwiki's parent pom -->
-                  <script><sourceFile>./jspwiki-selenide-tests/src/test/resources/hsqldb/hsql-userdb-setup.sql</sourceFile></script>
-                  <script><sourceFile>../jspwiki-selenide-tests/src/test/resources/hsqldb/hsql-userdb-setup.sql</sourceFile></script> 
-                  <script><sourceFile>./jspwiki-it-tests/jspwiki-selenide-tests/src/test/resources/hsqldb/hsql-userdb-setup.sql</sourceFile></script> 
+                  <script>
+                    <sourceFile>./jspwiki-selenide-tests/src/test/resources/hsqldb/hsql-userdb-setup.sql</sourceFile>
+                  </script>
+                  <script>
+                    <sourceFile>../jspwiki-selenide-tests/src/test/resources/hsqldb/hsql-userdb-setup.sql</sourceFile>
+                  </script>
+                  <script>
+                    <sourceFile>./jspwiki-it-tests/jspwiki-selenide-tests/src/test/resources/hsqldb/hsql-userdb-setup.sql</sourceFile>
+                  </script>
                 </sources>
               </configuration>
               <executions>
                 <execution>
                   <id>run</id>
                   <phase>pre-integration-test</phase>
-                  <goals><goal>run</goal></goals>
+                  <goals>
+                    <goal>run</goal>
+                  </goals>
                 </execution>
                 <execution>
                   <id>stop</id>
                   <phase>post-integration-test</phase>
-                  <goals><goal>stop</goal></goals>
+                  <goals>
+                    <goal>stop</goal>
+                  </goals>
                 </execution>
               </executions>
               <dependencies>
@@ -182,7 +178,6 @@
                 </dependency>
               </dependencies>
             </plugin>
-
             <!-- Additional Tomcat configuration (JNDI lookups for DB access, tomcat-users.xml file) -->
             <plugin>
               <groupId>org.codehaus.cargo</groupId>
@@ -195,7 +190,7 @@
                       <driverClass>org.hsqldb.jdbc.JDBCDriver</driverClass>
                       <url>jdbc:hsqldb:hsql://localhost/jspwiki</url>
                       <username>SA</username>
-                      <password />
+                      <password/>
                       <connectionProperties>
                         <maxTotal>10</maxTotal>
                         <maxIdle>5</maxIdle>
@@ -207,7 +202,7 @@
                       <driverClass>org.hsqldb.jdbc.JDBCDriver</driverClass>
                       <url>jdbc:hsqldb:hsql://localhost/jspwiki</url>
                       <username>SA</username>
-                      <password />
+                      <password/>
                       <connectionProperties>
                         <maxTotal>10</maxTotal>
                         <maxIdle>5</maxIdle>

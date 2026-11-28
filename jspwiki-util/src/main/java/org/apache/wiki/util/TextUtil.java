@@ -315,12 +315,13 @@ public final class TextUtil {
      *  @return The parsed value (or defvalue).
      */
     public static int parseIntParameter( final String value, final int defvalue ) {
-        try {
-            return Integer.parseInt( value.trim() );
-        } catch( final Exception e ) {
-            LOG.debug(e.getMessage(), e);
+        if (value!=null) {
+            try {
+                return Integer.parseInt( value.trim() );
+            } catch( final Exception e ) {
+                LOG.debug(e.getMessage(), e);
+            }
         }
-
         return defvalue;
     }
 
